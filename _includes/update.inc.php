@@ -30,7 +30,7 @@ while ($row = mysqli_fetch_object($result)) {
 
 $previous_version = $current_db_version;
 
-if ($current_db_version < $software_version) {
+if ($current_db_version < SOFTWARE_VERSION) {
 
     if ($current_db_version >= '1.1' && $current_db_version < '2.0022') {
 
@@ -84,13 +84,13 @@ if ($current_db_version < $software_version) {
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
 
-    $log->goal('upgrade', $previous_version, $software_version);
+    $log->goal('upgrade', $previous_version, SOFTWARE_VERSION);
 
-} elseif ($current_db_version > $software_version) {
+} elseif ($current_db_version > SOFTWARE_VERSION) {
 
     $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
     The software on your server is older than your database version. This should never happen.<BR><BR>Please logout and
-    log back in, and if the problem persists please contact your " . $software_title . " administrator.<BR>";
+    log back in, and if the problem persists please contact your " . SOFTWARE_TITLE . " administrator.<BR>";
 
     $_SESSION['s_version_error'] = '1';
 
