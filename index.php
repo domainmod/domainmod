@@ -178,14 +178,17 @@ if ($_SESSION['s_installation_mode'] == '0') {
 
     echo $form->showFormTop('');
 
-    if ($demo_install == "1") { ?> <strong>Demo Username & Password:</strong> "demo"<BR><BR><?php }
+    if (DEMO_INSTALLATION == '1') { ?>
+        <strong>Demo Username:</strong> demo<BR>
+        <strong>Demo Password:</strong> demo<BR><BR><?php
+    }
 
     echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
     echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '', '');
     echo $form->showSubmitButton('Login', '', '');
     echo $form->showFormBottom('');
 
-    if ($demo_install != "1") { ?>
+    if (DEMO_INSTALLATION != '1') { ?>
 
         <BR><a href="reset.php">Forgot your Password?</a><?php
 

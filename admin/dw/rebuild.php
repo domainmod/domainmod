@@ -34,6 +34,7 @@ $dw = new DomainMOD\DwBuild();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/dw-rebuild.inc.php');
 require_once(DIR_INC . '/database.inc.php');
@@ -50,7 +51,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 <?php
-if ($demo_install !== '1') {
+if (DEMO_INSTALLATION !== '1') {
 
     $result_message = $dw->build($dbcon);
 

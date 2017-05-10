@@ -40,7 +40,7 @@ require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-if ($demo_install != '1') {
+if (DEMO_INSTALLATION != '1') {
 
     $sql = "UPDATE scheduler
             SET is_running = '0'";

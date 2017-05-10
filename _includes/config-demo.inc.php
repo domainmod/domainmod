@@ -20,9 +20,8 @@
  */
 ?>
 <?php
-$demo_url = 'demo.domainmod.org';
-$demo_username = 'demo';
-$demo_password = 'demo';
-if ($_SERVER['HTTP_HOST'] == $demo_url) {
-    $demo_install = '1';
+define('DEMO_URL', 'demo.domainmod.org');
+
+if ($_SERVER['HTTP_HOST'] == DEMO_URL) {
+    define('DEMO_INSTALLATION', '1');
 }

@@ -47,7 +47,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $id = $_GET['id'];
 
-if ($demo_install != '1') {
+if (DEMO_INSTALLATION != '1') {
 
     $query = "SELECT id, slug, expression, next_run, active
               FROM scheduler
@@ -148,7 +148,7 @@ if ($demo_install != '1') {
 
 } else {
 
-    if ($demo_install == '1') {
+    if (DEMO_INSTALLATION == '1') {
 
         $_SESSION['s_message_danger'] .= "Tasks Disabled in Demo Mode";
 
