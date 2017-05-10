@@ -542,6 +542,14 @@ if ($q->prepare($query)) {
 
                         echo $form->showInputTextarea('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '', '', '');
 
+                    } elseif ($df_type_id == "4") { // Date
+
+                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '10', '', '', '', '');
+
+                    } elseif ($df_type_id == "5") { // Time Stamp
+
+                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '19', '', '', '', '');
+
                     }
 
                 }

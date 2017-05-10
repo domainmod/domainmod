@@ -131,6 +131,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                     $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
+            } elseif ($new_field_type_id == '4') { // Date
+
+                $query = "ALTER TABLE `ssl_cert_field_data`
+                          ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
+                $q = $dbcon->stmt_init();
+
+                if ($q->prepare($query)) {
+
+                    $q->execute();
+                    $q->close();
+
+                } else {
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
+                }
+
+            } elseif ($new_field_type_id == '5') { // Time Stamp
+
+                $query = "ALTER TABLE `ssl_cert_field_data`
+                          ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+                $q = $dbcon->stmt_init();
+
+                if ($q->prepare($query)) {
+
+                    $q->execute();
+                    $q->close();
+
+                } else {
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
+                }
+
             }
 
             $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $new_field_name . ') Added<BR>';

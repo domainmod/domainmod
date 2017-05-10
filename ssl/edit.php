@@ -542,6 +542,14 @@ if (mysqli_num_rows($result) > 0) { ?>
 
                 echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '', '');
 
+            } elseif ($row->type_id == "4") { // Date
+
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '10', '', '', '', '');
+
+            } elseif ($row->type_id == "5") { // Time Stamp
+
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '19', '', '', '', '');
+
             }
 
         }

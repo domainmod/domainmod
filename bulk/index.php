@@ -1972,7 +1972,7 @@ if ($action == "AD") { // Add Domains
 
     } elseif ($type_id == "3") {
 
-        $query = "SELECT df.name, df.field_name, df.type_id, df.description
+        $query = "SELECT df.name, df.field_name, df.description
                   FROM domain_fields AS df, custom_field_types AS cft
                   WHERE df.type_id = cft.id
                     AND df.id = ?";
@@ -1988,6 +1988,56 @@ if ($action == "AD") { // Add Domains
             while ($q->fetch()) {
 
                 echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    } elseif ($type_id == "4") {
+
+        $query = "SELECT df.name, df.field_name, df.description
+                  FROM domain_fields AS df, custom_field_types AS cft
+                  WHERE df.type_id = cft.id
+                    AND df.id = ?";
+        $q = $dbcon->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $field_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+
+            while ($q->fetch()) {
+
+                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (10)', $temp_description, ${'new_' . $temp_field_name}, '10', '', '', '', '');
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    } elseif ($type_id == "5") {
+
+        $query = "SELECT df.name, df.field_name, df.description
+                  FROM domain_fields AS df, custom_field_types AS cft
+                  WHERE df.type_id = cft.id
+                    AND df.id = ?";
+        $q = $dbcon->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $field_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+
+            while ($q->fetch()) {
+
+                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (19)', $temp_description, ${'new_' . $temp_field_name}, '19', '', '', '', '');
 
             }
 
@@ -2077,6 +2127,14 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
                         } elseif ($temp_type_id == "3") { // Text Area
 
                             echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+
+                        } elseif ($temp_type_id == "4") { // Date
+
+                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '10', '', '', '', '');
+
+                        } elseif ($temp_type_id == "5") { // Time Stamp
+
+                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '19', '', '', '', '');
 
                         }
 
