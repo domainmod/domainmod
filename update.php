@@ -46,7 +46,6 @@ $message_success_cli = '';
 if ($current_db_version !== SOFTWARE_VERSION) {
 
     require_once(DIR_INC . '/update.inc.php');
-    exit;
 
 }
 
