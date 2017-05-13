@@ -136,7 +136,7 @@ class Email
     {
         $headers = '';
         $headers .= 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=' . EMAIL_ENCODING_TYPE . "\r\n";
         $headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $from_address . ">\r\n";
         $headers .= 'Return-Path: ' . $from_address . "\r\n";
         $headers .= 'Reply-to: ' . $from_address . "\r\n";

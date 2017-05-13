@@ -33,6 +33,7 @@ class Smtp
 
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
+        $mail->CharSet = EMAIL_ENCODING_TYPE;
         $mail->SMTPSecure = $protocol;
         $mail->Host = $server;
         $mail->Port = $port;
