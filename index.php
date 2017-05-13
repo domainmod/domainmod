@@ -102,15 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
             }
 
-            $sql = "SELECT db_version
-                    FROM settings";
-            $result = mysqli_query($dbcon, $sql);
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $_SESSION['s_system_db_version'] = (string) $row->db_version;
-
-            }
+            $_SESSION['s_system_db_version'] = $system->getDbVersion($dbcon);
 
             $_SESSION['s_is_logged_in'] = 1;
 

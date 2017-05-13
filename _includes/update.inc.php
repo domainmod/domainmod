@@ -20,13 +20,7 @@
  */
 ?>
 <?php
-$sql = "SELECT db_version
-        FROM settings";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-while ($row = mysqli_fetch_object($result)) {
-    $current_db_version = (string) $row->db_version;
-}
+$current_db_version = $system->getDbVersion($dbcon);
 
 $previous_version = $current_db_version;
 
@@ -83,6 +77,7 @@ if ($current_db_version < SOFTWARE_VERSION) {
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
+    $message_success_cli = "Your database has been upgraded";
 
     $log->goal('upgrade', $previous_version, SOFTWARE_VERSION);
 
@@ -91,11 +86,13 @@ if ($current_db_version < SOFTWARE_VERSION) {
     $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
     The software on your server is older than your database version. This should never happen.<BR><BR>Please logout and
     log back in, and if the problem persists please contact your " . SOFTWARE_TITLE . " administrator.<BR>";
+    $message_danger_cli = "The upgrade process cannot be completed, as your versions are currently out-of-sync. The software on your server is older than your database version. This should never happen. Please logout and log back in, and if the problem persists please contact your " . SOFTWARE_TITLE . " administrator.";
 
     $_SESSION['s_version_error'] = '1';
 
 } else {
 
     $_SESSION['s_message_success'] .= "Your Database is already up-to-date<BR>";
+    $message_success_cli = "Your Database is already up-to-date";
 
 }

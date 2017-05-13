@@ -74,6 +74,17 @@ class System
         return $live_version;
     }
 
+    public function getDbVersion($dbcon)
+    {
+        $sql = "SELECT db_version
+                FROM settings";
+        $result = mysqli_query($dbcon, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            $current_version = (string) $row->db_version;
+        }
+        return $current_version;
+    }
+
     public function getUpgradeMessage()
     {
         return "A new version of DomainMOD is available for download. <a target=\"_blank\"
