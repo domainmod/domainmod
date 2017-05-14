@@ -46,7 +46,7 @@ class Layout
     {
 
         ob_start(); ?>
-        <button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button><?php
+        <button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button><?php
         return ob_get_clean();
 
     }
