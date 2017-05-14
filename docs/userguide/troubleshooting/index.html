@@ -135,6 +135,9 @@
                 <li class="toctree-l3"><a href="#installation">Installation</a></li>
                 
             
+                <li class="toctree-l3"><a href="#upgrading">Upgrading</a></li>
+                
+            
                 <li class="toctree-l3"><a href="#usage">Usage</a></li>
                 
             
@@ -216,6 +219,33 @@
 <pre><code>sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 </code></pre>
 <p>Once disabled you will need to restart MySQL, and then DomainMOD should install properly.</p>
+<h2 id="upgrading"><BR>Upgrading</h2>
+<p><h4>There was a problem while upgrading and now I can't access DomainMOD.</h4></p>
+<p>Although we personally haven't see this happen yet, it's definitely possible. This is why we recommend you make a backup of your entire DomainMOD database before upgrading (you did make that backup, right?).</p>
+<p>Follow these steps to restore your copy of DomainMOD:</p>
+<ol>
+<li>
+<p>Restore your DomainMOD database backup to the same location as your previous DomainMOD database.</p>
+</li>
+<li>
+<p>Instead of logging into DomainMOD to upgrade your database, run the below script from the command line.</p>
+<p>[FULL SERVER PATH TO DOMAINMOD]/update.php</p>
+<p>The full command will look something like this, depending on the location of PHP and DomainMOD on your server:</p>
+<p>/usr/bin/php -f /home/user/www/domainmod/update.php</p>
+</li>
+<li>
+<p>If you receive a notice that your upgrade was <strong>successful</strong>, switch back to your web browser and try to login to DomainMOD. If you're able to login successfully you can ignore the rest of these steps.</p>
+</li>
+<li>
+<p>If you receive a notice that your upgrade was <strong>unsuccessful</strong>, keep a record of any error messages that are displayed and proceed to the next step.</p>
+</li>
+<li>
+<p>Restore your DomainMOD database backup again, then <a href="https://github.com/domainmod/domainmod/releases">download the previous version that you were using</a> and go through the standard installation steps, pointing it at your newly-restored database in the config.inc.php file. This should get you back to where you were before you tried upgrading.</p>
+</li>
+<li>
+<p>Contact us with any error messages that were displayed and we'll try to help figure out what went wrong with your upgrade.</p>
+</li>
+</ol>
 <h2 id="usage"><BR>Usage</h2>
 <p><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
 <p>This is related to the error reporting level that you have turned on in PHP. Although these are only warnings and won't actually be breaking anything, you can get rid of them by editing your php.ini file and changing the error_reporting line.</p>
