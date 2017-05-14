@@ -1,5 +1,14 @@
 DomainMOD CHANGELOG
 ===================
+v4.04.000    2017-05-13
+- Added Date and Time Stamp Custom Field Types
+- Updated DB upgrade script to run from command line
+- Changed email encoding from iso-8859-1 to UTF-8
+- Updated Composer (? -> 1.4.1)
+- Updated PHP Cron Expression Parser (1.1.0 -> 1.2.0)
+- Updated PHPMailer (5.2.16 -> 5.2.23)
+- Code cleanup
+
 v4.03.002    2017-04-20
 - Added Above.com API
 - Added WHM API Token support
