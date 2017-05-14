@@ -23,10 +23,10 @@
 require_once('../_includes/start-session.inc.php');
 require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-require_once(DIR_ROOT . 'vendor/autoload.php');
+require_once(DIR_ROOT . '/vendor/autoload.php');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
@@ -35,10 +35,10 @@ $log = new DomainMOD\Log();
 
 $timestamp = $time->stamp();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->installCheck($dbcon);
 
@@ -47,7 +47,7 @@ $is_installed = mysqli_num_rows($result) > 0;
 
 if ($is_installed == '1') {
 
-    $_SESSION['s_message_danger'] .= $software_title . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
+    $_SESSION['s_message_danger'] .= SOFTWARE_TITLE . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
     header("Location: ../");
     exit;
@@ -66,7 +66,7 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
                 `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -96,11 +96,11 @@ if ($is_installed == '1') {
                 `read_only` TINYINT(1) NOT NULL DEFAULT '1',
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `number_of_logins` INT(10) NOT NULL DEFAULT '0',
-                `last_login` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `last_login` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -153,8 +153,8 @@ if ($is_installed == '1') {
                 `display_ssl_fee` INT(1) NOT NULL DEFAULT '0',
                 `display_inactive_assets` INT(1) NOT NULL DEFAULT '1',
                 `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -182,8 +182,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -201,8 +201,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -219,8 +219,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -240,8 +240,8 @@ if ($is_installed == '1') {
                 `symbol_order` INT(1) NOT NULL DEFAULT '0',
                 `symbol_space` INT(1) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -422,8 +422,8 @@ if ($is_installed == '1') {
                 `currency_id` INT(10) NOT NULL,
                 `user_id` INT(10) NOT NULL,
                 `conversion` DECIMAL(12,4) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -439,8 +439,8 @@ if ($is_installed == '1') {
                 `misc_fee` DECIMAL(10,2) NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -454,8 +454,8 @@ if ($is_installed == '1') {
                 `misc_fee` DECIMAL(10,2) NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -467,7 +467,7 @@ if ($is_installed == '1') {
                 `account_id` INT(10) NOT NULL DEFAULT '1',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` DATE NOT NULL,
+                `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `cat_id` INT(10) NOT NULL DEFAULT '1',
                 `fee_id` INT(10) NOT NULL DEFAULT '0',
                 `total_cost` DECIMAL(10,2) NOT NULL,
@@ -482,8 +482,8 @@ if ($is_installed == '1') {
                 `fee_fixed` INT(1) NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -498,7 +498,7 @@ if ($is_installed == '1') {
                 `account_id` INT(10) NOT NULL DEFAULT '0',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` DATE NOT NULL,
+                `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `cat_id` INT(10) NOT NULL DEFAULT '0',
                 `dns_id` INT(10) NOT NULL DEFAULT '0',
                 `ip_id` INT(10) NOT NULL DEFAULT '0',
@@ -512,7 +512,7 @@ if ($is_installed == '1') {
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -526,7 +526,7 @@ if ($is_installed == '1') {
                 `account_id` INT(10) NOT NULL DEFAULT '0',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` DATE NOT NULL,
+                `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `cat_id` INT(10) NOT NULL DEFAULT '0',
                 `dns_id` INT(10) NOT NULL DEFAULT '0',
                 `ip_id` INT(10) NOT NULL DEFAULT '0',
@@ -536,7 +536,7 @@ if ($is_installed == '1') {
                 `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -553,7 +553,7 @@ if ($is_installed == '1') {
                 `finished` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -566,7 +566,7 @@ if ($is_installed == '1') {
                 `registrar_id` INT(10) NOT NULL DEFAULT '0',
                 `account_id` INT(10) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -575,7 +575,7 @@ if ($is_installed == '1') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `account_id` INT(10) NOT NULL,
                 `domain` VARCHAR(255) NOT NULL,
-                `expiry_date` DATE NOT NULL,
+                `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `ns1` VARCHAR(255) NOT NULL,
                 `ns2` VARCHAR(255) NOT NULL,
                 `ns3` VARCHAR(255) NOT NULL,
@@ -596,8 +596,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -607,7 +607,9 @@ if ($is_installed == '1') {
             VALUES
             (1, 'Check Box', '" . $timestamp . "'),
             (2, 'Text', '" . $timestamp . "'),
-            (3, 'Text Area', '" . $timestamp . "')";
+            (3, 'Text Area', '" . $timestamp . "'),
+            (4, 'Date', '" . $timestamp . "'),
+            (5, 'Time Stamp', '" . $timestamp . "')";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
@@ -619,8 +621,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -628,8 +630,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `domain_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -644,7 +646,7 @@ if ($is_installed == '1') {
                 `ip_id` INT(10) NOT NULL,
                 `cat_id` INT(10) NOT NULL,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` DATE NOT NULL,
+                `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `fee_id` INT(10) NOT NULL,
                 `total_cost` DECIMAL(10,2) NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -652,8 +654,8 @@ if ($is_installed == '1') {
                 `fee_fixed` INT(1) NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -664,8 +666,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -688,8 +690,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -697,8 +699,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `ssl_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -730,8 +732,8 @@ if ($is_installed == '1') {
                 `number_of_servers` INT(2) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -750,8 +752,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -773,8 +775,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -787,8 +789,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -805,8 +807,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `ssl_provider_id` (`ssl_provider_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -821,8 +823,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -835,8 +837,8 @@ if ($is_installed == '1') {
                 `inactive` INT(1) NOT NULL DEFAULT '0',
                 `missing` INT(1) NOT NULL DEFAULT '0',
                 `filtered` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -849,8 +851,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -864,7 +866,7 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
                 `id` INT(5) NOT NULL AUTO_INCREMENT,
                 `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -889,19 +891,19 @@ if ($is_installed == '1') {
                 `dw_dns_zones` INT(10) NOT NULL,
                 `dw_dns_records` INT(10) NOT NULL,
                 `build_status` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `build_time` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built` INT(1) NOT NULL DEFAULT '0',
                 `build_status_overall` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `build_time_overall` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -913,14 +915,14 @@ if ($is_installed == '1') {
                 `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `interval` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
                 `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
-                `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `sort_order` INT(4) NOT NULL DEFAULT '1',
                 `is_running` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -970,8 +972,8 @@ if ($is_installed == '1') {
                 `ret_privacy_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `ret_autorenewal_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -994,7 +996,7 @@ if ($is_installed == '1') {
             ('NameBright', '1', '0', '0', '1', '0', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
             ('Namecheap', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
             ('NameSilo', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
-            ('OpenSRS', '1', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
+            ('OpenSRS', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
             ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not currently allow the auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a ResellerClub account will have their auto renewal status set to No.', '" . $timestamp . "')";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
@@ -1026,8 +1028,8 @@ if ($is_installed == '1') {
                 `smtp_email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `smtp_username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -1043,7 +1045,7 @@ if ($is_installed == '1') {
     if ($q->prepare($query)) {
 
         // $timestamp = $timestamp;
-        $q->bind_param('ssss', $full_url, $software_version, $_SESSION['new_install_email'], $timestamp);
+        $q->bind_param('ssss', $full_url, SOFTWARE_VERSION, $_SESSION['new_install_email'], $timestamp);
         $q->execute();
         $q->close();
 
@@ -1154,9 +1156,9 @@ if ($is_installed == '1') {
     unset($_SESSION['s_message_danger']);
 
     $_SESSION['s_installation_mode'] = '0';
-    $_SESSION['s_message_success'] .= $software_title . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
+    $_SESSION['s_message_success'] .= SOFTWARE_TITLE . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
 
-    $log->goal('install', '', $software_version);
+    $log->goal('install', '', SOFTWARE_VERSION);
 
     header("Location: ../");
     exit;

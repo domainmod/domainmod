@@ -133,4 +133,687 @@ if ($current_db_version === '4.03.001') {
 
 }
 
+// upgrade database from 4.03.002 to 4.04.000
+if ($current_db_version === '4.03.002') {
+
+    $sql = "ALTER TABLE `domains`
+            CHANGE `expiry_date` `expiry_date` DATE NOT NULL DEFAULT '1978-01-23'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue`
+            CHANGE `expiry_date` `expiry_date` DATE NOT NULL DEFAULT '1978-01-23'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue_history`
+            CHANGE `expiry_date` `expiry_date` DATE NOT NULL DEFAULT '1978-01-23'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue_temp`
+            CHANGE `expiry_date` `expiry_date` DATE NOT NULL DEFAULT '1978-01-23'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_certs`
+            CHANGE `expiry_date` `expiry_date` DATE NOT NULL DEFAULT '1978-01-23'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `creation_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `creation_types`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `last_login` `last_login` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `users`
+            SET `last_login` = '1978-01-23 00:00:00'
+            WHERE `last_login` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `users`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `users`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `user_settings`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `user_settings`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `user_settings`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `user_settings`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `categories`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `categories`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `categories`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `categories`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `hosting`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `hosting`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `hosting`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `hosting`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `owners`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `owners`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `owners`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `owners`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `currencies`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `currencies`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `currencies`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `currencies`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `currency_conversions`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `currency_conversions`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `currency_conversions`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `currency_conversions`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `fees`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `fees`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `fees`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `fees`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_fees`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_fees`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_fees`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_fees`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domains`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domains`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domains`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domains`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_queue`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue_history`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_queue_history`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue_list`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_queue_list`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_queue_list_history`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_queue_list_history`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `custom_field_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `custom_field_types`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `custom_field_types`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `custom_field_types`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_fields`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_fields`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_fields`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_fields`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_field_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_field_data`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `domain_field_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `domain_field_data`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_certs`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_certs`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_certs`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_certs`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_types`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_types`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_types`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_fields`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_fields`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_fields`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_fields`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_field_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_field_data`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_cert_field_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_cert_field_data`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dns`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dns`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dns`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dns`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `registrars`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `registrars`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `registrars`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `registrars`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `registrar_accounts`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `registrar_accounts`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `registrar_accounts`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `registrar_accounts`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_providers`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_providers`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_providers`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_providers`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_accounts`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_accounts`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ssl_accounts`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ssl_accounts`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `segments`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `segments`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `segments`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `segments`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `segment_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `segment_data`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `segment_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `segment_data`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ip_addresses`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ip_addresses`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `ip_addresses`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `ip_addresses`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `timezones`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `timezones`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_start_time` `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `build_start_time` = '1978-01-23 00:00:00'
+            WHERE `build_start_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_end_time` `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `build_end_time` = '1978-01-23 00:00:00'
+            WHERE `build_end_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_start_time_overall` `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `build_start_time_overall` = '1978-01-23 00:00:00'
+            WHERE `build_start_time_overall` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_end_time_overall` `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `build_end_time_overall` = '1978-01-23 00:00:00'
+            WHERE `build_end_time_overall` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `dw_servers`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `scheduler`
+            CHANGE `last_run` `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `scheduler`
+            SET `last_run` = '1978-01-23 00:00:00'
+            WHERE `last_run` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `scheduler`
+            CHANGE `next_run` `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `scheduler`
+            SET `next_run` = '1978-01-23 00:00:00'
+            WHERE `next_run` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `scheduler`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `scheduler`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `scheduler`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `scheduler`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `api_registrars`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `api_registrars`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `api_registrars`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `api_registrars`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `settings`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `settings`
+            SET `insert_time` = '1978-01-23 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "ALTER TABLE `settings`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE `settings`
+            SET `update_time` = '1978-01-23 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:01'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE api_registrars
+            SET req_ip_address = '1'
+            WHERE `name` = 'OpenSRS'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "INSERT INTO custom_field_types
+            (id, `name`, insert_time)
+            VALUES
+            (4, 'Date', '" . $time->stamp() . "'),
+            (5, 'Time Stamp', '" . $time->stamp() . "')";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE settings
+            SET db_version = '4.04.000',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $current_db_version = '4.04.000';
+
+}
+
 //@formatter:on
