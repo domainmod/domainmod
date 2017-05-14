@@ -238,6 +238,9 @@
         <div class="pull-right hidden-xs">
             Version <?php echo SOFTWARE_VERSION; ?>
         </div>
+        <div class="visible-xs">
+            Version <?php echo SOFTWARE_VERSION; ?>
+        </div>
         <a href="http://domainmod.org"><?php echo SOFTWARE_TITLE; ?></a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.
         Created by <a href="http://chetcuti.com">Greg Chetcuti</a>.<BR>
 
