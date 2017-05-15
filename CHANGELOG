@@ -1,5 +1,11 @@
 DomainMOD CHANGELOG
 ===================
+v4.04.001    2017-05-14
+- Fixed install script
+- Added link to Domain Queue during first run
+- Updated version info in footer
+- Changed button formatting
+
 v4.04.000    2017-05-13
 - Added Date and Time Stamp Custom Field Types
 - Updated DB upgrade script to run from command line
