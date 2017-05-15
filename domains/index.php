@@ -1134,7 +1134,7 @@ if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] 
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
     echo "<strong>0</strong> Domains found<BR><BR>";
-    echo "<a href='add.php'>Click here</a> to add a domain manually, or see the <a target='_blank' href='../docs/userguide/adding-domains/'>Adding Domains</a> section of the User Guide for more options.<BR>";
+    echo "Add a domain <a href='add.php'>manually</a>, add domains using the <a href='" . $web_root . "/queue/intro.php'>Domain Queue</a>, or see the <a target='_blank' href='../docs/userguide/adding-domains/'>Adding Domains</a> section of the User Guide for more options.<BR>";
 }
 
 if ($_SESSION['s_system_large_mode'] == '1') {
