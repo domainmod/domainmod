@@ -1044,8 +1044,10 @@ if ($is_installed == '1') {
 
     if ($q->prepare($query)) {
 
+        $software_version = SOFTWARE_VERSION;
+
         // $timestamp = $timestamp;
-        $q->bind_param('ssss', $full_url, SOFTWARE_VERSION, $_SESSION['new_install_email'], $timestamp);
+        $q->bind_param('ssss', $full_url, $software_version, $_SESSION['new_install_email'], $timestamp);
         $q->execute();
         $q->close();
 
