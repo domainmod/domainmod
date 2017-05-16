@@ -42,6 +42,8 @@ require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck();
 
+$_SESSION['s_running_login_checks'] = '1';
+
 $upgrade_approved = $_GET['u'];
 
 /*
@@ -206,6 +208,8 @@ if ($_SESSION['s_version_error'] != '1') {
 // Check GitHub to see if a newer version is available
 $system->checkVersion($dbcon, SOFTWARE_VERSION);
 
+unset($_SESSION['s_running_login_checks']);
+
 if (isset($_SESSION['s_user_redirect'])) {
 
     $temp_redirect = $_SESSION['s_user_redirect'];
@@ -217,7 +221,6 @@ if (isset($_SESSION['s_user_redirect'])) {
 } else {
 
     header('Location: dashboard/');
-
     exit;
 
 }

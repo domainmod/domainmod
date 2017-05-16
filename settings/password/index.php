@@ -83,7 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
             $_SESSION['s_message_success'] .= "Password changed<BR>";
 
-            header("Location: ../index.php");
+            if ($_SESSION['s_running_login_checks'] == '1') {
+
+                header('Location: ../../checks.php');
+
+            } else {
+
+                header('Location: ../index.php');
+
+            }
             exit;
 
         } else {
