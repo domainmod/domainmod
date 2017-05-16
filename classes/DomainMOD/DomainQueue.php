@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class DomainQueue
 {
+    public $db;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     public function processQueueList($dbcon)
     {

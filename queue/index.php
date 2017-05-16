@@ -28,7 +28,6 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
-$queue = new DomainMOD\DomainQueue();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
@@ -37,6 +36,8 @@ require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/settings/queue-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
+
+$queue = new DomainMOD\DomainQueue($dbcon);
 
 $system->authCheck();
 

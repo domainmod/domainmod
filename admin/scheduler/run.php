@@ -137,7 +137,7 @@ if (DEMO_INSTALLATION != '1') {
 
     } elseif ($slug == 'domain-queue') {
 
-        $queue = new DomainMOD\DomainQueue();
+        $queue = new DomainMOD\DomainQueue($dbcon);
         $schedule->isRunning($dbcon, $id);
         $queue->processQueueList($dbcon);
         $queue->processQueueDomain($dbcon);

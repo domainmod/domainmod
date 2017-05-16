@@ -162,7 +162,7 @@ while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 }
 
 // Check to see if there are any domain lists or domains in the queue
-$queue = new DomainMOD\DomainQueue();
+$queue = new DomainMOD\DomainQueue($dbcon);
 $queue->checkListQueue($dbcon);
 $queue->checkDomainQueue($dbcon);
 
