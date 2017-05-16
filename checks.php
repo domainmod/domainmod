@@ -33,7 +33,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $login = new DomainMOD\Login();
 $time = new DomainMOD\Time();
-$log = new DomainMOD\Log();
+$goal = new DomainMOD\Goal();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -209,7 +209,7 @@ if ($_SESSION['s_version_error'] != '1') {
 $system->checkVersion($dbcon, SOFTWARE_VERSION);
 
 // Log installation and upgrade activity
-$log->remote($dbcon);
+$goal->remote($dbcon);
 
 unset($_SESSION['s_running_login_checks']);
 

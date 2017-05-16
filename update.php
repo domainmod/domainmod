@@ -31,7 +31,7 @@ require_once(DIR_ROOT . '/vendor/autoload.php');
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
-$log = new DomainMOD\Log();
+$goal = new DomainMOD\Goal();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');

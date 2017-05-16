@@ -1,6 +1,6 @@
 <?php
 /**
- * /classes/DomainMOD/Log.php
+ * /classes/DomainMOD/Goal.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -21,7 +21,7 @@
 //@formatter:off
 namespace DomainMOD;
 
-class Log
+class Goal
 {
 
     public function installation($dbcon)
@@ -33,7 +33,7 @@ class Log
         $act_agent = $_SERVER['HTTP_USER_AGENT'];
         $act_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $timestamp = $time->stamp();
-        $sql = "INSERT INTO software_activity
+        $sql = "INSERT INTO goal_activity
                 (type, old_version, new_version, ip, agent, `language`, insert_time)
                  VALUES
                 ('i', 'n/a', '" . $act_software_version . "', '" . $act_ip_address . "', '" . $act_agent . "', '" . $act_language . "', '" . $timestamp . "')";
@@ -50,7 +50,7 @@ class Log
         $act_agent = $_SERVER['HTTP_USER_AGENT'];
         $act_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $timestamp = $time->stamp();
-        $sql = "INSERT INTO software_activity
+        $sql = "INSERT INTO goal_activity
                 (type, old_version, new_version, ip, agent, `language`, insert_time)
                  VALUES
                 ('u', '" . $act_old_version . "', '" . $act_new_version . "', '" . $act_ip_address . "', '" . $act_agent . "', '" . $act_language . "', '" . $timestamp . "')";
@@ -64,12 +64,12 @@ class Log
         $time = new Time();
         $timestamp = $time->stamp();
         $sql = "SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time
-                FROM software_activity
+                FROM goal_activity
                 WHERE new_activity = '1'
                 ORDER BY id ASC";
         $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         while ($row = mysqli_fetch_object($result)) {
-            $sql2 = "UPDATE software_activity
+            $sql2 = "UPDATE goal_activity
                      SET new_activity = '0',
                          update_time = '" . $timestamp . "'
                      WHERE id = '" . $row->id . "'";
