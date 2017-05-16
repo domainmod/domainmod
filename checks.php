@@ -208,6 +208,9 @@ if ($_SESSION['s_version_error'] != '1') {
 // Check GitHub to see if a newer version is available
 $system->checkVersion($dbcon, SOFTWARE_VERSION);
 
+// Log installation and upgrade activity
+$log->remote($dbcon);
+
 unset($_SESSION['s_running_login_checks']);
 
 if (isset($_SESSION['s_user_redirect'])) {

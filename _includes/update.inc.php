@@ -79,8 +79,6 @@ if ($current_db_version < SOFTWARE_VERSION) {
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
     $message_success_cli = "Your database has been upgraded\r\n\r\n";
 
-    $log->goal('upgrade', $previous_version, SOFTWARE_VERSION);
-
 } elseif ($current_db_version > SOFTWARE_VERSION) {
 
     $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
