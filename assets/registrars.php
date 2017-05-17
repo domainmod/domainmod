@@ -125,8 +125,8 @@ if ($export_data == '1') {
                 $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
-            $api = new DomainMOD\Api();
-            $api_registrar_name = $api->getApiRegistrarName($dbcon, $row->api_registrar_id);
+            $api = new DomainMOD\Api($dbcon);
+            $api_registrar_name = $api->getApiRegistrarName($row->api_registrar_id);
 
             if ($api_registrar_name == '') {
                 $api_registrar_name = 'n/a';
