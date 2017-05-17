@@ -24,6 +24,14 @@ namespace DomainMOD;
 class System
 {
 
+    public function db()
+    {
+        $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        $pdo->exec("set names utf8");
+        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+        return $pdo;
+    }
+
     public function installCheck($dbcon)
     {
         $full_install_path = DIR_ROOT . '/install/';
