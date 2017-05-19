@@ -357,13 +357,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     } // finish cycling through domains here
 
-                    $done = "1";
-                    reset($domain_list);
-                    $new_data_unformatted = implode(", ", $domain_list);
-
                     $_SESSION['s_domains_in_queue'] = '1';
 
                     $_SESSION['s_message_success'] .= "Domains Added To Queue<BR>";
+
+                    header('Location: index.php');
+                    exit;
 
                 }
 
@@ -384,18 +383,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
-<?php
-if ($done == "1") {
-
-    if ($submission_failed != "1") { ?>
-
-        <strong>The following domains were added to the queue:</strong><BR>
-        <?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
-
-    }
-
-}
-?>
 <strong>Domain Queue & API Prerequisites</strong><BR>
 Before you can add domains to DomainMOD using the Domain Queue you must first do the following:
 <ol>
