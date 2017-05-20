@@ -176,8 +176,10 @@ class System
         ob_start(); ?>
         <BR>
         <div class="alert alert-success alert-dismissible">
+        <?php /* ?>
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <h4><i class="icon fa fa-check"></i> Success!</h4>
+        <?php */ ?>
+            <h4><i class="icon fa fa-check"></i> Success</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -188,8 +190,7 @@ class System
         ob_start(); ?>
         <BR>
         <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <h4><i class="icon fa fa-exclamation-triangle"></i> Alert!</h4>
+            <h4><i class="icon fa fa-exclamation-circle"></i> Alert!</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -199,9 +200,8 @@ class System
     {
         ob_start(); ?>
         <BR>
-        <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <h4><i class="icon fa fa-exclamation-triangle"></i> Alert!</h4>
+        <div class="alert alert-warning alert-dismissible">
+            <h4><i class="icon fa fa-exclamation-triangle"></i> Attention Required!</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();

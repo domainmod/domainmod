@@ -25,17 +25,16 @@
   </div>
   <!-- /.login-logo -->
 <?php
-require_once(DIR_INC . '/layout/table-maintenance.inc.php');
-?>
-<?php
+if ($_SESSION['s_message_danger'] != "") {
+    echo $system->showMessageDanger($_SESSION['s_message_danger']);
+    unset($_SESSION['s_message_danger']);
+}
+
 if ($_SESSION['s_message_success'] != "") {
     echo $system->showMessageSuccess($_SESSION['s_message_success']);
     unset($_SESSION['s_message_success']);
 }
 
-if ($_SESSION['s_message_danger'] != "") {
-    echo $system->showMessageDanger($_SESSION['s_message_danger']);
-    unset($_SESSION['s_message_danger']);
-}
+require_once(DIR_INC . '/layout/table-maintenance.inc.php');
 ?>
   <div class="login-box-body">
