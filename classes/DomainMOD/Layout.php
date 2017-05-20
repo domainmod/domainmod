@@ -53,12 +53,10 @@ class Layout
 
     public function highlightText($colour, $text_to_display)
     {
-        if ($colour == 'success') {
+        if ($colour == 'red') {
+            $text_colour = '#a30000';
+        } elseif ($colour == 'green') {
             $text_colour = '#009933';
-        } elseif ($colour == 'failure') {
-            $text_colour = '#a30000';
-        } else {
-            $text_colour = '#a30000';
         }
         ob_start(); ?>
         <strong><span style="color:<?php echo $text_colour; ?>"><?php echo $text_to_display; ?></span></strong><?php
