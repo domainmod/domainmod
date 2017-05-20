@@ -35,3 +35,21 @@ if ($_SESSION['s_missing_ssl_fees'] == 1) {
     echo $system->showMaintenanceTable($message);
 
 }
+
+if (DEBUG_MODE == 1) {
+
+    $message = "Debugging mode is currently enabled.<BR><BR>";
+
+    if ($_SESSION['s_is_admin'] == 1) {
+
+        $message .= "You can disable debugging mode in <a href='" . $web_root . "/admin/settings/'>Settings</a>.";
+
+    } else {
+
+        $message .= "Please contact your " . SOFTWARE_TITLE . " administrator to disable debugging.";
+
+    }
+
+    echo $system->showDebugTable($message);
+
+}

@@ -51,6 +51,7 @@ $new_smtp_port = $_POST['new_smtp_port'];
 $new_smtp_email_address = $_POST['new_smtp_email_address'];
 $new_smtp_username = $_POST['new_smtp_username'];
 $new_smtp_password = $_POST['new_smtp_password'];
+$new_debug_mode = $_POST['new_debug_mode'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days != "") {
 
@@ -66,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
                   smtp_username = ?,
                   smtp_password = ?,
                   expiration_days = ?,
+                  debug_mode = ?,
                   update_time = ?";
     $q = $dbcon->stmt_init();
 
@@ -73,9 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
         $timestamp = $time->stamp();
 
-        $q->bind_param('ssiissssssis', $new_full_url, $new_email_address, $new_large_mode, $new_use_smtp,
+        $q->bind_param('ssiissssssiis', $new_full_url, $new_email_address, $new_large_mode, $new_use_smtp,
             $new_smtp_server, $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username,
-            $new_smtp_password, $new_expiration_days, $timestamp);
+            $new_smtp_password, $new_expiration_days, $new_debug_mode, $timestamp);
         $q->execute();
         $q->close();
 
@@ -97,14 +99,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_email_address == "") $_SESSION['s_message_danger'] .= "Enter the system email address<BR>";
         if ($new_full_url == "") $_SESSION['s_message_danger'] .= "Enter the full URL of your " . SOFTWARE_TITLE . " installation<BR>";
+        if ($new_email_address == "") $_SESSION['s_message_danger'] .= "Enter the system email address<BR>";
         if ($new_expiration_days == "") $_SESSION['s_message_danger'] .= "Enter the number of days to display in expiration emails<BR>";
 
     } else {
 
         $query = "SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
-                    smtp_email_address, smtp_username, smtp_password, expiration_days
+                    smtp_email_address, smtp_username, smtp_password, expiration_days, debug_mode
                   FROM settings";
         $q = $dbcon->stmt_init();
 
@@ -114,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
             $q->store_result();
             $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_use_smtp, $new_smtp_server,
                 $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username, $new_smtp_password,
-                $new_expiration_days);
+                $new_expiration_days, $new_debug_mode);
             $q->fetch();
             $q->close();
 
@@ -141,6 +143,10 @@ echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', '
 echo $form->showRadioTop('Enable Large Mode?', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
 echo $form->showRadioOption('new_large_mode', '1', 'Yes', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_large_mode', '0', 'No', $new_large_mode, '', '');
+echo $form->showRadioBottom('');
+echo $form->showRadioTop('Enable Debugging Mode?', 'Unless you\'re having problems with ' . SOFTWARE_TITLE . ' and support has asked you to turn this on, you should leave it turned off.', '');
+echo $form->showRadioOption('new_debug_mode', '1', 'Yes', $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_debug_mode', '0', 'No', $new_debug_mode, '', '');
 echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">
