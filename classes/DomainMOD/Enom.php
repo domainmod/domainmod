@@ -31,6 +31,7 @@ class Enom
         $this->db = $db;
         $this->registrar = 'eNom';
         $this->log = new Log('enom.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
@@ -84,7 +85,7 @@ class Enom
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -117,7 +118,7 @@ class Enom
         } else {
 
             $log_message = 'Unable to get partial domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -136,7 +137,7 @@ class Enom
         } else {
 
             $log_message = 'Unable to get privacy status';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -155,7 +156,7 @@ class Enom
         } else {
 
             $log_message = 'Unable to get auto renewal status';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }

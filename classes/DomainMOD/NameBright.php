@@ -31,6 +31,7 @@ class NameBright
         $this->db = $db;
         $this->registrar = 'NameBright';
         $this->log = new Log('namebright.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($account_username, $api_app_name, $api_secret, $command, $domain)
@@ -108,7 +109,7 @@ class NameBright
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $log_extra = array('Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -150,7 +151,7 @@ class NameBright
         } else {
 
             $log_message = 'Unable to get partial domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -169,7 +170,7 @@ class NameBright
         } else {
 
             $log_message = 'Unable to get DNS servers';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 
         }

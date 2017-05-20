@@ -31,6 +31,7 @@ class OpenSrs
         $this->db = $db;
         $this->registrar = 'OpenSRS';
         $this->log = new Log('opensrs.class');
+        $this->format = new Format();
     }
 
     public function domainList()
@@ -163,7 +164,7 @@ EOD;
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API Key' => $api_key);
+            $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -207,7 +208,7 @@ EOD;
         } else {
 
             $log_message = 'Unable to get partial domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -231,7 +232,7 @@ EOD;
         } else {
 
             $log_message = 'Unable to get privacy status';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }

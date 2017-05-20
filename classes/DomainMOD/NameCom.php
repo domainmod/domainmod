@@ -31,6 +31,7 @@ class NameCom
         $this->db = $db;
         $this->registrar = 'Name.com';
         $this->log = new Log('namecom.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($command, $domain)
@@ -81,7 +82,7 @@ class NameCom
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API Key' => $api_key);
+            $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -121,7 +122,7 @@ class NameCom
         } else {
 
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }

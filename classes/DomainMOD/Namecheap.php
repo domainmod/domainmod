@@ -31,6 +31,7 @@ class Namecheap
         $this->db = $db;
         $this->registrar = 'Namecheap';
         $this->log = new Log('namecheap.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)
@@ -78,7 +79,7 @@ class Namecheap
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
             $this->log->error($log_message, $log_extra);
 
         }
@@ -114,7 +115,7 @@ class Namecheap
         } else {
 
             $log_message = 'Unable to get partial domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
             $this->log->error($log_message, $log_extra);
 
         }
@@ -143,7 +144,7 @@ class Namecheap
         } else {
 
             $log_message = 'Unable to get auto renewal status';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
             $this->log->error($log_message, $log_extra);
 
         }

@@ -31,6 +31,7 @@ class InternetBs
         $this->db = $db;
         $this->registrar = 'Internet.bs';
         $this->log = new Log('internetbs.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($api_key, $api_secret, $command, $domain)
@@ -76,7 +77,7 @@ class InternetBs
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('API Key' => $api_key, 'API Secret' => $api_secret);
+            $log_extra = array('API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -117,7 +118,7 @@ class InternetBs
         } else {
 
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'API Key' => $api_key, 'API Secret' => $api_secret);
+            $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 
         }

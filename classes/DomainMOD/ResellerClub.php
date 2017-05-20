@@ -31,6 +31,7 @@ class ResellerClub
         $this->db = $db;
         $this->registrar = 'ResellerClub';
         $this->log = new Log('resellerclub.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($reseller_id, $api_key, $command, $domain)
@@ -102,7 +103,7 @@ class ResellerClub
         } else {
 
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'Reseller ID' => $reseller_id, 'API Key' => $api_key);
+            $log_extra = array('Domain' => $domain, 'Reseller ID' => $reseller_id, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
         }

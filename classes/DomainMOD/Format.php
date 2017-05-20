@@ -61,4 +61,8 @@ class Format
         return trim($list_formatted);
     }
 
+    public function obfusc($input)
+    {
+        return str_repeat("*", strlen($input));
+    }
 } //@formatter:on

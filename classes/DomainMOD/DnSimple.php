@@ -31,6 +31,7 @@ class DnSimple
         $this->db = $db;
         $this->registrar = 'DNSimple';
         $this->log = new Log('dnsimple.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($account_id, $command, $domain)
@@ -92,7 +93,7 @@ class DnSimple
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('API Key' => $api_key, 'Account ID' => $account_id);
+            $log_extra = array('API Key' => $this->format->obfusc($api_key), 'Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
 
         }
@@ -134,7 +135,7 @@ class DnSimple
         } else {
 
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'API Key' => $api_key, 'Account ID' => $account_id);
+            $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key), 'Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
 
         }

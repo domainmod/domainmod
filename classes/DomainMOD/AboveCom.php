@@ -30,6 +30,7 @@ class AboveCom
     {
         $this->db = $db;
         $this->registrar = 'Above.com';
+        $this->format = new Format();
         $this->log = new Log('abovecom.class');
     }
 
@@ -95,7 +96,7 @@ class AboveCom
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('API Key' => $api_key, 'Account ID' => $account_id);
+            $log_extra = array('API Key' => $this->format->obfusc($api_key), 'Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
 
         }

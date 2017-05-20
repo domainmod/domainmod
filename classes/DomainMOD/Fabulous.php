@@ -31,6 +31,7 @@ class Fabulous
         $this->db = $db;
         $this->registrar = 'Fabulous';
         $this->log = new Log('fabulous.class');
+        $this->format = new Format();
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
@@ -76,7 +77,7 @@ class Fabulous
         } else {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }
@@ -114,7 +115,7 @@ class Fabulous
         } else {
 
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $this->format->obfusc($account_password));
             $this->log->error($log_message, $log_extra);
 
         }
