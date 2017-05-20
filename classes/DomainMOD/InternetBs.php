@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class InternetBs
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'Internet.bs';
+        $this->log = new Log('internetbs.class');
+    }
 
     public function getApiUrl($api_key, $api_secret, $command, $domain)
     {
@@ -47,15 +56,15 @@ class InternetBs
 
     public function getDomainList($api_key, $api_secret)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl($api_key, $api_secret, 'domainlist', '');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if ($array_results['status'] == 'SUCCESS') {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach ($array_results['domain'] as $domain) {
 
@@ -66,9 +75,9 @@ class InternetBs
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('API Key' => $api_key, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -77,6 +86,11 @@ class InternetBs
 
     public function getFullInfo($api_key, $api_secret, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($api_key, $api_secret, 'info', $domain);
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -102,11 +116,9 @@ class InternetBs
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'API Key' => $api_key, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 

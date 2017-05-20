@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class AboveCom
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'Above.com';
+        $this->log = new Log('abovecom.class');
+    }
 
     public function getApiUrl($api_key, $command)
     {
@@ -45,6 +54,9 @@ class AboveCom
 
     public function getDomainList($dbcon, $api_key, $account_id)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $error = new Error();
         $api_url = $this->getApiUrl($api_key, 'domainlist');
         $api_results = $this->apiCall($api_url);
@@ -52,9 +64,6 @@ class AboveCom
 
         // confirm that the api call was successful
         if ($array_results[0]['@attributes']['code'] == '100') {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach ($array_results[0]['domains']['r'] as $value) {
 
@@ -85,9 +94,9 @@ class AboveCom
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('API Key' => $api_key, 'Account ID' => $account_id);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -96,6 +105,11 @@ class AboveCom
 
     public function getFullInfo($dbcon, $account_id, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $error = new Error();
         $sql = "SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
                 FROM domain_queue_temp
@@ -104,31 +118,39 @@ class AboveCom
                 ORDER BY id ASC";
         $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-         $dns_result = array();
+        if (mysqli_num_rows($result) > 0) {
 
-        while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-            $expiration_date = $row->expiry_date;
+                $expiration_date = $row->expiry_date;
 
-            $dns_result[0] = $row->ns1;
-            $dns_result[1] = $row->ns2;
-            $dns_result[2] = $row->ns3;
-            $dns_result[3] = $row->ns4;
-            $dns_result[4] = $row->ns5;
-            $dns_result[5] = $row->ns6;
-            $dns_result[6] = $row->ns7;
-            $dns_result[7] = $row->ns8;
-            $dns_result[8] = $row->ns9;
-            $dns_result[9] = $row->ns10;
-            $dns_servers = $this->processDns($dns_result);
+                $dns_result[0] = $row->ns1;
+                $dns_result[1] = $row->ns2;
+                $dns_result[2] = $row->ns3;
+                $dns_result[3] = $row->ns4;
+                $dns_result[4] = $row->ns5;
+                $dns_result[5] = $row->ns6;
+                $dns_result[6] = $row->ns7;
+                $dns_result[7] = $row->ns8;
+                $dns_result[8] = $row->ns9;
+                $dns_result[9] = $row->ns10;
+                $dns_servers = $this->processDns($dns_result);
 
-            $privacy_status = $row->privacy;
+                $privacy_status = $row->privacy;
 
-            $autorenewal_status = $row->autorenew;
+                $autorenewal_status = $row->autorenew;
 
-            $sql_temp = "DELETE FROM domain_queue_temp
-                         WHERE id = '" . $row->id . "'";
-            mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                $sql_temp = "DELETE FROM domain_queue_temp
+                             WHERE id = '" . $row->id . "'";
+                mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+            }
+
+        } else {
+
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'Account ID' => $account_id);
+            $this->log->error($log_message, $log_extra);
 
         }
 

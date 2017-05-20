@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class GoDaddy
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'GoDaddy';
+        $this->log = new Log('godaddy.class');
+    }
 
     public function getApiUrl($domain, $command)
     {
@@ -50,15 +59,15 @@ class GoDaddy
 
     public function getDomainList($api_key, $api_secret)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl('', 'domainlist');
         $api_results = $this->apiCall($api_key, $api_secret, $api_url);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if (isset($array_results[0]['domain'])) {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach ($array_results as $domain) {
 
@@ -69,9 +78,9 @@ class GoDaddy
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('API Key' => $api_key, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -80,6 +89,11 @@ class GoDaddy
 
     public function getFullInfo($api_key, $api_secret, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($domain, 'info');
         $api_results = $this->apiCall($api_key, $api_secret, $api_url);
         $array_results = $this->convertToArray($api_results);
@@ -104,11 +118,9 @@ class GoDaddy
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'API Key' => $api_key, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 

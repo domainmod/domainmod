@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class OpenSrs
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'OpenSRS';
+        $this->log = new Log('opensrs.class');
+    }
 
     public function domainList()
     {
@@ -133,12 +142,12 @@ EOD;
 
     public function getDomainList($account_username, $api_key)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_xml = $this->domainList();
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $api_call_status = $this->apiStatus($api_results);
-
-        $domain_list = array();
-        $domain_count = 0;
 
         if ($api_call_status == '1') {
 
@@ -151,21 +160,27 @@ EOD;
 
             }
 
+        } else {
+
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
+
         }
         return array($domain_count, $domain_list);
     }
 
     public function getFullInfo($account_username, $api_key, $domain)
     {
-        // get the partial domain info (expiration date, dns servers, and auto renewal status)
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
+        // get the partial domain details (expiration date, dns servers, and auto renewal status)
         $api_xml = $this->domainInfo($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $api_call_status = $this->apiStatus($api_results);
-
-        $expiration_date = '';
-        $dns_result = array();
-        $autorenewal_status = '';
-        $dns_servers = array();
 
         if ($api_call_status == '1') {
 
@@ -189,14 +204,18 @@ EOD;
             }
             $dns_servers = $this->processDns($dns_result);
 
+        } else {
+
+            $log_message = 'Unable to get partial domain details';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
+
         }
 
         // get the privacy status
         $api_xml = $this->domainPrivacy($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $api_call_status = $this->apiStatus($api_results);
-
-        $privacy_status = '';
 
         if ($api_call_status == '1') {
 
@@ -208,6 +227,12 @@ EOD;
                 }
 
             }
+
+        } else {
+
+            $log_message = 'Unable to get privacy status';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);

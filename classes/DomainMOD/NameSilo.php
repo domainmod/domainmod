@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class NameSilo
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'NameSilo';
+        $this->log = new Log('namesilo.class');
+    }
 
     public function getApiUrl($api_key, $domain, $command)
     {
@@ -47,6 +56,9 @@ class NameSilo
 
     public function getDomainList($api_key)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl($api_key, '', 'domainlist');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -66,9 +78,9 @@ class NameSilo
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -77,6 +89,11 @@ class NameSilo
 
     public function getFullInfo($api_key, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($api_key, $domain, 'info');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -101,11 +118,9 @@ class NameSilo
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
 

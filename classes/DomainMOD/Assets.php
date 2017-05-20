@@ -44,7 +44,7 @@ class Assets
 
         if (mysqli_num_rows($result) > 0) {
 
-            $error_message = '';
+            $log_message = '';
 
             while ($row = mysqli_fetch_object($result)) {
 
@@ -54,12 +54,13 @@ class Assets
 
         } else {
 
-            $error_message = 'Unable to retrieve Registrar name';
-            $this->log->error($error_message, 'Account ID: ' . $account_id);
+            $log_message = 'Unable to retrieve Registrar name';
+            $log_extra = array('Account ID' => $account_id);
+            $this->log->error($log_message, $log_extra);
 
         }
 
-        return $error_message;
+        return $log_message;
 
     }
 
@@ -73,7 +74,7 @@ class Assets
 
         if (mysqli_num_rows($result) > 0) {
 
-            $error_message = '';
+            $log_message = '';
 
             while ($row = mysqli_fetch_object($result)) {
 
@@ -83,12 +84,13 @@ class Assets
 
         } else {
 
-            $error_message = 'Unable to retrieve Registrar Account Username';
-            $this->log->error($error_message, 'Account ID: ' . $account_id);
+            $log_message = 'Unable to retrieve Registrar Account Username';
+            $log_extra = array('Account ID' => $account_id);
+            $this->log->error($log_message, $log_extra);
 
         }
 
-        return $error_message;
+        return $log_message;
 
     }
 

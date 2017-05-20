@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class Enom
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'eNom';
+        $this->log = new Log('enom.class');
+    }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
     {
@@ -55,15 +64,15 @@ class Enom
 
     public function getDomainList($account_username, $account_password)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl($account_username, $account_password, '', 'domainlist');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if (isset($array_results[0]['DomainSearch']['Domains']['Domain'][0]['SLD'])) {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach ($array_results[0]['DomainSearch']['Domains']['Domain'] as $domain) {
 
@@ -74,9 +83,9 @@ class Enom
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'Password' => $account_password);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -85,6 +94,11 @@ class Enom
 
     public function getFullInfo($account_username, $account_password, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($account_username, $account_password, $domain, 'info');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -102,9 +116,9 @@ class Enom
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
+            $log_message = 'Unable to get partial domain details';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -121,8 +135,9 @@ class Enom
 
         } else {
 
-            // if the API call failed assign empty values
-            $privacy_status = '';
+            $log_message = 'Unable to get privacy status';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -139,8 +154,9 @@ class Enom
 
         } else {
 
-            // if the API call failed assign empty values
-            $autorenewal_status = '';
+            $log_message = 'Unable to get auto renewal status';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'Password' => $account_password);
+            $this->log->error($log_message, $log_extra);
 
         }
 

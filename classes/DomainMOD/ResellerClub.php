@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class ResellerClub
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'ResellerClub';
+        $this->log = new Log('resellerclub.class');
+    }
 
     public function getApiUrl($reseller_id, $api_key, $command, $domain)
     {
@@ -47,6 +56,11 @@ class ResellerClub
 
     public function getFullInfo($reseller_id, $api_key, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($reseller_id, $api_key, 'info', $domain);
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -55,8 +69,26 @@ class ResellerClub
         if (isset($array_results['domainname'])) {
 
             // get expiration date
-            $expiry_result = $array_results['endtime'];
-            $expiration_date = $this->processExpiry($expiry_result);
+            $expiration_result = $array_results['endtime'];
+            $expiration_date = $this->processExpiry($expiration_result);
+
+            // get dns servers
+            $api_url = $this->getApiUrl($reseller_id, $api_key, 'dns', $domain);
+            $api_results = $this->apiCall($api_url);
+            $array_results = $this->convertToArray($api_results);
+
+            $dns_result[0] = $array_results['ns1'];
+            $dns_result[1] = $array_results['ns2'];
+            $dns_result[2] = $array_results['ns3'];
+            $dns_result[3] = $array_results['ns4'];
+            $dns_result[4] = $array_results['ns5'];
+            $dns_result[5] = $array_results['ns6'];
+            $dns_result[6] = $array_results['ns7'];
+            $dns_result[7] = $array_results['ns8'];
+            $dns_result[8] = $array_results['ns9'];
+            $dns_result[9] = $array_results['ns10'];
+
+            $dns_servers = $this->processDns($dns_result);
 
             // get privacy status
             $privacy_result = $array_results['isprivacyprotected'];
@@ -67,32 +99,11 @@ class ResellerClub
             // status as retrievable information with the API
             $autorenewal_status = '0';
 
-            // get dns servers
-            $api_url = $this->getApiUrl($reseller_id, $api_key, 'dns', $domain);
-            $api_results = $this->apiCall($api_url);
-            $array_results = $this->convertToArray($api_results);
-
-            $dns_list = array();
-            $dns_list[0] = $array_results['ns1'];
-            $dns_list[1] = $array_results['ns2'];
-            $dns_list[2] = $array_results['ns3'];
-            $dns_list[3] = $array_results['ns4'];
-            $dns_list[4] = $array_results['ns5'];
-            $dns_list[5] = $array_results['ns6'];
-            $dns_list[6] = $array_results['ns7'];
-            $dns_list[7] = $array_results['ns8'];
-            $dns_list[8] = $array_results['ns9'];
-            $dns_list[9] = $array_results['ns10'];
-
-            $dns_servers = $this->processDns($dns_list);
-
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'Reseller ID' => $reseller_id, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
 

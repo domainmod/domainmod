@@ -171,6 +171,12 @@ class System
         }
     }
 
+    public function getDebugMode()
+    {
+        $tmpq = $this->db()->query("SELECT debug_mode FROM settings");
+        return $tmpq->fetchColumn();
+    }
+
     public function showMessageSuccess($result_message)
     {
         ob_start(); ?>
@@ -202,6 +208,17 @@ class System
         <BR>
         <div class="alert alert-warning alert-dismissible">
             <h4><i class="icon fa fa-exclamation-triangle"></i> Attention Required!</h4>
+            <?php echo $result_message; ?>
+        </div><?php
+        return ob_get_clean();
+    }
+
+    public function showDebugTable($result_message)
+    {
+        ob_start(); ?>
+        <BR>
+        <div class="alert alert-info alert-dismissible bg-aqua-active">
+            <h4><i class="icon fa fa-info-circle"></i> Info</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();

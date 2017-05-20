@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class Namecheap
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'Namecheap';
+        $this->log = new Log('namecheap.class');
+    }
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)
     {
@@ -49,15 +58,15 @@ class Namecheap
 
     public function getDomainList($account_username, $api_key, $api_ip_address)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address);
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if ($array_results[0]['@attributes']['Status'] == "OK") {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
 
@@ -68,9 +77,9 @@ class Namecheap
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -79,6 +88,11 @@ class Namecheap
 
     public function getFullInfo($account_username, $api_key, $api_ip_address, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl($api_key, 'info', $domain, $account_username, $api_ip_address);
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
@@ -99,10 +113,9 @@ class Namecheap
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
+            $log_message = 'Unable to get partial domain details';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -129,8 +142,9 @@ class Namecheap
 
         } else {
 
-            // if the API call failed assign empty values
-            $autorenewal_status = '';
+            $log_message = 'Unable to get auto renewal status';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key, 'IP Address' => $api_ip_address);
+            $this->log->error($log_message, $log_extra);
 
         }
 

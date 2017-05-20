@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class NameBright
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'NameBright';
+        $this->log = new Log('namebright.class');
+    }
 
     public function getApiUrl($account_username, $api_app_name, $api_secret, $command, $domain)
     {
@@ -74,6 +83,9 @@ class NameBright
 
     public function getDomainList($account_username, $api_app_name, $api_secret)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         // get an access token
         list($api_url, $post_fields) = $this->getApiUrl($account_username, $api_app_name, $api_secret, 'accesstoken', '');
         $api_results = $this->apiCall($api_url, $post_fields, '', 'accesstoken');
@@ -86,9 +98,6 @@ class NameBright
 
         if (isset($array_results['Domains'])) {
 
-            $domain_list = array();
-            $domain_count = 0;
-
             foreach ($array_results['Domains'] as $domain) {
 
                 $domain_list[] = $domain['DomainName'];
@@ -98,9 +107,9 @@ class NameBright
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -109,6 +118,10 @@ class NameBright
 
     public function getFullInfo($account_username, $api_app_name, $api_secret, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
 
         // get an access token
         list($api_url, $post_fields) = $this->getApiUrl($account_username, $api_app_name, $api_secret, 'accesstoken', '');
@@ -136,10 +149,9 @@ class NameBright
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get partial domain details';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -156,7 +168,9 @@ class NameBright
 
         } else {
 
-            $dns_servers = '';
+            $log_message = 'Unable to get DNS servers';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $api_secret);
+            $this->log->error($log_message, $log_extra);
 
         }
 

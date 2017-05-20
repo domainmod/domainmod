@@ -23,219 +23,271 @@ namespace DomainMOD;
 
 class Api
 {
+    private $db;
 
-    public function getKey($dbcon, $account_id)
+    public function __construct($db)
     {
-        $error = new Error();
+        $this->db = $db;
+        $this->error = new Error();
+        $this->log = new Log('api.class');
+        $this->assets = new Assets($this->db);
+    }
+
+    public function getKey($account_id)
+    {
         $sql = "SELECT api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $api_key = $row->api_key;
+                return $row->api_key;
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message = 'Unable to retrieve API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message, $log_extra);
 
         }
 
-        return $api_key;
+        return $log_message;
+
     }
 
-    public function getKeySecret($dbcon, $account_id)
+    public function getKeySecret($account_id)
     {
-        $error = new Error();
         $sql = "SELECT api_key, api_secret
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $api_key = $row->api_key;
-                $api_secret = $row->api_secret;
+                return array($row->api_key, $row->api_secret);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve API Key';
+            $log_message2 = 'Unable to retrieve API Secret';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
 
         }
 
-        return array($api_key, $api_secret);
+        return array($log_message1, $log_message2);
     }
 
-    public function getUserKey($dbcon, $account_id)
+    public function getUserKey($account_id)
     {
-        $error = new Error();
         $sql = "SELECT username, api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $account_username = $row->username;
-                $api_key = $row->api_key;
+                return array($row->username, $row->api_key);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve Username';
+            $log_message2 = 'Unable to retrieve API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
 
         }
 
-        return array($account_username, $api_key);
+        return array($log_message1, $log_message2);
     }
 
-    public function getUserAppSecret($dbcon, $account_id)
+    public function getUserAppSecret($account_id)
     {
-        $error = new Error();
         $sql = "SELECT username, api_app_name, api_secret
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+            $log_message3 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $account_username = $row->username;
-                $api_app_name = $row->api_app_name;
-                $api_secret = $row->api_secret;
+                return array($row->username, $row->api_app_name, $row->api_secret);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve Username';
+            $log_message2 = 'Unable to retrieve API App Name';
+            $log_message3 = 'Unable to retrieve API Secret';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
+            $this->log->error($log_message3, $log_extra);
 
         }
 
-        return array($account_username, $api_app_name, $api_secret);
+        return array($log_message1, $log_message2, $log_message3);
     }
 
-    public function getUserKeyIp($dbcon, $account_id)
+    public function getUserKeyIp($account_id)
     {
-        $error = new Error();
         $sql = "SELECT ra.username, ra.api_key, ip.ip
                 FROM registrar_accounts AS ra, ip_addresses AS ip
                 WHERE ra.api_ip_id = ip.id
                   AND ra.id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+            $log_message3 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $account_username = $row->username;
-                $api_key = $row->api_key;
-                $api_ip_address = $row->ip;
+                return array($row->username, $row->api_key, $row->ip);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve Username';
+            $log_message2 = 'Unable to retrieve API Key';
+            $log_message3 = 'Unable to retrieve IP Address';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
+            $this->log->error($log_message3, $log_extra);
 
         }
 
-        return array($account_username, $api_key, $api_ip_address);
+        return array($log_message1, $log_message2, $log_message3);
     }
 
-    public function getReselleridKey($dbcon, $account_id)
+    public function getReselleridKey($account_id)
     {
-        $error = new Error();
         $sql = "SELECT reseller_id, api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $reseller_id = $row->reseller_id;
-                $api_key = $row->api_key;
+                return array($row->reseller_id, $row->api_key);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve Reseller ID';
+            $log_message2 = 'Unable to retrieve API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
 
         }
 
-        return array($reseller_id, $api_key);
+        return array($log_message1, $log_message2);
     }
 
-    public function getUserPass($dbcon, $account_id)
+    public function getUserPass($account_id)
     {
-        $error = new Error();
         $sql = "SELECT username, `password`
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
+            $log_message1 = '';
+            $log_message2 = '';
+
             while ($row = mysqli_fetch_object($result)) {
 
-                $account_username = $row->username;
-                $account_password = $row->password;
+                return array($row->username, $row->password);
 
             }
 
         } else {
 
-            echo "No API Credentials Found";
-            exit;
+            $log_message1 = 'Unable to retrieve Username';
+            $log_message2 = 'Unable to retrieve Password';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message1, $log_extra);
+            $this->log->error($log_message2, $log_extra);
 
         }
 
-        return array($account_username, $account_password);
+        return array($log_message1, $log_message2);
     }
 
-    public function getApiRegistrarName($dbcon, $api_registrar_id)
+    public function getApiRegistrarName($api_registrar_id)
     {
         $sql = "SELECT `name`
                 FROM api_registrars
                 WHERE id = '" . $api_registrar_id . "'";
-        $result = mysqli_query($dbcon, $sql);
+        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
 
-        while ($row = mysqli_fetch_object($result)) {
-            
-            $api_registrar_name = $row->name;
-        
+        if (mysqli_num_rows($result) > 0) {
+
+            $log_message = '';
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                return $row->name;
+
+            }
+
+        } else {
+
+            $log_message = 'Unable to retrieve API Registrar Name';
+            $log_extra = array('API Registrar ID' => $api_registrar_id);
+            $this->log->error($log_message, $log_extra);
+
         }
-        
-        return $api_registrar_name;
+
+        return $log_message;
     
     }
 

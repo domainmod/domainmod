@@ -23,6 +23,16 @@ namespace DomainMOD;
 
 class NameCom
 {
+    private $db;
+    private $registrar;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->registrar = 'Name.com';
+        $this->log = new Log('namecom.class');
+    }
+
     public function getApiUrl($command, $domain)
     {
         $base_url = 'https://api.name.com/api/';
@@ -51,15 +61,15 @@ class NameCom
 
     public function getDomainList($account_username, $api_key)
     {
+        $domain_list = array();
+        $domain_count = 0;
+
         $api_url = $this->getApiUrl('domainlist', '');
         $api_results = $this->apiCall($api_url, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if ($array_results['result']['message'] == "Command Successful") {
-
-            $domain_list = array();
-            $domain_count = 0;
 
             foreach(array_keys($array_results['domains']) as $domain) {
 
@@ -70,9 +80,9 @@ class NameCom
 
         } else {
 
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
 
@@ -81,6 +91,11 @@ class NameCom
 
     public function getFullInfo($account_username, $api_key, $domain)
     {
+        $expiration_date = '';
+        $dns_servers = array();
+        $privacy_status = '';
+        $autorenewal_status = '';
+
         $api_url = $this->getApiUrl('info', $domain);
         $api_results = $this->apiCall($api_url, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
@@ -105,11 +120,9 @@ class NameCom
 
         } else {
 
-            // if the API call failed assign empty values
-            $expiration_date = '';
-            $dns_servers = '';
-            $privacy_status = '';
-            $autorenewal_status = '';
+            $log_message = 'Unable to get domain details';
+            $log_extra = array('Domain' => $domain, 'Username' => $account_username, 'API Key' => $api_key);
+            $this->log->error($log_message, $log_extra);
 
         }
 
