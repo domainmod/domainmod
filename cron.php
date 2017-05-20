@@ -33,6 +33,7 @@ $maint = new DomainMOD\Maintenance();
 $conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
+$log = new DomainMOD\Log('cron');
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -42,75 +43,125 @@ require_once(DIR_INC . '/database.inc.php');
 
 if (DEMO_INSTALLATION != '1') {
 
-    $sql = "UPDATE scheduler
-            SET is_running = '0'";
-    $result = mysqli_query($dbcon, $sql);
+    $tmpq = $system->db()->query("UPDATE scheduler SET is_running = '0'");
 
-    $sql = "SELECT id, `name`, slug, expression, active
-            FROM scheduler
-            WHERE active = '1'
-              AND is_running = '0'
-              AND next_run <= '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql);
+    $tmpq = $system->db()->query("SELECT id, `name`, slug, expression, active
+                                  FROM scheduler
+                                  WHERE active = '1'
+                                    AND is_running = '0'
+                                    AND next_run <= '" . $time->stamp() . "'");
+    $result = $tmpq->fetchAll();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if (!$result) {
 
-        $cron = \Cron\CronExpression::factory($row->expression);
-        $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+        $log_message = 'No scheduled tasks to run';
+        $log->info($log_message);
 
-        if ($row->slug == 'cleanup') {
+    } else {
 
-            $schedule->isRunning($dbcon, $row->id);
-            $maint->performCleanup($dbcon);
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
+        foreach ($result as $row) {
 
-        } elseif ($row->slug == 'expiration-email') {
+            $cron = \Cron\CronExpression::factory($row->expression);
+            $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-            $email = new DomainMOD\Email();
-            $schedule->isRunning($dbcon, $row->id);
-            $email->sendExpirations($dbcon, '1');
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
+            $log_extra = array('Task ID' => $row->id, 'Name' => $row->name, 'Slug' => $row->slug, 'Expression' => $row->expression, 'Active' => $row->active, 'Next Run' => $next_run);
 
-        } elseif ($row->slug == 'update-conversion-rates') {
+            if ($row->slug == 'cleanup') {
 
-            $schedule->isRunning($dbcon, $row->id);
-            $sql_currency = "SELECT user_id, default_currency
-                             FROM user_settings";
-            $result_currency = mysqli_query($dbcon, $sql_currency);
+                $log_message = '[START] Cleanup Tasks';
+                $log->info($log_message, $log_extra);
 
-            while ($row_currency = mysqli_fetch_object($result_currency)) {
+                $schedule->isRunning($dbcon, $row->id);
+                $maint->performCleanup($dbcon);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
 
-                $conversion->updateRates($dbcon, $row_currency->default_currency, $row_currency->user_id);
+                $log_message = '[END] Cleanup Tasks';
+                $log->info($log_message);
+
+            } elseif ($row->slug == 'expiration-email') {
+
+                $log_message = '[START] Send Expiration Email';
+                $log->info($log_message, $log_extra);
+
+                $email = new DomainMOD\Email();
+                $schedule->isRunning($dbcon, $row->id);
+                $email->sendExpirations($dbcon, '1');
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
+
+                $log_message = '[END] Send Expiration Email';
+                $log->info($log_message);
+
+            } elseif ($row->slug == 'update-conversion-rates') {
+
+                $log_message = '[START] Update Conversion Rates';
+                $log->info($log_message, $log_extra);
+
+                $schedule->isRunning($dbcon, $row->id);
+                $sql_currency = "SELECT user_id, default_currency
+                                 FROM user_settings";
+                $result_currency = mysqli_query($dbcon, $sql_currency);
+
+                while ($row_currency = mysqli_fetch_object($result_currency)) {
+
+                    $conversion->updateRates($dbcon, $row_currency->default_currency, $row_currency->user_id);
+
+                }
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
+
+                $log_message = '[END] Update Conversion Rates';
+                $log->info($log_message);
+
+            } elseif ($row->slug == 'check-new-version') {
+
+                $log_message = '[START] New Version Check';
+                $log->info($log_message, $log_extra);
+
+                $schedule->isRunning($dbcon, $row->id);
+                $system->checkVersion($dbcon, SOFTWARE_VERSION);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
+
+                $log_message = '[END] New Version Check';
+                $log->info($log_message);
+
+            } elseif ($row->slug == 'data-warehouse-build') {
+
+                $log_message = '[START] Build Data Warehouse';
+                $log->info($log_message, $log_extra);
+
+                $dw = new DomainMOD\DwBuild();
+                $schedule->isRunning($dbcon, $row->id);
+                $dw->build($dbcon);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
+
+                $log_message = '[END] Build Data Warehouse';
+                $log->info($log_message);
+
+            } elseif ($row->slug == 'domain-queue') {
+
+                $log_message = '[START] Process Domain Queue';
+                $log->info($log_message, $log_extra);
+
+                $queue = new DomainMOD\DomainQueue($dbcon);
+                $schedule->isRunning($dbcon, $row->id);
+                $queue->processQueueList($dbcon);
+                $queue->processQueueDomain($dbcon);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->isFinished($dbcon, $row->id);
+
+                $log_message = '[END] Process Domain Queue';
+                $log->info($log_message);
+
+            } else {
+
+                $log_message = 'There are results, but no matching slugs';
+                $log->error($log_message, $log_extra);
 
             }
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
-
-        } elseif ($row->slug == 'check-new-version') {
-
-            $schedule->isRunning($dbcon, $row->id);
-            $system->checkVersion($dbcon, SOFTWARE_VERSION);
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
-
-        } elseif ($row->slug == 'data-warehouse-build') {
-
-            $dw = new DomainMOD\DwBuild();
-            $schedule->isRunning($dbcon, $row->id);
-            $dw->build($dbcon);
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
-
-        } elseif ($row->slug == 'domain-queue') {
-
-            $queue = new DomainMOD\DomainQueue($dbcon);
-            $schedule->isRunning($dbcon, $row->id);
-            $queue->processQueueList($dbcon);
-            $queue->processQueueDomain($dbcon);
-            $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
-            $schedule->isFinished($dbcon, $row->id);
 
         }
 
