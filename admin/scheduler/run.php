@@ -30,16 +30,17 @@ require_once(DIR_ROOT . '/vendor/autoload.php');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
-$conversion = new DomainMOD\Conversion();
 $maint = new DomainMOD\Maintenance();
+$conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$timestamp = $time->stamp();
+$log = new DomainMOD\Log('scheduler.run');
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck();
@@ -49,100 +50,145 @@ $id = $_GET['id'];
 
 if (DEMO_INSTALLATION != '1') {
 
-    $query = "SELECT id, slug, expression, next_run, active
-              FROM scheduler
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $tmpq = $system->db()->prepare("SELECT `name`, slug, expression, active
+                                    FROM scheduler
+                                    WHERE id = :id");
+    $tmpq->execute(['id' => $id]);
+    $result = $tmpq->fetch();
 
-    if ($q->prepare($query)) {
+    if (!$result) {
 
-        $q->bind_param('i', $id);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_id, $temp_slug, $temp_expression, $temp_next_run, $temp_active);
-
-        while ($q->fetch()) {
-
-            $id = $temp_id;
-            $slug = $temp_slug;
-            $expression = $temp_expression;
-            $next_run = $temp_next_run;
-            $active = $temp_active;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    if ($active == '1') {
-
-        $cron = \Cron\CronExpression::factory($expression);
-        $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+        $log_message = 'Unable to get scheduled task';
+        $log_extra = array('Task ID' => $id);
+        $log->info($log_message, $log_extra);
 
     } else {
 
-        $next_run = '0000-00-00 00:00:00';
+        if ($result->active == '1') {
 
-    }
+            $cron = \Cron\CronExpression::factory($result->expression);
+            $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-    if ($slug == 'cleanup') {
+        } else {
 
-        $schedule->isRunning($dbcon, $id);
-        $maint->performCleanup($dbcon);
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
+            $next_run = '1978-01-23 00:00:00';
 
-        $_SESSION['s_message_success'] .= "System Cleanup Performed";
-
-    } elseif ($slug == 'expiration-email') {
-
-        $email = new DomainMOD\Email();
-        $schedule->isRunning($dbcon, $id);
-        $email->sendExpirations($dbcon, '0');
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
-
-    } elseif ($slug == 'update-conversion-rates') {
-
-        $schedule->isRunning($dbcon, $id);
-        $sql_currency = "SELECT user_id, default_currency
-                         FROM user_settings";
-        $result_currency = mysqli_query($dbcon, $sql_currency);
-
-        while ($row_currency = mysqli_fetch_object($result_currency)) {
-            $conversion->updateRates($dbcon, $row_currency->default_currency, $row_currency->user_id);
         }
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
 
-        $_SESSION['s_message_success'] .= "Conversion Rates Updated";
+        $log_extra = array('Task ID' => $id, 'Name' => $result->name, 'Slug' => $result->slug, 'Expression' => $result->expression, 'Active' => $result->active, 'Next Run' => $next_run);
 
-    } elseif ($slug == 'check-new-version') {
+        if ($result->slug == 'cleanup') {
 
-        $schedule->isRunning($dbcon, $id);
-        $system->checkVersion($dbcon, SOFTWARE_VERSION);
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
+            $log_message = '[START] Cleanup Tasks';
+            $log->info($log_message, $log_extra);
 
-        $_SESSION['s_message_success'] .= "No Upgrade Available";
+            $schedule->isRunning($dbcon, $id);
+            $maint->performCleanup($dbcon);
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
 
-    } elseif ($slug == 'data-warehouse-build') {
+            $log_message = '[END] Cleanup Tasks';
+            $log->info($log_message);
 
-        $dw = new DomainMOD\DwBuild();
-        $schedule->isRunning($dbcon, $id);
-        $dw->build($dbcon);
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
+            $_SESSION['s_message_success'] .= "System Cleanup Performed";
 
-    } elseif ($slug == 'domain-queue') {
+        } elseif ($result->slug == 'expiration-email') {
 
-        $queue = new DomainMOD\DomainQueue($dbcon);
-        $schedule->isRunning($dbcon, $id);
-        $queue->processQueueList($dbcon);
-        $queue->processQueueDomain($dbcon);
-        $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
-        $schedule->isFinished($dbcon, $id);
+            $log_message = '[START] Send Expiration Email';
+            $log->info($log_message, $log_extra);
+
+            $email = new DomainMOD\Email();
+            $schedule->isRunning($dbcon, $id);
+            $email->sendExpirations($dbcon, '0');
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
+
+            $log_message = '[END] Send Expiration Email';
+            $log->info($log_message);
+
+        } elseif ($result->slug == 'update-conversion-rates') {
+
+            $log_message = '[START] Update Conversion Rates';
+            $log->info($log_message, $log_extra);
+
+            $schedule->isRunning($dbcon, $id);
+
+            $tmpq = $system->db()->query("SELECT user_id, default_currency
+                                          FROM user_settings");
+            $result_conversion = $tmpq->fetchAll();
+
+            if (!$result_conversion) {
+
+                $log_message = 'No user currencies found';
+                $log->error($log_message);
+
+            } else {
+
+                foreach ($result_conversion as $row_conversion) {
+
+                    $conversion->updateRates($dbcon, $row_conversion->default_currency, $row_conversion->user_id);
+
+                }
+
+            }
+
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
+
+            $log_message = '[END] Update Conversion Rates';
+            $log->info($log_message);
+
+            $_SESSION['s_message_success'] .= "Conversion Rates Updated";
+
+        } elseif ($result->slug == 'check-new-version') {
+
+            $log_message = '[START] New Version Check';
+            $log->info($log_message, $log_extra);
+
+            $schedule->isRunning($dbcon, $id);
+            $system->checkVersion($dbcon, SOFTWARE_VERSION);
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
+
+            $log_message = '[END] New Version Check';
+            $log->info($log_message);
+
+            $_SESSION['s_message_success'] .= "No Upgrade Available";
+
+        } elseif ($result->slug == 'data-warehouse-build') {
+
+            $log_message = '[START] Build Data Warehouse';
+            $log->info($log_message, $log_extra);
+
+            $dw = new DomainMOD\DwBuild();
+            $schedule->isRunning($dbcon, $id);
+            $dw->build($dbcon);
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
+
+            $log_message = '[END] Build Data Warehouse';
+            $log->info($log_message);
+
+            $_SESSION['s_message_success'] .= "Data Warehouse Rebuilt";
+
+        } elseif ($result->slug == 'domain-queue') {
+
+            $log_message = '[START] Process Domain Queue';
+            $log->info($log_message, $log_extra);
+
+            $queue = new DomainMOD\DomainQueue($dbcon);
+            $schedule->isRunning($dbcon, $id);
+            $queue->processQueueList($dbcon);
+            $queue->processQueueDomain($dbcon);
+            $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
+            $schedule->isFinished($dbcon, $id);
+
+            $log_message = '[END] Process Domain Queue';
+            $log->info($log_message);
+
+            $_SESSION['s_message_success'] .= "Domain Queue Processed";
+
+        }
 
     }
 

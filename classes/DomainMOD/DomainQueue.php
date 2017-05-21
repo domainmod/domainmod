@@ -28,6 +28,7 @@ class DomainQueue
     public function __construct($db)
     {
         $this->db = $db;
+        $this->api = new Api();
         $this->log = new Log('domainqueue.class');
     }
 
@@ -43,93 +44,91 @@ class DomainQueue
             $log_message = '[START] Processing Domain Queue Lists';
             $this->log->info($log_message);
 
-            $api = new Api($this->db);
-
             while ($row = mysqli_fetch_object($result)) {
 
                 if ($row->api_registrar_name == 'Above.com') {
 
                     $registrar = new AboveCom($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($dbcon, $api_key, $row->account_id);
 
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $account_id);
 
                 } elseif ($row->api_registrar_name == 'DreamHost') {
 
                     $registrar = new DreamHost($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($dbcon, $api_key, $row->account_id);
 
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy($this->db);
-                    list($api_key, $api_secret) = $api->getKeySecret($row->account_id);
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs($this->db);
-                    list($api_key, $api_secret) = $api->getKeySecret($row->account_id);
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new NameCom($this->db);
-                    list($account_username, $api_key) = $api->getUserKey($row->account_id);
+                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright($this->db);
-                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $this->api->getUserAppSecret($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_app_name, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap($this->db);
-                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $this->api->getUserKeyIp($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key, $api_ip_address);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs($this->db);
-                    list($account_username, $api_key) = $api->getUserKey($row->account_id);
+                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } else {
@@ -187,8 +186,6 @@ class DomainQueue
             $log_message = '[START] Processing domains in the Domain Queue';
             $this->log->info($log_message);
 
-            $api = new Api($this->db);
-
             while ($row = mysqli_fetch_object($result)) {
 
                 if ($row->api_registrar_name == 'Above.com') {
@@ -199,7 +196,7 @@ class DomainQueue
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $row->domain);
 
@@ -211,73 +208,73 @@ class DomainQueue
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom($this->db);
-                    list($account_username, $account_password) = $api->getUserPass($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy($this->db);
-                    list($api_key, $api_secret) = $api->getKeySecret($row->account_id);
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs($this->db);
-                    list($api_key, $api_secret) = $api->getKeySecret($row->account_id);
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new NameCom($this->db);
-                    list($account_username, $api_key) = $api->getUserKey($row->account_id);
+                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright($this->db);
-                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $this->api->getUserAppSecret($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_app_name, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap($this->db);
-                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $this->api->getUserKeyIp($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $api_ip_address, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo($this->db);
-                    $api_key = $api->getKey($row->account_id);
+                    $api_key = $this->api->getKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs($this->db);
-                    list($account_username, $api_key) = $api->getUserKey($row->account_id);
+                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'ResellerClub') {
 
                     $registrar = new ResellerClub($this->db);
-                    list($reseller_id, $api_key) = $api->getReselleridKey($row->account_id);
+                    list($reseller_id, $api_key) = $this->api->getReselleridKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
 
                 } else {
@@ -328,7 +325,6 @@ class DomainQueue
         $this->copyToHistoryDomain($dbcon);
 
         return 'Domain Queue Processed<BR>';
-
     }
 
     public function getQueueList($dbcon)
@@ -531,7 +527,6 @@ class DomainQueue
         mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $new_dns_id;
-
     }
 
     public function updateIp($dbcon, $queue_domain_id, $domain, $created_by)
@@ -601,12 +596,10 @@ class DomainQueue
         mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $new_ip_id;
-
     }
 
     public function updateCategory($dbcon, $queue_domain_id, $created_by)
     {
-
         // Check to see if there's an existing '[created by queue]' category
         $error = new Error();
         $time = new Time();
@@ -647,7 +640,6 @@ class DomainQueue
         mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $category_id;
-
     }
 
     public function updateHosting($dbcon, $queue_domain_id, $created_by)
@@ -777,7 +769,6 @@ class DomainQueue
         $_SESSION['s_domains_in_queue'] = '1';
 
         return;
-
     }
 
     public function importToMainDb($dbcon, $queue_domain_id)
@@ -859,7 +850,6 @@ class DomainQueue
         mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return 'Successfully Added List To Domain Queue';
-
     }
 
     public function markFinishedDomain($dbcon, $queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
@@ -899,7 +889,6 @@ class DomainQueue
             return 'Could Not Import ' . $domain . ' From The Queue';
 
         }
-
     }
 
     public function markNotProcessingList($dbcon, $list_id)
@@ -1001,7 +990,6 @@ class DomainQueue
 
     public function clearFinished($dbcon)
     {
-
         $sql = "DELETE FROM domain_queue_list
                 WHERE finished = '1'
                   AND copied_to_history = '1'";
@@ -1036,7 +1024,6 @@ class DomainQueue
 
     public function clearQueues($dbcon)
     {
-
         $sql = "DELETE FROM domain_queue_list";
         mysqli_query($dbcon, $sql);
 
@@ -1060,7 +1047,6 @@ class DomainQueue
             $_SESSION['s_domains_in_list_queue'] = '1';
             return '1';
         }
-
     }
 
     public function checkDomainQueue($dbcon)
@@ -1077,7 +1063,6 @@ class DomainQueue
             $_SESSION['s_domains_in_queue'] = '1';
             return '1';
         }
-
     }
 
     public function checkProcessingLists($dbcon)
@@ -1095,7 +1080,6 @@ class DomainQueue
             $_SESSION['s_list_queue_processing'] = '1';
             return '1';
         }
-
     }
 
     public function checkProcessingDomains($dbcon)
@@ -1113,7 +1097,6 @@ class DomainQueue
             $_SESSION['s_domain_queue_processing'] = '1';
             return '1';
         }
-
     }
 
 } //@formatter:on

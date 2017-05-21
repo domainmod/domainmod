@@ -39,6 +39,7 @@ require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
 if (DEMO_INSTALLATION != '1') {
@@ -73,7 +74,7 @@ if (DEMO_INSTALLATION != '1') {
 
                 $schedule->isRunning($dbcon, $row->id);
                 $maint->performCleanup($dbcon);
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] Cleanup Tasks';
@@ -87,7 +88,7 @@ if (DEMO_INSTALLATION != '1') {
                 $email = new DomainMOD\Email();
                 $schedule->isRunning($dbcon, $row->id);
                 $email->sendExpirations($dbcon, '1');
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] Send Expiration Email';
@@ -99,16 +100,27 @@ if (DEMO_INSTALLATION != '1') {
                 $log->info($log_message, $log_extra);
 
                 $schedule->isRunning($dbcon, $row->id);
-                $sql_currency = "SELECT user_id, default_currency
-                                 FROM user_settings";
-                $result_currency = mysqli_query($dbcon, $sql_currency);
 
-                while ($row_currency = mysqli_fetch_object($result_currency)) {
+                $tmpq = $system->db()->query("SELECT user_id, default_currency
+                                              FROM user_settings");
+                $result_conversion = $tmpq->fetchAll();
 
-                    $conversion->updateRates($dbcon, $row_currency->default_currency, $row_currency->user_id);
+                if (!$result_conversion) {
+
+                    $log_message = 'No user currencies found';
+                    $log->error($log_message);
+
+                } else {
+
+                    foreach ($result_conversion as $row_conversion) {
+
+                        $conversion->updateRates($dbcon, $row_conversion->default_currency, $row_conversion->user_id);
+
+                    }
 
                 }
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] Update Conversion Rates';
@@ -121,7 +133,7 @@ if (DEMO_INSTALLATION != '1') {
 
                 $schedule->isRunning($dbcon, $row->id);
                 $system->checkVersion($dbcon, SOFTWARE_VERSION);
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] New Version Check';
@@ -135,7 +147,7 @@ if (DEMO_INSTALLATION != '1') {
                 $dw = new DomainMOD\DwBuild();
                 $schedule->isRunning($dbcon, $row->id);
                 $dw->build($dbcon);
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] Build Data Warehouse';
@@ -150,7 +162,7 @@ if (DEMO_INSTALLATION != '1') {
                 $schedule->isRunning($dbcon, $row->id);
                 $queue->processQueueList($dbcon);
                 $queue->processQueueDomain($dbcon);
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
+                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($dbcon, $row->id);
 
                 $log_message = '[END] Process Domain Queue';

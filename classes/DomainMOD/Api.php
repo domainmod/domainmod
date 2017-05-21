@@ -23,272 +23,212 @@ namespace DomainMOD;
 
 class Api
 {
-    private $db;
-
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
+        $this->system = new System();
         $this->error = new Error();
         $this->log = new Log('api.class');
-        $this->assets = new Assets($this->db);
+        $this->assets = new Assets();
     }
 
     public function getKey($account_id)
     {
-        $sql = "SELECT api_key
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT api_key
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetchColumn();
 
-        if (mysqli_num_rows($result) > 0) {
+        if (!$result) {
 
-            $log_message = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return $row->api_key;
-
-            }
+            $log_message = 'Unable to retrieve API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
 
         } else {
 
-            $log_message = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            return $result;
 
         }
-
-        return $log_message;
-
     }
 
     public function getKeySecret($account_id)
     {
-        $sql = "SELECT api_key, api_secret
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT api_key, api_secret
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->api_key, $row->api_secret);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve API Key';
             $log_message2 = 'Unable to retrieve API Secret';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
+            return array($log_message1, $log_message2);
+
+        } else {
+
+            return array($result->api_key, $result->api_secret);
 
         }
-
-        return array($log_message1, $log_message2);
     }
 
     public function getUserKey($account_id)
     {
-        $sql = "SELECT username, api_key
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT username, api_key
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->username, $row->api_key);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve Username';
             $log_message2 = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
+            return array($log_message1, $log_message2);
+
+        } else {
+
+            return array($result->username, $result->api_key);
 
         }
-
-        return array($log_message1, $log_message2);
     }
 
     public function getUserAppSecret($account_id)
     {
-        $sql = "SELECT username, api_app_name, api_secret
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT username, api_app_name, api_secret
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-            $log_message3 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->username, $row->api_app_name, $row->api_secret);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve Username';
             $log_message2 = 'Unable to retrieve API App Name';
             $log_message3 = 'Unable to retrieve API Secret';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
             $this->log->error($log_message3, $log_extra);
+            return array($log_message1, $log_message2, $log_message3);
+
+        } else {
+
+            return array($result->username, $result->api_app_name, $result->api_secret);
 
         }
-
-        return array($log_message1, $log_message2, $log_message3);
     }
 
     public function getUserKeyIp($account_id)
     {
-        $sql = "SELECT ra.username, ra.api_key, ip.ip
-                FROM registrar_accounts AS ra, ip_addresses AS ip
-                WHERE ra.api_ip_id = ip.id
-                  AND ra.id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT ra.username, ra.api_key, ip.ip
+                                              FROM registrar_accounts AS ra, ip_addresses AS ip
+                                              WHERE ra.api_ip_id = ip.id
+                                                AND ra.id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-            $log_message3 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->username, $row->api_key, $row->ip);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve Username';
             $log_message2 = 'Unable to retrieve API Key';
             $log_message3 = 'Unable to retrieve IP Address';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
             $this->log->error($log_message3, $log_extra);
+            return array($log_message1, $log_message2, $log_message3);
+
+        } else {
+
+            return array($result->username, $result->api_key, $result->ip);
 
         }
-
-        return array($log_message1, $log_message2, $log_message3);
     }
 
     public function getReselleridKey($account_id)
     {
-        $sql = "SELECT reseller_id, api_key
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT reseller_id, api_key
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->reseller_id, $row->api_key);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve Reseller ID';
             $log_message2 = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
+            return array($log_message1, $log_message2);
+
+        } else {
+
+            return array($result->reseller_id, $result->api_key);
 
         }
-
-        return array($log_message1, $log_message2);
     }
 
     public function getUserPass($account_id)
     {
-        $sql = "SELECT username, `password`
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT username, `password`
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message1 = '';
-            $log_message2 = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return array($row->username, $row->password);
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message1 = 'Unable to retrieve Username';
             $log_message2 = 'Unable to retrieve Password';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id), 'Account Username' => $this->assets->getUsername($account_id));
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+                               'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message1, $log_extra);
             $this->log->error($log_message2, $log_extra);
+            return array($log_message1, $log_message2);
+
+        } else {
+
+            return array($result->username, $result->password);
 
         }
-
-        return array($log_message1, $log_message2);
     }
 
     public function getApiRegistrarName($api_registrar_id)
     {
-        $sql = "SELECT `name`
-                FROM api_registrars
-                WHERE id = '" . $api_registrar_id . "'";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT `name`
+                                              FROM api_registrars
+                                              WHERE id = :api_registrar_id");
+        $tmpq->execute(['api_registrar_id' => $api_registrar_id]);
+        $result = $tmpq->fetchColumn();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return $row->name;
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message = 'Unable to retrieve API Registrar Name';
             $log_extra = array('API Registrar ID' => $api_registrar_id);
             $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
 
         }
-
-        return $log_message;
-    
     }
 
 } //@formatter:on

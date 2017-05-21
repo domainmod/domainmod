@@ -23,75 +23,57 @@ namespace DomainMOD;
 
 class Assets
 {
-    private $db;
-
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
+        $this->system = new System();
         $this->error = new Error();
         $this->log = new Log('assets.class');
     }
 
     public function getRegistrar($account_id)
     {
+        $tmpq = $this->system->db()->prepare("SELECT r.name
+                                              FROM registrars AS r, registrar_accounts AS ra
+                                              WHERE r.id = ra.registrar_id
+                                                AND ra.id = :account_id
+                                              LIMIT 1");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetchColumn();
 
-        $sql = "SELECT r.name
-                FROM registrars AS r, registrar_accounts AS ra
-                WHERE r.id = ra.registrar_id
-                  AND ra.id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
-
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return $row->name;
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message = 'Unable to retrieve Registrar name';
             $log_extra = array('Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
 
         }
-
-        return $log_message;
-
     }
 
     public function getUsername($account_id)
     {
-        $sql = "SELECT username
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($this->db, $sql) or $this->error->outputSqlError($this->db, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("SELECT username
+                                              FROM registrar_accounts
+                                              WHERE id = :account_id");
+        $tmpq->execute(['account_id' => $account_id]);
+        $result = $tmpq->fetchColumn();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            $log_message = '';
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                return $row->username;
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message = 'Unable to retrieve Registrar Account Username';
             $log_extra = array('Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
 
         }
-
-        return $log_message;
-
     }
 
 } //@formatter:on

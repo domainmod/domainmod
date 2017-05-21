@@ -36,23 +36,16 @@ class Scheduler
         return mysqli_query($dbcon, $sql_finished);
     }
 
-    public function updateTime($dbcon, $task_id, $timestamp, $next_run, $active)
+    public function updateTime($dbcon, $task_id, $timestamp, $next_run)
     {
         $time = new Time();
         $current_time = $time->stamp();
         $duration = $this->getTimeDifference($timestamp, $current_time);
-        if ($active == '1') {
-            $sql_update = "UPDATE scheduler
-                           SET last_run = '" . $timestamp . "',
-                               last_duration = '" . $duration . "',
-                               next_run = '" . $next_run . "'
-                           WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
-        } else {
-            $sql_update = "UPDATE scheduler
-                           SET last_run = '" . $timestamp . "',
-                               duration = '" . $duration . "'
-                           WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
-        }
+        $sql_update = "UPDATE scheduler
+                       SET last_run = '" . $timestamp . "',
+                           last_duration = '" . $duration . "',
+                           next_run = '" . $next_run . "'
+                       WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
         return mysqli_query($dbcon, $sql_update);
     }
 
@@ -91,7 +84,7 @@ class Scheduler
 
     public function getDateOutput($next_run)
     {
-        if ($next_run == '0000-00-00 00:00:00') {
+        if ($next_run == '1978-01-23 00:00:00') {
             return 'n/a';
         } else {
             return $next_run;

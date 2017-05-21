@@ -35,6 +35,7 @@ $custom_field = new DomainMOD\CustomField();
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-add-custom-domain-field.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 

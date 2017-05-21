@@ -36,6 +36,7 @@ require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck();
@@ -115,7 +116,7 @@ if ($a == 'u') {
 
     $query = "UPDATE scheduler
               SET active = '0', 
-                  next_run = '0000-00-00 00:00:00'
+                  next_run = '1978-01-23 00:00:00'
               WHERE id = ?";
     $q = $dbcon->stmt_init();
 

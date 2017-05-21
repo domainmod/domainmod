@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/dw/index.php
+ * /_includes/debug.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -20,31 +20,4 @@
  */
 ?>
 <?php
-require_once('../../_includes/start-session.inc.php');
-require_once('../../_includes/init.inc.php');
-
-require_once(DIR_ROOT . '/classes/Autoloader.php');
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
-
-$system = new DomainMOD\System();
-
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-
-$system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
-?>
-<?php
-if ($_SESSION['s_display_dw_intro_page'] == "1") {
-
-    header("Location: intro.php");
-    exit;
-
-} else {
-
-    header("Location: dw.php");
-    exit;
-
-}
+define('DEBUG_MODE', $system->getDebugMode());

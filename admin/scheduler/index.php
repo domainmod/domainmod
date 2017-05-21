@@ -36,6 +36,7 @@ require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-scheduler-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
@@ -90,7 +91,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             <strong>Status:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
 
-            if ($row->last_run != '0000-00-00 00:00:00') {
+            if ($row->last_run != '1978-01-23 00:00:00') {
                 $last_run = $time->toUserTimezone($schedule->getDateOutput($row->last_run));
             } else {
                 $last_run = '-';
@@ -99,7 +100,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
 
-            if ($row->next_run != '0000-00-00 00:00:00') {
+            if ($row->next_run != '1978-01-23 00:00:00') {
                 $next_run = $time->toUserTimezone($schedule->getDateOutput($row->next_run));
                 $hour = date('H', strtotime($next_run));
             } else {

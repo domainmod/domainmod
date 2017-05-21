@@ -66,6 +66,8 @@ class Email
 
             }
             sleep(2);
+
+            $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
         }
     }
 
@@ -107,7 +109,6 @@ class Email
         $ssl_expiring = $system->checkForRowsResult($dbcon, $sql_ssl);
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
-            $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
             return array($domains_expiring, $ssl_expiring);
         } else {
             $_SESSION['s_message_success'] .= 'No Upcoming Expirations<BR>';
