@@ -38,7 +38,7 @@ require_once(DIR_INC . '/settings/system-debug.inc.php');
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
-$tmpq = $system->db()->query("UPDATE settings SET debug_mode = '0'");
+$system->db()->query("UPDATE settings SET debug_mode = '0'");
 ?>
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>

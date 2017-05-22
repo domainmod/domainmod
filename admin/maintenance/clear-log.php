@@ -36,7 +36,7 @@ require_once(DIR_INC . '/debug.inc.php');
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
-$tmpq = $system->db()->query("TRUNCATE log");
+$system->db()->query("TRUNCATE log");
 
 $_SESSION['s_message_success'] .= 'Debug Log Cleared';
 

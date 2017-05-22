@@ -44,7 +44,7 @@ require_once(DIR_INC . '/database.inc.php');
 
 if (DEMO_INSTALLATION != '1') {
 
-    $tmpq = $system->db()->query("UPDATE scheduler SET is_running = '0'");
+    $system->db()->query("UPDATE scheduler SET is_running = '0'");
 
     $tmpq = $system->db()->query("SELECT id, `name`, slug, expression, active
                                   FROM scheduler
