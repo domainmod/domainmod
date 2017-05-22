@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             SOFTWARE_TITLE . ' email them for you<BR><BR>';
         //@formatter:on
 
-        $conversion->updateRates($dbcon, 'USD', $temp_user_id);
+        $conversion->updateRates('USD', $temp_user_id);
 
         header("Location: index.php");
         exit;

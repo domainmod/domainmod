@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/maintenance/index.php
+ * /admin/maintenance/clear-log.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -32,24 +32,13 @@ require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/settings/admin-maintenance-main.inc.php');
-require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
-?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
-<html>
-<head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
-</head>
-<body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
-<a href="clear-queue-processing.php">Clear Queue Processing</a><BR><BR>
-<a href="clear-queues.php">Clear Queues</a> (<strong>WARNING:</strong> This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.)<BR><BR>
-<a href="clear-log.php">Clear Debug Log</a><BR>
-<?php //@formatter:on ?>
-<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
-</body>
-</html>
+
+$tmpq = $system->db()->query("TRUNCATE log");
+
+$_SESSION['s_message_success'] .= 'Debug Log Cleared';
+
+header("Location: index.php");
+exit;

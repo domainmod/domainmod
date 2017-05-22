@@ -23,106 +23,145 @@ namespace DomainMOD;
 
 class Conversion
 {
-
-    public function updateRates($dbcon, $default_currency, $user_id)
+    public function __construct()
     {
+        $this->system = new System();
+        $this->time = new Time();
+        $this->log = new Log('conversion.class');
+    }
 
-        $result = $this->getActiveCurrencies($dbcon);
+    public function updateRates($default_currency, $user_id)
+    {
+        $result = $this->getActiveCurrencies();
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
 
-            $sql = "SELECT id
-                    FROM currency_conversions
-                    WHERE currency_id = '" . $row->id . "'
-                      AND user_id = '" . $user_id . "'";
+            $tmpq = $this->system->db()->prepare("SELECT id
+                                                  FROM currency_conversions
+                                                  WHERE currency_id = :currency_id
+                                                    AND user_id = :user_id");
+            $tmpq->execute(['currency_id' => $row->id,
+                            'user_id' => $user_id]);
+            $result = $tmpq->fetchColumn();
 
-            $system = new System();
+            if (!$result) {
 
-            $is_existing = $system->checkForRows($dbcon, $sql);
+                $is_existing = '0';
+                $log_message = 'Unable to retrieve user currency';
+                $log_extra = array('User ID' => $user_id, 'Currency ID' => $row->id, 'Default Currency' =>
+                    $default_currency, 'Conversion Rate' => $conversion_rate);
+                $this->log->error($log_message, $log_extra);
 
-            $this->updateConversionRate($dbcon, $conversion_rate, $is_existing, $row->id, $user_id);
+            } else {
+
+                $is_existing = '1';
+
+            }
+
+            $this->updateConversionRate($conversion_rate, $is_existing, $row->id, $user_id);
 
         }
 
         $result_message = 'Conversion Rates updated<BR>';
 
         return $result_message;
-
     }
 
-    public function getActiveCurrencies($dbcon)
+    public function getActiveCurrencies()
     {
+        $tmpq = $this->system->db()->query("SELECT id, currency
+                                            FROM
+                                            (  SELECT c.id, c.currency
+                                               FROM currencies AS c, fees AS f, domains AS d
+                                               WHERE c.id = f.currency_id
+                                                 AND f.id = d.fee_id
+                                               GROUP BY c.currency
+                                               UNION
+                                               SELECT c.id, c.currency
+                                               FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
+                                               WHERE c.id = f.currency_id
+                                                 AND f.id = sslc.fee_id
+                                               GROUP BY c.currency
+                                            ) AS temp
+                                            GROUP BY currency");
+        $result = $tmpq->fetchAll();
 
-        $sql = "SELECT id, currency
-                FROM
-                (   SELECT c.id, c.currency
-                    FROM currencies AS c, fees AS f, domains AS d
-                    WHERE c.id = f.currency_id
-                      AND f.id = d.fee_id
-                    GROUP BY c.currency
-                    UNION
-                    SELECT c.id, c.currency
-                    FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
-                    WHERE c.id = f.currency_id
-                      AND f.id = sslc.fee_id
-                    GROUP BY c.currency
-                ) AS temp
-                GROUP BY currency";
-        $result = mysqli_query($dbcon, $sql);
+        if (!$result) {
 
-        return $result;
+            $log_message = 'Unable to retrieve active currencies';
+            $this->log->error($log_message);
+            return $log_message;
 
+        } else {
+
+            return $result;
+
+        }
     }
 
     public function getConversionRate($from_currency, $to_currency)
     {
-
-        $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency . "=X";
-        $api_call = @fopen($full_url, "r");
-        $api_call_result = '';
-
-        if ($api_call) {
-
-            $api_call_result = fgets($api_call, 4096);
-            fclose($api_call);
-
-        }
-
-        $api_call_split = explode(",", $api_call_result);
+        $full_url = "http://download.finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency . "=X";
+        $handle = curl_init($full_url);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($handle);
+        curl_close($handle);
+        $api_call_split = explode(",", $result);
         $conversion_rate = $api_call_split[1];
 
-        return $conversion_rate;
+        if ($conversion_rate != '' && $conversion_rate != 'N/A' && $conversion_rate != 'n/a') {
 
-    }
-
-    public function updateConversionRate($dbcon, $conversion_rate, $is_existing, $currency_id, $user_id)
-    {
-
-        $time = new Time();
-        $timestamp = $time->stamp();
-
-        if ($is_existing == '1') {
-
-            $sql = "UPDATE currency_conversions
-                    SET conversion = '" . $conversion_rate . "',
-                        update_time = '" . $timestamp . "'
-                    WHERE currency_id = '" . $currency_id . "'
-                      AND user_id = '" . $user_id . "'";
+            return $conversion_rate;
 
         } else {
 
-            $sql = "INSERT INTO currency_conversions
-                    (currency_id, user_id, conversion, insert_time)
-                    VALUES
-                    ('" . $currency_id . "', '" . $user_id . "', '" . $conversion_rate . "', '" . $timestamp . "')";
+            $log_message = 'Unable to retrieve Yahoo! Finance currency conversion';
+            $log_extra = array('From Currency' => $from_currency, 'To Currency' => $to_currency,
+                               'Conversion Rate Result' => $conversion_rate);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        }
+    }
+
+    public function updateConversionRate($conversion_rate, $is_existing, $currency_id, $user_id)
+    {
+        if ($is_existing == '1') {
+
+            $tmpq = $this->system->db()->prepare("UPDATE currency_conversions
+                                                  SET conversion = :conversion_rate,
+                                                      update_time = :update_time
+                                                  WHERE currency_id = :currency_id
+                                                    AND user_id = :user_id");
+            $tmpq->execute(['conversion_rate' => $conversion_rate,
+                            'update_time' => $this->time->stamp(),
+                            'currency_id' => $currency_id,
+                            'user_id' => $user_id]);
+
+            $log_message = 'Conversion rate updated';
+            $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());
+            $this->log->info($log_message, $log_extra);
+
+        } else {
+
+            $tmpq = $this->system->db()->prepare("INSERT INTO currency_conversions
+                                                  (currency_id, user_id, conversion, insert_time)
+                                                  VALUES
+                                                  (:currency_id, :user_id, :conversion_rate, :update_time)");
+            $tmpq->execute(['currency_id' => $currency_id,
+                            'user_id' => $user_id,
+                            'conversion_rate' => $conversion_rate,
+                            'update_time' => $this->time->stamp()]);
+
+            $log_message = 'Conversion rate inserted';
+            $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());
+            $this->log->info($log_message, $log_extra);
 
         }
 
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
+        return;
 
     }
 

@@ -38,7 +38,7 @@ if ($_SESSION['s_missing_ssl_fees'] == 1) {
 
 if (DEBUG_MODE == 1) {
 
-    $message = "Debugging mode is currently enabled.<BR><BR>";
+    $message = "Debugging mode is currently enabled. <a href='" . WEB_ROOT . "/admin/debug-log/'>View Debug Log</a><BR><BR>";
 
     if ($_SESSION['s_is_admin'] == 1) {
 

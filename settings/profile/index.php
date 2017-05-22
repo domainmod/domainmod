@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 }
 
                 $_SESSION['s_message_success']
-                    .= $conversion->updateRates($dbcon, $new_currency, $_SESSION['s_user_id']);
+                    .= $conversion->updateRates($new_currency, $_SESSION['s_user_id']);
 
             }
 

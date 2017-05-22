@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
-        $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+        $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
         $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
 

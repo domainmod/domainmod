@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = $queryB->missingFees('domains');
                 $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
-                $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+                $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
                 $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
 

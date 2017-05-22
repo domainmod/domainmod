@@ -141,13 +141,13 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', 'Full ' . SOFTWARE_TITLE . ' URL (100)', 'Enter the full URL of your ' . SOFTWARE_TITLE . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $new_full_url, '100', '', '1', '', '');
 echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is monitored by the ' . SOFTWARE_TITLE . ' System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by ' . SOFTWARE_TITLE . '.', $new_email_address, '100', '', '1', '', '');
 echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '1', '', '');
-echo $form->showRadioTop('Enable Large Mode?', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
-echo $form->showRadioOption('new_large_mode', '1', 'Yes', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_large_mode', '0', 'No', $new_large_mode, '', '');
+echo $form->showRadioTop('Large Mode', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
+echo $form->showRadioOption('new_large_mode', '1', 'Enabled', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_large_mode', '0', 'Disabled', $new_large_mode, '', '');
 echo $form->showRadioBottom('');
-echo $form->showRadioTop('Enable Debugging Mode?', 'Unless you\'re having problems with ' . SOFTWARE_TITLE . ' and support has asked you to turn this on, you should leave it turned off.', '');
-echo $form->showRadioOption('new_debug_mode', '1', 'Yes', $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_debug_mode', '0', 'No', $new_debug_mode, '', '');
+echo $form->showRadioTop('Debugging Mode', 'Unless you\'re having problems with ' . SOFTWARE_TITLE . ' and support has asked you to turn this on, you should leave it turned off.', '');
+echo $form->showRadioOption('new_debug_mode', '1', 'Enabled', $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_debug_mode', '0', 'Disabled', $new_debug_mode, '', '');
 echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">
