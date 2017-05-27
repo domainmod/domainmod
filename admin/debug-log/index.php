@@ -126,6 +126,7 @@ if (!$result) {
 
 } else { ?>
 
+    <a href="../maintenance/clear-log.php"><?php echo $layout->showButton('button', 'Clear Debug Log'); ?></a>
     <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
