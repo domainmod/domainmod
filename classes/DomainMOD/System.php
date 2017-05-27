@@ -64,9 +64,8 @@ class System
     public function checkVersion($current_version)
     {
         $live_version = $this->getLiveVersion();
-        $release_notify = $this->getReleaseNotify();
 
-        if ($current_version < $live_version && $live_version != '' && $release_notify == '1') {
+        if ($current_version < $live_version && $live_version != '') {
 
             $this->db()->query("UPDATE settings SET upgrade_available = '1'");
             $_SESSION['s_system_upgrade_available'] = '1';
@@ -98,24 +97,6 @@ class System
             $live_version = $result;
         }
         return $live_version;
-    }
-
-    public function getReleaseNotify()
-    {
-        $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/notify.txt';
-        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-        $version_fgc = file_get_contents($version_file, false, $context);
-        if ($version_fgc) {
-            $release_notify = $version_fgc;
-        } else {
-            $handle = curl_init();
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_URL, $version_file);
-            $result = curl_exec($handle);
-            curl_close($handle);
-            $release_notify = $result;
-        }
-        return $release_notify;
     }
 
     public function getDbVersion()
