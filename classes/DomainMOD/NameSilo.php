@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class NameSilo
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'NameSilo';
-        $this->log = new Log('namesilo.class');
         $this->format = new Format();
+        $this->log = new Log('namesilo.class');
     }
 
     public function getApiUrl($api_key, $domain, $command)

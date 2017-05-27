@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class NameCom
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Name.com';
-        $this->log = new Log('namecom.class');
         $this->format = new Format();
+        $this->log = new Log('namecom.class');
     }
 
     public function getApiUrl($command, $domain)

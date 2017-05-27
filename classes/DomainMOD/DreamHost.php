@@ -23,13 +23,14 @@ namespace DomainMOD;
 
 class DreamHost
 {
-    private $registrar;
+    public $format;
+    public $log;
+    public $system;
 
     public function __construct()
     {
-        $this->registrar = 'DreamHost';
-        $this->log = new Log('dreamhost.class');
         $this->format = new Format();
+        $this->log = new Log('dreamhost.class');
         $this->system = new System();
     }
 

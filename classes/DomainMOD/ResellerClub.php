@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class ResellerClub
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'ResellerClub';
-        $this->log = new Log('resellerclub.class');
         $this->format = new Format();
+        $this->log = new Log('resellerclub.class');
     }
 
     public function getApiUrl($reseller_id, $api_key, $command, $domain)

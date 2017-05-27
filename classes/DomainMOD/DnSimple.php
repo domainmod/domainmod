@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class DnSimple
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'DNSimple';
-        $this->log = new Log('dnsimple.class');
         $this->format = new Format();
+        $this->log = new Log('dnsimple.class');
     }
 
     public function getApiUrl($account_id, $command, $domain)

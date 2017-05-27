@@ -23,11 +23,15 @@ namespace DomainMOD;
 
 class Assets
 {
+    public $error;
+    public $log;
+    public $system;
+
     public function __construct()
     {
-        $this->system = new System();
         $this->error = new Error();
         $this->log = new Log('assets.class');
+        $this->system = new System();
     }
 
     public function getRegistrar($account_id)

@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class DwAccounts
 {
+    public $system;
+    public $time;
+
     public function __construct()
     {
         $this->system = new System();

@@ -23,6 +23,8 @@ namespace DomainMOD;
 
 class DwDisplay
 {
+    public $system;
+
     public function __construct()
     {
         $this->system = new System();

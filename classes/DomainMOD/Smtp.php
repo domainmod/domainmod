@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class Smtp
 {
+    public $log;
+    public $system;
+
     public function __construct()
     {
         $this->log = new Log('smtp.class');

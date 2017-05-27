@@ -23,6 +23,8 @@ namespace DomainMOD;
 
 class DwClean
 {
+    public $system;
+
     public function __construct()
     {
         $this->system = new System();
@@ -78,14 +80,15 @@ class DwClean
 
         if ($result) {
 
+            $tmpq = $this->system->db()->prepare("
+                UPDATE dw_dns_records
+                SET formatted_output = :wrapped
+                WHERE id = :id");
+
             foreach ($result as $row) {
 
                 $wrapped = wordwrap($row->{$field}, $wrap_at, "<BR>", true);
 
-                $tmpq = $this->system->db()->prepare("
-                    UPDATE dw_dns_records
-                    SET formatted_output = :wrapped
-                    WHERE id = :id");
                 $tmpq->execute(['wrapped' => $wrapped,
                                 'id' => $row->id]);
 

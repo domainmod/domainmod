@@ -23,17 +23,22 @@ namespace DomainMOD;
 
 class Log
 {
+    public $area;
+    public $time;
+    public $url;
+    public $user_id;
 
     public function __construct($area)
     {
-        $this->time = new Time();
         $this->area = $area;
+        $this->time = new Time();
+        $this->url = $_SERVER['REQUEST_URI'];
+
         if ($_SESSION['s_user_id']) {
             $this->user_id = $_SESSION['s_user_id'];
         } else {
             $this->user_id = 0;
         }
-        $this->url = $_SERVER['REQUEST_URI'];
     }
 
     public function addEntry($level, $message, $extra_info)

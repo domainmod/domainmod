@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Namecheap
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Namecheap';
-        $this->log = new Log('namecheap.class');
         $this->format = new Format();
+        $this->log = new Log('namecheap.class');
     }
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)

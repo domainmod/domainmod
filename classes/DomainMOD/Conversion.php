@@ -23,11 +23,15 @@ namespace DomainMOD;
 
 class Conversion
 {
+    public $log;
+    public $system;
+    public $time;
+
     public function __construct()
     {
+        $this->log = new Log('conversion.class');
         $this->system = new System();
         $this->time = new Time();
-        $this->log = new Log('conversion.class');
     }
 
     public function updateRates($default_currency, $user_id)

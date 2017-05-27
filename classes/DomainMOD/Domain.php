@@ -23,10 +23,14 @@ namespace DomainMOD;
 
 class Domain
 {
+    public $log;
+    public $system;
+    public $time;
+
     public function __construct()
     {
-        $this->system = new System();
         $this->log = new Log('domain.class');
+        $this->system = new System();
         $this->time = new Time();
     }
 

@@ -40,5 +40,5 @@ $system->db()->query("TRUNCATE log");
 
 $_SESSION['s_message_success'] .= 'Debug Log Cleared';
 
-header("Location: " . $_SERVER["HTTP_REFERER"]);
+header("Location: index.php");
 exit;

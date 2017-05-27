@@ -23,10 +23,13 @@ namespace DomainMOD;
 
 class DwBuild
 {
+    public $log;
+    public $system;
+
     public function __construct()
     {
-        $this->system = new System();
         $this->log = new Log('dwbuild.class');
+        $this->system = new System();
     }
 
     public function build()

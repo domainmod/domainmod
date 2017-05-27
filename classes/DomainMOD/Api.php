@@ -23,12 +23,17 @@ namespace DomainMOD;
 
 class Api
 {
+    public $assets;
+    public $error;
+    public $log;
+    public $system;
+
     public function __construct()
     {
-        $this->system = new System();
+        $this->assets = new Assets();
         $this->error = new Error();
         $this->log = new Log('api.class');
-        $this->assets = new Assets();
+        $this->system = new System();
     }
 
     public function getKey($account_id)

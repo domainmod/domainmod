@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class InternetBs
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Internet.bs';
-        $this->log = new Log('internetbs.class');
         $this->format = new Format();
+        $this->log = new Log('internetbs.class');
     }
 
     public function getApiUrl($api_key, $api_secret, $command, $domain)

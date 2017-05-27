@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Freenom
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Freenom';
-        $this->log = new Log('freenom.class');
         $this->format = new Format();
+        $this->log = new Log('freenom.class');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)

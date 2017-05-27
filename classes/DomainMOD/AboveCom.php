@@ -23,11 +23,12 @@ namespace DomainMOD;
 
 class AboveCom
 {
-    private $registrar;
+    public $format;
+    public $log;
+    public $system;
 
     public function __construct()
     {
-        $this->registrar = 'Above.com';
         $this->format = new Format();
         $this->log = new Log('abovecom.class');
         $this->system = new System();

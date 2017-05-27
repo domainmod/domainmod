@@ -23,6 +23,8 @@ namespace DomainMOD;
 
 class System
 {
+    public $log;
+
     public function __construct()
     {
         $this->log = new Log('system.class');

@@ -23,6 +23,10 @@ namespace DomainMOD;
 
 class Email
 {
+    public $log;
+    public $system;
+    public $time;
+
     public function __construct()
     {
         $this->log = new Log('email.class');

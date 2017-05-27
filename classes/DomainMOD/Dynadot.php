@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Dynadot
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Dynadot';
-        $this->log = new Log('dynadot.class');
         $this->format = new Format();
+        $this->log = new Log('dynadot.class');
     }
 
     public function getApiUrl($api_key, $command, $domain)

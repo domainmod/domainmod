@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class GoDaddy
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'GoDaddy';
-        $this->log = new Log('godaddy.class');
         $this->format = new Format();
+        $this->log = new Log('godaddy.class');
     }
 
     public function getApiUrl($domain, $command)

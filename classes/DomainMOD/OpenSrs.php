@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class OpenSrs
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'OpenSRS';
-        $this->log = new Log('opensrs.class');
         $this->format = new Format();
+        $this->log = new Log('opensrs.class');
     }
 
     public function domainList()

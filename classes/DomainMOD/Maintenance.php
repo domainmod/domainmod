@@ -23,6 +23,10 @@ namespace DomainMOD;
 
 class Maintenance
 {
+    public $log;
+    public $system;
+    public $time;
+
     public function __construct()
     {
         $this->log = new Log('maintenance.class');

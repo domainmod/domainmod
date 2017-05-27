@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class DwRecords
 {
+    public $system;
+    public $time;
+
     public function __construct()
     {
         $this->system = new System();

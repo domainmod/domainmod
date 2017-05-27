@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Enom
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'eNom';
-        $this->log = new Log('enom.class');
         $this->format = new Format();
+        $this->log = new Log('enom.class');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)

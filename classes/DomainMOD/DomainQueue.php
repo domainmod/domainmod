@@ -23,6 +23,14 @@ namespace DomainMOD;
 
 class DomainQueue
 {
+    public $api;
+    public $domain;
+    public $log;
+    public $maint;
+    public $queryB;
+    public $system;
+    public $time;
+
     public function __construct()
     {
         $this->api = new Api();

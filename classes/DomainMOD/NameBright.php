@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class NameBright
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'NameBright';
-        $this->log = new Log('namebright.class');
         $this->format = new Format();
+        $this->log = new Log('namebright.class');
     }
 
     public function getApiUrl($account_username, $api_app_name, $api_secret, $command, $domain)

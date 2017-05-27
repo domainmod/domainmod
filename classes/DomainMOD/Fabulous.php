@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Fabulous
 {
-    private $registrar;
+    public $format;
+    public $log;
 
     public function __construct()
     {
-        $this->registrar = 'Fabulous';
-        $this->log = new Log('fabulous.class');
         $this->format = new Format();
+        $this->log = new Log('fabulous.class');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
