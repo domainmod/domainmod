@@ -84,7 +84,7 @@ if (DEMO_INSTALLATION != '1') {
             $log->info($log_message, $log_extra);
 
             $schedule->isRunning($dbcon, $id);
-            $maint->performCleanup($dbcon);
+            $maint->performCleanup();
             $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
             $schedule->isFinished($dbcon, $id);
 
