@@ -828,4 +828,50 @@ if ($current_db_version === '4.04.000') {
 
 }
 
+// upgrade database from 4.04.001 to 4.05.00
+if ($current_db_version === '4.04.001') {
+
+    $sql = "CREATE TABLE IF NOT EXISTS `goal_activity` (
+                `id` int(10) NOT NULL AUTO_INCREMENT,
+                `type` varchar(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `old_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `new_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `ip` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `agent` longtext COLLATE utf8_unicode_ci NOT NULL,
+                `language` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `new_activity` TINYINT(1) NOT NULL DEFAULT '1',
+                `insert_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
+                PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $goal->upgrade($previous_version);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `debug_mode` TINYINT(1) NOT NULL DEFAULT '0' AFTER `smtp_password`";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "CREATE TABLE IF NOT EXISTS `log` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `user_id` INT(10) NOT NULL DEFAULT '0',
+                `area` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `level` VARCHAR(9) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `message` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `extra` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `url` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "UPDATE settings
+            SET db_version = '4.05.00',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $current_db_version = '4.05.00';
+
+}
+
 //@formatter:on

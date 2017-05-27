@@ -31,16 +31,17 @@ require_once(DIR_ROOT . '/vendor/autoload.php');
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
-$log = new DomainMOD\Log();
+$goal = new DomainMOD\Goal();
 
 $timestamp = $time->stamp();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/software.inc.php');
+// require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->installCheck($dbcon);
+$system->installCheck();
 
 $result = mysqli_query($dbcon, "SHOW TABLES LIKE 'settings'");
 $is_installed = mysqli_num_rows($result) > 0;
@@ -81,8 +82,8 @@ if ($is_installed == '1') {
             ('Queue', '" . $timestamp . "')";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $creation_type_id_installation = $system->getCreationTypeId($dbcon, 'Installation');
-    $creation_type_id_manual = $system->getCreationTypeId($dbcon, 'Manual');
+    $creation_type_id_installation = $system->getCreationTypeId('Installation');
+    $creation_type_id_manual = $system->getCreationTypeId('Manual');
 
     $sql = "CREATE TABLE IF NOT EXISTS `users` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -1000,6 +1001,23 @@ if ($is_installed == '1') {
             ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not currently allow the auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a ResellerClub account will have their auto renewal status set to No.', '" . $timestamp . "')";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
+    $sql = "CREATE TABLE IF NOT EXISTS `goal_activity` (
+                `id` int(10) NOT NULL AUTO_INCREMENT,
+                `type` varchar(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `old_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `new_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `ip` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `agent` longtext COLLATE utf8_unicode_ci NOT NULL,
+                `language` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `new_activity` TINYINT(1) NOT NULL DEFAULT '1',
+                `insert_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
+                PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $goal->installation();
+
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
@@ -1028,8 +1046,22 @@ if ($is_installed == '1') {
                 `smtp_email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `smtp_username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `debug_mode` TINYINT(1) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $sql = "CREATE TABLE IF NOT EXISTS `log` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `user_id` INT(10) NOT NULL DEFAULT '0',
+                `area` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `level` VARCHAR(9) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `message` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `extra` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `url` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
@@ -1159,8 +1191,6 @@ if ($is_installed == '1') {
 
     $_SESSION['s_installation_mode'] = '0';
     $_SESSION['s_message_success'] .= SOFTWARE_TITLE . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
-
-    $log->goal('install', '', SOFTWARE_VERSION);
 
     header("Location: ../");
     exit;
