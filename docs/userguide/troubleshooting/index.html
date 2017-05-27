@@ -141,6 +141,9 @@
                 <li class="toctree-l3"><a href="#usage">Usage</a></li>
                 
             
+                <li class="toctree-l3"><a href="#debugging">Debugging</a></li>
+                
+            
             </ul>
         
     </li>
@@ -277,9 +280,41 @@
 <p>We would recommend trying some of the suggestions for this error in Google and see if any of them help: <a href="https://www.google.com/search?q=Database+Connection+Error%3A+1045">https://www.google.com/search?q=Database+Connection+Error%3A+1045</a>.</p>
 <h4>I'm trying to import data using the Domain Queue, but everything is stuck on "Processing".</h4>
 
-<p>In case there's a problem with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click on the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
+<p>In case there's a problem with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
 <p>If that doesn't work you can try clearing the queue items that are currently processing by going to Administration -&gt; Maintenance, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
 <p>If that still doesn't do it go to Administration -&gt; Maintenance, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
+<h2 id="debugging"><BR>Debugging</h2>
+<p>If you're still having problems you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors. This can help us troubleshoot your issue.</p>
+<p><strong>NOTE:</strong> No sensitive information gets stored in the logs. Passwords, API keys, and other sensitive information is replaced with asterisks, so we will never be able to view your private data.</p>
+<p>To enable Debugging Mode:</p>
+<ol>
+<li>
+<p>Click <strong>Administration</strong> on the main menu, then click <strong>System Settings</strong>.</p>
+</li>
+<li>
+<p>Change the <strong>Debugging Mode</strong> option to <strong>Enabled</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Update System Settings</strong> button.</p>
+</li>
+</ol>
+<p>Once debugging is enabled use DomainMOD as you normally would, repeating the steps you took when you first encountered a problem. Once you've done this follow the steps below to report your issue.</p>
+<ol>
+<li>
+<p>Visit the DomainMOD support forum and post about your issue: <a href="https://domainmod.org/forum/">https://domainmod.org/forum/</a></p>
+</li>
+<li>
+<p>In DomainMOD, click on <strong>Administration</strong> and then <strong>Debug Log</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Export</strong> button to export the debugging log.</p>
+</li>
+<li>
+<p>Send an email to <a href="../debugging@domainmod.org">debugging@domainmod.org</a>, attaching the log file that you just exported, and including a link to your forum post.</p>
+</li>
+</ol>
+<p>We will review your debugging log and get back to you as soon as we can!</p>
+<p>Also, if you haven't already, make sure you disable Debugging mode.</p>
                 
             </div>
           </div>
