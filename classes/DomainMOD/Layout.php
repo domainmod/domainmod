@@ -43,7 +43,7 @@ class Layout
     public function showButton($button_type, $button_text)
     {
         ob_start(); ?>
-        <button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button><?php
+        <button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button>&nbsp;<?php
         return ob_get_clean();
     }
 
