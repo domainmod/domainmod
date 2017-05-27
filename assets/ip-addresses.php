@@ -172,7 +172,7 @@ if ($export_data == '1') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 Below is a list of all the IP Addresses that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add/ip-address.php"><?php echo $layout->showButton('button', 'Add IP Address'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="add/ip-address.php"><?php echo $layout->showButton('button', 'Add IP Address'); ?></a>
 <a href="ip-addresses.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');

@@ -234,7 +234,7 @@ Segments are lists of domains that can be used to help filter and manage your <a
 Segment filters will tell you which domains match with domains that are saved in <?php echo SOFTWARE_TITLE; ?>, as well
 as which domains don't match, and you can easily view and export the results.<BR>
 <BR>
-<a href="add.php"><?php echo $layout->showButton('button', 'Add Segment'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="add.php"><?php echo $layout->showButton('button', 'Add Segment'); ?></a>
 <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $sql_segment_check = "SELECT id

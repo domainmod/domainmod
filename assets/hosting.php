@@ -146,7 +146,7 @@ if ($export_data == '1') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 Below is a list of all the Web Hosting Providers that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add/host.php"><?php echo $layout->showButton('button', 'Add Hosting Provider'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="add/host.php"><?php echo $layout->showButton('button', 'Add Hosting Provider'); ?></a>
 <a href="hosting.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');

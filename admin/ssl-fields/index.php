@@ -129,7 +129,7 @@ $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERR
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-    <a href="add.php"><?php echo $layout->showButton('button', 'Add Custom Field'); ?></a>&nbsp;&nbsp;&nbsp;
+    <a href="add.php"><?php echo $layout->showButton('button', 'Add Custom Field'); ?></a>
     <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">

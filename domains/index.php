@@ -2236,8 +2236,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             echo $form->showInputHidden('numBegin', '1');
             echo $form->showSubmitButton('Apply Filters', '', '');
             ?>
-            &nbsp;&nbsp;&nbsp;<a
-                href="<?php echo $web_root; ?>/domains/"><?php echo $layout->showButton('button', 'Reset Filters'); ?></a><?php
+            <a href="<?php echo $web_root; ?>/domains/"><?php echo $layout->showButton('button', 'Reset Filters'); ?></a><?php
 
             echo $form->showFormBottom(''); ?>
 

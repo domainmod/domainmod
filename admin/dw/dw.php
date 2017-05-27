@@ -163,7 +163,7 @@ if ($result === false || mysqli_num_rows($result) <= 0) {
 }
 ?>
 <a href="servers.php"><?php echo $layout->showButton('button', 'Manage Servers'); ?></a><?php
-if ($has_servers == 1) { ?>&nbsp;&nbsp;&nbsp;<a href="rebuild.php"><?php echo $layout->showButton('button', 'Rebuild DW'); ?></a><?php } ?>
+if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', 'Rebuild DW'); ?></a><?php } ?>
 <?php
 $sql_accounts = "SELECT id
                  FROM dw_accounts";

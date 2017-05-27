@@ -170,7 +170,7 @@ if ($export_data == '1') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 Below is a list of all the Categories that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add/category.php"><?php echo $layout->showButton('button', 'Add Category'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="add/category.php"><?php echo $layout->showButton('button', 'Add Category'); ?></a>
 <a href="categories.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
