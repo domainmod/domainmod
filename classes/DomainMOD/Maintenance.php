@@ -111,7 +111,7 @@ class Maintenance
 
     public function updateDomainFees()
     {
-        $this->system->db()->prepare("UPDATE domains SET fee_fixed = '0'");
+        $this->system->db()->query("UPDATE domains SET fee_fixed = '0'");
 
         $tmpq = $this->system->db()->prepare("
             UPDATE fees
