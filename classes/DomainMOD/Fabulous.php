@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class Fabulous
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'Fabulous';
         $this->log = new Log('fabulous.class');
         $this->format = new Format();

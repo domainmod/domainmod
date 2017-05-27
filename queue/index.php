@@ -38,7 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/queue-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$queue = new DomainMOD\DomainQueue($dbcon);
+$queue = new DomainMOD\DomainQueue();
 
 $system->authCheck();
 
@@ -469,7 +469,7 @@ if ($clear == "1") {
 
 if ($really_clear == "1") {
 
-    $queue->clearFinished($dbcon);
+    $queue->clearFinished();
 
     $_SESSION['s_message_success'] .= "Completed items cleared from the queue<BR>";
 
@@ -495,7 +495,7 @@ if ($really_dell == '1' && $list_id != '') {
 
     } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $queue->checkListQueue($dbcon);
+    $queue->checkListQueue();
 
     $_SESSION['s_message_success'] .= "Domain List deleted from Queue<BR>";
 
@@ -521,7 +521,7 @@ if ($really_deld == '1' && $domain_id != '') {
 
     } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $queue->checkDomainQueue($dbcon);
+    $queue->checkDomainQueue();
 
     $_SESSION['s_message_success'] .= "Domain deleted from Queue<BR>";
 
@@ -536,8 +536,8 @@ if ($really_deld == '1' && $domain_id != '') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 <?php
-$queue->checkProcessingLists($dbcon);
-$queue->checkProcessingDomains($dbcon);
+$queue->checkProcessingLists();
+$queue->checkProcessingDomains();
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
     <button type="button" class="btn btn-default btn-lrg">

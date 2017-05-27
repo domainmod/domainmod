@@ -23,13 +23,18 @@ namespace DomainMOD;
 
 class Smtp
 {
+    public function __construct()
+    {
+        $this->log = new Log('smtp.class');
+        $this->system = new System();
+    }
 
-    public function send($dbcon, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
+    public function send($reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
     {
         require_once(DIR_ROOT . '/vendor/autoload.php');
         $mail = new \PHPMailer();
 
-        list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings($dbcon);
+        list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings();
 
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
@@ -52,26 +57,36 @@ class Smtp
             echo 'Message could not be sent.<BR><BR>Please check your SMTP server and account information and try again.';
             exit;
         }
-        return;
     }
 
-    public function getSettings($dbcon)
+    public function getSettings()
     {
-        $sql = "SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password FROM settings";
-        $result = mysqli_query($dbcon, $sql);
         $server = '';
         $protocol = '';
         $port = '';
         $email_address = '';
         $username = '';
         $password = '';
-        while ($row = mysqli_fetch_object($result)) {
-            $server = $row->smtp_server;
-            $protocol = $row->smtp_protocol;
-            $port = $row->smtp_port;
-            $email_address = $row->smtp_email_address;
-            $username = $row->smtp_username;
-            $password = $row->smtp_password;
+
+        $tmpq = $this->system->db()->query("
+            SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password
+            FROM settings");
+        $result = $tmpq->fetch();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve SMTP settings';
+            $this->log->error($log_message);
+
+        } else {
+
+            $server = $result->smtp_server;
+            $protocol = $result->smtp_protocol;
+            $port = $result->smtp_port;
+            $email_address = $result->smtp_email_address;
+            $username = $result->smtp_username;
+            $password = $result->smtp_password;
+
         }
         return array($server, $protocol, $port, $email_address, $username, $password);
     }

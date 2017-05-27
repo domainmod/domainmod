@@ -23,10 +23,14 @@ namespace DomainMOD;
 
 class DwBuild
 {
-
-    public function build($dbcon)
+    public function __construct()
     {
+        $this->system = new System();
+        $this->log = new Log('dwbuild.class');
+    }
 
+    public function build()
+    {
         $accounts = new DwAccounts();
         $zones = new DwZones();
         $records = new DwRecords();
@@ -34,84 +38,78 @@ class DwBuild
         $stats = new DwStats();
         $time = new Time();
 
-        $result = $servers->get($dbcon);
-        if ($servers->checkForHosts($result) == '0')
-            return false;
-        $this->dropDwTables($dbcon);
+        $result = $servers->get();
+
+        if (!$result) {
+
+            $log_message = 'There are no web servers to process in the DW';
+            $this->log->info($log_message);
+            return $log_message;
+
+        }
+
+        $this->dropDwTables();
 
         $build_start_time_o = $time->stamp();
 
-        $sql = "UPDATE dw_servers
-                SET build_status_overall = '0',
-                    build_start_time_overall = '" . $build_start_time_o . "',
-                    build_end_time_overall = '1978-01-23 00:00:00',
-                    build_time = '0',
-                    build_status = '0',
-                    build_start_time = '1978-01-23 00:00:00',
-                    build_end_time = '1978-01-23 00:00:00',
-                    build_time_overall = '0',
-                    dw_accounts = '0',
-                    dw_dns_zones = '0',
-                    dw_dns_records = '0'";
-        mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->prepare("
+            UPDATE dw_servers
+            SET build_status_overall = '0',
+                build_start_time_overall = :build_start_time_o,
+                build_end_time_overall = '1978-01-23 00:00:00',
+                build_time = '0',
+                build_status = '0',
+                build_start_time = '1978-01-23 00:00:00',
+                build_end_time = '1978-01-23 00:00:00',
+                build_time_overall = '0',
+                dw_accounts = '0',
+                dw_dns_zones = '0',
+                dw_dns_records = '0'");
+        $tmpq->execute(['build_start_time_o' => $build_start_time_o]);
 
-        $accounts->createTable($dbcon);
-        $zones->createTable($dbcon);
-        $records->createTable($dbcon);
-        $servers->processEachServer($dbcon, $result);
+        $accounts->createTable();
+        $zones->createTable();
+        $records->createTable();
+        $servers->processEachServer($result);
 
         $clean = new DwClean();
-        $clean->all($dbcon);
+        $clean->all();
 
-        $result = $servers->get($dbcon);
-        $stats->updateServerStats($dbcon, $result);
-        $stats->updateDwTotalsTable($dbcon);
-        $this->buildFinish($dbcon, $build_start_time_o);
-        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals($dbcon);
+        $result = $servers->get();
+        $stats->updateServerStats($result);
+        $stats->updateDwTotalsTable();
+        $this->buildFinish($build_start_time_o);
+        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals();
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
-        $this->updateEmpty($dbcon, $has_empty);
+        $this->updateEmpty($has_empty);
 
         $result_message = 'The Data Warehouse has been rebuilt.';
-
         return $result_message;
-
     }
 
-    public function dropDwTables($dbcon)
+    public function dropDwTables()
     {
-
-        $sql_accounts = "DROP TABLE IF EXISTS dw_accounts";
-        mysqli_query($dbcon, $sql_accounts);
-
-        $sql_zones = "DROP TABLE IF EXISTS dw_dns_zones";
-        mysqli_query($dbcon, $sql_zones);
-
-        $sql_records = "DROP TABLE IF EXISTS dw_dns_records";
-        mysqli_query($dbcon, $sql_records);
-
-        return true;
-
+        $this->system->db()->query("DROP TABLE IF EXISTS dw_accounts");
+        $this->system->db()->query("DROP TABLE IF EXISTS dw_dns_zones");
+        $this->system->db()->query("DROP TABLE IF EXISTS dw_dns_records");
     }
 
-    public function buildFinish($dbcon, $build_start_time_o)
+    public function buildFinish($build_start_time_o)
     {
-
         list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
 
-        $sql = "UPDATE dw_servers
-                SET build_status_overall = '1',
-                    build_end_time_overall = '" . $build_end_time_o . "',
-                    build_time_overall = '" . $total_build_time_o . "',
-                    has_ever_been_built_overall = '1'";
-        mysqli_query($dbcon, $sql);
-
-        return true;
-
+        $tmpq = $this->system->db()->prepare("
+            UPDATE dw_servers
+            SET build_status_overall = '1',
+                build_end_time_overall = :build_end_time_o,
+                build_time_overall = :total_build_time_o,
+                has_ever_been_built_overall = '1'");
+        $tmpq->execute(['build_end_time_o' => $build_end_time_o,
+                        'total_build_time_o' => $total_build_time_o]);
     }
 
     public function getBuildTime($build_start_time)
     {
-
         $time = new Time();
 
         $build_end_time = $time->stamp();
@@ -119,12 +117,10 @@ class DwBuild
         $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 
         return array($build_end_time, $total_build_time);
-
     }
 
     public function checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records)
     {
-
         $empty_assets = '0';
 
         if ($temp_dw_accounts == "0" && $temp_dw_dns_zones == "0" && $temp_dw_dns_records == "0") {
@@ -134,45 +130,37 @@ class DwBuild
         }
 
         return $empty_assets;
-
     }
 
-    public function updateEmpty($dbcon, $empty_assets)
+    public function updateEmpty($empty_assets)
     {
-
         if ($empty_assets == '1') {
 
-            $sql = "UPDATE dw_servers
-                    SET build_status_overall = '0',
-                        build_start_time_overall = '1978-01-23 00:00:00',
-                        build_end_time_overall = '1978-01-23 00:00:00',
-                        build_time = '0',
-                        build_status = '0',
-                        build_start_time = '1978-01-23 00:00:00',
-                        build_end_time = '1978-01-23 00:00:00',
-                        build_time_overall = '0',
-                        build_status_overall = '0',
-                        dw_accounts = '0',
-                        dw_dns_zones = '0',
-                        dw_dns_records = '0'";
-            mysqli_query($dbcon, $sql);
+            $this->system->db()->query("
+                UPDATE dw_servers
+                SET build_status_overall = '0',
+                    build_start_time_overall = '1978-01-23 00:00:00',
+                    build_end_time_overall = '1978-01-23 00:00:00',
+                    build_time = '0',
+                    build_status = '0',
+                    build_start_time = '1978-01-23 00:00:00',
+                    build_end_time = '1978-01-23 00:00:00',
+                    build_time_overall = '0',
+                    build_status_overall = '0',
+                    dw_accounts = '0',
+                    dw_dns_zones = '0',
+                    dw_dns_records = '0'");
 
         }
-
-        return true;
-
     }
 
     public function apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash)
     {
-
         return $this->apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash);
-
     }
 
     public function apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash)
     {
-
         $query = $protocol . "://" . $host . ":" . $port . $api_call;
         $header = '';
         $curl = curl_init(); // Create Curl Object
@@ -193,7 +181,6 @@ class DwBuild
         curl_close($curl);
 
         return $api_results;
-
     }
 
 } //@formatter:on

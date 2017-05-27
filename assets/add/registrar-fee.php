@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $queryB = new DomainMOD\QueryBuild();
 
                 $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 

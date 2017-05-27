@@ -23,65 +23,30 @@ namespace DomainMOD;
 
 class User
 {
-
-    public function getAdminId($dbcon)
+    public function __construct()
     {
-        $sql = "SELECT id
-                FROM users
-                WHERE username = 'admin'";
-        $result = mysqli_query($dbcon, $sql);
-        while ($row = mysqli_fetch_object($result)) {
-            $admin_id = $row->id;
-        }
-        return $admin_id;
+        $this->system = new System();
     }
 
-    public function getFullName($dbcon, $user_id)
+    public function getAdminId()
     {
-        $sql = "SELECT first_name, last_name
-                FROM users
-                WHERE id = '" . $user_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-        while ($row = mysqli_fetch_object($result)) {
-            $full_name = $row->first_name . ' ' . $row->last_name;
-        }
-        return $full_name;
+        $tmpq = $this->system->db()->query("
+            SELECT id
+            FROM users
+            WHERE username = 'admin'");
+        return $tmpq->fetchColumn();
     }
 
-    // leave user_id empty to use the primary admin
-    public function getDefaultSetting($dbcon, $default_field, $primary_table, $user_id)
+    public function getFullName($user_id)
     {
-        if ($user_id == '') {
-            $admin_id = $this->getAdminId($dbcon);
-        } else {
-            $admin_id = $user_id;
-        }
+        $tmpq = $this->system->db()->prepare("
+            SELECT first_name, last_name
+            FROM users
+            WHERE id = :user_id");
+        $tmpq->execute(['user_id' => $user_id]);
+        $result = $tmpq->fetch();
 
-        $sql = "SELECT us." . $default_field . "
-                FROM users AS u, user_settings AS us
-                WHERE u.id = us.user_id
-                  AND u.id = '" . $admin_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $sql_confirm = "SELECT id
-                            FROM `" . $primary_table . "`
-                            WHERE id = '" . $row->{$default_field} . "'";
-            $result_confirm = mysqli_query($dbcon, $sql_confirm);
-
-            if ($row->{$default_field} != '0' && mysqli_num_rows($result_confirm) > 0) {
-
-                return $row->{$default_field};
-
-            } else {
-
-                return '';
-
-            }
-
-        }
-
+        return $result->first_name . ' ' . $result->last_name;
     }
 
 } //@formatter:on

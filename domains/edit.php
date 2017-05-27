@@ -239,12 +239,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Updated<BR>";
 
-        $maint->updateSegments($dbcon);
+        $maint->updateSegments();
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('domains');
-        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
         header('Location: edit.php?did=' . $did);
         exit;
@@ -396,9 +396,9 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
-    $maint->updateSegments($dbcon);
+    $maint->updateSegments();
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: ../domains/index.php");
     exit;
@@ -642,7 +642,7 @@ if ($no_results_accounts !== 1) { ?>
                     <td></td>
                     <td><?php echo $row->name; ?></td>
 
-                    <?php echo $dwdisplay->account($dbcon, $row->id, $new_domain); ?>
+                    <?php echo $dwdisplay->account($row->id, $new_domain); ?>
 
                 </tr><?php
 

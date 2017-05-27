@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$current_db_version = $system->getDbVersion($dbcon);
+$current_db_version = $system->getDbVersion();
 
 $previous_version = $current_db_version;
 

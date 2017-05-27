@@ -23,10 +23,13 @@ namespace DomainMOD;
 
 class CustomField
 {
+    public function __construct()
+    {
+        $this->system = new System();
+    }
 
     public function checkFieldFormat($input_field)
     {
-
         if (preg_match('/^[a-zA-Z_]+$/i', $input_field, $output_field)) {
 
             return $output_field;
@@ -36,21 +39,18 @@ class CustomField
             return false;
 
         }
-
     }
 
-    public function getCustomFields($dbcon, $table_name)
+    public function getCustomFields($table_name)
     {
-
-        $result = $this->queryCustomFields($dbcon, $table_name);
+        $result = $this->queryCustomFields($table_name);
 
         $columns_array = array();
-
         $count = 0;
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $columns_array[$count++] = $row->field_name;
 
@@ -59,29 +59,26 @@ class CustomField
         }
 
         return $columns_array;
-
     }
 
-    public function queryCustomFields($dbcon, $table_name)
+    public function queryCustomFields($table_name)
     {
-
-        $sql = "SELECT field_name FROM " . $table_name . " ORDER BY `name` ASC";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
-
+        $tmpq = $this->system->db()->query("
+            SELECT field_name
+            FROM " . $table_name . "
+            ORDER BY `name` ASC");
+        return $tmpq->fetchAll();
     }
 
-    public function getCustomFieldsSql($dbcon, $table_name, $column_prefix)
+    public function getCustomFieldsSql($table_name, $column_prefix)
     {
-
-        $result = $this->queryCustomFields($dbcon, $table_name);
+        $result = $this->queryCustomFields($table_name);
 
         $columns = '';
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $columns .= ", " . $column_prefix . "." . $row->field_name;
 
@@ -90,7 +87,6 @@ class CustomField
         }
 
         return $columns;
-
     }
 
 } //@formatter:on

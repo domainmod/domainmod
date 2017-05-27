@@ -53,13 +53,10 @@ $system->authCheck();
 
     <!-- Expiring Boxes -->
     <?php
-    $sql = "SELECT expiration_days
-            FROM settings";
-    $result = mysqli_query($dbcon, $sql);
-
-    while ($row = mysqli_fetch_object($result)) {
-        $expiration_days = $row->expiration_days;
-    }
+    $tmpq = $system->db()->query("
+        SELECT expiration_days
+        FROM settings");
+    $expiration_days = $tmpq->fetchColumn();
 
     $start_date = '2000-01-01';
     $end_date = $time->timeBasicPlusDays($expiration_days);
@@ -71,20 +68,28 @@ $system->authCheck();
         <div class="small-box bg-red">
             <div class="inner">
                 <?php
-                $sql_domains = "SELECT id, expiry_date, domain
-                                FROM domains
-                                WHERE active NOT IN ('0', '10')
-                                  AND expiry_date <= '" . $end_date . "'
-                                ORDER BY expiry_date, domain";
-                $domains_expiring = $system->checkForRowsResult($dbcon, $sql_domains);
+                $tmpq = $system->db()->prepare("
+                    SELECT id, expiry_date, domain
+                    FROM domains
+                    WHERE active NOT IN ('0', '10')
+                      AND expiry_date <= :end_date
+                    ORDER BY expiry_date, domain");
+                $tmpq->execute(['end_date' => $end_date]);
+                $result = $tmpq->fetchAll();
 
-                if ($domains_expiring != '0') {
+                if (!$result) {
 
-                    $to_display = mysqli_num_rows($domains_expiring);
+                    $to_display = '0';
 
                 } else {
 
-                    $to_display = '0';
+                    $tmpq = $system->db()->prepare("
+                        SELECT count(*)
+                        FROM domains
+                        WHERE active NOT IN ('0', '10')
+                          AND expiry_date <= :end_date");
+                    $tmpq->execute(['end_date' => $end_date]);
+                    $to_display = $tmpq->fetchColumn();
 
                 }
                 ?>
@@ -105,21 +110,30 @@ $system->authCheck();
         <div class="small-box bg-red">
             <div class="inner">
                 <?php
-                $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
-                            FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-                            WHERE sslc.type_id = sslt.id
-                              AND sslc.active NOT IN ('0')
-                              AND sslc.expiry_date <= '" . $end_date . "'
-                            ORDER BY sslc.expiry_date, sslc.name";
-                $ssl_expiring = $system->checkForRowsResult($dbcon, $sql_ssl);
+                $tmpq = $system->db()->prepare("
+                    SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
+                    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                    WHERE sslc.type_id = sslt.id
+                      AND sslc.active NOT IN ('0')
+                      AND sslc.expiry_date <= :end_date
+                    ORDER BY sslc.expiry_date, sslc.name");
+                $tmpq->execute(['end_date' => $end_date]);
+                $result = $tmpq->fetchAll();
 
-                if ($ssl_expiring != '0') {
+                if (!$result) {
 
-                    $to_display = mysqli_num_rows($ssl_expiring);
+                    $to_display = '0';
 
                 } else {
 
-                    $to_display = '0';
+                    $tmpq = $system->db()->prepare("
+                        SELECT count(*)
+                        FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                        WHERE sslc.type_id = sslt.id
+                          AND sslc.active NOT IN ('0')
+                          AND sslc.expiry_date <= :end_date");
+                    $tmpq->execute(['end_date' => $end_date]);
+                    $to_display = $tmpq->fetchColumn();
 
                 }
                 ?>

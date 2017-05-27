@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($_SESSION['s_has_registrar'] != '1') {
 
-            $system->checkExistingAssets($dbcon);
+            $system->checkExistingAssets();
 
             header("Location: ../../domains/index.php");
 

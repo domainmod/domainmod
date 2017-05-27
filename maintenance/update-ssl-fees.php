@@ -41,12 +41,12 @@ require_once(DIR_INC . '/database.inc.php');
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-$maint->updateSslFees($dbcon);
+$maint->updateSslFees();
 
 $queryB = new DomainMOD\QueryBuild();
 
 $sql = $queryB->missingFees('ssl_certs');
-$_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
+$_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
 $_SESSION['s_message_success'] .= "SSL Certificate Fees updated<BR>";
 

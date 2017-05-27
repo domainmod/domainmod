@@ -23,15 +23,14 @@ namespace DomainMOD;
 
 class AboveCom
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'Above.com';
         $this->format = new Format();
         $this->log = new Log('abovecom.class');
+        $this->system = new System();
     }
 
     public function getApiUrl($api_key, $command)
@@ -53,18 +52,24 @@ class AboveCom
         return $result;
     }
 
-    public function getDomainList($dbcon, $api_key, $account_id)
+    public function getDomainList($api_key, $account_id)
     {
         $domain_list = array();
         $domain_count = 0;
 
-        $error = new Error();
         $api_url = $this->getApiUrl($api_key, 'domainlist');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
         if ($array_results[0]['@attributes']['code'] == '100') {
+
+            $tmpq = $this->system->db()->prepare("
+                INSERT INTO domain_queue_temp
+                (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
+                VALUES
+                (:account_id, :domain, :expiry_date, :ns1, :ns2, :ns3, :ns4, :ns5, :ns6, :ns7, :ns8, :ns9, :ns10,
+                 :autorenew, :privacy)");
 
             foreach ($array_results[0]['domains']['r'] as $value) {
 
@@ -83,11 +88,21 @@ class AboveCom
                 $autorenew = $this->processAutorenew($value['autorenew']);
                 $privacy = $this->processPrivacy($value['privacy']);
 
-                $sql = "INSERT INTO domain_queue_temp
-                        (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
-                        VALUES
-                        ('" . $account_id . "', '" . $domain_list[$domain_count] . "', '" . $expiry_date . "', '" . $ns1 . "', '" . $ns2 . "', '" . $ns3 . "', '" . $ns4 . "', '" . $ns5 . "', '" . $ns6 . "', '" . $ns7 . "', '" . $ns8 . "', '" . $ns9 . "', '" . $ns10 . "', '" . $autorenew . "', '" . $privacy . "')";
-                $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                $tmpq->execute(['account_id' => $account_id,
+                                'domain' => $domain_list[$domain_count],
+                                'expiry_date' => $expiry_date,
+                                'ns1' => $ns1,
+                                'ns2' => $ns2,
+                                'ns3' => $ns3,
+                                'ns4' => $ns4,
+                                'ns5' => $ns5,
+                                'ns6' => $ns6,
+                                'ns7' => $ns7,
+                                'ns8' => $ns8,
+                                'ns9' => $ns9,
+                                'ns10' => $ns10,
+                                'autorenew' => $autorenew,
+                                'privacy' => $privacy]);
 
                 $domain_count++;
 
@@ -104,54 +119,53 @@ class AboveCom
         return array($domain_count, $domain_list);
     }
 
-    public function getFullInfo($dbcon, $account_id, $domain)
+    public function getFullInfo($account_id, $domain)
     {
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';
         $autorenewal_status = '';
 
-        $error = new Error();
-        $sql = "SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
-                FROM domain_queue_temp
-                WHERE account_id = '" . $account_id . "'
-                  AND domain = '" . $domain . "'
-                ORDER BY id ASC";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+        $tmpq = $this->system->db()->prepare("
+            SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
+            FROM domain_queue_temp
+            WHERE account_id = :account_id
+              AND domain = :domain
+            ORDER BY id ASC");
+        $tmpq->execute(['account_id' => $account_id,
+                        'domain' => $domain]);
+        $result = $tmpq->fetch();
 
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $expiration_date = $row->expiry_date;
-
-                $dns_result[0] = $row->ns1;
-                $dns_result[1] = $row->ns2;
-                $dns_result[2] = $row->ns3;
-                $dns_result[3] = $row->ns4;
-                $dns_result[4] = $row->ns5;
-                $dns_result[5] = $row->ns6;
-                $dns_result[6] = $row->ns7;
-                $dns_result[7] = $row->ns8;
-                $dns_result[8] = $row->ns9;
-                $dns_result[9] = $row->ns10;
-                $dns_servers = $this->processDns($dns_result);
-
-                $privacy_status = $row->privacy;
-
-                $autorenewal_status = $row->autorenew;
-
-                $sql_temp = "DELETE FROM domain_queue_temp
-                             WHERE id = '" . $row->id . "'";
-                mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-            }
-
-        } else {
+        if (!$result) {
 
             $log_message = 'Unable to get domain details';
             $log_extra = array('Domain' => $domain, 'Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
+
+        } else {
+
+            $expiration_date = $result->expiry_date;
+
+            $dns_result[0] = $result->ns1;
+            $dns_result[1] = $result->ns2;
+            $dns_result[2] = $result->ns3;
+            $dns_result[3] = $result->ns4;
+            $dns_result[4] = $result->ns5;
+            $dns_result[5] = $result->ns6;
+            $dns_result[6] = $result->ns7;
+            $dns_result[7] = $result->ns8;
+            $dns_result[8] = $result->ns9;
+            $dns_result[9] = $result->ns10;
+            $dns_servers = $this->processDns($dns_result);
+
+            $privacy_status = $result->privacy;
+
+            $autorenewal_status = $result->autorenew;
+
+            $tmpq = $this->system->db()->prepare("
+                DELETE FROM domain_queue_temp
+                WHERE id = :id");
+            $tmpq->execute(['id' => $result->id]);
 
         }
 

@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class Namecheap
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'Namecheap';
         $this->log = new Log('namecheap.class');
         $this->format = new Format();
@@ -150,7 +148,6 @@ class Namecheap
         }
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
-
     }
                
     public function convertToArray($api_result)

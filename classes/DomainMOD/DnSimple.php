@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class DnSimple
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'DNSimple';
         $this->log = new Log('dnsimple.class');
         $this->format = new Format();

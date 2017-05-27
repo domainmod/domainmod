@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class NameSilo
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'NameSilo';
         $this->log = new Log('namesilo.class');
         $this->format = new Format();

@@ -23,44 +23,59 @@ namespace DomainMOD;
 
 class System
 {
+    public function __construct()
+    {
+        $this->log = new Log('system.class');
+    }
 
     public function db()
     {
         $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
-        $pdo->exec("set names utf8");
+        $pdo->exec("SET NAMES utf8");
+        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         return $pdo;
     }
 
-    public function installCheck($dbcon)
+    public function installCheck()
     {
         $full_install_path = DIR_ROOT . '/install/';
-        $result = mysqli_query($dbcon, "SHOW TABLES LIKE 'settings'");
-        $is_installed = mysqli_num_rows($result) > 0;
-        if (is_dir($full_install_path) && $is_installed != '1') {
+
+        $tmpq = $this->db()->prepare("SHOW TABLES LIKE 'settings'");
+        $result = $tmpq->fetchColumn();
+
+        if ($result && is_dir($full_install_path)) {
+
             $installation_mode = 1;
             $result_message = 'DomainMOD is not yet installed<BR>';
+
         } else {
+
             $installation_mode = 0;
             $result_message = '';
+
         }
+
         return array($installation_mode, $result_message);
     }
 
-    public function checkVersion($dbcon, $current_version)
+    public function checkVersion($current_version)
     {
         $live_version = $this->getLiveVersion();
         $release_notify = $this->getReleaseNotify();
+
         if ($current_version < $live_version && $live_version != '' && $release_notify == '1') {
-            $sql = "UPDATE settings SET upgrade_available = '1'";
-            mysqli_query($dbcon, $sql);
+
+            $this->db()->query("UPDATE settings SET upgrade_available = '1'");
             $_SESSION['s_system_upgrade_available'] = '1';
             $message = $this->getUpgradeMessage();
+
         } else {
-            $sql = "UPDATE settings SET upgrade_available = '0'";
-            mysqli_query($dbcon, $sql);
+
+            $this->db()->query("UPDATE settings SET upgrade_available = '0'");
             $_SESSION['s_system_upgrade_available'] = '0';
             $message = 'No Upgrade Available';
+
         }
         return $message;
     }
@@ -101,15 +116,12 @@ class System
         return $release_notify;
     }
 
-    public function getDbVersion($dbcon)
+    public function getDbVersion()
     {
-        $sql = "SELECT db_version
-                FROM settings";
-        $result = mysqli_query($dbcon, $sql);
-        while ($row = mysqli_fetch_object($result)) {
-            $current_version = (string) $row->db_version;
-        }
-        return $current_version;
+        $tmpq = $this->db()->query("
+            SELECT db_version
+            FROM settings");
+        return $tmpq->fetchColumn();
     }
 
     public function getUpgradeMessage()
@@ -123,35 +135,33 @@ class System
         return SOFTWARE_TITLE . ' :: ' . $page_title;
     }
 
-    public function checkExistingAssets($dbcon)
+    public function checkExistingAssets()
     {
         $queryB = new QueryBuild();
 
         $sql = $queryB->singleAsset('registrars');
-        $_SESSION['s_has_registrar'] = $this->checkForRows($dbcon, $sql);
+        $_SESSION['s_has_registrar'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('registrar_accounts');
-        $_SESSION['s_has_registrar_account'] = $this->checkForRows($dbcon, $sql);
+        $_SESSION['s_has_registrar_account'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('domains');
-        $_SESSION['s_has_domain'] = $this->checkForRows($dbcon, $sql);
+        $_SESSION['s_has_domain'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('ssl_providers');
-        $_SESSION['s_has_ssl_provider'] = $this->checkForRows($dbcon, $sql);
+        $_SESSION['s_has_ssl_provider'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('ssl_accounts');
-        $_SESSION['s_has_ssl_account'] = $this->checkForRows($dbcon, $sql);
+        $_SESSION['s_has_ssl_account'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('ssl_certs');
-        $_SESSION['s_has_ssl_cert'] = $this->checkForRows($dbcon, $sql);
-        return true;
+        $_SESSION['s_has_ssl_cert'] = $this->checkForRows($sql);
     }
 
-    public function checkForRows($dbcon, $sql)
+    public function checkForRows($sql)
     {
-        $result = mysqli_query($dbcon, $sql);
-        if (mysqli_num_rows($result) >= 1) { return '1'; } else { return '0'; }
-    }
-
-    public function checkForRowsResult($dbcon, $sql)
-    {
-        $result = mysqli_query($dbcon, $sql);
-        if (mysqli_num_rows($result) >= 1) { return $result; } else { return '0'; }
+        $tmpq = $this->db()->query($sql);
+        $result = $tmpq->fetchColumn();
+        if (!$result) {
+            return '0';
+        } else {
+            return '1';
+        }
     }
 
     public function authCheck()
@@ -258,60 +268,50 @@ class System
         return $qrun;
     }
 
-    public function getCreationType($dbcon, $creation_type_id)
+    public function getCreationType($creation_type_id)
     {
-        $error = new Error();
-        
-        $sql = "SELECT `name`
-                FROM creation_types
-                WHERE id = '" . $creation_type_id . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-        
-        if (mysqli_num_rows($result) == 1) {
-        
-            while ($row = mysqli_fetch_object($result)) {
-                
-                $creation_type = $row->name;
-            
-            }
-        
+        $tmpq = $this->db()->prepare("
+            SELECT `name`
+            FROM creation_types
+            WHERE id = :creation_type_id");
+        $tmpq->execute(['creation_type_id' => $creation_type_id]);
+        $result = $tmpq->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve creation type';
+            $log_extra = array('Creation Type ID' => $creation_type_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
         } else {
-            
-            echo 'There was a problem retrieving the creation type';
-            exit;
-            
+
+            return $result;
+
         }
-        
-        return $creation_type;
-    
     }
 
-    public function getCreationTypeId($dbcon, $creation_type)
+    public function getCreationTypeId($creation_type)
     {
-        $error = new Error();
-        
-        $sql = "SELECT id
-                FROM creation_types
-                WHERE `name` = '" . $creation_type . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-        
-        if (mysqli_num_rows($result) == 1) {
-        
-            while ($row = mysqli_fetch_object($result)) {
-                
-                $creation_type_id = $row->id;
-            
-            }
-        
+        $tmpq = $this->db()->prepare("
+            SELECT id
+            FROM creation_types
+            WHERE `name` = :creation_type");
+        $tmpq->execute(['creation_type' => $creation_type]);
+        $result = $tmpq->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve creation type ID';
+            $log_extra = array('Creation Type' => $creation_type, 'Result' => $result);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
         } else {
-            
-            echo 'There was a problem retrieving the creation type ID';
-            exit;
-            
+
+            return $result;
+
         }
-        
-        return $creation_type_id;
-    
     }
 
 } //@formatter:on

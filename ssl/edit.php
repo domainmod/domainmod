@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
         header('Location: edit.php?sslcid=' . $sslcid);
         exit;
@@ -382,7 +382,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " (" . $temp_type . ") Deleted<BR>";
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: index.php");
     exit;

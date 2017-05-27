@@ -33,9 +33,10 @@ class Api
 
     public function getKey($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT api_key
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT api_key
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetchColumn();
 
@@ -56,9 +57,10 @@ class Api
 
     public function getKeySecret($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT api_key, api_secret
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT api_key, api_secret
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -81,9 +83,10 @@ class Api
 
     public function getUserKey($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT username, api_key
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT username, api_key
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -106,9 +109,10 @@ class Api
 
     public function getUserAppSecret($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT username, api_app_name, api_secret
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT username, api_app_name, api_secret
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -133,10 +137,11 @@ class Api
 
     public function getUserKeyIp($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT ra.username, ra.api_key, ip.ip
-                                              FROM registrar_accounts AS ra, ip_addresses AS ip
-                                              WHERE ra.api_ip_id = ip.id
-                                                AND ra.id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT ra.username, ra.api_key, ip.ip
+            FROM registrar_accounts AS ra, ip_addresses AS ip
+            WHERE ra.api_ip_id = ip.id
+              AND ra.id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -161,9 +166,10 @@ class Api
 
     public function getReselleridKey($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT reseller_id, api_key
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT reseller_id, api_key
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -186,9 +192,10 @@ class Api
 
     public function getUserPass($account_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT username, `password`
-                                              FROM registrar_accounts
-                                              WHERE id = :account_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT username, `password`
+            FROM registrar_accounts
+            WHERE id = :account_id");
         $tmpq->execute(['account_id' => $account_id]);
         $result = $tmpq->fetch();
 
@@ -211,9 +218,10 @@ class Api
 
     public function getApiRegistrarName($api_registrar_id)
     {
-        $tmpq = $this->system->db()->prepare("SELECT `name`
-                                              FROM api_registrars
-                                              WHERE id = :api_registrar_id");
+        $tmpq = $this->system->db()->prepare("
+            SELECT `name`
+            FROM api_registrars
+            WHERE id = :api_registrar_id");
         $tmpq->execute(['api_registrar_id' => $api_registrar_id]);
         $result = $tmpq->fetchColumn();
 

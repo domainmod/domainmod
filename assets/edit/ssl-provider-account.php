@@ -247,7 +247,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: ../ssl-accounts.php");
     exit;

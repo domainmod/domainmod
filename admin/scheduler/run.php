@@ -50,9 +50,10 @@ $id = $_GET['id'];
 
 if (DEMO_INSTALLATION != '1') {
 
-    $tmpq = $system->db()->prepare("SELECT `name`, slug, expression, active
-                                    FROM scheduler
-                                    WHERE id = :id");
+    $tmpq = $system->db()->prepare("
+        SELECT `name`, slug, expression, active
+        FROM scheduler
+        WHERE id = :id");
     $tmpq->execute(['id' => $id]);
     $result = $tmpq->fetch();
 
@@ -99,7 +100,7 @@ if (DEMO_INSTALLATION != '1') {
 
             $email = new DomainMOD\Email();
             $schedule->isRunning($dbcon, $id);
-            $email->sendExpirations($dbcon, '0');
+            $email->sendExpirations('0');
             $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
             $schedule->isFinished($dbcon, $id);
 
@@ -113,8 +114,9 @@ if (DEMO_INSTALLATION != '1') {
 
             $schedule->isRunning($dbcon, $id);
 
-            $tmpq = $system->db()->query("SELECT user_id, default_currency
-                                          FROM user_settings");
+            $tmpq = $system->db()->query("
+                SELECT user_id, default_currency
+                FROM user_settings");
             $result_conversion = $tmpq->fetchAll();
 
             if (!$result_conversion) {
@@ -146,7 +148,7 @@ if (DEMO_INSTALLATION != '1') {
             $log->info($log_message, $log_extra);
 
             $schedule->isRunning($dbcon, $id);
-            $system->checkVersion($dbcon, SOFTWARE_VERSION);
+            $system->checkVersion(SOFTWARE_VERSION);
             $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
             $schedule->isFinished($dbcon, $id);
 
@@ -162,7 +164,7 @@ if (DEMO_INSTALLATION != '1') {
 
             $dw = new DomainMOD\DwBuild();
             $schedule->isRunning($dbcon, $id);
-            $dw->build($dbcon);
+            $dw->build();
             $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
             $schedule->isFinished($dbcon, $id);
 
@@ -176,10 +178,10 @@ if (DEMO_INSTALLATION != '1') {
             $log_message = '[START] Process Domain Queue';
             $log->info($log_message, $log_extra);
 
-            $queue = new DomainMOD\DomainQueue($dbcon);
+            $queue = new DomainMOD\DomainQueue();
             $schedule->isRunning($dbcon, $id);
-            $queue->processQueueList($dbcon);
-            $queue->processQueueDomain($dbcon);
+            $queue->processQueueList();
+            $queue->processQueueDomain();
             $schedule->updateTime($dbcon, $id, $time->stamp(), $next_run);
             $schedule->isFinished($dbcon, $id);
 

@@ -26,7 +26,6 @@ class Segment
 
     public function trimLength($input_segment, $max_length)
     {
-
         if (strlen($input_segment) > $max_length) {
 
             $output_segment = substr($input_segment, 0, $max_length);
@@ -45,7 +44,6 @@ class Segment
             return $input_segment;
 
         }
-
     }
 
 } //@formatter:on

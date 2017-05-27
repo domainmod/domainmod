@@ -29,7 +29,6 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
-$page = new DomainMOD\Page();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
@@ -280,7 +279,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 }
 
-$dfd_columns = $customField->getCustomFieldsSql($dbcon, 'domain_fields', 'dfd');
+$dfd_columns = $customField->getCustomFieldsSql('domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
@@ -1010,7 +1009,7 @@ if ($export_data == "1") {
         unset($row_contents);
         $count = 0;
 
-        $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
+        $creation_type = $system->getCreationType($row->creation_type_id);
 
         $row_contents[$count++] = $domain_status;
         $row_contents[$count++] = $row->expiry_date;
@@ -1042,13 +1041,13 @@ if ($export_data == "1") {
             $row_contents[$count++] = 'Unknown';
         } else {
             $user = new DomainMOD\User();
-            $row_contents[$count++] = $user->getFullName($dbcon, $row->created_by);
+            $row_contents[$count++] = $user->getFullName($row->created_by);
         }
         $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
         $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
-        $dfd_columns_array = $customField->getCustomFields($dbcon, 'domain_fields');
+        $dfd_columns_array = $customField->getCustomFields('domain_fields');
 
         if ($dfd_columns_array != "") {
 
@@ -1097,7 +1096,7 @@ if ($_SESSION['s_has_domain'] == '0') {
     
     $queryB = new DomainMOD\QueryBuild();
     $sql_asset_check = $queryB->singleAsset('domains');
-    $_SESSION['s_has_domain'] = $system->checkForRows($dbcon, $sql_asset_check);
+    $_SESSION['s_has_domain'] = $system->checkForRows($sql_asset_check);
 
 }
 
@@ -1142,7 +1141,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
     $totalrows = mysqli_num_rows(mysqli_query($dbcon, $sql));
     $parameters = array($totalrows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
-    $navigate = $page->browser($parameters);
+    $navigate = $layout->pageBrowser($parameters);
     $sql = $sql . $navigate[0];
 
 }

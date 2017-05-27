@@ -44,9 +44,10 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
-$tmpq = $system->db()->query("SELECT id, user_id, area, `level`, message, extra, url, insert_time
-                              FROM log
-                              ORDER BY insert_time DESC, id DESC");
+$tmpq = $system->db()->query("
+    SELECT id, user_id, area, `level`, message, extra, url, insert_time
+    FROM log
+    ORDER BY insert_time DESC, id DESC");
 
 if ($export_data == '1') {
 
@@ -131,11 +132,11 @@ if (!$result) {
         <thead>
         <tr>
             <th width="20px"></th>
-            <th class="none">ID</th>
+            <th class="all">ID</th>
             <th class="none">User ID</th>
             <th class="all">Area</th>
             <th class="all">Level</th>
-            <th>Message</th>
+            <th class="all">Message</th>
             <th>Extra</th>
             <th class="none">URL</th>
             <th>Insert Time</th>

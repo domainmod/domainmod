@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($_SESSION['s_has_ssl_account'] != '1') {
 
-            $system->checkExistingAssets($dbcon);
+            $system->checkExistingAssets();
 
             header("Location: ../../ssl/index.php");
 

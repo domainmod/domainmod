@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class Enom
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'eNom';
         $this->log = new Log('enom.class');
         $this->format = new Format();

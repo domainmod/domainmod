@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class ResellerClub
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'ResellerClub';
         $this->log = new Log('resellerclub.class');
         $this->format = new Format();
@@ -107,7 +105,6 @@ class ResellerClub
             $this->log->error($log_message, $log_extra);
 
         }
-
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 

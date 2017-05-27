@@ -41,12 +41,12 @@ require_once(DIR_INC . '/database.inc.php');
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-$maint->updateDomainFees($dbcon);
+$maint->updateDomainFees();
 
 $queryB = new DomainMOD\QueryBuild();
 
 $sql = $queryB->missingFees('domains');
-$_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+$_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
 $_SESSION['s_message_success'] .= "Domain Fees updated<BR>";
 

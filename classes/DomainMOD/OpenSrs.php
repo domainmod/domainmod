@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class OpenSrs
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'OpenSRS';
         $this->log = new Log('opensrs.class');
         $this->format = new Format();
@@ -236,8 +234,8 @@ EOD;
             $this->log->error($log_message, $log_extra);
 
         }
-        return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
 
+        return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 
     public function apiStatus($api_results)

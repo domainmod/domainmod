@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class GoDaddy
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'GoDaddy';
         $this->log = new Log('godaddy.class');
         $this->format = new Format();

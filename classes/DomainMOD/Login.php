@@ -26,7 +26,6 @@ class Login
 
     public function getUserInfo($dbcon, $user_id, $username)
     {
-
         $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`,
                        number_of_logins, last_login
                 FROM users
@@ -36,12 +35,10 @@ class Login
         $result = mysqli_query($dbcon, $sql);
 
         return $result;
-
     }
 
     public function getSystemSettings($dbcon)
     {
-
         $sql = "SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
                        default_category_ssl, default_dns, default_host, default_ip_address_domains,
                        default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
@@ -51,12 +48,10 @@ class Login
         $result = mysqli_query($dbcon, $sql);
 
         return $result;
-
     }
 
     public function getUserSettings($dbcon, $user_id)
     {
-
         $sql = "SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
                        default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
                        default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
@@ -72,24 +67,20 @@ class Login
         $result = mysqli_query($dbcon, $sql);
 
         return $result;
-
     }
 
     public function getCurrencyInfo($dbcon, $currency)
     {
-
         $sql = "SELECT `name`, symbol, symbol_order, symbol_space
                 FROM currencies
                 WHERE currency = '" . $currency . "'";
         $result = mysqli_query($dbcon, $sql);
 
         return $result;
-
     }
 
     public function setLastLogin($dbcon, $user_id, $email_address)
     {
-
         $time = new Time();
         $timestamp = $time->stamp();
 
@@ -100,7 +91,6 @@ class Login
                 WHERE id = '" . $user_id . "'
                   AND email_address = '" . $email_address . "'";
         mysqli_query($dbcon, $sql);
-
     }
 
 } //@formatter:on

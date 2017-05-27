@@ -23,26 +23,31 @@ namespace DomainMOD;
 
 class Email
 {
-
-    public function sendExpirations($dbcon, $from_cron)
+    public function __construct()
     {
-        $time = new Time();
-        $timestamp_basic = $time->timeBasic();
-        $timestamp_long = $time->timeLong();
+        $this->log = new Log('email.class');
+        $this->system = new System();
+        $this->time = new Time();
+    }
 
-        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings($dbcon);
-        $send_to = $this->getRecipients($dbcon);
+    public function sendExpirations($from_cron)
+    {
+        $timestamp_basic = $this->time->timeBasic();
+        $timestamp_long = $this->time->timeLong();
+
+        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings();
+        $send_to = $this->getRecipients();
         $subject = "Upcoming Expirations - " . $timestamp_long;
         $headers = $this->getHeaders($from_address);
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($number_of_days, $from_cron);
         $message_html = '';
         $message_html .= $this->messageTopHtml($full_url, $subject, $number_of_days);
         $message_html .= $this->showDomainsHtml($result_domains, $full_url, $timestamp_basic);
         $message_html .= $this->showSslHtml($result_ssl, $full_url, $timestamp_basic);
         $message_html .= $this->messageBottomHtml($full_url);
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($number_of_days, $from_cron);
         $message_text = '';
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText($number_of_days);
@@ -50,7 +55,7 @@ class Email
         $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
         $message_text .= $this->messageBottomText($full_url);
 
-        while ($row_recipients = mysqli_fetch_object($send_to)) {
+        foreach ($send_to as $row_recipients) {
 
             $full_to = '"' . $row_recipients->first_name . ' ' . $row_recipients->last_name . '"' . ' <' . $row_recipients->email_address . '>';
 
@@ -61,8 +66,8 @@ class Email
             } else {
 
                 $smtp = new Smtp();
-                $smtp->send($dbcon, $from_address, $row_recipients->email_address, $row_recipients->first_name
-                    . ' ' . $row_recipients->last_name, $subject, $message_html, $message_text);
+                $smtp->send($from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
+                    $row_recipients->last_name, $subject, $message_html, $message_text);
 
             }
             sleep(2);
@@ -71,42 +76,76 @@ class Email
         }
     }
 
-    public function getSettings($dbcon)
+    public function getSettings()
     {
-        $sql = "SELECT full_url, email_address, expiration_days, use_smtp FROM settings";
-        $result = mysqli_query($dbcon, $sql);
         $url = '';
         $email = '';
         $days = '';
-        while ($row = mysqli_fetch_object($result)) {
-            $url = $row->full_url;
-            $email = $row->email_address;
-            $days = $row->expiration_days;
-            $use_smtp = $row->use_smtp;
+        $use_smtp = '';
+
+        $tmpq = $this->system->db()->query("
+            SELECT full_url, email_address, expiration_days, use_smtp
+            FROM settings");
+        $result = $tmpq->fetch();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve email settings';
+            $this->log->error($log_message);
+
+        } else {
+
+            $url = $result->full_url;
+            $email = $result->email_address;
+            $days = $result->expiration_days;
+            $use_smtp = $result->use_smtp;
+
         }
         return array($url, $email, $days, $use_smtp);
     }
 
-    public function checkExpiring($dbcon, $days, $from_cron)
+    public function checkExpiring($days, $from_cron)
     {
-        $system = new System();
-        $time = new Time();
-        $date = $time->timeBasicPlusDays($days);
+        $date = $this->time->timeBasicPlusDays($days);
 
-        $sql_domains = "SELECT id, expiry_date, domain
-                        FROM domains
-                        WHERE active NOT IN ('0', '10')
-                          AND expiry_date <= '" . $date . "'
-                        ORDER BY expiry_date, domain";
-        $domains_expiring = $system->checkForRowsResult($dbcon, $sql_domains);
+        $tmpq = $this->system->db()->prepare("
+            SELECT id, expiry_date, domain
+            FROM domains
+            WHERE active NOT IN ('0', '10')
+              AND expiry_date <= :date
+            ORDER BY expiry_date, domain");
+        $tmpq->execute(['date' => $date]);
+        $result = $tmpq->fetchAll();
 
-        $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
-                    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-                    WHERE sslc.type_id = sslt.id
-                      AND sslc.active NOT IN ('0')
-                      AND sslc.expiry_date <= '" . $date . "'
-                    ORDER BY sslc.expiry_date, sslc.name";
-        $ssl_expiring = $system->checkForRowsResult($dbcon, $sql_ssl);
+        if (!$result) {
+
+            $domains_expiring = '0';
+
+        } else {
+
+            $domains_expiring = $result;
+
+        }
+
+        $tmpq = $this->system->db()->prepare("
+            SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
+            FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+            WHERE sslc.type_id = sslt.id
+              AND sslc.active NOT IN ('0')
+              AND sslc.expiry_date <= :date
+            ORDER BY sslc.expiry_date, sslc.name");
+        $tmpq->execute(['date' => $date]);
+        $result = $tmpq->fetchAll();
+
+        if (!$result) {
+
+            $ssl_expiring = '0';
+
+        } else {
+
+            $ssl_expiring = $result;
+
+        }
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
             return array($domains_expiring, $ssl_expiring);
@@ -117,20 +156,26 @@ class Email
         }
     }
 
-    public function getRecipients($dbcon)
+    public function getRecipients()
     {
-        $sql_recipients = "SELECT u.email_address, u.first_name, u.last_name
-                           FROM users AS u, user_settings AS us
-                           WHERE u.id = us.user_id
-                             AND u.active = '1'
-                             AND us.expiration_emails = '1'";
-        $result_recipients = mysqli_query($dbcon, $sql_recipients);
+        $tmpq = $this->system->db()->query("
+            SELECT u.email_address, u.first_name, u.last_name
+            FROM users AS u, user_settings AS us
+            WHERE u.id = us.user_id
+              AND u.active = '1'
+              AND us.expiration_emails = '1'");
+        $result = $tmpq->fetchAll();
 
-        if (mysqli_num_rows($result_recipients) <= 0) {
+        if (!$result) {
+
             $_SESSION['s_message_danger'] .= 'No Users Are Subscribed<BR>';
             return false;
+
+        } else {
+
+            return $result;
+
         }
-        return $result_recipients;
     }
 
     public function getHeaders($from_address)
@@ -173,9 +218,9 @@ class Email
     public function showDomainsHtml($result_domains, $full_url, $timestamp_basic)
     {
         ob_start();
-        if ($result_domains != '0') { ?>
+        if ($result_domains) { ?>
             <strong><u>Domains</u></strong><BR><?php
-            while ($row_domains = mysqli_fetch_object($result_domains)) {
+            foreach ($result_domains as $row_domains) {
                 if ($row_domains->expiry_date < $timestamp_basic) { ?>
 
                     <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
@@ -195,9 +240,10 @@ class Email
 
     public function showDomainsText($result_domains, $timestamp_basic)
     {
-        if ($result_domains != '0') {
+        $message = '';
+        if ($result_domains) {
             $message .= "[DOMAINS]\n";
-            while ($row_domains = mysqli_fetch_object($result_domains)) {
+            foreach ($result_domains as $row_domains) {
                 if ($row_domains->expiry_date < $timestamp_basic) {
                     $message .= $row_domains->expiry_date . " - " . $row_domains->domain . " *EXPIRED*\n";
                 } else {
@@ -212,9 +258,9 @@ class Email
     public function showSslHtml($result_ssl, $full_url, $timestamp_basic)
     {
         ob_start();
-        if ($result_ssl != '0') { ?>
+        if ($result_ssl) { ?>
             <BR><strong><u>SSL Certificates</u></strong><BR><?php
-            while ($row_ssl = mysqli_fetch_object($result_ssl)) {
+            foreach ($result_ssl as $row_ssl) {
                 if ($row_ssl->expiry_date < $timestamp_basic) { ?>
                     <font color="#CC0000"><?php echo $row_ssl->expiry_date; ?></font>&nbsp;&nbsp;<a
                         href="<?php echo $full_url; ?>/edit/ssl-cert.php?sslcid=<?php echo $row_ssl->id;
@@ -232,9 +278,10 @@ class Email
 
     public function showSslText($result_ssl, $timestamp_basic)
     {
-        if ($result_ssl != '0') {
+        $message = '';
+        if ($result_ssl) {
             $message .= "[SSL CERTIFICATES]\n";
-            while ($row_ssl = mysqli_fetch_object($result_ssl)) {
+            foreach ($result_ssl as $row_ssl) {
                 if ($row_ssl->expiry_date < $timestamp_basic) {
                     $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ") *EXPIRED*\n";
                 } else {
@@ -270,6 +317,7 @@ class Email
 
     public function messageBottomText($full_url)
     {
+        $message = '';
         $message .= "Best Regards,\n";
         $message .= "\n";
         $message .= "Greg Chetcuti\n";

@@ -262,15 +262,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
-                $maint->updateDomainFee($dbcon, $temp_domain_id);
+                $maint->updateDomainFee($temp_domain_id);
 
                 $queryB = new DomainMOD\QueryBuild();
                 $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
-                $system->checkExistingAssets($dbcon);
+                $system->checkExistingAssets();
 
                 $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
 

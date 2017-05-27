@@ -23,46 +23,54 @@ namespace DomainMOD;
 
 class Maintenance
 {
-
-    public function performCleanup($dbcon)
+    public function __construct()
     {
+        $this->log = new Log('maintenance.class');
+        $this->system = new System();
+        $this->time = new Time();
+    }
 
-        $this->lowercaseDomains($dbcon);
-        $this->updateTlds($dbcon);
-        $this->updateSegments($dbcon);
-        $this->updateAllFees($dbcon);
-        $this->deleteUnusedFees($dbcon, 'fees', 'domains');
-        $this->deleteUnusedFees($dbcon, 'ssl_fees', 'ssl_certs');
+    public function performCleanup()
+    {
+        $this->lowercaseDomains();
+        $this->updateTlds();
+        $this->updateSegments();
+        $this->updateAllFees();
+        $this->deleteUnusedFees('fees', 'domains');
+        $this->deleteUnusedFees('ssl_fees', 'ssl_certs');
 
         $result_message = 'Maintenance Completed<BR>';
 
         return $result_message;
-
     }
 
-    public function lowercaseDomains($dbcon)
+    public function lowercaseDomains()
     {
-
-        $sql = "UPDATE domains
-                SET domain = LOWER(domain)";
-        mysqli_query($dbcon, $sql);
-        return true;
-
+        $this->system->db()->query("UPDATE domains SET domain = LOWER(domain)");
     }
 
-    public function updateTlds($dbcon)
+    public function updateTlds()
     {
-        $sql = "SELECT id, domain FROM domains";
-        $result = mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->query("SELECT id, domain FROM domains");
+        $result = $tmpq->fetchAll();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $tld = $this->getTld($row->domain);
-            $sql_update = "UPDATE domains
-                           SET tld = '" . $tld . "'
-                           WHERE id = '" . $row->id . "'";
-            mysqli_query($dbcon, $sql_update);
+        if ($result) {
+
+            $tmpq = $this->system->db()->prepare("
+                UPDATE domains
+                SET tld = :tld
+                WHERE id = :id");
+
+            foreach ($result as $row) {
+
+                $tld = $this->getTld($row->domain);
+
+                $tmpq->execute(['tld' => $tld,
+                                'id' => $row->id]);
+
+            }
+
         }
-        return true;
     }
 
     public function getTld($domain)
@@ -70,241 +78,271 @@ class Maintenance
         return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
     }
 
-    public function updateSegments($dbcon)
+    public function updateSegments()
     {
+        $this->system->db()->query("
+            UPDATE segment_data
+            SET active = '0',
+                inactive = '0',
+                missing = '0',
+                filtered = '0'");
 
-        $sql = "UPDATE segment_data SET active = '0', inactive = '0', missing = '0', filtered = '0'";
-        mysqli_query($dbcon, $sql);
+        $this->system->db()->query("
+            UPDATE segment_data
+            SET active = '1'
+            WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))");
 
-        $sql = "UPDATE segment_data
-                SET active = '1'
-                WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))";
-        mysqli_query($dbcon, $sql);
+        $this->system->db()->query("
+            UPDATE segment_data
+            SET inactive = '1'
+            WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))");
 
-        $sql = "UPDATE segment_data
-                SET inactive = '1'
-                WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))";
-        mysqli_query($dbcon, $sql);
-
-        $sql = "UPDATE segment_data
-                 SET missing = '1'
-                 WHERE domain NOT IN (SELECT domain FROM domains)";
-        mysqli_query($dbcon, $sql);
-
-        return true;
-
+        $this->system->db()->query("
+            UPDATE segment_data
+            SET missing = '1'
+            WHERE domain NOT IN (SELECT domain FROM domains)");
     }
 
-    public function updateAllFees($dbcon)
+    public function updateAllFees()
     {
-
-        $this->updateDomainFees($dbcon);
-        $this->updateSslFees($dbcon);
-
-        return true;
-
+        $this->updateDomainFees();
+        $this->updateSslFees();
     }
 
-    public function updateDomainFees($dbcon)
+    public function updateDomainFees()
     {
+        $this->system->db()->prepare("UPDATE domains SET fee_fixed = '0'");
 
-        $time = new Time();
-        $timestamp = $time->stamp();
+        $tmpq = $this->system->db()->prepare("
+            UPDATE fees
+            SET fee_fixed = '0',
+                update_time = :update_time");
+        $tmpq->execute(['update_time' => $this->time->stamp()]);
 
-        $sql = "UPDATE domains
-                SET fee_fixed = '0'";
-        mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->query("
+            SELECT id, registrar_id, tld
+            FROM fees
+            WHERE fee_fixed = '0'");
+        $result = $tmpq->fetchAll();
 
-        $sql = "UPDATE fees
-                SET fee_fixed = '0',
-                    update_time = '" . $timestamp . "'";
-        mysqli_query($dbcon, $sql);
+        if ($result) {
 
-        $sql = "SELECT id, registrar_id, tld
-                FROM fees
-                WHERE fee_fixed = '0'";
-        $result = mysqli_query($dbcon, $sql);
+            $tmpq = $this->system->db()->prepare("
+                UPDATE domains
+                SET fee_id = :id
+                WHERE registrar_id = :registrar_id
+                  AND tld = :tld
+                  AND fee_fixed = '0'");
 
-        while ($row = mysqli_fetch_object($result)) {
+            $tmpq2 = $this->system->db()->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.fee_fixed = '1',
+                    d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                WHERE d.registrar_id = :registrar_id
+                  AND d.tld = :tld
+                  AND d.privacy = '1'");
 
-            $sql2 = "UPDATE domains
-                     SET fee_id = '" . $row->id . "'
-                     WHERE registrar_id = '" . $row->registrar_id . "'
-                       AND tld = '" . $row->tld . "'
-                       AND fee_fixed = '0'";
-            mysqli_query($dbcon, $sql2);
+            $tmpq3 = $this->system->db()->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.fee_fixed = '1',
+                    d.total_cost = f.renewal_fee + f.misc_fee
+                WHERE d.registrar_id = :registrar_id
+                  AND d.tld = :tld
+                  AND d.privacy = '0'");
 
-            $sql2 = "UPDATE domains d
-                     JOIN fees f ON d.fee_id = f.id
-                     SET d.fee_fixed = '1',
-                         d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                     WHERE d.registrar_id = '" . $row->registrar_id . "'
-                       AND d.tld = '" . $row->tld . "'
-                       AND d.privacy = '1'";
-            mysqli_query($dbcon, $sql2);
+            $tmpq4 = $this->system->db()->prepare("
+                UPDATE fees
+                SET fee_fixed = '1',
+                    update_time = :update_time
+                WHERE registrar_id = :registrar_id
+                  AND tld = :tld");
 
-            $sql2 = "UPDATE domains d
-                     JOIN fees f ON d.fee_id = f.id
-                     SET d.fee_fixed = '1',
-                         d.total_cost = f.renewal_fee + f.misc_fee
-                     WHERE d.registrar_id = '" . $row->registrar_id . "'
-                       AND d.tld = '" . $row->tld . "'
-                       AND d.privacy = '0'";
-            mysqli_query($dbcon, $sql2);
+            foreach ($result as $row) {
 
-            $sql2 = "UPDATE fees
-                     SET fee_fixed = '1',
-                         update_time = '" . $timestamp . "'
-                     WHERE registrar_id = '" . $row->registrar_id . "'
-                       AND tld = '" . $row->tld . "'";
-            mysqli_query($dbcon, $sql2);
+                $tmpq->execute(['id' => $row->id,
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld]);
 
-        }
+                $tmpq2->execute(['registrar_id' => $row->registrar_id,
+                                 'tld' => $row->tld]);
 
-        return true;
+                $tmpq3->execute(['registrar_id' => $row->registrar_id,
+                                 'tld' => $row->tld]);
 
-    }
-
-    public function updateDomainFee($dbcon, $domain_id)
-    {
-
-        $time = new Time();
-        $timestamp = $time->stamp();
-
-        $sql = "SELECT registrar_id, tld
-                FROM domains
-                WHERE id = '" . $domain_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $registrar_id = $row->registrar_id;
-            $tld = $row->tld;
-
-        }
-
-        $sql = "UPDATE domains
-                SET fee_fixed = '0'
-                WHERE id = '" . $domain_id . "'";
-        mysqli_query($dbcon, $sql);
-
-        $sql = "UPDATE fees
-                SET fee_fixed = '0',
-                    update_time = '" . $timestamp . "'
-                WHERE registrar_id = '" . $registrar_id . "'
-                  AND tld = '" . $tld . "'";
-        mysqli_query($dbcon, $sql);
-
-        $sql = "SELECT id, registrar_id, tld
-                FROM fees
-                WHERE fee_fixed = '0'
-                  AND registrar_id = '" . $registrar_id . "'
-                  AND tld = '" . $tld . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $sql2 = "UPDATE domains
-                         SET fee_id = '" . $row->id . "'
-                         WHERE registrar_id = '" . $row->registrar_id . "'
-                           AND tld = '" . $row->tld . "'
-                           AND fee_fixed = '0'";
-                mysqli_query($dbcon, $sql2);
-
-                $sql2 = "UPDATE domains d
-                         JOIN fees f ON d.fee_id = f.id
-                         SET d.fee_fixed = '1',
-                             d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                         WHERE d.registrar_id = '" . $row->registrar_id . "'
-                           AND d.tld = '" . $row->tld . "'
-                           AND d.privacy = '1'";
-                mysqli_query($dbcon, $sql2);
-
-                $sql2 = "UPDATE domains d
-                         JOIN fees f ON d.fee_id = f.id
-                         SET d.fee_fixed = '1',
-                             d.total_cost = f.renewal_fee + f.misc_fee
-                         WHERE d.registrar_id = '" . $row->registrar_id . "'
-                           AND d.tld = '" . $row->tld . "'
-                           AND d.privacy = '0'";
-                mysqli_query($dbcon, $sql2);
-
-                $sql2 = "UPDATE fees
-                         SET fee_fixed = '1',
-                             update_time = '" . $timestamp . "'
-                         WHERE registrar_id = '" . $row->registrar_id . "'
-                           AND tld = '" . $row->tld . "'";
-                mysqli_query($dbcon, $sql2);
+                $tmpq4->execute(['update_time' => $this->time->stamp(),
+                                 'registrar_id' => $row->registrar_id,
+                                 'tld' => $row->tld]);
 
             }
 
         }
-
-        return true;
-
     }
 
-    public function updateSslFees($dbcon)
+    public function updateDomainFee($domain_id)
     {
+        $tmpq = $this->system->db()->prepare("
+            SELECT registrar_id, tld
+            FROM domains
+            WHERE id = :domain_id");
+        $tmpq->execute(['domain_id' => $domain_id]);
+        $result = $tmpq->fetch();
 
-        $time = new Time();
-        $timestamp = $time->stamp();
+        if ($result) {
 
-        $sql = "UPDATE ssl_certs
-                SET fee_fixed = '0'";
-        mysqli_query($dbcon, $sql);
-
-        $sql = "UPDATE ssl_fees
-                SET fee_fixed = '0',
-                    update_time = '" . $timestamp . "'";
-        mysqli_query($dbcon, $sql);
-
-        $sql = "SELECT id, ssl_provider_id, type_id
-                FROM ssl_fees
-                WHERE fee_fixed = '0'";
-        $result = mysqli_query($dbcon, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $sql2 = "UPDATE ssl_certs
-                     SET fee_id = '" . $row->id . "'
-                     WHERE ssl_provider_id = '" . $row->ssl_provider_id . "'
-                       AND type_id = '" . $row->type_id . "'
-                       AND fee_fixed = '0'";
-            mysqli_query($dbcon, $sql2);
-
-            $sql2 = "UPDATE ssl_certs sslc
-                     JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
-                     SET sslc.fee_fixed = '1',
-                         sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
-                     WHERE sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
-                       AND sslc.type_id = '" . $row->type_id . "'";
-            mysqli_query($dbcon, $sql2);
-
-            $sql2 = "UPDATE ssl_fees
-                     SET fee_fixed = '1',
-                         update_time = '" . mysqli_real_escape_string($dbcon, $timestamp) . "'
-                     WHERE ssl_provider_id = '" . $row->ssl_provider_id . "'
-                       AND type_id = '" . $row->type_id . "'";
-            mysqli_query($dbcon, $sql2);
+            $registrar_id = $result->registrar_id;
+            $tld = $result->tld;
 
         }
 
-        return true;
+        $tmpq = $this->system->db()->prepare("
+            UPDATE domains
+            SET fee_fixed = '0'
+            WHERE id = :domain_id");
+        $tmpq->execute(['domain_id' => $domain_id]);
 
+        $tmpq = $this->system->db()->prepare("
+            UPDATE fees
+            SET fee_fixed = '0',
+                update_time = :update_time
+            WHERE registrar_id = :registrar_id
+              AND tld = :tld");
+        $tmpq->execute(['update_time' => $this->time->stamp(),
+                        'registrar_id' => $registrar_id,
+                        'tld' => $tld]);
+
+        $tmpq = $this->system->db()->prepare("
+            SELECT id, registrar_id, tld
+            FROM fees
+            WHERE fee_fixed = '0'
+              AND registrar_id = :registrar_id
+              AND tld = :tld");
+        $tmpq->execute(['registrar_id' => $registrar_id,
+                        'tld' => $tld]);
+        $result = $tmpq->fetchAll();
+
+        if ($result) {
+
+            $tmpq = $this->system->db()->prepare("
+                UPDATE domains
+                SET fee_id = :fee_id
+                WHERE registrar_id = :registrar_id
+                  AND tld = :tld
+                  AND fee_fixed = '0'");
+
+            $tmpq2 = $this->system->db()->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.fee_fixed = '1',
+                    d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                WHERE d.registrar_id = :registrar_id
+                  AND d.tld = :tld
+                  AND d.privacy = '1'");
+
+            $tmpq3 = $this->system->db()->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.fee_fixed = '1',
+                    d.total_cost = f.renewal_fee + f.misc_fee
+                WHERE d.registrar_id = :registrar_id
+                  AND d.tld = :tld
+                  AND d.privacy = '0'");
+
+            $tmpq4 = $this->system->db()->prepare("
+                UPDATE fees
+                SET fee_fixed = '1',
+                    update_time = :update_time
+                WHERE registrar_id = :registrar_id
+                  AND tld = :tld");
+
+            foreach ($result as $row) {
+
+                $tmpq->execute(['fee_id' => $row->id,
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld]);
+
+                $tmpq2->execute(['registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld]);
+
+                $tmpq3->execute(['registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld]);
+
+                $tmpq4->execute(['update_time' => $this->time->stamp(),
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld]);
+
+            }
+
+        }
     }
 
-    public function deleteUnusedFees($dbcon, $fee_table, $compare_table)
+    public function updateSslFees()
     {
-        $sql = "DELETE FROM " . $fee_table . "
-                WHERE id NOT IN (
-                                 SELECT fee_id
-                                 FROM " . $compare_table . "
-                                 )";
-        mysqli_query($dbcon, $sql);
-        return true;
+        $this->system->db()->query("UPDATE ssl_certs SET fee_fixed = '0'");
+
+        $tmpq = $this->system->db()->prepare("
+            UPDATE ssl_fees
+            SET fee_fixed = '0',
+                update_time = :update_time");
+        $tmpq->execute(['update_time' => $this->time->stamp()]);
+
+        $tmpq = $this->system->db()->query("
+            SELECT id, ssl_provider_id, type_id
+            FROM ssl_fees
+            WHERE fee_fixed = '0'");
+        $result = $tmpq->fetchAll();
+
+        if ($result) {
+
+            $tmpq = $this->system->db()->prepare("
+                UPDATE ssl_certs
+                SET fee_id = :id
+                WHERE ssl_provider_id = :ssl_provider_id
+                  AND type_id = :type_id
+                  AND fee_fixed = '0'");
+
+            $tmpq2 = $this->system->db()->prepare("
+                UPDATE ssl_certs sslc
+                JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                SET sslc.fee_fixed = '1',
+                    sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                WHERE sslc.ssl_provider_id = :ssl_provider_id
+                  AND sslc.type_id = :type_id");
+
+            $tmpq3 = $this->system->db()->prepare("
+                UPDATE ssl_fees
+                SET fee_fixed = '1',
+                    update_time = :update_time
+                WHERE ssl_provider_id = :ssl_provider_id
+                  AND type_id = :type_id");
+
+            foreach ($result as $row) {
+
+                $tmpq->execute(['id' => $row->id,
+                                'ssl_provider_id' => $row->ssl_provider_id,
+                                'type_id' => $row->type_id]);
+
+                $tmpq2->execute(['ssl_provider_id' => $row->ssl_provider_id,
+                                 'type_id' => $row->type_id]);
+
+                $tmpq3->execute(['update_time' => $this->time->stamp(),
+                                 'ssl_provider_id' => $row->ssl_provider_id,
+                                 'type_id' => $row->type_id]);
+
+            }
+
+        }
+    }
+
+    public function deleteUnusedFees($fee_table, $compare_table)
+    {
+        $this->system->db()->query("
+            DELETE FROM " . $fee_table . "
+            WHERE id NOT IN (
+                             SELECT fee_id
+                             FROM " . $compare_table . "
+                            )");
     }
 
 } //@formatter:on

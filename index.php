@@ -42,7 +42,7 @@ require_once(DIR_INC . '/database.inc.php');
 
 $system->loginCheck();
 
-list($installation_mode, $result_message) = $system->installCheck($dbcon);
+list($installation_mode, $result_message) = $system->installCheck();
 $_SESSION['s_installation_mode'] = $installation_mode;
 $_SESSION['s_message_danger'] .= $result_message;
 
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
             }
 
-            $_SESSION['s_system_db_version'] = $system->getDbVersion($dbcon);
+            $_SESSION['s_system_db_version'] = $system->getDbVersion();
 
             $_SESSION['s_is_logged_in'] = 1;
 

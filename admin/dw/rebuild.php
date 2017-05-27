@@ -54,7 +54,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <?php
 if (DEMO_INSTALLATION !== '1') {
 
-    $result_message = $dw->build($dbcon);
+    $result_message = $dw->build();
 
 } else {
 

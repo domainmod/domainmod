@@ -34,14 +34,16 @@ class Conversion
     {
         $result = $this->getActiveCurrencies();
 
+        $tmpq = $this->system->db()->prepare("
+            SELECT id
+            FROM currency_conversions
+            WHERE currency_id = :currency_id
+              AND user_id = :user_id");
+
         foreach ($result as $row) {
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
 
-            $tmpq = $this->system->db()->prepare("SELECT id
-                                                  FROM currency_conversions
-                                                  WHERE currency_id = :currency_id
-                                                    AND user_id = :user_id");
             $tmpq->execute(['currency_id' => $row->id,
                             'user_id' => $user_id]);
             $result = $tmpq->fetchColumn();
@@ -71,21 +73,22 @@ class Conversion
 
     public function getActiveCurrencies()
     {
-        $tmpq = $this->system->db()->query("SELECT id, currency
-                                            FROM
-                                            (  SELECT c.id, c.currency
-                                               FROM currencies AS c, fees AS f, domains AS d
-                                               WHERE c.id = f.currency_id
-                                                 AND f.id = d.fee_id
-                                               GROUP BY c.currency
-                                               UNION
-                                               SELECT c.id, c.currency
-                                               FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
-                                               WHERE c.id = f.currency_id
-                                                 AND f.id = sslc.fee_id
-                                               GROUP BY c.currency
-                                            ) AS temp
-                                            GROUP BY currency");
+        $tmpq = $this->system->db()->query("
+            SELECT id, currency
+            FROM
+            (  SELECT c.id, c.currency
+               FROM currencies AS c, fees AS f, domains AS d
+               WHERE c.id = f.currency_id
+                 AND f.id = d.fee_id
+               GROUP BY c.currency
+               UNION
+               SELECT c.id, c.currency
+               FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
+               WHERE c.id = f.currency_id
+                 AND f.id = sslc.fee_id
+               GROUP BY c.currency
+            ) AS temp
+            GROUP BY currency");
         $result = $tmpq->fetchAll();
 
         if (!$result) {
@@ -130,11 +133,12 @@ class Conversion
     {
         if ($is_existing == '1') {
 
-            $tmpq = $this->system->db()->prepare("UPDATE currency_conversions
-                                                  SET conversion = :conversion_rate,
-                                                      update_time = :update_time
-                                                  WHERE currency_id = :currency_id
-                                                    AND user_id = :user_id");
+            $tmpq = $this->system->db()->prepare("
+                UPDATE currency_conversions
+                SET conversion = :conversion_rate,
+                    update_time = :update_time
+                WHERE currency_id = :currency_id
+                  AND user_id = :user_id");
             $tmpq->execute(['conversion_rate' => $conversion_rate,
                             'update_time' => $this->time->stamp(),
                             'currency_id' => $currency_id,
@@ -146,10 +150,11 @@ class Conversion
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("INSERT INTO currency_conversions
-                                                  (currency_id, user_id, conversion, insert_time)
-                                                  VALUES
-                                                  (:currency_id, :user_id, :conversion_rate, :update_time)");
+            $tmpq = $this->system->db()->prepare("
+                INSERT INTO currency_conversions
+                (currency_id, user_id, conversion, insert_time)
+                VALUES
+                (:currency_id, :user_id, :conversion_rate, :update_time)");
             $tmpq->execute(['currency_id' => $currency_id,
                             'user_id' => $user_id,
                             'conversion_rate' => $conversion_rate,
@@ -160,9 +165,6 @@ class Conversion
             $this->log->info($log_message, $log_extra);
 
         }
-
-        return;
-
     }
 
 } //@formatter:on

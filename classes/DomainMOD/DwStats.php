@@ -23,160 +23,113 @@ namespace DomainMOD;
 
 class DwStats
 {
-
-    public function updateServerStats($dbcon, $result)
+    public function __construct()
     {
+        $this->system = new System();
+        $this->time = new Time();
+    }
 
-        while ($row = mysqli_fetch_object($result)) {
+    public function updateServerStats($result)
+    {
+        foreach ($result as $row) {
 
-            $total_dw_accounts = $this->getTotals($dbcon, $row->id, 'dw_accounts');
-            $total_dw_dns_zones = $this->getTotals($dbcon, $row->id, 'dw_dns_zones');
-            $total_dw_dns_records = $this->getTotals($dbcon, $row->id, 'dw_dns_records');
-            $this->updateServerTotals($dbcon, $row->id, $total_dw_accounts, $total_dw_dns_zones,
-                $total_dw_dns_records);
+            $total_dw_accounts = $this->getTotals($row->id, 'dw_accounts');
+            $total_dw_dns_zones = $this->getTotals($row->id, 'dw_dns_zones');
+            $total_dw_dns_records = $this->getTotals($row->id, 'dw_dns_records');
+            $this->updateServerTotals($row->id, $total_dw_accounts, $total_dw_dns_zones, $total_dw_dns_records);
 
         }
-
     }
 
-    public function getTotals($dbcon, $server_id, $table)
+    public function getTotals($server_id, $table)
     {
-
-        $sql = "SELECT count(*) AS total
-                FROM `" . $table . "`
-                WHERE server_id = '" . $server_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        $total = '';
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total = $row->total;
-
-        }
-
-        return $total;
-
+        $tmpq = $this->system->db()->prepare("
+            SELECT count(*)
+            FROM `" . $table . "`
+            WHERE server_id = :server_id");
+        $tmpq->execute(['server_id' => $server_id]);
+        return $tmpq->fetchColumn();
     }
 
-    public function updateServerTotals($dbcon, $server_id, $total_dw_accounts, $total_dw_dns_zones,
-                                       $total_dw_dns_records)
+    public function updateServerTotals($server_id, $total_accounts, $total_dns_zones, $total_dns_records)
     {
-
-        $sql_update = "UPDATE dw_servers
-                       SET dw_accounts = '" . $total_dw_accounts . "',
-                           dw_dns_zones = '" . $total_dw_dns_zones . "',
-                           dw_dns_records = '" . $total_dw_dns_records . "'
-                       WHERE id = '" . $server_id . "'";
-        mysqli_query($dbcon, $sql_update);
-
-        return true;
-
+        $tmpq = $this->system->db()->prepare("
+            UPDATE dw_servers
+            SET dw_accounts = :total_accounts,
+                dw_dns_zones = :total_dns_zones,
+                dw_dns_records = :total_dns_records
+            WHERE id = :server_id");
+        $tmpq->execute(['total_accounts' => $total_accounts,
+                        'total_dns_zones' => $total_dns_zones,
+                        'total_dns_records' => $total_dns_records,
+                        'server_id' => $server_id]);
     }
 
-    public function updateDwTotalsTable($dbcon)
+    public function updateDwTotalsTable()
     {
-
         $accounts = new DwAccounts();
         $zones = new DwZones();
         $records = new DwRecords();
 
-        $this->deleteTotalsTable($dbcon);
-        $this->recreateDwTotalsTable($dbcon);
-        $total_dw_servers = $this->getTotalDwServers($dbcon);
-        $total_dw_accounts = $accounts->getTotalDwAccounts($dbcon);
-        $total_dw_zones = $zones->getTotalDwZones($dbcon);
-        $total_dw_records = $records->getTotalDwRecords($dbcon);
-        $this->updateTable($dbcon, $total_dw_servers, $total_dw_accounts, $total_dw_zones, $total_dw_records);
-
-        return true;
-
+        $this->deleteTotalsTable();
+        $this->recreateDwTotalsTable();
+        $total_dw_servers = $this->getTotalDwServers();
+        $total_dw_accounts = $accounts->getTotalDwAccounts();
+        $total_dw_zones = $zones->getTotalDwZones();
+        $total_dw_records = $records->getTotalDwRecords();
+        $this->updateTable($total_dw_servers, $total_dw_accounts, $total_dw_zones, $total_dw_records);
     }
 
-    public function deleteTotalsTable($dbcon)
+    public function deleteTotalsTable()
     {
-
-        $sql = "DROP TABLE IF EXISTS dw_server_totals";
-        mysqli_query($dbcon, $sql);
-
-        return true;
-
+        $this->system->db()->query("DROP TABLE IF EXISTS dw_server_totals");
     }
 
-    public function recreateDwTotalsTable($dbcon)
+    public function recreateDwTotalsTable()
     {
-
-        $sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
-                    `id` INT(10) NOT NULL AUTO_INCREMENT,
-                    `dw_servers` INT(10) NOT NULL,
-                    `dw_accounts` INT(10) NOT NULL,
-                    `dw_dns_zones` INT(10) NOT NULL,
-                    `dw_dns_records` INT(10) NOT NULL,
-                    `insert_time` DATETIME NOT NULL,
-                    PRIMARY KEY  (`id`)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-        mysqli_query($dbcon, $sql);
-
-        return true;
-
+        $this->system->db()->query("
+            CREATE TABLE IF NOT EXISTS `dw_server_totals` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `dw_servers` INT(10) NOT NULL,
+                `dw_accounts` INT(10) NOT NULL,
+                `dw_dns_zones` INT(10) NOT NULL,
+                `dw_dns_records` INT(10) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;");
     }
 
-    public function getTotalDwServers($dbcon)
+    public function getTotalDwServers()
     {
-
-        $total_dw_servers = '';
-
-        $sql_servers = "SELECT count(*) AS total_dw_servers
-                        FROM `dw_servers`";
-        $result_servers = mysqli_query($dbcon, $sql_servers);
-
-        while ($row_servers = mysqli_fetch_object($result_servers)) {
-
-            $total_dw_servers = $row_servers->total_dw_servers;
-
-        }
-
-        return $total_dw_servers;
-
+        $tmpq = $this->system->db()->query("
+            SELECT count(*)
+            FROM `dw_servers`");
+        return $tmpq->fetchColumn();
     }
 
-    public function updateTable($dbcon, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
+    public function updateTable($total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
-
-        $time = new Time();
-
-        $sql_insert = "INSERT INTO dw_server_totals
-                       (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
-                       VALUES
-                       ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "',
-                        '" . $total_dw_records . "', '" . $time->stamp() . "')";
-        mysqli_query($dbcon, $sql_insert);
-
-        return true;
-
+        $tmpq = $this->system->db()->prepare("
+            INSERT INTO dw_server_totals
+            (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
+            VALUES
+            (:total_dw_servers, :total_dw_accounts, :total_dw_dns_zones,
+             :total_dw_records, :insert_time)");
+        $tmpq->execute(['total_dw_servers' => $total_dw_servers,
+                        'total_dw_accounts' => $total_dw_accounts,
+                        'total_dw_dns_zones' => $total_dw_dns_zones,
+                        'total_dw_records' => $total_dw_records,
+                        'insert_time' => $this->time->stamp()]);
     }
 
-    public function getServerTotals($dbcon)
+    public function getServerTotals()
     {
+        $tmpq = $this->system->db()->query("
+            SELECT dw_accounts, dw_dns_zones, dw_dns_records
+            FROM dw_server_totals");
+        $result = $tmpq->fetch();
 
-        $temp_dw_accounts = '0';
-        $temp_dw_dns_zones = '0';
-        $temp_dw_dns_records = '0';
-
-        $sql = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
-                FROM dw_server_totals";
-        $result = mysqli_query($dbcon, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $temp_dw_accounts = $row->dw_accounts;
-            $temp_dw_dns_zones = $row->dw_dns_zones;
-            $temp_dw_dns_records = $row->dw_dns_records;
-
-        }
-
-        return array($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
-
+        return array($result->dw_accounts, $result->dw_dns_zones, $result->dw_dns_records);
     }
 
 } //@formatter:on

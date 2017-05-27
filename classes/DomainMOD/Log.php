@@ -26,7 +26,6 @@ class Log
 
     public function __construct($area)
     {
-        $this->system = new System();
         $this->time = new Time();
         $this->area = $area;
         if ($_SESSION['s_user_id']) {
@@ -39,15 +38,17 @@ class Log
 
     public function addEntry($level, $message, $extra_info)
     {
+        $system = new System();
         if ($extra_info != '') {
             $extra_info_formatted = $this->formatExtraInfo($extra_info);
         } else {
             $extra_info_formatted = '';
         }
-        $tmpq = $this->system->db()->prepare("INSERT INTO `log`
-                                             (`user_id`, `area`, `level`, `message`, `extra`, `url`, `insert_time`)
-                                             VALUES
-                                             (:user_id, :area, :level, :message, :extra, :url, :insert_time)");
+        $tmpq = $system->db()->prepare("
+            INSERT INTO `log`
+            (`user_id`, `area`, `level`, `message`, `extra`, `url`, `insert_time`)
+            VALUES
+            (:user_id, :area, :level, :message, :extra, :url, :insert_time)");
         $tmpq->execute(['user_id' => $this->user_id,
                         'area' => $this->area,
                         'level' => $level,

@@ -298,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid == "" || $new_raid == "0" || $has_existing_domains == '1' || $has_existing_domains_queue == '1') {
 
-                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR><BR>";
+                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
                     if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered is already in the domain queue.<BR>";
                     if ($new_raid == "" || $new_raid == "0") $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
 

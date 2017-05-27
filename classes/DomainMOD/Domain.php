@@ -23,10 +23,15 @@ namespace DomainMOD;
 
 class Domain
 {
+    public function __construct()
+    {
+        $this->system = new System();
+        $this->log = new Log('domain.class');
+        $this->time = new Time();
+    }
 
     public function findInvalidDomains($lines)
     {
-
         $invalid_to_display = 5;
         $invalid_domains = 0;
         $invalid_count = 0;
@@ -50,7 +55,6 @@ class Domain
         }
 
         return array($invalid_to_display, $invalid_domains, $invalid_count, $result_message);
-
     }
 
     public function checkFormat($input_domain)
@@ -67,31 +71,36 @@ class Domain
         }
 */
         return $input_domain;
-
     }
 
-    public function renew($dbcon, $domain, $renewal_years, $notes)
+    public function renew($domain, $renewal_years, $notes)
     {
-        $expiry_date = $this->getExpiry($dbcon, $domain);
+        $expiry_date = $this->getExpiry($domain);
         $new_expiry = $this->getNewExpiry($expiry_date, $renewal_years);
-        $this->writeNewExpiry($dbcon, $domain, $new_expiry, $notes);
+        $this->writeNewExpiry($domain, $new_expiry, $notes);
     }
 
-    public function getExpiry($dbcon, $domain)
+    public function getExpiry($domain)
     {
-        $expiry = '';
-        $query = "SELECT expiry_date
-                  FROM domains
-                  WHERE domain = ?";
-        $qrun = $dbcon->stmt_init();
-        $qrun->prepare($query);
-        $qrun->bind_param('s', $domain);
-        $qrun->execute();
-        $qrun->store_result();
-        $qrun->bind_result($expiry);
-        while ($qrun->fetch()) { $expiry_date = $expiry; }
-        $qrun->close();
-        return $expiry_date;
+        $tmpq = $this->system->db()->prepare("
+            SELECT expiry_date
+            FROM domains
+            WHERE domain = :domain");
+        $tmpq->execute(['domain' => $domain]);
+        $result = $tmpq->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = "Unable to retrieve domain's expiry date";
+            $log_extra = array('Domain' => $domain);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
     }
 
     public function getNewExpiry($expiry_date, $renewal_years)
@@ -100,36 +109,33 @@ class Domain
         return $expiry_pieces[0] + $renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
     }
 
-    public function writeNewExpiry($dbcon, $domain, $new_expiry, $notes)
+    public function writeNewExpiry($domain, $new_expiry, $notes)
     {
-        $time = new Time();
-        $timestamp = $time->stamp();
-
         if ($notes != '') {
 
-            $query = "UPDATE domains
-                      SET expiry_date = ?,
-                          notes = CONCAT(?, '\r\n\r\n', notes),
-                          update_time = ?
-                      WHERE domain = ?";
-            $q = $dbcon->stmt_init();
-            $q->prepare($query);
-            $q->bind_param('ssss', $new_expiry, $notes, $timestamp, $domain);
+            $tmpq = $this->system->db()->prepare("
+                UPDATE domains
+                SET expiry_date = :new_expiry,
+                    notes = CONCAT(:notes, '\r\n\r\n', notes),
+                    update_time = :update_time
+                WHERE domain = :domain");
+            $tmpq->execute(['new_expiry' => $new_expiry,
+                            'notes' => $notes,
+                            'update_time' => $this->time->stamp(),
+                            'domain' => $domain]);
 
         } else {
 
-            $query = "UPDATE domains
-                      SET expiry_date = ?,
-                          update_time = ?
-                      WHERE domain = ?";
-            $q = $dbcon->stmt_init();
-            $q->prepare($query);
-            $q->bind_param('sss', $new_expiry, $timestamp, $domain);
+           $tmpq = $this->system->db()->prepare("
+                UPDATE domains
+                SET expiry_date = :new_expiry,
+                    update_time = :update_time
+                WHERE domain = :domain");
+            $tmpq->execute(['new_expiry' => $new_expiry,
+                            'update_time' => $this->time->stamp(),
+                            'domain' => $domain]);
 
         }
-
-        $q->execute();
-        $q->close();
     }
 
     public function getTld($domain)

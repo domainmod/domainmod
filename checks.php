@@ -163,12 +163,12 @@ while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 }
 
 // Check to see if there are any domain lists or domains in the queue
-$queue = new DomainMOD\DomainQueue($dbcon);
-$queue->checkListQueue($dbcon);
-$queue->checkDomainQueue($dbcon);
+$queue = new DomainMOD\DomainQueue();
+$queue->checkListQueue();
+$queue->checkDomainQueue();
 
 // Check for existing Domain and SSL assets
-$system->checkExistingAssets($dbcon);
+$system->checkExistingAssets();
 
 unset($_SESSION['s_installation_mode']);
 
@@ -189,12 +189,12 @@ if ($_SESSION['s_version_error'] != '1') {
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('domains');
-    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('ssl_certs');
-    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
+    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
     if ($_SESSION['s_is_new_password'] == 1) {
 
@@ -207,10 +207,10 @@ if ($_SESSION['s_version_error'] != '1') {
 }
 
 // Check GitHub to see if a newer version is available
-$system->checkVersion($dbcon, SOFTWARE_VERSION);
+$system->checkVersion(SOFTWARE_VERSION);
 
 // Log installation and upgrade activity
-$goal->remote($dbcon);
+$goal->remote();
 
 unset($_SESSION['s_running_login_checks']);
 

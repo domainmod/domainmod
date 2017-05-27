@@ -26,7 +26,6 @@ class Date
 
     public function checkDateFormat($input_date)
     {
-
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $input_date, $output_date)) {
 
             return checkdate($output_date[2], $output_date[3], $output_date[1]);
@@ -36,12 +35,10 @@ class Date
             return false;
 
         }
-
     }
 
     public function splitAndCheckRange($daterange)
     {
-
         $start_date = substr($daterange, 0, 10);
         $end_date = substr($daterange, -10, 10);
 
@@ -49,7 +46,6 @@ class Date
         if (!$this->checkDateFormat($end_date)) $end_date = '2300-01-01';
 
         return array($start_date, $end_date);
-
     }
 
 } //@formatter:on

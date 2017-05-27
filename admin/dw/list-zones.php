@@ -258,7 +258,7 @@ if (mysqli_num_rows($result) == 0) {
             <tr>
                 <td></td>
                 <td>
-                    <?php echo $dwdisplay->zoneSidebar($dbcon, $row->server_id, $row->domain, '1', '1'); ?>
+                    <?php echo $dwdisplay->zoneSidebar($row->server_id, $row->domain, '1', '1'); ?>
                 </td>
                 <td>
                     <?php echo $dwdisplay->zone($dbcon, $row->server_id, $row->domain); ?>

@@ -26,20 +26,17 @@ class QueryBuild
 
     public function missingFees($table)
     {
-
         return "SELECT id
                 FROM " . $table . "
-                WHERE fee_id = '0'";
-
+                WHERE fee_id = '0'
+                LIMIT 1";
     }
 
     public function singleAsset($table)
     {
-
         return "SELECT id
                 FROM " . $table . "
                 LIMIT 1";
-
     }
 
 } //@formatter:on

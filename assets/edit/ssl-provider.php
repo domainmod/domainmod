@@ -222,7 +222,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: ../ssl-providers.php");
     exit;

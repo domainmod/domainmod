@@ -274,7 +274,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: ../registrar-accounts.php");
     exit;

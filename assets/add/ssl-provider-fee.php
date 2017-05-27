@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $queryB = new DomainMOD\QueryBuild();
 
                 $sql = $queryB->missingFees('ssl_certs');
-                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
+                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 

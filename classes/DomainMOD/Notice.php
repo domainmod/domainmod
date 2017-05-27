@@ -35,9 +35,6 @@ class Notice
             AND YOU HAVEN'T CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER.<BR>***** WARNING *****</strong><BR><BR>          
             Please be patient, this may take a moment.<BR><BR>
             <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
-
-        return true;
-
     }
 
 } //@formatter:on

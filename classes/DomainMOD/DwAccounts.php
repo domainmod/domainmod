@@ -23,111 +23,117 @@ namespace DomainMOD;
 
 class DwAccounts
 {
-
-    public function createTable($dbcon)
+    public function __construct()
     {
+        $this->system = new System();
+        $this->time = new Time();
+    }
 
-        $sql_accounts = "CREATE TABLE IF NOT EXISTS dw_accounts (
-                             id INT(10) NOT NULL AUTO_INCREMENT,
-                             server_id INT(10) NOT NULL,
-                             domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             ip VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             email VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             plan VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             theme VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             shell VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `partition` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             disklimit VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             diskused VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxaddons VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxftp VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxlst VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxparked VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxpop VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsql VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsub VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             unix_startdate INT(10) NOT NULL,
-                             suspended INT(1) NOT NULL,
-                             suspendreason VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             suspendtime INT(10) NOT NULL,
-                             MAX_EMAIL_PER_HOUR INT(10) NOT NULL,
-                             MAX_DEFER_FAIL_PERCENTAGE INT(10) NOT NULL,
-                             MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION INT(10) NOT NULL,
-                             insert_time DATETIME NOT NULL,
-                             PRIMARY KEY  (id)
-                         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($dbcon, $sql_accounts);
-
-        return true;
-
+    public function createTable()
+    {
+        $this->system->db()->query("
+            CREATE TABLE IF NOT EXISTS dw_accounts (
+                id INT(10) NOT NULL AUTO_INCREMENT,
+                server_id INT(10) NOT NULL,
+                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                ip VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                email VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                plan VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                theme VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                shell VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `partition` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                disklimit VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                diskused VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxaddons VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxftp VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxlst VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxparked VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxpop VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxsql VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                maxsub VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                unix_startdate INT(10) NOT NULL,
+                suspended INT(1) NOT NULL,
+                suspendreason VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                suspendtime INT(10) NOT NULL,
+                MAX_EMAIL_PER_HOUR INT(10) NOT NULL,
+                MAX_DEFER_FAIL_PERCENTAGE INT(10) NOT NULL,
+                MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION INT(10) NOT NULL,
+                insert_time DATETIME NOT NULL,
+                PRIMARY KEY  (id)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
 
     public function getApiCall()
     {
-
         return "/xml-api/listaccts?searchtype=domain&search=";
-
     }
 
-    public function insertAccounts($dbcon, $api_results, $server_id)
+    public function insertAccounts($api_results, $server_id)
     {
-
         if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
+
+            $tmpq = $this->system->db()->prepare("
+                INSERT INTO dw_accounts
+                (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
+                 diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate,
+                 unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR,
+                 MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
+                VALUES
+                (:server_id, :domain, :ip, :owner, :user, :email, :plan, :theme, :shell, :partition, :disklimit,
+                 :diskused, :maxaddons, :maxftp, :maxlst, :maxparked, :maxpop, :maxsql, :maxsub, :startdate,
+                 :unix_startdate, :suspended, :suspendreason, :suspendtime, :max_email_per_hour,
+                 :max_defer_fail_percentage, :min_defer_fail_to_trigger_protection, :insert_time)");
 
             foreach ($xml->acct as $hit) {
 
                 $disklimit_formatted = rtrim($hit->disklimit, 'M');
                 $diskused_formatted = rtrim($hit->diskused, 'M');
 
-                $time = new Time();
-
-                $sql = "INSERT INTO dw_accounts
-                        (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
-                         diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate,
-                         unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR,
-                         MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
-                        VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner . "',
-                         '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme . "',
-                         '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted . "',
-                         '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "',
-                         '" . $hit->maxlst . "', '" . $hit->maxparked . "', '" . $hit->maxpop . "', '" . $hit->maxsql . "',
-                         '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate . "',
-                         '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime . "',
-                         '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "',
-                         '" . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql);
+                $tmpq->execute(['server_id' => $server_id,
+                                'domain' => $hit->domain,
+                                'ip' => $hit->ip,
+                                'owner' => $hit->owner,
+                                'user' => $hit->user,
+                                'email' => $hit->email,
+                                'plan' => $hit->plan,
+                                'theme' => $hit->theme,
+                                'shell' => $hit->shell,
+                                'partition' => $hit->partition,
+                                'disklimit' => $disklimit_formatted,
+                                'diskused' => $diskused_formatted,
+                                'maxaddons' => $hit->maxaddons,
+                                'maxftp' => $hit->maxftp,
+                                'maxlst' => $hit->maxlst,
+                                'maxparked' => $hit->maxparked,
+                                'maxpop' => $hit->maxpop,
+                                'maxsql' => $hit->maxsql,
+                                'maxsub' => $hit->maxsub,
+                                'startdate' => $hit->startdate,
+                                'unix_startdate' => $hit->unix_startdate,
+                                'suspended' => $hit->suspended,
+                                'suspendreason' => $hit->suspendreason,
+                                'suspendtime' => $hit->suspendtime,
+                                'max_email_per_hour' => $hit->MAX_EMAIL_PER_HOUR,
+                                'max_defer_fail_percentage' => $hit->MAX_DEFER_FAIL_PERCENTAGE,
+                                'min_defer_fail_to_trigger_protection' => $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION,
+                                'insert_time' => $this->time->stamp()]);
 
             }
 
         }
-
-        return true;
-
     }
 
-    public function getTotalDwAccounts($dbcon)
+    public function getTotalDwAccounts()
     {
-
-        $total_dw_accounts = '';
-
-        $sql_accounts = "SELECT count(*) AS total_dw_accounts
-                         FROM `dw_accounts`";
-        $result_accounts = mysqli_query($dbcon, $sql_accounts);
-
-        while ($row_accounts = mysqli_fetch_object($result_accounts)) {
-
-            $total_dw_accounts = $row_accounts->total_dw_accounts;
-
-        }
-
-        return $total_dw_accounts;
-
+        $tmpq = $this->system->db()->query("
+            SELECT count(*)
+            FROM `dw_accounts`");
+        return $tmpq->fetchColumn();
     }
 
 } //@formatter:on

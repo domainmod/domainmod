@@ -23,102 +23,85 @@ namespace DomainMOD;
 
 class DwZones
 {
-
-    public function createTable($dbcon)
+    public function __construct()
     {
+        $this->system = new System();
+        $this->time = new Time();
+    }
 
-        $sql_zones = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
-                          id INT(10) NOT NULL AUTO_INCREMENT,
-                          server_id INT(10) NOT NULL,
-                          domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          insert_time DATETIME NOT NULL,
-                          PRIMARY KEY  (id)
-                          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($dbcon, $sql_zones);
-
-        return true;
-
+    public function createTable()
+    {
+        $this->system->db()->query("
+            CREATE TABLE IF NOT EXISTS dw_dns_zones (
+                id INT(10) NOT NULL AUTO_INCREMENT,
+                server_id INT(10) NOT NULL,
+                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                insert_time DATETIME NOT NULL,
+                PRIMARY KEY  (id)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
 
     public function getApiCall()
     {
-
         return "/xml-api/listzones";
-
     }
 
-    public function insertZones($dbcon, $api_results, $server_id)
+    public function insertZones($api_results, $server_id)
     {
-
         if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
-            $time = new Time();
+            $tmpq = $this->system->db()->prepare("
+                INSERT INTO dw_dns_zones
+                (server_id, domain, zonefile, insert_time)
+                VALUES
+                (:server_id, :domain, :zonefile, :insert_time)");
 
             foreach ($xml->zone as $hit) {
 
-                $sql = "INSERT INTO dw_dns_zones
-                        (server_id, domain, zonefile, insert_time)
-                        VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql);
+                $tmpq->execute(['server_id' => $server_id,
+                                'domain' => $hit->domain,
+                                'zonefile' => $hit->zonefile,
+                                'insert_time' => $this->time->stamp()]);
 
             }
 
         }
-
-        return true;
-
     }
 
-    public function getInsertedZones($dbcon, $server_id)
+    public function getInsertedZones($server_id)
     {
-
-        $sql = "SELECT id, domain
-                FROM dw_dns_zones
-                WHERE server_id = '" . $server_id . "'
-                ORDER BY domain";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
-
+        $tmpq = $this->system->db()->prepare("
+            SELECT id, domain
+            FROM dw_dns_zones
+            WHERE server_id = :server_id
+            ORDER BY domain");
+        $tmpq->execute(['server_id' => $server_id]);
+        return $tmpq->fetchAll();
     }
 
-    public function processEachZone($dbcon, $result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
+    public function processEachZone($result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
     {
-
-        while ($row_zones = mysqli_fetch_object($result_zones)) {
+        foreach ($result_zones as $row_zones) {
 
             $build = new DwBuild();
             $records = new DwRecords();
 
             $api_call = $records->getApiCall($row_zones->domain);
             $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash);
-            $records->insertRecords($dbcon, $api_results, $server_id, $row_zones->id, $row_zones->domain);
+            $records->insertRecords($api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }
-
     }
 
-    public function getTotalDwZones($dbcon)
+    public function getTotalDwZones()
     {
-
-        $total_dw_zones = '';
-
-        $sql_zones = "SELECT count(*) AS total_dw_zones
-                      FROM `dw_dns_zones`";
-        $result_zones = mysqli_query($dbcon, $sql_zones);
-
-        while ($row_zones = mysqli_fetch_object($result_zones)) {
-
-            $total_dw_zones = $row_zones->total_dw_zones;
-
-        }
-
-        return $total_dw_zones;
-
+        $tmpq = $this->system->db()->query("
+            SELECT count(*)
+            FROM `dw_dns_zones`");
+        return $tmpq->fetchColumn();
     }
 
 } //@formatter:on

@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class NameBright
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'NameBright';
         $this->log = new Log('namebright.class');
         $this->format = new Format();
@@ -52,6 +50,7 @@ class NameBright
         } else {
             return array('Unable to build API URL', '');
         }
+
         return array($full_url, $post_fields);
     }
 
@@ -197,7 +196,6 @@ class NameBright
 
     public function processPrivacy($privacy_result)
     {
-
         if ($privacy_result == '1') {
             $privacy_status = '1';
         } else {

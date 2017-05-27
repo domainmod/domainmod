@@ -230,9 +230,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $queryB = new DomainMOD\QueryBuild();
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
-        $system->checkExistingAssets($dbcon);
+        $system->checkExistingAssets();
 
         $_SESSION['s_message_success'] .= 'SSL Certificate ' . $new_name . ' Added<BR>';
 

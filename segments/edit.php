@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_success'] .= "Segment " . $new_name . " Updated<BR>";
 
-            $maint->updateSegments($dbcon);
+            $maint->updateSegments();
 
             header("Location: ../segments/");
             exit;

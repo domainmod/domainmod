@@ -219,7 +219,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
 
-    $system->checkExistingAssets($dbcon);
+    $system->checkExistingAssets();
 
     header("Location: ../registrars.php");
     exit;

@@ -209,7 +209,7 @@ if ($really_del == "1") {
     }
 
     $dwstats = new DomainMOD\DwStats();
-    $dwstats->updateDwTotalsTable($dbcon);
+    $dwstats->updateDwTotalsTable();
 
     $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Deleted<BR>";
 

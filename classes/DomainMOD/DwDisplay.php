@@ -23,13 +23,17 @@ namespace DomainMOD;
 
 class DwDisplay
 {
-
-    public function account($dbcon, $server_id, $domain)
+    public function __construct()
     {
-        $result_account = $this->getAccount($dbcon, $server_id, $domain);
+        $this->system = new System();
+    }
+
+    public function account($server_id, $domain)
+    {
+        $result_account = $this->getAccount($server_id, $domain);
         $result = '';
 
-        while ($row = mysqli_fetch_object($result_account)) {
+        foreach ($result_account as $row) {
 
             ob_start();  ?>
 
@@ -65,19 +69,24 @@ class DwDisplay
 
             $result = ob_get_clean();
         }
+
         return $result;
     }
 
-    public function getAccount($dbcon, $server_id, $domain)
+    public function getAccount($server_id, $domain)
     {
-        $sql = "SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
-                    a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
-                    a.suspended, a.suspendtime, a.suspendreason, s.name AS server_name
-                FROM dw_accounts AS a, dw_servers AS s
-                WHERE a.server_id = s.id
-                  AND a.server_id = '" . $server_id . "'
-                  AND a.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'";
-        return mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->prepare("
+            SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
+                a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
+                a.suspended, a.suspendtime, a.suspendreason, s.name AS server_name
+            FROM dw_accounts AS a, dw_servers AS s
+            WHERE a.server_id = s.id
+              AND a.server_id = :server_id
+              AND a.domain = :domain");
+        $tmpq->execute(['server_id' => $server_id,
+                        'domain' => $domain]);
+
+        return $tmpq->fetchAll();
     }
 
     public function accountSidebar($server_name, $domain, $show_heading, $show_url)
@@ -116,25 +125,25 @@ class DwDisplay
     { 
         ob_start();
 
-        $result_zone = $this->getZone($dbcon, $server_id, $domain);
+        $result_zones = $this->getZone($server_id, $domain);
 
-        while ($row_zone = mysqli_fetch_object($result_zone)) {
+        foreach ($result_zones as $row_zone) {
 
-            $result_records = $this->getRecords($dbcon, $row_zone->zone_id); ?>
+            $result_records = $this->getRecords($row_zone->zone_id); ?>
 
             <table><?php
 
-                while ($row = mysqli_fetch_object($result_records)) { ?>
+                foreach ($result_records as $row_records) { ?>
 
                     <tr>
                         <td align="right" valign="top">
-                            <?php echo $row->formatted_type; ?>
+                            <?php echo $row_records->formatted_type; ?>
                         </td>
                         <td align="center" valign="top"><?php
-                            echo $row->formatted_line; ?>
+                            echo $row_records->formatted_line; ?>
                         </td>
                         <td align="left" valign="top"><?php
-                            echo $row->formatted_output; ?>
+                            echo $row_records->formatted_output; ?>
                         </td>
                     </tr><?php
 
@@ -143,16 +152,18 @@ class DwDisplay
             </table><?php
 
         }
-        $result = ob_get_clean();
-        return $result;
-    } 
 
-    public function zoneSidebar($dbcon, $server_id, $domain, $show_heading, $show_url)
+        $result = ob_get_clean();
+
+        return $result;
+    }
+
+    public function zoneSidebar($server_id, $domain, $show_heading, $show_url)
     { 
         ob_start();
-        $zone = $this->getZonefile($dbcon, $server_id, $domain);
+        $zone = $this->getZonefile($server_id, $domain);
         echo $this->showHeading($zone, $show_heading);
-        $server_name = $this->getServerName($dbcon, $server_id);
+        $server_name = $this->getServerName($server_id);
         echo $server_name . "<BR>";
         echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url);
         $result = ob_get_clean();
@@ -160,48 +171,52 @@ class DwDisplay
         return $result;
     } 
 
-    public function getZonefile($dbcon, $server_id, $domain)
+    public function getZonefile($server_id, $domain)
     {
-        $zonefile = '';
-        $sql = "SELECT zonefile
-                FROM dw_dns_zones
-                WHERE server_id = '" . $server_id . "'
-                  AND domain = '" . $domain . "'";
-        $result = mysqli_query($dbcon, $sql);
-        while ($row = mysqli_fetch_object($result)) { $zonefile = $row->zonefile; }
-        return $zonefile;
-    } 
-
-    public function getServerName($dbcon, $server_id)
-    { 
-        $server_name = '';
-        $sql = "SELECT `name`
-                FROM dw_servers
-                WHERE id = '" . $server_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-        while ($row = mysqli_fetch_object($result)) { $server_name = $row->name; }
-        return $server_name;
-    } 
-
-    public function getZone($dbcon, $server_id, $domain)
-    {
-        $sql = "SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
-                FROM dw_dns_zones AS z, dw_servers AS s
-                WHERE z.server_id = s.id
-                  AND z.server_id = '" . $server_id . "'
-                  AND z.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'";
-        return mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->prepare("
+            SELECT zonefile
+            FROM dw_dns_zones
+            WHERE server_id = :server_id
+              AND domain = :domain");
+        $tmpq->execute(['server_id' => $server_id,
+                        'domain' => $domain]);
+        return $tmpq->fetchColumn();
     }
 
-    public function getRecords($dbcon, $zone_id)
+    public function getServerName($server_id)
     {
-        $sql = "SELECT address, cname, `exchange`, expire, line, minimum, mname, `name`, nsdname, preference, raw,
-                    refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
-                    formatted_output
-                FROM dw_dns_records
-                WHERE dns_zone_id = '" . $zone_id . "'
-                ORDER BY new_order";
-        return mysqli_query($dbcon, $sql);
+        $tmpq = $this->system->db()->prepare("
+            SELECT `name`
+            FROM dw_servers
+            WHERE id = :server_id");
+        $tmpq->execute(['server_id' => $server_id]);
+        return $tmpq->fetchColumn();
+    }
+
+    public function getZone($server_id, $domain)
+    {
+        $tmpq = $this->system->db()->prepare("
+            SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
+            FROM dw_dns_zones AS z, dw_servers AS s
+            WHERE z.server_id = s.id
+              AND z.server_id = :server_id
+              AND z.domain = :domain");
+        $tmpq->execute(['server_id' => $server_id,
+                        'domain' => $domain]);
+        return $tmpq->fetchAll();
+    }
+
+    public function getRecords($zone_id)
+    {
+        $tmpq = $this->system->db()->prepare("
+            SELECT address, cname, `exchange`, `expire`, line, minimum, mname, `name`, nsdname, preference, raw,
+                refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
+                formatted_output
+            FROM dw_dns_records
+            WHERE dns_zone_id = :zone_id
+            ORDER BY new_order");
+        $tmpq->execute(['zone_id' => $zone_id]);
+        return $tmpq->fetchAll();
     }
 
 } //@formatter:on

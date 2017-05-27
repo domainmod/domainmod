@@ -170,7 +170,7 @@ if ($_SESSION['s_search_for_ssl'] != "") {
     $search_string = "";
 }
 
-$sslfd_columns = $customField->getCustomFieldsSql($dbcon, 'ssl_cert_fields', 'sslfd');
+$sslfd_columns = $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd');
 
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.creation_type_id, sslc.created_by, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.id AS f_id, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name" . $sslfd_columns . "
         FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
@@ -616,13 +616,13 @@ if ($export_data == "1") {
         unset($row_contents);
         $count = 0;
 
-        $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
+        $creation_type = $system->getCreationType($row->creation_type_id);
 
         if ($row->created_by == '0') {
             $created_by = 'Unknown';
         } else {
             $user = new DomainMOD\User();
-            $created_by = $user->getFullName($dbcon, $row->created_by);
+            $created_by = $user->getFullName($row->created_by);
         }
 
         $row_contents[$count++] = $ssl_status;
@@ -649,7 +649,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
-        $sslfd_columns_array = $customField->getCustomFields($dbcon, 'ssl_cert_fields');
+        $sslfd_columns_array = $customField->getCustomFields('ssl_cert_fields');
 
         if ($sslfd_columns_array != "") {
 
@@ -685,7 +685,7 @@ if ($_SESSION['s_has_ssl_cert'] == '0') {
 
     $queryB = new DomainMOD\QueryBuild();
     $sql_asset_check = $queryB->singleAsset('ssl_certs');
-    $_SESSION['s_has_ssl_cert'] = $system->checkForRows($dbcon, $sql_asset_check);
+    $_SESSION['s_has_ssl_cert'] = $system->checkForRows($sql_asset_check);
 
 }
 

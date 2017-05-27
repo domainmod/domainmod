@@ -23,12 +23,10 @@ namespace DomainMOD;
 
 class NameCom
 {
-    private $db;
     private $registrar;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
         $this->registrar = 'Name.com';
         $this->log = new Log('namecom.class');
         $this->format = new Format();
@@ -128,7 +126,6 @@ class NameCom
         }
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
-
     }
 
     public function convertToArray($api_result)
@@ -150,7 +147,6 @@ class NameCom
 
     public function processPrivacy($privacy_result)
     {
-
         if ($privacy_result == '1') {
             $privacy_status = '1';
         } else {

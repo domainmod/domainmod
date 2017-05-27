@@ -22,7 +22,7 @@
 <?php
 $email = new DomainMOD\Email();
 
-list($full_url, $from_address, $null_variable, $use_smtp) = $email->getSettings($dbcon);
+list($full_url, $from_address, $null_variable, $use_smtp) = $email->getSettings();
 
 $to_address = $email_address;
 $from_name = SOFTWARE_TITLE;
@@ -130,6 +130,6 @@ if ($use_smtp != '1') {
 } else {
 
     $smtp = new DomainMOD\Smtp();
-    $smtp->send($dbcon, $from_address, $to_address, $first_name . ' ' . $last_name, $subject, $message_html, $message_text);
+    $smtp->send($from_address, $to_address, $first_name . ' ' . $last_name, $subject, $message_html, $message_text);
 
 }

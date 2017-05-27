@@ -26,7 +26,6 @@ class Reporting
 
     public function getRangeString($all, $column, $new_start_date, $new_end_date)
     {
-
         if ($all == '1') {
 
             $range_string = '';
@@ -36,9 +35,7 @@ class Reporting
             $range_string = " AND " . $column . " between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
 
         }
-
         return $range_string;
-
     }
 
 } //@formatter:on

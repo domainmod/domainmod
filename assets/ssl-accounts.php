@@ -135,13 +135,13 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
+            $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($dbcon, $row->created_by);
+                $created_by = $user->getFullName($row->created_by);
             }
 
             $row_contents = array(

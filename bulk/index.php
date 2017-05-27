@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "AD") {
 
@@ -305,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         if ($q->prepare($query)) {
 
-                            $creation_type_id = $system->getCreationTypeId($dbcon, 'Bulk Updater');
+                            $creation_type_id = $system->getCreationTypeId('Bulk Updater');
 
                             $q->bind_param('iiisssiidiiissiiiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
                                 $new_domain, $new_tld, $new_expiry_date, $new_pcid, $temp_fee_id, $new_total_cost,
@@ -393,11 +393,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-                    $maint->updateSegments($dbcon);
+                    $maint->updateSegments();
 
-                    $maint->updateTlds($dbcon);
+                    $maint->updateTlds();
 
                 }
 
@@ -447,7 +447,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
                 $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
 
@@ -743,7 +743,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
                 }
 
@@ -849,7 +849,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "E") {
 
@@ -890,7 +890,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "S") {
 
@@ -931,7 +931,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "A") {
 
@@ -972,7 +972,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "T") {
 
@@ -1013,7 +1013,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "PRg") {
 
@@ -1054,7 +1054,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "PRn") {
 
@@ -1095,7 +1095,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "PO") {
 
@@ -1136,7 +1136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "AURNE") {
 
@@ -1177,7 +1177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "AURND") {
 
@@ -1272,7 +1272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
 
-                $maint->updateSegments($dbcon);
+                $maint->updateSegments();
 
             } elseif ($action == "PRVD") {
 

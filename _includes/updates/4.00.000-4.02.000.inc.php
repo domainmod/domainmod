@@ -102,9 +102,9 @@ if ($current_db_version === '4.00.002') {
             ('Queue', '" . $time->stamp() . "')";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $creation_type_id_installation = $system->getCreationTypeId($dbcon, 'Installation');
-    $creation_type_id_manual = $system->getCreationTypeId($dbcon, 'Manual');
-    $creation_type_id_unknown = $system->getCreationTypeId($dbcon, 'Manual or Bulk Updater');
+    $creation_type_id_installation = $system->getCreationTypeId('Installation');
+    $creation_type_id_manual = $system->getCreationTypeId('Manual');
+    $creation_type_id_unknown = $system->getCreationTypeId('Manual or Bulk Updater');
 
     $sql = "ALTER TABLE `domains`
             ADD `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "' AFTER `fee_fixed`";

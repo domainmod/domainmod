@@ -36,15 +36,15 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$queue = new DomainMOD\DomainQueue($dbcon);
+$queue = new DomainMOD\DomainQueue();
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
-$_SESSION['s_message_success'] .= $queue->clearQueues($dbcon);
+$_SESSION['s_message_success'] .= $queue->clearQueues();
 
-$queue->checkListQueue($dbcon);
-$queue->checkDomainQueue($dbcon);
+$queue->checkListQueue();
+$queue->checkDomainQueue();
 
 header("Location: index.php");
 exit;

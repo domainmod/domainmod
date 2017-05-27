@@ -224,7 +224,7 @@ if (mysqli_num_rows($result) == 0) {
                         <?php echo $dwdisplay->accountSidebar($row->dw_server_name, $row->domain, '1', '1'); ?>
                     </td>
 
-                    <?php echo $dwdisplay->account($dbcon, $row->server_id, $row->domain); ?>
+                    <?php echo $dwdisplay->account($row->server_id, $row->domain); ?>
 
                 </tr><?php
 

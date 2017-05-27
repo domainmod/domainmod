@@ -23,90 +23,73 @@ namespace DomainMOD;
 
 class DwServers
 {
-
-    public function get($dbcon)
+    public function __construct()
     {
-
-        $sql = "SELECT id, `host`, protocol, `port`, username, api_token, `hash`
-                FROM dw_servers
-                ORDER BY `name`";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
-
+        $this->system = new System();
     }
 
-    public function checkForHosts($result)
+    public function get()
     {
-
-        if (mysqli_num_rows($result) >= 1) {
-
-            return '1';
-
-        } else {
-
-            return '0';
-
-        }
-
+        $tmpq = $this->system->db()->query("
+            SELECT id, `host`, protocol, `port`, username, api_token, `hash`
+            FROM dw_servers
+            ORDER BY `name`");
+        return $tmpq->fetchAll();
     }
 
-    public function processEachServer($dbcon, $result)
+    public function processEachServer($result)
     {
-
         $build = new DwBuild();
         $accounts = new DwAccounts();
         $zones = new DwZones();
         $time = new Time();
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $build_start_time = $time->stamp();
 
-            $sql = "UPDATE dw_servers
-                    SET build_start_time = '" . $build_start_time . "',
-                        build_status = '0'
-                    WHERE id = '" . $row->id . "'";
-            mysqli_query($dbcon, $sql);
+            $tmpq = $this->system->db()->prepare("
+                UPDATE dw_servers
+                SET build_start_time = :build_start_time,
+                    build_status = '0'
+                WHERE id = :id");
+            $tmpq->execute(['build_start_time' => $build_start_time,
+                            'id' => $row->id]);
 
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash);
-            $accounts->insertAccounts($dbcon, $api_results, $row->id);
+            $accounts->insertAccounts($api_results, $row->id);
 
             $api_call = $zones->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash);
-            $zones->insertZones($dbcon, $api_results, $row->id);
+            $zones->insertZones($api_results, $row->id);
 
-            $result_zones = $zones->getInsertedZones($dbcon, $row->id);
-            $zones->processEachZone($dbcon, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
-                $row->username, $row->api_token, $row->hash);
-            $this->serverFinish($dbcon, $row->id, $build_start_time);
+            $result_zones = $zones->getInsertedZones($row->id);
+            $zones->processEachZone($result_zones, $row->id, $row->protocol, $row->host, $row->port, $row->username,
+                $row->api_token, $row->hash);
+            $this->serverFinish($row->id, $build_start_time);
 
         }
-
-        return true;
-
     }
 
-    public function serverFinish($dbcon, $server_id, $build_start_time)
+    public function serverFinish($server_id, $build_start_time)
     {
-
         $build = new DwBuild();
 
         list($build_end_time, $total_build_time) = $build->getBuildTime($build_start_time);
 
-        $sql = "UPDATE dw_servers
-                SET build_status = '1',
-                    build_end_time = '" . $build_end_time . "',
-                    build_time = '" . $total_build_time . "',
-                    has_ever_been_built = '1'
-                WHERE id = '" . $server_id . "'";
-        mysqli_query($dbcon, $sql);
-
-        return true;
-
+        $tmpq = $this->system->db()->prepare("
+            UPDATE dw_servers
+            SET build_status = '1',
+                build_end_time = :build_end_time,
+                build_time = :total_build_time,
+                has_ever_been_built = '1'
+            WHERE id = :server_id");
+        $tmpq->execute(['build_end_time' => $build_end_time,
+                        'total_build_time' => $total_build_time,
+                        'server_id' => $server_id]);
     }
 
 } //@formatter:on
