@@ -113,8 +113,7 @@ class DwStats
             INSERT INTO dw_server_totals
             (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
             VALUES
-            (:total_dw_servers, :total_dw_accounts, :total_dw_dns_zones,
-             :total_dw_records, :insert_time)");
+            (:total_dw_servers, :total_dw_accounts, :total_dw_dns_zones, :total_dw_records, :insert_time)");
         $tmpq->execute(['total_dw_servers' => $total_dw_servers,
                         'total_dw_accounts' => $total_dw_accounts,
                         'total_dw_dns_zones' => $total_dw_dns_zones,
