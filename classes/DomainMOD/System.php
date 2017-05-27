@@ -41,10 +41,10 @@ class System
     {
         $full_install_path = DIR_ROOT . '/install/';
 
-        $tmpq = $this->db()->prepare("SHOW TABLES LIKE 'settings'");
+        $tmpq = $this->db()->query("SHOW TABLES LIKE 'settings'");
         $result = $tmpq->fetchColumn();
 
-        if ($result && is_dir($full_install_path)) {
+        if (!$result && is_dir($full_install_path)) {
 
             $installation_mode = 1;
             $result_message = 'DomainMOD is not yet installed<BR>';
