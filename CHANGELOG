@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.05.00    2017-05-27
+- Added Debugging Mode
+- Cosmetic changes
+- Code cleanup
+
 v4.04.001    2017-05-14
 - Fixed install script
 - Added link to Domain Queue during first run
