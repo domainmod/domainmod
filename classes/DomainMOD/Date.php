@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class Date
 {
+    public $time;
+
+    public function __construct()
+    {
+        $this->time = new Time();
+    }
 
     public function checkDateFormat($input_date)
     {
@@ -42,8 +48,8 @@ class Date
         $start_date = substr($daterange, 0, 10);
         $end_date = substr($daterange, -10, 10);
 
-        if (!$this->checkDateFormat($start_date)) $start_date = '1900-01-01';
-        if (!$this->checkDateFormat($end_date)) $end_date = '2300-01-01';
+        if (!$this->checkDateFormat($start_date)) $start_date = $this->time->timeBasicMinusDays('14');
+        if (!$this->checkDateFormat($end_date)) $end_date = $this->time->timeBasicPlusYears('11');
 
         return array($start_date, $end_date);
     }
