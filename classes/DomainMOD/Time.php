@@ -39,6 +39,11 @@ class Time
         return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
     }
 
+    public function timeBasicMinusDays($days)
+    {
+        return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") - $days, date("Y")));
+    }
+
     public function timeBasicPlusDays($days)
     {
         return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") + $days, date("Y")));
