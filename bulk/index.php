@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 foreach ($domain_list as $each_domain) {
 
-                    $domain->renew($dbcon, $each_domain, $new_renewal_years, $new_notes);
+                    $domain->renew($each_domain, $new_renewal_years, $new_notes);
 
                 }
 
