@@ -42,11 +42,6 @@ require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
-
-$sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
-        FROM scheduler
-        ORDER BY sort_order ASC";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
@@ -76,11 +71,13 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
         </tr>
     </thead>
     <tbody><?php
+    $tmpq = $system->db()->query("
+        SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
+        FROM scheduler
+        ORDER BY sort_order ASC");
+    $result = $tmpq->fetchAll();
 
-    $row = mysqli_fetch_object($schedule->getTask($dbcon, $row->id));
-    $hour = explode(" ", $row->expression);
-
-    while ($row = mysqli_fetch_object($result)) { ?>
+    foreach ($result as $row) { ?>
 
         <tr>
         <td style="padding: 7px 5px 0px 10px;">
@@ -114,7 +111,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
                 <BR>
                 <form name="edit_task_form" method="post" action="update.php">
-                    <select name="new_hour">
+                    <select name="new_hour" title="Task Time">
                         <?php echo $schedule->hourSelect($hour); ?>
                     </select><BR><BR><?php
                     echo $form->showInputHidden('a', 'u');
