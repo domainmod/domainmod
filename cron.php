@@ -74,10 +74,10 @@ if (DEMO_INSTALLATION != '1') {
                 $log_message = '[START] Cleanup Tasks';
                 $log->info($log_message, $log_extra);
 
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
                 $maint->performCleanup();
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] Cleanup Tasks';
                 $log->info($log_message);
@@ -88,10 +88,10 @@ if (DEMO_INSTALLATION != '1') {
                 $log->info($log_message, $log_extra);
 
                 $email = new DomainMOD\Email();
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
                 $email->sendExpirations('1');
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] Send Expiration Email';
                 $log->info($log_message);
@@ -101,7 +101,7 @@ if (DEMO_INSTALLATION != '1') {
                 $log_message = '[START] Update Conversion Rates';
                 $log->info($log_message, $log_extra);
 
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
 
                 $tmpq = $system->db()->query("
                     SELECT user_id, default_currency
@@ -123,8 +123,8 @@ if (DEMO_INSTALLATION != '1') {
 
                 }
 
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] Update Conversion Rates';
                 $log->info($log_message);
@@ -134,10 +134,10 @@ if (DEMO_INSTALLATION != '1') {
                 $log_message = '[START] New Version Check';
                 $log->info($log_message, $log_extra);
 
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
                 $system->checkVersion(SOFTWARE_VERSION);
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] New Version Check';
                 $log->info($log_message);
@@ -148,10 +148,10 @@ if (DEMO_INSTALLATION != '1') {
                 $log->info($log_message, $log_extra);
 
                 $dw = new DomainMOD\DwBuild();
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
                 $dw->build();
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] Build Data Warehouse';
                 $log->info($log_message);
@@ -162,11 +162,11 @@ if (DEMO_INSTALLATION != '1') {
                 $log->info($log_message, $log_extra);
 
                 $queue = new DomainMOD\DomainQueue();
-                $schedule->isRunning($dbcon, $row->id);
+                $schedule->isRunning($row->id);
                 $queue->processQueueList();
                 $queue->processQueueDomain();
-                $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run);
-                $schedule->isFinished($dbcon, $row->id);
+                $schedule->updateTime($row->id, $time->stamp(), $next_run);
+                $schedule->isFinished($row->id);
 
                 $log_message = '[END] Process Domain Queue';
                 $log->info($log_message);

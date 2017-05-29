@@ -682,7 +682,7 @@ if ($no_results_dns_zones !== 1) { ?>
                 <td></td>
                 <td valign="top"><?php echo $row->name; ?></td>
                 <td>
-                    <?php echo $dwdisplay->zone($dbcon, $row->dw_server_id, $new_domain); ?>
+                    <?php echo $dwdisplay->zone($row->dw_server_id, $new_domain); ?>
                 </td>
             </tr><?php
 

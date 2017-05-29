@@ -44,64 +44,60 @@ $system->loginCheck();
 $page_title = "Reset Password";
 $software_section = "resetpassword";
 
-$new_data = $_REQUEST['new_data'];
+$user_identifier = $_REQUEST['user_identifier'];
 
-if ($new_data != "") {
+if ($user_identifier != '') {
 
-    $query = "SELECT first_name, last_name, username, email_address
-              FROM users
-              WHERE (username = ? OR email_address = ?)
-                AND active = '1'";
-    $q = $dbcon->stmt_init();
+    $tmpq = $system->db()->prepare("
+        SELECT first_name, last_name, username, email_address
+        FROM users
+        WHERE (username = :username OR email_address = :email_address)
+          AND active = '1'");
+    $tmpq->execute(['username' => $user_identifier,
+                    'email_address' => $user_identifier]);
+    $result = $tmpq->fetch();
 
-    if ($q->prepare($query)) {
+    if (!$result) {
 
-        $q->bind_param('ss', $new_data, $new_data);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($first_name, $last_name, $username, $email_address);
+        $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
-        if ($q->num_rows() == 1) {
+        header('Location: ' . $web_root . "/");
+        exit;
 
-            while ($q->fetch()) {
+    } else {
 
-                $new_password = substr(md5(time()), 0, 8);
+        $new_password = substr(md5(time()), 0, 8);
 
-                $sql_update = "UPDATE users
-                               SET `password` = password('" . $new_password . "'),
-                                   new_password = '1',
-                                   update_time = '" . $time->stamp() . "'
-                               WHERE username = '" . $username . "'
-                                 AND email_address = '" . $email_address . "'";
-                $result_update = mysqli_query($dbcon, $sql_update);
+        $tmpq = $system->db()->prepare("
+            UPDATE users
+            SET `password` = password(:new_password),
+                new_password = '1',
+                update_time = :timestamp
+            WHERE username = :username
+              AND email_address = :email_address");
+        $tmpq->execute(['new_password' => $new_password,
+                        'timestamp' => $time->stamp(),
+                        'username' => $result->username,
+                        'email_address' => $result->email_address]);
 
-                require_once(DIR_INC . '/email/send-new-password.inc.php');
+        $first_name = $result->first_name;
+        $last_name = $result->last_name;
+        $username = $result->username;
+        $email_address = $result->email_address;
+        require_once(DIR_INC . '/email/send-new-password.inc.php');
 
-                $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
+        $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
-                header('Location: ' . $web_root . "/");
-                exit;
+        header('Location: ' . $web_root . "/");
+        exit;
 
-            }
-
-        } else {
-
-            $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
-
-            header('Location: ' . $web_root . "/");
-            exit;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_data == "") {
+        if ($user_identifier == "") {
             $_SESSION['s_message_danger'] .= "Enter your username or email address<BR>";
         }
 
@@ -119,7 +115,7 @@ if ($new_data != "") {
 <?php require_once(DIR_INC . '/layout/header-login.inc.php'); ?>
 <?php
     echo $form->showFormTop('');
-    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '100', '', '', '', '');
+    echo $form->showInputText('user_identifier', 'Username or Email Address', '', $user_identifier, '100', '', '', '', '');
     echo $form->showSubmitButton('Reset Password', '', '');
     echo $form->showFormBottom('');
 ?>

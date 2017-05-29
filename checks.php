@@ -64,103 +64,86 @@ if ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved !
 
 }
 
-// Load system and user data
-$result = $login->getUserInfo($dbcon, $_SESSION['s_user_id'], $_SESSION['s_username']);
+// Load User Info
+$result = $login->getUserInfo($_SESSION['s_user_id']);
+$_SESSION['s_first_name'] = $result->first_name;
+$_SESSION['s_last_name'] = $result->last_name;
+$_SESSION['s_email_address'] = $result->email_address;
+$_SESSION['s_is_new_password'] = $result->new_password;
+$_SESSION['s_number_of_logins'] = $result->number_of_logins;
+if ($result->admin == 1) $_SESSION['s_is_admin'] = 1;
+if ($result->read_only == '0') $_SESSION['s_read_only'] = '0';
 
-while ($row = mysqli_fetch_object($result)) {
+// Load System Settings
+$result = $login->getSystemSettings();
+$_SESSION['s_system_full_url'] = $result->full_url;
+$_SESSION['s_system_upgrade_available'] = $result->upgrade_available;
+$_SESSION['s_system_email_address'] = $result->email_address;
+$_SESSION['s_system_large_mode'] = $result->large_mode;
+$_SESSION['s_system_default_category_domains'] = $result->default_category_domains;
+$_SESSION['s_system_default_category_ssl'] = $result->default_category_ssl;
+$_SESSION['s_system_default_dns'] = $result->default_dns;
+$_SESSION['s_system_default_host'] = $result->default_host;
+$_SESSION['s_system_default_ip_address_domains'] = $result->default_ip_address_domains;
+$_SESSION['s_system_default_ip_address_ssl'] = $result->default_ip_address_ssl;
+$_SESSION['s_system_default_owner_domains'] = $result->default_owner_domains;
+$_SESSION['s_system_default_owner_ssl'] = $result->default_owner_ssl;
+$_SESSION['s_system_default_registrar'] = $result->default_registrar;
+$_SESSION['s_system_default_registrar_account'] = $result->default_registrar_account;
+$_SESSION['s_system_default_ssl_provider_account'] = $result->default_ssl_provider_account;
+$_SESSION['s_system_default_ssl_type'] = $result->default_ssl_type;
+$_SESSION['s_system_default_ssl_provider'] = $result->default_ssl_provider;
+$_SESSION['s_system_expiration_days'] = $result->expiration_days;
 
-    $_SESSION['s_first_name'] = $row->first_name;
-    $_SESSION['s_last_name'] = $row->last_name;
-    $_SESSION['s_email_address'] = $row->email_address;
-    $_SESSION['s_is_new_password'] = $row->new_password;
-    $_SESSION['s_number_of_logins'] = $row->number_of_logins;
-    if ($row->admin == 1) $_SESSION['s_is_admin'] = 1;
-    if ($row->read_only == '0') $_SESSION['s_read_only'] = '0';
+// Load User Settings
+$result = $login->getUserSettings($_SESSION['s_user_id']);
+$_SESSION['s_default_currency'] = $result->default_currency;
+$_SESSION['s_default_timezone'] = $result->default_timezone;
+$_SESSION['s_expiration_email'] = $result->expiration_emails;
+$_SESSION['s_default_category_domains'] = $result->default_category_domains;
+$_SESSION['s_default_category_ssl'] = $result->default_category_ssl;
+$_SESSION['s_default_dns'] = $result->default_dns;
+$_SESSION['s_default_host'] = $result->default_host;
+$_SESSION['s_default_ip_address_domains'] = $result->default_ip_address_domains;
+$_SESSION['s_default_ip_address_ssl'] = $result->default_ip_address_ssl;
+$_SESSION['s_default_owner_domains'] = $result->default_owner_domains;
+$_SESSION['s_default_owner_ssl'] = $result->default_owner_ssl;
+$_SESSION['s_default_registrar'] = $result->default_registrar;
+$_SESSION['s_default_registrar_account'] = $result->default_registrar_account;
+$_SESSION['s_default_ssl_provider_account'] = $result->default_ssl_provider_account;
+$_SESSION['s_default_ssl_type'] = $result->default_ssl_type;
+$_SESSION['s_default_ssl_provider'] = $result->default_ssl_provider;
+$_SESSION['s_number_of_domains'] = $result->number_of_domains;
+$_SESSION['s_number_of_ssl_certs'] = $result->number_of_ssl_certs;
+$_SESSION['s_display_domain_owner'] = $result->display_domain_owner;
+$_SESSION['s_display_domain_registrar'] = $result->display_domain_registrar;
+$_SESSION['s_display_domain_account'] = $result->display_domain_account;
+$_SESSION['s_display_domain_expiry_date'] = $result->display_domain_expiry_date;
+$_SESSION['s_display_domain_category'] = $result->display_domain_category;
+$_SESSION['s_display_domain_dns'] = $result->display_domain_dns;
+$_SESSION['s_display_domain_host'] = $result->display_domain_host;
+$_SESSION['s_display_domain_ip'] = $result->display_domain_ip;
+$_SESSION['s_display_domain_host'] = $result->display_domain_host;
+$_SESSION['s_display_domain_tld'] = $result->display_domain_tld;
+$_SESSION['s_display_domain_fee'] = $result->display_domain_fee;
+$_SESSION['s_display_ssl_owner'] = $result->display_ssl_owner;
+$_SESSION['s_display_ssl_provider'] = $result->display_ssl_provider;
+$_SESSION['s_display_ssl_account'] = $result->display_ssl_account;
+$_SESSION['s_display_ssl_domain'] = $result->display_ssl_domain;
+$_SESSION['s_display_ssl_type'] = $result->display_ssl_type;
+$_SESSION['s_display_ssl_ip'] = $result->display_ssl_ip;
+$_SESSION['s_display_ssl_category'] = $result->display_ssl_category;
+$_SESSION['s_display_ssl_expiry_date'] = $result->display_ssl_expiry_date;
+$_SESSION['s_display_ssl_fee'] = $result->display_ssl_fee;
+$_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
+$_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
 
-}
-
-$result_settings = $login->getSystemSettings($dbcon);
-
-while ($row_settings = mysqli_fetch_object($result_settings)) {
-
-    $_SESSION['s_system_full_url'] = $row_settings->full_url;
-    $_SESSION['s_system_upgrade_available'] = $row_settings->upgrade_available;
-    $_SESSION['s_system_email_address'] = $row_settings->email_address;
-    $_SESSION['s_system_large_mode'] = $row_settings->large_mode;
-    $_SESSION['s_system_default_category_domains'] = $row_settings->default_category_domains;
-    $_SESSION['s_system_default_category_ssl'] = $row_settings->default_category_ssl;
-    $_SESSION['s_system_default_dns'] = $row_settings->default_dns;
-    $_SESSION['s_system_default_host'] = $row_settings->default_host;
-    $_SESSION['s_system_default_ip_address_domains'] = $row_settings->default_ip_address_domains;
-    $_SESSION['s_system_default_ip_address_ssl'] = $row_settings->default_ip_address_ssl;
-    $_SESSION['s_system_default_owner_domains'] = $row_settings->default_owner_domains;
-    $_SESSION['s_system_default_owner_ssl'] = $row_settings->default_owner_ssl;
-    $_SESSION['s_system_default_registrar'] = $row_settings->default_registrar;
-    $_SESSION['s_system_default_registrar_account'] = $row_settings->default_registrar_account;
-    $_SESSION['s_system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
-    $_SESSION['s_system_default_ssl_type'] = $row_settings->default_ssl_type;
-    $_SESSION['s_system_default_ssl_provider'] = $row_settings->default_ssl_provider;
-    $_SESSION['s_system_expiration_days'] = $row_settings->expiration_days;
-
-}
-
-$result_user_settings = $login->getUserSettings($dbcon, $_SESSION['s_user_id']);
-
-while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
-
-    $_SESSION['s_default_currency'] = $row_user_settings->default_currency;
-    $_SESSION['s_default_timezone'] = $row_user_settings->default_timezone;
-    $_SESSION['s_expiration_email'] = $row_user_settings->expiration_emails;
-    $_SESSION['s_default_category_domains'] = $row_user_settings->default_category_domains;
-    $_SESSION['s_default_category_ssl'] = $row_user_settings->default_category_ssl;
-    $_SESSION['s_default_dns'] = $row_user_settings->default_dns;
-    $_SESSION['s_default_host'] = $row_user_settings->default_host;
-    $_SESSION['s_default_ip_address_domains'] = $row_user_settings->default_ip_address_domains;
-    $_SESSION['s_default_ip_address_ssl'] = $row_user_settings->default_ip_address_ssl;
-    $_SESSION['s_default_owner_domains'] = $row_user_settings->default_owner_domains;
-    $_SESSION['s_default_owner_ssl'] = $row_user_settings->default_owner_ssl;
-    $_SESSION['s_default_registrar'] = $row_user_settings->default_registrar;
-    $_SESSION['s_default_registrar_account'] = $row_user_settings->default_registrar_account;
-    $_SESSION['s_default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;
-    $_SESSION['s_default_ssl_type'] = $row_user_settings->default_ssl_type;
-    $_SESSION['s_default_ssl_provider'] = $row_user_settings->default_ssl_provider;
-    $_SESSION['s_number_of_domains'] = $row_user_settings->number_of_domains;
-    $_SESSION['s_number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
-    $_SESSION['s_display_domain_owner'] = $row_user_settings->display_domain_owner;
-    $_SESSION['s_display_domain_registrar'] = $row_user_settings->display_domain_registrar;
-    $_SESSION['s_display_domain_account'] = $row_user_settings->display_domain_account;
-    $_SESSION['s_display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
-    $_SESSION['s_display_domain_category'] = $row_user_settings->display_domain_category;
-    $_SESSION['s_display_domain_dns'] = $row_user_settings->display_domain_dns;
-    $_SESSION['s_display_domain_host'] = $row_user_settings->display_domain_host;
-    $_SESSION['s_display_domain_ip'] = $row_user_settings->display_domain_ip;
-    $_SESSION['s_display_domain_host'] = $row_user_settings->display_domain_host;
-    $_SESSION['s_display_domain_tld'] = $row_user_settings->display_domain_tld;
-    $_SESSION['s_display_domain_fee'] = $row_user_settings->display_domain_fee;
-    $_SESSION['s_display_ssl_owner'] = $row_user_settings->display_ssl_owner;
-    $_SESSION['s_display_ssl_provider'] = $row_user_settings->display_ssl_provider;
-    $_SESSION['s_display_ssl_account'] = $row_user_settings->display_ssl_account;
-    $_SESSION['s_display_ssl_domain'] = $row_user_settings->display_ssl_domain;
-    $_SESSION['s_display_ssl_type'] = $row_user_settings->display_ssl_type;
-    $_SESSION['s_display_ssl_ip'] = $row_user_settings->display_ssl_ip;
-    $_SESSION['s_display_ssl_category'] = $row_user_settings->display_ssl_category;
-    $_SESSION['s_display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
-    $_SESSION['s_display_ssl_fee'] = $row_user_settings->display_ssl_fee;
-    $_SESSION['s_display_inactive_assets'] = $row_user_settings->display_inactive_assets;
-    $_SESSION['s_display_dw_intro_page'] = $row_user_settings->display_dw_intro_page;
-
-}
-
-$result_currencies = $login->getCurrencyInfo($dbcon, $_SESSION['s_default_currency']);
-
-while ($row_currencies = mysqli_fetch_object($result_currencies)) {
-
-    $_SESSION['s_default_currency_name'] = $row_currencies->name;
-    $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
-    $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
-    $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
-
-}
+// Load Currency Info
+$result = $login->getCurrencyInfo($_SESSION['s_default_currency']);
+$_SESSION['s_default_currency_name'] = $result->name;
+$_SESSION['s_default_currency_symbol'] = $result->symbol;
+$_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
+$_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
 
 // Check to see if there are any domain lists or domains in the queue
 $queue = new DomainMOD\DomainQueue();
@@ -172,7 +155,7 @@ $system->checkExistingAssets();
 
 unset($_SESSION['s_installation_mode']);
 
-$login->setLastLogin($dbcon, $_SESSION['s_user_id'], $_SESSION['s_email_address']);
+$login->setLastLogin($_SESSION['s_user_id']);
 
 if ($_SESSION['s_version_error'] != '1') {
 

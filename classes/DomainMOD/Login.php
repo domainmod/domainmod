@@ -23,74 +23,79 @@ namespace DomainMOD;
 
 class Login
 {
+    public $system;
+    public $time;
 
-    public function getUserInfo($dbcon, $user_id, $username)
+    public function __construct()
     {
-        $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`,
-                       number_of_logins, last_login
-                FROM users
-                WHERE id = '" . $user_id . "'
-                  AND username = '" . $username . "'
-                  AND active = '1'";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
+        $this->system = new System();
+        $this->time = new Time();
     }
 
-    public function getSystemSettings($dbcon)
+    public function getUserInfo($user_id)
     {
-        $sql = "SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
-                       default_category_ssl, default_dns, default_host, default_ip_address_domains,
-                       default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
-                       default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
-                       expiration_days, debug_mode
-                FROM settings";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
+        $tmpq = $this->system->db()->prepare("
+            SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`, number_of_logins,
+                last_login
+            FROM users
+            WHERE id = :user_id
+              AND active = '1'");
+        $tmpq->execute(['user_id' => $user_id]);
+        return $tmpq->fetch();
     }
 
-    public function getUserSettings($dbcon, $user_id)
+    public function getSystemSettings()
     {
-        $sql = "SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
-                       default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
-                       default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
-                       default_ssl_type, default_ssl_provider, expiration_emails, number_of_domains,
-                       number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account,
-                       display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host,
-                       display_domain_ip, display_domain_host, display_domain_tld, display_domain_fee,
-                       display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain,
-                       display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee,
-                       display_inactive_assets, display_dw_intro_page
-                FROM user_settings
-                WHERE user_id = '" . $user_id . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
+        $tmpq = $this->system->db()->query("
+            SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
+                default_category_ssl, default_dns, default_host, default_ip_address_domains,
+                default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
+                default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
+                expiration_days, debug_mode
+            FROM settings");
+        return $tmpq->fetch();
     }
 
-    public function getCurrencyInfo($dbcon, $currency)
+    public function getUserSettings($user_id)
     {
-        $sql = "SELECT `name`, symbol, symbol_order, symbol_space
-                FROM currencies
-                WHERE currency = '" . $currency . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        return $result;
+        $tmpq = $this->system->db()->prepare("
+            SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
+                default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
+                default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
+                default_ssl_type, default_ssl_provider, expiration_emails, number_of_domains,
+                number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account,
+                display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host,
+                display_domain_ip, display_domain_host, display_domain_tld, display_domain_fee,
+                display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain,
+                display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee,
+                display_inactive_assets, display_dw_intro_page
+            FROM user_settings
+            WHERE user_id = :user_id");
+        $tmpq->execute(['user_id' => $user_id]);
+        return $tmpq->fetch();
     }
 
-    public function setLastLogin($dbcon, $user_id, $email_address)
+    public function getCurrencyInfo($currency)
     {
-        $time = new Time();
-        $timestamp = $time->stamp();
+        $tmpq = $this->system->db()->prepare("
+            SELECT `name`, symbol, symbol_order, symbol_space
+            FROM currencies
+            WHERE currency = :currency");
+        $tmpq->execute(['currency' => $currency]);
+        return $tmpq->fetch();
+    }
 
-        $sql = "UPDATE users
-                SET last_login = '" . $timestamp . "',
-                    number_of_logins = number_of_logins + 1,
-                    update_time = '" . $timestamp . "'
-                WHERE id = '" . $user_id . "'
-                  AND email_address = '" . $email_address . "'";
-        mysqli_query($dbcon, $sql);
+    public function setLastLogin($user_id)
+    {
+        $tmpq = $this->system->db()->prepare("
+            UPDATE users
+            SET last_login = :last_login,
+                number_of_logins = number_of_logins + 1,
+                update_time = :update_time
+            WHERE id = :user_id");
+        $tmpq->execute(['last_login' => $this->time->stamp(),
+                        'update_time' => $this->time->stamp(),
+                        'user_id' => $user_id]);
     }
 
 } //@formatter:on

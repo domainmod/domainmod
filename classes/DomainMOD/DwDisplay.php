@@ -123,7 +123,7 @@ class DwDisplay
         return $result;
     } 
 
-    public function zone($dbcon, $server_id, $domain)
+    public function zone($server_id, $domain)
     { 
         ob_start();
 
