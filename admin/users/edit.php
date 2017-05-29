@@ -46,8 +46,6 @@ $really_del = $_GET['really_del'];
 
 $uid = $_GET['uid'];
 
-if ($new_uid == '') $new_uid = $uid;
-
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
@@ -61,134 +59,125 @@ $new_read_only = $_POST['new_read_only'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
-//make sure they're not trying to edit the primary admin account
-$query = "SELECT username
-          FROM users
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+if ($new_uid == '') $new_uid = $uid;
 
-if ($q->prepare($query)) {
+$tmpq = $system->db()->prepare("
+    SELECT username
+    FROM users
+    WHERE id = :user_id");
+$tmpq->execute(['user_id' => $uid]);
+$result = $tmpq->fetchColumn();
 
-    $q->bind_param('i', $uid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($username);
+if ($result) {
 
-    while ($q->fetch()) {
+    if ($result == 'admin' && $_SESSION['s_username'] != 'admin') {
 
-        if ($username == 'admin' && $_SESSION['s_username'] != 'admin') {
+        $_SESSION['s_message_danger'] .= "You don't have permissions to edit the primary administrator account<BR>";
 
-            $_SESSION['s_message_danger'] .= "You don't have permissions to edit the primary administrator account<BR>";
-
-            header("Location: index.php");
-            exit;
-
-        }
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
-
-    // Make sure the new username isn't already in use
-    $query = "SELECT username
-              FROM users
-              WHERE username = ?
-                AND id != ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('si', $new_username, $new_uid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $invalid_username = 1;
-            $new_username = $original_username;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    // Make sure they aren't trying to assign a reserved username
-    // If it's the primary admin account editing their own profile the query will return 1, otherwise 0
-    if ($new_username == 'admin' || $new_username == 'administrator') {
-
-        $query = "SELECT username
-                  FROM users
-                  WHERE username = ?
-                    AND id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('si', $new_username, $new_uid);
-            $q->execute();
-            $q->store_result();
-
-            if ($q->num_rows() == 0) {
-
-                $invalid_username = 1;
-                $new_username = $original_username;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        header("Location: index.php");
+        exit;
 
     }
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '' && $invalid_username != 1) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
 
-    $query = "UPDATE users
-              SET first_name = ?,
-                  last_name = ?,
-                  username = ?,
-                  email_address = ?,
-                  admin = ?,
-                  `read_only` = ?,
-                  active = ?,
-                  update_time = ?
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $invalid_username = '';
+    $invalid_email_address = '';
 
-    if ($q->prepare($query)) {
+    // Check to see if the username is already taken
+    $tmpq = $system->db()->prepare("
+        SELECT username
+        FROM users
+        WHERE username = :username
+          AND id != :user_id");
+    $tmpq->execute(['username' => $new_username,
+                    'user_id' => $new_uid]);
+    $result = $tmpq->fetch();
 
-        $timestamp = $time->stamp();
+    if ($result) {
 
-        $q->bind_param('ssssiiisi', $new_first_name, $new_last_name, $new_username, $new_email_address, $new_is_admin, $new_read_only, $new_is_active, $timestamp, $new_uid);
-        $q->execute();
-        $q->close();
+        $invalid_username = '1';
 
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
-    $query = "UPDATE user_settings
-              SET default_currency = ?,
-                  default_timezone = ?,
-                  expiration_emails = ?,
-                  update_time = ?
-              WHERE user_id = ?";
-    $q = $dbcon->stmt_init();
+    // Check to see if the email address is already taken
+    $tmpq = $system->db()->prepare("
+        SELECT username
+        FROM users
+        WHERE email_address = :email_address
+          AND id != :user_id");
+    $tmpq->execute(['email_address' => $new_email_address,
+                    'user_id' => $new_uid]);
+    $result = $tmpq->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $timestamp = $time->stamp();
+        $invalid_email_address = '1';
 
-        $q->bind_param('ssisi', $new_currency, $new_timezone, $new_expiration_emails, $timestamp, $new_uid);
-        $q->execute();
-        $q->close();
+    }
 
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    // Make sure they aren't trying to assign a reserved username
+    // If it's the primary admin account editing their own profile the query will return 1, otherwise 0
+    if ($new_username == 'admin' || $new_username == 'administrator') {
+
+        $tmpq = $system->db()->prepare("
+            SELECT username
+            FROM users
+            WHERE username = :new_username
+              AND id = :new_uid");
+        $tmpq->execute(['new_username' => $new_username,
+                        'new_uid' => $new_uid]);
+        $result = $tmpq->fetchColumn();
+
+        if (!$result) {
+
+            $invalid_username = '1';
+            $new_username = $original_username;
+
+        }
+
+    }
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
+    && $new_email_address != '' && $invalid_username != '1' && $invalid_email_address != '1') {
+
+    $tmpq = $system->db()->prepare("
+        UPDATE users
+        SET first_name = :first_name,
+            last_name = :last_name,
+            username = :username,
+            email_address = :email_address,
+            admin = :admin,
+            `read_only` = :read_only,
+            active = :active,
+            update_time = :update_time
+        WHERE id = :user_id");
+    $tmpq->execute(['first_name' => $new_first_name,
+                    'last_name' => $new_last_name,
+                    'username' => $new_username,
+                    'email_address' => $new_email_address,
+                    'admin' => $new_is_admin,
+                    'read_only' => $new_read_only,
+                    'active' => $new_is_active,
+                    'update_time' => $time->stamp(),
+                    'user_id' => $new_uid]);
+
+    $tmpq = $system->db()->prepare("
+        UPDATE user_settings
+        SET default_currency = :new_currency,
+            default_timezone = :new_timezone,
+            expiration_emails = :new_expiration_emails,
+            update_time = :update_time
+        WHERE user_id = :user_id");
+    $tmpq->execute(['new_currency' => $new_currency,
+                    'new_timezone' => $new_timezone,
+                    'new_expiration_emails' => $new_expiration_emails,
+                    'update_time' => $time->stamp(),
+                    'user_id' => $new_uid]);
 
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
@@ -207,45 +196,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($invalid_username == 1 || $new_username == '') $_SESSION['s_message_danger'] .= 'You have entered an invalid username<BR>';
         if ($new_first_name == '') $_SESSION['s_message_danger'] .= 'Enter the user\'s first name<BR>';
         if ($new_last_name == '') $_SESSION['s_message_danger'] .= 'Enter the user\'s last name<BR>';
-        if ($new_email_address == '') $_SESSION['s_message_danger'] .= 'Enter the user\'s email address<BR>';
+        if ($invalid_username == '1' || $new_username == '') $_SESSION['s_message_danger'] .= 'You have entered an invalid username<BR>';
+        if ($invalid_email_address == '1' || $new_email_address == '') $_SESSION['s_message_danger'] .= 'You have entered an invalid email address<BR>';
 
     } else {
 
-        $query = "SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
-                  FROM users AS u, user_settings AS us
-                  WHERE u.id = us.user_id
-                    AND u.id = ?";
-        $q = $dbcon->stmt_init();
+        $tmpq = $system->db()->prepare("
+            SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
+            FROM users AS u, user_settings AS us
+            WHERE u.id = us.user_id
+              AND u.id = :user_id");
+        $tmpq->execute(['user_id' => $uid]);
+        $result = $tmpq->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $uid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($first_name, $last_name, $username, $email_address, $currency, $timezone, $expiration_emails, $admin, $read_only, $active);
+            $new_first_name = $result->first_name;
+            $new_last_name = $result->last_name;
+            $new_username = $result->username;
+            $original_username = $result->username;
+            $new_email_address = $result->email_address;
+            $new_currency = $result->default_currency;
+            $new_timezone = $result->default_timezone;
+            $new_expiration_emails = $result->expiration_emails;
+            $new_is_admin = $result->admin;
+            $new_read_only = $result->read_only;
+            $new_is_active = $result->active;
 
-                while ($q->fetch()) {
-
-                    $new_first_name = $first_name;
-                    $new_last_name = $last_name;
-                    $new_username = $username;
-                    $original_username = $username;
-                    $new_email_address = $email_address;
-                    $new_currency = $currency;
-                    $new_timezone = $timezone;
-                    $new_expiration_emails = $expiration_emails;
-                    $new_is_admin = $admin;
-                    $new_read_only = $read_only;
-                    $new_is_active = $active;
-
-                }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 }
@@ -257,45 +237,28 @@ if ($del == '1') {
 
 if ($really_del == '1') {
 
-    $sql = "SELECT id
-            FROM users
-            WHERE username = 'admin'";
-    $result = mysqli_query($dbcon, $sql);
-
-    while ($row = mysqli_fetch_object($result)) {
-        $temp_uid = $row->id;
-    }
+    $tmpq = $system->db()->query("
+        SELECT id
+        FROM users
+        WHERE username = 'admin'");
+    $temp_uid = $tmpq->fetchColumn();
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= 'The user admin cannot be deleted<BR>';
+        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= 'The admin user cannot be deleted<BR>';
         if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= 'You can\'t delete yourself<BR>';
 
     } else {
 
-        $query = "DELETE FROM user_settings
-                  WHERE user_id = ?";
-        $q = $dbcon->stmt_init();
+        $tmpq = $system->db()->prepare("
+            DELETE FROM user_settings
+            WHERE user_id = :user_id");
+        $tmpq->execute(['user_id' => $uid]);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $uid);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "DELETE FROM users
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $uid);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $tmpq = $system->db()->prepare("
+            DELETE FROM users
+            WHERE id = ?");
+        $tmpq->execute(['user_id' => $uid]);
 
         $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 
@@ -332,22 +295,38 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
-$sql = "SELECT currency, `name`, symbol
-        FROM currencies
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ' ' . $row->symbol . ')', $new_currency);
+$tmpq = $system->db()->query("
+    SELECT currency, `name`, symbol
+    FROM currencies
+    ORDER BY name");
+$result = $tmpq->fetchAll();
+
+if ($result) {
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ' ' . $row->symbol . ')', $new_currency);
+
+    }
+
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
-$sql = "SELECT timezone
-        FROM timezones
-        ORDER BY timezone";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    echo $form->showDropdownOption($row->timezone, $row->timezone, $new_timezone);
+$tmpq = $system->db()->query("
+    SELECT timezone
+    FROM timezones
+    ORDER BY timezone");
+$result = $tmpq->fetchAll();
+
+if ($result) {
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->timezone, $row->timezone, $new_timezone);
+
+    }
+
 }
 echo $form->showDropdownBottom('');
 

@@ -31,7 +31,6 @@ $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
-$timestamp = $time->stamp();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -54,119 +53,101 @@ $new_active = $_POST['new_active'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
     && $new_email_address != '') {
 
-    $query = "SELECT username
-              FROM users
-              WHERE username = ?";
-    $q = $dbcon->stmt_init();
+    $existing_username = '';
+    $existing_email_address = '';
 
-    if ($q->prepare($query)) {
+    $tmpq = $system->db()->prepare("
+        SELECT id
+        FROM users
+        WHERE username = :username");
+    $tmpq->execute(['username' => $new_username]);
+    $result = $tmpq->fetchAll();
 
-        $q->bind_param('s', $new_username);
-        $q->execute();
-        $q->store_result();
+    if ($result) {
 
-        if ($q->num_rows() === 1) {
+        $existing_username = '1';
 
-            $existing_username = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    if ($existing_username == 1) {
+    $tmpq = $system->db()->prepare("
+        SELECT id
+        FROM users
+        WHERE email_address = :email_address");
+    $tmpq->execute(['email_address' => $new_email_address]);
+    $result = $tmpq->fetchAll();
 
-        $_SESSION['s_message_danger'] .= 'You have entered an invalid username<BR>';
+    if ($result) {
+
+        $existing_email_address = '1';
+
+    }
+
+    if ($existing_username == '1' || $existing_email_address == '1') {
+
+        if ($existing_username == '1') $_SESSION['s_message_danger'] .= 'A user with that username already exists<BR>';
+        if ($existing_email_address == '1') $_SESSION['s_message_danger'] .= 'A user with that email address already exists<BR>';
 
     } else {
 
         $new_password = substr(md5(time()), 0, 8);
 
-        $query = "INSERT INTO users
-                  (first_name, last_name, username, email_address, `password`, admin, `read_only`, active, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, password(?), ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        $tmpq = $system->db()->prepare("
+            INSERT INTO users
+            (first_name, last_name, username, email_address, `password`, admin, `read_only`, active, created_by,
+             insert_time)
+            VALUES
+            (:first_name, :last_name, :username, :email_address, password(:password), :is_admin, :read_only, :active,
+             :created_by, :insert_time)");
+        $tmpq->execute(['first_name' => $new_first_name,
+                        'last_name' => $new_last_name,
+                        'username' => $new_username,
+                        'email_address' => $new_email_address,
+                        'password' => $new_password,
+                        'is_admin' => $new_admin,
+                        'read_only' => $new_read_only,
+                        'active' => $new_active,
+                        'created_by' => $_SESSION['s_user_id'],
+                        'insert_time' => $time->stamp()]);
+        $temp_user_id = $this->system->db()->lastInsertId();
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('sssssiiiis', $new_first_name, $new_last_name, $new_username, $new_email_address,
-                $new_password, $new_admin, $new_read_only, $new_active, $_SESSION['s_user_id'], $timestamp);
-            $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to add user');
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "SELECT id
-                  FROM users
-                  WHERE first_name = ?
-                    AND last_name = ?
-                    AND insert_time = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('sss', $new_first_name, $new_last_name, $timestamp);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_user_id);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "INSERT INTO user_settings
-                  (user_id,
-                   default_currency,
-                   default_category_domains,
-                   default_category_ssl,
-                   default_dns,
-                   default_host,
-                   default_ip_address_domains,
-                   default_ip_address_ssl,
-                   default_owner_domains,
-                   default_owner_ssl,
-                   default_registrar,
-                   default_registrar_account,
-                   default_ssl_provider,
-                   default_ssl_provider_account,
-                   default_ssl_type,
-                   insert_time)
-                   VALUES
-                   (?, 'USD', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('iiiiiiiiiiiiiii',
-                $temp_user_id,
-                $_SESSION['s_system_default_category_domains'],
-                $_SESSION['s_system_default_category_ssl'],
-                $_SESSION['s_system_default_dns'],
-                $_SESSION['s_system_default_host'],
-                $_SESSION['s_system_default_ip_address_domains'],
-                $_SESSION['s_system_default_ip_address_ssl'],
-                $_SESSION['s_system_default_owner_domains'],
-                $_SESSION['s_system_default_owner_ssl'],
-                $_SESSION['s_system_default_registrar'],
-                $_SESSION['s_system_default_registrar_account'],
-                $_SESSION['s_system_default_ssl_provider'],
-                $_SESSION['s_system_default_ssl_provider_account'],
-                $_SESSION['s_system_default_ssl_type'],
-                $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $tmpq = $system->db()->prepare("
+            INSERT INTO user_settings
+            (user_id,
+             default_currency,
+             default_category_domains,
+             default_category_ssl,
+             default_dns,
+             default_host,
+             default_ip_address_domains,
+             default_ip_address_ssl,
+             default_owner_domains,
+             default_owner_ssl,
+             default_registrar,
+             default_registrar_account,
+             default_ssl_provider,
+             default_ssl_provider_account,
+             default_ssl_type,
+             insert_time)
+             VALUES
+             (:user_id, 'USD', :default_category_domains, :default_category_ssl, :default_dns, :default_host,
+              :default_ip_address_domains, :default_ip_address_ssl, :default_owner_domains, :default_owner_ssl,
+              :default_registrar, :default_registrar_account, :default_ssl_provider, :default_ssl_provider_account,
+              :default_ssl_type, :insert_time)");
+        $tmpq->execute(['user_id' => $temp_user_id,
+                        'default_category_domains' => $_SESSION['s_system_default_category_domains'],
+                        'default_category_ssl' => $_SESSION['s_system_default_category_ssl'],
+                        'default_dns' => $_SESSION['s_system_default_dns'],
+                        'default_host' => $_SESSION['s_system_default_host'],
+                        'default_ip_address_domains' => $_SESSION['s_system_default_ip_address_domains'],
+                        'default_ip_address_ssl' => $_SESSION['s_system_default_ip_address_ssl'],
+                        'default_owner_domains' => $_SESSION['s_system_default_owner_domains'],
+                        'default_owner_ssl' => $_SESSION['s_system_default_owner_ssl'],
+                        'default_registrar' => $_SESSION['s_system_default_registrar'],
+                        'default_registrar_account' => $_SESSION['s_system_default_registrar_account'],
+                        'default_ssl_provider' => $_SESSION['s_system_default_ssl_provider'],
+                        'default_ssl_provider_account' => $_SESSION['s_system_default_ssl_provider_account'],
+                        'default_ssl_type' => $_SESSION['s_system_default_ssl_type'],
+                        'insert_time' => $time->stamp()]);
 
         //@formatter:off
         $_SESSION['s_message_success']
