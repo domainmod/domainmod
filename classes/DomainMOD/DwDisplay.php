@@ -85,8 +85,9 @@ class DwDisplay
             WHERE a.server_id = s.id
               AND a.server_id = :server_id
               AND a.domain = :domain");
-        $tmpq->execute(['server_id' => $server_id,
-                        'domain' => $domain]);
+        $tmpq->execute(array(
+                       'server_id' => $server_id,
+                       'domain' => $domain));
 
         return $tmpq->fetchAll();
     }
@@ -180,8 +181,9 @@ class DwDisplay
             FROM dw_dns_zones
             WHERE server_id = :server_id
               AND domain = :domain");
-        $tmpq->execute(['server_id' => $server_id,
-                        'domain' => $domain]);
+        $tmpq->execute(array(
+                       'server_id' => $server_id,
+                       'domain' => $domain));
         return $tmpq->fetchColumn();
     }
 
@@ -191,7 +193,7 @@ class DwDisplay
             SELECT `name`
             FROM dw_servers
             WHERE id = :server_id");
-        $tmpq->execute(['server_id' => $server_id]);
+        $tmpq->execute(array('server_id' => $server_id));
         return $tmpq->fetchColumn();
     }
 
@@ -203,8 +205,9 @@ class DwDisplay
             WHERE z.server_id = s.id
               AND z.server_id = :server_id
               AND z.domain = :domain");
-        $tmpq->execute(['server_id' => $server_id,
-                        'domain' => $domain]);
+        $tmpq->execute(array(
+                       'server_id' => $server_id,
+                       'domain' => $domain));
         return $tmpq->fetchAll();
     }
 
@@ -217,7 +220,7 @@ class DwDisplay
             FROM dw_dns_records
             WHERE dns_zone_id = :zone_id
             ORDER BY new_order");
-        $tmpq->execute(['zone_id' => $zone_id]);
+        $tmpq->execute(array('zone_id' => $zone_id));
         return $tmpq->fetchAll();
     }
 

@@ -88,21 +88,22 @@ class DreamHost
                 $autorenew = $this->processAutorenew($value['autorenew']);
                 $privacy = '0';
 
-                $tmpq->execute(['account_id' => $account_id,
-                                'domain' => $domain_list[$domain_count],
-                                'expiry_date' => $expiry_date,
-                                'ns1' => $ns1,
-                                'ns2' => $ns2,
-                                'ns3' => $ns3,
-                                'ns4' => $ns4,
-                                'ns5' => $ns5,
-                                'ns6' => $ns6,
-                                'ns7' => $ns7,
-                                'ns8' => $ns8,
-                                'ns9' => $ns9,
-                                'ns10' => $ns10,
-                                'autorenew' => $autorenew,
-                                'privacy' => $privacy]);
+                $tmpq->execute(array(
+                               'account_id' => $account_id,
+                               'domain' => $domain_list[$domain_count],
+                               'expiry_date' => $expiry_date,
+                               'ns1' => $ns1,
+                               'ns2' => $ns2,
+                               'ns3' => $ns3,
+                               'ns4' => $ns4,
+                               'ns5' => $ns5,
+                               'ns6' => $ns6,
+                               'ns7' => $ns7,
+                               'ns8' => $ns8,
+                               'ns9' => $ns9,
+                               'ns10' => $ns10,
+                               'autorenew' => $autorenew,
+                               'privacy' => $privacy));
 
                 $domain_count++;
 
@@ -132,8 +133,9 @@ class DreamHost
             WHERE account_id = :account_id
               AND domain = :domain
             ORDER BY id ASC");
-        $tmpq->execute(['account_id' => $account_id,
-                        'domain' => $domain]);
+        $tmpq->execute(array(
+                       'account_id' => $account_id,
+                       'domain' => $domain));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -165,7 +167,7 @@ class DreamHost
             $tmpq = $this->system->db()->prepare("
                 DELETE FROM domain_queue_temp
                 WHERE id = :id");
-            $tmpq->execute(['id' => $result->id]);
+            $tmpq->execute(array('id' => $result->id));
 
         }
 

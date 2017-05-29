@@ -37,7 +37,7 @@ class Scheduler
             UPDATE scheduler
             SET is_running = '1'
             WHERE id = :task_id");
-        $tmpq->execute(['task_id' => $task_id]);
+        $tmpq->execute(array('task_id' => $task_id));
     }
 
     public function isFinished($task_id)
@@ -46,7 +46,7 @@ class Scheduler
             UPDATE scheduler
             SET is_running = '0'
             WHERE id = :task_id");
-        $tmpq->execute(['task_id' => $task_id]);
+        $tmpq->execute(array('task_id' => $task_id));
     }
 
     public function updateTime($task_id, $timestamp, $next_run)
@@ -60,10 +60,11 @@ class Scheduler
                 last_duration = :last_duration,
                 next_run = :next_run
             WHERE id = :task_id");
-        $tmpq->execute(['last_run' => $current_time,
-                        'last_duration' => $duration,
-                        'next_run' => $next_run,
-                        'task_id' => $task_id]);
+        $tmpq->execute(array(
+                       'last_run' => $current_time,
+                       'last_duration' => $duration,
+                       'next_run' => $next_run,
+                       'task_id' => $task_id));
     }
 
     public function getTimeDifference($start_time, $end_time)
@@ -86,7 +87,7 @@ class Scheduler
             FROM scheduler
             WHERE id = :task_id
             ORDER BY sort_order ASC");
-        $tmpq->execute(['task_id' => $task_id]);
+        $tmpq->execute(array('task_id' => $task_id));
         return $tmpq->fetch();
     }
 

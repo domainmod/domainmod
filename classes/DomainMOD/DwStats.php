@@ -50,7 +50,7 @@ class DwStats
             SELECT count(*)
             FROM `" . $table . "`
             WHERE server_id = :server_id");
-        $tmpq->execute(['server_id' => $server_id]);
+        $tmpq->execute(array('server_id' => $server_id));
         return $tmpq->fetchColumn();
     }
 
@@ -62,10 +62,11 @@ class DwStats
                 dw_dns_zones = :total_dns_zones,
                 dw_dns_records = :total_dns_records
             WHERE id = :server_id");
-        $tmpq->execute(['total_accounts' => $total_accounts,
-                        'total_dns_zones' => $total_dns_zones,
-                        'total_dns_records' => $total_dns_records,
-                        'server_id' => $server_id]);
+        $tmpq->execute(array(
+                       'total_accounts' => $total_accounts,
+                       'total_dns_zones' => $total_dns_zones,
+                       'total_dns_records' => $total_dns_records,
+                       'server_id' => $server_id));
     }
 
     public function updateDwTotalsTable()
@@ -117,11 +118,12 @@ class DwStats
             (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
             VALUES
             (:total_dw_servers, :total_dw_accounts, :total_dw_dns_zones, :total_dw_records, :insert_time)");
-        $tmpq->execute(['total_dw_servers' => $total_dw_servers,
-                        'total_dw_accounts' => $total_dw_accounts,
-                        'total_dw_dns_zones' => $total_dw_dns_zones,
-                        'total_dw_records' => $total_dw_records,
-                        'insert_time' => $this->time->stamp()]);
+        $tmpq->execute(array(
+                       'total_dw_servers' => $total_dw_servers,
+                       'total_dw_accounts' => $total_dw_accounts,
+                       'total_dw_dns_zones' => $total_dw_dns_zones,
+                       'total_dw_records' => $total_dw_records,
+                       'insert_time' => $this->time->stamp()));
     }
 
     public function getServerTotals()

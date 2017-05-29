@@ -45,7 +45,7 @@ class User
             SELECT first_name, last_name
             FROM users
             WHERE id = :user_id");
-        $tmpq->execute(['user_id' => $user_id]);
+        $tmpq->execute(array('user_id' => $user_id));
         $result = $tmpq->fetch();
 
         return $result->first_name . ' ' . $result->last_name;

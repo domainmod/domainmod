@@ -54,7 +54,7 @@ if (DEMO_INSTALLATION != '1') {
         SELECT `name`, slug, expression, active
         FROM scheduler
         WHERE id = :id");
-    $tmpq->execute(['id' => $id]);
+    $tmpq->execute(array('id' => $id));
     $result = $tmpq->fetch();
 
     if (!$result) {

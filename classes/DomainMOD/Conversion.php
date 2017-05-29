@@ -48,8 +48,9 @@ class Conversion
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
 
-            $tmpq->execute(['currency_id' => $row->id,
-                            'user_id' => $user_id]);
+            $tmpq->execute(array(
+                           'currency_id' => $row->id,
+                           'user_id' => $user_id));
             $result = $tmpq->fetchColumn();
 
             if (!$result) {
@@ -143,10 +144,11 @@ class Conversion
                     update_time = :update_time
                 WHERE currency_id = :currency_id
                   AND user_id = :user_id");
-            $tmpq->execute(['conversion_rate' => $conversion_rate,
-                            'update_time' => $this->time->stamp(),
-                            'currency_id' => $currency_id,
-                            'user_id' => $user_id]);
+            $tmpq->execute(array(
+                           'conversion_rate' => $conversion_rate,
+                           'update_time' => $this->time->stamp(),
+                           'currency_id' => $currency_id,
+                           'user_id' => $user_id));
 
             $log_message = 'Conversion rate updated';
             $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());
@@ -159,10 +161,11 @@ class Conversion
                 (currency_id, user_id, conversion, insert_time)
                 VALUES
                 (:currency_id, :user_id, :conversion_rate, :update_time)");
-            $tmpq->execute(['currency_id' => $currency_id,
-                            'user_id' => $user_id,
-                            'conversion_rate' => $conversion_rate,
-                            'update_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'currency_id' => $currency_id,
+                           'user_id' => $user_id,
+                           'conversion_rate' => $conversion_rate,
+                           'update_time' => $this->time->stamp()));
 
             $log_message = 'Conversion rate inserted';
             $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());

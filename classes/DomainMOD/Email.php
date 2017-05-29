@@ -118,7 +118,7 @@ class Email
             WHERE active NOT IN ('0', '10')
               AND expiry_date <= :date
             ORDER BY expiry_date, domain");
-        $tmpq->execute(['date' => $date]);
+        $tmpq->execute(array('date' => $date));
         $result = $tmpq->fetchAll();
 
         if (!$result) {
@@ -138,7 +138,7 @@ class Email
               AND sslc.active NOT IN ('0')
               AND sslc.expiry_date <= :date
             ORDER BY sslc.expiry_date, sslc.name");
-        $tmpq->execute(['date' => $date]);
+        $tmpq->execute(array('date' => $date));
         $result = $tmpq->fetchAll();
 
         if (!$result) {

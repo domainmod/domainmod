@@ -64,10 +64,11 @@ class DwZones
 
             foreach ($xml->zone as $hit) {
 
-                $tmpq->execute(['server_id' => $server_id,
-                                'domain' => $hit->domain,
-                                'zonefile' => $hit->zonefile,
-                                'insert_time' => $this->time->stamp()]);
+                $tmpq->execute(array(
+                               'server_id' => $server_id,
+                               'domain' => $hit->domain,
+                               'zonefile' => $hit->zonefile,
+                               'insert_time' => $this->time->stamp()));
 
             }
 
@@ -81,7 +82,7 @@ class DwZones
             FROM dw_dns_zones
             WHERE server_id = :server_id
             ORDER BY domain");
-        $tmpq->execute(['server_id' => $server_id]);
+        $tmpq->execute(array('server_id' => $server_id));
         return $tmpq->fetchAll();
     }
 

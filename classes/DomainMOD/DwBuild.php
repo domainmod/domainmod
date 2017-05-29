@@ -68,7 +68,7 @@ class DwBuild
                 dw_accounts = '0',
                 dw_dns_zones = '0',
                 dw_dns_records = '0'");
-        $tmpq->execute(['build_start_time_o' => $build_start_time_o]);
+        $tmpq->execute(array('build_start_time_o' => $build_start_time_o));
 
         $accounts->createTable();
         $zones->createTable();
@@ -107,8 +107,9 @@ class DwBuild
                 build_end_time_overall = :build_end_time_o,
                 build_time_overall = :total_build_time_o,
                 has_ever_been_built_overall = '1'");
-        $tmpq->execute(['build_end_time_o' => $build_end_time_o,
-                        'total_build_time_o' => $total_build_time_o]);
+        $tmpq->execute(array(
+                       'build_end_time_o' => $build_end_time_o,
+                       'total_build_time_o' => $total_build_time_o));
     }
 
     public function getBuildTime($build_start_time)

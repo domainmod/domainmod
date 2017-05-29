@@ -89,8 +89,9 @@ class DwClean
 
                 $wrapped = wordwrap($row->{$field}, $wrap_at, "<BR>", true);
 
-                $tmpq->execute(['wrapped' => $wrapped,
-                                'id' => $row->id]);
+                $tmpq->execute(array(
+                               'wrapped' => $wrapped,
+                               'id' => $row->id));
 
             }
 
@@ -192,8 +193,9 @@ class DwClean
 
         foreach ($type_order as $key) {
 
-            $tmpq->execute(['new_order' => $new_order,
-                            'key' => $key]);
+            $tmpq->execute(array(
+                           'new_order' => $new_order,
+                           'key' => $key));
             $new_order++;
         }
     }

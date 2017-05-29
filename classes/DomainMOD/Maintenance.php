@@ -69,8 +69,9 @@ class Maintenance
 
                 $tld = $this->getTld($row->domain);
 
-                $tmpq->execute(['tld' => $tld,
-                                'id' => $row->id]);
+                $tmpq->execute(array(
+                               'tld' => $tld,
+                               'id' => $row->id));
 
             }
 
@@ -121,7 +122,7 @@ class Maintenance
             UPDATE fees
             SET fee_fixed = '0',
                 update_time = :update_time");
-        $tmpq->execute(['update_time' => $this->time->stamp()]);
+        $tmpq->execute(array('update_time' => $this->time->stamp()));
 
         $tmpq = $this->system->db()->query("
             SELECT id, registrar_id, tld
@@ -165,19 +166,23 @@ class Maintenance
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['id' => $row->id,
+                $tmpq->execute(array(
+                               'id' => $row->id,
+                               'registrar_id' => $row->registrar_id,
+                               'tld' => $row->tld));
+
+                $tmpq2->execute(array(
                                 'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld]);
+                                'tld' => $row->tld));
 
-                $tmpq2->execute(['registrar_id' => $row->registrar_id,
-                                 'tld' => $row->tld]);
+                $tmpq3->execute(array(
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld));
 
-                $tmpq3->execute(['registrar_id' => $row->registrar_id,
-                                 'tld' => $row->tld]);
-
-                $tmpq4->execute(['update_time' => $this->time->stamp(),
-                                 'registrar_id' => $row->registrar_id,
-                                 'tld' => $row->tld]);
+                $tmpq4->execute(array(
+                                'update_time' => $this->time->stamp(),
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld));
 
             }
 
@@ -190,7 +195,7 @@ class Maintenance
             SELECT registrar_id, tld
             FROM domains
             WHERE id = :domain_id");
-        $tmpq->execute(['domain_id' => $domain_id]);
+        $tmpq->execute(array('domain_id' => $domain_id));
         $result = $tmpq->fetch();
 
         if ($result) {
@@ -204,7 +209,7 @@ class Maintenance
             UPDATE domains
             SET fee_fixed = '0'
             WHERE id = :domain_id");
-        $tmpq->execute(['domain_id' => $domain_id]);
+        $tmpq->execute(array('domain_id' => $domain_id));
 
         $tmpq = $this->system->db()->prepare("
             UPDATE fees
@@ -212,9 +217,10 @@ class Maintenance
                 update_time = :update_time
             WHERE registrar_id = :registrar_id
               AND tld = :tld");
-        $tmpq->execute(['update_time' => $this->time->stamp(),
-                        'registrar_id' => $registrar_id,
-                        'tld' => $tld]);
+        $tmpq->execute(array(
+                       'update_time' => $this->time->stamp(),
+                       'registrar_id' => $registrar_id,
+                       'tld' => $tld));
 
         $tmpq = $this->system->db()->prepare("
             SELECT id, registrar_id, tld
@@ -222,8 +228,9 @@ class Maintenance
             WHERE fee_fixed = '0'
               AND registrar_id = :registrar_id
               AND tld = :tld");
-        $tmpq->execute(['registrar_id' => $registrar_id,
-                        'tld' => $tld]);
+        $tmpq->execute(array(
+                       'registrar_id' => $registrar_id,
+                       'tld' => $tld));
         $result = $tmpq->fetchAll();
 
         if ($result) {
@@ -262,19 +269,23 @@ class Maintenance
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['fee_id' => $row->id,
+                $tmpq->execute(array(
+                               'fee_id' => $row->id,
+                               'registrar_id' => $row->registrar_id,
+                               'tld' => $row->tld));
+
+                $tmpq2->execute(array(
                                 'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld]);
+                                'tld' => $row->tld));
 
-                $tmpq2->execute(['registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld]);
-
-                $tmpq3->execute(['registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld]);
-
-                $tmpq4->execute(['update_time' => $this->time->stamp(),
+                $tmpq3->execute(array(
                                 'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld]);
+                                'tld' => $row->tld));
+
+                $tmpq4->execute(array(
+                                'update_time' => $this->time->stamp(),
+                                'registrar_id' => $row->registrar_id,
+                                'tld' => $row->tld));
 
             }
 
@@ -289,7 +300,7 @@ class Maintenance
             UPDATE ssl_fees
             SET fee_fixed = '0',
                 update_time = :update_time");
-        $tmpq->execute(['update_time' => $this->time->stamp()]);
+        $tmpq->execute(array('update_time' => $this->time->stamp()));
 
         $tmpq = $this->system->db()->query("
             SELECT id, ssl_provider_id, type_id
@@ -323,16 +334,19 @@ class Maintenance
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['id' => $row->id,
+                $tmpq->execute(array(
+                               'id' => $row->id,
+                               'ssl_provider_id' => $row->ssl_provider_id,
+                               'type_id' => $row->type_id));
+
+                $tmpq2->execute(array(
                                 'ssl_provider_id' => $row->ssl_provider_id,
-                                'type_id' => $row->type_id]);
+                                'type_id' => $row->type_id));
 
-                $tmpq2->execute(['ssl_provider_id' => $row->ssl_provider_id,
-                                 'type_id' => $row->type_id]);
-
-                $tmpq3->execute(['update_time' => $this->time->stamp(),
-                                 'ssl_provider_id' => $row->ssl_provider_id,
-                                 'type_id' => $row->type_id]);
+                $tmpq3->execute(array(
+                                'update_time' => $this->time->stamp(),
+                                'ssl_provider_id' => $row->ssl_provider_id,
+                                'type_id' => $row->type_id));
 
             }
 

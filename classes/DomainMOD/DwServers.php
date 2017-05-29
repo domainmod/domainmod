@@ -55,8 +55,9 @@ class DwServers
                 SET build_start_time = :build_start_time,
                     build_status = '0'
                 WHERE id = :id");
-            $tmpq->execute(['build_start_time' => $build_start_time,
-                            'id' => $row->id]);
+            $tmpq->execute(array(
+                           'build_start_time' => $build_start_time,
+                           'id' => $row->id));
 
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
@@ -89,9 +90,10 @@ class DwServers
                 build_time = :total_build_time,
                 has_ever_been_built = '1'
             WHERE id = :server_id");
-        $tmpq->execute(['build_end_time' => $build_end_time,
-                        'total_build_time' => $total_build_time,
-                        'server_id' => $server_id]);
+        $tmpq->execute(array(
+                       'build_end_time' => $build_end_time,
+                       'total_build_time' => $total_build_time,
+                       'server_id' => $server_id));
     }
 
 } //@formatter:on

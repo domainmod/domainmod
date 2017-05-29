@@ -42,7 +42,7 @@ class Api
             SELECT api_key
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -66,7 +66,7 @@ class Api
             SELECT api_key, api_secret
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -92,7 +92,7 @@ class Api
             SELECT username, api_key
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -118,7 +118,7 @@ class Api
             SELECT username, api_app_name, api_secret
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -147,7 +147,7 @@ class Api
             FROM registrar_accounts AS ra, ip_addresses AS ip
             WHERE ra.api_ip_id = ip.id
               AND ra.id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -175,7 +175,7 @@ class Api
             SELECT reseller_id, api_key
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -201,7 +201,7 @@ class Api
             SELECT username, `password`
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetch();
 
         if (!$result) {
@@ -227,7 +227,7 @@ class Api
             SELECT `name`
             FROM api_registrars
             WHERE id = :api_registrar_id");
-        $tmpq->execute(['api_registrar_id' => $api_registrar_id]);
+        $tmpq->execute(array('api_registrar_id' => $api_registrar_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {

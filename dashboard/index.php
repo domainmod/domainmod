@@ -74,7 +74,7 @@ $system->authCheck();
                     WHERE active NOT IN ('0', '10')
                       AND expiry_date <= :end_date
                     ORDER BY expiry_date, domain");
-                $tmpq->execute(['end_date' => $end_date]);
+                $tmpq->execute(array('end_date' => $end_date));
                 $result = $tmpq->fetchAll();
 
                 if (!$result) {
@@ -88,7 +88,7 @@ $system->authCheck();
                         FROM domains
                         WHERE active NOT IN ('0', '10')
                           AND expiry_date <= :end_date");
-                    $tmpq->execute(['end_date' => $end_date]);
+                    $tmpq->execute(array('end_date' => $end_date));
                     $to_display = $tmpq->fetchColumn();
 
                 }
@@ -117,7 +117,7 @@ $system->authCheck();
                       AND sslc.active NOT IN ('0')
                       AND sslc.expiry_date <= :end_date
                     ORDER BY sslc.expiry_date, sslc.name");
-                $tmpq->execute(['end_date' => $end_date]);
+                $tmpq->execute(array('end_date' => $end_date));
                 $result = $tmpq->fetchAll();
 
                 if (!$result) {
@@ -132,7 +132,7 @@ $system->authCheck();
                         WHERE sslc.type_id = sslt.id
                           AND sslc.active NOT IN ('0')
                           AND sslc.expiry_date <= :end_date");
-                    $tmpq->execute(['end_date' => $end_date]);
+                    $tmpq->execute(array('end_date' => $end_date));
                     $to_display = $tmpq->fetchColumn();
 
                 }

@@ -53,8 +53,9 @@ if ($user_identifier != '') {
         FROM users
         WHERE (username = :username OR email_address = :email_address)
           AND active = '1'");
-    $tmpq->execute(['username' => $user_identifier,
-                    'email_address' => $user_identifier]);
+    $tmpq->execute(array(
+                   'username' => $user_identifier,
+                   'email_address' => $user_identifier));
     $result = $tmpq->fetch();
 
     if (!$result) {
@@ -75,10 +76,11 @@ if ($user_identifier != '') {
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $tmpq->execute(['new_password' => $new_password,
-                        'timestamp' => $time->stamp(),
-                        'username' => $result->username,
-                        'email_address' => $result->email_address]);
+        $tmpq->execute(array(
+                       'new_password' => $new_password,
+                       'timestamp' => $time->stamp(),
+                       'username' => $result->username,
+                       'email_address' => $result->email_address));
 
         $first_name = $result->first_name;
         $last_name = $result->last_name;

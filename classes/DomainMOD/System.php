@@ -257,7 +257,7 @@ class System
             SELECT `name`
             FROM creation_types
             WHERE id = :creation_type_id");
-        $tmpq->execute(['creation_type_id' => $creation_type_id]);
+        $tmpq->execute(array('creation_type_id' => $creation_type_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -280,7 +280,7 @@ class System
             SELECT id
             FROM creation_types
             WHERE `name` = :creation_type");
-        $tmpq->execute(['creation_type' => $creation_type]);
+        $tmpq->execute(array('creation_type' => $creation_type));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {

@@ -54,13 +54,14 @@ class Log
             (`user_id`, `area`, `level`, `message`, `extra`, `url`, `insert_time`)
             VALUES
             (:user_id, :area, :level, :message, :extra, :url, :insert_time)");
-        $tmpq->execute(['user_id' => $this->user_id,
-                        'area' => $this->area,
-                        'level' => $level,
-                        'message' => $message,
-                        'extra' => $extra_info_formatted,
-                        'url' => $this->url,
-                        'insert_time' => $this->time->stamp()]);
+        $tmpq->execute(array(
+                       'user_id' => $this->user_id,
+                       'area' => $this->area,
+                       'level' => $level,
+                       'message' => $message,
+                       'extra' => $extra_info_formatted,
+                       'url' => $this->url,
+                       'insert_time' => $this->time->stamp()));
     }
 
     public function formatExtraInfo($extra_info)

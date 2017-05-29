@@ -65,7 +65,7 @@ $tmpq = $system->db()->prepare("
     SELECT username
     FROM users
     WHERE id = :user_id");
-$tmpq->execute(['user_id' => $uid]);
+$tmpq->execute(array('user_id' => $uid));
 $result = $tmpq->fetchColumn();
 
 if ($result) {
@@ -92,8 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         FROM users
         WHERE username = :username
           AND id != :user_id");
-    $tmpq->execute(['username' => $new_username,
-                    'user_id' => $new_uid]);
+    $tmpq->execute(array(
+                   'username' => $new_username,
+                   'user_id' => $new_uid));
     $result = $tmpq->fetch();
 
     if ($result) {
@@ -108,8 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         FROM users
         WHERE email_address = :email_address
           AND id != :user_id");
-    $tmpq->execute(['email_address' => $new_email_address,
-                    'user_id' => $new_uid]);
+    $tmpq->execute(array(
+                   'email_address' => $new_email_address,
+                   'user_id' => $new_uid));
     $result = $tmpq->fetch();
 
     if ($result) {
@@ -127,8 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             FROM users
             WHERE username = :new_username
               AND id = :new_uid");
-        $tmpq->execute(['new_username' => $new_username,
-                        'new_uid' => $new_uid]);
+        $tmpq->execute(array(
+                       'new_username' => $new_username,
+                       'new_uid' => $new_uid));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -156,15 +159,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             active = :active,
             update_time = :update_time
         WHERE id = :user_id");
-    $tmpq->execute(['first_name' => $new_first_name,
-                    'last_name' => $new_last_name,
-                    'username' => $new_username,
-                    'email_address' => $new_email_address,
-                    'admin' => $new_is_admin,
-                    'read_only' => $new_read_only,
-                    'active' => $new_is_active,
-                    'update_time' => $time->stamp(),
-                    'user_id' => $new_uid]);
+    $tmpq->execute(array(
+                   'first_name' => $new_first_name,
+                   'last_name' => $new_last_name,
+                   'username' => $new_username,
+                   'email_address' => $new_email_address,
+                   'admin' => $new_is_admin,
+                   'read_only' => $new_read_only,
+                   'active' => $new_is_active,
+                   'update_time' => $time->stamp(),
+                   'user_id' => $new_uid));
 
     $tmpq = $system->db()->prepare("
         UPDATE user_settings
@@ -173,11 +177,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             expiration_emails = :new_expiration_emails,
             update_time = :update_time
         WHERE user_id = :user_id");
-    $tmpq->execute(['new_currency' => $new_currency,
-                    'new_timezone' => $new_timezone,
-                    'new_expiration_emails' => $new_expiration_emails,
-                    'update_time' => $time->stamp(),
-                    'user_id' => $new_uid]);
+    $tmpq->execute(array(
+                   'new_currency' => $new_currency,
+                   'new_timezone' => $new_timezone,
+                   'new_expiration_emails' => $new_expiration_emails,
+                   'update_time' => $time->stamp(),
+                   'user_id' => $new_uid));
 
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
@@ -208,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.id = :user_id");
-        $tmpq->execute(['user_id' => $uid]);
+        $tmpq->execute(array('user_id' => $uid));
         $result = $tmpq->fetch();
 
         if ($result) {
@@ -253,12 +258,12 @@ if ($really_del == '1') {
         $tmpq = $system->db()->prepare("
             DELETE FROM user_settings
             WHERE user_id = :user_id");
-        $tmpq->execute(['user_id' => $uid]);
+        $tmpq->execute(array('user_id' => $uid));
 
         $tmpq = $system->db()->prepare("
             DELETE FROM users
             WHERE id = ?");
-        $tmpq->execute(['user_id' => $uid]);
+        $tmpq->execute(array('user_id' => $uid));
 
         $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 

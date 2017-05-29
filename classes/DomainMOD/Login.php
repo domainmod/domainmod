@@ -40,7 +40,7 @@ class Login
             FROM users
             WHERE id = :user_id
               AND active = '1'");
-        $tmpq->execute(['user_id' => $user_id]);
+        $tmpq->execute(array('user_id' => $user_id));
         return $tmpq->fetch();
     }
 
@@ -71,7 +71,7 @@ class Login
                 display_inactive_assets, display_dw_intro_page
             FROM user_settings
             WHERE user_id = :user_id");
-        $tmpq->execute(['user_id' => $user_id]);
+        $tmpq->execute(array('user_id' => $user_id));
         return $tmpq->fetch();
     }
 
@@ -81,7 +81,7 @@ class Login
             SELECT `name`, symbol, symbol_order, symbol_space
             FROM currencies
             WHERE currency = :currency");
-        $tmpq->execute(['currency' => $currency]);
+        $tmpq->execute(array('currency' => $currency));
         return $tmpq->fetch();
     }
 
@@ -93,9 +93,10 @@ class Login
                 number_of_logins = number_of_logins + 1,
                 update_time = :update_time
             WHERE id = :user_id");
-        $tmpq->execute(['last_login' => $this->time->stamp(),
-                        'update_time' => $this->time->stamp(),
-                        'user_id' => $user_id]);
+        $tmpq->execute(array(
+                       'last_login' => $this->time->stamp(),
+                       'update_time' => $this->time->stamp(),
+                       'user_id' => $user_id));
     }
 
 } //@formatter:on

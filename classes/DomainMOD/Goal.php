@@ -44,11 +44,12 @@ class Goal
             (type, old_version, new_version, ip, agent, `language`, insert_time)
              VALUES
             ('i', 'n/a', :act_software_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
-        $tmpq->execute(['act_software_version' => $act_software_version,
-                        'act_ip_address' => $act_ip_address,
-                        'act_agent' => $act_agent,
-                        'act_language' => $act_language,
-                        'insert_time' => $this->time->stamp()]);
+        $tmpq->execute(array(
+                       'act_software_version' => $act_software_version,
+                       'act_ip_address' => $act_ip_address,
+                       'act_agent' => $act_agent,
+                       'act_language' => $act_language,
+                       'insert_time' => $this->time->stamp()));
     }
 
     public function upgrade($act_old_version)
@@ -63,12 +64,13 @@ class Goal
             (type, old_version, new_version, ip, agent, `language`, insert_time)
              VALUES
             ('u', :act_old_version, :act_new_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
-        $tmpq->execute(['act_old_version' => $act_old_version,
-                        'act_new_version' => $act_new_version,
-                        'act_ip_address' => $act_ip_address,
-                        'act_agent' => $act_agent,
-                        'act_language' => $act_language,
-                'insert_time' => $this->time->stamp()]);
+        $tmpq->execute(array(
+                       'act_old_version' => $act_old_version,
+                       'act_new_version' => $act_new_version,
+                       'act_ip_address' => $act_ip_address,
+                       'act_agent' => $act_agent,
+                       'act_language' => $act_language,
+                       'insert_time' => $this->time->stamp()));
     }
 
     public function remote()
@@ -90,8 +92,9 @@ class Goal
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['timestamp' => $this->time->stamp(),
-                                'id' => $row->id]);
+                $tmpq->execute(array(
+                               'timestamp' => $this->time->stamp(),
+                               'id' => $row->id));
                 $base_url = $this->getBaseUrl($row->type, $row->old_version, $row->new_version);
                 $goal_url = $base_url . '&ip=' . urlencode($row->ip) . '&a=' . urlencode($row->agent) . '&l=' .
                     urlencode($row->language) . '&ti=' . urlencode($row->insert_time) . '&tu=' .

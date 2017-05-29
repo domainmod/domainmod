@@ -42,7 +42,7 @@ class Assets
             WHERE r.id = ra.registrar_id
               AND ra.id = :account_id
             LIMIT 1");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -65,7 +65,7 @@ class Assets
             SELECT username
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(['account_id' => $account_id]);
+        $tmpq->execute(array('account_id' => $account_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {

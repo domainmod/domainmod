@@ -386,8 +386,9 @@ class DomainQueue
             UPDATE domain_queue_list
             SET domain_count = :domain_count
             WHERE id = :id");
-        $tmpq->execute(['domain_count' => $domain_count,
-                        'id' => $list_id]);
+        $tmpq->execute(array(
+                       'domain_count' => $domain_count,
+                       'id' => $list_id));
     }
 
     public function markProcessingDomain()
@@ -422,7 +423,7 @@ class DomainQueue
                 UPDATE domain_queue
                 SET ready_to_import = '1'
                 WHERE id = :queue_domain_id");
-            $tmpq->execute(['queue_domain_id' => $queue_domain_id]);
+            $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
 
             $ready_to_import = '1';
 
@@ -441,8 +442,9 @@ class DomainQueue
             UPDATE domain_queue
             SET expiry_date = :expiration_date
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['expiration_date' => $expiration_date,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'expiration_date' => $expiration_date,
+                       'queue_domain_id' => $queue_domain_id));
     }
 
     public function updateDnsServers($queue_domain_id, $dns_servers, $created_by)
@@ -515,21 +517,22 @@ class DomainQueue
                 ('[created by queue]', :new_servers0, :new_servers1, :new_servers2, :new_servers3, :new_servers4,
                  :new_servers5, :new_servers6, :new_servers7, :new_servers8, :new_servers9, :notes, :number_of_servers,
                  :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(['new_servers0' => $new_servers[0],
-                            'new_servers1' => $new_servers[1],
-                            'new_servers2' => $new_servers[2],
-                            'new_servers3' => $new_servers[3],
-                            'new_servers4' => $new_servers[4],
-                            'new_servers5' => $new_servers[5],
-                            'new_servers6' => $new_servers[6],
-                            'new_servers7' => $new_servers[7],
-                            'new_servers8' => $new_servers[8],
-                            'new_servers9' => $new_servers[9],
-                            'notes' => $this->time->timeBasic() . ' - Created by queue.',
-                            'number_of_servers' => $number_of_servers,
-                            'creation_type_id' => $creation_type_id,
-                            'created_by' => $created_by,
-                            'insert_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'new_servers0' => $new_servers[0],
+                           'new_servers1' => $new_servers[1],
+                           'new_servers2' => $new_servers[2],
+                           'new_servers3' => $new_servers[3],
+                           'new_servers4' => $new_servers[4],
+                           'new_servers5' => $new_servers[5],
+                           'new_servers6' => $new_servers[6],
+                           'new_servers7' => $new_servers[7],
+                           'new_servers8' => $new_servers[8],
+                           'new_servers9' => $new_servers[9],
+                           'notes' => $this->time->timeBasic() . ' - Created by queue.',
+                           'number_of_servers' => $number_of_servers,
+                           'creation_type_id' => $creation_type_id,
+                           'created_by' => $created_by,
+                           'insert_time' => $this->time->stamp()));
             $new_dns_id = $this->system->db()->lastInsertId();
         }
 
@@ -537,8 +540,9 @@ class DomainQueue
             UPDATE domain_queue
             SET dns_id = :new_dns_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['new_dns_id' => $new_dns_id,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'new_dns_id' => $new_dns_id,
+                       'queue_domain_id' => $queue_domain_id));
 
         return $new_dns_id;
     }
@@ -596,12 +600,13 @@ class DomainQueue
                 (`name`, ip, rdns, notes, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', :live_ip, :rdns, :notes, :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(['live_ip' => $live_ip,
-                            'rdns' => $rdns,
-                            'notes' => $this->time->timeBasic() . ' - Created by queue.',
-                            'creation_type_id' => $creation_type_id,
-                            'created_by' => $created_by,
-                            'insert_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'live_ip' => $live_ip,
+                           'rdns' => $rdns,
+                           'notes' => $this->time->timeBasic() . ' - Created by queue.',
+                           'creation_type_id' => $creation_type_id,
+                           'created_by' => $created_by,
+                           'insert_time' => $this->time->stamp()));
 
             $new_ip_id = $this->system->db()->lastInsertId();
 
@@ -611,8 +616,9 @@ class DomainQueue
             UPDATE domain_queue
             SET ip_id = :new_ip_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['new_ip_id' => $new_ip_id,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'new_ip_id' => $new_ip_id,
+                       'queue_domain_id' => $queue_domain_id));
 
         return $new_ip_id;
     }
@@ -636,9 +642,10 @@ class DomainQueue
                 (`name`, stakeholder, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', '[created by queue]', :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(['creation_type_id' => $creation_type_id,
-                            'created_by' => $created_by,
-                            'insert_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'creation_type_id' => $creation_type_id,
+                           'created_by' => $created_by,
+                           'insert_time' => $this->time->stamp()));
 
             $category_id = $this->system->db()->lastInsertId();
 
@@ -652,8 +659,9 @@ class DomainQueue
             UPDATE domain_queue
             SET cat_id = :category_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['category_id' => $category_id,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'category_id' => $category_id,
+                       'queue_domain_id' => $queue_domain_id));
 
         return $category_id;
     }
@@ -678,9 +686,10 @@ class DomainQueue
                 (`name`, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(['creation_type_id' => $creation_type_id,
-                            'created_by' => $created_by,
-                            'insert_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'creation_type_id' => $creation_type_id,
+                           'created_by' => $created_by,
+                           'insert_time' => $this->time->stamp()));
 
             $hosting_id = $this->system->db()->lastInsertId();
 
@@ -694,8 +703,9 @@ class DomainQueue
             UPDATE domain_queue
             SET hosting_id = :hosting_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['hosting_id' => $hosting_id,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'hosting_id' => $hosting_id,
+                       'queue_domain_id' => $queue_domain_id));
 
         return $hosting_id;
     }
@@ -706,8 +716,9 @@ class DomainQueue
             UPDATE domain_queue
             SET privacy = :privacy_status
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['privacy_status' => $privacy_status,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'privacy_status' => $privacy_status,
+                       'queue_domain_id' => $queue_domain_id));
     }
 
     public function updateRenewStatus($queue_domain_id, $autorenew_status)
@@ -716,8 +727,9 @@ class DomainQueue
             UPDATE domain_queue
             SET autorenew = :autorenew_status
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['autorenew_status' => $autorenew_status,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'autorenew_status' => $autorenew_status,
+                       'queue_domain_id' => $queue_domain_id));
     }
 
     public function importToDomainQueue($api_registrar_id, $domain, $owner_id, $registrar_id, $account_id, $created_by)
@@ -729,7 +741,7 @@ class DomainQueue
             SELECT id
             FROM domains
             WHERE domain = :domain");
-        $tmpq->execute(['domain' => $domain]);
+        $tmpq->execute(array('domain' => $domain));
         $result = $tmpq->fetchColumn();
 
         if ($result) { // already in the main domain table
@@ -741,15 +753,16 @@ class DomainQueue
                 VALUES
                 (:api_registrar_id, :domain_id, :owner_id, :registrar_id, :account_id, :domain, :tld, '0', '1', '1',
                  '1', :created_by, :insert_time)");
-            $tmpq->execute(['api_registrar_id' => $api_registrar_id,
-                            'domain_id' => $result,
-                            'owner_id' => $owner_id,
-                            'registrar_id' => $registrar_id,
-                            'account_id' => $account_id,
-                            'domain' => $domain,
-                            'tld' => $tld,
-                            'created_by' => $created_by,
-                            'insert_time' => $this->time->stamp()]);
+            $tmpq->execute(array(
+                           'api_registrar_id' => $api_registrar_id,
+                           'domain_id' => $result,
+                           'owner_id' => $owner_id,
+                           'registrar_id' => $registrar_id,
+                           'account_id' => $account_id,
+                           'domain' => $domain,
+                           'tld' => $tld,
+                           'created_by' => $created_by,
+                           'insert_time' => $this->time->stamp()));
 
         } else { // not already in the main domain table
 
@@ -758,7 +771,7 @@ class DomainQueue
                 SELECT id
                 FROM domain_queue
                 WHERE domain = :domain");
-            $tmpq->execute(['domain' => $domain]);
+            $tmpq->execute(array('domain' => $domain));
             $result = $tmpq->fetchColumn();
 
             if ($result) { // already in the domain queue
@@ -768,14 +781,15 @@ class DomainQueue
                     (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_queue, created_by, insert_time)
                     VALUES
                     (:api_registrar_id, :owner_id, :registrar_id, :account_id, :domain, :tld, '0', '1', '1', '1', :created_by, :insert_time)");
-                $tmpq->execute(['api_registrar_id' => $api_registrar_id,
-                                'owner_id' => $owner_id,
-                                'registrar_id' => $registrar_id,
-                                'account_id' => $account_id,
-                                'domain' => $domain,
-                                'tld' => $tld,
-                                'created_by' => $created_by,
-                                'insert_time' => $this->time->stamp()]);
+                $tmpq->execute(array(
+                               'api_registrar_id' => $api_registrar_id,
+                               'owner_id' => $owner_id,
+                               'registrar_id' => $registrar_id,
+                               'account_id' => $account_id,
+                               'domain' => $domain,
+                               'tld' => $tld,
+                               'created_by' => $created_by,
+                               'insert_time' => $this->time->stamp()));
 
             } else { // if it's not in the main domain table or the domain queue
 
@@ -784,14 +798,15 @@ class DomainQueue
                     (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, created_by, insert_time)
                     VALUES
                     (:api_registrar_id, :owner_id, :registrar_id, :account_id, :domain, :tld, :created_by, :insert_time)");
-                $tmpq->execute(['api_registrar_id' => $api_registrar_id,
-                                'owner_id' => $owner_id,
-                                'registrar_id' => $registrar_id,
-                                'account_id' => $account_id,
-                                'domain' => $domain,
-                                'tld' => $tld,
-                                'created_by' => $created_by,
-                                'insert_time' => $this->time->stamp()]);
+                $tmpq->execute(array(
+                               'api_registrar_id' => $api_registrar_id,
+                               'owner_id' => $owner_id,
+                               'registrar_id' => $registrar_id,
+                               'account_id' => $account_id,
+                               'domain' => $domain,
+                               'tld' => $tld,
+                               'created_by' => $created_by,
+                               'insert_time' => $this->time->stamp()));
 
             }
 
@@ -810,7 +825,7 @@ class DomainQueue
               AND already_in_domains != '1'
               AND already_in_queue != '1'
             ORDER BY insert_time ASC");
-        $tmpq->execute(['queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
         $result = $tmpq->fetchAll();
 
         if (!$result) {
@@ -840,27 +855,29 @@ class DomainQueue
 
                 $creation_type_id = $this->system->getCreationTypeId('Queue');
 
-                $tmpq->execute(['owner_id' => $row->owner_id,
-                                'registrar_id' => $row->registrar_id,
-                                'account_id' => $row->account_id,
-                                'domain' => $row->domain,
-                                'tld' => $row->tld,
-                                'expiry_date' => $row->expiry_date,
-                                'cat_id' => $row->cat_id,
-                                'dns_id' => $row->dns_id,
-                                'ip_id' => $row->ip_id,
-                                'hosting_id' => $row->hosting_id,
-                                'notes' => $this->time->timeBasic() . " - Inserted by Queue.",
-                                'autorenew' => $row->autorenew,
-                                'privacy' => $row->privacy,
-                                'creation_type_id' => $creation_type_id,
-                                'created_by' => $row->created_by,
-                                'insert_time' => $this->time->stamp()]);
+                $tmpq->execute(array(
+                               'owner_id' => $row->owner_id,
+                               'registrar_id' => $row->registrar_id,
+                               'account_id' => $row->account_id,
+                               'domain' => $row->domain,
+                               'tld' => $row->tld,
+                               'expiry_date' => $row->expiry_date,
+                               'cat_id' => $row->cat_id,
+                               'dns_id' => $row->dns_id,
+                               'ip_id' => $row->ip_id,
+                               'hosting_id' => $row->hosting_id,
+                               'notes' => $this->time->timeBasic() . " - Inserted by Queue.",
+                               'autorenew' => $row->autorenew,
+                               'privacy' => $row->privacy,
+                               'creation_type_id' => $creation_type_id,
+                               'created_by' => $row->created_by,
+                               'insert_time' => $this->time->stamp()));
 
                 $new_domain_id = $this->system->db()->lastInsertId();
 
-                $tmpq2->execute(['domain_id' => $new_domain_id,
-                                 'insert_time' => $this->time->stamp()]);
+                $tmpq2->execute(array(
+                                'domain_id' => $new_domain_id,
+                                'insert_time' => $this->time->stamp()));
 
                 // update domain's fees
                 $this->maint->updateDomainFee($new_domain_id);
@@ -880,8 +897,9 @@ class DomainQueue
             UPDATE domain_queue
             SET domain_id = :new_domain_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['new_domain_id' => $new_domain_id,
-                        'queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array(
+                       'new_domain_id' => $new_domain_id,
+                       'queue_domain_id' => $queue_domain_id));
     }
 
     public function markFinishedList($list_id)
@@ -892,7 +910,7 @@ class DomainQueue
                 ready_to_import = '2',
                 finished = '1'
             WHERE id = :list_id");
-        $tmpq->execute(['list_id' => $list_id]);
+        $tmpq->execute(array('list_id' => $list_id));
     }
 
     public function markFinishedDomain($queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
@@ -913,15 +931,16 @@ class DomainQueue
               AND autorenew = :autorenew_status
               AND creation_type_id = :creation_type_id
               AND active = '1'");
-        $tmpq->execute(['domain' => $domain,
-                        'expiration_date' => $expiration_date,
-                        'dns_id' => $dns_id,
-                        'ip_id' => $ip_id,
-                        'cat_id' => $cat_id,
-                        'hosting_id' => $hosting_id,
-                        'privacy_status' => $privacy_status,
-                        'autorenew_status' => $autorenew_status,
-                        'creation_type_id' => $creation_type_id]);
+        $tmpq->execute(array(
+                       'domain' => $domain,
+                       'expiration_date' => $expiration_date,
+                       'dns_id' => $dns_id,
+                       'ip_id' => $ip_id,
+                       'cat_id' => $cat_id,
+                       'hosting_id' => $hosting_id,
+                       'privacy_status' => $privacy_status,
+                       'autorenew_status' => $autorenew_status,
+                       'creation_type_id' => $creation_type_id));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -941,7 +960,7 @@ class DomainQueue
                     ready_to_import = '2',
                     finished = '1'
                 WHERE id = :queue_domain_id");
-            $tmpq->execute(['queue_domain_id' => $queue_domain_id]);
+            $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
 
         }
     }
@@ -952,7 +971,7 @@ class DomainQueue
             UPDATE domain_queue_list
             SET processing = '0'
             WHERE id = :list_id");
-        $tmpq->execute(['list_id' => $list_id]);
+        $tmpq->execute(array('list_id' => $list_id));
     }
 
     public function markNotProcessingDomain($queue_domain_id)
@@ -961,7 +980,7 @@ class DomainQueue
             UPDATE domain_queue
             SET processing = '0'
             WHERE id = :queue_domain_id");
-        $tmpq->execute(['queue_domain_id' => $queue_domain_id]);
+        $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
     }
 
     public function copyToHistoryList()
@@ -990,13 +1009,14 @@ class DomainQueue
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['api_registrar_id' => $row->api_registrar_id,
-                                'domain_count' => $row->domain_count,
-                                'owner_id' => $row->owner_id,
-                                'registrar_id' => $row->registrar_id,
-                                'account_id' => $row->account_id,
-                                'created_by' => $row->created_by,
-                                'insert_time' => $row->insert_time]);
+                $tmpq->execute(array(
+                               'api_registrar_id' => $row->api_registrar_id,
+                               'domain_count' => $row->domain_count,
+                               'owner_id' => $row->owner_id,
+                               'registrar_id' => $row->registrar_id,
+                               'account_id' => $row->account_id,
+                               'created_by' => $row->created_by,
+                               'insert_time' => $row->insert_time));
 
                 $this->system->db()->query("
                     UPDATE domain_queue_list
@@ -1040,24 +1060,25 @@ class DomainQueue
 
             foreach ($result as $row) {
 
-                $tmpq->execute(['api_registrar_id' => $row->api_registrar_id,
-                                'domain_id' => $row->domain_id,
-                                'owner_id' => $row->owner_id,
-                                'registrar_id' => $row->registrar_id,
-                                'account_id' => $row->account_id,
-                                'domain' => $row->domain,
-                                'tld' => $row->tld,
-                                'expiry_date' => $row->expiry_date,
-                                'cat_id' => $row->cat_id,
-                                'dns_id' => $row->dns_id,
-                                'ip_id' => $row->ip_id,
-                                'hosting_id' => $row->hosting_id,
-                                'autorenew' => $row->autorenew,
-                                'privacy' => $row->privacy,
-                                'already_in_domains' => $row->already_in_domains,
-                                'already_in_queue' => $row->already_in_queue,
-                                'created_by' => $row->created_by,
-                                'insert_time' => $row->insert_time]);
+                $tmpq->execute(array(
+                               'api_registrar_id' => $row->api_registrar_id,
+                               'domain_id' => $row->domain_id,
+                               'owner_id' => $row->owner_id,
+                               'registrar_id' => $row->registrar_id,
+                               'account_id' => $row->account_id,
+                               'domain' => $row->domain,
+                               'tld' => $row->tld,
+                               'expiry_date' => $row->expiry_date,
+                               'cat_id' => $row->cat_id,
+                               'dns_id' => $row->dns_id,
+                               'ip_id' => $row->ip_id,
+                               'hosting_id' => $row->hosting_id,
+                               'autorenew' => $row->autorenew,
+                               'privacy' => $row->privacy,
+                               'already_in_domains' => $row->already_in_domains,
+                               'already_in_queue' => $row->already_in_queue,
+                               'created_by' => $row->created_by,
+                               'insert_time' => $row->insert_time));
 
                 $this->system->db()->query("
                     UPDATE domain_queue

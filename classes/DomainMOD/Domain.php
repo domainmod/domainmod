@@ -90,7 +90,7 @@ class Domain
             SELECT expiry_date
             FROM domains
             WHERE domain = :domain");
-        $tmpq->execute(['domain' => $domain]);
+        $tmpq->execute(array('domain' => $domain));
         $result = $tmpq->fetchColumn();
 
         if (!$result) {
@@ -123,10 +123,11 @@ class Domain
                     notes = CONCAT(:notes, '\r\n\r\n', notes),
                     update_time = :update_time
                 WHERE domain = :domain");
-            $tmpq->execute(['new_expiry' => $new_expiry,
-                            'notes' => $notes,
-                            'update_time' => $this->time->stamp(),
-                            'domain' => $domain]);
+            $tmpq->execute(array(
+                           'new_expiry' => $new_expiry,
+                           'notes' => $notes,
+                           'update_time' => $this->time->stamp(),
+                           'domain' => $domain));
 
         } else {
 
@@ -135,9 +136,10 @@ class Domain
                 SET expiry_date = :new_expiry,
                     update_time = :update_time
                 WHERE domain = :domain");
-            $tmpq->execute(['new_expiry' => $new_expiry,
-                            'update_time' => $this->time->stamp(),
-                            'domain' => $domain]);
+            $tmpq->execute(array(
+                           'new_expiry' => $new_expiry,
+                           'update_time' => $this->time->stamp(),
+                           'domain' => $domain));
 
         }
     }

@@ -52,7 +52,7 @@ if (DEMO_INSTALLATION != '1') {
         WHERE active = '1'
           AND is_running = '0'
           AND next_run <= :next_run");
-    $tmpq->execute(['next_run' => $time->stamp()]);
+    $tmpq->execute(array('next_run' => $time->stamp()));
     $result = $tmpq->fetchAll();
 
     if (!$result) {

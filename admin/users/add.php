@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         SELECT id
         FROM users
         WHERE username = :username");
-    $tmpq->execute(['username' => $new_username]);
+    $tmpq->execute(array('username' => $new_username));
     $result = $tmpq->fetchAll();
 
     if ($result) {
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         SELECT id
         FROM users
         WHERE email_address = :email_address");
-    $tmpq->execute(['email_address' => $new_email_address]);
+    $tmpq->execute(array('email_address' => $new_email_address));
     $result = $tmpq->fetchAll();
 
     if ($result) {
@@ -98,16 +98,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             VALUES
             (:first_name, :last_name, :username, :email_address, password(:password), :is_admin, :read_only, :active,
              :created_by, :insert_time)");
-        $tmpq->execute(['first_name' => $new_first_name,
-                        'last_name' => $new_last_name,
-                        'username' => $new_username,
-                        'email_address' => $new_email_address,
-                        'password' => $new_password,
-                        'is_admin' => $new_admin,
-                        'read_only' => $new_read_only,
-                        'active' => $new_active,
-                        'created_by' => $_SESSION['s_user_id'],
-                        'insert_time' => $time->stamp()]);
+        $tmpq->execute(array(
+                       'first_name' => $new_first_name,
+                       'last_name' => $new_last_name,
+                       'username' => $new_username,
+                       'email_address' => $new_email_address,
+                       'password' => $new_password,
+                       'is_admin' => $new_admin,
+                       'read_only' => $new_read_only,
+                       'active' => $new_active,
+                       'created_by' => $_SESSION['s_user_id'],
+                       'insert_time' => $time->stamp()));
         $temp_user_id = $this->system->db()->lastInsertId();
 
         $tmpq = $system->db()->prepare("
@@ -133,21 +134,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
               :default_ip_address_domains, :default_ip_address_ssl, :default_owner_domains, :default_owner_ssl,
               :default_registrar, :default_registrar_account, :default_ssl_provider, :default_ssl_provider_account,
               :default_ssl_type, :insert_time)");
-        $tmpq->execute(['user_id' => $temp_user_id,
-                        'default_category_domains' => $_SESSION['s_system_default_category_domains'],
-                        'default_category_ssl' => $_SESSION['s_system_default_category_ssl'],
-                        'default_dns' => $_SESSION['s_system_default_dns'],
-                        'default_host' => $_SESSION['s_system_default_host'],
-                        'default_ip_address_domains' => $_SESSION['s_system_default_ip_address_domains'],
-                        'default_ip_address_ssl' => $_SESSION['s_system_default_ip_address_ssl'],
-                        'default_owner_domains' => $_SESSION['s_system_default_owner_domains'],
-                        'default_owner_ssl' => $_SESSION['s_system_default_owner_ssl'],
-                        'default_registrar' => $_SESSION['s_system_default_registrar'],
-                        'default_registrar_account' => $_SESSION['s_system_default_registrar_account'],
-                        'default_ssl_provider' => $_SESSION['s_system_default_ssl_provider'],
-                        'default_ssl_provider_account' => $_SESSION['s_system_default_ssl_provider_account'],
-                        'default_ssl_type' => $_SESSION['s_system_default_ssl_type'],
-                        'insert_time' => $time->stamp()]);
+        $tmpq->execute(array(
+                       'user_id' => $temp_user_id,
+                       'default_category_domains' => $_SESSION['s_system_default_category_domains'],
+                       'default_category_ssl' => $_SESSION['s_system_default_category_ssl'],
+                       'default_dns' => $_SESSION['s_system_default_dns'],
+                       'default_host' => $_SESSION['s_system_default_host'],
+                       'default_ip_address_domains' => $_SESSION['s_system_default_ip_address_domains'],
+                       'default_ip_address_ssl' => $_SESSION['s_system_default_ip_address_ssl'],
+                       'default_owner_domains' => $_SESSION['s_system_default_owner_domains'],
+                       'default_owner_ssl' => $_SESSION['s_system_default_owner_ssl'],
+                       'default_registrar' => $_SESSION['s_system_default_registrar'],
+                       'default_registrar_account' => $_SESSION['s_system_default_registrar_account'],
+                       'default_ssl_provider' => $_SESSION['s_system_default_ssl_provider'],
+                       'default_ssl_provider_account' => $_SESSION['s_system_default_ssl_provider_account'],
+                       'default_ssl_type' => $_SESSION['s_system_default_ssl_type'],
+                       'insert_time' => $time->stamp()));
 
         //@formatter:off
         $_SESSION['s_message_success']
