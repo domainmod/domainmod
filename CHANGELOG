@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.05.01    2017-05-29
+- Fixed bulk domain renewal bug
+- Updated DB execute syntax for PHP 5.3 compatibility
+- Updated Add & Edit User processes
+- Added timeBasicMinusDays method to Time class
+- Code cleanup
+
 v4.05.00    2017-05-27
 - Added Debugging Mode
 - Cosmetic changes
