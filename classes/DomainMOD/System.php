@@ -185,8 +185,15 @@ class System
 
     public function getDebugMode()
     {
-        $tmpq = $this->db()->query("SELECT debug_mode FROM settings");
-        return $tmpq->fetchColumn();
+        $tmpq = $this->db()->query("SHOW COLUMNS FROM `settings` LIKE 'debug_mode'");
+        if ($tmpq === false) return '0';
+        $result = $tmpq->fetchColumn();
+        if (!$result) {
+            return '0';
+        } else {
+            $tmpq2 = $this->db()->query("SELECT debug_mode FROM settings");
+            return $tmpq2->fetchColumn();
+        }
     }
 
     public function showMessageSuccess($result_message)
