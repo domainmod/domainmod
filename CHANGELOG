@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.05.02    2017-05-30
+- Fixed Debug process
+
 v4.05.01    2017-05-29
 - Fixed bulk domain renewal bug
 - Updated DB execute syntax for PHP 5.3 compatibility
