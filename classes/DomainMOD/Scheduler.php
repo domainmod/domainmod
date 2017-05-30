@@ -24,6 +24,7 @@ namespace DomainMOD;
 class Scheduler
 {
     public $system;
+    public $time;
 
     public function __construct()
     {
