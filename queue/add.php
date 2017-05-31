@@ -79,7 +79,7 @@ if ($new_raid != '' ) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $format = new DomainMOD\Format();
-    $domain_list = $format->cleanAndSplitDomains($raw_domain_list);
+    $domain_array = $format->cleanAndSplitDomains($raw_domain_list);
 
     // If the registrar has the ability to retrieve the list of domains
     if ($lists_domains == '1' && $raw_domain_list == '') {
@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
+            list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_array);
 
             if ($raw_domain_list == "" || $invalid_domains == 1) {
 
@@ -244,10 +244,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $date = new DomainMOD\Date();
 
-                reset($domain_list);
+                reset($domain_array);
 
                 // cycle through domains here
-                while (list($key, $new_domain) = each($domain_list)) {
+                while (list($key, $new_domain) = each($domain_array)) {
 
                     $query = "SELECT domain
                               FROM domains
@@ -270,10 +270,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                reset($domain_list);
+                reset($domain_array);
 
                 // cycle through domains here
-                while (list($key, $new_domain) = each($domain_list)) {
+                while (list($key, $new_domain) = each($domain_array)) {
 
                     $query = "SELECT domain
                               FROM domain_queue
@@ -331,10 +331,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
-                    reset($domain_list);
+                    reset($domain_array);
 
                     // cycle through domains here
-                    while (list($key, $new_domain) = each($domain_list)) {
+                    while (list($key, $new_domain) = each($domain_array)) {
 
                         $domain_temp = new DomainMOD\Domain();
                         $new_tld = $domain_temp->getTld($new_domain);

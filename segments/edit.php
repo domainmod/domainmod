@@ -58,16 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     $format = new DomainMOD\Format();
-    $domain_list = $format->cleanAndSplitDomains($raw_domain_list);
+    $domain_array = $format->cleanAndSplitDomains($raw_domain_list);
 
     if ($new_name != "" && $raw_domain_list != "") {
 
-        $number_of_domains = count($domain_list);
+        $number_of_domains = count($domain_array);
 
         $domain = new DomainMOD\Domain();
 
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) =
-            $domain->findInvalidDomains($domain_list);
+            $domain->findInvalidDomains($domain_array);
 
         if ($raw_domain_list == "" || $invalid_domains == 1) {
 
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $domain = new DomainMOD\Domain();
 
-            while (list($key, $new_domain) = each($domain_list)) {
+            while (list($key, $new_domain) = each($domain_array)) {
 
                 if (!$domain->checkFormat($new_domain)) {
                     echo 'invalid domain ' . $key;
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            $new_data_formatted = $format->formatForMysql($dbcon, $domain_list);
+            $new_data_formatted = $format->formatForMysql($dbcon, $domain_array);
 
             $query = "UPDATE segments
                       SET `name` = ?,
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
-            foreach ($domain_list as $domain) {
+            foreach ($domain_array as $domain) {
 
                 $query = "INSERT INTO segment_data
                           (segment_id, domain, update_time)
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bind_param('i', $segid);
         $q->execute();
         $q->store_result();
-        $q->bind_result($new_id, $new_name, $new_description, $domain_list_formatted, $new_notes);
+        $q->bind_result($new_id, $new_name, $new_description, $domain_array_formatted, $new_notes);
         $q->fetch();
         $q->close();
 
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_list_formatted);
+    $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_array_formatted);
     $raw_domain_list = preg_replace("/','/", "\r\n", $raw_domain_list);
     $raw_domain_list = preg_replace("/'/", "", $raw_domain_list);
 
