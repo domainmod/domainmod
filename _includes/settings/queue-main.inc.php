@@ -83,7 +83,6 @@ $datatable_options = 'var oldStart = 0;
                                            targets:   0
                                            } ],
                           "ordering": true,
-                          "order": [[ 8, "desc" ]],
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "fnDrawCallback": function (o) {

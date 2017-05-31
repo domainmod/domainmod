@@ -76,7 +76,7 @@ $sql_domains = "SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq
                   AND dq.account_id = ra.id
                   AND dq.owner_id = o.id
                   AND dq.api_registrar_id = ar.id
-                ORDER BY dq.already_in_domains DESC, dq.already_in_queue DESC, dq.insert_time DESC, dq.domain ASC";
+                ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC";
 $result_domains = mysqli_query($dbcon, $sql_domains);
 
 if ($export_data == '1') {
