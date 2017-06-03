@@ -65,11 +65,12 @@ class CustomField
 
     public function queryCustomFields($table_name)
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+        $stmt = $pdo->query("
             SELECT field_name
             FROM " . $table_name . "
             ORDER BY `name` ASC");
-        return $tmpq->fetchAll();
+        return $stmt->fetchAll();
     }
 
     public function getCustomFieldsSql($table_name, $column_prefix)

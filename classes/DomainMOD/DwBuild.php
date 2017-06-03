@@ -41,6 +41,7 @@ class DwBuild
         $stats = new DwStats();
         $time = new Time();
 
+        $pdo = $this->system->db();
         $result = $servers->get();
 
         if (!$result) {
@@ -55,7 +56,7 @@ class DwBuild
 
         $build_start_time_o = $time->stamp();
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE dw_servers
             SET build_status_overall = '0',
                 build_start_time_overall = :build_start_time_o,
@@ -68,7 +69,8 @@ class DwBuild
                 dw_accounts = '0',
                 dw_dns_zones = '0',
                 dw_dns_records = '0'");
-        $tmpq->execute(array('build_start_time_o' => $build_start_time_o));
+        $stmt->bindValue('build_start_time_o', $build_start_time_o, \PDO::PARAM_STR);
+        $stmt->execute();
 
         $accounts->createTable();
         $zones->createTable();
@@ -99,17 +101,20 @@ class DwBuild
 
     public function buildFinish($build_start_time_o)
     {
+        $pdo = $this->system->db();
+
         list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE dw_servers
             SET build_status_overall = '1',
                 build_end_time_overall = :build_end_time_o,
                 build_time_overall = :total_build_time_o,
                 has_ever_been_built_overall = '1'");
-        $tmpq->execute(array(
-                       'build_end_time_o' => $build_end_time_o,
-                       'total_build_time_o' => $total_build_time_o));
+        $stmt->bindValue('build_end_time_o', $build_end_time_o, \PDO::PARAM_STR);
+        $stmt->bindValue('total_build_time_o', $total_build_time_o, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
     public function getBuildTime($build_start_time)

@@ -52,23 +52,28 @@ class DwZones
 
     public function insertZones($api_results, $server_id)
     {
+        $pdo = $this->system->db();
+
         if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO dw_dns_zones
                 (server_id, domain, zonefile, insert_time)
                 VALUES
                 (:server_id, :domain, :zonefile, :insert_time)");
+            $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain', $bind_domain, \PDO::PARAM_STR);
+            $stmt->bindParam('zonefile', $bind_zonefile, \PDO::PARAM_STR);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
             foreach ($xml->zone as $hit) {
 
-                $tmpq->execute(array(
-                               'server_id' => $server_id,
-                               'domain' => $hit->domain,
-                               'zonefile' => $hit->zonefile,
-                               'insert_time' => $this->time->stamp()));
+                $bind_domain = $hit->domain;
+                $bind_zonefile = $hit->zonefile;
+                $stmt->execute();
 
             }
 
@@ -77,13 +82,17 @@ class DwZones
 
     public function getInsertedZones($server_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT id, domain
             FROM dw_dns_zones
             WHERE server_id = :server_id
             ORDER BY domain");
-        $tmpq->execute(array('server_id' => $server_id));
-        return $tmpq->fetchAll();
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function processEachZone($result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
@@ -102,10 +111,12 @@ class DwZones
 
     public function getTotalDwZones()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT count(*)
             FROM `dw_dns_zones`");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
 } //@formatter:on

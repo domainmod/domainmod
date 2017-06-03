@@ -46,27 +46,33 @@ class DwStats
 
     public function getTotals($server_id, $table)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT count(*)
             FROM `" . $table . "`
             WHERE server_id = :server_id");
-        $tmpq->execute(array('server_id' => $server_id));
-        return $tmpq->fetchColumn();
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
     }
 
     public function updateServerTotals($server_id, $total_accounts, $total_dns_zones, $total_dns_records)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE dw_servers
             SET dw_accounts = :total_accounts,
                 dw_dns_zones = :total_dns_zones,
                 dw_dns_records = :total_dns_records
             WHERE id = :server_id");
-        $tmpq->execute(array(
-                       'total_accounts' => $total_accounts,
-                       'total_dns_zones' => $total_dns_zones,
-                       'total_dns_records' => $total_dns_records,
-                       'server_id' => $server_id));
+        $stmt->bindValue('total_accounts', $total_accounts, \PDO::PARAM_INT);
+        $stmt->bindValue('total_dns_zones', $total_dns_zones, \PDO::PARAM_INT);
+        $stmt->bindValue('total_dns_records', $total_dns_records, \PDO::PARAM_INT);
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function updateDwTotalsTable()
@@ -105,33 +111,41 @@ class DwStats
 
     public function getTotalDwServers()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT count(*)
             FROM `dw_servers`");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
     public function updateTable($total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             INSERT INTO dw_server_totals
             (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
             VALUES
             (:total_dw_servers, :total_dw_accounts, :total_dw_dns_zones, :total_dw_records, :insert_time)");
-        $tmpq->execute(array(
-                       'total_dw_servers' => $total_dw_servers,
-                       'total_dw_accounts' => $total_dw_accounts,
-                       'total_dw_dns_zones' => $total_dw_dns_zones,
-                       'total_dw_records' => $total_dw_records,
-                       'insert_time' => $this->time->stamp()));
+        $stmt->bindValue('total_dw_servers', $total_dw_servers, \PDO::PARAM_INT);
+        $stmt->bindValue('total_dw_accounts', $total_dw_accounts, \PDO::PARAM_INT);
+        $stmt->bindValue('total_dw_dns_zones', $total_dw_dns_zones, \PDO::PARAM_INT);
+        $stmt->bindValue('total_dw_records', $total_dw_records, \PDO::PARAM_INT);
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
+
     }
 
     public function getServerTotals()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT dw_accounts, dw_dns_zones, dw_dns_records
             FROM dw_server_totals");
-        $result = $tmpq->fetch();
+        $result = $stmt->fetch();
 
         return array($result->dw_accounts, $result->dw_dns_zones, $result->dw_dns_records);
     }

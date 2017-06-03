@@ -55,6 +55,8 @@ class DreamHost
 
     public function getDomainList($api_key, $account_id)
     {
+        $pdo = $this->system->db();
+
         $domain_list = array();
         $domain_count = 0;
 
@@ -65,11 +67,12 @@ class DreamHost
         // confirm that the api call was successful
         if ($array_results['result'] == 'success') {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_temp
                 (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
                 VALUES
                 (:account_id, :domain, :expiry_date, :ns1, :ns2, :ns3, :ns4, :ns5, :ns6, :ns7, :ns8, :ns9, :ns10, :autorenew, :privacy)");
+            $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
 
             foreach ($array_results['data'] as $value) {
 
@@ -88,22 +91,21 @@ class DreamHost
                 $autorenew = $this->processAutorenew($value['autorenew']);
                 $privacy = '0';
 
-                $tmpq->execute(array(
-                               'account_id' => $account_id,
-                               'domain' => $domain_list[$domain_count],
-                               'expiry_date' => $expiry_date,
-                               'ns1' => $ns1,
-                               'ns2' => $ns2,
-                               'ns3' => $ns3,
-                               'ns4' => $ns4,
-                               'ns5' => $ns5,
-                               'ns6' => $ns6,
-                               'ns7' => $ns7,
-                               'ns8' => $ns8,
-                               'ns9' => $ns9,
-                               'ns10' => $ns10,
-                               'autorenew' => $autorenew,
-                               'privacy' => $privacy));
+                $stmt->bindValue('domain', $domain_list[$domain_count], \PDO::PARAM_STR);
+                $stmt->bindValue('expiry_date', $expiry_date, \PDO::PARAM_STR);
+                $stmt->bindValue('ns1', $ns1, \PDO::PARAM_STR);
+                $stmt->bindValue('ns2', $ns2, \PDO::PARAM_STR);
+                $stmt->bindValue('ns3', $ns3, \PDO::PARAM_STR);
+                $stmt->bindValue('ns4', $ns4, \PDO::PARAM_STR);
+                $stmt->bindValue('ns5', $ns5, \PDO::PARAM_STR);
+                $stmt->bindValue('ns6', $ns6, \PDO::PARAM_STR);
+                $stmt->bindValue('ns7', $ns7, \PDO::PARAM_STR);
+                $stmt->bindValue('ns8', $ns8, \PDO::PARAM_STR);
+                $stmt->bindValue('ns9', $ns9, \PDO::PARAM_STR);
+                $stmt->bindValue('ns10', $ns10, \PDO::PARAM_STR);
+                $stmt->bindValue('autorenew', $autorenew, \PDO::PARAM_INT);
+                $stmt->bindValue('privacy', $privacy, \PDO::PARAM_INT);
+                $stmt->execute();
 
                 $domain_count++;
 
@@ -122,21 +124,24 @@ class DreamHost
 
     public function getFullInfo($account_id, $domain)
     {
+        $pdo = $this->system->db();
+
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';
         $autorenewal_status = '';
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
             FROM domain_queue_temp
             WHERE account_id = :account_id
               AND domain = :domain
             ORDER BY id ASC");
-        $tmpq->execute(array(
-                       'account_id' => $account_id,
-                       'domain' => $domain));
-        $result = $tmpq->fetch();
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = $stmt->fetch();
 
         if (!$result) {
 
@@ -164,10 +169,11 @@ class DreamHost
 
             $autorenewal_status = $result->autorenew;
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 DELETE FROM domain_queue_temp
                 WHERE id = :id");
-            $tmpq->execute(array('id' => $result->id));
+            $stmt->bindValue('id', $result->id, \PDO::PARAM_INT);
+            $stmt->execute();
 
         }
 

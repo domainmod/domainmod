@@ -44,24 +44,27 @@ class Log
     public function addEntry($level, $message, $extra_info)
     {
         $system = new System();
+        $pdo = $system->db();
         if ($extra_info != '') {
             $extra_info_formatted = $this->formatExtraInfo($extra_info);
         } else {
             $extra_info_formatted = '';
         }
-        $tmpq = $system->db()->prepare("
+
+        $stmt = $pdo->prepare("
             INSERT INTO `log`
             (`user_id`, `area`, `level`, `message`, `extra`, `url`, `insert_time`)
             VALUES
             (:user_id, :area, :level, :message, :extra, :url, :insert_time)");
-        $tmpq->execute(array(
-                       'user_id' => $this->user_id,
-                       'area' => $this->area,
-                       'level' => $level,
-                       'message' => $message,
-                       'extra' => $extra_info_formatted,
-                       'url' => $this->url,
-                       'insert_time' => $this->time->stamp()));
+        $stmt->bindValue('user_id', $this->user_id, \PDO::PARAM_INT);
+        $stmt->bindValue('area', $this->area, \PDO::PARAM_STR);
+        $stmt->bindValue('level', $level, \PDO::PARAM_STR);
+        $stmt->bindValue('message', $message, \PDO::PARAM_LOB);
+        $stmt->bindValue('extra', $extra_info_formatted, \PDO::PARAM_LOB);
+        $stmt->bindValue('url', $this->url, \PDO::PARAM_LOB);
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
     }
 
     public function formatExtraInfo($extra_info)

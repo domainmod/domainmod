@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-                $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
+                $_SESSION['s_message_success'] .= "The fee for " . $new_tld . " has been added<BR>";
 
                 header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
                 exit;

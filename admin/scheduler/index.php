@@ -40,6 +40,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-scheduler-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 ?>
@@ -71,11 +72,11 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
         </tr>
     </thead>
     <tbody><?php
-    $tmpq = $system->db()->query("
+    $stmt = $pdo->query("
         SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC");
-    $result = $tmpq->fetchAll();
+    $result = $stmt->fetchAll();
 
     foreach ($result as $row) { ?>
 

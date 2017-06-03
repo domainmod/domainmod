@@ -36,14 +36,18 @@ class Assets
 
     public function getRegistrar($account_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT r.name
             FROM registrars AS r, registrar_accounts AS ra
             WHERE r.id = ra.registrar_id
               AND ra.id = :account_id
             LIMIT 1");
-        $tmpq->execute(array('account_id' => $account_id));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -61,12 +65,16 @@ class Assets
 
     public function getUsername($account_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT username
             FROM registrar_accounts
             WHERE id = :account_id");
-        $tmpq->execute(array('account_id' => $account_id));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 

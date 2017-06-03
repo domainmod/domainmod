@@ -36,24 +36,27 @@ class Conversion
 
     public function updateRates($default_currency, $user_id)
     {
+        $pdo = $this->system->db();
         $result = $this->getActiveCurrencies();
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id
             FROM currency_conversions
             WHERE currency_id = :currency_id
               AND user_id = :user_id");
+        $stmt->bindParam('currency_id', $bind_currency_id, \PDO::PARAM_INT);
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
 
         foreach ($result as $row) {
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
 
-            $tmpq->execute(array(
-                           'currency_id' => $row->id,
-                           'user_id' => $user_id));
-            $result = $tmpq->fetchColumn();
+            $bind_currency_id = $row->id;
+            $stmt->execute();
 
-            if (!$result) {
+            $result_conversion = $stmt->fetchColumn();
+
+            if (!$result_conversion) {
 
                 $is_existing = '0';
                 $log_message = 'Unable to retrieve user currency';
@@ -78,7 +81,9 @@ class Conversion
 
     public function getActiveCurrencies()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id, currency
             FROM
             (  SELECT c.id, c.currency
@@ -94,7 +99,7 @@ class Conversion
                GROUP BY c.currency
             ) AS temp
             GROUP BY currency");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -136,19 +141,22 @@ class Conversion
 
     public function updateConversionRate($conversion_rate, $is_existing, $currency_id, $user_id)
     {
+        $pdo = $this->system->db();
+
         if ($is_existing == '1') {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE currency_conversions
                 SET conversion = :conversion_rate,
                     update_time = :update_time
                 WHERE currency_id = :currency_id
                   AND user_id = :user_id");
-            $tmpq->execute(array(
-                           'conversion_rate' => $conversion_rate,
-                           'update_time' => $this->time->stamp(),
-                           'currency_id' => $currency_id,
-                           'user_id' => $user_id));
+            $stmt->bindValue(':conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);
+            $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+            $stmt->execute();
 
             $log_message = 'Conversion rate updated';
             $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());
@@ -156,16 +164,17 @@ class Conversion
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO currency_conversions
                 (currency_id, user_id, conversion, insert_time)
                 VALUES
                 (:currency_id, :user_id, :conversion_rate, :update_time)");
-            $tmpq->execute(array(
-                           'currency_id' => $currency_id,
-                           'user_id' => $user_id,
-                           'conversion_rate' => $conversion_rate,
-                           'update_time' => $this->time->stamp()));
+            $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);
+            $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
 
             $log_message = 'Conversion rate inserted';
             $log_extra = array('User ID' => $user_id, 'Currency ID' => $currency_id, 'Conversion Rate' => $conversion_rate, 'Update Time' => $this->time->stamp());

@@ -34,71 +34,82 @@ class Goal
 
     public function installation()
     {
+        $pdo = $this->system->db();
+
         $act_software_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
         $act_agent = $_SERVER['HTTP_USER_AGENT'];
         $act_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             INSERT INTO goal_activity
             (type, old_version, new_version, ip, agent, `language`, insert_time)
              VALUES
             ('i', 'n/a', :act_software_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
-        $tmpq->execute(array(
-                       'act_software_version' => $act_software_version,
-                       'act_ip_address' => $act_ip_address,
-                       'act_agent' => $act_agent,
-                       'act_language' => $act_language,
-                       'insert_time' => $this->time->stamp()));
+        $stmt->bindValue('act_software_version', $act_software_version, \PDO::PARAM_STR);
+        $stmt->bindValue('act_ip_address', $act_ip_address, \PDO::PARAM_STR);
+        $stmt->bindValue('act_agent', $act_agent, \PDO::PARAM_LOB);
+        $stmt->bindValue('act_language', $act_language, \PDO::PARAM_STR);
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
     }
 
     public function upgrade($act_old_version)
     {
+        $pdo = $this->system->db();
+
         $act_new_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
         $act_agent = $_SERVER['HTTP_USER_AGENT'];
         $act_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             INSERT INTO goal_activity
             (type, old_version, new_version, ip, agent, `language`, insert_time)
              VALUES
             ('u', :act_old_version, :act_new_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
-        $tmpq->execute(array(
-                       'act_old_version' => $act_old_version,
-                       'act_new_version' => $act_new_version,
-                       'act_ip_address' => $act_ip_address,
-                       'act_agent' => $act_agent,
-                       'act_language' => $act_language,
-                       'insert_time' => $this->time->stamp()));
+        $stmt->bindValue('act_old_version', $act_old_version, \PDO::PARAM_STR);
+        $stmt->bindValue('act_new_version', $act_new_version, \PDO::PARAM_STR);
+        $stmt->bindValue('act_ip_address', $act_ip_address, \PDO::PARAM_STR);
+        $stmt->bindValue('act_agent', $act_agent, \PDO::PARAM_LOB);
+        $stmt->bindValue('act_language', $act_language, \PDO::PARAM_STR);
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
     }
 
     public function remote()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time
             FROM goal_activity
             WHERE new_activity = '1'
             ORDER BY id ASC");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE goal_activity
                 SET new_activity = '0',
                     update_time = :timestamp
                 WHERE id = :id");
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('timestamp', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'timestamp' => $this->time->stamp(),
-                               'id' => $row->id));
+                $bind_id = $row->id;
+                $stmt->execute();
+
                 $base_url = $this->getBaseUrl($row->type, $row->old_version, $row->new_version);
                 $goal_url = $base_url . '&ip=' . urlencode($row->ip) . '&a=' . urlencode($row->agent) . '&l=' .
-                    urlencode($row->language) . '&ti=' . urlencode($row->insert_time) . '&tu=' .
-                    urlencode($this->time->stamp());
+                urlencode($row->language) . '&ti=' . urlencode($row->insert_time) . '&tu=' .
+                urlencode($this->time->stamp());
                 $this->triggerGoal($goal_url);
 
             }

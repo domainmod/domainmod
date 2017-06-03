@@ -37,6 +37,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/dashboard-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 ?>
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
@@ -53,10 +54,10 @@ $system->authCheck();
 
     <!-- Expiring Boxes -->
     <?php
-    $tmpq = $system->db()->query("
+    $stmt = $pdo->query("
         SELECT expiration_days
         FROM settings");
-    $expiration_days = $tmpq->fetchColumn();
+    $expiration_days = $stmt->fetchColumn();
 
     $start_date = '2000-01-01';
     $end_date = $time->timeBasicPlusDays($expiration_days);
@@ -68,14 +69,15 @@ $system->authCheck();
         <div class="small-box bg-red">
             <div class="inner">
                 <?php
-                $tmpq = $system->db()->prepare("
+                $stmt = $pdo->prepare("
                     SELECT id, expiry_date, domain
                     FROM domains
                     WHERE active NOT IN ('0', '10')
                       AND expiry_date <= :end_date
                     ORDER BY expiry_date, domain");
-                $tmpq->execute(array('end_date' => $end_date));
-                $result = $tmpq->fetchAll();
+                $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetchAll();
 
                 if (!$result) {
 
@@ -83,13 +85,14 @@ $system->authCheck();
 
                 } else {
 
-                    $tmpq = $system->db()->prepare("
+                    $stmt = $pdo->prepare("
                         SELECT count(*)
                         FROM domains
                         WHERE active NOT IN ('0', '10')
                           AND expiry_date <= :end_date");
-                    $tmpq->execute(array('end_date' => $end_date));
-                    $to_display = $tmpq->fetchColumn();
+                    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $to_display = $stmt->fetchColumn();
 
                 }
                 ?>
@@ -110,15 +113,16 @@ $system->authCheck();
         <div class="small-box bg-red">
             <div class="inner">
                 <?php
-                $tmpq = $system->db()->prepare("
+                $stmt = $pdo->prepare("
                     SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
                     FROM ssl_certs AS sslc, ssl_cert_types AS sslt
                     WHERE sslc.type_id = sslt.id
                       AND sslc.active NOT IN ('0')
                       AND sslc.expiry_date <= :end_date
                     ORDER BY sslc.expiry_date, sslc.name");
-                $tmpq->execute(array('end_date' => $end_date));
-                $result = $tmpq->fetchAll();
+                $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetchAll();
 
                 if (!$result) {
 
@@ -126,14 +130,15 @@ $system->authCheck();
 
                 } else {
 
-                    $tmpq = $system->db()->prepare("
+                    $stmt = $pdo->prepare("
                         SELECT count(*)
                         FROM ssl_certs AS sslc, ssl_cert_types AS sslt
                         WHERE sslc.type_id = sslt.id
                           AND sslc.active NOT IN ('0')
                           AND sslc.expiry_date <= :end_date");
-                    $tmpq->execute(array('end_date' => $end_date));
-                    $to_display = $tmpq->fetchColumn();
+                    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $to_display = $stmt->fetchColumn();
 
                 }
                 ?>

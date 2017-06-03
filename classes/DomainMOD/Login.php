@@ -34,31 +34,39 @@ class Login
 
     public function getUserInfo($user_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`, number_of_logins,
                 last_login
             FROM users
             WHERE id = :user_id
               AND active = '1'");
-        $tmpq->execute(array('user_id' => $user_id));
-        return $tmpq->fetch();
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch();
     }
 
     public function getSystemSettings()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
                 default_category_ssl, default_dns, default_host, default_ip_address_domains,
                 default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                 default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
                 expiration_days, debug_mode
             FROM settings");
-        return $tmpq->fetch();
+        return $stmt->fetch();
     }
 
     public function getUserSettings($user_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
                 default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
                 default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
@@ -71,32 +79,42 @@ class Login
                 display_inactive_assets, display_dw_intro_page
             FROM user_settings
             WHERE user_id = :user_id");
-        $tmpq->execute(array('user_id' => $user_id));
-        return $tmpq->fetch();
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch();
     }
 
     public function getCurrencyInfo($currency)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT `name`, symbol, symbol_order, symbol_space
             FROM currencies
             WHERE currency = :currency");
-        $tmpq->execute(array('currency' => $currency));
-        return $tmpq->fetch();
+        $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetch();
     }
 
     public function setLastLogin($user_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE users
             SET last_login = :last_login,
                 number_of_logins = number_of_logins + 1,
                 update_time = :update_time
             WHERE id = :user_id");
-        $tmpq->execute(array(
-                       'last_login' => $this->time->stamp(),
-                       'update_time' => $this->time->stamp(),
-                       'user_id' => $user_id));
+        $timestamp = $this->time->stamp();
+        $stmt->bindValue('last_login', $timestamp, \PDO::PARAM_STR);
+        $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
 } //@formatter:on

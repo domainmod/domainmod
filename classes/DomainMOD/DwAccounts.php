@@ -76,11 +76,13 @@ class DwAccounts
 
     public function insertAccounts($api_results, $server_id)
     {
+        $pdo = $this->system->db();
+
         if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO dw_accounts
                 (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
                  diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate,
@@ -91,41 +93,65 @@ class DwAccounts
                  :diskused, :maxaddons, :maxftp, :maxlst, :maxparked, :maxpop, :maxsql, :maxsub, :startdate,
                  :unix_startdate, :suspended, :suspendreason, :suspendtime, :max_email_per_hour,
                  :max_defer_fail_percentage, :min_defer_fail_to_trigger_protection, :insert_time)");
+            $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain', $bind_domain, \PDO::PARAM_STR);
+            $stmt->bindParam('ip', $bind_ip, \PDO::PARAM_STR);
+            $stmt->bindParam('owner', $bind_owner, \PDO::PARAM_STR);
+            $stmt->bindParam('user', $bind_user, \PDO::PARAM_STR);
+            $stmt->bindParam('email', $bind_email, \PDO::PARAM_STR);
+            $stmt->bindParam('plan', $bind_plan, \PDO::PARAM_STR);
+            $stmt->bindParam('theme', $bind_theme, \PDO::PARAM_STR);
+            $stmt->bindParam('shell', $bind_shell, \PDO::PARAM_STR);
+            $stmt->bindParam('partition', $bind_partition, \PDO::PARAM_STR);
+            $stmt->bindParam('disklimit', $bind_disklimit_formatted, \PDO::PARAM_STR);
+            $stmt->bindParam('diskused', $bind_diskused_formatted, \PDO::PARAM_STR);
+            $stmt->bindParam('maxaddons', $bind_maxaddons, \PDO::PARAM_STR);
+            $stmt->bindParam('maxftp', $bind_maxftp, \PDO::PARAM_STR);
+            $stmt->bindParam('maxlst', $bind_maxlst, \PDO::PARAM_STR);
+            $stmt->bindParam('maxparked', $bind_maxparked, \PDO::PARAM_STR);
+            $stmt->bindParam('maxpop', $bind_maxpop, \PDO::PARAM_STR);
+            $stmt->bindParam('maxsql', $bind_maxsql, \PDO::PARAM_STR);
+            $stmt->bindParam('maxsub', $bind_maxsub, \PDO::PARAM_STR);
+            $stmt->bindParam('startdate', $bind_startdate, \PDO::PARAM_STR);
+            $stmt->bindParam('unix_startdate', $bind_unix_startdate, \PDO::PARAM_INT);
+            $stmt->bindParam('suspended', $bind_suspended, \PDO::PARAM_INT);
+            $stmt->bindParam('suspendreason', $bind_suspendreason, \PDO::PARAM_STR);
+            $stmt->bindParam('suspendtime', $bind_suspendtime, \PDO::PARAM_INT);
+            $stmt->bindParam('max_email_per_hour', $bind_MAX_EMAIL_PER_HOUR, \PDO::PARAM_INT);
+            $stmt->bindParam('max_defer_fail_percentage', $bind_MAX_DEFER_FAIL_PERCENTAGE, \PDO::PARAM_INT);
+            $stmt->bindParam('min_defer_fail_to_trigger_protection', $bind_MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
             foreach ($xml->acct as $hit) {
 
-                $disklimit_formatted = rtrim($hit->disklimit, 'M');
-                $diskused_formatted = rtrim($hit->diskused, 'M');
-
-                $tmpq->execute(array(
-                               'server_id' => $server_id,
-                               'domain' => $hit->domain,
-                               'ip' => $hit->ip,
-                               'owner' => $hit->owner,
-                               'user' => $hit->user,
-                               'email' => $hit->email,
-                               'plan' => $hit->plan,
-                               'theme' => $hit->theme,
-                               'shell' => $hit->shell,
-                               'partition' => $hit->partition,
-                               'disklimit' => $disklimit_formatted,
-                               'diskused' => $diskused_formatted,
-                               'maxaddons' => $hit->maxaddons,
-                               'maxftp' => $hit->maxftp,
-                               'maxlst' => $hit->maxlst,
-                               'maxparked' => $hit->maxparked,
-                               'maxpop' => $hit->maxpop,
-                               'maxsql' => $hit->maxsql,
-                               'maxsub' => $hit->maxsub,
-                               'startdate' => $hit->startdate,
-                               'unix_startdate' => $hit->unix_startdate,
-                               'suspended' => $hit->suspended,
-                               'suspendreason' => $hit->suspendreason,
-                               'suspendtime' => $hit->suspendtime,
-                               'max_email_per_hour' => $hit->MAX_EMAIL_PER_HOUR,
-                               'max_defer_fail_percentage' => $hit->MAX_DEFER_FAIL_PERCENTAGE,
-                               'min_defer_fail_to_trigger_protection' => $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION,
-                               'insert_time' => $this->time->stamp()));
+                $bind_domain = $hit->domain;
+                $bind_ip = $hit->ip;
+                $bind_owner = $hit->owner;
+                $bind_user = $hit->user;
+                $bind_email = $hit->email;
+                $bind_plan = $hit->plan;
+                $bind_theme = $hit->theme;
+                $bind_shell = $hit->shell;
+                $bind_partition = $hit->partition;
+                $bind_disklimit_formatted = rtrim($hit->disklimit, 'M');
+                $bind_diskused_formatted = rtrim($hit->diskused, 'M');
+                $bind_maxaddons = $hit->maxaddons;
+                $bind_maxftp = $hit->maxftp;
+                $bind_maxlst = $hit->maxlst;
+                $bind_maxparked = $hit->maxparked;
+                $bind_maxpop = $hit->maxpop;
+                $bind_maxsql = $hit->maxsql;
+                $bind_maxsub = $hit->maxsub;
+                $bind_startdate = $hit->startdate;
+                $bind_unix_startdate = $hit->unix_startdate;
+                $bind_suspended = $hit->suspended;
+                $bind_suspendreason = $hit->suspendreason;
+                $bind_suspendtime = $hit->suspendtime;
+                $bind_MAX_EMAIL_PER_HOUR = $hit->MAX_EMAIL_PER_HOUR;
+                $bind_MAX_DEFER_FAIL_PERCENTAGE = $hit->MAX_DEFER_FAIL_PERCENTAGE;
+                $bind_MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION = $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION;
+                $stmt->execute();
 
             }
 
@@ -134,10 +160,12 @@ class DwAccounts
 
     public function getTotalDwAccounts()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT count(*)
             FROM `dw_accounts`");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
 } //@formatter:on

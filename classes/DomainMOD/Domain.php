@@ -86,12 +86,15 @@ class Domain
 
     public function getExpiry($domain)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT expiry_date
             FROM domains
             WHERE domain = :domain");
-        $tmpq->execute(array('domain' => $domain));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -115,31 +118,35 @@ class Domain
 
     public function writeNewExpiry($domain, $new_expiry, $notes)
     {
+        $pdo = $this->system->db();
+
         if ($notes != '') {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domains
                 SET expiry_date = :new_expiry,
                     notes = CONCAT(:notes, '\r\n\r\n', notes),
                     update_time = :update_time
                 WHERE domain = :domain");
-            $tmpq->execute(array(
-                           'new_expiry' => $new_expiry,
-                           'notes' => $notes,
-                           'update_time' => $this->time->stamp(),
-                           'domain' => $domain));
+            $stmt->bindValue('new_expiry', $new_expiry, \PDO::PARAM_STR);
+            $stmt->bindValue('notes', $notes, \PDO::PARAM_LOB);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
 
         } else {
 
-           $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domains
                 SET expiry_date = :new_expiry,
                     update_time = :update_time
                 WHERE domain = :domain");
-            $tmpq->execute(array(
-                           'new_expiry' => $new_expiry,
-                           'update_time' => $this->time->stamp(),
-                           'domain' => $domain));
+            $stmt->bindValue('new_expiry', $new_expiry, \PDO::PARAM_STR);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
 
         }
     }

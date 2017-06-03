@@ -27,9 +27,8 @@ require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
-$log = new DomainMOD\Log('admin.debuglog');
-
 $layout = new DomainMOD\Layout();
+$log = new DomainMOD\Log('admin.debuglog');
 $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
@@ -39,12 +38,14 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-debug-log-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
+
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
-$tmpq = $system->db()->query("
+$stmt = $pdo->query("
     SELECT id, user_id, area, `level`, message, extra, url, insert_time
     FROM log
     ORDER BY insert_time DESC, id DESC");
@@ -71,7 +72,7 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    $result = $tmpq->fetchAll();
+    $result = $stmt->fetchAll();
 
     if (!$result) {
 
@@ -112,7 +113,7 @@ if ($export_data == '1') {
 <?php
 require_once(DIR_INC . '/layout/header.inc.php');
 
-$result = $tmpq->fetchAll();
+$result = $stmt->fetchAll();
 
 if (!$result) {
 

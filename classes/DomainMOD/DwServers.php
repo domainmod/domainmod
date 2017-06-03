@@ -32,11 +32,13 @@ class DwServers
 
     public function get()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id, `host`, protocol, `port`, username, api_token, `hash`
             FROM dw_servers
             ORDER BY `name`");
-        return $tmpq->fetchAll();
+        return $stmt->fetchAll();
     }
 
     public function processEachServer($result)
@@ -46,18 +48,20 @@ class DwServers
         $zones = new DwZones();
         $time = new Time();
 
+        $pdo = $this->system->db();
+        $stmt = $pdo->prepare("
+            UPDATE dw_servers
+            SET build_start_time = :build_start_time,
+                build_status = '0'
+            WHERE id = :id");
+        $stmt->bindParam('build_start_time', $build_start_time, \PDO::PARAM_STR);
+        $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
+
         foreach ($result as $row) {
 
             $build_start_time = $time->stamp();
-
-            $tmpq = $this->system->db()->prepare("
-                UPDATE dw_servers
-                SET build_start_time = :build_start_time,
-                    build_status = '0'
-                WHERE id = :id");
-            $tmpq->execute(array(
-                           'build_start_time' => $build_start_time,
-                           'id' => $row->id));
+            $bind_id = $row->id;
+            $stmt->execute();
 
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
@@ -79,21 +83,24 @@ class DwServers
 
     public function serverFinish($server_id, $build_start_time)
     {
+        $pdo = $this->system->db();
+
         $build = new DwBuild();
 
         list($build_end_time, $total_build_time) = $build->getBuildTime($build_start_time);
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE dw_servers
             SET build_status = '1',
                 build_end_time = :build_end_time,
                 build_time = :total_build_time,
                 has_ever_been_built = '1'
             WHERE id = :server_id");
-        $tmpq->execute(array(
-                       'build_end_time' => $build_end_time,
-                       'total_build_time' => $total_build_time,
-                       'server_id' => $server_id));
+        $stmt->bindValue('build_end_time', $build_end_time, \PDO::PARAM_STR);
+        $stmt->bindValue('total_build_time', $total_build_time, \PDO::PARAM_INT);
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
 } //@formatter:on

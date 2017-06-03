@@ -36,6 +36,7 @@ class System
         $pdo->exec("SET NAMES utf8");
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
 
@@ -43,8 +44,9 @@ class System
     {
         $full_install_path = DIR_ROOT . '/install/';
 
-        $tmpq = $this->db()->query("SHOW TABLES LIKE 'settings'");
-        $result = $tmpq->fetchColumn();
+        $pdo = $this->db();
+        $stmt = $pdo->query("SHOW TABLES LIKE 'settings'");
+        $result = $stmt->fetchColumn();
 
         if (!$result && is_dir($full_install_path)) {
 
@@ -101,10 +103,11 @@ class System
 
     public function getDbVersion()
     {
-        $tmpq = $this->db()->query("
+        $pdo = $this->db();
+        $stmt = $pdo->query("
             SELECT db_version
             FROM settings");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
     public function getUpgradeMessage()
@@ -138,8 +141,9 @@ class System
 
     public function checkForRows($sql)
     {
-        $tmpq = $this->db()->query($sql);
-        $result = $tmpq->fetchColumn();
+        $pdo = $this->db();
+        $stmt = $pdo->query($sql);
+        $result = $stmt->fetchColumn();
         if (!$result) {
             return '0';
         } else {
@@ -185,14 +189,15 @@ class System
 
     public function getDebugMode()
     {
-        $tmpq = $this->db()->query("SHOW COLUMNS FROM `settings` LIKE 'debug_mode'");
-        if ($tmpq === false) return '0';
-        $result = $tmpq->fetchColumn();
+        $pdo = $this->db();
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'debug_mode'");
+        if ($stmt === false) return '0';
+        $result = $stmt->fetchColumn();
         if (!$result) {
             return '0';
         } else {
-            $tmpq2 = $this->db()->query("SELECT debug_mode FROM settings");
-            return $tmpq2->fetchColumn();
+            $stmt2 = $pdo->query("SELECT debug_mode FROM settings");
+            return $stmt2->fetchColumn();
         }
     }
 
@@ -260,12 +265,14 @@ class System
 
     public function getCreationType($creation_type_id)
     {
-        $tmpq = $this->db()->prepare("
+        $pdo = $this->db();
+        $stmt = $pdo->prepare("
             SELECT `name`
             FROM creation_types
             WHERE id = :creation_type_id");
-        $tmpq->execute(array('creation_type_id' => $creation_type_id));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -283,12 +290,14 @@ class System
 
     public function getCreationTypeId($creation_type)
     {
-        $tmpq = $this->db()->prepare("
+        $pdo = $this->db();
+        $stmt = $pdo->prepare("
             SELECT id
             FROM creation_types
             WHERE `name` = :creation_type");
-        $tmpq->execute(array('creation_type' => $creation_type));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('creation_type', $creation_type, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 

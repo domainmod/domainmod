@@ -82,15 +82,17 @@ class Email
 
     public function getSettings()
     {
+        $pdo = $this->system->db();
+
         $url = '';
         $email = '';
         $days = '';
         $use_smtp = '';
 
-        $tmpq = $this->system->db()->query("
+        $stmt = $pdo->query("
             SELECT full_url, email_address, expiration_days, use_smtp
             FROM settings");
-        $result = $tmpq->fetch();
+        $result = $stmt->fetch();
 
         if (!$result) {
 
@@ -111,15 +113,17 @@ class Email
     public function checkExpiring($days, $from_cron)
     {
         $date = $this->time->timeBasicPlusDays($days);
+        $pdo = $this->system->db();
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id, expiry_date, domain
             FROM domains
             WHERE active NOT IN ('0', '10')
               AND expiry_date <= :date
             ORDER BY expiry_date, domain");
-        $tmpq->execute(array('date' => $date));
-        $result = $tmpq->fetchAll();
+        $stmt->bindValue('date', $date, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -131,15 +135,16 @@ class Email
 
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
             FROM ssl_certs AS sslc, ssl_cert_types AS sslt
             WHERE sslc.type_id = sslt.id
               AND sslc.active NOT IN ('0')
               AND sslc.expiry_date <= :date
             ORDER BY sslc.expiry_date, sslc.name");
-        $tmpq->execute(array('date' => $date));
-        $result = $tmpq->fetchAll();
+        $stmt->bindValue('date', $date, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -162,13 +167,15 @@ class Email
 
     public function getRecipients()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT u.email_address, u.first_name, u.last_name
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.active = '1'
               AND us.expiration_emails = '1'");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 

@@ -42,18 +42,23 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
+
 if (DEMO_INSTALLATION != '1') {
 
     $system->db()->query("UPDATE scheduler SET is_running = '0'");
 
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         SELECT id, `name`, slug, expression, active
         FROM scheduler
         WHERE active = '1'
           AND is_running = '0'
           AND next_run <= :next_run");
-    $tmpq->execute(array('next_run' => $time->stamp()));
-    $result = $tmpq->fetchAll();
+    $bind_timestamp = $time->stamp();
+    $stmt->bindValue('next_run', $bind_timestamp, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $result = $stmt->fetchAll();
 
     if (!$result) {
 
@@ -103,10 +108,10 @@ if (DEMO_INSTALLATION != '1') {
 
                 $schedule->isRunning($row->id);
 
-                $tmpq = $system->db()->query("
+                $stmt = $pdo->query("
                     SELECT user_id, default_currency
                     FROM user_settings");
-                $result_conversion = $tmpq->fetchAll();
+                $result_conversion = $stmt->fetchAll();
 
                 if (!$result_conversion) {
 

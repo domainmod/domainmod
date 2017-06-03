@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-users-edit.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -61,12 +62,13 @@ $new_uid = $_POST['new_uid'];
 
 if ($new_uid == '') $new_uid = $uid;
 
-$tmpq = $system->db()->prepare("
+$stmt = $pdo->prepare("
     SELECT username
     FROM users
     WHERE id = :user_id");
-$tmpq->execute(array('user_id' => $uid));
-$result = $tmpq->fetchColumn();
+$stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchColumn();
 
 if ($result) {
 
@@ -87,15 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     $invalid_email_address = '';
 
     // Check to see if the username is already taken
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         SELECT username
         FROM users
         WHERE username = :username
           AND id != :user_id");
-    $tmpq->execute(array(
-                   'username' => $new_username,
-                   'user_id' => $new_uid));
-    $result = $tmpq->fetch();
+    $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
 
     if ($result) {
 
@@ -104,15 +107,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     }
 
     // Check to see if the email address is already taken
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         SELECT username
         FROM users
         WHERE email_address = :email_address
           AND id != :user_id");
-    $tmpq->execute(array(
-                   'email_address' => $new_email_address,
-                   'user_id' => $new_uid));
-    $result = $tmpq->fetch();
+    $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
 
     if ($result) {
 
@@ -124,15 +128,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     // If it's the primary admin account editing their own profile the query will return 1, otherwise 0
     if ($new_username == 'admin' || $new_username == 'administrator') {
 
-        $tmpq = $system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT username
             FROM users
             WHERE username = :new_username
               AND id = :new_uid");
-        $tmpq->execute(array(
-                       'new_username' => $new_username,
-                       'new_uid' => $new_uid));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_uid', $new_uid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -148,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
     && $new_email_address != '' && $invalid_username != '1' && $invalid_email_address != '1') {
 
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         UPDATE users
         SET first_name = :first_name,
             last_name = :last_name,
@@ -159,30 +164,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             active = :active,
             update_time = :update_time
         WHERE id = :user_id");
-    $tmpq->execute(array(
-                   'first_name' => $new_first_name,
-                   'last_name' => $new_last_name,
-                   'username' => $new_username,
-                   'email_address' => $new_email_address,
-                   'admin' => $new_is_admin,
-                   'read_only' => $new_read_only,
-                   'active' => $new_is_active,
-                   'update_time' => $time->stamp(),
-                   'user_id' => $new_uid));
+    $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
+    $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
+    $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
+    $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
+    $stmt->bindValue('admin', $new_is_admin, PDO::PARAM_INT);
+    $stmt->bindValue('read_only', $new_read_only, PDO::PARAM_INT);
+    $stmt->bindValue('active', $new_is_active, PDO::PARAM_INT);
+    $bind_timestamp = $time->stamp();
+    $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         UPDATE user_settings
         SET default_currency = :new_currency,
             default_timezone = :new_timezone,
             expiration_emails = :new_expiration_emails,
             update_time = :update_time
         WHERE user_id = :user_id");
-    $tmpq->execute(array(
-                   'new_currency' => $new_currency,
-                   'new_timezone' => $new_timezone,
-                   'new_expiration_emails' => $new_expiration_emails,
-                   'update_time' => $time->stamp(),
-                   'user_id' => $new_uid));
+    $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+    $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
+    $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
+    $bind_timestamp = $time->stamp();
+    $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
@@ -208,13 +215,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else {
 
-        $tmpq = $system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.id = :user_id");
-        $tmpq->execute(array('user_id' => $uid));
-        $result = $tmpq->fetch();
+        $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch();
 
         if ($result) {
 
@@ -242,11 +251,11 @@ if ($del == '1') {
 
 if ($really_del == '1') {
 
-    $tmpq = $system->db()->query("
+    $stmt = $pdo->query("
         SELECT id
         FROM users
         WHERE username = 'admin'");
-    $temp_uid = $tmpq->fetchColumn();
+    $temp_uid = $stmt->fetchColumn();
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
@@ -255,15 +264,17 @@ if ($really_del == '1') {
 
     } else {
 
-        $tmpq = $system->db()->prepare("
+        $stmt = $pdo->prepare("
             DELETE FROM user_settings
             WHERE user_id = :user_id");
-        $tmpq->execute(array('user_id' => $uid));
+        $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
+        $stmt->execute();
 
-        $tmpq = $system->db()->prepare("
+        $stmt = $pdo->prepare("
             DELETE FROM users
             WHERE id = ?");
-        $tmpq->execute(array('user_id' => $uid));
+        $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 
@@ -300,11 +311,12 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
-$tmpq = $system->db()->query("
+
+$stmt = $pdo->query("
     SELECT currency, `name`, symbol
     FROM currencies
     ORDER BY name");
-$result = $tmpq->fetchAll();
+$result = $stmt->fetchAll();
 
 if ($result) {
 
@@ -318,11 +330,12 @@ if ($result) {
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
-$tmpq = $system->db()->query("
+
+$stmt = $pdo->query("
     SELECT timezone
     FROM timezones
     ORDER BY timezone");
-$result = $tmpq->fetchAll();
+$result = $stmt->fetchAll();
 
 if ($result) {
 

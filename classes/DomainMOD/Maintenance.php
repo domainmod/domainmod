@@ -55,23 +55,26 @@ class Maintenance
 
     public function updateTlds()
     {
-        $tmpq = $this->system->db()->query("SELECT id, domain FROM domains");
-        $result = $tmpq->fetchAll();
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("SELECT id, domain FROM domains");
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $pdo = $this->system->db();
+            $stmt = $pdo->prepare("
                 UPDATE domains
                 SET tld = :tld
                 WHERE id = :id");
+            $stmt->bindParam('tld', $tld, \PDO::PARAM_STR);
+            $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
 
             foreach ($result as $row) {
 
                 $tld = $this->getTld($row->domain);
-
-                $tmpq->execute(array(
-                               'tld' => $tld,
-                               'id' => $row->id));
+                $bind_id = $row->id;
+                $stmt->execute();
 
             }
 
@@ -116,30 +119,38 @@ class Maintenance
 
     public function updateDomainFees()
     {
-        $this->system->db()->query("UPDATE domains SET fee_fixed = '0'");
+        $pdo = $this->system->db();
 
-        $tmpq = $this->system->db()->prepare("
+        $pdo->query("UPDATE domains SET fee_fixed = '0'");
+
+        $stmt = $pdo->prepare("
             UPDATE fees
             SET fee_fixed = '0',
                 update_time = :update_time");
-        $tmpq->execute(array('update_time' => $this->time->stamp()));
+        $timestamp = $this->time->stamp();
+        $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
 
-        $tmpq = $this->system->db()->query("
+
+        $stmt = $pdo->query("
             SELECT id, registrar_id, tld
             FROM fees
             WHERE fee_fixed = '0'");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domains
-                SET fee_id = :id
+                SET fee_id = :fee_id
                 WHERE registrar_id = :registrar_id
                   AND tld = :tld
                   AND fee_fixed = '0'");
+            $stmt->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+            $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq2 = $this->system->db()->prepare("
+            $stmt2 = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.fee_fixed = '1',
@@ -147,8 +158,10 @@ class Maintenance
                 WHERE d.registrar_id = :registrar_id
                   AND d.tld = :tld
                   AND d.privacy = '1'");
+            $stmt2->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt2->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq3 = $this->system->db()->prepare("
+            $stmt3 = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.fee_fixed = '1',
@@ -156,33 +169,33 @@ class Maintenance
                 WHERE d.registrar_id = :registrar_id
                   AND d.tld = :tld
                   AND d.privacy = '0'");
+            $stmt3->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt3->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq4 = $this->system->db()->prepare("
+            $stmt4 = $pdo->prepare("
                 UPDATE fees
                 SET fee_fixed = '1',
                     update_time = :update_time
                 WHERE registrar_id = :registrar_id
                   AND tld = :tld");
+            $timestamp = $this->time->stamp();
+            $stmt4->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+            $stmt4->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt4->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'id' => $row->id,
-                               'registrar_id' => $row->registrar_id,
-                               'tld' => $row->tld));
+                $bind_registrar_id = $row->registrar_id;
+                $bind_tld = $row->tld;
+                $bind_fee_id = $row->id;
 
-                $tmpq2->execute(array(
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt->execute();
 
-                $tmpq3->execute(array(
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt2->execute();
 
-                $tmpq4->execute(array(
-                                'update_time' => $this->time->stamp(),
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt3->execute();
+
+                $stmt4->execute();
 
             }
 
@@ -191,12 +204,15 @@ class Maintenance
 
     public function updateDomainFee($domain_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT registrar_id, tld
             FROM domains
             WHERE id = :domain_id");
-        $tmpq->execute(array('domain_id' => $domain_id));
-        $result = $tmpq->fetch();
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
         if ($result) {
 
@@ -205,44 +221,50 @@ class Maintenance
 
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE domains
             SET fee_fixed = '0'
             WHERE id = :domain_id");
-        $tmpq->execute(array('domain_id' => $domain_id));
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE fees
             SET fee_fixed = '0',
                 update_time = :update_time
             WHERE registrar_id = :registrar_id
               AND tld = :tld");
-        $tmpq->execute(array(
-                       'update_time' => $this->time->stamp(),
-                       'registrar_id' => $registrar_id,
-                       'tld' => $tld));
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+        $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
+        $stmt->execute();
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id, registrar_id, tld
             FROM fees
             WHERE fee_fixed = '0'
               AND registrar_id = :registrar_id
               AND tld = :tld");
-        $tmpq->execute(array(
-                       'registrar_id' => $registrar_id,
-                       'tld' => $tld));
-        $result = $tmpq->fetchAll();
+        $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+        $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domains
                 SET fee_id = :fee_id
                 WHERE registrar_id = :registrar_id
                   AND tld = :tld
                   AND fee_fixed = '0'");
+            $stmt->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+            $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq2 = $this->system->db()->prepare("
+            $stmt2 = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.fee_fixed = '1',
@@ -250,8 +272,10 @@ class Maintenance
                 WHERE d.registrar_id = :registrar_id
                   AND d.tld = :tld
                   AND d.privacy = '1'");
+            $stmt2->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt2->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq3 = $this->system->db()->prepare("
+            $stmt3 = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.fee_fixed = '1',
@@ -259,33 +283,33 @@ class Maintenance
                 WHERE d.registrar_id = :registrar_id
                   AND d.tld = :tld
                   AND d.privacy = '0'");
+            $stmt3->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt3->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
-            $tmpq4 = $this->system->db()->prepare("
+            $stmt4 = $pdo->prepare("
                 UPDATE fees
                 SET fee_fixed = '1',
                     update_time = :update_time
                 WHERE registrar_id = :registrar_id
                   AND tld = :tld");
+            $bind_timestamp = $this->time->stamp();
+            $stmt4->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt4->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt4->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'fee_id' => $row->id,
-                               'registrar_id' => $row->registrar_id,
-                               'tld' => $row->tld));
+                $bind_fee_id = $row->id;
+                $bind_registrar_id = $row->registrar_id;
+                $bind_tld = $row->tld;
 
-                $tmpq2->execute(array(
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt->execute();
 
-                $tmpq3->execute(array(
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt2->execute();
 
-                $tmpq4->execute(array(
-                                'update_time' => $this->time->stamp(),
-                                'registrar_id' => $row->registrar_id,
-                                'tld' => $row->tld));
+                $stmt3->execute();
+
+                $stmt->execute();
 
             }
 
@@ -294,59 +318,68 @@ class Maintenance
 
     public function updateSslFees()
     {
-        $this->system->db()->query("UPDATE ssl_certs SET fee_fixed = '0'");
+        $pdo = $this->system->db();
 
-        $tmpq = $this->system->db()->prepare("
+        $pdo->query("UPDATE ssl_certs SET fee_fixed = '0'");
+
+        $stmt = $pdo->prepare("
             UPDATE ssl_fees
             SET fee_fixed = '0',
                 update_time = :update_time");
-        $tmpq->execute(array('update_time' => $this->time->stamp()));
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->execute();
 
-        $tmpq = $this->system->db()->query("
+        $stmt = $pdo->query("
             SELECT id, ssl_provider_id, type_id
             FROM ssl_fees
             WHERE fee_fixed = '0'");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE ssl_certs
-                SET fee_id = :id
+                SET fee_id = :fee_id
                 WHERE ssl_provider_id = :ssl_provider_id
                   AND type_id = :type_id
                   AND fee_fixed = '0'");
+            $stmt->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+            $stmt->bindParam('ssl_provider_id', $bind_ssl_provider_id, \PDO::PARAM_INT);
+            $stmt->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
 
-            $tmpq2 = $this->system->db()->prepare("
+            $stmt2 = $pdo->prepare("
                 UPDATE ssl_certs sslc
                 JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
                 SET sslc.fee_fixed = '1',
                     sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                 WHERE sslc.ssl_provider_id = :ssl_provider_id
                   AND sslc.type_id = :type_id");
+            $stmt2->bindParam('ssl_provider_id', $bind_ssl_provider_id, \PDO::PARAM_INT);
+            $stmt2->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
 
-            $tmpq3 = $this->system->db()->prepare("
+            $stmt3 = $pdo->prepare("
                 UPDATE ssl_fees
                 SET fee_fixed = '1',
                     update_time = :update_time
                 WHERE ssl_provider_id = :ssl_provider_id
                   AND type_id = :type_id");
+            $bind_timestamp = $this->time->stamp();
+            $stmt3->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt3->bindParam('ssl_provider_id', $bind_ssl_provider_id, \PDO::PARAM_INT);
+            $stmt3->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'id' => $row->id,
-                               'ssl_provider_id' => $row->ssl_provider_id,
-                               'type_id' => $row->type_id));
+                $bind_fee_id = $row->id;
+                $bind_ssl_provider_id = $row->ssl_provider_id;
+                $bind_type_id = $row->type_id;
 
-                $tmpq2->execute(array(
-                                'ssl_provider_id' => $row->ssl_provider_id,
-                                'type_id' => $row->type_id));
+                $stmt->execute();
 
-                $tmpq3->execute(array(
-                                'update_time' => $this->time->stamp(),
-                                'ssl_provider_id' => $row->ssl_provider_id,
-                                'type_id' => $row->type_id));
+                $stmt2->execute();
+
+                $stmt3->execute();
 
             }
 

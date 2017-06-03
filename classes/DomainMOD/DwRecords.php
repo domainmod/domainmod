@@ -77,11 +77,13 @@ class DwRecords
 
     public function insertRecords($api_results, $server_id, $zone_id, $domain)
     {
+        $pdo = $this->system->db();
+
         if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO dw_dns_records
                 (server_id, dns_zone_id, domain, mname, rname, `serial`, refresh, retry, `expire`,
                  minimum, nsdname, `name`, ttl, class, type, address, cname, `exchange`, preference,
@@ -90,34 +92,55 @@ class DwRecords
                 (:server_id, :zone_id, :domain, :mname, :rname, :serial, :refresh, :retry, :expire, :minimum, :nsdname,
                  :name, :ttl, :class, :type, :address, :cname, :exchange, :preference, :txtdata, :line, :lines, :raw,
                  :insert_time)");
+            $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+            $stmt->bindValue('zone_id', $zone_id, \PDO::PARAM_INT);
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->bindParam('mname', $bind_mname, \PDO::PARAM_STR);
+            $stmt->bindParam('rname', $bind_rname, \PDO::PARAM_STR);
+            $stmt->bindParam('serial', $bind_serial, \PDO::PARAM_INT);
+            $stmt->bindParam('refresh', $bind_refresh, \PDO::PARAM_INT);
+            $stmt->bindParam('retry', $bind_retry, \PDO::PARAM_INT);
+            $stmt->bindParam('expire', $bind_expire, \PDO::PARAM_STR);
+            $stmt->bindParam('minimum', $bind_minimum, \PDO::PARAM_INT);
+            $stmt->bindParam('nsdname', $bind_nsdname, \PDO::PARAM_STR);
+            $stmt->bindParam('name', $bind_name, \PDO::PARAM_STR);
+            $stmt->bindParam('ttl', $bind_ttl, \PDO::PARAM_INT);
+            $stmt->bindParam('class', $bind_class, \PDO::PARAM_STR);
+            $stmt->bindParam('type', $bind_type, \PDO::PARAM_STR);
+            $stmt->bindParam('address', $bind_address, \PDO::PARAM_STR);
+            $stmt->bindParam('cname', $bind_cname, \PDO::PARAM_STR);
+            $stmt->bindParam('exchange', $bind_exchange, \PDO::PARAM_STR);
+            $stmt->bindParam('preference', $bind_preference, \PDO::PARAM_INT);
+            $stmt->bindParam('txtdata', $bind_txtdata, \PDO::PARAM_STR);
+            $stmt->bindParam('line', $bind_line, \PDO::PARAM_INT);
+            $stmt->bindParam('lines', $bind_lines, \PDO::PARAM_INT);
+            $stmt->bindParam('raw', $bind_raw, \PDO::PARAM_LOB);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
             foreach ($xml->result->record as $hit) {
 
-                $tmpq->execute(array(
-                               'server_id' => $server_id,
-                               'zone_id' => $zone_id,
-                               'domain' => $domain,
-                               'mname' => $hit->mname,
-                               'rname' => $hit->rname,
-                               'serial' => $hit->serial,
-                               'refresh' => $hit->refresh,
-                               'retry' => $hit->retry,
-                               'expire' => $hit->expire,
-                               'minimum' => $hit->minimum,
-                               'nsdname' => $hit->nsdname,
-                               'name' => $hit->name,
-                               'ttl' => $hit->ttl,
-                               'class' => $hit->class,
-                               'type' => $hit->type,
-                               'address' => $hit->address,
-                               'cname' => $hit->cname,
-                               'exchange' => $hit->exchange,
-                               'preference' => $hit->preference,
-                               'txtdata' => $hit->txtdata,
-                               'line' => $hit->Line,
-                               'lines' => $hit->Lines,
-                               'raw' => $hit->raw,
-                               'insert_time' => $this->time->stamp()));
+                $bind_mname = $hit->mname;
+                $bind_rname = $hit->rname;
+                $bind_serial = $hit->serial;
+                $bind_refresh = $hit->refresh;
+                $bind_retry = $hit->retry;
+                $bind_expire = $hit->expire;
+                $bind_minimum = $hit->minimum;
+                $bind_nsdname = $hit->nsdname;
+                $bind_name = $hit->name;
+                $bind_ttl = $hit->ttl;
+                $bind_class = $hit->class;
+                $bind_type = $hit->type;
+                $bind_address = $hit->address;
+                $bind_cname = $hit->cname;
+                $bind_exchange = $hit->exchange;
+                $bind_preference = $hit->preference;
+                $bind_txtdata = $hit->txtdata;
+                $bind_line = $hit->Line;
+                $bind_lines = $hit->Lines;
+                $bind_raw = $hit->raw;
+                $stmt->execute();
 
             }
 
@@ -126,10 +149,12 @@ class DwRecords
 
     public function getTotalDwRecords()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT count(*)
             FROM `dw_dns_records`");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
 } //@formatter:on

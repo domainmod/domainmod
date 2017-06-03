@@ -39,6 +39,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->loginCheck();
 
 $page_title = "Reset Password";
@@ -48,15 +49,16 @@ $user_identifier = $_REQUEST['user_identifier'];
 
 if ($user_identifier != '') {
 
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         SELECT first_name, last_name, username, email_address
         FROM users
         WHERE (username = :username OR email_address = :email_address)
           AND active = '1'");
-    $tmpq->execute(array(
-                   'username' => $user_identifier,
-                   'email_address' => $user_identifier));
-    $result = $tmpq->fetch();
+    $stmt->bindValue('username', $user_identifier, PDO::PARAM_STR);
+    $stmt->bindValue('email_address', $user_identifier, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
 
     if (!$result) {
 
@@ -69,18 +71,19 @@ if ($user_identifier != '') {
 
         $new_password = substr(md5(time()), 0, 8);
 
-        $tmpq = $system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE users
             SET `password` = password(:new_password),
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $tmpq->execute(array(
-                       'new_password' => $new_password,
-                       'timestamp' => $time->stamp(),
-                       'username' => $result->username,
-                       'email_address' => $result->email_address));
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $bind_timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
+        $stmt->bindValue('email_address', $result->email_address, PDO::PARAM_STR);
+        $stmt->execute();
 
         $first_name = $result->first_name;
         $last_name = $result->last_name;

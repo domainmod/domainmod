@@ -43,6 +43,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -50,12 +51,14 @@ $id = $_GET['id'];
 
 if (DEMO_INSTALLATION != '1') {
 
-    $tmpq = $system->db()->prepare("
+    $stmt = $pdo->prepare("
         SELECT `name`, slug, expression, active
         FROM scheduler
         WHERE id = :id");
-    $tmpq->execute(array('id' => $id));
-    $result = $tmpq->fetch();
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
 
     if (!$result) {
 
@@ -114,10 +117,10 @@ if (DEMO_INSTALLATION != '1') {
 
             $schedule->isRunning($id);
 
-            $tmpq = $system->db()->query("
+            $stmt = $pdo->query("
                 SELECT user_id, default_currency
                 FROM user_settings");
-            $result_conversion = $tmpq->fetchAll();
+            $result_conversion = $stmt->fetchAll();
 
             if (!$result_conversion) {
 

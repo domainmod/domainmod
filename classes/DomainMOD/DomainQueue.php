@@ -339,7 +339,9 @@ class DomainQueue
 
     public function getQueueList()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT dql.id, dql.api_registrar_id, dql.owner_id, dql.registrar_id, dql.account_id, dql.created_by,
                 ar.name AS api_registrar_name
             FROM domain_queue_list AS dql, api_registrars AS ar
@@ -349,13 +351,14 @@ class DomainQueue
               AND dql.finished = '0'
               AND dql.copied_to_history = '0'
             ORDER BY dql.insert_time DESC");
-
-        return $tmpq->fetchAll();
+        return $stmt->fetchAll();
     }
 
     public function getQueueDomain()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT dq.id, dq.api_registrar_id, dq.domain, dq.account_id, dq.created_by, ar.name AS api_registrar_name
             FROM domain_queue AS dq, api_registrars AS ar
             WHERE dq.api_registrar_id = ar.id
@@ -365,13 +368,14 @@ class DomainQueue
               AND dq.copied_to_history = '0'
               AND dq.already_in_domains = '0'
               AND dq.already_in_queue = '0'");
-
-        return $tmpq->fetchAll();
+        return $stmt->fetchAll();
     }
 
     public function markProcessingList()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $pdo->query("
             UPDATE domain_queue_list
             SET processing = '1'
             WHERE processing = '0'
@@ -382,18 +386,22 @@ class DomainQueue
 
     public function updateDomainCount($list_id, $domain_count)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue_list
             SET domain_count = :domain_count
             WHERE id = :id");
-        $tmpq->execute(array(
-                       'domain_count' => $domain_count,
-                       'id' => $list_id));
+        $stmt->bindValue('domain_count', $domain_count, \PDO::PARAM_INT);
+        $stmt->bindValue('id', $list_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function markProcessingDomain()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $pdo->query("
             UPDATE domain_queue
             SET processing = '1'
             WHERE processing = '0'
@@ -406,6 +414,8 @@ class DomainQueue
 
     public function updateDomain($queue_domain_id, $domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by)
     {
+        $pdo = $this->system->db();
+
         $this->updateExpirationDate($queue_domain_id, $expiration_date);
         $dns_id = $this->updateDnsServers($queue_domain_id, $dns_servers, $created_by);
         $ip_id = $this->updateIp($queue_domain_id, $domain, $created_by);
@@ -419,11 +429,12 @@ class DomainQueue
             && $cat_id != '0' && $cat_id != '' && $hosting_id != '0' && $hosting_id != '' && $privacy_status != ''
             && $autorenew_status != '') {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domain_queue
                 SET ready_to_import = '1'
                 WHERE id = :queue_domain_id");
-            $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
+            $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
 
             $ready_to_import = '1';
 
@@ -438,17 +449,21 @@ class DomainQueue
 
     public function updateExpirationDate($queue_domain_id, $expiration_date)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET expiry_date = :expiration_date
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'expiration_date' => $expiration_date,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('expiration_date', $expiration_date, \PDO::PARAM_STR);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function updateDnsServers($queue_domain_id, $dns_servers, $created_by)
     {
+        $pdo = $this->system->db();
+
         $has_match = '';
 
         // lower case the DNS servers for accurate matching
@@ -458,11 +473,11 @@ class DomainQueue
         }
         $dns_servers = $lower_value;
 
-        $tmpq = $this->system->db()->query("
+        $stmt = $pdo->query("
             SELECT id, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10
             FROM dns
             ORDER BY update_time DESC, insert_time DESC");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
@@ -509,7 +524,7 @@ class DomainQueue
 
             $creation_type_id = $this->system->getCreationTypeId('Queue');
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO dns
                 (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers,
                  creation_type_id, created_by, insert_time)
@@ -517,42 +532,61 @@ class DomainQueue
                 ('[created by queue]', :new_servers0, :new_servers1, :new_servers2, :new_servers3, :new_servers4,
                  :new_servers5, :new_servers6, :new_servers7, :new_servers8, :new_servers9, :notes, :number_of_servers,
                  :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(array(
-                           'new_servers0' => $new_servers[0],
-                           'new_servers1' => $new_servers[1],
-                           'new_servers2' => $new_servers[2],
-                           'new_servers3' => $new_servers[3],
-                           'new_servers4' => $new_servers[4],
-                           'new_servers5' => $new_servers[5],
-                           'new_servers6' => $new_servers[6],
-                           'new_servers7' => $new_servers[7],
-                           'new_servers8' => $new_servers[8],
-                           'new_servers9' => $new_servers[9],
-                           'notes' => $this->time->timeBasic() . ' - Created by queue.',
-                           'number_of_servers' => $number_of_servers,
-                           'creation_type_id' => $creation_type_id,
-                           'created_by' => $created_by,
-                           'insert_time' => $this->time->stamp()));
-            $new_dns_id = $this->system->db()->lastInsertId();
+
+            if (!isset($new_servers[0])) $new_servers[0] = '';
+            if (!isset($new_servers[1])) $new_servers[1] = '';
+            if (!isset($new_servers[2])) $new_servers[2] = '';
+            if (!isset($new_servers[3])) $new_servers[3] = '';
+            if (!isset($new_servers[4])) $new_servers[4] = '';
+            if (!isset($new_servers[5])) $new_servers[5] = '';
+            if (!isset($new_servers[6])) $new_servers[6] = '';
+            if (!isset($new_servers[7])) $new_servers[7] = '';
+            if (!isset($new_servers[8])) $new_servers[8] = '';
+            if (!isset($new_servers[9])) $new_servers[9] = '';
+
+            $temp_notes = $this->time->timeBasic() . ' - Created by queue.';
+
+            $stmt->bindValue('new_servers0', $new_servers[0], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers1', $new_servers[1], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers2', $new_servers[2], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers3', $new_servers[3], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers4', $new_servers[4], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers5', $new_servers[5], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers6', $new_servers[6], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers7', $new_servers[7], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers8', $new_servers[8], \PDO::PARAM_STR);
+            $stmt->bindValue('new_servers9', $new_servers[9], \PDO::PARAM_STR);
+            $stmt->bindValue('notes', $temp_notes, \PDO::PARAM_LOB);
+            $stmt->bindValue('number_of_servers', $number_of_servers, \PDO::PARAM_INT);
+            $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
+            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
+
+            $new_dns_id = $pdo->lastInsertId('id');
+
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET dns_id = :new_dns_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'new_dns_id' => $new_dns_id,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('new_dns_id', $new_dns_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
         return $new_dns_id;
     }
 
     public function updateIp($queue_domain_id, $domain, $created_by)
     {
+        $pdo = $this->system->db();
+
         $has_match = '';
 
         // get the rDNS for the IP
-        $live_ip = gethostbyname($domain);
+        $live_ip = gethostbyname($domain . '.');
 
         // If the domain doesn't resolve assign an IP and rDNS of 0.0.0.0
         if ($live_ip == $domain) {
@@ -567,11 +601,11 @@ class DomainQueue
         }
 
         // Check to see if the IP already exists
-        $tmpq = $this->system->db()->query("
+        $stmt = $pdo->query("
             SELECT id, ip
             FROM ip_addresses
             ORDER BY update_time DESC, insert_time DESC");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
@@ -595,59 +629,66 @@ class DomainQueue
             
             $creation_type_id = $this->system->getCreationTypeId('Queue');
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO ip_addresses
                 (`name`, ip, rdns, notes, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', :live_ip, :rdns, :notes, :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(array(
-                           'live_ip' => $live_ip,
-                           'rdns' => $rdns,
-                           'notes' => $this->time->timeBasic() . ' - Created by queue.',
-                           'creation_type_id' => $creation_type_id,
-                           'created_by' => $created_by,
-                           'insert_time' => $this->time->stamp()));
 
-            $new_ip_id = $this->system->db()->lastInsertId();
+            $temp_notes = $this->time->timeBasic() . ' - Created by queue.';
+
+            $stmt->bindValue('live_ip', $live_ip, \PDO::PARAM_STR);
+            $stmt->bindValue('rdns', $rdns, \PDO::PARAM_STR);
+            $stmt->bindValue('notes', $temp_notes, \PDO::PARAM_LOB);
+            $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
+            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
+
+            $new_ip_id = $pdo->lastInsertId('id');
 
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET ip_id = :new_ip_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'new_ip_id' => $new_ip_id,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('new_ip_id', $new_ip_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
         return $new_ip_id;
     }
 
     public function updateCategory($queue_domain_id, $created_by)
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM categories
             WHERE `name` = '[created by queue]'
             ORDER BY update_time DESC, insert_time DESC
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) { // If there isn't an existing '[created by queue]' category create one
 
             $creation_type_id = $this->system->getCreationTypeId('Queue');
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO categories
                 (`name`, stakeholder, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', '[created by queue]', :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(array(
-                           'creation_type_id' => $creation_type_id,
-                           'created_by' => $created_by,
-                           'insert_time' => $this->time->stamp()));
+            $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
+            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
 
-            $category_id = $this->system->db()->lastInsertId();
+            $category_id = $pdo->lastInsertId('id');
 
         } else { // If there's an existing '[created by queue]' category use it
 
@@ -655,43 +696,46 @@ class DomainQueue
 
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET cat_id = :category_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'category_id' => $category_id,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('category_id', $category_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
         return $category_id;
     }
 
     public function updateHosting($queue_domain_id, $created_by)
     {
+        $pdo = $this->system->db();
+
         // Check to see if there's an existing '[created by queue]' host
-        $tmpq = $this->system->db()->query("
+        $stmt = $pdo->query("
             SELECT id
             FROM hosting
             WHERE `name` = '[created by queue]'
             ORDER BY update_time DESC, insert_time DESC
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) { // If there isn't an existing '[created by queue]' host create one
 
             $creation_type_id = $this->system->getCreationTypeId('Queue');
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO hosting
                 (`name`, creation_type_id, created_by, insert_time)
                 VALUES
                 ('[created by queue]', :creation_type_id, :created_by, :insert_time)");
-            $tmpq->execute(array(
-                           'creation_type_id' => $creation_type_id,
-                           'created_by' => $created_by,
-                           'insert_time' => $this->time->stamp()));
+            $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
+            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
 
-            $hosting_id = $this->system->db()->lastInsertId();
+            $hosting_id = $pdo->lastInsertId('id');
 
         } else { // If there's an existing '[created by queue]' category use it
 
@@ -699,114 +743,129 @@ class DomainQueue
 
         }
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET hosting_id = :hosting_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'hosting_id' => $hosting_id,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('hosting_id', $hosting_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
 
         return $hosting_id;
     }
 
     public function updatePrivacy($queue_domain_id, $privacy_status)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET privacy = :privacy_status
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'privacy_status' => $privacy_status,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('privacy_status', $privacy_status, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
     public function updateRenewStatus($queue_domain_id, $autorenew_status)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET autorenew = :autorenew_status
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'autorenew_status' => $autorenew_status,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('autorenew_status', $autorenew_status, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
     public function importToDomainQueue($api_registrar_id, $domain, $owner_id, $registrar_id, $account_id, $created_by)
     {
+        $pdo = $this->system->db();
+
         $tld = $this->domain->getTld($domain);
 
         // check to make sure that the domain isn't already in the main domain table
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id
             FROM domains
             WHERE domain = :domain");
-        $tmpq->execute(array('domain' => $domain));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = $stmt->fetchColumn();
 
         if ($result) { // already in the main domain table
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO domain_queue
                 (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, processing,
                  ready_to_import, finished, already_in_domains, created_by, insert_time)
                 VALUES
                 (:api_registrar_id, :domain_id, :owner_id, :registrar_id, :account_id, :domain, :tld, '0', '1', '1',
                  '1', :created_by, :insert_time)");
-            $tmpq->execute(array(
-                           'api_registrar_id' => $api_registrar_id,
-                           'domain_id' => $result,
-                           'owner_id' => $owner_id,
-                           'registrar_id' => $registrar_id,
-                           'account_id' => $account_id,
-                           'domain' => $domain,
-                           'tld' => $tld,
-                           'created_by' => $created_by,
-                           'insert_time' => $this->time->stamp()));
+            $stmt->bindValue('api_registrar_id', $api_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindValue('domain_id', $result, \PDO::PARAM_INT);
+            $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+            $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+            $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
+            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->execute();
 
         } else { // not already in the main domain table
 
             // check to make sure that the domain isn't already in the domain queue
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 SELECT id
                 FROM domain_queue
                 WHERE domain = :domain");
-            $tmpq->execute(array('domain' => $domain));
-            $result = $tmpq->fetchColumn();
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
+
+            $result = $stmt->fetchColumn();
 
             if ($result) { // already in the domain queue
 
-                $tmpq = $this->system->db()->prepare("
+                $stmt = $pdo->prepare("
                     INSERT INTO domain_queue
                     (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_queue, created_by, insert_time)
                     VALUES
                     (:api_registrar_id, :owner_id, :registrar_id, :account_id, :domain, :tld, '0', '1', '1', '1', :created_by, :insert_time)");
-                $tmpq->execute(array(
-                               'api_registrar_id' => $api_registrar_id,
-                               'owner_id' => $owner_id,
-                               'registrar_id' => $registrar_id,
-                               'account_id' => $account_id,
-                               'domain' => $domain,
-                               'tld' => $tld,
-                               'created_by' => $created_by,
-                               'insert_time' => $this->time->stamp()));
+                $stmt->bindValue('api_registrar_id', $api_registrar_id, \PDO::PARAM_INT);
+                $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+                $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+                $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+                $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+                $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
+                $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+                $bind_timestamp = $this->time->stamp();
+                $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+                $stmt->execute();
 
             } else { // if it's not in the main domain table or the domain queue
 
-                $tmpq = $this->system->db()->prepare("
+                $stmt = $pdo->prepare("
                     INSERT INTO domain_queue
                     (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, created_by, insert_time)
                     VALUES
                     (:api_registrar_id, :owner_id, :registrar_id, :account_id, :domain, :tld, :created_by, :insert_time)");
-                $tmpq->execute(array(
-                               'api_registrar_id' => $api_registrar_id,
-                               'owner_id' => $owner_id,
-                               'registrar_id' => $registrar_id,
-                               'account_id' => $account_id,
-                               'domain' => $domain,
-                               'tld' => $tld,
-                               'created_by' => $created_by,
-                               'insert_time' => $this->time->stamp()));
+                $stmt->bindValue('api_registrar_id', $api_registrar_id, \PDO::PARAM_INT);
+                $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+                $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+                $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+                $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+                $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
+                $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
+                $bind_timestamp = $this->time->stamp();
+                $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
+                $stmt->execute();
 
             }
 
@@ -817,7 +876,9 @@ class DomainQueue
 
     public function importToMainDb($queue_domain_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, created_by, insert_time
             FROM domain_queue
             WHERE id = :queue_domain_id
@@ -825,8 +886,9 @@ class DomainQueue
               AND already_in_domains != '1'
               AND already_in_queue != '1'
             ORDER BY insert_time ASC");
-        $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
-        $result = $tmpq->fetchAll();
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -837,47 +899,62 @@ class DomainQueue
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO domains
                 (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id,
                  notes, autorenew, privacy, creation_type_id, created_by, insert_time)
                 VALUES
                 (:owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date, :cat_id, :dns_id, :ip_id,
                  :hosting_id, :notes, :autorenew, :privacy, :creation_type_id, :created_by, :insert_time)");
+            $stmt->bindParam('owner_id', $bind_owner_id, \PDO::PARAM_INT);
+            $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('account_id', $bind_account_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain', $bind_domain, \PDO::PARAM_STR);
+            $stmt->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
+            $stmt->bindParam('expiry_date', $bind_expiry_date, \PDO::PARAM_STR);
+            $stmt->bindParam('cat_id', $bind_cat_id, \PDO::PARAM_INT);
+            $stmt->bindParam('dns_id', $bind_dns_id, \PDO::PARAM_INT);
+            $stmt->bindParam('ip_id', $bind_ip_id, \PDO::PARAM_INT);
+            $stmt->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
+            $bind_temp_notes = $this->time->timeBasic() . " - Inserted by Queue.";
+            $stmt->bindValue('notes', $bind_temp_notes, \PDO::PARAM_LOB);
+            $stmt->bindParam('autorenew', $bind_autorenew, \PDO::PARAM_INT);
+            $stmt->bindParam('privacy', $bind_privacy, \PDO::PARAM_INT);
+            $bind_creation_type_id = $this->system->getCreationTypeId('Queue');
+            $stmt->bindValue('creation_type_id', $bind_creation_type_id, \PDO::PARAM_INT);
+            $stmt->bindParam('created_by', $bind_created_by, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            $tmpq2 = $this->system->db()->prepare("
+            $stmt2 = $pdo->prepare("
                 INSERT INTO domain_field_data
                 (domain_id, insert_time)
                 VALUES
                 (:domain_id, :insert_time)");
+            $stmt2->bindParam('domain_id', $new_domain_id, \PDO::PARAM_INT);
+            $bind_timestamp = $this->time->stamp();
+            $stmt2->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
             foreach ($result as $row) {
 
-                $creation_type_id = $this->system->getCreationTypeId('Queue');
+                $bind_owner_id = $row->owner_id;
+                $bind_registrar_id = $row->registrar_id;
+                $bind_account_id = $row->account_id;
+                $bind_domain = $row->domain;
+                $bind_tld = $row->tld;
+                $bind_expiry_date = $row->expiry_date;
+                $bind_cat_id = $row->cat_id;
+                $bind_dns_id = $row->dns_id;
+                $bind_ip_id = $row->ip_id;
+                $bind_hosting_id = $row->hosting_id;
+                $bind_autorenew = $row->autorenew;
+                $bind_privacy = $row->privacy;
+                $bind_created_by = $row->created_by;
+                $stmt->execute();
 
-                $tmpq->execute(array(
-                               'owner_id' => $row->owner_id,
-                               'registrar_id' => $row->registrar_id,
-                               'account_id' => $row->account_id,
-                               'domain' => $row->domain,
-                               'tld' => $row->tld,
-                               'expiry_date' => $row->expiry_date,
-                               'cat_id' => $row->cat_id,
-                               'dns_id' => $row->dns_id,
-                               'ip_id' => $row->ip_id,
-                               'hosting_id' => $row->hosting_id,
-                               'notes' => $this->time->timeBasic() . " - Inserted by Queue.",
-                               'autorenew' => $row->autorenew,
-                               'privacy' => $row->privacy,
-                               'creation_type_id' => $creation_type_id,
-                               'created_by' => $row->created_by,
-                               'insert_time' => $this->time->stamp()));
+                $new_domain_id = $pdo->lastInsertId('id');
 
-                $new_domain_id = $this->system->db()->lastInsertId();
-
-                $tmpq2->execute(array(
-                                'domain_id' => $new_domain_id,
-                                'insert_time' => $this->time->stamp()));
+                $stmt2->execute();
 
                 // update domain's fees
                 $this->maint->updateDomainFee($new_domain_id);
@@ -893,32 +970,39 @@ class DomainQueue
 
     public function updateNewDomainId($queue_domain_id, $new_domain_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET domain_id = :new_domain_id
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array(
-                       'new_domain_id' => $new_domain_id,
-                       'queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('new_domain_id', $new_domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function markFinishedList($list_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue_list
             SET processing = '0',
                 ready_to_import = '2',
                 finished = '1'
             WHERE id = :list_id");
-        $tmpq->execute(array('list_id' => $list_id));
+        $stmt->bindValue('list_id', $list_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function markFinishedDomain($queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
     {
+        $pdo = $this->system->db();
+
         $creation_type_id = $this->system->getCreationTypeId('Queue');
 
         // confirm that the domain was successfully imported into the main database before marking it as finished
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             SELECT id
             FROM domains
             WHERE domain = :domain
@@ -931,17 +1015,17 @@ class DomainQueue
               AND autorenew = :autorenew_status
               AND creation_type_id = :creation_type_id
               AND active = '1'");
-        $tmpq->execute(array(
-                       'domain' => $domain,
-                       'expiration_date' => $expiration_date,
-                       'dns_id' => $dns_id,
-                       'ip_id' => $ip_id,
-                       'cat_id' => $cat_id,
-                       'hosting_id' => $hosting_id,
-                       'privacy_status' => $privacy_status,
-                       'autorenew_status' => $autorenew_status,
-                       'creation_type_id' => $creation_type_id));
-        $result = $tmpq->fetchColumn();
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->bindValue('expiration_date', $expiration_date, \PDO::PARAM_STR);
+        $stmt->bindValue('dns_id', $dns_id, \PDO::PARAM_INT);
+        $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
+        $stmt->bindValue('cat_id', $cat_id, \PDO::PARAM_INT);
+        $stmt->bindValue('hosting_id', $hosting_id, \PDO::PARAM_INT);
+        $stmt->bindValue('privacy_status', $privacy_status, \PDO::PARAM_INT);
+        $stmt->bindValue('autorenew_status', $autorenew_status, \PDO::PARAM_INT);
+        $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -954,44 +1038,55 @@ class DomainQueue
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE domain_queue
                 SET processing = '0',
                     ready_to_import = '2',
                     finished = '1'
                 WHERE id = :queue_domain_id");
-            $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
+            $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
 
         }
     }
 
     public function markNotProcessingList($list_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue_list
             SET processing = '0'
             WHERE id = :list_id");
-        $tmpq->execute(array('list_id' => $list_id));
+        $stmt->bindValue('list_id', $list_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
     public function markNotProcessingDomain($queue_domain_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET processing = '0'
             WHERE id = :queue_domain_id");
-        $tmpq->execute(array('queue_domain_id' => $queue_domain_id));
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
     }
 
     public function copyToHistoryList()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT api_registrar_id, domain_count, owner_id, registrar_id, account_id, created_by, insert_time
             FROM domain_queue_list
             WHERE finished = '1'
               AND copied_to_history = '0'
             ORDER BY insert_time ASC");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -1000,38 +1095,47 @@ class DomainQueue
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_list_history
                 (api_registrar_id, domain_count, owner_id, registrar_id, account_id, created_by, insert_time)
                 VALUES
                 (:api_registrar_id, :domain_count, :owner_id, :registrar_id, :account_id, :created_by,
                  :insert_time)");
+            $stmt->bindParam('api_registrar_id', $bind_api_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain_count', $bind_domain_count, \PDO::PARAM_INT);
+            $stmt->bindParam('owner_id', $bind_owner_id, \PDO::PARAM_INT);
+            $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('account_id', $bind_account_id, \PDO::PARAM_INT);
+            $stmt->bindParam('created_by', $bind_created_by, \PDO::PARAM_INT);
+            $stmt->bindParam('insert_time', $bind_insert_time, \PDO::PARAM_STR);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'api_registrar_id' => $row->api_registrar_id,
-                               'domain_count' => $row->domain_count,
-                               'owner_id' => $row->owner_id,
-                               'registrar_id' => $row->registrar_id,
-                               'account_id' => $row->account_id,
-                               'created_by' => $row->created_by,
-                               'insert_time' => $row->insert_time));
-
-                $this->system->db()->query("
-                    UPDATE domain_queue_list
-                    SET copied_to_history = '1'
-                    WHERE finished = '1'
-                      AND copied_to_history = '0'");
+                $bind_api_registrar_id = $row->api_registrar_id;
+                $bind_domain_count = $row->domain_count;
+                $bind_owner_id = $row->owner_id;
+                $bind_registrar_id = $row->registrar_id;
+                $bind_account_id = $row->account_id;
+                $bind_created_by = $row->created_by;
+                $bind_insert_time = $row->insert_time;
+                $stmt->execute();
 
             }
+
+            $this->system->db()->query("
+                UPDATE domain_queue_list
+                SET copied_to_history = '1'
+                WHERE finished = '1'
+                  AND copied_to_history = '0'");
 
         }
     }
 
     public function copyToHistoryDomain()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
                 dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, created_by,
                 insert_time
@@ -1039,7 +1143,7 @@ class DomainQueue
             WHERE finished = '1'
               AND copied_to_history = '0'
             ORDER BY insert_time ASC");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if (!$result) {
 
@@ -1048,7 +1152,7 @@ class DomainQueue
 
         } else {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_history
                 (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
                  dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, created_by,
@@ -1057,50 +1161,70 @@ class DomainQueue
                 (:api_registrar_id, :domain_id, :owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date,
                  :cat_id, :dns_id, :ip_id, :hosting_id, :autorenew, :privacy, :already_in_domains,
                  :already_in_queue, :created_by, :insert_time)");
+            $stmt->bindParam('api_registrar_id', $bind_api_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain_id', $bind_domain_id, \PDO::PARAM_INT);
+            $stmt->bindParam('owner_id', $bind_owner_id, \PDO::PARAM_INT);
+            $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
+            $stmt->bindParam('account_id', $bind_account_id, \PDO::PARAM_INT);
+            $stmt->bindParam('domain', $bind_domain, \PDO::PARAM_STR);
+            $stmt->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
+            $stmt->bindParam('expiry_date', $bind_expiry_date, \PDO::PARAM_STR);
+            $stmt->bindParam('cat_id', $bind_cat_id, \PDO::PARAM_INT);
+            $stmt->bindParam('dns_id', $bind_dns_id, \PDO::PARAM_INT);
+            $stmt->bindParam('ip_id', $bind_ip_id, \PDO::PARAM_INT);
+            $stmt->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
+            $stmt->bindParam('autorenew', $bind_autorenew, \PDO::PARAM_INT);
+            $stmt->bindParam('privacy', $bind_privacy, \PDO::PARAM_INT);
+            $stmt->bindParam('already_in_domains', $bind_already_in_domains, \PDO::PARAM_INT);
+            $stmt->bindParam('already_in_queue', $bind_already_in_queue, \PDO::PARAM_INT);
+            $stmt->bindParam('created_by', $bind_created_by, \PDO::PARAM_INT);
+            $stmt->bindParam('insert_time', $bind_insert_time, \PDO::PARAM_STR);
 
             foreach ($result as $row) {
 
-                $tmpq->execute(array(
-                               'api_registrar_id' => $row->api_registrar_id,
-                               'domain_id' => $row->domain_id,
-                               'owner_id' => $row->owner_id,
-                               'registrar_id' => $row->registrar_id,
-                               'account_id' => $row->account_id,
-                               'domain' => $row->domain,
-                               'tld' => $row->tld,
-                               'expiry_date' => $row->expiry_date,
-                               'cat_id' => $row->cat_id,
-                               'dns_id' => $row->dns_id,
-                               'ip_id' => $row->ip_id,
-                               'hosting_id' => $row->hosting_id,
-                               'autorenew' => $row->autorenew,
-                               'privacy' => $row->privacy,
-                               'already_in_domains' => $row->already_in_domains,
-                               'already_in_queue' => $row->already_in_queue,
-                               'created_by' => $row->created_by,
-                               'insert_time' => $row->insert_time));
-
-                $this->system->db()->query("
-                    UPDATE domain_queue
-                    SET copied_to_history = '1'
-                    WHERE finished = '1'
-                      AND copied_to_history = '0'");
+                $bind_api_registrar_id = $row->api_registrar_id;
+                $bind_domain_id = $row->domain_id;
+                $bind_owner_id = $row->owner_id;
+                $bind_registrar_id = $row->registrar_id;
+                $bind_account_id = $row->account_id;
+                $bind_domain = $row->domain;
+                $bind_tld = $row->tld;
+                $bind_expiry_date = $row->expiry_date;
+                $bind_cat_id = $row->cat_id;
+                $bind_dns_id = $row->dns_id;
+                $bind_ip_id = $row->ip_id;
+                $bind_hosting_id = $row->hosting_id;
+                $bind_autorenew = $row->autorenew;
+                $bind_privacy = $row->privacy;
+                $bind_already_in_domains = $row->already_in_domains;
+                $bind_already_in_queue = $row->already_in_queue;
+                $bind_created_by = $row->created_by;
+                $bind_insert_time = $row->insert_time;
+                $stmt->execute();
 
             }
+
+            $this->system->db()->query("
+                UPDATE domain_queue
+                SET copied_to_history = '1'
+                WHERE finished = '1'
+                  AND copied_to_history = '0'");
 
         }
     }
 
     public function clearFinished()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $pdo->query("
             DELETE FROM domain_queue_list
             WHERE finished = '1'
               AND copied_to_history = '1'");
 
         $this->checkListQueue();
 
-        $this->system->db()->query("
+        $pdo->query("
             DELETE FROM domain_queue
             WHERE finished = '1'
               AND copied_to_history = '1'");
@@ -1110,12 +1234,14 @@ class DomainQueue
 
     public function clearProcessing()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $pdo->query("
             UPDATE domain_queue_list
             SET processing = '0'
             WHERE processing = '1'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE domain_queue
             SET processing = '0'
             WHERE processing = '1'");
@@ -1125,20 +1251,24 @@ class DomainQueue
 
     public function clearQueues()
     {
-        $this->system->db()->query("DELETE FROM domain_queue_list");
+        $pdo = $this->system->db();
 
-        $this->system->db()->query("DELETE FROM domain_queue");
+        $pdo->query("DELETE FROM domain_queue_list");
+
+        $pdo->query("DELETE FROM domain_queue");
 
         return 'Queues Cleared<BR>';
     }
     
     public function checkListQueue()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM domain_queue_list
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -1155,11 +1285,13 @@ class DomainQueue
 
     public function checkDomainQueue()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM domain_queue
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -1176,12 +1308,14 @@ class DomainQueue
 
     public function checkProcessingLists()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM domain_queue_list
             WHERE processing = '1'
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 
@@ -1198,12 +1332,14 @@ class DomainQueue
 
     public function checkProcessingDomains()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM domain_queue
             WHERE processing = '1'
             LIMIT 1");
-        $result = $tmpq->fetchColumn();
+        $result = $stmt->fetchColumn();
 
         if (!$result) {
 

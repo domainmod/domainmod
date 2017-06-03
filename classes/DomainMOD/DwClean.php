@@ -72,26 +72,28 @@ class DwClean
 
     public function wrapLine($field, $wrap_at)
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id, " . $field . "
             FROM dw_dns_records
             WHERE " . $field . " != ''");
-        $result = $tmpq->fetchAll();
+        $result = $stmt->fetchAll();
 
         if ($result) {
 
-            $tmpq = $this->system->db()->prepare("
+            $stmt = $pdo->prepare("
                 UPDATE dw_dns_records
                 SET formatted_output = :wrapped
                 WHERE id = :id");
+            $stmt->bindParam('wrapped', $bind_wrapped, \PDO::PARAM_LOB);
+            $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
 
             foreach ($result as $row) {
 
-                $wrapped = wordwrap($row->{$field}, $wrap_at, "<BR>", true);
-
-                $tmpq->execute(array(
-                               'wrapped' => $wrapped,
-                               'id' => $row->id));
+                $bind_wrapped = wordwrap($row->{$field}, $wrap_at, "<BR>", true);
+                $bind_id = $row->id;
+                $stmt->execute();
 
             }
 
@@ -173,6 +175,8 @@ class DwClean
 
     public function reorderRecords()
     {
+        $pdo = $this->system->db();
+
         $type_order = array();
         $count = 0;
         $new_order = 1;
@@ -186,17 +190,19 @@ class DwClean
         $type_order[$count++] = 'TXT';
         $type_order[$count++] = 'SRV';
 
-        $tmpq = $this->system->db()->prepare("
+        $stmt = $pdo->prepare("
             UPDATE dw_dns_records
             SET new_order = :new_order
             WHERE type = :key");
+        $stmt->bindValue('new_order', $new_order, \PDO::PARAM_INT);
+        $stmt->bindParam('key', $key, \PDO::PARAM_STR);
 
         foreach ($type_order as $key) {
 
-            $tmpq->execute(array(
-                           'new_order' => $new_order,
-                           'key' => $key));
+            $stmt->execute();
+
             $new_order++;
+
         }
     }
 

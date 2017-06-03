@@ -34,20 +34,26 @@ class Scheduler
 
     public function isRunning($task_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE scheduler
             SET is_running = '1'
             WHERE id = :task_id");
-        $tmpq->execute(array('task_id' => $task_id));
+        $stmt->bindValue('task_id', $task_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function isFinished($task_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE scheduler
             SET is_running = '0'
             WHERE id = :task_id");
-        $tmpq->execute(array('task_id' => $task_id));
+        $stmt->bindValue('task_id', $task_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function updateTime($task_id, $timestamp, $next_run)
@@ -55,17 +61,19 @@ class Scheduler
         $current_time = $this->time->stamp();
         $duration = $this->getTimeDifference($timestamp, $current_time);
 
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             UPDATE scheduler
             SET last_run = :last_run,
                 last_duration = :last_duration,
                 next_run = :next_run
             WHERE id = :task_id");
-        $tmpq->execute(array(
-                       'last_run' => $current_time,
-                       'last_duration' => $duration,
-                       'next_run' => $next_run,
-                       'task_id' => $task_id));
+        $stmt->bindValue('last_run', $current_time, \PDO::PARAM_STR);
+        $stmt->bindValue('last_duration', $duration, \PDO::PARAM_STR);
+        $stmt->bindValue('next_run', $next_run, \PDO::PARAM_STR);
+        $stmt->bindValue('task_id', $task_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function getTimeDifference($start_time, $end_time)
@@ -83,13 +91,17 @@ class Scheduler
 
     public function getTask($task_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
             FROM scheduler
             WHERE id = :task_id
             ORDER BY sort_order ASC");
-        $tmpq->execute(array('task_id' => $task_id));
-        return $tmpq->fetch();
+        $stmt->bindValue('task_id', $task_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch();
     }
 
     public function createActive($active, $task_id)

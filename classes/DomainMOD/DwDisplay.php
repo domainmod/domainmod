@@ -77,7 +77,9 @@ class DwDisplay
 
     public function getAccount($server_id, $domain)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
                 a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
                 a.suspended, a.suspendtime, a.suspendreason, s.name AS server_name
@@ -85,11 +87,11 @@ class DwDisplay
             WHERE a.server_id = s.id
               AND a.server_id = :server_id
               AND a.domain = :domain");
-        $tmpq->execute(array(
-                       'server_id' => $server_id,
-                       'domain' => $domain));
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
 
-        return $tmpq->fetchAll();
+        return $stmt->fetchAll();
     }
 
     public function accountSidebar($server_name, $domain, $show_heading, $show_url)
@@ -176,52 +178,66 @@ class DwDisplay
 
     public function getZonefile($server_id, $domain)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT zonefile
             FROM dw_dns_zones
             WHERE server_id = :server_id
               AND domain = :domain");
-        $tmpq->execute(array(
-                       'server_id' => $server_id,
-                       'domain' => $domain));
-        return $tmpq->fetchColumn();
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
     }
 
     public function getServerName($server_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT `name`
             FROM dw_servers
             WHERE id = :server_id");
-        $tmpq->execute(array('server_id' => $server_id));
-        return $tmpq->fetchColumn();
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
     }
 
     public function getZone($server_id, $domain)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id
               AND z.server_id = :server_id
               AND z.domain = :domain");
-        $tmpq->execute(array(
-                       'server_id' => $server_id,
-                       'domain' => $domain));
-        return $tmpq->fetchAll();
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function getRecords($zone_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT address, cname, `exchange`, `expire`, line, minimum, mname, `name`, nsdname, preference, raw,
                 refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
                 formatted_output
             FROM dw_dns_records
             WHERE dns_zone_id = :zone_id
             ORDER BY new_order");
-        $tmpq->execute(array('zone_id' => $zone_id));
-        return $tmpq->fetchAll();
+        $stmt->bindValue('zone_id', $zone_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
 } //@formatter:on

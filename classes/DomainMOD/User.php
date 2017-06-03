@@ -32,21 +32,26 @@ class User
 
     public function getAdminId()
     {
-        $tmpq = $this->system->db()->query("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->query("
             SELECT id
             FROM users
             WHERE username = 'admin'");
-        return $tmpq->fetchColumn();
+        return $stmt->fetchColumn();
     }
 
     public function getFullName($user_id)
     {
-        $tmpq = $this->system->db()->prepare("
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
             SELECT first_name, last_name
             FROM users
             WHERE id = :user_id");
-        $tmpq->execute(array('user_id' => $user_id));
-        $result = $tmpq->fetch();
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
         return $result->first_name . ' ' . $result->last_name;
     }
