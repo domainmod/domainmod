@@ -44,9 +44,7 @@ class System
     {
         $full_install_path = DIR_ROOT . '/install/';
 
-        $pdo = $this->db();
-        $stmt = $pdo->query("SHOW TABLES LIKE 'settings'");
-        $result = $stmt->fetchColumn();
+        $result = $this->checkForSettingsTable();
 
         if (!$result && is_dir($full_install_path)) {
 
@@ -61,6 +59,13 @@ class System
         }
 
         return array($installation_mode, $result_message);
+    }
+
+    public function checkForSettingsTable()
+    {
+        $pdo = $this->db();
+        $stmt = $pdo->query("SHOW TABLES LIKE 'settings'");
+        return $stmt->fetchColumn();
     }
 
     public function checkVersion($current_version)
@@ -190,6 +195,8 @@ class System
     public function getDebugMode()
     {
         $pdo = $this->db();
+        $result = $this->checkForSettingsTable();
+        if (!$result) return '0';
         $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'debug_mode'");
         if ($stmt === false) return '0';
         $result = $stmt->fetchColumn();
