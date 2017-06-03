@@ -26,9 +26,10 @@ require_once('../../_includes/init.inc.php');
 require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
@@ -38,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -53,43 +55,48 @@ $new_smtp_email_address = $_POST['new_smtp_email_address'];
 $new_smtp_username = $_POST['new_smtp_username'];
 $new_smtp_password = $_POST['new_smtp_password'];
 $new_debug_mode = $_POST['new_debug_mode'];
+$new_local_php_log = $_POST['new_local_php_log'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days != "") {
 
-    $query = "UPDATE settings
-              SET full_url = ?,
-                  email_address = ?,
-                  large_mode = ?,
-                  use_smtp = ?,
-                  smtp_server = ?,
-                  smtp_protocol = ?,
-                  smtp_port = ?,
-                  smtp_email_address = ?,
-                  smtp_username = ?,
-                  smtp_password = ?,
-                  expiration_days = ?,
-                  debug_mode = ?,
-                  update_time = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $timestamp = $time->stamp();
-
-        $q->bind_param('ssiissssssiis', $new_full_url, $new_email_address, $new_large_mode, $new_use_smtp,
-            $new_smtp_server, $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username,
-            $new_smtp_password, $new_expiration_days, $new_debug_mode, $timestamp);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        UPDATE settings
+        SET full_url = :new_full_url,
+            email_address = :new_email_address,
+            large_mode = :new_large_mode,
+            use_smtp = :new_use_smtp,
+            smtp_server = :new_smtp_server,
+            smtp_protocol = :new_smtp_protocol,
+            smtp_port = :new_smtp_port,
+            smtp_email_address = :new_smtp_email_address,
+            smtp_username = :new_smtp_username,
+            smtp_password = :new_smtp_password,
+            expiration_days = :new_expiration_days,
+            debug_mode = :new_debug_mode,
+            local_php_log = :new_local_php_log,
+            update_time = :timestamp");
+    $stmt->bindValue('new_full_url', $new_full_url, PDO::PARAM_STR);
+    $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+    $stmt->bindValue('new_large_mode', $new_large_mode, PDO::PARAM_INT);
+    $stmt->bindValue('new_use_smtp', $new_use_smtp, PDO::PARAM_INT);
+    $stmt->bindValue('new_smtp_server', $new_smtp_server, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_protocol', $new_smtp_protocol, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_port', $new_smtp_port, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_email_address', $new_smtp_email_address, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_username', $new_smtp_username, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);
+    $stmt->bindValue('new_expiration_days', $new_expiration_days, PDO::PARAM_INT);
+    $stmt->bindValue('new_debug_mode', $new_debug_mode, PDO::PARAM_INT);
+    $stmt->bindValue('new_local_php_log', $new_local_php_log, PDO::PARAM_INT);
+    $timestamp = $time->stamp();
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $_SESSION['s_system_full_url'] = $new_full_url;
     $_SESSION['s_system_email_address'] = $new_email_address;
     $_SESSION['s_system_large_mode'] = $new_large_mode;
     $_SESSION['s_system_expiration_days'] = $new_expiration_days;
+    $_SESSION['s_system_local_php_log'] = $new_local_php_log;
 
     $_SESSION['s_message_success'] .= "The System Settings were updated<BR>";
 
@@ -106,23 +113,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     } else {
 
-        $query = "SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
-                    smtp_email_address, smtp_username, smtp_password, expiration_days, debug_mode
-                  FROM settings";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->query("
+            SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
+                smtp_email_address, smtp_username, smtp_password, expiration_days, debug_mode, local_php_log
+            FROM settings");
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_use_smtp, $new_smtp_server,
-                $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username, $new_smtp_password,
-                $new_expiration_days, $new_debug_mode);
-            $q->fetch();
-            $q->close();
+            $new_full_url = $result->full_url;
+            $new_email_address = $result->email_address;
+            $new_large_mode = $result->large_mode;
+            $new_use_smtp = $result->use_smtp;
+            $new_smtp_server = $result->smtp_server;
+            $new_smtp_protocol = $result->smtp_protocol;
+            $new_smtp_port = $result->smtp_port;
+            $new_smtp_email_address = $result->smtp_email_address;
+            $new_smtp_username = $result->smtp_username;
+            $new_smtp_password = $result->smtp_password;
+            $new_expiration_days = $result->expiration_days;
+            $new_debug_mode = $result->debug_mode;
+            $new_local_php_log = $result->local_php_log;
 
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
     }
@@ -148,6 +161,11 @@ echo $form->showRadioBottom('');
 echo $form->showRadioTop('Debugging Mode', 'Unless you\'re having problems with ' . SOFTWARE_TITLE . ' and support has asked you to turn this on, you should leave it turned off.', '');
 echo $form->showRadioOption('new_debug_mode', '1', 'Enabled', $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_debug_mode', '0', 'Disabled', $new_debug_mode, '', '');
+echo $form->showRadioBottom('');
+echo $form->showRadioTop('Local PHP Log', 'This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.<BR>' .
+    $layout->highlightText('red', 'WARNING:') . ' Only enable this feature temporarily for troubleshooting, and if you\'re asked to by ' . SOFTWARE_TITLE . ' support. Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your ' . SOFTWARE_TITLE . ' installation, which could allow them to compromise your system.', '');
+echo $form->showRadioOption('new_local_php_log', '1', 'Enabled', $new_local_php_log, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_local_php_log', '0', 'Disabled', $new_local_php_log, '', '');
 echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">

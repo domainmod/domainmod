@@ -32,6 +32,12 @@ date_default_timezone_set('UTC');
 @ini_set('display_errors', 0);
 @ini_set('log_errors', 1);
 
+if ($_SESSION['s_system_local_php_log'] == '1') {
+
+    @ini_set("error_log", DIR_ROOT . "/domainmod.log");
+
+}
+
 // For Troubleshooting -- Include the helper file if it exists
 if (file_exists(DIR_ROOT . '/helper.php')) {
 
