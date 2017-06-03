@@ -151,7 +151,7 @@ class Conversion
                     update_time = :update_time
                 WHERE currency_id = :currency_id
                   AND user_id = :user_id");
-            $stmt->bindValue(':conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
+            $stmt->bindValue('conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
             $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);
@@ -171,7 +171,7 @@ class Conversion
                 (:currency_id, :user_id, :conversion_rate, :update_time)");
             $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);
             $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
-            $stmt->bindValue(':conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
+            $stmt->bindValue('conversion_rate', strval($conversion_rate), \PDO::PARAM_STR);
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
             $stmt->execute();
