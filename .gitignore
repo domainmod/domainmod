@@ -2,4 +2,5 @@
 /_includes/config.inc.php
 .htaccess
 error_log
+helper.php
 robots.txt

@@ -31,3 +31,10 @@ date_default_timezone_set('UTC');
 @error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 @ini_set('display_errors', 0);
 @ini_set('log_errors', 1);
+
+// For Troubleshooting -- Include the helper file if it exists
+if (file_exists(DIR_ROOT . '/helper.php')) {
+
+    require_once(DIR_ROOT . '/helper.php');
+
+}
