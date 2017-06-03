@@ -20,8 +20,14 @@
  */
 ?>
 <?php
+// PHP named constants
 define('DIR_ROOT', dirname(dirname(__FILE__)));
 define('DIR_INC', DIR_ROOT . '/_includes');
 define('WEBROOT_THEME', '_includes/theme');
 define('EMAIL_ENCODING_TYPE', 'UTF-8'); // UTF-8 or iso-8859-1
+
+// PHP.ini overrides
 date_default_timezone_set('UTC');
+@error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
+@ini_set('display_errors', 0);
+@ini_set('log_errors', 1);
