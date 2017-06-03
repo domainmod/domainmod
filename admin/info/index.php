@@ -48,11 +48,12 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 
+<strong><?php echo SOFTWARE_TITLE; ?> Version:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
-<strong>PHP:</strong> <?php echo phpversion(); ?><BR>
-<strong>MySQL:</strong> <?php echo mysqli_get_server_info($dbcon); ?><BR>
-<strong><?php echo SOFTWARE_TITLE; ?>:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
+<strong>PHP Version:</strong> <?php echo phpversion(); ?><BR>
+<strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log');; ?><BR>
+<strong>MySQL Version:</strong> <?php echo mysqli_get_server_info($dbcon); ?><BR>
 
 <?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
