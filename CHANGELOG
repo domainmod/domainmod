@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.05.03    2017-06-03
+- Added Helper File mechanism
+- Added local logging of PHP errors
+- Added error reporting options
+- Updated System Information page
+- Code Cleanup (Converting to PDO)
+
 v4.05.02    2017-05-30
 - Fixed Debug process
 
