@@ -42,6 +42,7 @@ class Maintenance
         $this->updateAllFees();
         $this->deleteUnusedFees('fees', 'domains');
         $this->deleteUnusedFees('ssl_fees', 'ssl_certs');
+        $this->zeroInvalidIpIds();
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -394,6 +395,36 @@ class Maintenance
                              SELECT fee_id
                              FROM " . $compare_table . "
                             )");
+    }
+
+    public function zeroInvalidIpIds()
+    { // This zeroes out API IP address IDs in the registrar_account table that are no longer valid. For example, if an
+      // IP has been deleted.
+        $pdo = $this->system->db();
+        $stmt = $pdo->query("
+            SELECT id
+            FROM ip_addresses");
+        $result = $stmt->fetchAll();
+
+        if ($result) {
+
+            $id_array = array();
+
+            foreach ($result as $row) {
+
+                $id_array[] = $row->id;
+
+            }
+
+            $in_list = str_repeat('?, ', count($id_array) - 1) . '?';
+            $sql = "UPDATE registrar_accounts
+                    SET api_ip_id = '0'
+                    WHERE api_ip_id NOT IN (" . $in_list . ")";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($id_array);
+
+        }
+
     }
 
 } //@formatter:on
