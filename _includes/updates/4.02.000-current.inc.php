@@ -898,4 +898,276 @@ if ($current_db_version === '4.05.01') {
 
 }
 
+// upgrade database from 4.05.02 to 4.05.03
+if ($current_db_version === '4.05.02') {
+
+    $pdo->query("
+        ALTER TABLE `settings`
+        ADD `local_php_log` TINYINT(1) NOT NULL DEFAULT '0' AFTER `debug_mode`");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip1` `ip1` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip2` `ip2` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip3` `ip3` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip4` `ip4` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip5` `ip5` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip6` `ip6` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip7` `ip7` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip8` `ip8` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip9` `ip9` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `ip10` `ip10` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ip_addresses`
+        CHANGE `ip` `ip` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ip_addresses`
+        CHANGE `rdns` `rdns` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `goal_activity`
+        CHANGE `ip` `ip` varchar(45) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown'");
+
+    $pdo->query("
+        ALTER TABLE `users`
+        CHANGE `new_password` `new_password` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `users`
+        CHANGE `admin` `admin` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `users`
+        CHANGE `active` `active` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `expiration_emails` `expiration_emails` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_owner` `display_domain_owner` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_registrar` `display_domain_registrar` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_account` `display_domain_account` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_expiry_date` `display_domain_expiry_date` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_category` `display_domain_category` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_dns` `display_domain_dns` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_host` `display_domain_host` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_ip` `display_domain_ip` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_tld` `display_domain_tld` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_domain_fee` `display_domain_fee` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_owner` `display_ssl_owner` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_provider` `display_ssl_provider` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_account` `display_ssl_account` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_domain` `display_ssl_domain` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_type` `display_ssl_type` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_expiry_date` `display_ssl_expiry_date` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_ip` `display_ssl_ip` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_category` `display_ssl_category` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_ssl_fee` `display_ssl_fee` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_inactive_assets` `display_inactive_assets` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings`
+        CHANGE `display_dw_intro_page` `display_dw_intro_page` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `currencies`
+        CHANGE `symbol_order` `symbol_order` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `currencies`
+        CHANGE `symbol_space` `symbol_space` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `fees`
+        CHANGE `fee_fixed` `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domains`
+        CHANGE `privacy` `privacy` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domains`
+        CHANGE `active` `active` TINYINT(2) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains`
+        CHANGE `fee_fixed` `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_fees`
+        CHANGE `fee_fixed` `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs`
+        CHANGE `active` `active` TINYINT(2) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs`
+        CHANGE `fee_fixed` `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts`
+        CHANGE `reseller` `reseller` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_accounts`
+        CHANGE `reseller` `reseller` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segment_data`
+        CHANGE `active` `active` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segment_data`
+        CHANGE `inactive` `inactive` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segment_data`
+        CHANGE `missing` `missing` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segment_data`
+        CHANGE `filtered` `filtered` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers`
+        CHANGE `build_status` `build_status` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers`
+        CHANGE `has_ever_been_built` `has_ever_been_built` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers`
+        CHANGE `build_status_overall` `build_status_overall` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers`
+        CHANGE `has_ever_been_built_overall` `has_ever_been_built_overall` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `scheduler`
+        CHANGE `is_running` `is_running` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `scheduler`
+        CHANGE `active` `active` TINYINT(1) NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `settings`
+        CHANGE `upgrade_available` `upgrade_available` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dns`
+        CHANGE `number_of_servers` `number_of_servers` TINYINT(2) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        UPDATE api_registrars
+        SET ret_privacy_status = '1',
+            ret_autorenewal_status = '1',
+            notes = ''
+        WHERE `name` = 'Fabulous'");
+
+    $pdo->query("
+        UPDATE api_registrars
+        SET req_ip_address = '1'
+        WHERE `name` = 'Dynadot'");
+
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '4.05.03',
+            update_time = '" . $time->stamp() . "'");
+
+    $current_db_version = '4.05.03';
+
+}
+
 //@formatter:on

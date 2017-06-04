@@ -41,6 +41,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $_SESSION['s_running_login_checks'] = '1';
