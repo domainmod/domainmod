@@ -30,6 +30,7 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$log = new DomainMOD\Log('admin.sslfields.edit');
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -38,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-edit-custom-ssl-field.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -53,71 +55,61 @@ $new_notes = $_POST['new_notes'];
 
 if ($new_csfid == '') $new_csfid = $csfid;
 
-$query = "SELECT id
-          FROM ssl_cert_fields
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM ssl_cert_fields
+    WHERE id = :csfid");
+$stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchColumn();
 
-if ($q->prepare($query)) {
+if (!$result) {
 
-    $q->bind_param('i', $csfid);
-    $q->execute();
-    $q->store_result();
+    $_SESSION['s_message_danger'] .= "The Custom SSL Field you're trying to edit is invalid<BR>";
 
-    if ($q->num_rows() == 0) {
+    header("Location: ../ssl-fields/");
+    exit;
 
-        $_SESSION['s_message_danger'] .= "You're trying to edit an invalid Custom SSL Field<BR>";
-
-        header("Location: ../ssl-fields/");
-        exit;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
-    $query = "UPDATE ssl_cert_fields
-              SET `name` = ?,
-                  description = ?,
-                  notes = ?,
-                  update_time = ?
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT field_name
+        FROM ssl_cert_fields
+        WHERE id = :new_csfid");
+    $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if (!$result) {
 
+        $log_message = 'Unable to retrieve Custom SSL Field ID';
+        $log_extra = array('Custom SSL Field Name' => $new_name, 'Custom SSL Field ID' => $new_csfid);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+    } else {
+
+        $stmt = $pdo->prepare("
+            UPDATE ssl_cert_fields
+            SET `name` = :new_name,
+                description = :new_description,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_csfid");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
         $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
+        $stmt->execute();
 
-        $q->bind_param('ssssi', $new_name, $new_description, $new_notes, $timestamp, $new_csfid);
-        $q->execute();
-        $q->close();
+        $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $result . ') Updated<BR>';
 
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    $query = "SELECT field_name
-              FROM ssl_cert_fields
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $new_csfid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($field_name);
-
-        while ($q->fetch()) {
-
-            $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $temp_field_name . ') Updated<BR>';
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
     header("Location: ../ssl-fields/");
     exit;
@@ -130,33 +122,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
     } else {
 
-        $query = "SELECT f.name, f.field_name, f.description, f.notes, t.name
-                  FROM ssl_cert_fields AS f, custom_field_types AS t
-                  WHERE f.type_id = t.id
-                    AND f.id = ?
-                  ORDER BY f.name";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT f.name, f.field_name, f.description, f.notes, t.name AS field_type
+            FROM ssl_cert_fields AS f, custom_field_types AS t
+            WHERE f.type_id = t.id
+              AND f.id = :csfid
+            ORDER BY f.name");
+        $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $csfid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($name, $field_name, $description, $notes, $field_type);
+            $new_name = $result->name;
+            $new_field_name = $result->field_name;
+            $new_description = $result->description;
+            $new_notes = $result->notes;
+            $new_field_type = $result->field_type;
 
-            while ($q->fetch()) {
-
-                $new_name = $name;
-                $new_field_name = $field_name;
-                $new_description = $description;
-                $new_notes = $notes;
-                $new_field_type = $field_type;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 
@@ -176,57 +160,41 @@ if ($really_del == '1') {
 
     } else {
 
-        $query = "SELECT `name`, field_name
-                  FROM ssl_cert_fields
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT `name`, field_name
+            FROM ssl_cert_fields
+            WHERE id = :csfid");
+        $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if (!$result) {
 
-            $q->bind_param('i', $csfid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($name, $field_name);
+            $log_message = 'Unable to delete Custom SSL Field';
+            $log_extra = array('Custom SSL Field Name' => $new_name, 'Custom SSL Field ID' => $csfid);
+            $log->error($log_message, $log_extra);
 
-            while ($q->fetch()) {
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-                $temp_name = $name;
-                $temp_field_name = $field_name;
 
-            }
+        } else {
 
-            $q->close();
+            $pdo->query("
+                ALTER TABLE `ssl_cert_field_data`
+                DROP `" . $result->field_name . "`");
 
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_cert_fields
+                WHERE id = :csfid");
+            $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $query = "ALTER TABLE `ssl_cert_field_data`
-                  DROP `?`";
-        $q = $dbcon->stmt_init();
+            $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $result->name . ' (' . $result->field_name . ') deleted<BR>';
 
-        if ($q->prepare($query)) {
+            header("Location: ../ssl-fields/");
+            exit;
 
-            $q->bind_param('s', $temp_field_name);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "DELETE FROM ssl_cert_fields
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $csfid);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $temp_name . ' (' . $temp_field_name . ') Deleted<BR>';
-
-        header("Location: ../ssl-fields/");
-        exit;
+        }
 
     }
 

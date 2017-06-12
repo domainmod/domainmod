@@ -30,6 +30,8 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$assets = new DomainMOD\Assets();
+$user = new DomainMOD\User();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -40,6 +42,7 @@ require_once(DIR_INC . '/database.inc.php');
 
 $queue = new DomainMOD\DomainQueue();
 
+$pdo = $system->db();
 $system->authCheck();
 
 $list_id = $_GET['list_id'];
@@ -55,29 +58,29 @@ $really_clear = $_GET['really_clear'];
 $s = $_GET['s'];
 $export_data = $_GET['export_data'];
 
-$sql_lists = "SELECT dql.id, dql.api_registrar_id, dql.domain_count, dql.owner_id, dql.registrar_id, dql.account_id,
-                  dql.processing, dql.ready_to_import, dql.finished, dql.copied_to_history, dql.created_by,
-                  dql.insert_time, r.name AS registrar_name, ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
-              FROM domain_queue_list AS dql, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
-              WHERE dql.registrar_id = r.id
-                AND dql.account_id = ra.id
-                AND dql.owner_id = o.id
-                AND dql.api_registrar_id = ar.id
-              ORDER BY dql.insert_time DESC";
-$result_lists = mysqli_query($dbcon, $sql_lists);
+$result_lists = $pdo->query("
+    SELECT dql.id, dql.api_registrar_id, dql.domain_count, dql.owner_id, dql.registrar_id, dql.account_id,
+        dql.processing, dql.ready_to_import, dql.finished, dql.copied_to_history, dql.created_by,
+        dql.insert_time, r.name AS registrar_name, ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
+    FROM domain_queue_list AS dql, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
+    WHERE dql.registrar_id = r.id
+      AND dql.account_id = ra.id
+      AND dql.owner_id = o.id
+      AND dql.api_registrar_id = ar.id
+    ORDER BY dql.insert_time DESC")->fetchAll();
 
-$sql_domains = "SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
-                    dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
-                    dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue,
-                    dq.copied_to_history, dq.created_by, dq.insert_time, r.name AS registrar_name,
-                    ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
-                FROM domain_queue AS dq, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
-                WHERE dq.registrar_id = r.id
-                  AND dq.account_id = ra.id
-                  AND dq.owner_id = o.id
-                  AND dq.api_registrar_id = ar.id
-                ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC";
-$result_domains = mysqli_query($dbcon, $sql_domains);
+$result_domains = $pdo->query("
+    SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
+        dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
+        dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue,
+        dq.copied_to_history, dq.created_by, dq.insert_time, r.name AS registrar_name,
+        ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
+    FROM domain_queue AS dq, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
+    WHERE dq.registrar_id = r.id
+      AND dq.account_id = ra.id
+      AND dq.owner_id = o.id
+      AND dq.api_registrar_id = ar.id
+    ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC")->fetchAll();
 
 if ($export_data == '1') {
 
@@ -106,9 +109,9 @@ if ($export_data == '1') {
         );
         $export->writeRow($export_file, $row_contents);
 
-        if (mysqli_num_rows($result_lists) > 0) {
+        if ($result_lists) {
 
-            while ($row_lists = mysqli_fetch_object($result_lists)) {
+            foreach ($result_lists as $row_lists) {
 
                 if ($row_lists->finished == '1') {
 
@@ -128,17 +131,6 @@ if ($export_data == '1') {
 
                 }
 
-                $sql_temp = "SELECT first_name, last_name
-                             FROM users
-                             WHERE id = '" . $row_lists->created_by . "'";
-                $result_temp = mysqli_query($dbcon, $sql_temp);
-
-                while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                    $full_name_export = $row_temp->first_name . ' ' . $row_temp->last_name;
-
-                }
-
                 $row_contents = array(
                     $export_processing,
                     $row_lists->api_registrar_name,
@@ -148,7 +140,7 @@ if ($export_data == '1') {
                     $row_lists->domain_count,
                     $row_lists->ready_to_import,
                     $row_lists->copied_to_history,
-                    $full_name_export,
+                    $user->getFullName($row_lists->created_by),
                     $time->toUserTimezone($row_lists->insert_time)
                 );
                 $export->writeRow($export_file, $row_contents);
@@ -194,9 +186,9 @@ if ($export_data == '1') {
         );
         $export->writeRow($export_file, $row_contents);
 
-        if (mysqli_num_rows($result_domains) > 0) {
+        if ($result_domains) {
 
-            while ($row_domains = mysqli_fetch_object($result_domains)) {
+            foreach ($result_domains as $row_domains) {
 
                 $already_exists = '';
                 if ($row_domains->finished == '1' && $row_domains->processing != '1') {
@@ -263,16 +255,7 @@ if ($export_data == '1') {
 
                 } else {
 
-                    $sql_temp = "SELECT `name`
-                                 FROM dns
-                                 WHERE id = '" . $row_domains->dns_id . "'";
-                    $result_temp = mysqli_query($dbcon, $sql_temp);
-
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                        $export_dns = $row_temp->name;
-
-                    }
+                    $export_dns = $assets->getDnsName($row_domains->dns_id);
 
                 }
 
@@ -292,172 +275,127 @@ if ($export_data == '1') {
 
                 } else {
 
-                    $sql_temp = "SELECT `name`, ip
-                                 FROM ip_addresses
-                                 WHERE id = '" . $row_domains->ip_id . "'";
-                    $result_temp = mysqli_query($dbcon, $sql_temp);
+                    list($export_ip_name, $export_ip_address) = $assets->getIpAndName($row_domains->ip_id);
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                    if ($row_domains->hosting_id == '0') {
 
-                        $export_ip_name = $row_temp->name;
-                        $export_ip_address = $row_temp->ip;
+                        if ($already_exists == '1') {
 
-                    }
-                }
+                            $export_host = '-';
 
-                if ($row_domains->hosting_id == '0') {
+                        } else {
 
-                    if ($already_exists == '1') {
+                            $export_host = 'Pending';
 
-                        $export_host = '-';
+                        }
 
                     } else {
 
-                        $export_host = 'Pending';
+                        $export_host = $assets->getHost($row_domains->hosting_id);
 
                     }
 
-                } else {
+                    if ($row_domains->cat_id == '0') {
 
-                    $sql_temp = "SELECT `name`
-                                 FROM hosting
-                                 WHERE id = '" . $row_domains->hosting_id . "'";
-                    $result_temp = mysqli_query($dbcon, $sql_temp);
+                        if ($already_exists == '1') {
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                            $export_category = '-';
 
-                        $export_host = $row_temp->name;
+                        } else {
 
-                    }
+                            $export_category = 'Pending';
 
-                }
-
-                if ($row_domains->cat_id == '0') {
-
-                    if ($already_exists == '1') {
-
-                        $export_category = '-';
+                        }
 
                     } else {
 
-                        $export_category = 'Pending';
+                        $export_category = $assets->getCat($row_domains->cat_id);
 
                     }
 
-                } else {
+                    if ($row_domains->autorenew == '1') {
 
-                    $sql_temp = "SELECT `name`
-                                 FROM categories
-                                 WHERE id = '" . $row_domains->cat_id . "'";
-                    $result_temp = mysqli_query($dbcon, $sql_temp);
-
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                        $export_category = $row_temp->name;
-
-                    }
-
-                }
-
-                if ($row_domains->autorenew == '1') {
-
-                    $export_autorenew = 'Yes';
-
-                } else {
-
-                    if ($row_domains->finished == '1') {
-
-                        $export_autorenew = 'No';
+                        $export_autorenew = 'Yes';
 
                     } else {
 
-                        $export_autorenew = 'Pending';
+                        if ($row_domains->finished == '1') {
+
+                            $export_autorenew = 'No';
+
+                        } else {
+
+                            $export_autorenew = 'Pending';
+
+                        }
 
                     }
 
-                }
+                    if ($row_domains->privacy == '1') {
 
-                if ($row_domains->privacy == '1') {
-
-                    $export_privacy = 'Yes';
-
-                } else {
-
-                    if ($row_domains->finished == '1') {
-
-                        $export_privacy = 'No';
+                        $export_privacy = 'Yes';
 
                     } else {
 
-                        $export_privacy = 'Pending';
+                        if ($row_domains->finished == '1') {
+
+                            $export_privacy = 'No';
+
+                        } else {
+
+                            $export_privacy = 'Pending';
+
+                        }
 
                     }
 
-                }
+                    $account_export = $assets->getUsername($row_domains->account_id);
 
-                $sql_temp = "SELECT `username`
-                             FROM registrar_accounts
-                             WHERE id = '" . $row_domains->account_id . "'";
-                $result_temp = mysqli_query($dbcon, $sql_temp);
+                    if ($row_domains->created_by == '0') {
 
-                while ($row_temp = mysqli_fetch_object($result_temp)) {
+                        $full_name_export = '[unknown]';
 
-                    $account_export = $row_temp->username;
+                    } else {
 
-                }
-
-                if ($row_domains->created_by == '0') {
-
-                    $full_name_export = '[unknown]';
-
-                } else {
-
-                    $sql_temp = "SELECT first_name, last_name
-                                 FROM users
-                                 WHERE id = '" . $row_domains->created_by . "'";
-                    $result_temp = mysqli_query($dbcon, $sql_temp);
-
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                        $full_name_export = $row_temp->first_name . ' ' . $row_temp->last_name;
+                        $full_name_export = $user->getFullName($row_domains->created_by);
 
                     }
 
-                }
+                    $row_contents = array(
+                        $export_processing,
+                        $row_domains->domain,
+                        $row_domains->api_registrar_name,
+                        $row_domains->registrar_name,
+                        $row_domains->owner,
+                        $account_export,
+                        $row_domains->tld,
+                        $export_expiry_date,
+                        $export_dns,
+                        $export_ip_name,
+                        $export_ip_address,
+                        $export_host,
+                        $export_category,
+                        $export_autorenew,
+                        $export_privacy,
+                        $row_domains->ready_to_import,
+                        $row_domains->already_in_domains,
+                        $row_domains->already_in_queue,
+                        $row_domains->copied_to_history,
+                        $full_name_export,
+                        $time->toUserTimezone($row_domains->insert_time),
+                        $row_domains->domain_id
+                    );
+                    $export->writeRow($export_file, $row_contents);
 
-                $row_contents = array(
-                    $export_processing,
-                    $row_domains->domain,
-                    $row_domains->api_registrar_name,
-                    $row_domains->registrar_name,
-                    $row_domains->owner,
-                    $account_export,
-                    $row_domains->tld,
-                    $export_expiry_date,
-                    $export_dns,
-                    $export_ip_name,
-                    $export_ip_address,
-                    $export_host,
-                    $export_category,
-                    $export_autorenew,
-                    $export_privacy,
-                    $row_domains->ready_to_import,
-                    $row_domains->already_in_domains,
-                    $row_domains->already_in_queue,
-                    $row_domains->copied_to_history,
-                    $full_name_export,
-                    $time->toUserTimezone($row_domains->insert_time),
-                    $row_domains->domain_id
-                );
-                $export->writeRow($export_file, $row_contents);
+                }
 
             }
 
         }
 
-    }
+        $export->closeFile($export_file);
 
-    $export->closeFile($export_file);
+    }
 
 }
 
@@ -483,19 +421,11 @@ if ($dell != '' && $list_id != '') {
 
 if ($really_dell == '1' && $list_id != '') {
 
-    $query = "DELETE FROM domain_queue_list
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $list_id);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    $queue->checkListQueue();
+    $stmt = $pdo->prepare("
+        DELETE FROM domain_queue_list
+        WHERE id = :list_id");
+    $stmt->bindValue('list_id', $list_id, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Domain List deleted from Queue<BR>";
 
@@ -509,17 +439,11 @@ if ($deld != '' && $domain_id != '') {
 
 if ($really_deld == '1' && $domain_id != '') {
 
-    $query = "DELETE FROM domain_queue
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $domain_id);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        DELETE FROM domain_queue
+        WHERE id = :domain_id");
+    $stmt->bindValue('domain_id', $domain_id, PDO::PARAM_INT);
+    $stmt->execute();
 
     $queue->checkDomainQueue();
 
@@ -560,9 +484,7 @@ The Domain Queue relies on your domain registrar's API to import your domains, s
 <?php } ?>
 <BR><BR>
 <?php
-$result_lists = mysqli_query($dbcon, $sql_lists);
-
-if (mysqli_num_rows($result_lists) == 0) {
+if (!$result_lists) {
 
     unset($_SESSION['s_domains_in_list_queue']);
 
@@ -583,7 +505,7 @@ if (mysqli_num_rows($result_lists) == 0) {
         </thead>
         <tbody><?php
 
-        while ($row_lists = mysqli_fetch_object($result_lists)) { ?>
+        foreach ($result_lists as $row_lists) { ?>
 
             <tr>
             <td></td>
@@ -631,27 +553,7 @@ if (mysqli_num_rows($result_lists) == 0) {
 
                 } else {
 
-                    $query = "SELECT first_name, last_name
-                              FROM users
-                              WHERE id = ?";
-                    $q = $dbcon->stmt_init();
-
-                    if ($q->prepare($query)) {
-
-                        $q->bind_param('i', $row_lists->created_by);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_first_name, $t_last_name);
-
-                        while ($q->fetch()) {
-
-                            $to_display = $t_first_name . ' ' . $t_last_name;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $to_display = $user->getFullName($row_lists->created_by);
 
                 }
                 echo $to_display; ?>
@@ -680,9 +582,7 @@ if (mysqli_num_rows($result_lists) == 0) {
     </table><?php
 }
 
-$result_domains = mysqli_query($dbcon, $sql_domains);
-
-if (mysqli_num_rows($result_domains) == 0) {
+if (!$result_domains) {
 
     unset($_SESSION['s_domains_in_queue']);
 
@@ -706,7 +606,7 @@ if (mysqli_num_rows($result_domains) == 0) {
         </thead>
         <tbody><?php
 
-        while ($row_domains = mysqli_fetch_object($result_domains)) { ?>
+        foreach ($result_domains as $row_domains) { ?>
 
             <tr>
             <td></td>
@@ -787,27 +687,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $query = "SELECT `name`
-                              FROM dns
-                              WHERE id = ?";
-                    $q = $dbcon->stmt_init();
-
-                    if ($q->prepare($query)) {
-
-                        $q->bind_param('i', $row_domains->dns_id);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_name);
-
-                        while ($q->fetch()) {
-
-                            $to_display = $t_name;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $to_display = $assets->getDnsName($row_domains->dns_id);
 
                 }
                 echo $to_display; ?>
@@ -827,27 +707,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $query = "SELECT `name`
-                              FROM ip_addresses
-                              WHERE id = ?";
-                    $q = $dbcon->stmt_init();
-
-                    if ($q->prepare($query)) {
-
-                        $q->bind_param('i', $row_domains->ip_id);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_name);
-
-                        while ($q->fetch()) {
-
-                            $to_display = $t_name;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $to_display = $assets->getIpName($row_domains->ip_id);
 
                 }
                 echo $to_display; ?>
@@ -859,27 +719,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $query = "SELECT first_name, last_name
-                              FROM users
-                              WHERE id = ?";
-                    $q = $dbcon->stmt_init();
-
-                    if ($q->prepare($query)) {
-
-                        $q->bind_param('i', $row_domains->created_by);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_first_name, $t_last_name);
-
-                        while ($q->fetch()) {
-
-                            $to_display = $t_first_name . ' ' . $t_last_name;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $to_display = $user->getFullName($row_domains->created_by);
 
                 }
                 echo $to_display; ?>

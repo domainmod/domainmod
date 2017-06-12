@@ -70,11 +70,10 @@ $type_id = $_REQUEST['type_id'];
 $field_id = $_REQUEST['field_id'];
 
 // Custom Fields
-$stmt = $pdo->query("
+$result = $pdo->query("
     SELECT field_name
     FROM domain_fields
-    ORDER BY name");
-$result = $stmt->fetchAll();
+    ORDER BY name")->fetchAll();
 
 if ($result) {
 
@@ -354,11 +353,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
-                        $stmt = $pdo->query("
+                        $result = $pdo->query("
                             SELECT field_name
                             FROM domain_fields
-                            ORDER BY `name`");
-                        $result = $stmt->fetchAll();
+                            ORDER BY `name`")->fetchAll();
 
                         if ($result) {
 

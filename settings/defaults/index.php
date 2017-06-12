@@ -39,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/settings-defaults.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $new_default_category_domains = $_POST['new_default_category_domains'];
@@ -59,59 +60,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['s_message_success'] .= "Your Defaults were updated<BR>";
 
-    $sql = "SELECT *
-            FROM user_settings
-            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
-    $result = mysqli_query($dbcon, $sql);
-    while ($row = mysqli_fetch_object($result)) {
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM user_settings
+        WHERE user_id = :user_id");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-        $saved_default_category_domains = $row->default_category_domains;
-        $saved_default_category_ssl = $row->default_category_ssl;
-        $saved_default_dns = $row->default_dns;
-        $saved_default_host = $row->default_host;
-        $saved_default_ip_address_domains = $row->default_ip_address_domains;
-        $saved_default_ip_address_ssl = $row->default_ip_address_ssl;
-        $saved_default_owner_domains = $row->default_owner_domains;
-        $saved_default_owner_ssl = $row->default_owner_ssl;
-        $saved_default_registrar = $row->default_registrar;
-        $saved_default_registrar_account = $row->default_registrar_account;
-        $saved_default_ssl_provider_account = $row->default_ssl_provider_account;
-        $saved_default_ssl_type = $row->default_ssl_type;
-        $saved_default_ssl_provider = $row->default_ssl_provider;
+    if ($result) {
+
+        $saved_default_category_domains = $result->default_category_domains;
+        $saved_default_category_ssl = $result->default_category_ssl;
+        $saved_default_dns = $result->default_dns;
+        $saved_default_host = $result->default_host;
+        $saved_default_ip_address_domains = $result->default_ip_address_domains;
+        $saved_default_ip_address_ssl = $result->default_ip_address_ssl;
+        $saved_default_owner_domains = $result->default_owner_domains;
+        $saved_default_owner_ssl = $result->default_owner_ssl;
+        $saved_default_registrar = $result->default_registrar;
+        $saved_default_registrar_account = $result->default_registrar_account;
+        $saved_default_ssl_provider_account = $result->default_ssl_provider_account;
+        $saved_default_ssl_type = $result->default_ssl_type;
+        $saved_default_ssl_provider = $result->default_ssl_provider;
 
     }
 
-    $query = "UPDATE user_settings
-              SET default_category_domains = ?,
-                  default_category_ssl = ?,
-                  default_dns = ?,
-                  default_host = ?,
-                  default_ip_address_domains = ?,
-                  default_ip_address_ssl = ?,
-                  default_owner_domains = ?,
-                  default_owner_ssl = ?,
-                  default_registrar = ?,
-                  default_registrar_account = ?,
-                  default_ssl_provider_account = ?,
-                  default_ssl_type = ?,
-                  default_ssl_provider = ?,
-                  update_time = ?
-              WHERE user_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-        
-        $timestamp = $time->stamp();
-    
-        $q->bind_param('iiiiiiiiiiiiisi', $new_default_category_domains, $new_default_category_ssl, $new_default_dns,
-            $new_default_host, $new_default_ip_address_domains, $new_default_ip_address_ssl, $new_default_owner_domains,
-            $new_default_owner_ssl, $new_default_registrar, $new_default_registrar_account,
-            $new_default_ssl_provider_account, $new_default_ssl_type, $new_default_ssl_provider, $timestamp,
-            $_SESSION['s_user_id']);
-        $q->execute();
-        $q->close();
-    
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE user_settings
+        SET default_category_domains = :new_default_category_domains,
+            default_category_ssl = :new_default_category_ssl,
+            default_dns = :new_default_dns,
+            default_host = :new_default_host,
+            default_ip_address_domains = :new_default_ip_address_domains,
+            default_ip_address_ssl = :new_default_ip_address_ssl,
+            default_owner_domains = :new_default_owner_domains,
+            default_owner_ssl = :new_default_owner_ssl,
+            default_registrar = :new_default_registrar,
+            default_registrar_account = :new_default_registrar_account,
+            default_ssl_provider_account = :new_default_ssl_provider_account,
+            default_ssl_type = :new_default_ssl_type,
+            default_ssl_provider = :new_default_ssl_provider,
+            update_time = :timestamp
+        WHERE user_id = :user_id");
+    $stmt->bindValue('new_default_category_domains', $new_default_category_domains, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_category_ssl', $new_default_category_ssl, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_dns', $new_default_dns, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_host', $new_default_host, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_ip_address_domains', $new_default_ip_address_domains, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_ip_address_ssl', $new_default_ip_address_ssl, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_owner_domains', $new_default_owner_domains, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_owner_ssl', $new_default_owner_ssl, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_registrar', $new_default_registrar, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_registrar_account', $new_default_registrar_account, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_ssl_provider_account', $new_default_ssl_provider_account, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_ssl_type', $new_default_ssl_type, PDO::PARAM_INT);
+    $stmt->bindValue('new_default_ssl_provider', $new_default_ssl_provider, PDO::PARAM_INT);
+    $timestamp = $time->stamp();
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_default_category_domains'] = $new_default_category_domains;
     $_SESSION['s_default_category_ssl'] = $new_default_category_ssl;

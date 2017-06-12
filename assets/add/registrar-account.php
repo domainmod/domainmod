@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-add-registrar-account.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -58,63 +59,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
-        $query = "INSERT INTO registrar_accounts
-                  (owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name, api_key, api_secret, api_ip_id, notes, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            INSERT INTO registrar_accounts
+            (owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name,
+             api_key, api_secret, api_ip_id, notes, created_by, insert_time)
+            VALUES
+            (:new_owner_id, :new_registrar_id, :new_email_address, :new_username, :new_password, :new_reseller,
+             :new_reseller_id, :new_api_app_name, :new_api_key, :new_api_secret, :new_api_ip_id, :new_notes,
+             :created_by, :timestamp)");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
+        $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_key', $new_api_key, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_secret', $new_api_secret, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_ip_id', $new_api_ip_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('iisssissssisis', $new_owner_id, $new_registrar_id, $new_email_address, $new_username,
-                $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key, $new_api_secret,
-                $new_api_ip_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "SELECT `name`
-                  FROM registrars
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_registrar_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_registrar);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "SELECT `name`
-                  FROM owners
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_owner_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_owner);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Added<BR>";
+        $assets = new DomainMOD\Assets();
+        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" .
+            $assets->getRegistrar($new_registrar_id) . ", " . $assets->getOwner($new_owner_id) . ") Added<BR>";
 
         if ($_SESSION['s_has_registrar_account'] != '1') {
 
@@ -160,77 +132,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-$query = "SELECT id, `name`
-          FROM registrars
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
-
-    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
-
-    if ($new_registrar_id == '') {
-
-        $to_compare = $_SESSION['s_default_registrar'];
-
-    } else {
-
-        $to_compare = $new_registrar_id;
-    }
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $to_compare);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
+echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
+if ($new_registrar_id == '') {
+    $to_compare = $_SESSION['s_default_registrar'];
 } else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
+    $to_compare = $new_registrar_id;
 }
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM registrars
+    ORDER BY `name` ASC")->fetchAll();
+foreach ($result as $row) {
+    echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+}
+echo $form->showDropdownBottom('');
 
-$query = "SELECT id, `name`
-          FROM owners
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
-
-    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
-
-    if ($new_owner_id == '') {
-
-        $to_compare = $_SESSION['s_default_owner_domains'];
-
-    } else {
-
-        $to_compare = $new_owner_id;
-    }
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $to_compare);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
+echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+if ($new_owner_id == '') {
+    $to_compare = $_SESSION['s_default_owner_domains'];
 } else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
+    $to_compare = $new_owner_id;
 }
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM owners
+    ORDER BY `name` ASC")->fetchAll();
+foreach ($result as $row) {
+    echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+}
+echo $form->showDropdownBottom('');
 
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
 echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
@@ -257,34 +187,16 @@ echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_resel
         echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '', '');
         echo $form->showInputText('new_api_secret', 'API Secret', '', $new_api_secret, '255', '', '', '', '');
 
-        $query = "SELECT id, `name`, ip
-                  FROM ip_addresses
-                  ORDER BY `name` ASC";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($id, $name, $ip_address);
-
-            echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access.', '', '');
-
-            echo $form->showDropdownOption('0', 'n/a', '0');
-
-            while ($q->fetch()) {
-
-                echo $form->showDropdownOption($id, $name . ' (' . $ip_address . ')', $new_api_ip_id);
-
-            }
-
-            echo $form->showDropdownBottom('');
-
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        } ?>
+        echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access.', '', '');
+        echo $form->showDropdownOption('0', 'n/a', '0');
+        $result = $pdo->query("
+            SELECT id, `name`, ip
+            FROM ip_addresses
+            ORDER BY `name` ASC")->fetchAll();
+        foreach ($result as $row) {
+            echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_api_ip_id);
+        }
+        echo $form->showDropdownBottom(''); ?>
 
     </div>
 </div><BR><?php

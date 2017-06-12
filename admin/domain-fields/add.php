@@ -39,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-add-custom-domain-field.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -50,131 +51,70 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name)) {
 
-    $query = "SELECT field_name
-              FROM domain_fields
-              WHERE field_name = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT field_name
+        FROM domain_fields
+        WHERE field_name = :new_field_name
+        LIMIT 1");
+    $stmt->bindValue('new_field_name', $new_field_name, PDO::PARAM_STR);
+    $stmt->execute();
+    $result_main = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result_main) {
 
-        $q->bind_param('s', $new_field_name);
-        $q->execute();
-        $q->store_result();
+        $_SESSION['s_message_danger'] .= 'The Database Field Name you entered already exists<BR>';
 
-        if ($q->num_rows() > 0) {
+    } else {
 
-            $_SESSION['s_message_danger'] .= 'The Database Field Name you entered already exists<BR>';
+        $stmt = $pdo->prepare("
+            INSERT INTO domain_fields
+            (`name`, field_name, description, type_id, notes, created_by, insert_time)
+            VALUES
+            (:new_name, :new_field_name, :new_description, :new_field_type_id, :new_notes, :created_by, :timestamp)");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_field_name', $new_field_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
+        $stmt->bindValue('new_field_type_id', $new_field_type_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
-        } else {
+        if ($new_field_type_id == '1') { // Check Box
 
-            $query_i = "INSERT INTO domain_fields
-                        (`name`, field_name, description, type_id, notes, created_by, insert_time)
-                        VALUES
-                        (?, ?, ?, ?, ?, ?, ?)";
-            $q_i = $dbcon->stmt_init();
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'";
 
-            if ($q_i->prepare($query_i)) {
+        } elseif ($new_field_type_id == '2') { // Text
 
-                $timestamp = $time->stamp();
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-                $q_i->bind_param('sssisis', $new_name, $new_field_name, $new_description, $new_field_type_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
-                $q_i->execute();
-                $q_i->close();
+        } elseif ($new_field_type_id == '3') { // Text Area
 
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-            if ($new_field_type_id == '1') { // Check Box
+        } elseif ($new_field_type_id == '4') { // Date
 
-                $query = "ALTER TABLE `domain_field_data`
-                          ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-                $q = $dbcon->stmt_init();
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
 
-                if ($q->prepare($query)) {
-                    $q->execute();
-                    $q->close();
+        } elseif ($new_field_type_id == '5') { // Time Stamp
 
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-            } elseif ($new_field_type_id == '2') { // Text
-
-                $query = "ALTER TABLE `domain_field_data`
-                          ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT
-                          NULL";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->execute();
-                    $q->close();
-
-                } else {
-
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-            } elseif ($new_field_type_id == '3') { // Text Area
-
-                $query = "ALTER TABLE `domain_field_data`
-                          ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-            } elseif ($new_field_type_id == '4') { // Date
-
-                $query = "ALTER TABLE `domain_field_data`
-                          ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-            } elseif ($new_field_type_id == '5') { // Time Stamp
-
-                $query = "ALTER TABLE `domain_field_data`
-                          ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-            }
-
-            $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $new_field_name . ') Added<BR>';
-
-            header("Location: ../domain-fields/");
-            exit;
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
 
         }
 
-        $q->close();
+        $pdo->query($sql);
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+        $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $new_field_name . ') Added<BR>';
+
+        header("Location: ../domain-fields/");
+        exit;
+
     }
 
 } else {
@@ -200,33 +140,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 echo $form->showFormTop('');
 echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '1', '', '');
 echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $new_field_name, '30', '', '1', '', '');
-?>
-<?php
-$query = "SELECT id, `name`
-          FROM custom_field_types
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
 
-if ($q->prepare($query)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM custom_field_types
+    ORDER BY `name` ASC")->fetchAll();
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, '');
+        echo $form->showDropdownOption($row->id, $row->name, '');
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');

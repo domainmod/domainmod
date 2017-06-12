@@ -31,6 +31,7 @@ $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -39,39 +40,24 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-ssl-provider-fees.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $sslpid = $_GET['sslpid'];
 $export_data = $_GET['export_data'];
 
-$query = "SELECT `name`
-          FROM ssl_providers
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+$ssl_provider_name = $assets->getSslProvider($sslpid);
 
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $sslpid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_name);
-
-    while ($q->fetch()) {
-
-        $ssl_provider_name = $t_name;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-$query = "SELECT f.id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, sslct.type, c.currency, c.symbol, c.symbol_order, c.symbol_space
-          FROM ssl_fees AS f, ssl_cert_types AS sslct, currencies AS c
-          WHERE f.currency_id = c.id
-            AND f.type_id = sslct.id
-            AND f.ssl_provider_id = ?
-          ORDER BY sslct.type ASC";
+$stmt = $pdo->prepare("
+    SELECT f.id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, sslct.type, c.currency, c.symbol, c.symbol_order, c.symbol_space
+    FROM ssl_fees AS f, ssl_cert_types AS sslct, currencies AS c
+    WHERE f.currency_id = c.id
+      AND f.type_id = sslct.id
+      AND f.ssl_provider_id = :sslpid
+    ORDER BY sslct.type ASC");
+$stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchAll();
 
 if ($export_data == '1') {
 
@@ -95,38 +81,25 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    $q = $dbcon->stmt_init();
+    if ($result) {
 
-    if ($q->prepare($query)) {
+        foreach ($result as $row) {
 
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($t_fee_id, $t_fee_initial_fee, $t_fee_renewal_fee, $t_fee_misc_fee, $t_fee_insert_time, $t_fee_update_time, $t_fee_type, $t_currency, $t_symbol, $t_order, $t_space);
-
-        if ($q->num_rows() > 0) {
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    $ssl_provider_name,
-                    $t_fee_type,
-                    $t_fee_initial_fee,
-                    $t_fee_renewal_fee,
-                    $t_fee_misc_fee,
-                    $t_currency,
-                    $time->toUserTimezone($t_fee_insert_time),
-                    $time->toUserTimezone($t_fee_update_time)
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
+            $row_contents = array(
+                $ssl_provider_name,
+                $row->type,
+                $row->initial_fee,
+                $row->renewal_fee,
+                $row->misc_fee,
+                $row->currency,
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
+            );
+            $export->writeRow($export_file, $row_contents);
 
         }
 
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
     $export->closeFile($export_file);
 
@@ -144,138 +117,114 @@ Below is a list of all the fees associated with <a href="edit/ssl-provider.php?s
 <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>
 <a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$query2 = "SELECT sslct.id, sslct.type
-           FROM ssl_certs AS sslc, ssl_cert_types AS sslct
-           WHERE sslc.type_id = sslct.id
-             AND sslc.ssl_provider_id = ?
-             AND sslc.fee_id = '0'
-           GROUP BY sslct.type
-           ORDER BY sslct.type ASC";
-$q2 = $dbcon->stmt_init();
+$stmt2 = $pdo->prepare("
+    SELECT sslct.id, sslct.type
+     FROM ssl_certs AS sslc, ssl_cert_types AS sslct
+     WHERE sslc.type_id = sslct.id
+       AND sslc.ssl_provider_id = :sslpid
+       AND sslc.fee_id = '0'
+     GROUP BY sslct.type
+     ORDER BY sslct.type ASC");
+$stmt2->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+$stmt2->execute();
+$result2 = $stmt2->fetchAll();
 
-if ($q2->prepare($query2)) {
+if ($result2) { ?>
 
-    $q2->bind_param('i', $sslpid);
-    $q2->execute();
-    $q2->store_result();
-    $q2->bind_result($t_id, $t_type);
+    <h4>Missing SSL Type Fees</h4><?php
 
-    if ($q2->num_rows() > 0) { ?>
+    $temp_all_missing_fees = '';
+    $count = 0;
 
-        <h4>Missing SSL Type Fees</h4><?php
+    foreach ($result2 as $row2) {
 
-        $count = 0;
+        $temp_all_missing_fees = $temp_all_missing_fees .= "<a href=\"add/ssl-provider-fee.php?sslpid=" . $sslpid . "&type_id=" . $row2->id . "\">" . $row2->type . "</a>, ";
+        $count++;
 
-        while ($q2->fetch()) {
+    }
 
-            $temp_all_missing_fees = $temp_all_missing_fees .= "<a href=\"add/ssl-provider-fee.php?sslpid=" . $sslpid . "&type_id=" . $t_id . "\">" . $t_type . "</a>, ";
-            $count++;
-
-        }
-
-        $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
-        <strong><?php echo $all_missing_fees; ?></strong><BR>
-        <?php if ($count == 1) { ?>
+    $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
+    <strong><?php echo $all_missing_fees; ?></strong><BR>
+    <?php if ($count == 1) { ?>
         You have SSL certificates with <?php echo $ssl_provider_name; ?> that use this SSL Type, however there are no fees associated with it yet. You should add this fee as soon as possible.<BR><BR><BR>
-        <?php } else { ?>
+    <?php } else { ?>
         You have SSL certificates with <?php echo $ssl_provider_name; ?> that use these SSL Types, however there are no fees associated with them yet. You should add these fees as soon as possible.<BR><BR><BR>
-        <?php }
+    <?php }
 
-    }
+}
 
-    $q2->close();
+if (!$result) { ?>
 
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+    <BR>You don't currently have any fees associated with this SSL provider. <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>">Click here to add one</a>.<?php
 
-$q = $dbcon->stmt_init();
+} else { ?>
 
-if ($q->prepare($query)) {
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Type</th>
+            <th>Initial Fee</th>
+            <th>Renewal Fee</th>
+            <th>Misc Fee</th>
+            <th>Currency</th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-    $q->bind_param('i', $sslpid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_fee_id, $t_fee_initial_fee, $t_fee_renewal_fee, $t_fee_misc_fee, $t_fee_insert_time, $t_fee_update_time, $t_fee_type, $t_currency, $t_symbol, $t_order, $t_space);
+        foreach ($result as $row) { ?>
 
-    if ($q->num_rows() > 0) { ?>
-
-        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
-            <thead>
             <tr>
-                <th width="20px"></th>
-                <th>Type</th>
-                <th>Initial Fee</th>
-                <th>Renewal Fee</th>
-                <th>Misc Fee</th>
-                <th>Currency</th>
-            </tr>
-            </thead>
-            <tbody><?php
+            <td></td>
+            <td>
+                <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->type; ?></a>
+            </td>
+            <td><?php
+                if ($row->initial_fee > 0) {
 
-            while ($q->fetch()) { ?>
+                    echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                <tr>
-                <td></td>
-                <td>
-                    <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($t_fee_id); ?>"><?php echo $t_fee_type; ?></a>
-                </td>
-                <td><?php
-                    if ($t_fee_initial_fee > 0) {
+                } else {
 
-                        $t_fee_initial_fee = $currency->format($t_fee_initial_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_initial_fee;
+                    echo '-';
 
-                    } else {
+                }?>
+            </td>
+            <td>
+                <?php
+                if ($row->renewal_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_renewal_fee > 0) {
+                } else {
 
-                        $t_fee_renewal_fee = $currency->format($t_fee_renewal_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_renewal_fee;
+                    echo '-';
 
-                    } else {
+                }?>
+            </td>
+            <td>
+                <?php
+                if ($row->misc_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_misc_fee > 0) {
+                } else {
 
-                        $t_fee_misc_fee = $currency->format($t_fee_misc_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_misc_fee;
+                    echo '-';
 
-                    } else {
+                }?>
+            </td>
+            <td>
+                <?php echo $row->currency; ?>
+            </td>
+            </tr><?php
 
-                        echo '-';
+        } ?>
 
-                    }?>
-                </td>
-                <td>
-                    <?php echo $t_currency; ?>
-                </td>
-                </tr><?php
+        </tbody>
+    </table><?php
 
-            } ?>
-
-            </tbody>
-        </table><?php
-
-    } else { ?>
-
-        <BR>You don't currently have any fees associated with this SSL provider. <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>">Click here to add one</a>.<?php
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
-
+}
 require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>
 </body>
 </html>

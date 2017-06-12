@@ -32,6 +32,7 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -40,6 +41,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-add-ssl-provider-fee.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -57,139 +59,89 @@ $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_type_id != '' && $new_type_id != '0' && $new_initial_fee != '' && $new_renewal_fee != '') {
-
-        $timestamp = $time->stamp();
-
-        $query = "SELECT *
-                  FROM ssl_fees
-                  WHERE ssl_provider_id = ?
-                    AND type_id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('ii', $sslpid, $new_type_id);
-            $q->execute();
-            $q->store_result();
-
-            if ($q->num_rows() > 0) {
-
-                $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists.<BR>';
-
-            } else {
-
-                $query2 = "SELECT id
-                           FROM currencies
-                           WHERE currency = ?";
-                $q2 = $dbcon->stmt_init();
-
-                if ($q2->prepare($query2)) {
-
-                    $q2->bind_param('s', $new_currency);
-                    $q2->execute();
-                    $q2->store_result();
-                    $q2->bind_result($temp_id);
-
-                    while ($q2->fetch()) {
-
-                        $currency_id = $temp_id;
-
-                    }
-
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $query2 = "INSERT INTO ssl_fees
-                           (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
-                           VALUES
-                           (?, ?, ?, ?, ?, ?, ?)";
-                $q2 = $dbcon->stmt_init();
-
-                if ($q2->prepare($query2)) {
-
-                    $q2->bind_param('iidddis', $sslpid, $new_type_id, $new_initial_fee, $new_renewal_fee, $new_misc_fee, $currency_id, $timestamp);
-                    $q2->execute();
-                    $new_fee_id = $q2->insert_id;
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $query2 = "UPDATE ssl_certs
-                           SET fee_id = ?,
-                               update_time = ?
-                           WHERE ssl_provider_id = ?
-                             AND type_id = ?";
-                $q2 = $dbcon->stmt_init();
-
-                if ($q2->prepare($query2)) {
-
-                    $q2->bind_param('isii', $new_fee_id, $timestamp, $sslpid, $new_type_id);
-                    $q2->execute();
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $query2 = "SELECT type
-                           FROM ssl_cert_types
-                           WHERE id = ?";
-                $q2 = $dbcon->stmt_init();
-
-                if ($q2->prepare($query2)) {
-
-                    $q2->bind_param('i', $new_type_id);
-                    $q2->execute();
-                    $q2->store_result();
-                    $q2->bind_result($t_type);
-
-                    while ($q2->fetch()) {
-
-                        $temp_type = $t_type;
-
-                    }
-
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $query2 = "UPDATE ssl_certs sslc
-                           JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
-                           SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
-                           WHERE sslc.fee_id = ?";
-                $q2 = $dbcon->stmt_init();
-
-                if ($q2->prepare($query2)) {
-
-                    $q2->bind_param('i', $new_fee_id);
-                    $q2->execute();
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $queryB = new DomainMOD\QueryBuild();
-
-                $sql = $queryB->missingFees('ssl_certs');
-                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
-
-                $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
-
-                $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
-
-                header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
-                exit;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    } else {
+    if ($new_type_id == '' || $new_type_id == '0' || $new_initial_fee == '' || $new_renewal_fee == '') {
 
         if ($new_type_id == '' || $new_type_id == '0') $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
         if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
         if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
+
+    } else {
+
+        $timestamp = $time->stamp();
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM ssl_fees
+            WHERE ssl_provider_id = :sslpid
+              AND type_id = :new_type_id
+            LIMIT 1");
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $fee_id = $stmt->fetchColumn();
+
+        if ($fee_id) {
+
+            $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists [<a href=\'' . WEB_ROOT .
+                '/assets/edit/ssl-provider-fee.php?sslpid=' . urlencode($sslpid) . '&fee_id=' . urlencode($fee_id) .
+                '\'>edit fee</a>]<BR>';
+
+        } else {
+
+            $currency = new DomainMOD\Currency();
+            $currency_id = $currency->getCurrencyId($new_currency);
+
+            $stmt = $pdo->prepare("
+                INSERT INTO ssl_fees
+                (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
+                VALUES
+                (:sslpid, :new_type_id, :new_initial_fee, :new_renewal_fee, :new_misc_fee, :currency_id, :timestamp)");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+            $stmt->bindValue('currency_id', $currency_id, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $new_fee_id = $pdo->lastInsertId('id');
+
+            $stmt = $pdo->prepare("
+                UPDATE ssl_certs
+                SET fee_id = :new_fee_id,
+                    update_time = :timestamp
+                WHERE ssl_provider_id = :sslpid
+                  AND type_id = :new_type_id");
+            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $temp_type = $assets->getSslType($new_type_id);
+
+            $stmt = $pdo->prepare("
+                UPDATE ssl_certs sslc
+                JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                WHERE sslc.fee_id = :new_fee_id");
+            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $queryB = new DomainMOD\QueryBuild();
+
+            $sql = $queryB->missingFees('ssl_certs');
+            $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
+
+            $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+            $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
+
+            header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
+            exit;
+
+        }
 
     }
 
@@ -206,41 +158,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <a href="../ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
-
-$query = "SELECT `name`
-          FROM ssl_providers
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $sslpid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_ssl_provider);
-
-    while ($q->fetch()) {
-
-        $t_ssl_provider = $temp_ssl_provider;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <strong>SSL Provider</strong><BR>
-<?php echo $temp_ssl_provider; ?><BR><BR><?php
+<?php echo $assets->getSslProvider($sslpid); ?><BR><BR><?php
 
-$sql = "SELECT id, type
-        FROM ssl_cert_types
-        ORDER BY `type`";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_type_id', 'SSL Type', '', '1', '');
-echo $form->showDropdownOption('', 'Choose an SSL Type', 'null');
-while ($row = mysqli_fetch_object($result)) {
+echo $form->showDropdownOption('', 'Choose an SSL Type', '');
+$result = $pdo->query("
+    SELECT id, type
+    FROM ssl_cert_types
+    ORDER BY `type`")->fetchAll();
 
-    echo $form->showDropdownOption($row->id, $row->type, $new_type_id);
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->type, isset($new_type_id) ? $new_type_id : $_SESSION['s_default_ssl_type']);
 
 }
 echo $form->showDropdownBottom('');
@@ -249,17 +180,20 @@ echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee
 echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
 
-$sql = "SELECT id, currency, `name`, symbol
-        FROM currencies
-        ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, currency, `name`, symbol
+    FROM currencies
+    ORDER BY `name`")->fetchAll();
 
-    echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')', $_SESSION['s_default_currency']);
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')',
+        isset($new_currency) ? $new_currency : $_SESSION['s_default_currency']);
 
 }
 echo $form->showDropdownBottom('');
+
 
 echo $form->showSubmitButton('Add Fee', '', '');
 echo $form->showInputHidden('sslpid', $sslpid);

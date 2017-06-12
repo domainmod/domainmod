@@ -54,10 +54,9 @@ $system->authCheck();
 
     <!-- Expiring Boxes -->
     <?php
-    $stmt = $pdo->query("
+    $expiration_days = $pdo->query("
         SELECT expiration_days
-        FROM settings");
-    $expiration_days = $stmt->fetchColumn();
+        FROM settings")->fetchColumn();
 
     $start_date = '2000-01-01';
     $end_date = $time->timeBasicPlusDays($expiration_days);

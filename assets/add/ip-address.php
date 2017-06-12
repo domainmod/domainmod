@@ -50,23 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_name != '' && $new_ip != '') {
 
-        $query = "INSERT INTO ip_addresses
-                  (`name`, ip, rdns, notes, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        $pdo = $system->db();
 
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssssis', $new_name, $new_ip, $new_rdns, $new_notes, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO ip_addresses
+            (`name`, ip, rdns, notes, created_by, insert_time)
+            VALUES
+            (:new_name, :new_ip, :new_rdns, :new_notes, :created_by, :timestamp)");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip', $new_ip, PDO::PARAM_STR);
+        $stmt->bindValue('new_rdns', $new_rdns, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";
 

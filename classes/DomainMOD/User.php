@@ -32,13 +32,10 @@ class User
 
     public function getAdminId()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT id
             FROM users
-            WHERE username = 'admin'");
-        return $stmt->fetchColumn();
+            WHERE username = 'admin'")->fetchColumn();
     }
 
     public function getFullName($user_id)

@@ -72,11 +72,10 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
         </tr>
     </thead>
     <tbody><?php
-    $stmt = $pdo->query("
+    $result = $pdo->query("
         SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
-        ORDER BY sort_order ASC");
-    $result = $stmt->fetchAll();
+        ORDER BY sort_order ASC")->fetchAll();
 
     foreach ($result as $row) { ?>
 

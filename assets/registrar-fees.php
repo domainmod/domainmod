@@ -31,6 +31,7 @@ $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -39,38 +40,23 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-registrar-fees.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $rid = $_GET['rid'];
 $export_data = $_GET['export_data'];
 
-$query = "SELECT `name`
-          FROM registrars
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+$registrar_name = $assets->getRegistrar($rid);
 
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $rid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_name);
-
-    while ($q->fetch()) {
-
-        $registrar_name = $t_name;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-$query = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
-          FROM fees AS f, currencies AS c
-          WHERE f.currency_id = c.id
-            AND f.registrar_id = ?
-          ORDER BY f.tld ASC";
+$stmt = $pdo->prepare("
+    SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+    FROM fees AS f, currencies AS c
+    WHERE f.currency_id = c.id
+      AND f.registrar_id = :rid
+    ORDER BY f.tld ASC");
+$stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchAll();
 
 if ($export_data == '1') {
 
@@ -96,40 +82,27 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    $q = $dbcon->stmt_init();
+    if ($result) {
 
-    if ($q->prepare($query)) {
+        foreach ($result as $row) {
 
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($t_fee_id, $t_fee_tld, $t_fee_initial_fee, $t_fee_renewal_fee, $t_fee_transfer_fee, $t_fee_privacy_fee, $t_fee_misc_fee, $t_fee_insert_time, $t_fee_update_time, $t_currency, $t_symbol, $t_order, $t_space);
-
-        if ($q->num_rows() > 0) {
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    $registrar_name,
-                    $t_fee_tld,
-                    $t_fee_initial_fee,
-                    $t_fee_renewal_fee,
-                    $t_fee_transfer_fee,
-                    $t_fee_privacy_fee,
-                    $t_fee_misc_fee,
-                    $t_currency,
-                    $time->toUserTimezone($t_fee_insert_time),
-                    $time->toUserTimezone($t_fee_update_time)
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
+            $row_contents = array(
+                $registrar_name,
+                $row->tld,
+                $row->initial_fee,
+                $row->renewal_fee,
+                $row->transfer_fee,
+                $row->privacy_fee,
+                $row->misc_fee,
+                $row->currency,
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
+            );
+            $export->writeRow($export_file, $row_contents);
 
         }
 
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
     $export->closeFile($export_file);
 
@@ -147,166 +120,134 @@ Below is a list of all the fees associated with <a href="edit/registrar.php?rid=
 <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>
 <a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$query2 = "SELECT tld
-           FROM domains
-           WHERE registrar_id = ?
-             AND fee_id = '0'
-           GROUP BY tld
-           ORDER BY tld ASC";
-$q2 = $dbcon->stmt_init();
+$stmt2 = $pdo->prepare("
+    SELECT tld
+    FROM domains
+    WHERE registrar_id = :rid
+      AND fee_id = '0'
+    GROUP BY tld
+    ORDER BY tld ASC");
+$stmt2->bindValue('rid', $rid, PDO::PARAM_INT);
+$stmt2->execute();
+$result2 = $stmt2->fetchAll();
 
-if ($q2->prepare($query2)) {
+if ($result2) { ?>
 
-    $q2->bind_param('i', $rid);
-    $q2->execute();
-    $q2->store_result();
-    $q2->bind_result($t_tld);
+    <h4>Missing TLD Fees</h4><?php
 
-    if ($q2->num_rows() > 0) { ?>
+    $temp_all_missing_fees = '';
+    $count = 0;
 
-        <h4>Missing TLD Fees</h4><?php
+    foreach ($result2 as $row2) {
 
-        $count = 0;
+        $temp_all_missing_fees .= "<a href=\"add/registrar-fee.php?rid=" . $rid . "&tld=" . $row2->tld . "\">." . $row2->tld . "</a>, ";
+        $count++;
 
-        while ($q2->fetch()) {
+    }
 
-            $temp_all_missing_fees = $temp_all_missing_fees .= "<a href=\"add/registrar-fee.php?rid=" . $rid . "&tld=" . $t_tld . "\">." . $t_tld . "</a>, ";
-            $count++;
-
-        }
-
-        $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
-        <strong><?php echo $all_missing_fees; ?></strong><BR>
-        <?php if ($count == 1) { ?>
+    $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
+    <strong><?php echo $all_missing_fees; ?></strong><BR>
+    <?php if ($count == 1) { ?>
         You have domains with <?php echo $registrar_name; ?> that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible.<BR><BR><BR>
-        <?php } else { ?>
+    <?php } else { ?>
         You have domains with <?php echo $registrar_name; ?> that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible.<BR><BR><BR>
-        <?php }
+    <?php }
 
-    }
+}
 
-    $q2->close();
+if (!$result) { ?>
 
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+    <BR>You don't currently have any fees associated with this domain registrar. <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>">Click here to add one</a>.<?php
 
-$q = $dbcon->stmt_init();
+} else { ?>
 
-if ($q->prepare($query)) {
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>TLD</th>
+            <th>Initial</th>
+            <th>Renewal</th>
+            <th>Transfer</th>
+            <th>Privacy</th>
+            <th>Misc</th>
+            <th>Currency</th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-    $q->bind_param('i', $rid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_fee_id, $t_fee_tld, $t_fee_initial_fee, $t_fee_renewal_fee, $t_fee_transfer_fee, $t_fee_privacy_fee, $t_fee_misc_fee, $t_fee_insert_time, $t_fee_update_time, $t_currency, $t_symbol, $t_order, $t_space);
+        foreach ($result as $row) { ?>
 
-    if ($q->num_rows() > 0) { ?>
-
-        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
-            <thead>
             <tr>
-                <th width="20px"></th>
-                <th>TLD</th>
-                <th>Initial</th>
-                <th>Renewal</th>
-                <th>Transfer</th>
-                <th>Privacy</th>
-                <th>Misc</th>
-                <th>Currency</th>
-            </tr>
-            </thead>
-            <tbody><?php
+            <td></td>
+            <td>
+                .<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a>
+            </td>
+            <td><?php
+                if ($row->initial_fee > 0) {
 
-            while ($q->fetch()) { ?>
+                    echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                <tr>
-                <td></td>
-                <td>
-                    .<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($t_fee_id); ?>"><?php echo $t_fee_tld; ?></a>
-                </td>
-                <td><?php
-                    if ($t_fee_initial_fee > 0) {
+                } else {
 
-                        $t_fee_initial_fee = $currency->format($t_fee_initial_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_initial_fee;
+                    echo '-';
 
-                    } else {
+                }?>
+            </td>
+            <td><?php
+                if ($row->renewal_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_renewal_fee > 0) {
+                } else {
 
-                        $t_fee_renewal_fee = $currency->format($t_fee_renewal_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_renewal_fee;
+                    echo '-';
 
-                    } else {
+                } ?>
+            </td>
+            <td><?php
+                if ($row->transfer_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_transfer_fee > 0) {
+                } else {
 
-                        $t_fee_transfer_fee = $currency->format($t_fee_transfer_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_transfer_fee;
+                    echo '-';
 
-                    } else {
+                } ?>
+            </td>
+            <td><?php
+                if ($row->privacy_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_privacy_fee > 0) {
+                } else {
 
-                        $t_fee_privacy_fee = $currency->format($t_fee_privacy_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_privacy_fee;
+                    echo '-';
 
-                    } else {
+                } ?>
+            </td>
+            <td><?php
+                if ($row->misc_fee > 0) {
 
-                        echo '-';
+                    echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
 
-                    }?>
-                </td>
-                <td>
-                    <?php
-                    if ($t_fee_misc_fee > 0) {
+                } else {
 
-                        $t_fee_misc_fee = $currency->format($t_fee_misc_fee, $t_symbol, $t_order, $t_space);
-                        echo $t_fee_misc_fee;
+                    echo '-';
 
-                    } else {
+                } ?>
+            </td>
+            <td><?php echo $row->currency; ?>
+            </td>
+            </tr><?php
 
-                        echo '-';
+        } ?>
 
-                    }?>
-                </td>
-                <td>
-                    <?php echo $t_currency; ?>
-                </td>
-                </tr><?php
+        </tbody>
+    </table><?php
 
-            } ?>
-
-            </tbody>
-        </table><?php
-
-    } else { ?>
-
-        <BR>You don't currently have any fees associated with this domain registrar. <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>">Click here to add one</a>.<?php
-
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
-
+}
 require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>
 </body>
 </html>

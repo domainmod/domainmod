@@ -58,8 +58,7 @@ class Maintenance
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("SELECT id, domain FROM domains");
-        $result = $stmt->fetchAll();
+        $result = $pdo->query("SELECT id, domain FROM domains")->fetchAll();
 
         if ($result) {
 
@@ -89,24 +88,25 @@ class Maintenance
 
     public function updateSegments()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+        $pdo->query("
             UPDATE segment_data
             SET active = '0',
                 inactive = '0',
                 missing = '0',
                 filtered = '0'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE segment_data
             SET active = '1'
             WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE segment_data
             SET inactive = '1'
             WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE segment_data
             SET missing = '1'
             WHERE domain NOT IN (SELECT domain FROM domains)");
@@ -132,12 +132,10 @@ class Maintenance
         $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
         $stmt->execute();
 
-
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, registrar_id, tld
             FROM fees
-            WHERE fee_fixed = '0'");
-        $result = $stmt->fetchAll();
+            WHERE fee_fixed = '0'")->fetchAll();
 
         if ($result) {
 
@@ -331,11 +329,10 @@ class Maintenance
         $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
         $stmt->execute();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, ssl_provider_id, type_id
             FROM ssl_fees
-            WHERE fee_fixed = '0'");
-        $result = $stmt->fetchAll();
+            WHERE fee_fixed = '0'")->fetchAll();
 
         if ($result) {
 
@@ -401,10 +398,10 @@ class Maintenance
     { // This zeroes out API IP address IDs in the registrar_account table that are no longer valid. For example, if an
       // IP has been deleted.
         $pdo = $this->system->db();
-        $stmt = $pdo->query("
+
+        $result = $pdo->query("
             SELECT id
-            FROM ip_addresses");
-        $result = $stmt->fetchAll();
+            FROM ip_addresses")->fetchAll();
 
         if ($result) {
 

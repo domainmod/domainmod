@@ -63,24 +63,23 @@ class System
 
     public function checkForSettingsTable()
     {
-        $pdo = $this->db();
-        $stmt = $pdo->query("SHOW TABLES LIKE 'settings'");
-        return $stmt->fetchColumn();
+        return $this->db()->query("SHOW TABLES LIKE 'settings'")->fetchColumn();
     }
 
     public function checkVersion($current_version)
     {
+        $pdo = $this->db();
         $live_version = $this->getLiveVersion();
 
         if ($current_version < $live_version && $live_version != '') {
 
-            $this->db()->query("UPDATE settings SET upgrade_available = '1'");
+            $pdo->query("UPDATE settings SET upgrade_available = '1'");
             $_SESSION['s_system_upgrade_available'] = '1';
             $message = $this->getUpgradeMessage();
 
         } else {
 
-            $this->db()->query("UPDATE settings SET upgrade_available = '0'");
+            $pdo->query("UPDATE settings SET upgrade_available = '0'");
             $_SESSION['s_system_upgrade_available'] = '0';
             $message = 'No Upgrade Available';
 
@@ -108,11 +107,9 @@ class System
 
     public function getDbVersion()
     {
-        $pdo = $this->db();
-        $stmt = $pdo->query("
+        return $this->db()->query("
             SELECT db_version
-            FROM settings");
-        return $stmt->fetchColumn();
+            FROM settings")->fetchColumn();
     }
 
     public function getUpgradeMessage()
@@ -146,9 +143,7 @@ class System
 
     public function checkForRows($sql)
     {
-        $pdo = $this->db();
-        $stmt = $pdo->query($sql);
-        $result = $stmt->fetchColumn();
+        $result = $this->db()->query($sql)->fetchColumn();
         if (!$result) {
             return '0';
         } else {
@@ -203,8 +198,7 @@ class System
         if (!$result) {
             return '0';
         } else {
-            $stmt2 = $pdo->query("SELECT debug_mode FROM settings");
-            return $stmt2->fetchColumn();
+            return $pdo->query("SELECT debug_mode FROM settings")->fetchColumn();
         }
     }
 

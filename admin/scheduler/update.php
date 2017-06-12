@@ -39,6 +39,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -53,80 +54,51 @@ if ($a == 'u') {
     $hour = date("G", strtotime($new_time_utc));
     $full_expression = '0 ' . $hour . ' * * * *';
 
-    $query = "UPDATE scheduler
-              SET expression = ?,
-                  next_run = ?
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('ssi', $full_expression, $new_time_utc, $id);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE scheduler
+        SET expression = :full_expression,
+            next_run = :new_time_utc
+        WHERE id = :id");
+    $stmt->bindValue('full_expression', $full_expression, PDO::PARAM_STR);
+    $stmt->bindValue('new_time_utc', $new_time_utc, PDO::PARAM_STR);
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     $message = 'Task Updated<BR>';
 
 } elseif ($a == 'e') {
 
-    $query = "SELECT expression
-              FROM scheduler
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $id);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_expression);
-
-        while ($q->fetch()) {
-
-            $full_expression = $temp_expression;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        SELECT expression
+        FROM scheduler
+        WHERE id = :id");
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $full_expression = $stmt->fetchColumn();
 
     $cron = \Cron\CronExpression::factory($full_expression);
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-    $query = "UPDATE scheduler
-              SET active = '1', 
-                  next_run = ?
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('si', $next_run, $id);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE scheduler
+        SET active = '1', 
+            next_run = :next_run
+        WHERE id = :id");
+    $stmt->bindValue('next_run', $next_run, PDO::PARAM_STR);
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     $message = 'Task Enabled<BR>';
 
 } elseif ($a == 'd') {
 
-    $query = "UPDATE scheduler
-              SET active = '0', 
-                  next_run = '1978-01-23 00:00:00'
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $id);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE scheduler
+        SET active = '0', 
+            next_run = '1978-01-23 00:00:00'
+        WHERE id = :id");
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     $message = 'Task Disabled<BR>';
 

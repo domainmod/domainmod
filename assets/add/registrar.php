@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-add-registrar.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -50,23 +51,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_registrar != "") {
 
-        $query = "INSERT INTO registrars
-                  (`name`, url, api_registrar_id, notes, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssisis', $new_registrar, $new_url, $new_api_registrar_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO registrars
+            (`name`, url, api_registrar_id, notes, created_by, insert_time)
+            VALUES
+            (:new_registrar, :new_url, :new_api_registrar_id, :new_notes, :created_by, :timestamp)");
+        $stmt->bindValue('new_registrar', $new_registrar, PDO::PARAM_STR);
+        $stmt->bindValue('new_url', $new_url, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_registrar_id', $new_api_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Added<BR>";
 
@@ -104,34 +101,20 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '1', '', '');
 echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '', '');
 
-$query = "SELECT id, `name`
-          FROM api_registrars
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM api_registrars
+    ORDER BY `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
+echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
+echo $form->showDropdownOption('0', 'n/a', '0');
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+foreach ($result as $row) {
 
-    echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
+    echo $form->showDropdownOption($row->id, $row->name, $new_api_registrar_id);
 
-    echo $form->showDropdownOption('0', 'n/a', '0');
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $new_api_registrar_id);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
+echo $form->showDropdownBottom('');
 
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Domain Registrar', '', '');

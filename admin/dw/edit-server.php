@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/dw-edit-server.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -57,34 +58,54 @@ $new_dwsid = $_POST['new_dwsid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && ($new_api_token != "" || $new_hash != "")
+    if ($new_name == "" || $new_host == "" || $new_protocol == "" || $new_port == "" || $new_username == "" || ($new_api_token == "" && $new_hash == "")
     ) {
 
-        $query = "UPDATE dw_servers
-                  SET `name` = ?,
-                      `host` = ?,
-                      protocol = ?,
-                      `port` = ?,
-                      username = ?,
-                      api_token = ?,
-                      `hash` = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssisssssi', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_api_token,
-                $new_hash, $new_notes, $timestamp, $new_dwsid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
+        if ($new_name == "") {
+            $_SESSION['s_message_danger'] .= "Enter a display name for the server<BR>";
         }
+        if ($new_host == "") {
+            $_SESSION['s_message_danger'] .= "Enter the hostname<BR>";
+        }
+        if ($new_protocol == "") {
+            $_SESSION['s_message_danger'] .= "Enter the protocol<BR>";
+        }
+        if ($new_port == "") {
+            $_SESSION['s_message_danger'] .= "Enter the port<BR>";
+        }
+        if ($new_username == "") {
+            $_SESSION['s_message_danger'] .= "Enter the username<BR>";
+        }
+        if ($new_api_token == "" && $new_hash == "") {
+            $_SESSION['s_message_danger'] .= "Enter either the API token or remote access key/hash<BR>";
+        }
+
+    } else {
+
+        $stmt = $pdo->prepare("
+            UPDATE dw_servers
+            SET `name` = :new_name,
+                `host` = :new_host,
+                protocol = :new_protocol,
+                `port` = :new_port,
+                username = :new_username,
+                api_token = :new_api_token,
+                `hash` = :new_hash,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_dwsid");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_host', $new_host, PDO::PARAM_STR);
+        $stmt->bindValue('new_protocol', $new_protocol, PDO::PARAM_STR);
+        $stmt->bindValue('new_port', $new_port, PDO::PARAM_INT);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_token', $new_api_token, PDO::PARAM_STR);
+        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_LOB);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_dwsid', $new_dwsid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $dwsid = $new_dwsid;
 
@@ -93,35 +114,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: servers.php");
         exit;
 
-    } else {
-
-        if ($new_name == "") { $_SESSION['s_message_danger'] .= "Enter a display name for the server<BR>"; }
-        if ($new_host == "") { $_SESSION['s_message_danger'] .= "Enter the hostname<BR>"; }
-        if ($new_protocol == "") { $_SESSION['s_message_danger'] .= "Enter the protocol<BR>"; }
-        if ($new_port == "") { $_SESSION['s_message_danger'] .= "Enter the port<BR>"; }
-        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter the username<BR>"; }
-        if ($new_api_token == "" && $new_hash == "") { $_SESSION['s_message_danger'] .= "Enter either the API token or remote access key/hash<BR>"; }
-
     }
 
 } else {
 
-    $query = "SELECT `name`, `host`, protocol, `port`, username, api_token, `hash`, notes
-              FROM dw_servers
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, `host`, protocol, `port`, username, api_token, `hash`, notes
+        FROM dw_servers
+        WHERE id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_name, $new_host, $new_protocol, $new_port, $new_username, $new_api_token, $new_hash, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_name = $result->name;
+        $new_host = $result->host;
+        $new_protocol = $result->protocol;
+        $new_port = $result->port;
+        $new_username = $result->username;
+        $new_api_token = $result->api_token;
+        $new_hash = $result->hash;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -134,79 +149,44 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "SELECT `name`, `host`
-              FROM dw_servers
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, `host`
+        FROM dw_servers
+        WHERE id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_name, $new_host);
-        $q->fetch();
-        $q->close();
+        $new_name = $result->name;
+        $new_host = $result->host;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "DELETE FROM dw_accounts
-              WHERE server_id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        DELETE FROM dw_accounts
+        WHERE server_id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        DELETE FROM dw_dns_records
+        WHERE server_id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->close();
+    $stmt = $pdo->prepare("
+        DELETE FROM dw_dns_zones
+        WHERE server_id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM dw_dns_records
-              WHERE server_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM dw_dns_zones
-              WHERE server_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM dw_servers
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $dwsid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM dw_servers
+        WHERE id = :dwsid");
+    $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $dwstats = new DomainMOD\DwStats();
     $dwstats->updateDwTotalsTable();

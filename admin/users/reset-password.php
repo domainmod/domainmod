@@ -36,6 +36,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -47,74 +48,64 @@ $display = $_GET['display'];
 
 if ($new_username != '') {
 
-    $query = "SELECT id, first_name, last_name, username, email_address
-              FROM users
-              WHERE username = ?
-                AND active = '1'";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT id, first_name, last_name, username, email_address
+        FROM users
+        WHERE username = :new_username
+          AND active = '1'");
+    $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    // Apparently doing a second query to get the row count is the best approach with PDO, which is kind of ridiculous
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM users
+        WHERE username = :new_username
+          AND active = '1'");
+    $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+    $stmt->execute();
+    $user_count = $stmt->fetchColumn();
 
-        $q->bind_param('s', $new_username);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($id, $first_name, $last_name, $username, $email_address);
+    if (!$result || $user_count > 1) {
 
-        if ($q->num_rows() === 1) {
+        $_SESSION['s_message_danger'] .= 'The password could not be reset due to an invalid username.<BR>';
 
-            while ($q->fetch()) {
+        header("Location: index.php");
+        exit;
 
-                $new_password = substr(md5(time()), 0, 8);
+    } else {
 
-                $query = "UPDATE users
-                          SET password = password(?),
-                              new_password = '1',
-                              update_time = ?
-                          WHERE username = ?
-                            AND email_address = ?";
-                $q = $dbcon->stmt_init();
+        $new_password = substr(md5(time()), 0, 8);
 
-                if ($q->prepare($query)) {
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET password = password(:new_password),
+                new_password = '1',
+                update_time = :timestamp
+            WHERE username = :username
+              AND email_address = :email_address");
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
+        $stmt->bindValue('email_address', $result->email_address, PDO::PARAM_STR);
+        $stmt->execute();
 
-                    $timestamp = $time->stamp();
+        if ($display == '1') {
 
-                    $q->bind_param('ssss', $new_password, $timestamp, $username, $email_address);
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                if ($display == '1') {
-
-                    $_SESSION['s_message_success'] .= 'The new password for ' . $username . ' is ' . $new_password . '<BR>';
-
-                } else {
-
-                    require_once(DIR_INC . '/email/send-new-password.inc.php');
-                    $_SESSION['s_message_success'] .= 'The password has been reset and emailed to the account holder<BR>';
-
-                }
-
-                header('Location: edit.php?uid=' . $id);
-                exit;
-
-            }
+            $_SESSION['s_message_success'] .= 'The new password for ' . $result->username . ' is ' . $new_password . '<BR>';
 
         } else {
 
-            $_SESSION['s_message_danger'] .= 'You have entered an invalid username<BR>';
-
-            header("Location: index.php");
-            exit;
+            require_once(DIR_INC . '/email/send-new-password.inc.php');
+            $_SESSION['s_message_success'] .= 'The password has been reset and emailed to the account holder<BR>';
 
         }
 
-        $q->close();
+        header('Location: edit.php?uid=' . $result->id);
+        exit;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 } else {

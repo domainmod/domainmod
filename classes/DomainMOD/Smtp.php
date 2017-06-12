@@ -64,8 +64,6 @@ class Smtp
 
     public function getSettings()
     {
-        $pdo = $this->system->db();
-
         $server = '';
         $protocol = '';
         $port = '';
@@ -73,10 +71,9 @@ class Smtp
         $username = '';
         $password = '';
 
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password
-            FROM settings");
-        $result = $stmt->fetch();
+            FROM settings")->fetch();
 
         if (!$result) {
 

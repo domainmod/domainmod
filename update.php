@@ -39,6 +39,8 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
+
 $current_db_version = $system->getDbVersion();
 
 $message_danger_cli = '';

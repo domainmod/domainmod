@@ -83,12 +83,11 @@ class Goal
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time
             FROM goal_activity
             WHERE new_activity = '1'
-            ORDER BY id ASC");
-        $result = $stmt->fetchAll();
+            ORDER BY id ASC")->fetchAll();
 
         if ($result) {
 

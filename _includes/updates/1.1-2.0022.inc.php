@@ -973,18 +973,11 @@ if ($current_db_version === '2.002') {
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
-    $query = "UPDATE settings
-              SET full_url = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('s', $full_url);
-        $q->execute();
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE settings
+        SET full_url = :full_url");
+    $stmt->bindValue('full_url', $full_url, PDO::PARAM_STR);
+    $stmt->execute();
 
     $sql = "UPDATE settings
             SET db_version = '2.0021',

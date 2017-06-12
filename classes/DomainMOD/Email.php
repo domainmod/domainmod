@@ -82,17 +82,14 @@ class Email
 
     public function getSettings()
     {
-        $pdo = $this->system->db();
-
         $url = '';
         $email = '';
         $days = '';
         $use_smtp = '';
 
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT full_url, email_address, expiration_days, use_smtp
-            FROM settings");
-        $result = $stmt->fetch();
+            FROM settings")->fetch();
 
         if (!$result) {
 
@@ -167,15 +164,12 @@ class Email
 
     public function getRecipients()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT u.email_address, u.first_name, u.last_name
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.active = '1'
-              AND us.expiration_emails = '1'");
-        $result = $stmt->fetchAll();
+              AND us.expiration_emails = '1'")->fetchAll();
 
         if (!$result) {
 

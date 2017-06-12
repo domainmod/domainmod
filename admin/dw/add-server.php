@@ -55,24 +55,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && ($new_api_token != "" || $new_hash != "")
     ) {
 
-        $query = "INSERT INTO dw_servers
-                  (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, notes, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssissssis', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_api_token,
-                $new_hash, $new_notes, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $pdo = $system->db();
+        $stmt = $pdo->prepare("
+            INSERT INTO dw_servers
+            (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, notes, created_by, insert_time)
+            VALUES
+            (:new_name, :new_host, :new_protocol, :new_port, :new_username, :new_api_token, :new_hash, :new_notes, :created_by, :timestamp)");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_host', $new_host, PDO::PARAM_STR);
+        $stmt->bindValue('new_protocol', $new_protocol, PDO::PARAM_STR);
+        $stmt->bindValue('new_port', $new_port, PDO::PARAM_INT);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_token', $new_api_token, PDO::PARAM_STR);
+        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_LOB);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Added<BR>";
 

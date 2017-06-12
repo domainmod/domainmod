@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/settings-password.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $new_password = $_POST['new_password'];
@@ -47,65 +48,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
     $new_password == $new_password_confirmation
 ) {
 
-    $query = "SELECT id
-              FROM users
-              WHERE id = ?
-                AND email_address = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM users
+        WHERE id = :user_id
+          AND email_address = :email_address");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM users
+        WHERE id = :user_id
+          AND email_address = :email_address");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
+    $stmt->execute();
+    $user_count = $stmt->fetchColumn();
 
-        $q->bind_param('is', $_SESSION['s_user_id'], $_SESSION['s_email_address']);
-        $q->execute();
-        $q->store_result();
+    if (!$result || $user_count > 1) {
 
-        if ($q->num_rows() === 1) {
+        $_SESSION['s_message_danger'] .= "Your password could not be updated<BR>";
+        $_SESSION['s_message_danger'] .= "If the problem persists please contact your administrator<BR>";
 
-            $query_update = "UPDATE users
-                             SET `password` = password(?),
-                                 new_password = '0',
-                                 update_time = ?
-                             WHERE id = ?
-                               AND email_address = ?";
-            $q_update = $dbcon->stmt_init();
+    } else {
 
-            if ($q_update->prepare($query_update)) {
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET `password` = password(:new_password),
+                new_password = '0',
+                update_time = :timestamp
+            WHERE id = :user_id
+              AND email_address = :email_address");
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
+        $stmt->execute();
 
-                $timestamp = $time->stamp();
+        $_SESSION['s_message_success'] .= "Password changed<BR>";
 
-                $q_update->bind_param('ssis', $new_password, $timestamp, $_SESSION['s_user_id'],
-                    $_SESSION['s_email_address']);
-                $q_update->execute();
-                $q_update->close();
+        if ($_SESSION['s_running_login_checks'] == '1') {
 
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
-
-            $_SESSION['s_message_success'] .= "Password changed<BR>";
-
-            if ($_SESSION['s_running_login_checks'] == '1') {
-
-                header('Location: ../../checks.php');
-
-            } else {
-
-                header('Location: ../index.php');
-
-            }
-            exit;
+            header('Location: ../../checks.php');
 
         } else {
 
-            $_SESSION['s_message_danger'] .= "Your password could not be updated<BR>";
-            $_SESSION['s_message_danger'] .= "If the problem persists please contact your administrator<BR>";
+            header('Location: ../index.php');
 
         }
+        exit;
 
-        $q->close();
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 } else {

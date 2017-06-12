@@ -34,7 +34,33 @@ class Assets
         $this->system = new System();
     }
 
-    public function getRegistrar($account_id)
+    public function getRegistrar($registrar_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM registrars
+            WHERE id = :registrar_id");
+        $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Registrar name';
+            $log_extra = array('Registrar ID' => $registrar_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getRegistrarByAcc($account_id)
     {
         $pdo = $this->system->db();
 
@@ -46,13 +72,220 @@ class Assets
             LIMIT 1");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetchColumn();
 
         if (!$result) {
 
             $log_message = 'Unable to retrieve Registrar name';
             $log_extra = array('Account ID' => $account_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getSslType($type_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT type
+            FROM ssl_cert_types
+            WHERE id = :type_id");
+        $stmt->bindValue('type_id', $type_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve SSL Type';
+            $log_extra = array('SSL Type ID' => $type_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getDnsName($dns_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM dns
+            WHERE id = :dns_id");
+        $stmt->bindValue('dns_id', $dns_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve DNS Profile name';
+            $log_extra = array('DNS Profile ID' => $dns_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getIpName($ip_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM ip_addresses
+            WHERE id = :ip_id");
+        $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve IP Address name';
+            $log_extra = array('IP Address ID' => $ip_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getIpAndName($ip_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`, ip
+            FROM ip_addresses
+            WHERE id = :ip_id");
+        $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve IP Address name & IP Address';
+            $log_extra = array('IP Address ID' => $ip_id);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, '');
+
+        } else {
+
+            return array($result->name, $result->ip);
+
+        }
+    }
+
+    public function getSslProvider($ssl_provider_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM ssl_providers
+            WHERE id = :ssl_provider_id");
+        $stmt->bindValue('ssl_provider_id', $ssl_provider_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve SSL Provider name';
+            $log_extra = array('SSL Provider ID' => $ssl_provider_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getOwner($owner_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM owners
+            WHERE id = :owner_id");
+        $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Owner name';
+            $log_extra = array('Owner ID' => $owner_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getHost($host_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM hosting
+            WHERE id = :host_id");
+        $stmt->bindValue('host_id', $host_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Hosting name';
+            $log_extra = array('Hosting ID' => $host_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getCat($cat_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM categories
+            WHERE id = :cat_id");
+        $stmt->bindValue('cat_id', $cat_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Category';
+            $log_extra = array('Category ID' => $cat_id);
             $this->log->error($log_message, $log_extra);
             return $log_message;
 

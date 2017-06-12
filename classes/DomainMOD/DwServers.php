@@ -32,13 +32,10 @@ class DwServers
 
     public function get()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT id, `host`, protocol, `port`, username, api_token, `hash`
             FROM dw_servers
-            ORDER BY `name`");
-        return $stmt->fetchAll();
+            ORDER BY `name`")->fetchAll();
     }
 
     public function processEachServer($result)

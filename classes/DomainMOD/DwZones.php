@@ -111,12 +111,9 @@ class DwZones
 
     public function getTotalDwZones()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT count(*)
-            FROM `dw_dns_zones`");
-        return $stmt->fetchColumn();
+            FROM `dw_dns_zones`")->fetchColumn();
     }
 
 } //@formatter:on

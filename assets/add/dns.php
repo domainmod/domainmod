@@ -81,27 +81,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_dns2 == '') { $new_number_of_servers = '1'; }
         if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
-        $query = "INSERT INTO dns
-                  (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6,
-                   ip7, ip8, ip9, ip10, notes, number_of_servers, created_by, insert_time)
-                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        $pdo = $system->db();
 
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssssssssssssssssssssssis', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5,
-                $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3, $new_ip4,
-                $new_ip5, $new_ip6, $new_ip7, $new_ip8, $new_ip9, $new_ip10, $new_notes, $new_number_of_servers,
-                $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO dns
+            (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6,
+             ip7, ip8, ip9, ip10, notes, number_of_servers, created_by, insert_time)
+            VALUES
+            (:new_name, :new_dns1, :new_dns2, :new_dns3, :new_dns4, :new_dns5, :new_dns6, :new_dns7, :new_dns8,
+             :new_dns9, :new_dns10, :new_ip1, :new_ip2, :new_ip3, :new_ip4, :new_ip5, :new_ip6, :new_ip7, :new_ip8,
+             :new_ip9, :new_ip10, :new_notes, :new_number_of_servers, :created_by, :timestamp)");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns1', $new_dns1, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns2', $new_dns2, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns3', $new_dns3, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns4', $new_dns4, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns5', $new_dns5, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns6', $new_dns6, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns7', $new_dns7, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns8', $new_dns8, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns9', $new_dns9, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns10', $new_dns10, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip1', $new_ip1, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip2', $new_ip2, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip3', $new_ip3, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip4', $new_ip4, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip5', $new_ip5, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip6', $new_ip6, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip7', $new_ip7, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip8', $new_ip8, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip9', $new_ip9, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip10', $new_ip10, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('new_number_of_servers', $new_number_of_servers, PDO::PARAM_INT);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= 'DNS Profile ' . $new_name . ' Added<BR>';
 

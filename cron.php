@@ -46,7 +46,7 @@ $pdo = $system->db();
 
 if (DEMO_INSTALLATION != '1') {
 
-    $system->db()->query("UPDATE scheduler SET is_running = '0'");
+    $pdo->query("UPDATE scheduler SET is_running = '0'");
 
     $stmt = $pdo->prepare("
         SELECT id, `name`, slug, expression, active
@@ -108,10 +108,9 @@ if (DEMO_INSTALLATION != '1') {
 
                 $schedule->isRunning($row->id);
 
-                $stmt = $pdo->query("
+                $result_conversion = $pdo->query("
                     SELECT user_id, default_currency
-                    FROM user_settings");
-                $result_conversion = $stmt->fetchAll();
+                    FROM user_settings")->fetchAll();
 
                 if (!$result_conversion) {
 

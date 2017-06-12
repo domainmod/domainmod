@@ -81,9 +81,7 @@ class Conversion
 
     public function getActiveCurrencies()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT id, currency
             FROM
             (  SELECT c.id, c.currency
@@ -98,8 +96,7 @@ class Conversion
                  AND f.id = sslc.fee_id
                GROUP BY c.currency
             ) AS temp
-            GROUP BY currency");
-        $result = $stmt->fetchAll();
+            GROUP BY currency")->fetchAll();
 
         if (!$result) {
 

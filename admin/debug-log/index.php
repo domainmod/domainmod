@@ -45,10 +45,10 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
-$stmt = $pdo->query("
+$result = $pdo->query("
     SELECT id, user_id, area, `level`, message, extra, url, insert_time
     FROM log
-    ORDER BY insert_time DESC, id DESC");
+    ORDER BY insert_time DESC, id DESC")->fetchAll();
 
 if ($export_data == '1') {
 
@@ -71,8 +71,6 @@ if ($export_data == '1') {
         'Inserted'
     );
     $export->writeRow($export_file, $row_contents);
-
-    $result = $stmt->fetchAll();
 
     if (!$result) {
 
@@ -112,8 +110,6 @@ if ($export_data == '1') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php
 require_once(DIR_INC . '/layout/header.inc.php');
-
-$result = $stmt->fetchAll();
 
 if (!$result) {
 

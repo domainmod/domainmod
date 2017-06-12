@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/dw-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -55,30 +56,22 @@ if ($action != "") {
 
         } else {
 
-            $query = "SELECT `name`, `host`
-                      FROM dw_servers
-                      WHERE id = ?";
-            $q = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                SELECT `name`, `host`
+                FROM dw_servers
+                WHERE id = :id");
+            $stmt->bindValue('id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-            if ($q->prepare($query)) {
+            if ($result) {
 
-                $q->bind_param('i', $id);
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($temp_name, $temp_host);
+                $_SESSION['s_dw_view_all'] = "";
+                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_name'] = $result->name;
+                $_SESSION['s_dw_server_host'] = $result->host;
 
-                while ($q->fetch()) {
-
-                    $_SESSION['s_dw_view_all'] = "";
-                    $_SESSION['s_dw_server_id'] = $id;
-                    $_SESSION['s_dw_server_name'] = $temp_name;
-                    $_SESSION['s_dw_server_host'] = $temp_host;
-
-                }
-
-                $q->close();
-
-            } else $error->outputSqlError($dbcon, '1', 'ERROR');
+            }
 
         }
 
@@ -93,30 +86,22 @@ if ($action != "") {
 
         } else {
 
-            $query = "SELECT `name`, `host`
-                      FROM dw_servers
-                      WHERE id = ?";
-            $q = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                SELECT `name`, `host`
+                FROM dw_servers
+                WHERE id = :id");
+            $stmt->bindValue('id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-            if ($q->prepare($query)) {
+            if ($result) {
 
-                $q->bind_param('i', $id);
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($temp_name, $temp_host);
+                $_SESSION['s_dw_view_all'] = "";
+                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_name'] = $result->name;
+                $_SESSION['s_dw_server_host'] = $result->host;
 
-                while ($q->fetch()) {
-
-                    $_SESSION['s_dw_view_all'] = "";
-                    $_SESSION['s_dw_server_id'] = $id;
-                    $_SESSION['s_dw_server_name'] = $temp_name;
-                    $_SESSION['s_dw_server_host'] = $temp_host;
-
-                }
-
-                $q->close();
-
-            } else $error->outputSqlError($dbcon, '1', 'ERROR');
+            }
 
         }
 

@@ -44,27 +44,28 @@ class DwClean
 
     public function prep()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+        $pdo->query("
             DELETE FROM dw_dns_records
             WHERE type = ':RAW'
             AND raw = ''");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET type = 'COMMENT'
             WHERE type = ':RAW'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET type = 'ZONE TTL'
             WHERE type = '\$TTL'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET nlines = '1'
             WHERE nlines = '0'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records AS r, dw_dns_zones AS z
             SET r.zonefile = z.zonefile
             WHERE r.dns_zone_id = z.id");
@@ -74,11 +75,10 @@ class DwClean
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, " . $field . "
             FROM dw_dns_records
-            WHERE " . $field . " != ''");
-        $result = $stmt->fetchAll();
+            WHERE " . $field . " != ''")->fetchAll();
 
         if ($result) {
 
@@ -102,12 +102,13 @@ class DwClean
 
     public function lines()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+        $pdo->query("
             UPDATE dw_dns_records
             SET `formatted_line` = concat(' | ', `line`, ' | ')
             WHERE line >= 10");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET `formatted_line` = concat(' | 0', `line`, ' | ')
             WHERE line < 10");
@@ -122,32 +123,33 @@ class DwClean
 
     public function content()
     {
-        $this->system->db()->query("
+        $pdo = $this->system->db();
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `address`, ' | ', `ttl`)
             WHERE type = 'A'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`formatted_output`, ' | ', ttl)
             WHERE type = 'COMMENT'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `cname`, ' |', `ttl`)
             WHERE type = 'CNAME'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`preference`, ' | ', `exchange`, ' | ', `ttl`)
             WHERE type = 'MX'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`nsdname`, ' | ', `ttl`)
             WHERE type = 'NS'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `mname`, ' | ', `rname`, ' | ', `ttl`, '<BR" . ">" . "',
                 '<strong" . ">" . "Serial:</strong" . ">" . " ', `serial`, ' |
@@ -157,17 +159,17 @@ class DwClean
                 <strong" . ">" . "Minimum TTL:</strong" . ">" . " ', `minimum`)
             WHERE type = 'SOA'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `ttl`)
             WHERE type = 'SRV'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `formatted_output`, ' | ', `ttl`)
             WHERE type = 'TXT'");
 
-        $this->system->db()->query("
+        $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = ttl
             WHERE type = 'ZONE TTL'");

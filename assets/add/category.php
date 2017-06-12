@@ -49,23 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_category != "") {
 
-        $query = "INSERT INTO categories
-                  (`name`, stakeholder, notes, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        $pdo = $system->db();
 
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssis', $new_category, $new_stakeholder, $new_notes, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO categories
+            (`name`, stakeholder, notes, created_by, insert_time)
+            VALUES
+            (:new_category, :new_stakeholder, :new_notes, :created_by, :timestamp)");
+        $stmt->bindValue('new_category', $new_category, PDO::PARAM_STR);
+        $stmt->bindValue('new_stakeholder', $new_stakeholder, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= 'Category ' . $new_category . ' Added<BR>';
 

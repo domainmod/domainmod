@@ -30,8 +30,10 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $login = new DomainMOD\Login();
+$log = new DomainMOD\Log('/index.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$format = new DomainMOD\Format();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -40,6 +42,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->loginCheck();
 
 list($installation_mode, $result_message) = $system->installCheck();
@@ -80,45 +83,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
     $_SESSION['s_read_only'] = '1';
 
-    $query = "SELECT id, username
-              FROM users
-              WHERE username = ?
-                AND `password` = password(?)
-                AND active = '1'";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT id, username
+        FROM users
+        WHERE username = :new_username
+          AND `password` = password(:new_password)
+          AND active = '1'");
+    $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+    $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if (!$result) {
 
-        $q->bind_param('ss', $new_username, $new_password);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($id, $username);
+        $log_message = 'Unable to login';
+        $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
+        $log->error($log_message, $log_extra);
 
-        if ($q->num_rows() == 1) { // Login succeeded
+        $_SESSION['s_message_danger'] .= "Login Failed<BR>";
 
-            while ($q->fetch()) {
+    } else {
 
-                $_SESSION['s_user_id'] = $id;
-                $_SESSION['s_username'] = $username;
+        $_SESSION['s_user_id'] = $result->id;
+        $_SESSION['s_username'] = $result->username;
 
-            }
+        $_SESSION['s_system_db_version'] = $system->getDbVersion();
 
-            $_SESSION['s_system_db_version'] = $system->getDbVersion();
+        $_SESSION['s_is_logged_in'] = 1;
 
-            $_SESSION['s_is_logged_in'] = 1;
+        header("Location: checks.php");
+        exit;
 
-            header("Location: checks.php");
-            exit;
-
-        } else { // Login failed
-
-            $_SESSION['s_message_danger'] .= "Login Failed<BR>";
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
 } else {
 

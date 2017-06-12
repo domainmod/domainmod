@@ -32,9 +32,9 @@ class CustomField
 
     public function checkFieldFormat($input_field)
     {
-        if (preg_match('/^[a-zA-Z_]+$/i', $input_field, $output_field)) {
+        if (preg_match('/^[a-zA-Z_]+$/i', $input_field)) {
 
-            return $output_field;
+            return true;
 
         } else {
 
@@ -65,12 +65,10 @@ class CustomField
 
     public function queryCustomFields($table_name)
     {
-        $pdo = $this->system->db();
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT field_name
             FROM " . $table_name . "
-            ORDER BY `name` ASC");
-        return $stmt->fetchAll();
+            ORDER BY `name` ASC")->fetchAll();
     }
 
     public function getCustomFieldsSql($table_name, $column_prefix)

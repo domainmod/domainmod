@@ -33,10 +33,12 @@ require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 
+$pdo = $system->db();
+
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
-$system->db()->query("TRUNCATE log");
+$pdo->query("TRUNCATE log");
 
 $_SESSION['s_message_success'] .= 'Debug Log Cleared';
 

@@ -46,13 +46,12 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetchColumn();
 
         if (!$result) {
 
             $log_message = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
             $this->log->error($log_message, $log_extra);
             return $log_message;
@@ -74,18 +73,15 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve API Key';
-            $log_message2 = 'Unable to retrieve API Secret';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve API Key & API Secret';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            return array($log_message1, $log_message2);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message);
 
         } else {
 
@@ -104,18 +100,15 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve Username';
-            $log_message2 = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve Username & API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            return array($log_message1, $log_message2);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message);
 
         } else {
 
@@ -134,20 +127,15 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve Username';
-            $log_message2 = 'Unable to retrieve API App Name';
-            $log_message3 = 'Unable to retrieve API Secret';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve Username, API App Name, & API Secret';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            $this->log->error($log_message3, $log_extra);
-            return array($log_message1, $log_message2, $log_message3);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message, $log_message);
 
         } else {
 
@@ -167,20 +155,15 @@ class Api
               AND ra.id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve Username';
-            $log_message2 = 'Unable to retrieve API Key';
-            $log_message3 = 'Unable to retrieve IP Address';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve Username, API Key, & IP Address';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            $this->log->error($log_message3, $log_extra);
-            return array($log_message1, $log_message2, $log_message3);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message, $log_message);
 
         } else {
 
@@ -199,18 +182,15 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve Reseller ID';
-            $log_message2 = 'Unable to retrieve API Key';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve Reseller ID & API Key';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            return array($log_message1, $log_message2);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message);
 
         } else {
 
@@ -229,18 +209,15 @@ class Api
             WHERE id = :account_id");
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
 
         if (!$result) {
 
-            $log_message1 = 'Unable to retrieve Username';
-            $log_message2 = 'Unable to retrieve Password';
-            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrar($account_id),
+            $log_message = 'Unable to retrieve Username & Password';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message1, $log_extra);
-            $this->log->error($log_message2, $log_extra);
-            return array($log_message1, $log_message2);
+            $this->log->error($log_message, $log_extra);
+            return array($log_message, $log_message);
 
         } else {
 
@@ -259,7 +236,6 @@ class Api
             WHERE id = :api_registrar_id");
         $stmt->bindValue('api_registrar_id', $api_registrar_id, \PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetchColumn();
 
         if (!$result) {

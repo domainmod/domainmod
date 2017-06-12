@@ -50,16 +50,13 @@ class Login
 
     public function getSystemSettings()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
                 default_category_ssl, default_dns, default_host, default_ip_address_domains,
                 default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                 default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
                 expiration_days, local_php_log
-            FROM settings");
-        return $stmt->fetch();
+            FROM settings")->fetch();
     }
 
     public function getUserSettings($user_id)

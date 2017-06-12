@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/settings-display.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $new_number_of_domains = $_POST['new_number_of_domains'];
@@ -72,46 +73,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (in_array("ip", $ssl_column_options)) { $new_display_ssl_ip = '1'; } else { $new_display_ssl_ip = '0'; }
     if (in_array("category", $ssl_column_options)) { $new_display_ssl_category = '1'; } else { $new_display_ssl_category = '0'; }
     if (in_array("owner", $ssl_column_options)) { $new_display_ssl_owner = '1'; } else { $new_display_ssl_owner = '0'; }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
-    $query = "UPDATE user_settings
-              SET number_of_domains = ?,
-                  display_domain_owner = ?,
-                  display_domain_registrar = ?,
-                  display_domain_account = ?,
-                  display_domain_category = ?,
-                  display_domain_expiry_date = ?,
-                  display_domain_dns = ?,
-                  display_domain_host = ?,
-                  display_domain_ip = ?,
-                  display_domain_tld = ?,
-                  display_domain_fee = ?,
-                  display_ssl_owner = ?,
-                  display_ssl_provider = ?,
-                  display_ssl_account = ?,
-                  display_ssl_domain = ?,
-                  display_ssl_type = ?,
-                  display_ssl_ip = ?,
-                  display_ssl_category = ?,
-                  display_ssl_expiry_date = ?,
-                  display_ssl_fee = ?,
-                  display_inactive_assets = ?,
-                  display_dw_intro_page = ?,
-                  number_of_ssl_certs = ?,
-                  update_time = ?
-              WHERE user_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $timestamp = $time->stamp();
-        $q->bind_param('iiiiiiiiiiiiiiiiiiiiiiisi', $new_number_of_domains, $new_display_domain_owner, $new_display_domain_registrar, $new_display_domain_account, $new_display_domain_category, $new_display_domain_expiry_date, $new_display_domain_dns, $new_display_domain_host, $new_display_domain_ip, $new_display_domain_tld, $new_display_domain_fee, $new_display_ssl_owner, $new_display_ssl_provider, $new_display_ssl_account, $new_display_ssl_domain, $new_display_ssl_type, $new_display_ssl_ip, $new_display_ssl_category, $new_display_ssl_expiry_date, $new_display_ssl_fee, $new_display_inactive_assets, $new_display_dw_intro_page, $new_number_of_ssl_certs, $timestamp, $_SESSION['s_user_id']);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE user_settings
+        SET number_of_domains = :new_number_of_domains,
+            display_domain_owner = :new_display_domain_owner,
+            display_domain_registrar = :new_display_domain_registrar,
+            display_domain_account = :new_display_domain_account,
+            display_domain_category = :new_display_domain_category,
+            display_domain_expiry_date = :new_display_domain_expiry_date,
+            display_domain_dns = :new_display_domain_dns,
+            display_domain_host = :new_display_domain_host,
+            display_domain_ip = :new_display_domain_ip,
+            display_domain_tld = :new_display_domain_tld,
+            display_domain_fee = :new_display_domain_fee,
+            display_ssl_owner = :new_display_ssl_owner,
+            display_ssl_provider = :new_display_ssl_provider,
+            display_ssl_account = :new_display_ssl_account,
+            display_ssl_domain = :new_display_ssl_domain,
+            display_ssl_type = :new_display_ssl_type,
+            display_ssl_ip = :new_display_ssl_ip,
+            display_ssl_category = :new_display_ssl_category,
+            display_ssl_expiry_date = :new_display_ssl_expiry_date,
+            display_ssl_fee = :new_display_ssl_fee,
+            display_inactive_assets = :new_display_inactive_assets,
+            display_dw_intro_page = :new_display_dw_intro_page,
+            number_of_ssl_certs = :new_number_of_ssl_certs,
+            update_time = :timestamp
+        WHERE user_id = :user_id");
+    $stmt->bindValue('new_number_of_domains', $new_number_of_domains, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_owner', $new_display_domain_owner, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_registrar', $new_display_domain_registrar, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_account', $new_display_domain_account, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_category', $new_display_domain_category, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_expiry_date', $new_display_domain_expiry_date, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_dns', $new_display_domain_dns, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_host', $new_display_domain_host, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_ip', $new_display_domain_ip, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_tld', $new_display_domain_tld, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_domain_fee', $new_display_domain_fee, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_owner', $new_display_ssl_owner, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_provider', $new_display_ssl_provider, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_account', $new_display_ssl_account, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_domain', $new_display_ssl_domain, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_type', $new_display_ssl_type, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_ip', $new_display_ssl_ip, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_category', $new_display_ssl_category, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_expiry_date', $new_display_ssl_expiry_date, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_ssl_fee', $new_display_ssl_fee, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_inactive_assets', $new_display_inactive_assets, PDO::PARAM_INT);
+    $stmt->bindValue('new_display_dw_intro_page', $new_display_dw_intro_page, PDO::PARAM_INT);
+    $stmt->bindValue('new_number_of_ssl_certs', $new_number_of_ssl_certs, PDO::PARAM_INT);
+    $timestamp = $time->stamp();
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_number_of_domains'] = $new_number_of_domains;
     $_SESSION['s_number_of_ssl_certs'] = $new_number_of_ssl_certs;
@@ -152,49 +172,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
     } else {
 
-        $query = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_category, display_domain_expiry_date, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee, display_inactive_assets, display_dw_intro_page
-                  FROM user_settings
-                  WHERE user_id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar,
+                display_domain_account, display_domain_category, display_domain_expiry_date, display_domain_dns,
+                display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner,
+                display_ssl_provider, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_ip,
+                display_ssl_category, display_ssl_expiry_date, display_ssl_fee, display_inactive_assets,
+                display_dw_intro_page
+            FROM user_settings
+            WHERE user_id = :user_id");
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $_SESSION['s_user_id']);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($t_number_of_domains, $t_number_of_ssl_certs, $t_display_domain_owner, $t_display_domain_registrar, $t_display_domain_account, $t_display_domain_category, $t_display_domain_expiry_date, $t_display_domain_dns, $t_display_domain_host, $t_display_domain_ip, $t_display_domain_tld, $t_display_domain_fee, $t_display_ssl_owner, $t_display_ssl_provider, $t_display_ssl_account, $t_display_ssl_domain, $t_display_ssl_type, $t_display_ssl_ip, $t_display_ssl_category, $t_display_ssl_expiry_date, $t_display_ssl_fee, $t_display_inactive_assets, $t_display_dw_intro_page);
+            $new_number_of_domains = $result->number_of_domains;
+            $new_number_of_ssl_certs = $result->number_of_ssl_certs;
+            $new_display_domain_owner = $result->display_domain_owner;
+            $new_display_domain_registrar = $result->display_domain_registrar;
+            $new_display_domain_account = $result->display_domain_account;
+            $new_display_domain_category = $result->display_domain_category;
+            $new_display_domain_expiry_date = $result->display_domain_expiry_date;
+            $new_display_domain_dns = $result->display_domain_dns;
+            $new_display_domain_host = $result->display_domain_host;
+            $new_display_domain_ip = $result->display_domain_ip;
+            $new_display_domain_tld = $result->display_domain_tld;
+            $new_display_domain_fee = $result->display_domain_fee;
+            $new_display_ssl_owner = $result->display_ssl_owner;
+            $new_display_ssl_provider = $result->display_ssl_provider;
+            $new_display_ssl_account = $result->display_ssl_account;
+            $new_display_ssl_domain = $result->display_ssl_domain;
+            $new_display_ssl_type = $result->display_ssl_type;
+            $new_display_ssl_ip = $result->display_ssl_ip;
+            $new_display_ssl_category = $result->display_ssl_category;
+            $new_display_ssl_expiry_date = $result->display_ssl_expiry_date;
+            $new_display_ssl_fee = $result->display_ssl_fee;
+            $new_display_inactive_assets = $result->display_inactive_assets;
+            $new_display_dw_intro_page = $result->display_dw_intro_page;
 
-            while ($q->fetch()) {
-
-                $new_number_of_domains = $t_number_of_domains;
-                $new_number_of_ssl_certs = $t_number_of_ssl_certs;
-                $new_display_domain_owner = $t_display_domain_owner;
-                $new_display_domain_registrar = $t_display_domain_registrar;
-                $new_display_domain_account = $t_display_domain_account;
-                $new_display_domain_category = $t_display_domain_category;
-                $new_display_domain_expiry_date = $t_display_domain_expiry_date;
-                $new_display_domain_dns = $t_display_domain_dns;
-                $new_display_domain_host = $t_display_domain_host;
-                $new_display_domain_ip = $t_display_domain_ip;
-                $new_display_domain_tld = $t_display_domain_tld;
-                $new_display_domain_fee = $t_display_domain_fee;
-                $new_display_ssl_owner = $t_display_ssl_owner;
-                $new_display_ssl_provider = $t_display_ssl_provider;
-                $new_display_ssl_account = $t_display_ssl_account;
-                $new_display_ssl_domain = $t_display_ssl_domain;
-                $new_display_ssl_type = $t_display_ssl_type;
-                $new_display_ssl_ip = $t_display_ssl_ip;
-                $new_display_ssl_category = $t_display_ssl_category;
-                $new_display_ssl_expiry_date = $t_display_ssl_expiry_date;
-                $new_display_ssl_fee = $t_display_ssl_fee;
-                $new_display_inactive_assets = $t_display_inactive_assets;
-                $new_display_dw_intro_page = $t_display_dw_intro_page;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 }

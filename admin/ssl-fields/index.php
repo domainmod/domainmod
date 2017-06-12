@@ -38,19 +38,19 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/admin-custom-ssl-fields.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type
-        FROM ssl_cert_fields AS f, custom_field_types AS t
-        WHERE f.type_id = t.id
-        ORDER BY f.name";
+$result = $pdo->query("
+    SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type
+    FROM ssl_cert_fields AS f, custom_field_types AS t
+    WHERE f.type_id = t.id
+    ORDER BY f.name")->fetchAll();
 
 if ($export_data == '1') {
-
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('custom_ssl_field_list', strtotime($time->stamp()));
@@ -73,9 +73,9 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result) > 0) {
+    if ($result) {
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
@@ -125,9 +125,12 @@ for every one of your SSL certificates. And when you export your SSL data, the i
 fields will automatically be included in the exported data.<BR>
 <BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+if (!$result) { ?>
 
-if (mysqli_num_rows($result) > 0) { ?>
+    It appears as though you haven't created any Custom SSL Fields yet. <a href="add.php">Click
+        here</a> to add one.<?php
+
+} else { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Custom Field'); ?></a>
     <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
@@ -145,7 +148,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         </thead>
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) { ?>
+        foreach ($result as $row) { ?>
 
             <tr>
             <td></td>
@@ -180,10 +183,6 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         </tbody>
     </table><?php
-
-} else { ?>
-
-    It appears as though you haven't created any Custom SSL Fields yet. <a href="add.php">Click here</a> to add one.<?php
 
 } ?>
 <?php require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>

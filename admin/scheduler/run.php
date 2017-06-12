@@ -34,7 +34,7 @@ $maint = new DomainMOD\Maintenance();
 $conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$log = new DomainMOD\Log('scheduler.run');
+$log = new DomainMOD\Log('admin.scheduler.run');
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -117,10 +117,9 @@ if (DEMO_INSTALLATION != '1') {
 
             $schedule->isRunning($id);
 
-            $stmt = $pdo->query("
+            $result_conversion = $pdo->query("
                 SELECT user_id, default_currency
-                FROM user_settings");
-            $result_conversion = $stmt->fetchAll();
+                FROM user_settings")->fetchAll();
 
             if (!$result_conversion) {
 

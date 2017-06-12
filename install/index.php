@@ -41,6 +41,7 @@ require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->installCheck();
 
 $result = mysqli_query($dbcon, "SHOW TABLES LIKE 'settings'");
@@ -106,11 +107,17 @@ if ($is_installed == '1') {
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $sql = "INSERT INTO `users`
-            (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`, `insert_time`)
-            VALUES
-            ('Domain', 'Administrator', 'admin', '" . $_SESSION['new_install_email'] . "', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        INSERT INTO `users`
+        (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`,
+         `insert_time`)
+        VALUES
+        ('Domain', 'Administrator', 'admin', :new_install_email, '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0',
+         :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('new_install_email', $_SESSION['new_install_email'], PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -160,15 +167,9 @@ if ($is_installed == '1') {
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    $sql = "SELECT id
-            FROM users";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    while ($row = mysqli_fetch_object($result)) {
-
-        $temp_user_id = $row->id;
-
-    }
+$temp_user_id = $pdo->query("
+    SELECT id
+    FROM users")->fetchColumn();
 
     $sql_temp = "INSERT INTO user_settings
                  (user_id, default_currency, insert_time)
@@ -1069,22 +1070,17 @@ if ($is_installed == '1') {
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
-    $query = "INSERT INTO `settings`
-              (`full_url`, `db_version`, `email_address`, `insert_time`)
-               VALUES
-              (?, ?, ?, ?)";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $software_version = SOFTWARE_VERSION;
-
-        // $timestamp = $timestamp;
-        $q->bind_param('ssss', $full_url, $software_version, $_SESSION['new_install_email'], $timestamp);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        INSERT INTO `settings`
+        (`full_url`, `db_version`, `email_address`, `insert_time`)
+        VALUES
+        (:full_url, :software_version, :new_install_email, :timestamp)");
+    $stmt->bindValue('full_url', $full_url, PDO::PARAM_STR);
+    $software_version = SOFTWARE_VERSION;
+    $stmt->bindValue('software_version', $software_version, PDO::PARAM_STR);
+    $stmt->bindValue('new_install_email', $_SESSION['new_install_email'], PDO::PARAM_STR);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $sql_settings = "SELECT *
                      FROM settings";
@@ -1162,30 +1158,22 @@ if ($is_installed == '1') {
 
     }
 
-    $query = "SELECT `name`, symbol, symbol_order, symbol_space
-              FROM currencies
-              WHERE currency = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, symbol, symbol_order, symbol_space
+        FROM currencies
+        WHERE currency = :default_currency");
+    $stmt->bindValue('default_currency', $_SESSION['s_default_currency'], PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('s', $_SESSION['s_default_currency']);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($t_name, $t_symbol, $t_order, $t_space);
+        $_SESSION['s_default_currency_name'] = $result->name;
+        $_SESSION['s_default_currency_symbol'] = $result->symbol;
+        $_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
+        $_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
 
-        while ($q->fetch()) {
-
-            $_SESSION['s_default_currency_name'] = $t_name;
-            $_SESSION['s_default_currency_symbol'] = $t_symbol;
-            $_SESSION['s_default_currency_symbol_order'] = $t_order;
-            $_SESSION['s_default_currency_symbol_space'] = $t_space;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
     // Without this, the "DomainMOD is not yet installed" message will continue to display after installation. The header isn't displayed on the install file, which is when this normally unsets.
     unset($_SESSION['s_message_danger']);

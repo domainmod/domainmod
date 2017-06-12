@@ -251,11 +251,10 @@ if ($del == '1') {
 
 if ($really_del == '1') {
 
-    $stmt = $pdo->query("
+    $temp_uid = $pdo->query("
         SELECT id
         FROM users
-        WHERE username = 'admin'");
-    $temp_uid = $stmt->fetchColumn();
+        WHERE username = 'admin'")->fetchColumn();
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
@@ -312,11 +311,10 @@ echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_e
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 
-$stmt = $pdo->query("
+$result = $pdo->query("
     SELECT currency, `name`, symbol
     FROM currencies
-    ORDER BY name");
-$result = $stmt->fetchAll();
+    ORDER BY name")->fetchAll();
 
 if ($result) {
 
@@ -331,11 +329,10 @@ echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
 
-$stmt = $pdo->query("
+$result = $pdo->query("
     SELECT timezone
     FROM timezones
-    ORDER BY timezone");
-$result = $stmt->fetchAll();
+    ORDER BY timezone")->fetchAll();
 
 if ($result) {
 

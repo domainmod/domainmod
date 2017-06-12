@@ -111,12 +111,9 @@ class DwStats
 
     public function getTotalDwServers()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT count(*)
-            FROM `dw_servers`");
-        return $stmt->fetchColumn();
+            FROM `dw_servers`")->fetchColumn();
     }
 
     public function updateTable($total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
@@ -140,12 +137,9 @@ class DwStats
 
     public function getServerTotals()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT dw_accounts, dw_dns_zones, dw_dns_records
-            FROM dw_server_totals");
-        $result = $stmt->fetch();
+            FROM dw_server_totals")->fetch();
 
         return array($result->dw_accounts, $result->dw_dns_zones, $result->dw_dns_records);
     }

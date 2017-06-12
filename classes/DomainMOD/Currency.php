@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class Currency
 {
+    public $system;
+
+    public function __construct()
+    {
+        $this->system = new System();
+    }
 
     public function format($amount, $symbol, $order, $space)
     {
@@ -37,6 +43,18 @@ class Currency
         }
 
         return $formatted_output;
+    }
+
+    public function getCurrencyId($currency)
+    {
+        $pdo = $this->system->db();
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM currencies
+            WHERE currency = :currency");
+        $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
 
 } //@formatter:on

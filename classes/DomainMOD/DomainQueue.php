@@ -339,9 +339,7 @@ class DomainQueue
 
     public function getQueueList()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT dql.id, dql.api_registrar_id, dql.owner_id, dql.registrar_id, dql.account_id, dql.created_by,
                 ar.name AS api_registrar_name
             FROM domain_queue_list AS dql, api_registrars AS ar
@@ -350,15 +348,12 @@ class DomainQueue
               AND dql.ready_to_import = '0'
               AND dql.finished = '0'
               AND dql.copied_to_history = '0'
-            ORDER BY dql.insert_time DESC");
-        return $stmt->fetchAll();
+            ORDER BY dql.insert_time DESC")->fetchAll();
     }
 
     public function getQueueDomain()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT dq.id, dq.api_registrar_id, dq.domain, dq.account_id, dq.created_by, ar.name AS api_registrar_name
             FROM domain_queue AS dq, api_registrars AS ar
             WHERE dq.api_registrar_id = ar.id
@@ -367,15 +362,12 @@ class DomainQueue
               AND dq.finished = '0'
               AND dq.copied_to_history = '0'
               AND dq.already_in_domains = '0'
-              AND dq.already_in_queue = '0'");
-        return $stmt->fetchAll();
+              AND dq.already_in_queue = '0'")->fetchAll();
     }
 
     public function markProcessingList()
     {
-        $pdo = $this->system->db();
-
-        $pdo->query("
+        $this->system->db()->query("
             UPDATE domain_queue_list
             SET processing = '1'
             WHERE processing = '0'
@@ -399,9 +391,7 @@ class DomainQueue
 
     public function markProcessingDomain()
     {
-        $pdo = $this->system->db();
-
-        $pdo->query("
+        $this->system->db()->query("
             UPDATE domain_queue
             SET processing = '1'
             WHERE processing = '0'
@@ -473,11 +463,10 @@ class DomainQueue
         }
         $dns_servers = $lower_value;
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10
             FROM dns
-            ORDER BY update_time DESC, insert_time DESC");
-        $result = $stmt->fetchAll();
+            ORDER BY update_time DESC, insert_time DESC")->fetchAll();
 
         if ($result) {
 
@@ -601,11 +590,10 @@ class DomainQueue
         }
 
         // Check to see if the IP already exists
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id, ip
             FROM ip_addresses
-            ORDER BY update_time DESC, insert_time DESC");
-        $result = $stmt->fetchAll();
+            ORDER BY update_time DESC, insert_time DESC")->fetchAll();
 
         if ($result) {
 
@@ -665,13 +653,12 @@ class DomainQueue
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id
             FROM categories
             WHERE `name` = '[created by queue]'
             ORDER BY update_time DESC, insert_time DESC
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) { // If there isn't an existing '[created by queue]' category create one
 
@@ -712,13 +699,12 @@ class DomainQueue
         $pdo = $this->system->db();
 
         // Check to see if there's an existing '[created by queue]' host
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT id
             FROM hosting
             WHERE `name` = '[created by queue]'
             ORDER BY update_time DESC, insert_time DESC
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) { // If there isn't an existing '[created by queue]' host create one
 
@@ -1080,13 +1066,12 @@ class DomainQueue
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT api_registrar_id, domain_count, owner_id, registrar_id, account_id, created_by, insert_time
             FROM domain_queue_list
             WHERE finished = '1'
               AND copied_to_history = '0'
-            ORDER BY insert_time ASC");
-        $result = $stmt->fetchAll();
+            ORDER BY insert_time ASC")->fetchAll();
 
         if (!$result) {
 
@@ -1135,15 +1120,14 @@ class DomainQueue
     {
         $pdo = $this->system->db();
 
-        $stmt = $pdo->query("
+        $result = $pdo->query("
             SELECT api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
                 dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, created_by,
                 insert_time
             FROM domain_queue
             WHERE finished = '1'
               AND copied_to_history = '0'
-            ORDER BY insert_time ASC");
-        $result = $stmt->fetchAll();
+            ORDER BY insert_time ASC")->fetchAll();
 
         if (!$result) {
 
@@ -1262,13 +1246,10 @@ class DomainQueue
     
     public function checkListQueue()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result =  $this->system->db()->query("
             SELECT id
             FROM domain_queue_list
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) {
 
@@ -1285,13 +1266,10 @@ class DomainQueue
 
     public function checkDomainQueue()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT id
             FROM domain_queue
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) {
 
@@ -1308,14 +1286,11 @@ class DomainQueue
 
     public function checkProcessingLists()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT id
             FROM domain_queue_list
             WHERE processing = '1'
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) {
 
@@ -1332,14 +1307,11 @@ class DomainQueue
 
     public function checkProcessingDomains()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        $result = $this->system->db()->query("
             SELECT id
             FROM domain_queue
             WHERE processing = '1'
-            LIMIT 1");
-        $result = $stmt->fetchColumn();
+            LIMIT 1")->fetchColumn();
 
         if (!$result) {
 

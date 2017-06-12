@@ -149,12 +149,9 @@ class DwRecords
 
     public function getTotalDwRecords()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT count(*)
-            FROM `dw_dns_records`");
-        return $stmt->fetchColumn();
+            FROM `dw_dns_records`")->fetchColumn();
     }
 
 } //@formatter:on

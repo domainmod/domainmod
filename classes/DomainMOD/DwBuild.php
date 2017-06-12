@@ -94,9 +94,10 @@ class DwBuild
 
     public function dropDwTables()
     {
-        $this->system->db()->query("DROP TABLE IF EXISTS dw_accounts");
-        $this->system->db()->query("DROP TABLE IF EXISTS dw_dns_zones");
-        $this->system->db()->query("DROP TABLE IF EXISTS dw_dns_records");
+        $pdo = $this->system->db();
+        $pdo->query("DROP TABLE IF EXISTS dw_accounts");
+        $pdo->query("DROP TABLE IF EXISTS dw_dns_zones");
+        $pdo->query("DROP TABLE IF EXISTS dw_dns_records");
     }
 
     public function buildFinish($build_start_time_o)

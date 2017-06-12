@@ -160,12 +160,9 @@ class DwAccounts
 
     public function getTotalDwAccounts()
     {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->query("
+        return $this->system->db()->query("
             SELECT count(*)
-            FROM `dw_accounts`");
-        return $stmt->fetchColumn();
+            FROM `dw_accounts`")->fetchColumn();
     }
 
 } //@formatter:on
