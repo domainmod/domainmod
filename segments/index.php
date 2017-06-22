@@ -38,79 +38,46 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/segments-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $segid = (integer) $_GET['segid'];
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
-        FROM segments AS s, segment_data AS sd
-        WHERE s.id = sd.segment_id
-        GROUP BY s.id
-        ORDER BY s.name ASC, sd.domain ASC";
-
 if ($export_data == "1") {
 
     if ($segid != "") {
 
-        $seg_clause = " AND s.id = " . $segid . " ";
+        $seg_clause = " AND s.id = :segid ";
 
-        $query = "SELECT `name`, number_of_domains
-                  FROM segments
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT `name`, number_of_domains
+            FROM segments
+            WHERE id = :segid");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $segid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($name, $number);
+            $segment_name = $result->name;
+            $number_of_domains = $result->number_of_domains;
 
-            while ($q->fetch()) {
-
-                $segment_name = $name;
-                $number_of_domains = $number;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     } else {
 
         $seg_clause = "";
 
-        $sql_seg = "SELECT count(*) AS total_segments
-                    FROM segments";
-        $result_seg = mysqli_query($dbcon, $sql_seg);
+        $number_of_segments = $pdo->query("
+            SELECT count(*)
+            FROM segments")->fetchColumn();
 
-        while ($row_seg = mysqli_fetch_object($result_seg)) {
-
-            $number_of_segments = $row_seg->total_segments;
-
-        }
-
-        $sql_seg = "SELECT count(*) AS total_segment_domains
-                    FROM segment_data";
-        $result_seg = mysqli_query($dbcon, $sql_seg);
-
-        while ($row_seg = mysqli_fetch_object($result_seg)) {
-
-            $number_of_segment_domains = $row_seg->total_segment_domains;
-
-        }
+        $number_of_segment_domains = $pdo->query("
+            SELECT count(*)
+            FROM segment_data")->fetchColumn();
 
     }
-
-    // The only difference between this SELECT statement and the primary one above is that it uses a GROUP BY clause
-    $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
-            FROM segments AS s, segment_data AS sd
-            WHERE s.id = sd.segment_id" .
-            $seg_clause . "
-            ORDER BY s.name ASC, sd.domain ASC";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     if ($segid != "") {
 
@@ -179,9 +146,23 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Update Time";
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result) > 0) {
+    // The only difference between this SELECT statement and the primary one below is that it uses a GROUP BY clause
+    // The main one also doesn't check if $segid exists, since that's only needed when exporting an individual segment
+    $stmt = $pdo->prepare("
+        SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
+        FROM segments AS s, segment_data AS sd
+        WHERE s.id = sd.segment_id" .
+        $seg_clause . "
+        ORDER BY s.name ASC, sd.domain ASC");
+    if ($segid != '') {
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
-        while ($row = mysqli_fetch_object($result)) {
+    if ($result) {
+
+        foreach ($result as $row) {
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
@@ -225,9 +206,6 @@ if ($export_data == "1") {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
-<?php
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-?>
 Segments are lists of domains that can be used to help filter and manage your <a href="<?php echo $web_root; ?>/domains/">domain
     results</a>.<BR>
 <BR>
@@ -237,15 +215,16 @@ as which domains don't match, and you can easily view and export the results.<BR
 <a href="add.php"><?php echo $layout->showButton('button', 'Add Segment'); ?></a>
 <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$sql_segment_check = "SELECT id
-                      FROM segments
-                      LIMIT 1";
-$result_segment_check = mysqli_query($dbcon, $sql_segment_check) or $error->outputSqlError($dbcon, '1', 'ERROR');
-if (mysqli_num_rows($result_segment_check) == 0) { ?>
-    You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR><?php
-}
+$has_existing_segments = $pdo->query("
+    SELECT id
+    FROM segments
+    LIMIT 1")->fetchColumn();
 
-if (mysqli_num_rows($result) > 0) { ?>
+if (!$has_existing_segments) { ?>
+
+    You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR><?php
+
+} else { ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
@@ -259,7 +238,15 @@ if (mysqli_num_rows($result) > 0) { ?>
         </thead>
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) { ?>
+        $result = $pdo->query("
+            SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id,
+                s.created_by, s.insert_time, s.update_time, sd.domain
+            FROM segments AS s, segment_data AS sd
+            WHERE s.id = sd.segment_id
+            GROUP BY s.id
+            ORDER BY s.name ASC, sd.domain ASC")->fetchAll();
+
+        foreach ($result as $row) { ?>
 
             <tr>
                 <td></td>
@@ -279,16 +266,15 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <td>
                     <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>">EXPORT</a>
                 </td>
-            </tr>
-
-            <?php
+            </tr><?php
 
         } ?>
 
         </tbody>
     </table><?php
 
-} ?>
+}
+?>
 <?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-category.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -56,25 +57,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_category != "") {
 
-        $query = "UPDATE categories
-                  SET `name` = ?,
-                      stakeholder = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssssi', $new_category, $new_stakeholder, $new_notes, $timestamp, $new_pcid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE categories
+            SET `name` = :new_category,
+                stakeholder = :new_stakeholder,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_pcid");
+        $stmt->bindValue('new_category', $new_category, PDO::PARAM_STR);
+        $stmt->bindValue('new_stakeholder', $new_stakeholder, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $pcid = $new_pcid;
 
@@ -91,74 +87,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, stakeholder, notes
-              FROM categories
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, stakeholder, notes
+        FROM categories
+        WHERE id = :pcid");
+    $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $pcid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_category, $new_stakeholder, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_category = $result->name;
+        $new_stakeholder = $result->stakeholder;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT cat_id
-              FROM domains
-              WHERE cat_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT cat_id
+        FROM domains
+        WHERE cat_id = :pcid
+        LIMIT 1");
+    $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $pcid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $_SESSION['s_message_danger'] .= "This Category has domains associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Category?<BR><BR><a
-                href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This Category has domains associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Category?<BR><BR><a
+        href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM categories
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $pcid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM categories
+        WHERE id = :pcid");
+    $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Category " . $new_category . " Deleted<BR>";
 

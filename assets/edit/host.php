@@ -55,25 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_host != "") {
 
-        $query = "UPDATE hosting
-                  SET `name` = ?,
-                      url = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssssi', $new_host, $new_url, $new_notes, $timestamp, $new_whid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE hosting
+            SET `name` = :new_host,
+                url = :new_url,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_whid");
+        $stmt->bindValue('new_host', $new_host, PDO::PARAM_STR);
+        $stmt->bindValue('new_url', $new_url, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $whid = $new_whid;
 
@@ -90,74 +85,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, url, notes
-              FROM hosting
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, url, notes
+        FROM hosting
+        WHERE id = :whid");
+    $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $whid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_host, $new_url, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_host = $result->name;
+        $new_url = $result->url;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT hosting_id
-              FROM domains
-              WHERE hosting_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT hosting_id
+        FROM domains
+        WHERE hosting_id = :whid
+        LIMIT 1");
+    $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $whid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $_SESSION['s_message_danger'] .= "This Web Host has domains associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Web Host?<BR><BR><a
-                href="host.php?whid=' . $whid . '&really_del=1">YES, REALLY DELETE THIS WEB HOST</a><BR>';
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This Web Host has domains associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Web Host?<BR><BR><a href="host.php?whid=' .
+            $whid . '&really_del=1">YES, REALLY DELETE THIS WEB HOST</a><BR>';
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM hosting
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $whid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM hosting
+        WHERE id = :whid");
+    $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Deleted<BR>";
 

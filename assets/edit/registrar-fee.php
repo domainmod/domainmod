@@ -32,6 +32,7 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -40,6 +41,8 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-registrar-fee.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$timestamp = $time->stamp();
+$pdo = $system->db();
 $system->authCheck();
 
 $fee_id = $_REQUEST['fee_id'];
@@ -59,72 +62,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_initial_fee != '' && $new_renewal_fee != '' && $new_transfer_fee != '') {
 
         $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
-        $timestamp = $time->stamp();
 
-        $query = "UPDATE fees
-                  SET initial_fee = ?,
-                      renewal_fee = ?,
-                      transfer_fee = ?,
-                      privacy_fee = ?,
-                      misc_fee = ?,
-                      currency_id = ?,
-                      update_time = ?
-                  WHERE registrar_id = ?
-                    AND tld = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            UPDATE fees
+            SET initial_fee = :new_initial_fee,
+                renewal_fee = :new_renewal_fee,
+                transfer_fee = :new_transfer_fee,
+                privacy_fee =:new_privacy_fee,
+                misc_fee = :new_misc_fee,
+                currency_id = :new_currency_id,
+                update_time = :timestamp
+            WHERE registrar_id = :rid
+              AND tld = :new_tld");
+        $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_privacy_fee', strval($new_privacy_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
 
-        if ($q->prepare($query)) {
+        $stmt = $pdo->prepare("
+            UPDATE domains
+            SET fee_id = :fee_id,
+                update_time = :timestamp
+            WHERE registrar_id = :rid
+              AND tld = :new_tld");
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
 
-            $q->bind_param('dddddisis', $new_initial_fee, $new_renewal_fee, $new_transfer_fee, $new_privacy_fee, $new_misc_fee, $new_currency_id, $timestamp, $rid, $new_tld);
-            $q->execute();
-            $q->close();
+        $stmt = $pdo->prepare("
+            UPDATE domains d
+            JOIN fees f ON d.fee_id = f.id
+            SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+            WHERE d.privacy = '1'
+              AND d.fee_id = :fee_id");
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "UPDATE domains
-                  SET fee_id = ?,
-                      update_time = ?
-                  WHERE registrar_id = ?
-                    AND tld = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('isis', $fee_id, $timestamp, $rid, $new_tld);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "UPDATE domains d
-                  JOIN fees f ON d.fee_id = f.id
-                  SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                  WHERE d.privacy = '1'
-                    AND d.fee_id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $fee_id);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "UPDATE domains d
-                  JOIN fees f ON d.fee_id = f.id
-                  SET d.total_cost = f.renewal_fee + f.misc_fee
-                  WHERE d.privacy = '0'
-                    AND d.fee_id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $fee_id);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $stmt = $pdo->prepare("
+            UPDATE domains d
+            JOIN fees f ON d.fee_id = f.id
+            SET d.total_cost = f.renewal_fee + f.misc_fee
+            WHERE d.privacy = '0'
+              AND d.fee_id = :fee_id");
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
 
         $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
@@ -143,22 +132,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
-              FROM fees
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
+        FROM fees
+        WHERE id = :fee_id");
+    $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $fee_id);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($rid, $new_tld, $new_initial_fee, $new_renewal_fee, $new_transfer_fee, $new_privacy_fee, $new_misc_fee, $new_currency_id);
-        $q->fetch();
-        $q->close();
+        $rid = $result->registrar_id;
+        $new_tld = $result->tld;
+        $new_initial_fee = $result->initial_fee;
+        $new_renewal_fee = $result->renewal_fee;
+        $new_transfer_fee = $result->transfer_fee;
+        $new_privacy_fee = $result->privacy_fee;
+        $new_misc_fee = $result->misc_fee;
+        $new_currency_id = $result->currency_id;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -174,28 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <a href="../registrar-fees.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
-
-$query = "SELECT `name`
-          FROM registrars
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $rid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_registrar);
-
-    while ($q->fetch()) {
-
-        $temp_registrar = $t_registrar;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+$temp_registrar = $assets->getRegistrar($rid);
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>
@@ -208,17 +179,25 @@ echo $form->showInputText('new_transfer_fee', 'Transfer Fee', '', $new_transfer_
 echo $form->showInputText('new_privacy_fee', 'Privacy Fee', '', $new_privacy_fee, '10', '', '', '', '');
 echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
 
-$sql = "SELECT id, currency, `name`, symbol
-        FROM currencies
-        ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, currency, `name`, symbol
+    FROM currencies
+    ORDER BY `name`")->fetchAll();
 
-    echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->currency . ')', $new_currency_id);
+if ($result) {
+
+    echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->currency . ')', $new_currency_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
+
 echo $form->showInputHidden('fee_id', $fee_id);
 echo $form->showInputHidden('rid', $rid);
 echo $form->showInputHidden('new_tld', $new_tld);

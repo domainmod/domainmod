@@ -88,48 +88,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_dns2 == '') $new_number_of_servers = '1';
         if ($new_dns1 == '') $new_number_of_servers = '0';
 
-        $query = "UPDATE dns
-                  SET `name` = ?,
-                      dns1 = ?,
-                      dns2 = ?,
-                      dns3 = ?,
-                      dns4 = ?,
-                      dns5 = ?,
-                      dns6 = ?,
-                      dns7 = ?,
-                      dns8 = ?,
-                      dns9 = ?,
-                      dns10 = ?,
-                      ip1 = ?,
-                      ip2 = ?,
-                      ip3 = ?,
-                      ip4 = ?,
-                      ip5 = ?,
-                      ip6 = ?,
-                      ip7 = ?,
-                      ip8 = ?,
-                      ip9 = ?,
-                      ip10 = ?,
-                      notes = ?,
-                      number_of_servers = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssssssssssssssssssssssisi', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4,
-                $new_dns5, $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3,
-                $new_ip4, $new_ip5, $new_ip6, $new_ip7, $new_ip8, $new_ip9, $new_ip10, $new_notes,
-                $new_number_of_servers, $timestamp, $new_dnsid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE dns
+            SET `name` = :new_name,
+                dns1 = :new_dns1,
+                dns2 = :new_dns2,
+                dns3 = :new_dns3,
+                dns4 = :new_dns4,
+                dns5 = :new_dns5,
+                dns6 = :new_dns6,
+                dns7 = :new_dns7,
+                dns8 = :new_dns8,
+                dns9 = :new_dns9,
+                dns10 = :new_dns10,
+                ip1 = :new_ip1,
+                ip2 = :new_ip2,
+                ip3 = :new_ip3,
+                ip4 = :new_ip4,
+                ip5 = :new_ip5,
+                ip6 = :new_ip6,
+                ip7 = :new_ip7,
+                ip8 = :new_ip8,
+                ip9 = :new_ip9,
+                ip10 = :new_ip10,
+                notes = :new_notes,
+                number_of_servers = :new_number_of_servers,
+                update_time = :timestamp
+            WHERE id = :new_dnsid");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns1', $new_dns1, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns2', $new_dns2, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns3', $new_dns3, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns4', $new_dns4, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns5', $new_dns5, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns6', $new_dns6, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns7', $new_dns7, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns8', $new_dns8, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns9', $new_dns9, PDO::PARAM_STR);
+        $stmt->bindValue('new_dns10', $new_dns10, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip1', $new_ip1, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip2', $new_ip2, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip3', $new_ip3, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip4', $new_ip4, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip5', $new_ip5, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip6', $new_ip6, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip7', $new_ip7, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip8', $new_ip8, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip9', $new_ip9, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip10', $new_ip10, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('new_number_of_servers', $new_number_of_servers, PDO::PARAM_INT);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $dnsid = $new_dnsid;
 
@@ -148,76 +160,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6,
-                  ip7, ip8, ip9, ip10, notes
-              FROM dns
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7,
+            ip8, ip9, ip10, notes
+        FROM dns
+        WHERE id = :dnsid");
+    $stmt->bindValue('dnsid', $dnsid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $dnsid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5, $new_dns6, $new_dns7,
-            $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3, $new_ip4, $new_ip5, $new_ip6, $new_ip7,
-            $new_ip8, $new_ip9, $new_ip10, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_name = $result->name;
+        $new_dns1 = $result->dns1;
+        $new_dns2 = $result->dns2;
+        $new_dns3 = $result->dns3;
+        $new_dns4 = $result->dns4;
+        $new_dns5 = $result->dns5;
+        $new_dns6 = $result->dns6;
+        $new_dns7 = $result->dns7;
+        $new_dns8 = $result->dns8;
+        $new_dns9 = $result->dns9;
+        $new_dns10 = $result->dns10;
+        $new_ip1 = $result->ip1;
+        $new_ip2 = $result->ip2;
+        $new_ip3 = $result->ip3;
+        $new_ip4 = $result->ip4;
+        $new_ip5 = $result->ip5;
+        $new_ip6 = $result->ip6;
+        $new_ip7 = $result->ip7;
+        $new_ip8 = $result->ip8;
+        $new_ip9 = $result->ip9;
+        $new_ip10 = $result->ip10;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
+
 if ($del == "1") {
 
-    $query = "SELECT dns_id
-              FROM domains
-              WHERE dns_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT dns_id
+        FROM domains
+        WHERE dns_id = :dnsid
+        LIMIT 1");
+    $stmt->bindValue('dnsid', $dnsid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $dnsid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $_SESSION['s_message_danger'] .= "This DNS Profile has domains associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this DNS Profile?<BR><BR><a
-                href=\"dns.php?dnsid=" . $dnsid . "&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This DNS Profile has domains associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this DNS Profile?<BR><BR><a
+        href=\"dns.php?dnsid=" . $dnsid . "&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM dns
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $dnsid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM dns
+        WHERE id = :dnsid");
+    $stmt->bindValue('dnsid', $dnsid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "DNS Profile " . $new_name . " Deleted<BR>";
 

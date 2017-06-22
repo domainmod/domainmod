@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-ssl-type.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -55,24 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_type != "") {
 
-        $query = "UPDATE ssl_cert_types
-                  SET type = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssi', $new_type, $new_notes, $timestamp, $new_ssltid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE ssl_cert_types
+            SET type = :new_type,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_ssltid");
+        $stmt->bindValue('new_type', $new_type, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_ssltid', $new_ssltid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $ssltid = $new_ssltid;
 
@@ -89,73 +84,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT type, notes
-              FROM ssl_cert_types
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT type, notes
+        FROM ssl_cert_types
+        WHERE id = :ssltid");
+    $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $ssltid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_type, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_type = $result->type;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
+
 if ($del == "1") {
 
-    $query = "SELECT type_id
-              FROM ssl_certs
-              WHERE type_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT type_id
+        FROM ssl_certs
+        WHERE type_id = :ssltid
+        LIMIT 1");
+    $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $ssltid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $_SESSION['s_message_danger'] .= "This Type has SSL certificates associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Type?<BR><BR><a
-                href=\"ssl-type.php?ssltid=" . $ssltid . "&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This Type has SSL certificates associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Type?<BR><BR><a
+            href=\"ssl-type.php?ssltid=" . $ssltid . "&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM ssl_cert_types
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $ssltid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM ssl_cert_types
+        WHERE id = :ssltid");
+    $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Deleted<BR>";
 

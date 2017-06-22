@@ -40,6 +40,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/segments-add.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -107,74 +108,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $new_data_formatted = $format->formatForMysql($dbcon, $domain_array);
 
-            $query = "INSERT INTO segments
-                      (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
-                      VALUES
-                      (?, ?, ?, ?, ?, ?, ?)";
-            $q = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                INSERT INTO segments
+                (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
+                VALUES
+                (:new_name, :new_description, :new_data_formatted, :number_of_domains, :new_notes, :user_id,
+                 :timestamp)");
+            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_description', $new_description, PDO::PARAM_LOB);
+            $stmt->bindValue('new_data_formatted', $new_data_formatted, PDO::PARAM_LOB);
+            $stmt->bindValue('number_of_domains', $number_of_domains, PDO::PARAM_INT);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
 
-            if ($q->prepare($query)) {
+            $temp_segment_id = $pdo->lastInsertId('id');
 
-                $q->bind_param('sssisis', $new_name, $new_description, $new_data_formatted, $number_of_domains,
-                    $new_notes, $_SESSION['s_user_id'], $timestamp);
-                $q->execute();
-                $q->close();
+            $stmt = $pdo->prepare("
+                DELETE FROM segment_data
+                WHERE segment_id = :temp_segment_id");
+            $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
+            $stmt->execute();
 
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
-
-            $query = "SELECT id
-                      FROM segments
-                      WHERE `name` = ?
-                        AND segment = ?
-                        AND insert_time = ?";
-            $q = $dbcon->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $q->bind_param('sss', $new_name, $new_data_formatted, $timestamp);
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($temp_segment_id);
-                $q->fetch();
-                $q->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
-
-            $query = "DELETE FROM segment_data
-                      WHERE segment_id = ?";
-            $q = $dbcon->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $q->bind_param('i', $temp_segment_id);
-                $q->execute();
-                $q->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
+            $stmt = $pdo->prepare("
+                INSERT INTO segment_data
+                (segment_id, domain, insert_time)
+                VALUES
+                (:temp_segment_id, :domain, :timestamp)");
+            $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
+            $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
 
             foreach ($domain_array as $domain) {
 
-                $query = "INSERT INTO segment_data
-                          (segment_id, domain, insert_time)
-                          VALUES
-                          (?, ?, ?)";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->bind_param('iss', $temp_segment_id, $domain, $timestamp);
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
+                $stmt->execute();
 
             }
 

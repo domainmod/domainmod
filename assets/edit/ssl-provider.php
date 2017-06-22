@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-ssl-provider.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -50,30 +51,25 @@ $new_notes = $_POST['new_notes'];
 $new_sslpid = $_POST['new_sslpid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_ssl_provider != "") {
 
-        $query = "UPDATE ssl_providers
-                  SET `name` = ?,
-                      url = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssssi', $new_ssl_provider, $new_url, $new_notes, $timestamp, $new_sslpid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE ssl_providers
+            SET `name` = :new_ssl_provider,
+                url = :new_url,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_sslpid");
+        $stmt->bindValue('new_ssl_provider', $new_ssl_provider, PDO::PARAM_STR);
+        $stmt->bindValue('new_url', $new_url, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_sslpid', $new_sslpid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $sslpid = $new_sslpid;
 
@@ -90,74 +86,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, url, notes
-              FROM ssl_providers
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, url, notes
+        FROM ssl_providers
+        WHERE id = :sslpid");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_ssl_provider, $new_url, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_ssl_provider = $result->name;
+        $new_url = $result->url;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT ssl_provider_id
-              FROM ssl_accounts
-              WHERE ssl_provider_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT ssl_provider_id
+        FROM ssl_accounts
+        WHERE ssl_provider_id = :sslpid
+        LIMIT 1");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_provider_accounts = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_provider_accounts = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "SELECT ssl_provider_id
-              FROM ssl_certs
-              WHERE ssl_provider_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT ssl_provider_id
+        FROM ssl_certs
+        WHERE ssl_provider_id = :sslpid
+        LIMIT 1");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_certs = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_certs = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
@@ -178,47 +154,23 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM ssl_fees
-              WHERE ssl_provider_id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        DELETE FROM ssl_fees
+        WHERE ssl_provider_id = :sslpid");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        DELETE FROM ssl_accounts
+        WHERE ssl_provider_id = :sslpid");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM ssl_accounts
-              WHERE ssl_provider_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM ssl_providers
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $sslpid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM ssl_providers
+        WHERE id = :sslpid");
+    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
 

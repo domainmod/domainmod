@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-owner.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -55,24 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_owner != "") {
 
-        $query = "UPDATE owners
-                  SET `name` = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssi', $new_owner, $new_notes, $timestamp, $new_oid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE owners
+            SET `name` = :new_owner,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_oid");
+        $stmt->bindValue('new_owner', $new_owner, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_oid', $new_oid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $oid = $new_oid;
 
@@ -89,122 +84,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, notes
-              FROM owners
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, notes
+        FROM owners
+        WHERE id = :oid");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_owner, $new_notes);
-        $q->fetch();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $new_owner = $result->name;
+    $new_notes = $result->notes;
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT owner_id
-              FROM registrar_accounts
-              WHERE owner_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id
+        FROM registrar_accounts
+        WHERE owner_id = :oid
+        LIMIT 1");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->store_result();
+        $existing_registrar_accounts = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_registrar_accounts = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "SELECT owner_id
-              FROM ssl_accounts
-              WHERE owner_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id
+        FROM ssl_accounts
+        WHERE owner_id = :oid
+        LIMIT 1");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_accounts = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_accounts = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "SELECT owner_id
-              FROM domains
-              WHERE owner_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id
+        FROM domains
+        WHERE owner_id = :oid
+        LIMIT 1");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->store_result();
+        $existing_domains = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_domains = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "SELECT owner_id
-              FROM ssl_certs
-              WHERE owner_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id
+        FROM ssl_certs
+        WHERE owner_id = :oid
+        LIMIT 1");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_certs = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_certs = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
@@ -240,19 +192,11 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM owners
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $oid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM owners
+        WHERE id = :oid");
+    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Owner " . $new_owner . " Deleted<BR>";
 

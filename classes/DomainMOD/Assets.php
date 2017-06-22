@@ -296,6 +296,32 @@ class Assets
         }
     }
 
+    public function getSegment($seg_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM segments
+            WHERE id = :seg_id");
+        $stmt->bindValue('seg_id', $seg_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Segment name';
+            $log_extra = array('Segment ID' => $seg_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
     public function getUsername($account_id)
     {
         $pdo = $this->system->db();

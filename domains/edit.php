@@ -537,14 +537,22 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $sql_data = "SELECT " . $row->field_name . "
-                         FROM domain_field_data
-                         WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
-            $result_data = mysqli_query($dbcon, $sql_data);
+            if (${'new_' . $field}) {
 
-            while ($row_data = mysqli_fetch_object($result_data)) {
+                $field_data = ${'new_' . $field};
 
-                $field_data = $row_data->{$row->field_name};
+            } else {
+
+                $sql_data = "SELECT " . $row->field_name . "
+                             FROM domain_field_data
+                             WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
+                $result_data = mysqli_query($dbcon, $sql_data);
+
+                while ($row_data = mysqli_fetch_object($result_data)) {
+
+                    $field_data = $row_data->{$row->field_name};
+
+                }
 
             }
 

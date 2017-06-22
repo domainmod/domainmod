@@ -162,22 +162,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // cycle through domains here
                 while (list($key, $new_domain) = each($domain_array)) {
 
-                    $query = "SELECT domain
-                              FROM domains
-                              WHERE domain = ?";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT domain
+                        FROM domains
+                        WHERE domain = :new_domain");
+                    $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $result = $stmt->fetchColumn();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('s', $new_domain);
-                        $q->execute();
-                        $q->store_result();
-
-                        if ($q->num_rows() > 0) {
-
-                            $has_existing_domains = '1';
-
-                        }
+                        $has_existing_domains = '1';
 
                     }
 
@@ -197,28 +192,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $query = "SELECT owner_id, registrar_id
-                              FROM registrar_accounts
-                              WHERE id = ?";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT owner_id, registrar_id
+                        FROM registrar_accounts
+                        WHERE id = :raid");
+                    $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $result = $stmt->fetch();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('i', $new_raid);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_owner_id, $t_registrar_id);
+                        $temp_owner_id = $result->owner_id;
+                        $temp_registrar_id = $result->registrar_id;
 
-                        while ($q->fetch()) {
-
-                            $temp_owner_id = $t_owner_id;
-                            $temp_registrar_id = $t_registrar_id;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    }
 
                     reset($domain_array);
 
@@ -227,28 +214,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-                        $query = "SELECT id
-                                  FROM fees
-                                  WHERE registrar_id = ?
-                                    AND tld = ?";
-                        $q = $dbcon->stmt_init();
-
-                        if ($q->prepare($query)) {
-
-                            $q->bind_param('is', $temp_registrar_id, $new_tld);
-                            $q->execute();
-                            $q->store_result();
-                            $q->bind_result($id);
-
-                            while ($q->fetch()) {
-
-                                $temp_fee_id = $id;
-
-                            }
-
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                        $stmt = $pdo->prepare("
+                            SELECT id
+                            FROM fees
+                            WHERE registrar_id = :registrar_id
+                              AND tld = :new_tld");
+                        $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                        $stmt->execute();
+                        $temp_fee_id = $stmt->fetchColumn();
 
                         if ($temp_fee_id == '0' || $temp_fee_id == "") {
                             $temp_fee_fixed = 0;

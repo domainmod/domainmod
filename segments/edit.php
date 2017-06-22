@@ -32,6 +32,7 @@ $maint = new DomainMOD\Maintenance();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
 $timestamp = $time->stamp();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -40,6 +41,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/segments-edit.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $segid = $_GET['segid'];
@@ -114,58 +116,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $new_data_formatted = $format->formatForMysql($dbcon, $domain_array);
 
-            $query = "UPDATE segments
-                      SET `name` = ?,
-                          description = ?,
-                          segment = ?,
-                          number_of_domains = ?,
-                          notes = ?,
-                          update_time = ?
-                      WHERE id = ?";
-            $q = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                UPDATE segments
+                SET `name` = :new_name,
+                    description = :new_description,
+                    segment = :new_data_formatted,
+                    number_of_domains = :number_of_domains,
+                    notes = :new_notes,
+                    update_time = :timestamp
+                WHERE id = :segid");
+            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_description', $new_description, PDO::PARAM_LOB);
+            $stmt->bindValue('new_data_formatted', $new_data_formatted, PDO::PARAM_LOB);
+            $stmt->bindValue('number_of_domains', $number_of_domains, PDO::PARAM_INT);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+            $stmt->execute();
 
-            if ($q->prepare($query)) {
+            $stmt = $pdo->prepare("
+                DELETE FROM segment_data
+                WHERE segment_id = :new_segid");
+            $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
+            $stmt->execute();
 
-                $q->bind_param('sssissi', $new_name, $new_description, $new_data_formatted, $number_of_domains,
-                    $new_notes, $timestamp, $segid);
-                $q->execute();
-                $q->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
-
-            $query = "DELETE FROM segment_data
-                      WHERE segment_id = ?";
-            $q = $dbcon->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $q->bind_param('i', $new_segid);
-                $q->execute();
-                $q->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
-            }
+            $stmt = $pdo->prepare("
+                INSERT INTO segment_data
+                (segment_id, domain, update_time)
+                VALUES
+                (:new_segid, :domain, :timestamp)");
+            $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
+            $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
 
             foreach ($domain_array as $domain) {
 
-                $query = "INSERT INTO segment_data
-                          (segment_id, domain, update_time)
-                          VALUES
-                          (?, ?, ?)";
-                $q = $dbcon->stmt_init();
-
-                if ($q->prepare($query)) {
-
-                    $q->bind_param('iss', $new_segid, $domain, $timestamp);
-                    $q->execute();
-                    $q->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
+                $stmt->execute();
 
             }
 
@@ -189,22 +175,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT id, `name`, description, segment, notes
-              FROM segments
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT id, `name`, description, segment, notes
+        FROM segments
+        WHERE id = :segid");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_id, $new_name, $new_description, $domain_array_formatted, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_id = $result->id;
+        $new_name = $result->name;
+        $new_description = $result->description;
+        $domain_array_formatted = $result->segment;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_array_formatted);
@@ -222,51 +208,19 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "SELECT `name`
-              FROM segments
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $temp_segment_name = $assets->getSegment($segid);
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        DELETE FROM segments
+        WHERE id = :segid");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_segment_name);
-        $q->fetch();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM segments
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM segment_data
-              WHERE segment_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM segment_data
+        WHERE segment_id = :segid");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Segment " . $temp_segment_name . " Deleted<BR>";
 

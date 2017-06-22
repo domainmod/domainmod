@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-ip-address.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -56,26 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_name != "" && $new_ip != "") {
 
-        $query = "UPDATE ip_addresses
-                  SET name = ?,
-                      ip = ?,
-                      rdns = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('sssssi', $new_name, $new_ip, $new_rdns, $new_notes, $timestamp, $new_ipid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE ip_addresses
+            SET name = :new_name,
+                ip = :new_ip,
+                rdns = :new_rdns,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_ipid");
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_ip', $new_ip, PDO::PARAM_STR);
+        $stmt->bindValue('new_rdns', $new_rdns, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $ipid = $new_ipid;
 
@@ -93,74 +90,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, ip, rdns, notes
-              FROM ip_addresses
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, ip, rdns, notes
+        FROM ip_addresses
+        WHERE id = :ipid");
+    $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $ipid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_name, $new_ip, $new_rdns, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_name = $result->name;
+        $new_ip = $result->ip;
+        $new_rdns = $result->rdns;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT ip_id
-              FROM domains
-              WHERE ip_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT ip_id
+        FROM domains
+        WHERE ip_id = :ipid
+        LIMIT 1");
+    $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $ipid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $_SESSION['s_message_danger'] .= "This IP Address has domains associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this IP Address?<BR><BR><a
-                href="ip-address.php?ipid=' . $ipid . '&really_del=1">YES, REALLY DELETE THIS IP ADDRESS</a><BR>';
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This IP Address has domains associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this IP Address?<BR><BR><a
+            href="ip-address.php?ipid=' . $ipid . '&really_del=1">YES, REALLY DELETE THIS IP ADDRESS</a><BR>';
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM ip_addresses
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $ipid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM ip_addresses
+        WHERE id = :ipid");
+    $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
 

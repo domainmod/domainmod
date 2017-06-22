@@ -177,6 +177,7 @@ class DwBuild
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // Allow certs that do not match the domain
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // Allow self-signed certs
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // Return contents of transfer on curl_exec
+        $header = array();
         if ($api_token != "") {
             $header[0] = "Authorization: WHM " . $username . ":" . $api_token;
         } else {

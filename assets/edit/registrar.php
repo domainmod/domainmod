@@ -38,6 +38,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-registrar.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -55,26 +56,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_registrar != "") {
 
-        $query = "UPDATE registrars
-                  SET `name` = ?,
-                      url = ?,
-                      api_registrar_id = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('ssissi', $new_registrar, $new_url, $new_api_registrar_id, $new_notes, $timestamp, $rid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE registrars
+            SET `name` = :new_registrar,
+                url = :new_url,
+                api_registrar_id = :new_api_registrar_id,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :rid");
+        $stmt->bindValue('new_registrar', $new_registrar, PDO::PARAM_STR);
+        $stmt->bindValue('new_url', $new_url, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_registrar_id', $new_api_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Updated<BR>";
 
@@ -89,74 +86,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, url, api_registrar_id, notes
-              FROM registrars
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT `name`, url, api_registrar_id, notes
+        FROM registrars
+        WHERE id = :rid");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_registrar, $new_url, $new_api_registrar_id, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_registrar = $result->name;
+        $new_url = $result->url;
+        $new_api_registrar_id = $result->api_registrar_id;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT registrar_id
-              FROM registrar_accounts
-              WHERE registrar_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT registrar_id
+        FROM registrar_accounts
+        WHERE registrar_id = :rid
+        LIMIT 1");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->store_result();
+        $existing_registrar_accounts = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_registrar_accounts = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "SELECT registrar_id
-              FROM domains
-              WHERE registrar_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT registrar_id
+        FROM domains
+        WHERE registrar_id = :rid
+        LIMIT 1");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->store_result();
+        $existing_domains = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_domains = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
@@ -175,47 +153,23 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM fees
-              WHERE registrar_id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        DELETE FROM fees
+        WHERE registrar_id = :rid");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        DELETE FROM registrar_accounts
+        WHERE registrar_id = :rid");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM registrar_accounts
-              WHERE registrar_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
-
-    $query = "DELETE FROM registrars
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $rid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM registrars
+        WHERE id = :rid");
+    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
 
@@ -239,36 +193,26 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '1', '', '');
 echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '', '');
 
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM api_registrars
+    ORDER BY `name` ASC")->fetchAll();
 
-$query = "SELECT id, `name`
-          FROM api_registrars
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
 
     echo $form->showDropdownOption('0', 'n/a', '0');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, $new_api_registrar_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_api_registrar_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
-
 
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('rid', $rid);

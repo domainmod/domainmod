@@ -30,6 +30,7 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -38,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-ssl-account.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -60,69 +62,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 
-        $query = "UPDATE ssl_accounts
-                  SET owner_id = ?,
-                      ssl_provider_id = ?,
-                      email_address = ?,
-                      username = ?,
-                      `password` = ?,
-                      reseller = ?,
-                      reseller_id = ?,
-                      notes = ?,
-                      update_time = ?
-                      WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('iisssisssi', $new_owner_id, $new_ssl_provider_id, $new_email_address, $new_username,
-                $new_password, $new_reseller, $new_reseller_id, $new_notes, $timestamp, $new_sslpaid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE ssl_accounts
+            SET owner_id = :new_owner_id,
+                ssl_provider_id = :new_ssl_provider_id,
+                email_address = :new_email_address,
+                username = :new_username,
+                `password` =:new_password,
+                reseller = :new_reseller,
+                reseller_id = :new_reseller_id,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_sslpaid");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
+        $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $sslpaid = $new_sslpaid;
 
-        $query = "SELECT `name`
-                  FROM ssl_providers
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_ssl_provider = $assets->getSslProvider($new_ssl_provider_id);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_ssl_provider_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_ssl_provider);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "SELECT `name`
-                  FROM owners
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_owner_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_owner);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $temp_owner = $assets->getOwner($new_owner_id);
 
         $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Updated<BR>";
 
@@ -149,50 +118,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT owner_id, ssl_provider_id, email_address, username, `password`, reseller, reseller_id, notes
-              FROM ssl_accounts
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id, ssl_provider_id, email_address, username, `password`, reseller, reseller_id, notes
+        FROM ssl_accounts
+        WHERE id = :sslpaid");
+    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpaid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_owner_id, $new_ssl_provider_id, $new_email_address, $new_username, $new_password, $new_reseller, $new_reseller_id, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_owner_id = $result->owner_id;
+        $new_ssl_provider_id = $result->ssl_provider_id;
+        $new_email_address = $result->email_address;
+        $new_username = $result->username;
+        $new_password = $result->password;
+        $new_reseller = $result->reseller;
+        $new_reseller_id = $result->reseller_id;
+        $new_notes = $result->notes;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT account_id
-              FROM ssl_certs
-              WHERE account_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT account_id
+        FROM ssl_certs
+        WHERE account_id = :sslpaid
+        LIMIT 1");
+    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpaid);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_certs = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_certs = 1;
-
-        }
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     if ($existing_ssl_certs > 0) {
@@ -211,39 +174,29 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "SELECT a.username AS username, o.name AS owner_name, p.name AS ssl_provider_name
-              FROM ssl_accounts AS a, owners AS o, ssl_providers AS p
-              WHERE a.owner_id = o.id
-                AND a.ssl_provider_id = p.id
-                AND a.id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT a.username AS username, o.name AS owner_name, p.name AS ssl_provider_name
+        FROM ssl_accounts AS a, owners AS o, ssl_providers AS p
+        WHERE a.owner_id = o.id
+          AND a.ssl_provider_id = p.id
+          AND a.id = :sslpaid");
+    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslpaid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_username, $temp_owner_name, $temp_ssl_provider_name);
-        $q->fetch();
-        $q->close();
+        $temp_username = $result->username;
+        $temp_owner_name = $result->owner_name;
+        $temp_ssl_provider_name = $result->ssl_provider_name;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "DELETE FROM ssl_accounts
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $sslpaid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM ssl_accounts
+        WHERE id = :sslpaid");
+    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
@@ -265,57 +218,42 @@ if ($really_del == "1") {
 <?php
 echo $form->showFormTop('');
 
-$query = "SELECT id, `name`
-              FROM ssl_providers
-              ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM ssl_providers
+    ORDER BY `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '1', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, $new_ssl_provider_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_ssl_provider_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
-$query = "SELECT id, `name`
-          FROM owners
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM owners
+    ORDER BY `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, $new_owner_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_owner_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');

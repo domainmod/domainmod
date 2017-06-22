@@ -40,6 +40,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/ssl-add.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -99,83 +100,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_cat_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_ip_id != "0"
         && $new_cat_id != "0" && $new_domain_id != "0" && $new_account_id != "0" && $new_active != '') {
 
-        $query = "SELECT ssl_provider_id, owner_id
-                  FROM ssl_accounts
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT ssl_provider_id, owner_id
+            FROM ssl_accounts
+            WHERE id = :new_account_id");
+        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $new_account_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($new_ssl_provider_id, $new_owner_id);
-            $q->fetch();
-            $q->close();
+            $new_ssl_provider_id = $result->ssl_provider_id;
+            $new_owner_id = $result->owner_id;
 
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
-        $query = "SELECT id, (renewal_fee + misc_fee) AS total_cost
-                  FROM ssl_fees
-                  WHERE ssl_provider_id = ?
-                    AND type_id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT id, (renewal_fee + misc_fee) AS total_cost
+            FROM ssl_fees
+            WHERE ssl_provider_id = :new_ssl_provider_id
+              AND type_id = :new_type_id");
+        $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('ii', $new_ssl_provider_id, $new_type_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($new_fee_id, $new_total_cost);
-            $q->fetch();
-            $q->close();
+            $new_fee_id = $result->id;
+            $new_total_cost = $result->total_cost;
 
-            if ($new_fee_id == "") $new_fee_id = 0;
-            if ($new_total_cost == "") $new_total_cost = 0;
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
-        $query = "INSERT INTO ssl_certs
-                  (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date,
-                   fee_id, total_cost, notes, active, created_by, insert_time)
-                  VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $dbcon->stmt_init();
+        if ($new_fee_id == "") $new_fee_id = 0;
+        if ($new_total_cost == "") $new_total_cost = 0;
 
-        if ($q->prepare($query)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_certs
+            (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date,
+             fee_id, total_cost, notes, active, created_by, insert_time)
+            VALUES
+            (:new_owner_id, :new_ssl_provider_id, :new_account_id, :new_domain_id, :new_name, :new_type_id, :new_ip_id,
+             :new_cat_id, :new_expiry_date, :new_fee_id, :new_total_cost, :new_notes, :new_active, :user_id,
+             :timestamp)");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+        $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
-            $q->bind_param('iiiisiiisidsiis', $new_owner_id, $new_ssl_provider_id, $new_account_id, $new_domain_id,
-                $new_name, $new_type_id, $new_ip_id, $new_cat_id, $new_expiry_date, $new_fee_id, $new_total_cost,
-                $new_notes, $new_active, $_SESSION['s_user_id'], $timestamp);
-            $q->execute();
+        $temp_ssl_id = $pdo->lastInsertId('id');
 
-            $temp_ssl_id = $q->insert_id;
-
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "INSERT INTO ssl_cert_field_data
-                  (ssl_id, insert_time)
-                  VALUES
-                  (?, ?)";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('is', $temp_ssl_id, $timestamp);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_cert_field_data
+            (ssl_id, insert_time)
+            VALUES
+            (:temp_ssl_id, :timestamp)");
+        $stmt->bindValue('temp_ssl_id', $temp_ssl_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
 
         $query = "SELECT field_name
                   FROM ssl_cert_fields

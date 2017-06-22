@@ -30,6 +30,7 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$assets = new DomainMOD\Assets();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
@@ -38,6 +39,7 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/assets-edit-registrar-account.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
@@ -64,89 +66,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
-        $query = "UPDATE registrar_accounts
-                  SET owner_id = ?,
-                      registrar_id = ?,
-                      email_address = ?,
-                      username = ?,
-                      `password` = ?,
-                      reseller = ?,
-                      reseller_id = ?,
-                      api_app_name = ?,
-                      api_key = ?,
-                      api_secret = ?,
-                      api_ip_id = ?,
-                      notes = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            UPDATE registrar_accounts
+            SET owner_id = :new_owner_id,
+                registrar_id = :new_registrar_id,
+                email_address = :new_email_address,
+                username = :new_username,
+                `password` = :new_password,
+                reseller = :new_reseller,
+                reseller_id = :new_reseller_id,
+                api_app_name = :new_api_app_name,
+                api_key = :new_api_key,
+                api_secret = :new_api_secret,
+                api_ip_id = :new_api_ip_id,
+                notes = :new_notes,
+                update_time = :timestamp
+            WHERE id = :new_raid");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
+        $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_key', $new_api_key, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_secret', $new_api_secret, PDO::PARAM_STR);
+        $stmt->bindValue('new_api_ip_id', $new_api_ip_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+        $stmt->execute();
 
-        if ($q->prepare($query)) {
-
-            $timestamp = $time->stamp();
-
-            $q->bind_param('iisssissssissi', $new_owner_id, $new_registrar_id, $new_email_address, $new_username,
-                $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key, $new_api_secret,
-                $new_api_ip_id, $new_notes, $timestamp, $new_raid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "UPDATE domains
-                  SET owner_id = ?
-                  WHERE account_id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('ii', $new_owner_id, $new_raid);
-            $q->execute();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $stmt = $pdo->prepare("
+            UPDATE domains
+            SET owner_id = :new_owner_id
+            WHERE account_id = :new_raid");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+        $stmt->execute();
 
         $raid = $new_raid;
 
-        $query = "SELECT `name`
-                  FROM registrars
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_registrar_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_registrar);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
-
-        $query = "SELECT `name`
-                  FROM owners
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $new_owner_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_owner);
-            $q->fetch();
-            $q->close();
-
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
-        }
+        $temp_registrar = $assets->getRegistrar($new_registrar_id);
+        $temp_owner = $assets->getOwner($new_owner_id);
 
         $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
 
@@ -173,104 +137,84 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name,
-                  api_key, api_secret, api_ip_id, notes
-              FROM registrar_accounts
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name, api_key,
+            api_secret, api_ip_id, notes
+        FROM registrar_accounts
+        WHERE id = :raid");
+    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $raid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($new_owner_id, $new_registrar_id, $new_email_address, $new_username,
-                        $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key,
-                        $new_api_secret, $new_api_ip_id, $new_notes);
-        $q->fetch();
-        $q->close();
+        $new_owner_id = $result->owner_id;
+        $new_registrar_id = $result->registrar_id;
+        $new_email_address = $result->email_address;
+        $new_username = $result->username;
+        $new_password = $result->password;
+        $new_reseller = $result->reseller;
+        $new_reseller_id = $result->reseller_id;
+        $new_api_app_name = $result->api_app_name;
+        $new_api_key = $result->api_key;
+        $new_api_secret = $result->api_secret;
+        $new_api_ip_id = $result->api_ip_id;
+        $new_notes = $result->notes;
 
-    } else {
-
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT account_id
-              FROM domains
-              WHERE account_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT account_id
+        FROM domains
+        WHERE account_id = :raid
+        LIMIT 1");
+    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $raid);
-        $q->execute();
-        $q->store_result();
-
-        if ($q->num_rows() > 0) {
-
-            $existing_domains = 1;
-
-        }
-
-        if ($existing_domains > 0) {
-
-            $_SESSION['s_message_danger'] .= "This Registrar Account has domains associated with it and cannot be deleted<BR>";
-
-        } else {
-
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar Account?<BR><BR><a
-                href=\"registrar-account.php?raid=" . $raid . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
-
-        }
-
-        $q->close();
+        $_SESSION['s_message_danger'] .= "This Registrar Account has domains associated with it and cannot be deleted<BR>";
 
     } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
+
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar Account?<BR><BR><a
+            href=\"registrar-account.php?raid=" . $raid . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR
+            ACCOUNT</a><BR>";
+
     }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
-              FROM registrar_accounts AS ra, owners AS o, registrars AS r
-              WHERE ra.owner_id = o.id
-                AND ra.registrar_id = r.id
-                AND ra.id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
+        FROM registrar_accounts AS ra, owners AS o, registrars AS r
+        WHERE ra.owner_id = o.id
+          AND ra.registrar_id = r.id
+          AND ra.id = :raid");
+    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $raid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_username, $temp_owner_name, $temp_registrar_name);
-        $q->fetch();
-        $q->close();
+        $temp_username = $result->username;
+        $temp_owner_name = $result->owner_name;
+        $temp_registrar_name = $result->registrar_name;
 
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
-    $query = "DELETE FROM registrar_accounts
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $raid);
-        $q->execute();
-        $q->close();
-
-    } else {
-        $error->outputSqlError($dbcon, '1', 'ERROR');
-    }
+    $stmt = $pdo->prepare("
+        DELETE FROM registrar_accounts
+        WHERE id = :raid");
+    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
@@ -281,32 +225,37 @@ if ($really_del == "1") {
 
 }
 
-$query = "SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
-              apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
-              apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status,
-              apir.notes
-          FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
-          WHERE ra.registrar_id = r.id
-            AND r.api_registrar_id = apir.id
-            AND ra.id = ?";
-$q = $dbcon->stmt_init();
+$stmt = $pdo->prepare("
+    SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id, apir.req_api_app_name,
+        apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains, apir.ret_expiry_date,
+        apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status, apir.notes
+    FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
+    WHERE ra.registrar_id = r.id
+      AND r.api_registrar_id = apir.id
+      AND ra.id = :raid");
+$stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetch();
 
-if ($q->prepare($query)) {
+if ($result) {
 
-    $q->bind_param('i', $raid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($api_registrar_name, $req_account_username, $req_account_password, $req_reseller_id,
-                    $req_api_app_name, $req_api_key, $req_api_secret, $req_ip_address, $lists_domains,
-                    $ret_expiry_date, $ret_dns_servers, $ret_privacy_status, $ret_autorenewal_status,
-                    $api_registrar_notes);
-    $q->fetch();
-    $has_api_support = $q->num_rows();
-    $q->close();
+    $api_registrar_name = $result->name;
+    $req_account_username = $result->req_account_username;
+    $req_account_password = $result->req_account_password;
+    $req_reseller_id = $result->req_reseller_id;
+    $req_api_app_name = $result->req_api_app_name;
+    $req_api_key = $result->req_api_key;
+    $req_api_secret = $result->req_api_secret;
+    $req_ip_address = $result->req_ip_address;
+    $lists_domains = $result->lists_domains;
+    $ret_expiry_date = $result->ret_expiry_date;
+    $ret_dns_servers = $result->ret_dns_servers;
+    $ret_privacy_status = $result->ret_privacy_status;
+    $ret_autorenewal_status = $result->ret_autorenewal_status;
+    $api_registrar_notes = $result->notes;
 
-} else {
+    $has_api_support = 1;
 
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 ?>
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
@@ -320,58 +269,42 @@ if ($q->prepare($query)) {
 <?php
 echo $form->showFormTop('');
 
-$query = "SELECT id, `name`
-          FROM registrars
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM registrars
+    ORDER BY `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, $new_registrar_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_registrar_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
-$query = "SELECT id, `name`
-          FROM owners
-          ORDER BY `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM owners
+    ORDER BY `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+if ($result) {
 
     echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($id, $name, $new_owner_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_owner_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
@@ -479,33 +412,25 @@ if ($has_api_support >= 1) { ?>
             echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '', '');
             echo $form->showInputText('new_api_secret', 'API Secret', '', $new_api_secret, '255', '', '', '', '');
 
-            $query = "SELECT id, `name`, ip
-                      FROM ip_addresses
-                      ORDER BY `name` ASC";
-            $q = $dbcon->stmt_init();
+            $result = $pdo->query("
+                SELECT id, `name`, ip
+                FROM ip_addresses
+                ORDER BY `name` ASC")->fetchAll();
 
-            if ($q->prepare($query)) {
-
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($id, $name, $ip_address);
+            if ($result) {
 
                 echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access. <a href="' . $web_root . '/assets/add/ip-address.php">Click here</a> to add a new IP Address.', '', '');
 
                 echo $form->showDropdownOption('0', 'n/a', '0');
 
-                while ($q->fetch()) {
+                foreach ($result as $row) {
 
-                    echo $form->showDropdownOption($id, $name . ' (' . $ip_address . ')', $new_api_ip_id);
+                    echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_api_ip_id);
 
                 }
 
                 echo $form->showDropdownBottom('');
 
-                $q->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
             } ?>
 
         </div>

@@ -40,39 +40,54 @@ require_once(DIR_INC . '/debug.inc.php');
 require_once(DIR_INC . '/settings/queue-add.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_raid = $_REQUEST['new_raid'];
 $raw_domain_list = $_POST['raw_domain_list'];
 
-if ($new_raid != '' ) {
+if ($new_raid != '') {
 
-    $query = "SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
-                  apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
-                  apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status,
-                  apir.notes, ra.username, ra.password, ra.reseller_id, ra.api_app_name, ra.api_key, ra.api_secret,
-                  ra.api_ip_id
-              FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
-              WHERE ra.registrar_id = r.id
-                AND r.api_registrar_id = apir.id
-                AND ra.id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
+            apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
+            apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status,
+            apir.notes, ra.username, ra.password, ra.reseller_id, ra.api_app_name, ra.api_key, ra.api_secret,
+            ra.api_ip_id
+        FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
+        WHERE ra.registrar_id = r.id
+          AND r.api_registrar_id = apir.id
+          AND ra.id = :new_raid");
+    $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
-    
-        $q->bind_param('i', $new_raid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($api_registrar_name, $req_account_username, $req_account_password, $req_reseller_id,
-                        $req_api_app_name, $req_api_key, $req_api_secret, $req_ip_address, $lists_domains,
-                        $ret_expiry_date, $ret_dns_servers, $ret_privacy_status, $ret_autorenewal_status,
-                        $registrar_notes, $account_username, $account_password, $reseller_id, $api_app_name, $api_key,
-                        $api_secret, $api_ip_id);
-        $q->fetch();
-        $q->close();
-    
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    if ($result) {
+
+        $api_registrar_name = $result->name;
+        $req_account_username = $result->req_account_username;
+        $req_account_password = $result->req_account_password;
+        $req_reseller_id = $result->req_reseller_id;
+        $req_api_app_name = $result->req_api_app_name;
+        $req_api_key = $result->req_api_key;
+        $req_api_secret = $result->req_api_secret;
+        $req_ip_address = $result->req_ip_address;
+        $lists_domains = $result->lists_domains;
+        $ret_expiry_date = $result->ret_expiry_date;
+        $ret_dns_servers = $result->ret_dns_servers;
+        $ret_privacy_status = $result->ret_privacy_status;
+        $ret_autorenewal_status = $result->ret_autorenewal_status;
+        $registrar_notes = $result->notes;
+        $account_username = $result->username;
+        $account_password = $result->password;
+        $reseller_id = $result->reseller_id;
+        $api_app_name = $result->api_app_name;
+        $api_key = $result->api_key;
+        $api_secret = $result->api_key;
+        $api_ip_id = $result->api_ip_id;
+
+    }
 
 }
 
@@ -90,46 +105,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $query = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                      FROM registrar_accounts AS ra, registrars AS r
-                      WHERE ra.registrar_id = r.id
-                        AND ra.id = ?";
-            $q = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                FROM registrar_accounts AS ra, registrars AS r
+                WHERE ra.registrar_id = r.id
+                  AND ra.id = :new_raid");
+            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-            if ($q->prepare($query)) {
+            if ($result) {
 
-                $q->bind_param('i', $new_raid);
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($t_owner_id, $t_registrar_id, $t_api_registrar_id);
+                $temp_owner_id = $result->owner_id;
+                $temp_registrar_id = $result->registrar_id;
+                $temp_api_registrar_id = $result->api_registrar_id;
 
-                while ($q->fetch()) {
+            }
 
-                    $temp_owner_id = $t_owner_id;
-                    $temp_registrar_id = $t_registrar_id;
-                    $temp_api_registrar_id = $t_api_registrar_id;
-
-                }
-
-                $q->close();
-
-            } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-            $query = "INSERT INTO domain_queue_list
-                      (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
-                      VALUES
-                      (?, ?, ?, ?, ?, ?)";
-            $q = $dbcon->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $timestamp = $time->stamp();
-
-                $q->bind_param('iiiiis', $temp_api_registrar_id, $temp_owner_id, $temp_registrar_id, $new_raid, $_SESSION['s_user_id'], $timestamp);
-                $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to add registrar account to list queue');
-                $q->close();
-
-            } else $error->outputSqlError($dbcon, '1', 'ERROR');
+            $stmt = $pdo->prepare("
+                INSERT INTO domain_queue_list
+                (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
+                VALUES
+                (:api_registrar_id, :owner_id, :registrar_id, :new_raid, :user_id, :timestamp)");
+            $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
 
             $_SESSION['s_domains_in_list_queue'] = '1';
 
@@ -144,54 +149,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              // problem with he automatic import, use the list supplied
 
         // check to make sure that the registrar associated with the account has API support
-        $query = "SELECT ra.id, ra.registrar_id
-                  FROM registrar_accounts AS ra, registrars AS r, api_registrars AS ar
-                  WHERE ra.registrar_id = r.id
-                    AND r.api_registrar_id = ar.id
-                    AND ra.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT ra.id, ra.registrar_id
+            FROM registrar_accounts AS ra, registrars AS r, api_registrars AS ar
+            WHERE ra.registrar_id = r.id
+              AND r.api_registrar_id = ar.id
+              AND ra.id = :new_raid");
+        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $new_raid);
-            $q->execute();
-            $q->store_result();
+            $has_api_support = '1';
 
-            if ($q->num_rows() == 0) {
+        } else {
 
-                $query2 = "SELECT registrar_id
-                           FROM registrar_accounts
-                           WHERE id = ?";
-                $q2 = $dbcon->stmt_init();
+            $stmt2 = $pdo->prepare("
+                SELECT registrar_id
+                FROM registrar_accounts
+                WHERE id = :new_raid");
+            $stmt2->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+            $stmt2->execute();
+            $temp_registrar_id = $stmt2->fetchColumn();
 
-                if ($q2->prepare($query2)) {
+            $has_api_support = '0';
 
-                    $q2->bind_param('i', $new_raid);
-                    $q2->execute();
-                    $q2->store_result();
-                    $q2->bind_result($t_rid);
-
-                    while ($q2->fetch()) {
-
-                        $temp_registrar_id = $t_rid;
-
-                    }
-
-                    $q2->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                $has_api_support = '0';
-
-            } else {
-
-                $has_api_support = '1';
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
         if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
 
@@ -249,22 +233,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // cycle through domains here
                 while (list($key, $new_domain) = each($domain_array)) {
 
-                    $query = "SELECT domain
-                              FROM domains
-                              WHERE domain = ?";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT domain
+                        FROM domains
+                        WHERE domain = :new_domain");
+                    $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('s', $new_domain);
-                        $q->execute();
-                        $q->store_result();
-
-                        if ($q->num_rows() > 0) {
-
-                            $has_existing_domains = '1';
-
-                        }
+                        $has_existing_domains = '1';
 
                     }
 
@@ -275,22 +254,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // cycle through domains here
                 while (list($key, $new_domain) = each($domain_array)) {
 
-                    $query = "SELECT domain
-                              FROM domain_queue
-                              WHERE domain = ?";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT domain
+                        FROM domain_queue
+                        WHERE domain = :new_domain");
+                    $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('s', $new_domain);
-                        $q->execute();
-                        $q->store_result();
-
-                        if ($q->num_rows() > 0) {
-
-                            $has_existing_domains_queue = '1';
-
-                        }
+                        $has_existing_domains_queue = '1';
 
                     }
 
@@ -306,30 +280,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $query = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                              FROM registrar_accounts AS ra, registrars AS r
-                              WHERE ra.registrar_id = r.id
-                                AND ra.id = ?";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                        FROM registrar_accounts AS ra, registrars AS r
+                        WHERE ra.registrar_id = r.id
+                          AND ra.id = :raid");
+                    $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $result = $stmt->fetch();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('i', $new_raid);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($t_oid, $t_rid, $t_apirid);
+                        $temp_owner_id = $result->owner_id;
+                        $temp_registrar_id = $result->registrar_id;
+                        $temp_api_registrar_id = $result->api_registrar_id;
 
-                        while ($q->fetch()) {
-
-                            $temp_owner_id = $t_oid;
-                            $temp_registrar_id = $t_rid;
-                            $temp_api_registrar_id = $t_apirid;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    }
 
                     reset($domain_array);
 
@@ -339,22 +305,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $domain_temp = new DomainMOD\Domain();
                         $new_tld = $domain_temp->getTld($new_domain);
 
-                        $query = "INSERT INTO domain_queue
-                                  (api_registrar_id, domain, owner_id, registrar_id, account_id, tld, created_by, insert_time)
-                                  VALUES
-                                  (?, ?, ?, ?, ?, ?, ?, ?)";
-                        $q = $dbcon->stmt_init();
-
-                        if ($q->prepare($query)) {
-
-                            $timestamp = $time->stamp();
-
-                            $q->bind_param('isiiisis', $temp_api_registrar_id, $new_domain, $temp_owner_id, $temp_registrar_id,
-                                $new_raid, $new_tld, $_SESSION['s_user_id'], $timestamp);
-                            $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to add domains to queue');
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                        $stmt = $pdo->prepare("
+                            INSERT INTO domain_queue
+                            (api_registrar_id, domain, owner_id, registrar_id, account_id, tld, created_by, insert_time)
+                            VALUES
+                            (:api_registrar_id, :new_domain, :owner_id, :registrar_id, :new_raid, :new_tld, :user_id, :timestamp)");
+                        $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                        $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
+                        $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                        $timestamp = $time->stamp();
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->execute();
 
                     } // finish cycling through domains here
 
@@ -396,17 +361,17 @@ echo $form->showFormTop('');
 
 echo $form->showDropdownTopJump('', '', '', '');
 
-$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                WHERE ra.owner_id = o.id
-                  AND ra.registrar_id = r.id
-                  AND r.api_registrar_id != '0'
-                ORDER BY r_name, o_name, ra.username";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
+$result_account = $pdo->query("
+    SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+    WHERE ra.owner_id = o.id
+      AND ra.registrar_id = r.id
+      AND r.api_registrar_id != '0'
+    ORDER BY r_name, o_name, ra.username")->fetchAll();
 
 echo $form->showDropdownOptionJump('add.php', '', 'Choose the Registrar Account to import', '');
 
-while ($row_account = mysqli_fetch_object($result_account)) {
+foreach ($result_account as $row_account) {
 
     echo $form->showDropdownOptionJump('add.php?new_raid=', $row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_raid);
 
