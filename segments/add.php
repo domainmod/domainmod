@@ -23,8 +23,7 @@
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
 
-require_once DIR_ROOT . '/classes/Autoloader.php';
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+require_once DIR_ROOT . '/vendor/autoload.php';
 
 $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();

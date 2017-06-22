@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
 {
     public static $prefixLengthsPsr4 = array (
+        'D' => 
+        array (
+            'DomainMOD\\' => 10,
+        ),
         'C' => 
         array (
             'Cron\\' => 5,
@@ -14,6 +18,10 @@ class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
     );
 
     public static $prefixDirsPsr4 = array (
+        'DomainMOD\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/classes/DomainMOD',
+        ),
         'Cron\\' => 
         array (
             0 => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron',

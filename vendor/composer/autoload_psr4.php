@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'DomainMOD\\' => array($baseDir . '/classes/DomainMOD'),
     'Cron\\' => array($vendorDir . '/mtdowling/cron-expression/src/Cron'),
 );
