@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-require_once('../_includes/start-session.inc.php');
-require_once('../_includes/init.inc.php');
+require_once __DIR__ . '/../_includes/start-session.inc.php';
+require_once __DIR__ . '/../_includes/init.inc.php';
 
-require_once(DIR_ROOT . '/classes/Autoloader.php');
+require_once DIR_ROOT . '/classes/Autoloader.php';
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -31,11 +31,11 @@ $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
 
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/database.inc.php');
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/database.inc.php';
 
 $system->authCheck();
 
@@ -280,16 +280,16 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php
 $page_align = 'left';
-require_once(DIR_INC . '/layout/header-bare.inc.php'); ?>
+require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
 <?php
 $query = "SELECT `name`
           FROM segments
@@ -336,6 +336,6 @@ while ($qd->fetch()) {
 }
 $qd->close;
 ?>
-<?php require_once(DIR_INC . '/layout/footer-bare.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

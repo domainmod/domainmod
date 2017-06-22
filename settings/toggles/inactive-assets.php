@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-require_once('../../_includes/start-session.inc.php');
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
 
 if ($_SESSION['s_display_inactive_assets'] == '1') {
 

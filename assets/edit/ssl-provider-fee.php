@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-require_once('../../_includes/start-session.inc.php');
-require_once('../../_includes/init.inc.php');
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
 
-require_once(DIR_ROOT . '/classes/Autoloader.php');
+require_once DIR_ROOT . '/classes/Autoloader.php';
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -34,12 +34,12 @@ $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
 $assets = new DomainMOD\Assets();
 
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/settings/assets-edit-ssl-provider-fee.inc.php');
-require_once(DIR_INC . '/database.inc.php');
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/assets-edit-ssl-provider-fee.inc.php';
+require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -150,14 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <a href="../ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
@@ -203,6 +203,6 @@ echo $form->showInputHidden('new_type_id', $new_type_id);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

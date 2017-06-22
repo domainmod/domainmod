@@ -41,6 +41,6 @@ if ($_SESSION['s_system_local_php_log'] == '1') {
 // For Troubleshooting -- Include the helper file if it exists
 if (file_exists(DIR_ROOT . '/helper.php')) {
 
-    require_once(DIR_ROOT . '/helper.php');
+    require_once DIR_ROOT . '/helper.php';
 
 }

@@ -34,7 +34,7 @@ class Smtp
 
     public function send($reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
     {
-        require_once(DIR_ROOT . '/vendor/autoload.php');
+        require_once DIR_ROOT . '/vendor/autoload.php';
         $mail = new \PHPMailer();
 
         list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings();

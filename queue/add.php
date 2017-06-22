@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-require_once('../_includes/start-session.inc.php');
-require_once('../_includes/init.inc.php');
+require_once __DIR__ . '/../_includes/start-session.inc.php';
+require_once __DIR__ . '/../_includes/init.inc.php';
 
-require_once(DIR_ROOT . '/classes/Autoloader.php');
+require_once DIR_ROOT . '/classes/Autoloader.php';
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -33,12 +33,12 @@ $domain = new DomainMOD\Domain();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/settings/queue-add.inc.php');
-require_once(DIR_INC . '/database.inc.php');
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/queue-add.inc.php';
+require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -340,15 +340,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <strong>Domain Queue & API Prerequisites</strong><BR>
 Before you can add domains to DomainMOD using the Domain Queue you must first do the following:
 <ol>
@@ -458,6 +458,6 @@ if ($new_raid != '') {
 echo $form->showInputHidden('new_raid', $new_raid);
 echo $form->showFormBottom('');
 ?>
-<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

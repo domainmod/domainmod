@@ -30,7 +30,7 @@ class Autoloader
 
         $class_path = DIR_ROOT . '/classes/';
         $class_base = preg_replace("/\\\\/", "/", $class_full);
-        require_once($class_path . $class_base . '.php');
+        require_once $class_path . $class_base . '.php';
 
     }
 

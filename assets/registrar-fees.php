@@ -20,10 +20,10 @@
  */
 ?>
 <?php //@formatter:off
-require_once('../_includes/start-session.inc.php');
-require_once('../_includes/init.inc.php');
+require_once __DIR__ . '/../_includes/start-session.inc.php';
+require_once __DIR__ . '/../_includes/init.inc.php';
 
-require_once(DIR_ROOT . '/classes/Autoloader.php');
+require_once DIR_ROOT . '/classes/Autoloader.php';
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -33,12 +33,12 @@ $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
 $assets = new DomainMOD\Assets();
 
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/settings/assets-registrar-fees.inc.php');
-require_once(DIR_INC . '/database.inc.php');
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/assets-registrar-fees.inc.php';
+require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -108,14 +108,14 @@ if ($export_data == '1') {
 
 }
 ?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 Below is a list of all the fees associated with <a href="edit/registrar.php?rid=<?php echo urlencode($rid); ?>"><?php echo $registrar_name; ?></a>.<BR><BR>
 <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>
 <a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
@@ -248,6 +248,6 @@ if (!$result) { ?>
     </table><?php
 
 }
-require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>
+require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

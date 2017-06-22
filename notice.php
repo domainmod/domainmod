@@ -20,21 +20,21 @@
  */
 ?>
 <?php
-require_once('_includes/start-session.inc.php');
-require_once('_includes/init.inc.php');
+require_once __DIR__ . '/_includes/start-session.inc.php';
+require_once __DIR__ . '/_includes/init.inc.php';
 
-require_once(DIR_ROOT . '/classes/Autoloader.php');
+require_once DIR_ROOT . '/classes/Autoloader.php';
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 $notice = new DomainMOD\Notice();
 
-require_once(DIR_INC . '/head.inc.php');
-require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
-require_once(DIR_INC . '/debug.inc.php');
-require_once(DIR_INC . '/settings/system-notice.inc.php');
-require_once(DIR_INC . '/database.inc.php');
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/system-notice.inc.php';
+require_once DIR_INC . '/database.inc.php';
 
 $system->authCheck();
 
@@ -43,20 +43,20 @@ $action = $_GET['a'];
 // u = Upgrade DomainMOD Database
 if ($action = 'u') $notice->dbUpgrade();
 ?>
-<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
-    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php
 $page_align = 'center';
-require_once(DIR_INC . '/layout/header-bare.inc.php'); ?>
+require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
 <?php
 echo '<strong>' . $_SESSION['s_notice_page_title'] . '</strong><BR>';
 echo $_SESSION['s_notice'];
 ?><BR><BR>
-<?php require_once(DIR_INC . '/layout/footer-bare.inc.php'); ?>
+<?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

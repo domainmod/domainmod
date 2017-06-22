@@ -35,6 +35,6 @@ if ($_SESSION['s_message_success'] != "") {
     unset($_SESSION['s_message_success']);
 }
 
-require_once(DIR_INC . '/layout/table-maintenance.inc.php');
+require_once DIR_INC . '/layout/table-maintenance.inc.php';
 ?>
   <div class="login-box-body">
