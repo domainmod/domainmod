@@ -24,12 +24,16 @@ namespace DomainMOD;
 class DwZones
 {
     public $system;
+    public $log;
     public $time;
+    public $dwbuild;
 
     public function __construct()
     {
         $this->system = new System();
+        $this->log = new Log('dwzones.class');
         $this->time = new Time();
+        $this->dwbuild = new DwBuild();
     }
 
     public function createTable()
@@ -47,16 +51,21 @@ class DwZones
 
     public function getApiCall()
     {
-        return "/xml-api/listzones";
+        return "/json-api/listzones?api.version=1";
     }
 
     public function insertZones($api_results, $server_id)
     {
         $pdo = $this->system->db();
+        $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($api_results !== false) {
+        if ($array_results['metadata']['result'] !== 1) {
 
-            $xml = simplexml_load_string($api_results);
+            $log_message = 'Unable to retrieve DNS Zones from WHM';
+            $log_extra = array('Server ID' => $server_id, 'API Results' => $array_results);
+            $this->log->error($log_message, $log_extra);
+
+        } else {
 
             $stmt = $pdo->prepare("
                 INSERT INTO dw_dns_zones
@@ -69,10 +78,10 @@ class DwZones
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($xml->zone as $hit) {
+            foreach ($array_results['data']['zone'] as $zone) {
 
-                $bind_domain = $hit->domain;
-                $bind_zonefile = $hit->zonefile;
+                $bind_domain = $zone['domain'] ? $zone['domain'] : '';
+                $bind_zonefile = $zone['zonefile'] ? $zone['zonefile'] : '';
                 $stmt->execute();
 
             }
@@ -114,6 +123,31 @@ class DwZones
         return $this->system->db()->query("
             SELECT count(*)
             FROM `dw_dns_zones`")->fetchColumn();
+    }
+
+    public function checkForZones($domain)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM dw_dns_zones
+            WHERE domain = :domain
+            LIMIT 1");
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if ($result) {
+
+            return 1;
+
+        } else {
+
+            return 0;
+
+        }
+
     }
 
 } //@formatter:on

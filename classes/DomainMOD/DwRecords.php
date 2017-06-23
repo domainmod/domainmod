@@ -24,12 +24,16 @@ namespace DomainMOD;
 class DwRecords
 {
     public $system;
+    public $log;
     public $time;
+    public $dwbuild;
 
     public function __construct()
     {
         $this->system = new System();
+        $this->log = new Log('dwrecords.class');
         $this->time = new Time();
+        $this->dwbuild = new DwBuild();
     }
 
     public function createTable()
@@ -45,7 +49,7 @@ class DwRecords
                 mname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 rname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `serial` INT(20) NOT NULL,
-                refresh INT(10) NOT NULL,
+                refresh VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 retry INT(10) NOT NULL,
                 expire VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 minimum INT(10) NOT NULL,
@@ -58,9 +62,9 @@ class DwRecords
                 cname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `exchange` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 preference INT(10) NOT NULL,
-                txtdata VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                txtdata LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 line INT(10) NOT NULL,
-                nlines INT(10) NOT NULL,
+                nlines VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 raw LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 formatted_line VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 formatted_type VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -72,16 +76,21 @@ class DwRecords
 
     public function getApiCall($domain)
     {
-        return "/xml-api/dumpzone?domain=" . $domain;
+        return "/json-api/dumpzone?api.version=1&domain=" . $domain;
     }
 
     public function insertRecords($api_results, $server_id, $zone_id, $domain)
     {
         $pdo = $this->system->db();
+        $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($api_results !== false) {
+        if ($array_results['metadata']['result'] !== 1) {
 
-            $xml = simplexml_load_string($api_results);
+            $log_message = 'Unable to retrieve DNS Records from WHM';
+            $log_extra = array('Server ID' => $server_id, 'Domain' => $domain, 'Zone ID' => $zone_id, 'API Results' => $array_results);
+            $this->log->error($log_message, $log_extra);
+
+        } else {
 
             $stmt = $pdo->prepare("
                 INSERT INTO dw_dns_records
@@ -90,7 +99,7 @@ class DwRecords
                  txtdata, line, nlines, raw, insert_time)
                 VALUES
                 (:server_id, :zone_id, :domain, :mname, :rname, :serial, :refresh, :retry, :expire, :minimum, :nsdname,
-                 :name, :ttl, :class, :type, :address, :cname, :exchange, :preference, :txtdata, :line, :lines, :raw,
+                 :name, :ttl, :class, :type, :address, :cname, :exchange, :preference, :txtdata, :line, :nlines, :raw,
                  :insert_time)");
             $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
             $stmt->bindValue('zone_id', $zone_id, \PDO::PARAM_INT);
@@ -98,7 +107,7 @@ class DwRecords
             $stmt->bindParam('mname', $bind_mname, \PDO::PARAM_STR);
             $stmt->bindParam('rname', $bind_rname, \PDO::PARAM_STR);
             $stmt->bindParam('serial', $bind_serial, \PDO::PARAM_INT);
-            $stmt->bindParam('refresh', $bind_refresh, \PDO::PARAM_INT);
+            $stmt->bindParam('refresh', $bind_refresh, \PDO::PARAM_STR);
             $stmt->bindParam('retry', $bind_retry, \PDO::PARAM_INT);
             $stmt->bindParam('expire', $bind_expire, \PDO::PARAM_STR);
             $stmt->bindParam('minimum', $bind_minimum, \PDO::PARAM_INT);
@@ -111,35 +120,35 @@ class DwRecords
             $stmt->bindParam('cname', $bind_cname, \PDO::PARAM_STR);
             $stmt->bindParam('exchange', $bind_exchange, \PDO::PARAM_STR);
             $stmt->bindParam('preference', $bind_preference, \PDO::PARAM_INT);
-            $stmt->bindParam('txtdata', $bind_txtdata, \PDO::PARAM_STR);
+            $stmt->bindParam('txtdata', $bind_txtdata, \PDO::PARAM_LOB);
             $stmt->bindParam('line', $bind_line, \PDO::PARAM_INT);
-            $stmt->bindParam('lines', $bind_lines, \PDO::PARAM_INT);
+            $stmt->bindParam('nlines', $bind_nlines, \PDO::PARAM_STR);
             $stmt->bindParam('raw', $bind_raw, \PDO::PARAM_LOB);
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($xml->result->record as $hit) {
+            foreach ($array_results['data']['zone'][0]['record'] as $record) {
 
-                $bind_mname = $hit->mname;
-                $bind_rname = $hit->rname;
-                $bind_serial = $hit->serial;
-                $bind_refresh = $hit->refresh;
-                $bind_retry = $hit->retry;
-                $bind_expire = $hit->expire;
-                $bind_minimum = $hit->minimum;
-                $bind_nsdname = $hit->nsdname;
-                $bind_name = $hit->name;
-                $bind_ttl = $hit->ttl;
-                $bind_class = $hit->class;
-                $bind_type = $hit->type;
-                $bind_address = $hit->address;
-                $bind_cname = $hit->cname;
-                $bind_exchange = $hit->exchange;
-                $bind_preference = $hit->preference;
-                $bind_txtdata = $hit->txtdata;
-                $bind_line = $hit->Line;
-                $bind_lines = $hit->Lines;
-                $bind_raw = $hit->raw;
+                $bind_mname = $record['mname'] ? $record['mname'] : '';
+                $bind_rname = $record['rname'] ? $record['rname'] : '';
+                $bind_serial = $record['serial'] ? $record['serial'] : 0;
+                $bind_refresh = $record['refresh'] ? $record['refresh'] : '';
+                $bind_retry = $record['retry'] ? $record['retry'] : 0;
+                $bind_expire = $record['expire'] ? $record['expire'] : '';
+                $bind_minimum = $record['minimum'] ? $record['minimum'] : 0;
+                $bind_nsdname = $record['nsdname'] ? $record['nsdname'] : '';
+                $bind_name = $record['name'] ? $record['name'] : '';
+                $bind_ttl = $record['ttl'] ? $record['ttl'] : 0;
+                $bind_class = $record['class'] ? $record['class'] : '';
+                $bind_type = $record['type'] ? $record['type'] : '';
+                $bind_address = $record['address'] ? $record['address'] : '';
+                $bind_cname = $record['cname'] ? $record['cname'] : '';
+                $bind_exchange = $record['exchange'] ? $record['exchange'] : '';
+                $bind_preference = $record['preference'] ? $record['preference'] : 0;
+                $bind_txtdata = $record['txtdata'] ? $record['txtdata'] : '';
+                $bind_line = $record['Line'] ? $record['Line'] : 0;
+                $bind_nlines = $record['Lines'] ? $record['Lines'] : '';
+                $bind_raw = $record['raw'] ? $record['raw'] : '';
                 $stmt->execute();
 
             }

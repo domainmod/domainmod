@@ -194,4 +194,9 @@ class DwBuild
         return $api_results;
     }
 
+    public function convertToArray($api_result)
+    {
+        return json_decode($api_result, true);
+    }
+
 } //@formatter:on

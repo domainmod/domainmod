@@ -24,12 +24,16 @@ namespace DomainMOD;
 class DwAccounts
 {
     public $system;
+    public $log;
     public $time;
+    public $dwbuild;
 
     public function __construct()
     {
         $this->system = new System();
+        $this->log = new Log('dwaccounts.class');
         $this->time = new Time();
+        $this->dwbuild = new DwBuild();
     }
 
     public function createTable()
@@ -57,13 +61,13 @@ class DwAccounts
                 maxsql VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 maxsub VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                unix_startdate INT(10) NOT NULL,
-                suspended INT(1) NOT NULL,
+                unix_startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                suspended TINYINT(1) NOT NULL,
                 suspendreason VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                suspendtime INT(10) NOT NULL,
-                MAX_EMAIL_PER_HOUR INT(10) NOT NULL,
-                MAX_DEFER_FAIL_PERCENTAGE INT(10) NOT NULL,
-                MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION INT(10) NOT NULL,
+                suspendtime VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                max_email_per_hour VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                max_defer_fail_percentage VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                min_defer_fail_to_trigger_protection VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 insert_time DATETIME NOT NULL,
                 PRIMARY KEY  (id)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -71,23 +75,28 @@ class DwAccounts
 
     public function getApiCall()
     {
-        return "/xml-api/listaccts?searchtype=domain&search=";
+        return "/json-api/listaccts?api.version=1&searchtype=domain&search=";
     }
 
     public function insertAccounts($api_results, $server_id)
     {
         $pdo = $this->system->db();
+        $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($api_results !== false) {
+        if ($array_results['metadata']['result'] !== 1) {
 
-            $xml = simplexml_load_string($api_results);
+            $log_message = 'Unable to retrieve Accounts from WHM';
+            $log_extra = array('Server ID' => $server_id, 'API Results' => $array_results);
+            $this->log->error($log_message, $log_extra);
+
+        } else {
 
             $stmt = $pdo->prepare("
                 INSERT INTO dw_accounts
                 (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
                  diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate,
-                 unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR,
-                 MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
+                 unix_startdate, suspended, suspendreason, suspendtime, max_email_per_hour,
+                 max_defer_fail_percentage, min_defer_fail_to_trigger_protection, insert_time)
                 VALUES
                 (:server_id, :domain, :ip, :owner, :user, :email, :plan, :theme, :shell, :partition, :disklimit,
                  :diskused, :maxaddons, :maxftp, :maxlst, :maxparked, :maxpop, :maxsql, :maxsub, :startdate,
@@ -113,49 +122,50 @@ class DwAccounts
             $stmt->bindParam('maxsql', $bind_maxsql, \PDO::PARAM_STR);
             $stmt->bindParam('maxsub', $bind_maxsub, \PDO::PARAM_STR);
             $stmt->bindParam('startdate', $bind_startdate, \PDO::PARAM_STR);
-            $stmt->bindParam('unix_startdate', $bind_unix_startdate, \PDO::PARAM_INT);
+            $stmt->bindParam('unix_startdate', $bind_unix_startdate, \PDO::PARAM_STR);
             $stmt->bindParam('suspended', $bind_suspended, \PDO::PARAM_INT);
             $stmt->bindParam('suspendreason', $bind_suspendreason, \PDO::PARAM_STR);
-            $stmt->bindParam('suspendtime', $bind_suspendtime, \PDO::PARAM_INT);
-            $stmt->bindParam('max_email_per_hour', $bind_MAX_EMAIL_PER_HOUR, \PDO::PARAM_INT);
-            $stmt->bindParam('max_defer_fail_percentage', $bind_MAX_DEFER_FAIL_PERCENTAGE, \PDO::PARAM_INT);
-            $stmt->bindParam('min_defer_fail_to_trigger_protection', $bind_MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, \PDO::PARAM_INT);
+            $stmt->bindParam('suspendtime', $bind_suspendtime, \PDO::PARAM_STR);
+            $stmt->bindParam('max_email_per_hour', $bind_max_email_per_hour, \PDO::PARAM_STR);
+            $stmt->bindParam('max_defer_fail_percentage', $bind_max_defer_fail_percentage, \PDO::PARAM_STR);
+            $stmt->bindParam('min_defer_fail_to_trigger_protection', $bind_min_defer_fail_to_trigger_protection, \PDO::PARAM_STR);
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($xml->acct as $hit) {
+            foreach ($array_results['data']['acct'] as $account) {
 
-                $bind_domain = $hit->domain;
-                $bind_ip = $hit->ip;
-                $bind_owner = $hit->owner;
-                $bind_user = $hit->user;
-                $bind_email = $hit->email;
-                $bind_plan = $hit->plan;
-                $bind_theme = $hit->theme;
-                $bind_shell = $hit->shell;
-                $bind_partition = $hit->partition;
-                $bind_disklimit_formatted = rtrim($hit->disklimit, 'M');
-                $bind_diskused_formatted = rtrim($hit->diskused, 'M');
-                $bind_maxaddons = $hit->maxaddons;
-                $bind_maxftp = $hit->maxftp;
-                $bind_maxlst = $hit->maxlst;
-                $bind_maxparked = $hit->maxparked;
-                $bind_maxpop = $hit->maxpop;
-                $bind_maxsql = $hit->maxsql;
-                $bind_maxsub = $hit->maxsub;
-                $bind_startdate = $hit->startdate;
-                $bind_unix_startdate = $hit->unix_startdate;
-                $bind_suspended = $hit->suspended;
-                $bind_suspendreason = $hit->suspendreason;
-                $bind_suspendtime = $hit->suspendtime;
-                $bind_MAX_EMAIL_PER_HOUR = $hit->MAX_EMAIL_PER_HOUR;
-                $bind_MAX_DEFER_FAIL_PERCENTAGE = $hit->MAX_DEFER_FAIL_PERCENTAGE;
-                $bind_MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION = $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION;
+                $bind_domain = $account['domain'] ? $account['domain'] : '';
+                $bind_ip = $account['ip'] ? $account['ip'] : '';
+                $bind_owner = $account['owner'] ? $account['owner'] : '';
+                $bind_user = $account['user'] ? $account['user'] : '';
+                $bind_email = $account['email'] ? $account['email'] : '';
+                $bind_plan = $account['plan'] ? $account['plan'] : '';
+                $bind_theme = $account['theme'] ? $account['theme'] : '';
+                $bind_shell = $account['shell'] ? $account['shell'] : '';
+                $bind_partition = $account['partition'] ? $account['partition'] : '';
+                $bind_disklimit_formatted = $account['disklimit'] ? rtrim($account['disklimit'], 'M') : '';
+                $bind_diskused_formatted = $account['diskused'] ? rtrim($account['diskused'], 'M') : '';
+                $bind_maxaddons = $account['maxaddons'] ? $account['maxaddons'] : '';
+                $bind_maxftp = $account['maxftp'] ? $account['maxftp'] : '';
+                $bind_maxlst = $account['maxlst'] ? $account['maxlst'] : '';
+                $bind_maxparked = $account['maxparked'] ? $account['maxparked'] : '';
+                $bind_maxpop = $account['maxpop'] ? $account['maxpop'] : '';
+                $bind_maxsql = $account['maxsql'] ? $account['maxsql'] : '';
+                $bind_maxsub = $account['maxsub'] ? $account['maxsub'] : '';
+                $bind_startdate = $account['startdate'] ? $account['startdate'] : '';
+                $bind_unix_startdate = $account['unix_startdate'] ? $account['unix_startdate'] : '';
+                $bind_suspended = $account['suspended'] ? $account['suspended'] : 0;
+                $bind_suspendreason = $account['suspendreason'] ? $account['suspendreason'] : '';
+                $bind_suspendtime = $account['suspendtime'] ? $account['suspendtime'] : '';
+                $bind_max_email_per_hour = $account['max_email_per_hour'] ? $account['max_email_per_hour'] : '';
+                $bind_max_defer_fail_percentage = $account['max_defer_fail_percentage'] ? $account['max_defer_fail_percentage'] : '';
+                $bind_min_defer_fail_to_trigger_protection = $account['min_defer_fail_to_trigger_protection'] ? $account['min_defer_fail_to_trigger_protection'] : '';
                 $stmt->execute();
 
             }
 
         }
+
     }
 
     public function getTotalDwAccounts()
@@ -163,6 +173,31 @@ class DwAccounts
         return $this->system->db()->query("
             SELECT count(*)
             FROM `dw_accounts`")->fetchColumn();
+    }
+
+    public function checkForAccounts($domain)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM dw_accounts
+            WHERE domain = :domain
+            LIMIT 1");
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if ($result) {
+
+            return 1;
+
+        } else {
+
+            return 0;
+
+        }
+
     }
 
 } //@formatter:on
