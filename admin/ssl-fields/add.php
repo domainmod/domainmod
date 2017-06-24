@@ -151,7 +151,7 @@ if ($result) {
 
     foreach ($result as $row) {
 
-        echo $form->showDropdownOption($row->id, $row->name, '');
+        echo $form->showDropdownOption($row->id, $row->name, $new_field_type_id);
 
     }
 

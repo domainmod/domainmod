@@ -274,7 +274,7 @@ if ($export_data == '1') {
 
                 } else {
 
-                    list($export_ip_name, $export_ip_address) = $assets->getIpAndName($row_domains->ip_id);
+                    list($export_ip_address, $export_ip_name) = $assets->getIpAndName($row_domains->ip_id);
 
                     if ($row_domains->hosting_id == '0') {
 

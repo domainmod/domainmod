@@ -268,39 +268,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
-              FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
-              WHERE sslc.account_id = sslpa.id
-                AND sslc.type_id = sslcf.id
-                AND sslc.ip_id = ip.id
-                AND sslc.cat_id = cat.id
-                AND sslc.id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+         SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
+         FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+         WHERE sslc.account_id = sslpa.id
+           AND sslc.type_id = sslcf.id
+           AND sslc.ip_id = ip.id
+           AND sslc.cat_id = cat.id
+           AND sslc.id = :sslcid");
+    $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $sslcid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($t_domain_id, $t_name, $t_expiry_date, $t_notes, $t_active, $t_account_id, $t_type_id, $t_ip_id, $t_cat_id);
+        $new_domain_id = $result->domain_id;
+        $new_name = $result->name;
+        $new_type_id = $result->type_id;
+        $new_ip_id = $result->ip_id;
+        $new_cat_id = $result->cat_id;
+        $new_expiry_date = $result->expiry_date;
+        $new_notes = $result->notes;
+        $new_active = $result->active;
+        $new_account_id = $result->account_id;
 
-        while ($q->fetch()) {
-
-            $new_domain_id = $t_domain_id;
-            $new_name = $t_name;
-            $new_type_id = $t_type_id;
-            $new_ip_id = $t_ip_id;
-            $new_cat_id = $t_cat_id;
-            $new_expiry_date = $t_expiry_date;
-            $new_notes = $t_notes;
-            $new_active = $t_active;
-            $new_account_id = $t_account_id;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
 }
 
@@ -349,82 +341,104 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
-$query = "SELECT id, domain
-          FROM domains
-          WHERE (active NOT IN ('0', '10') OR id = ?)
-          ORDER BY domain";
-$q = $dbcon->stmt_init();
+$stmt = $pdo->prepare("
+    SELECT id, domain
+    FROM domains
+    WHERE (active NOT IN ('0', '10') OR id = :new_domain_id)
+    ORDER BY domain");
+$stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchAll();
 
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $new_domain_id);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($t_id, $t_domain);
+if ($result) {
 
     echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
 
-    while ($q->fetch()) {
+    foreach ($result as $row) {
 
-        echo $form->showDropdownOption($t_id, $t_domain, $new_domain_id);
+        echo $form->showDropdownOption($row->id, $row->domain, $new_domain_id);
 
     }
 
     echo $form->showDropdownBottom('');
 
-    $q->close();
+}
 
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+$result = $pdo->query("
+    SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
+    FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
+    WHERE sslpa.owner_id = o.id
+      AND sslpa.ssl_provider_id = sslp.id
+    ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC")->fetchAll();
 
-$sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
-                FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
-                WHERE sslpa.owner_id = o.id
-                  AND sslpa.ssl_provider_id = sslp.id
-                ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
-while ($row_account = mysqli_fetch_object($result_account)) {
+if ($result) {
 
-    echo $form->showDropdownOption($row_account->id, $row_account->sslp_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_account_id);
+    echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->sslp_name . ', ' . $row->o_name . ' (' . $row->username . ')', $new_account_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
 
-$sql_type = "SELECT id, type
-             FROM ssl_cert_types
-             ORDER BY type ASC";
-$result_type = mysqli_query($dbcon, $sql_type) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
-while ($row_type = mysqli_fetch_object($result_type)) {
+$result = $pdo->query("
+    SELECT id, type
+    FROM ssl_cert_types
+    ORDER BY type ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_type->id, $row_type->type, $new_type_id);
+if ($result) {
+
+    echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->type, $new_type_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+}
+
+$result = $pdo->query("
+    SELECT id, ip, `name`
+    FROM ip_addresses
+    ORDER BY `name`, ip")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_ip_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+}
+
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY `name`")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
-
-$sql_ip = "SELECT id, ip, `name`
-           FROM ip_addresses
-           ORDER BY `name`, ip";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
-while ($row_ip = mysqli_fetch_object($result_ip)) {
-
-    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $new_ip_id);
-
-}
-echo $form->showDropdownBottom('');
-
-$sql_cat = "SELECT id, `name`
-            FROM categories
-            ORDER BY `name`";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
-while ($row_cat = mysqli_fetch_object($result_cat)) {
-
-    echo $form->showDropdownOption($row_cat->id, $row_cat->name, $new_cat_id);
-
-}
-echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_active', 'Certificate Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);

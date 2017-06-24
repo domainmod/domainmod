@@ -29,6 +29,7 @@ $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
+$assets = new DomainMOD\Assets();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
@@ -36,6 +37,7 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $segid = $_GET['segid'];
@@ -54,61 +56,65 @@ $software_section = "segments";
 
 if ($type == "inactive") {
 
-    $query = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-              FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-              WHERE d.account_id = ra.id
-                AND ra.registrar_id = r.id
-                AND ra.owner_id = o.id
-                AND d.registrar_id = f.registrar_id
-                AND d.tld = f.tld
-                AND f.currency_id = c.id
-                AND c.id = cc.currency_id
-                AND d.cat_id = cat.id
-                AND d.dns_id = dns.id
-                AND d.ip_id = ip.id
-                AND d.hosting_id = h.id
-                AND cc.user_id = ?
-                AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = ? AND inactive = '1' ORDER BY domain)
-              ORDER BY d.domain asc";
-    $params1 = 'ii';
-    $params2 = array(&$_SESSION['s_user_id'], &$segid);
-    $binding = array(&$id, &$domain, &$tld, &$expiry_date, &$function, &$notes, &$autorenew, &$privacy, &$active, &$insert_time, &$update_time, &$username, &$registrar_name, &$owner_name, &$initial_fee, &$renewal_fee, &$conversion, &$category_name, &$category_stakeholder, &$dns_profile, &$name, &$ip, &$rdns, &$wh_name);
+    $stmt = $pdo->prepare("
+        SELECT d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+        WHERE d.account_id = ra.id
+          AND ra.registrar_id = r.id
+          AND ra.owner_id = o.id
+          AND d.registrar_id = f.registrar_id
+          AND d.tld = f.tld
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.cat_id = cat.id
+          AND d.dns_id = dns.id
+          AND d.ip_id = ip.id
+          AND d.hosting_id = h.id
+          AND cc.user_id = :user_id
+          AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND inactive = '1' ORDER BY domain)
+        ORDER BY d.domain ASC");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
 } elseif ($type == "filtered") {
 
-    $query = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-              FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-              WHERE d.account_id = ra.id
-                AND ra.registrar_id = r.id
-                AND ra.owner_id = o.id
-                AND d.registrar_id = f.registrar_id
-                AND d.tld = f.tld
-                AND f.currency_id = c.id
-                AND c.id = cc.currency_id
-                AND d.cat_id = cat.id
-                AND d.dns_id = dns.id
-                AND d.ip_id = ip.id
-                AND d.hosting_id = h.id
-                AND cc.user_id = ?
-                AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = ? AND filtered = '1' ORDER BY domain)
-              ORDER BY d.domain asc";
-    $params1 = 'ii';
-    $params2 = array(&$_SESSION['s_user_id'], &$segid);
-    $binding = array(&$id, &$domain, &$tld, &$expiry_date, &$function, &$notes, &$autorenew, &$privacy, &$active, &$insert_time, &$update_time, &$username, &$registrar_name, &$owner_name, &$initial_fee, &$renewal_fee, &$conversion, &$category_name, &$category_stakeholder, &$dns_profile, &$name, &$ip, &$rdns, &$wh_name);
+    $stmt = $pdo->prepare("
+        SELECT d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+        WHERE d.account_id = ra.id
+          AND ra.registrar_id = r.id
+          AND ra.owner_id = o.id
+          AND d.registrar_id = f.registrar_id
+          AND d.tld = f.tld
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.cat_id = cat.id
+          AND d.dns_id = dns.id
+          AND d.ip_id = ip.id
+          AND d.hosting_id = h.id
+          AND cc.user_id = :user_id
+          AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND filtered = '1' ORDER BY domain)
+        ORDER BY d.domain ASC");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
 } elseif ($type == "missing") {
 
-    $query = "SELECT domain
-              FROM segment_data
-              WHERE segment_id = ?
-                AND missing = '1'
-              ORDER BY domain";
-    $params1 = 'i';
-    $params2 = array(&$segid);
-    $binding = array(&$domain);
+    $stmt = $pdo->prepare("
+        SELECT domain
+        FROM segment_data
+        WHERE segment_id = :segid
+          AND missing = '1'
+        ORDER BY domain");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
 }
-$qd = $system->dynamicQuery($dbcon, $query, $params1, $params2, $binding);
 
 if ($export_data == "1") {
 
@@ -180,47 +186,47 @@ if ($export_data == "1") {
 
     if ($type == "inactive" || $type == "filtered") {
 
-        while ($qd->fetch()) {
+        foreach ($result as $row) {
 
-            $temp_initial_fee = $initial_fee * $conversion;
+            $temp_initial_fee = $row->initial_fee * $row->conversion;
             $total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
 
-            $temp_renewal_fee = $renewal_fee * $conversion;
+            $temp_renewal_fee = $row->renewal_fee * $row->conversion;
             $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-            if ($active == "0") {
+            if ($row->active == "0") {
                 $domain_status = "EXPIRED";
-            } elseif ($active == "1") {
+            } elseif ($row->active == "1") {
                 $domain_status = "ACTIVE";
-            } elseif ($active == "2") {
+            } elseif ($row->active == "2") {
                 $domain_status = "PENDING (TRANSFER)";
-            } elseif ($active == "3") {
+            } elseif ($row->active == "3") {
                 $domain_status = "PENDING (RENEWAL)";
-            } elseif ($active == "4") {
+            } elseif ($row->active == "4") {
                 $domain_status = "PENDING (OTHER)";
-            } elseif ($active == "5") {
+            } elseif ($row->active == "5") {
                 $domain_status = "PENDING (REGISTRATION)";
-            } elseif ($active == "10") {
+            } elseif ($row->active == "10") {
                 $domain_status = "SOLD";
             } else {
                 $domain_status = "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP";
             }
 
-            if ($autorenew == "1") {
+            if ($row->autorenew == "1") {
 
                 $autorenew_status = "Auto Renewal";
 
-            } elseif ($autorenew == "0") {
+            } elseif ($row->autorenew == "0") {
 
                 $autorenew_status = "Manual Renewal";
 
             }
 
-            if ($privacy == "1") {
+            if ($row->privacy == "1") {
 
                 $privacy_status = "Private";
 
-            } elseif ($privacy == "0") {
+            } elseif ($row->privacy == "0") {
 
                 $privacy_status = "Public";
 
@@ -236,27 +242,27 @@ if ($export_data == "1") {
 
             $row_contents = array(
                 $domain_status,
-                $expiry_date,
+                $row->expiry_date,
                 $export_initial_fee,
                 $export_renewal_fee,
-                $domain,
-                '.' . $tld,
+                $row->domain,
+                '.' . $row->tld,
                 $autorenew_status,
                 $privacy_status,
-                $registrar_name,
-                $username,
-                $dns_profile,
-                $name,
-                $ip,
-                $rdns,
-                $wh_name,
-                $category_name,
-                $category_stakeholder,
-                $owner_name,
-                $function,
-                $notes,
-                $time->toUserTimezone($insert_time),
-                $time->toUserTimezone($update_time)
+                $row->registrar_name,
+                $row->username,
+                $row->dns_profile,
+                $row->name,
+                $row->ip,
+                $row->rdns,
+                $row->wh_name,
+                $row->category_name,
+                $row->category_stakeholder,
+                $row->owner_name,
+                $row->function,
+                $row->notes,
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -264,16 +270,14 @@ if ($export_data == "1") {
 
     } elseif ($type == "missing") {
 
-        while ($qd->fetch()) {
+        foreach ($result as $row) {
 
-            $row_contents = array($domain);
+            $row_contents = array($row->domain);
             $export->writeRow($export_file, $row_contents);
 
         }
 
     }
-
-    $qd->close;
 
     $export->closeFile($export_file);
 
@@ -290,27 +294,8 @@ if ($export_data == "1") {
 $page_align = 'left';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
 <?php
-$query = "SELECT `name`
-          FROM segments
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->bind_param('i', $segid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($name);
-
-    while ($q->fetch()) {
-
-        $segment_name = $name;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+$segment = new DomainMOD\Segment();
+$segment_name = $segment->getName($segid);
 
 if ($type == "inactive") {
     echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . SOFTWARE_TITLE . " database, but they are currently marked as inactive.<BR><BR>";
@@ -328,12 +313,12 @@ if ($type == "inactive") {
 } elseif ($type == "missing") {
     echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 }
-?>
-<?php
-while ($qd->fetch()) {
-    echo $domain . "<BR>";
+
+foreach ($result as $row) {
+
+    echo $row->domain . "<BR>";
+
 }
-$qd->close;
 ?>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>

@@ -33,32 +33,25 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $sslcid = $_GET['sslcid'];
 
-$query = "SELECT `name`, notes
-          FROM ssl_certs
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+$stmt = $pdo->prepare("
+    SELECT `name`, notes
+    FROM ssl_certs
+    WHERE id = :sslcid");
+$stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetch();
 
-if ($q->prepare($query)) {
+if ($result) {
 
-    $q->bind_param('i', $sslcid);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($name, $notes);
+    $new_name = $result->name;
+    $new_notes = $result->notes;
 
-    while ($q->fetch()) {
-
-        $new_name = $name;
-        $new_notes = $notes;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+}
 
 $page_title = "SSL Certificate Notes (" . $new_name . ")";
 $software_section = "ssl-certs";

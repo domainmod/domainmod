@@ -139,12 +139,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT *
-            FROM user_settings
-            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM user_settings
+        WHERE user_id = :user_id");
+    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $new_default_category_domains = $row->default_category_domains;
         $new_default_category_ssl = $row->default_category_ssl;
@@ -178,12 +181,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 echo $form->showFormTop('');
 
 echo $form->showDropdownTop('new_default_registrar', 'Default Domain Registrar', '', '', '');
-$sql = "SELECT id, `name`
-        FROM registrars
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM registrars
+    ORDER BY name")->fetchAll();
+
+foreach ($result as $row) {
+
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_registrar']);
+
 }
 echo $form->showDropdownBottom('');
 

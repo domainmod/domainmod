@@ -33,6 +33,7 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
@@ -55,11 +56,11 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 </head>
 <body>
 <?php
-$result = mysqli_query($dbcon, $_SESSION['s_raw_list_query']);
+$result = $pdo->query($_SESSION['s_raw_list_query'])->fetchAll();
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         echo $row->domain . "<BR>";
 
@@ -67,7 +68,7 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 
 } elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         echo $row->name . "<BR>";
 

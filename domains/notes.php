@@ -33,32 +33,25 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
-$did = (integer) $_GET['did'];
+$did = (integer)$_GET['did'];
 
-$query = "SELECT domain, notes
-          FROM domains
-          WHERE id = ?";
-$q = $dbcon->stmt_init();
+$stmt = $pdo->prepare("
+    SELECT domain, notes
+    FROM domains
+    WHERE id = :did");
+$stmt->bindValue('did', $did, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetch();
 
-if ($q->prepare($query)) {
+if ($result) {
 
-    $q->bind_param('i', $did);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($domain, $notes);
+    $new_domain = $result->domain;
+    $new_notes = $result->notes;
 
-    while ($q->fetch()) {
-
-        $new_domain = $domain;
-        $new_notes = $notes;
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
+}
 
 $page_title = "Domain Notes (" . $new_domain . ")";
 $software_section = "domains";

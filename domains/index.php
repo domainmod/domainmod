@@ -33,6 +33,8 @@ $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $form = new DomainMOD\Form();
 $date = new DomainMOD\Date();
+$segment = new DomainMOD\Segment();
+$assets = new DomainMOD\Assets();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
@@ -41,6 +43,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-main.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
@@ -155,27 +158,7 @@ if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
 
 if ($segid != "") {
 
-    $query = "SELECT segment
-              FROM segments
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($segment);
-
-        while ($q->fetch()) {
-
-            $temp_segment = $segment;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $temp_segment = $segment->getSegment($segid);
 
     $segid_string = " AND d.domain IN ($temp_segment)";
 
@@ -355,19 +338,13 @@ if ($segid != "") {
     $active_domains .= "'";
     $active_domains = substr($active_domains, 0, -4);
 
-    $query = "UPDATE segment_data
-              SET filtered = '0'
-              WHERE active = '1'
-                AND segment_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        UPDATE segment_data
+        SET filtered = '0'
+        WHERE active = '1'
+          AND segment_id = :segid");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
 
     $sql_filter_update = "UPDATE segment_data
                           SET filtered = '1'
@@ -440,111 +417,49 @@ if ($export_data == "1") {
 
     if ($segid != "") {
 
-        $query = "SELECT domain
-                  FROM segment_data
-                  WHERE segment_id = ?
-                    AND inactive = '1'
-                  ORDER BY domain";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT count(*)
+            FROM segment_data
+            WHERE segment_id = :segid
+              AND inactive = '1'");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalrows_inactive = $stmt->fetchColumn();
 
-        if ($q->prepare($query)) {
+        $stmt = $pdo->prepare("
+            SELECT count(*)
+            FROM segment_data
+            WHERE segment_id = :segid
+              AND missing = '1'");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalrows_missing = $stmt->fetchColumn();
 
-            $q->bind_param('i', $segid);
-            $q->execute();
-            $q->store_result();
-            $totalrows_inactive = $q->num_rows();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "SELECT domain
-                  FROM segment_data
-                  WHERE segment_id = ?
-                    AND missing = '1'
-                  ORDER BY domain";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $segid);
-            $q->execute();
-            $q->store_result();
-            $totalrows_missing = $q->num_rows();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "SELECT domain
-                  FROM segment_data
-                  WHERE segment_id = ?
-                    AND filtered = '1'
-                  ORDER BY domain";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $segid);
-            $q->execute();
-            $q->store_result();
-            $totalrows_filtered = $q->num_rows();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $stmt = $pdo->prepare("
+            SELECT count(*)
+            FROM segment_data
+            WHERE segment_id = :segid
+              AND filtered = '1'");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalrows_filtered = $stmt->fetchColumn();
 
         if ($segid != "") {
 
-            $query = "SELECT number_of_domains
-                      FROM segments
-                      WHERE id = ?";
-            $q = $dbcon->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $q->bind_param('i', $segid);
-                $q->execute();
-                $q->store_result();
-                $q->bind_result($temp_number_of_domains);
-
-                while ($q->fetch()) {
-
-                    $number_of_domains = $temp_number_of_domains;
-
-                }
-
-                $q->close();
-
-            } else $error->outputSqlError($dbcon, '1', 'ERROR');
+            $number_of_domains = $segment->getNumberOfDomains($segid);
 
         }
 
         $row_contents = array('[Segment Results]');
         $export->writeRow($export_file, $row_contents);
 
-        $query = "SELECT `name`
-                  FROM segments
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_name = $segment->getName($segid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $segid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Segment Filter:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Segment Filter:',
+            $temp_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
             'Domains in Segment:',
@@ -605,241 +520,97 @@ if ($export_data == "1") {
 
     if ($rid > 0) {
 
-        $query = "SELECT `name`
-                  FROM registrars
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_registrar_name = $assets->getRegistrar($rid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $rid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Registrar:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Registrar:',
+            $temp_registrar_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($raid > 0) {
 
-        $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
-                  FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                  WHERE ra.registrar_id = r.id
-                    AND ra.owner_id = o.id
-                    AND ra.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
+            FROM registrar_accounts AS ra, registrars AS r, owners AS o
+            WHERE ra.registrar_id = r.id
+              AND ra.owner_id = o.id
+              AND ra.id = :raid");
+        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $raid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_owner, $temp_username);
+            $row_contents = array(
+                'Registrar Account:',
+                $result->registrar_name . " - " . $result->owner_name . " - " . $result->username
+            );
+            $export->writeRow($export_file, $row_contents);
 
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Registrar Account:',
-                    $temp_name . " - " . $temp_owner . " - " . $temp_username
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
-                  FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                  WHERE ra.registrar_id = r.id
-                    AND ra.owner_id = o.id
-                    AND ra.id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $raid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_owner, $temp_username);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Registrar Account:',
-                    $temp_name . " - " . $temp_owner . " - " . $temp_username
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 
     if ($dnsid > 0) {
 
-        $query = "SELECT `name`
-                  FROM dns
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_dns_name = $assets->getDnsName($dnsid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $dnsid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'DNS Profile:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'DNS Profile:',
+            $temp_dns_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($ipid > 0) {
 
-        $query = "SELECT `name`, ip
-                  FROM ip_addresses
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        list($temp_ip, $temp_ip_name) = $assets->getIpAndName($ipid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $ipid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_ip);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'IP Address:',
-                    $temp_name . ' (' . $temp_ip . ')'
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'IP Address:',
+            $temp_ip_name . ' (' . $temp_ip . ')'
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($whid > 0) {
 
-        $query = "SELECT `name`
-                  FROM hosting
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_hosting_name = $assets->getHost($whid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $whid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Web Host:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Web Host:',
+            $temp_hosting_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($pcid > 0) {
 
-        $query = "SELECT `name`
-                  FROM categories
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_category = $assets->getCat($pcid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $pcid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Category:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Category:',
+            $temp_category
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($oid > 0) {
 
-        $query = "SELECT `name`
-                  FROM owners
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_owner = $assets->getOwner($oid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $oid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Owner:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Owner:',
+            $temp_owner
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
@@ -1150,27 +921,7 @@ $total_rows = number_format(mysqli_num_rows($result));
 
 if ($segid != "") {
 
-    $query = "SELECT number_of_domains
-              FROM segments
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($temp_number_of_domains);
-
-        while ($q->fetch()) {
-
-            $number_of_domains = $temp_number_of_domains;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $number_of_domains = $segment->getNumberOfDomains($segid);
 
 }
 
@@ -2249,56 +2000,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($segid != "") {
 
-    $query = "SELECT domain
-              FROM segment_data
-              WHERE segment_id = ?
-                AND inactive = '1'
-              ORDER BY domain";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM segment_data
+        WHERE segment_id = :segid
+          AND inactive = '1'");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $totalrows_inactive = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM segment_data
+        WHERE segment_id = :segid
+          AND missing = '1'");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $totalrows_missing = $stmt->fetchColumn();
 
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $totalrows_inactive = $q->num_rows();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    $query = "SELECT domain
-              FROM segment_data
-              WHERE segment_id = ?
-                AND missing = '1'
-              ORDER BY domain";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $totalrows_missing = $q->num_rows();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    $query = "SELECT domain
-              FROM segment_data
-              WHERE segment_id = ?
-                AND filtered = '1'
-              ORDER BY domain";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $segid);
-        $q->execute();
-        $q->store_result();
-        $totalrows_filtered = $q->num_rows();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM segment_data
+        WHERE segment_id = :segid
+          AND filtered = '1'");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
+    $totalrows_filtered = $stmt->fetchColumn();
     ?>
     <strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 

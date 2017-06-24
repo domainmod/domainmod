@@ -40,6 +40,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-add.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
@@ -57,41 +58,28 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
 // Custom Fields
-$query = "SELECT field_name
-          FROM domain_fields
-          ORDER BY `name`";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT field_name
+    FROM domain_fields
+    ORDER BY `name`")->fetchAll();
 
-if ($q->prepare($query)) {
+if ($result) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($field_name);
+    $field_array = array();
 
-    if ($q->num_rows() > 0) {
+    foreach ($result as $row) {
 
-        $count = 0;
-
-        while ($q->fetch()) {
-
-            $field_array[$count] = $field_name;
-            $count++;
-
-        }
-
-        foreach ($field_array as $field) {
-
-            $full_field = "new_" . $field . "";
-            ${'new_' . $field} = $_POST[$full_field];
-
-        }
+        $field_array[] = $row->field_name;
 
     }
 
-    $q->close();
+    foreach ($field_array as $field) {
 
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
+        $full_field = "new_" . $field . "";
+        ${'new_' . $field} = $_POST[$full_field];
+
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -103,186 +91,154 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
         $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
 
-        $query = "SELECT domain
-                  FROM domains
-                  WHERE domain = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT domain
+            FROM domains
+            WHERE domain = :new_domain
+            LIMIT 1");
+        $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('s', $new_domain);
-            $q->execute();
-            $q->store_result();
+            $_SESSION['s_message_danger'] .= "This domain is already in " . SOFTWARE_TITLE . "<BR>";
 
-            if ($q->num_rows() === 0) {
+        } else {
 
-                $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+            $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-                $query_ra = "SELECT registrar_id, owner_id
-                             FROM registrar_accounts
-                             WHERE id = ?";
-                $q_ra = $dbcon->stmt_init();
+            $stmt = $pdo->prepare("
+                SELECT registrar_id, owner_id
+                FROM registrar_accounts
+                WHERE id = :new_account_id");
+            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-                if ($q_ra->prepare($query_ra)) {
+            if ($result) {
 
-                    $q_ra->bind_param('i', $new_account_id);
-                    $q_ra->execute();
-                    $q_ra->store_result();
-                    $q_ra->bind_result($new_registrar_id, $new_owner_id);
-                    $q_ra->fetch();
-                    $q_ra->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                if ($new_privacy == "1") {
-
-                    $query_f = "SELECT id, (renewal_fee + privacy_fee + misc_fee) AS total_cost
-                                FROM fees
-                                WHERE registrar_id = ?
-                                  AND tld = ?";
-
-                } else {
-
-                    $query_f = "SELECT id, (renewal_fee + misc_fee) AS total_cost
-                                FROM fees
-                                WHERE registrar_id = ?
-                                  AND tld = ?";
-
-                }
-
-                $q_f = $dbcon->stmt_init();
-
-                if ($q_f->prepare($query_f)) {
-
-                    $q_f->bind_param('is', $new_registrar_id, $tld);
-                    $q_f->execute();
-                    $q_f->store_result();
-                    $q_f->bind_result($new_fee_id, $new_total_cost);
-                    $q_f->fetch();
-                    $q_f->close();
-
-                    if ($new_fee_id == "") $new_fee_id = 0;
-                    if ($new_total_cost == "") $new_total_cost = 0;
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                $query_d = "INSERT INTO domains
-                            (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
-                             hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, created_by,
-                             active, insert_time)
-                            VALUES
-                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $q_d = $dbcon->stmt_init();
-
-                if ($q_d->prepare($query_d)) {
-
-                    $q_d->bind_param('iiisssiiiiidssiiiis', $new_owner_id, $new_registrar_id, $new_account_id,
-                        $new_domain, $tld, $new_expiry_date, $new_cat_id, $new_dns_id, $new_ip_id, $new_hosting_id,
-                        $new_fee_id, $new_total_cost, $new_function, $new_notes, $new_autorenew, $new_privacy,
-                        $_SESSION['s_user_id'], $new_active, $timestamp);
-                    $q_d->execute();
-
-                    $temp_domain_id = $q_d->insert_id;
-
-                    $q_d->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                $query_df = "INSERT INTO domain_field_data
-                             (domain_id, insert_time)
-                             VALUES
-                             (?, ?)";
-                $q_df = $dbcon->stmt_init();
-
-                if ($q_df->prepare($query_df)) {
-
-                    $q_df->bind_param('is', $temp_domain_id, $timestamp);
-                    $q_df->execute();
-                    $q_df->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                $query_df = "SELECT field_name
-                             FROM domain_fields
-                             ORDER BY `name`";
-                $q_df = $dbcon->stmt_init();
-
-                if ($q_df->prepare($query_df)) {
-
-                    $q_df->execute();
-                    $q_df->store_result();
-                    $q_df->bind_result($field_name);
-
-                    if ($q_df->num_rows() > 0) {
-
-                        $count = 0;
-
-                        while ($q_df->fetch()) {
-
-                            $field_array[$count] = $field_name;
-                            $count++;
-
-                        }
-
-                        foreach ($field_array as $field) {
-
-                            $full_field = "new_" . $field;
-
-                            $query_dfd = "UPDATE domain_field_data
-                                          SET `" . $field . "` = ?
-                                          WHERE domain_id = ?";
-                            $q_dfd = $dbcon->stmt_init();
-
-                            if ($q_dfd->prepare($query_dfd)) {
-
-                                $q_dfd->bind_param('si', ${$full_field}, $temp_domain_id);
-                                $q_dfd->execute();
-                                $q_dfd->close();
-
-                            } else {
-                                $error->outputSqlError($dbcon, '1', 'ERROR');
-                            }
-
-                        }
-
-                    }
-
-                    $q_df->close();
-
-                } else {
-                    $error->outputSqlError($dbcon, '1', 'ERROR');
-                }
-
-                $maint->updateDomainFee($temp_domain_id);
-
-                $queryB = new DomainMOD\QueryBuild();
-                $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
-
-                $maint->updateSegments();
-
-                $system->checkExistingAssets();
-
-                $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
-
-            } else {
-
-                $_SESSION['s_message_danger'] .= "This domain is already in " . SOFTWARE_TITLE . "<BR>";
+                $new_registrar_id = $result->registrar_id;
+                $new_owner_id = $result->owner_id;
 
             }
 
-            $q->close();
+            if ($new_privacy == "1") {
 
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
+                $fee_string = 'renewal_fee + privacy_fee + misc_fee';
+
+            } else {
+
+                $fee_string = 'renewal_fee + misc_fee';
+
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT id, (" . $fee_string . ") AS total_cost
+                FROM fees
+                WHERE registrar_id = :new_registrar_id
+                  AND tld = :tld");
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch();
+
+            if ($result) {
+
+                $new_fee_id = $result->id;
+                $new_total_cost = $result->total_cost;
+
+            } else {
+
+                $new_fee_id = 0;
+                $new_total_cost = 0;
+
+            }
+
+            $stmt = $pdo->prepare("
+                INSERT INTO domains
+                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                 hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, created_by,
+                 active, insert_time)
+                VALUES
+                (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
+                 :new_dns_id, :new_ip_id, :new_hosting_id, :new_fee_id, :new_total_cost, :new_function, :new_notes,
+                 :new_autorenew, :new_privacy, :user_id, :new_active, :timestamp)");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+            $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
+            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+            $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+            $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+            $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $temp_domain_id = $pdo->lastInsertId('id');
+
+            $stmt = $pdo->prepare("
+                INSERT INTO domain_field_data
+                (domain_id, insert_time)
+                VALUES
+                (:temp_domain_id, :timestamp)");
+            $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $result = $pdo->query("
+                SELECT field_name
+                FROM domain_fields
+                ORDER BY `name`")->fetchAll();
+
+            if ($result) {
+
+                $field_array = array();
+
+                foreach ($result as $row) {
+
+                    $field_array[] = $row->field_name;
+
+                }
+
+                foreach ($field_array as $field) {
+
+                    $full_field = "new_" . $field;
+
+                    $stmt = $pdo->prepare("
+                        UPDATE domain_field_data
+                        SET `" . $field . "` = :full_field
+                        WHERE domain_id = :temp_domain_id");
+                    $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                    $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+                    $stmt->execute();
+
+                }
+
+            }
+
+            $maint->updateDomainFee($temp_domain_id);
+
+            $queryB = new DomainMOD\QueryBuild();
+            $sql = $queryB->missingFees('domains');
+            $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+
+            $maint->updateSegments();
+
+            $system->checkExistingAssets();
+
+            $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
+
         }
 
     } else {
@@ -352,13 +308,6 @@ if ($new_expiry_date == '') {
 }
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
-$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                WHERE ra.owner_id = o.id
-                  AND ra.registrar_id = r.id
-                ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $to_compare = $new_account_id;
@@ -368,13 +317,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_registrar_account'];
 
 }
-echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
-while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
 
-    echo $form->showDropdownOption($row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $to_compare);
+$result = $pdo->query("
+    SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+    WHERE ra.owner_id = o.id
+      AND ra.registrar_id = r.id
+    ORDER BY r_name ASC, o_name ASC, ra.username ASC")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->r_name . ', ' . $row->o_name . ' (' . $row->username . ')', $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -385,19 +348,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_dns'];
 
 }
-$sql_dns = "SELECT id, `name`
-            FROM dns
-            ORDER BY `name` ASC";
-$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
-while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM dns
+    ORDER BY `name` ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_dns->id, $row_dns->name, $to_compare);
+if ($result) {
+
+    echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -408,19 +377,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_ip_address_domains'];
 
 }
-$sql_ip = "SELECT id, `name`, ip
-           FROM ip_addresses
-           ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
-while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`, ip
+     FROM ip_addresses
+     ORDER BY `name` ASC, ip ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ' )', $to_compare);
+if ($result) {
+
+    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ' )', $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -431,18 +406,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_host'];
 
 }
-$sql_hosting = "SELECT id, `name`
-                FROM hosting
-                ORDER BY name ASC";
-$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
-while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM hosting
+    ORDER BY name ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $to_compare);
+if ($result) {
+
+    echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -453,18 +435,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_category_domains'];
 
 }
-$sql_cat = "SELECT id, `name`
-            FROM categories
-            ORDER BY name ASC";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
-while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_cat->id, $row_cat->name, $to_compare);
+if ($result) {
 
+    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
 }
-echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
@@ -490,84 +478,66 @@ echo $form->showRadioBottom('');
 
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 
-$query = "SELECT field_name
-          FROM domain_fields
-          ORDER BY type_id ASC, `name` ASC";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT field_name
+    FROM domain_fields
+    ORDER BY type_id ASC, `name` ASC")->fetchAll();
 
-if ($q->prepare($query)) {
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($field_name);
+if ($result) { ?>
 
-    if ($q->num_rows() > 0) { ?>
+    <h3>Custom Fields</h3><?php
 
-        <h3>Custom Fields</h3><?php
+    $field_array = array();
 
-        $count = 0;
+    foreach ($result as $row) {
 
-        while ($q->fetch()) {
+        $field_array[] = $row->field_name;
 
-            $field_array[$count] = $field_name;
-            $count++;
+    }
 
-        }
+    foreach ($field_array as $field) {
 
-        foreach ($field_array as $field) {
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.type_id, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.field_name = :field");
+        $stmt->bindValue('field', $field, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-            $query_df = "SELECT df.name, df.field_name, df.type_id, df.description
-                         FROM domain_fields AS df, custom_field_types AS cft
-                         WHERE df.type_id = cft.id
-                           AND df.field_name = ?";
-            $q_df = $dbcon->stmt_init();
+        if ($result) {
 
-            if ($q_df->prepare($query_df)) {
+            foreach ($result as $row) {
 
-                $q_df->bind_param('s', $field);
-                $q_df->execute();
-                $q_df->store_result();
-                $q_df->bind_result($df_name, $df_field_name, $df_type_id, $df_description);
+                if ($row->type_id == "1") { // Check Box
 
-                while ($q_df->fetch()) {
+                    echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $field}, '', '');
 
-                    if ($df_type_id == "1") { // Check Box
+                } elseif ($row->type_id == "2") { // Text
 
-                        echo $form->showCheckbox('new_' . $df_field_name, '1', $df_name, $df_description, ${'new_' . $field}, '', '');
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '255', '', '', '', '');
 
-                    } elseif ($df_type_id == "2") { // Text
+                } elseif ($row->type_id == "3") { // Text Area
 
-                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '255', '', '', '', '');
+                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
 
-                    } elseif ($df_type_id == "3") { // Text Area
+                } elseif ($row->type_id == "4") { // Date
 
-                        echo $form->showInputTextarea('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '', '', '');
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '10', '', '', '', '');
 
-                    } elseif ($df_type_id == "4") { // Date
+                } elseif ($row->type_id == "5") { // Time Stamp
 
-                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '10', '', '', '', '');
-
-                    } elseif ($df_type_id == "5") { // Time Stamp
-
-                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '19', '', '', '', '');
-
-                    }
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '19', '', '', '', '');
 
                 }
 
-                $q_df->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
         }
 
     }
 
-    $q->close();
-
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showSubmitButton('Add Domain', '', '');

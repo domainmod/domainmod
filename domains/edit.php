@@ -39,6 +39,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-edit.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $did = (integer) $_REQUEST['did'];
@@ -96,62 +97,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" &&
         $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
 
-        $query = "SELECT registrar_id, owner_id
-                  FROM registrar_accounts
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT registrar_id, owner_id
+            FROM registrar_accounts
+            WHERE id = :new_account_id");
+        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $new_account_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($t_registrar_id, $t_owner_id);
+            $new_registrar_id = $result->registrar_id;
+            $new_owner_id = $result->owner_id;
 
-            while ($q->fetch()) {
+        }
 
-                $new_registrar_id = $t_registrar_id;
-                $new_owner_id = $t_owner_id;
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM fees
+            WHERE registrar_id = :new_registrar_id
+              AND tld = :new_tld");
+        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
 
-            }
+        if (!$result) {
 
-            $q->close();
+            $temp_fee_id = "0";
+            $temp_fee_fixed = "0";
 
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        } else {
 
-        $query = "SELECT id
-                  FROM fees
-                  WHERE registrar_id = ?
-                    AND tld = ?";
-        $q = $dbcon->stmt_init();
+            $temp_fee_id = $result;
+            $temp_fee_fixed = "1";
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('is', $new_registrar_id, $new_tld);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($t_fee_id);
-
-            if ($q->num_rows() >= 1) {
-
-                while ($q->fetch()) {
-
-                    $temp_fee_id = $t_fee_id;
-
-                }
-
-                $temp_fee_fixed = "1";
-
-            } else {
-
-                $temp_fee_id = "0";
-                $temp_fee_fixed = "0";
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
         if ($new_privacy == "1") {
 
@@ -173,38 +154,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_total_cost = $row->total_cost;
         }
 
-        $query = "UPDATE domains
-                  SET owner_id = ?,
-                      registrar_id = ?,
-                      account_id = ?,
-                      tld = ?,
-                      expiry_date = ?,
-                      cat_id = ?,
-                      dns_id = ?,
-                      ip_id = ?,
-                      hosting_id = ?,
-                      fee_id = ?,
-                      total_cost = ?,
-                      `function` = ?,
-                      notes = ?,
-                      autorenew = ?,
-                      privacy = ?,
-                      active = ?,
-                      fee_fixed = ?,
-                      update_time = ?
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('iiissiiiiisssiiiisi', $new_owner_id, $new_registrar_id, $new_account_id, $new_tld,
-                $new_expiry_date, $new_cat_id, $new_dns_id, $new_ip_id, $new_hosting_id, $temp_fee_id, $new_total_cost,
-                $new_function, $new_notes, $new_autorenew, $new_privacy, $new_active, $temp_fee_fixed, $timestamp,
-                $did);
-            $q->execute();
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $stmt = $pdo->prepare("
+            UPDATE domains
+            SET owner_id = :new_owner_id,
+                registrar_id = :new_registrar_id,
+                account_id = :new_account_id,
+                tld = :new_tld,
+                expiry_date = :new_expiry_date,
+                cat_id = :new_cat_id,
+                dns_id = :new_dns_id,
+                ip_id = :new_ip_id,
+                hosting_id = :new_hosting_id,
+                fee_id = :temp_fee_id,
+                total_cost = :new_total_cost,
+                `function` = :new_function,
+                notes = :new_notes,
+                autorenew = :new_autorenew,
+                privacy = :new_privacy,
+                active = :new_active,
+                fee_fixed = :temp_fee_fixed,
+                update_time = :timestamp
+            WHERE id = :did");
+        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+        $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
+        $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+        $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+        $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+        $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+        $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+        $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('did', $did, PDO::PARAM_INT);
+        $stmt->execute();
 
         $sql = "SELECT field_name
                 FROM domain_fields
@@ -294,66 +284,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.autorenew, d.privacy, d.active, ra.id AS account_id
-              FROM domains AS d, registrar_accounts AS ra
-              WHERE d.account_id = ra.id
-                AND d.id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.autorenew, d.privacy, d.active, ra.id AS account_id
+        FROM domains AS d, registrar_accounts AS ra
+        WHERE d.account_id = ra.id
+          AND d.id = :did");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $did);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($t_domain, $t_tld, $t_expiry_date, $t_cat_id, $t_dns_id, $t_ip_id, $t_hosting_id, $t_function, $t_notes, $t_autorenew, $t_privacy, $t_active, $t_account_id);
+        $new_domain = $result->domain;
+        $new_tld = $result->tld;
+        $new_expiry_date = $result->expiry_date;
+        $new_cat_id = $result->cat_id;
+        $new_dns_id = $result->dns_id;
+        $new_ip_id = $result->ip_id;
+        $new_hosting_id = $result->hosting_id;
+        $new_function = $result->function;
+        $new_notes = $result->notes;
+        $new_autorenew = $result->autorenew;
+        $new_privacy = $result->privacy;
+        $new_active = $result->active;
+        $new_account_id = $result->account_id;
 
-        while ($q->fetch()) {
-
-            $new_domain = $t_domain;
-            $new_tld = $t_tld;
-            $new_expiry_date = $t_expiry_date;
-            $new_cat_id = $t_cat_id;
-            $new_dns_id = $t_dns_id;
-            $new_ip_id = $t_ip_id;
-            $new_hosting_id = $t_hosting_id;
-            $new_function = $t_function;
-            $new_notes = $t_notes;
-            $new_autorenew = $t_autorenew;
-            $new_privacy = $t_privacy;
-            $new_active = $t_active;
-            $new_account_id = $t_account_id;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
 }
 
 if ($del == "1") {
 
-    $query = "SELECT domain_id
-              FROM ssl_certs
-              WHERE domain_id = ?
-              LIMIT 1";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        SELECT domain_id
+        FROM ssl_certs
+        WHERE domain_id = :did
+        LIMIT 1");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetchColumn();
 
-    if ($q->prepare($query)) {
+    if ($result) {
 
-        $q->bind_param('i', $did);
-        $q->execute();
-        $q->store_result();
+        $existing_ssl_certs = 1;
 
-        if ($q->num_rows() > 0) {
-
-            $existing_ssl_certs = 1;
-
-        }
-
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    }
 
     if ($existing_ssl_certs > 0) {
 
@@ -369,29 +344,17 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $query = "DELETE FROM domains
-              WHERE id = ?";
-    $q = $dbcon->stmt_init();
+    $stmt = $pdo->prepare("
+        DELETE FROM domains
+        WHERE id = :did");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
 
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $did);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-    $query = "DELETE FROM domain_field_data
-              WHERE domain_id = ?";
-    $q = $dbcon->stmt_init();
-
-    if ($q->prepare($query)) {
-
-        $q->bind_param('i', $did);
-        $q->execute();
-        $q->close();
-
-    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        DELETE FROM domain_field_data
+        WHERE domain_id = :did");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
 
     $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
@@ -419,67 +382,101 @@ echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'). '<BR><BR>';
 echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
-$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                WHERE ra.owner_id = o.id
-                  AND ra.registrar_id = r.id
-                ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
-while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
+$result = $pdo->query("
+    SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+    WHERE ra.owner_id = o.id
+      AND ra.registrar_id = r.id
+    ORDER BY r_name ASC, o_name ASC, ra.username ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_account_id);
+if ($result) {
 
-}
-echo $form->showDropdownBottom('');
+    echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
 
-$sql_dns = "SELECT id, `name`
-            FROM dns
-            ORDER BY name ASC";
-$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
-while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
+    foreach ($result as $row) {
 
-    echo $form->showDropdownOption($row_dns->id, $row_dns->name, $new_dns_id);
+        echo $form->showDropdownOption($row->id, $row->r_name . ', ' . $row->o_name . ' (' . $row->username . ')', $new_account_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
 
-$sql_ip = "SELECT id, `name`, ip
-           FROM ip_addresses
-           ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
-while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM dns
+    ORDER BY name ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $new_ip_id);
+if ($result) {
 
-}
-echo $form->showDropdownBottom('');
+    echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 
-$sql_hosting = "SELECT id, `name`
-                FROM hosting
-                ORDER BY name ASC";
-$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
-while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
+    foreach ($result as $row) {
 
-    echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $new_hosting_id);
+        echo $form->showDropdownOption($row->id, $row->name, $new_dns_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
 
-$sql_cat = "SELECT id, `name`
-            FROM categories
-            ORDER BY name ASC";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
-while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
+$result = $pdo->query("
+    SELECT id, `name`, ip
+    FROM ip_addresses
+    ORDER BY `name` ASC, ip ASC")->fetchAll();
 
-    echo $form->showDropdownOption($row_cat->id, $row_cat->name, $new_cat_id);
+if ($result) {
+
+    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_ip_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+}
+
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM hosting
+    ORDER BY name ASC")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $new_hosting_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
 
 }
-echo $form->showDropdownBottom('');
+
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name ASC")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+}
 
 echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
@@ -589,44 +586,31 @@ echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 
-$sql_accounts = "SELECT id
-                 FROM dw_accounts
-                 WHERE domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'";
-$result_accounts = mysqli_query($dbcon, $sql_accounts);
+$dwaccounts = new DomainMOD\DwAccounts();
+$dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);
 
-if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
+$dwzones = new DomainMOD\DwZones();
+$dw_has_zones = $dwzones->checkForZones($new_domain);
 
-    $no_results_accounts = 1;
-
-}
-
-$sql_dns_zones = "SELECT id
-                  FROM dw_dns_zones
-                  WHERE domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'";
-$result_dns_zones = mysqli_query($dbcon, $sql_dns_zones);
-
-if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
-
-    $no_results_dns_zones = 1;
-
-}
-
-if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
+if ($dw_has_accounts === 1 || $dw_has_zones === 1) { ?>
 
     <BR><BR><h3>Data Warehouse Information for <?php echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'); ?></h3><?php
 
 }
 
-if ($no_results_accounts !== 1) { ?>
+if ($dw_has_accounts === 1) { ?>
 
     <h4>Accounts</h4><?php
 
-    $sql = "SELECT s.id, s.name
-            FROM dw_accounts AS a, dw_servers AS s
-            WHERE a.server_id = s.id
-              AND a.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
-            ORDER BY s.name ASC, a.unix_startdate DESC";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $stmt = $pdo->prepare("
+        SELECT s.id, s.name
+        FROM dw_accounts AS a, dw_servers AS s
+        WHERE a.server_id = s.id
+          AND a.domain = :new_domain
+        ORDER BY s.name ASC, a.unix_startdate DESC");
+    $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
@@ -643,7 +627,7 @@ if ($no_results_accounts !== 1) { ?>
         </thead>
         <tbody><?php
 
-            while ($row = mysqli_fetch_object($result)) { ?>
+            foreach ($result as $row) { ?>
 
                 <tr>
                     <td></td>
@@ -660,16 +644,19 @@ if ($no_results_accounts !== 1) { ?>
 
 }
 
-if ($no_results_dns_zones !== 1) { ?>
+if ($dw_has_zones === 1) { ?>
 
     <h4>DNS Zones & Records</h4><?php
-    $sql = "SELECT s.id AS dw_server_id, s.name
-            FROM dw_dns_zones AS z, dw_servers AS s
-            WHERE z.server_id = s.id
-              AND z.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
-            ORDER BY s.name, z.zonefile, z.domain";
-    $result = mysqli_query($dbcon, $sql)
-    or $error->outputSqlError($dbcon, '1', 'ERROR');
+
+    $stmt = $pdo->prepare("
+        SELECT s.id AS dw_server_id, s.name
+        FROM dw_dns_zones AS z, dw_servers AS s
+        WHERE z.server_id = s.id
+          AND z.domain = :new_domain
+        ORDER BY s.name, z.zonefile, z.domain");
+    $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
@@ -683,7 +670,7 @@ if ($no_results_dns_zones !== 1) { ?>
         </thead>
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) { ?>
+        foreach ($result as $row) { ?>
 
             <tr>
                 <td></td>

@@ -23,15 +23,15 @@ namespace DomainMOD;
 
 class Assets
 {
+    public $system;
     public $error;
     public $log;
-    public $system;
 
     public function __construct()
     {
-        $this->error = new Error();
-        $this->log = new Log('assets.class');
         $this->system = new System();
+        $this->log = new Log('assets.class');
+        $this->error = new Error();
     }
 
     public function getRegistrar($registrar_id)
@@ -286,32 +286,6 @@ class Assets
 
             $log_message = 'Unable to retrieve Category';
             $log_extra = array('Category ID' => $cat_id);
-            $this->log->error($log_message, $log_extra);
-            return $log_message;
-
-        } else {
-
-            return $result;
-
-        }
-    }
-
-    public function getSegment($seg_id)
-    {
-        $pdo = $this->system->db();
-
-        $stmt = $pdo->prepare("
-            SELECT `name`
-            FROM segments
-            WHERE id = :seg_id");
-        $stmt->bindValue('seg_id', $seg_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
-
-        if (!$result) {
-
-            $log_message = 'Unable to retrieve Segment name';
-            $log_extra = array('Segment ID' => $seg_id);
             $this->log->error($log_message, $log_extra);
             return $log_message;
 

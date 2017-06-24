@@ -249,21 +249,6 @@ class System
         return ob_get_clean();
     }
 
-    public function dynamicQuery($dbcon, $query, $params1, $params2, $binding)
-    {
-        $error = new Error();
-        $qrun = $dbcon->stmt_init();
-        if ($qrun->prepare($query)) {
-
-            call_user_func_array(array($qrun, 'bind_param'), array_merge(array($params1), $params2));
-            $qrun->execute();
-            $qrun->store_result();
-            call_user_func_array(array($qrun, 'bind_result'), $binding);
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-        return $qrun;
-    }
-
     public function getCreationType($creation_type_id)
     {
         $pdo = $this->db();

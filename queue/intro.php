@@ -36,6 +36,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-info.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -51,16 +52,17 @@ The Domain Queue allows you to use your domain registrar's API to automatically 
 If you use a registrar that isn't already supported, and they have an API, send us an email at <a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a> and we'll see what we can do about adding it.<BR>
 <BR>
 <?php
-$sql_supported = "SELECT `name`
-                 FROM api_registrars
-                 ORDER BY name ASC";
-$result_supported = mysqli_query($dbcon, $sql_supported);
-$supported_registrars = '';
-while ($row_supported = mysqli_fetch_object($result_supported)) {
+$result = $pdo->query("
+    SELECT `name`
+    FROM api_registrars
+    ORDER BY name ASC")->fetchAll();
 
-    $supported_registrars .= ', ' . $row_supported->name;
+foreach ($result as $row) {
+
+    $supported_registrars .= ', ' . $row->name;
 
 }
+
 $supported_registrars = substr($supported_registrars, 2);
 ?>
 <strong>Currently Supported Registrars</strong>: <?php echo $supported_registrars; ?><BR>

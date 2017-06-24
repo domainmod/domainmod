@@ -24,10 +24,12 @@ namespace DomainMOD;
 class Currency
 {
     public $system;
+    public $log;
 
     public function __construct()
     {
         $this->system = new System();
+        $this->log = new Log('currency.class');
     }
 
     public function format($amount, $symbol, $order, $space)
@@ -48,13 +50,28 @@ class Currency
     public function getCurrencyId($currency)
     {
         $pdo = $this->system->db();
+
         $stmt = $pdo->prepare("
             SELECT id
             FROM currencies
             WHERE currency = :currency");
         $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->fetchColumn();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Currency ID';
+            $log_extra = array('Currency' => $currency);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+
     }
 
 } //@formatter:on

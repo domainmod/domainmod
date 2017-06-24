@@ -224,10 +224,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $temp_fee_id = $stmt->fetchColumn();
 
                         if ($temp_fee_id == '0' || $temp_fee_id == "") {
+
                             $temp_fee_fixed = 0;
                             $temp_fee_id = 0;
+
                         } else {
+
                             $temp_fee_fixed = 1;
+
                         }
 
                         if ($new_privacy == "1") {
@@ -240,91 +244,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         }
 
-                        $query = "SELECT id, (" . $fee_string . ") AS total_cost
-                                  FROM fees
-                                  WHERE registrar_id = ?
-                                    AND tld = ?";
-                        $q = $dbcon->stmt_init();
+                        $stmt = $pdo->prepare("
+                            SELECT (" . $fee_string . ") AS total_cost
+                            FROM fees
+                            WHERE registrar_id = :temp_registrar_id
+                              AND tld = :new_tld");
+                        $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                        $stmt->execute();
+                        $result = $stmt->fetchColumn();
 
-                        if ($q->prepare($query)) {
+                        if ($result) {
 
-                            $q->bind_param('is', $temp_registrar_id, $new_tld);
-                            $q->execute();
-                            $q->store_result();
-                            $q->bind_result($id, $cost);
+                            $new_total_cost = $result;
 
-                            while ($q->fetch()) {
+                        } else {
 
-                                $new_total_cost = $cost;
+                            $new_total_cost = 0;
 
-                            }
+                        }
 
-                            if (!$new_total_cost || $new_total_cost == '') $new_total_cost = 0;
-
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                        $query = "INSERT INTO domains
-                                  (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
-                                   total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
-                                   creation_type_id, created_by, active, fee_fixed, insert_time)
-                                  VALUES
-                                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        $q = $dbcon->stmt_init();
-
-                        if ($q->prepare($query)) {
-
-                            $creation_type_id = $system->getCreationTypeId('Bulk Updater');
-
-                            $q->bind_param('iiisssiidiiissiiiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
-                                $new_domain, $new_tld, $new_expiry_date, $new_pcid, $temp_fee_id, $new_total_cost,
-                                $new_dnsid, $new_ipid, $new_whid, $new_function, $new_notes, $new_autorenew,
-                                $new_privacy, $creation_type_id, $_SESSION['s_user_id'], $new_active, $temp_fee_fixed,
-                                $timestamp);
-                            $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to insert domains');
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                        $stmt = $pdo->prepare("
+                            INSERT INTO domains
+                            (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
+                             total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
+                             creation_type_id, created_by, active, fee_fixed, insert_time)
+                            VALUES
+                            (:temp_owner_id, :temp_registrar_id, :new_raid, :new_domain, :new_tld, :new_expiry_date,
+                             :new_pcid, :temp_fee_id, :new_total_cost, :new_dnsid, :new_ipid, :new_whid, :new_function,
+                             :new_notes, :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active,
+                             :temp_fee_fixed, :timestamp)");
+                        $stmt->bindValue('temp_owner_id', $temp_owner_id, PDO::PARAM_INT);
+                        $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                        $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+                        $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
+                        $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
+                        $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+                        $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
+                        $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
+                        $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
+                        $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+                        $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+                        $creation_type_id = $system->getCreationTypeId('Bulk Updater');
+                        $stmt->bindValue('creation_type_id', $creation_type_id, PDO::PARAM_INT);
+                        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                        $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+                        $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->execute();
 
                         $temp_fee_id = 0;
 
-                        $query = "SELECT id
-                                  FROM domains
-                                  WHERE domain = ?
-                                    AND insert_time = ?";
-                        $q = $dbcon->stmt_init();
+                        $temp_domain_id = $pdo->lastInsertId('id');
 
-                        if ($q->prepare($query)) {
-
-                            $q->bind_param('ss', $new_domain, $timestamp);
-                            $q->execute();
-                            $q->store_result();
-                            $q->bind_result($id);
-
-                            while ($q->fetch()) {
-
-                                $temp_domain_id = $id;
-
-                            }
-
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
-
-                        $query = "INSERT INTO domain_field_data
-                                  (domain_id, insert_time)
-                                  VALUES
-                                  (?, ?)";
-                        $q = $dbcon->stmt_init();
-
-                        if ($q->prepare($query)) {
-
-                            $q->bind_param('is', $temp_domain_id, $timestamp);
-                            $q->execute();
-                            $q->close();
-
-                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                        $stmt = $pdo->prepare("
+                            INSERT INTO domain_field_data
+                            (domain_id, insert_time)
+                            VALUES
+                            (:temp_domain_id, :timestamp)");
+                        $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->execute();
 
                         $result = $pdo->query("
                             SELECT field_name
@@ -333,12 +318,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         if ($result) {
 
-                            $count = 0;
+                            $field_array = array();
 
                             foreach ($result as $row) {
 
-                                $field_array[$count] = $row->field_name;
-                                $count++;
+                                $field_array[] = $row->field_name;
 
                             }
 
@@ -625,37 +609,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $query = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id,
-                                  o.name AS o_name
-                              FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                              WHERE ra.registrar_id = r.id
-                                AND ra.owner_id = o.id
-                                AND ra.id = ?
-                              GROUP BY r.name, o.name, ra.username
-                              ORDER BY r.name ASC, o.name ASC, ra.username ASC";
-                    $q = $dbcon->stmt_init();
+                    $stmt = $pdo->prepare("
+                        SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
+                        FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                        WHERE ra.registrar_id = r.id
+                          AND ra.owner_id = o.id
+                          AND ra.id = :new_raid
+                        GROUP BY r.name, o.name, ra.username
+                        ORDER BY r.name ASC, o.name ASC, ra.username ASC");
+                    $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $result = $stmt->fetch();
 
-                    if ($q->prepare($query)) {
+                    if ($result) {
 
-                        $q->bind_param('i', $new_raid);
-                        $q->execute();
-                        $q->store_result();
-                        $q->bind_result($ra_id, $username, $r_id, $r_name, $o_id, $o_name);
+                        $new_registrar_account_id = $result->ra_id;
+                        $new_username = $result->username;
+                        $new_registrar_id = $result->r_id;
+                        $new_registrar_name = $result->r_name;
+                        $new_owner_id = $result->o_id;
+                        $new_owner_name = $result->o_name;
 
-                        while ($q->fetch()) {
-
-                            $new_registrar_account_id = $ra_id;
-                            $new_username = $username;
-                            $new_registrar_id = $r_id;
-                            $new_registrar_name = $r_name;
-                            $new_owner_id = $o_id;
-                            $new_owner_name = $o_name;
-
-                        }
-
-                        $q->close();
-
-                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                    }
 
                     if ($new_notes != "") {
 
@@ -1971,128 +1946,104 @@ if ($action == "AD") { // Add Domains
 
     if ($type_id == "1") {
 
-        $query = "SELECT df.name, df.field_name, df.description
-                  FROM domain_fields AS df, custom_field_types AS cft
-                  WHERE df.type_id = cft.id
-                    AND df.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $field_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+            foreach ($result as $row) {
 
-            while ($q->fetch()) {
-
-                echo $form->showCheckbox('new_' . $temp_field_name, '1', $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '');
+                echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $row->field_name}, '', '');
 
             }
 
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     } elseif ($type_id == "2") {
 
-        $query = "SELECT df.name, df.field_name, df.description
-                  FROM domain_fields AS df, custom_field_types AS cft
-                  WHERE df.type_id = cft.id
-                    AND df.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        foreach ($result as $row) {
 
-            $q->bind_param('i', $field_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
-            while ($q->fetch()) {
-
-                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (255)', $temp_description, ${'new_' . $temp_field_name}, '255', '', '', '', '');
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     } elseif ($type_id == "3") {
 
-        $query = "SELECT df.name, df.field_name, df.description
-                  FROM domain_fields AS df, custom_field_types AS cft
-                  WHERE df.type_id = cft.id
-                    AND df.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $field_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+            foreach ($result as $row) {
 
-            while ($q->fetch()) {
-
-                echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
 
             }
 
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     } elseif ($type_id == "4") {
 
-        $query = "SELECT df.name, df.field_name, df.description
-                  FROM domain_fields AS df, custom_field_types AS cft
-                  WHERE df.type_id = cft.id
-                    AND df.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $field_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+            foreach ($result as $row) {
 
-            while ($q->fetch()) {
-
-                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (10)', $temp_description, ${'new_' . $temp_field_name}, '10', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (10)', $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '');
 
             }
 
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     } elseif ($type_id == "5") {
 
-        $query = "SELECT df.name, df.field_name, df.description
-                  FROM domain_fields AS df, custom_field_types AS cft
-                  WHERE df.type_id = cft.id
-                    AND df.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $field_id);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_field_name, $temp_description);
+            foreach ($result as $row) {
 
-            while ($q->fetch()) {
-
-                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (19)', $temp_description, ${'new_' . $temp_field_name}, '19', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (19)', $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '');
 
             }
 
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 
@@ -2127,71 +2078,65 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
     }
 
-    if ($action == "AD") { ?>
+    if ($action == "AD") {
 
-        <?php
-        $sql = "SELECT field_name
-                FROM domain_fields
-                ORDER BY type_id, `name`";
-        $result = mysqli_query($dbcon, $sql);
+        $result = $pdo->query("
+            SELECT field_name
+            FROM domain_fields
+            ORDER BY type_id, `name`")->fetchAll();
 
-        if (mysqli_num_rows($result) > 0) { ?>
+        if ($result) { ?>
 
             <BR><h3>Custom Fields</h3><?php
 
-            $count = 0;
+            $field_array = array();
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
-                $field_array[$count] = $row->field_name;
-                $count++;
+                $field_array[] = $row->field_name;
 
             }
 
             foreach ($field_array as $field) {
 
-                $query = "SELECT df.name, df.field_name, df.type_id, df.description
-                          FROM domain_fields AS df, custom_field_types AS cft
-                          WHERE df.type_id = cft.id
-                            AND df.field_name = ?";
-                $q = $dbcon->stmt_init();
+                $stmt = $pdo->prepare("
+                SELECT df.name, df.field_name, df.type_id, df.description
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.field_name = :field");
+                $stmt->bindValue('field', $field, PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetchAll();
 
-                if ($q->prepare($query)) {
+                if ($result) {
 
-                    $q->bind_param('s', $field);
-                    $q->execute();
-                    $q->store_result();
-                    $q->bind_result($temp_name, $temp_field_name, $temp_type_id, $temp_description);
+                    foreach ($result as $row) {
 
-                    while ($q->fetch()) {
+                        if ($row->type_id == "1") { // Check Box
 
-                        if ($temp_type_id == "1") { // Check Box
+                            echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, '', '', '');
 
-                            echo $form->showCheckbox('new_' . $temp_field_name, '1', $temp_name, $temp_description, '', '', '');
+                        } elseif ($row->type_id == "2") { // Text
 
-                        } elseif ($temp_type_id == "2") { // Text
+                            echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
-                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '255', '', '', '', '');
+                        } elseif ($row->type_id == "3") { // Text Area
 
-                        } elseif ($temp_type_id == "3") { // Text Area
+                            echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
 
-                            echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+                        } elseif ($row->type_id == "4") { // Date
 
-                        } elseif ($temp_type_id == "4") { // Date
+                            echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '');
 
-                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '10', '', '', '', '');
+                        } elseif ($row->type_id == "5") { // Time Stamp
 
-                        } elseif ($temp_type_id == "5") { // Time Stamp
-
-                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '19', '', '', '', '');
+                            echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '');
 
                         }
 
                     }
 
-                    $q->close();
-
-                } else $error->outputSqlError($dbcon, '1', 'ERROR');
+                }
 
             }
 

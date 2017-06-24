@@ -54,41 +54,28 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
 // Custom Fields
-$query = "SELECT field_name
-          FROM ssl_cert_fields
-          ORDER BY `name`";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT field_name
+    FROM ssl_cert_fields
+    ORDER BY `name`")->fetchAll();
 
-if ($q->prepare($query)) {
+if ($result) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($field_name);
+    $field_array = array();
 
-    if ($q->num_rows() > 0) {
+    foreach ($result as $row) {
 
-        $count = 0;
-
-        while ($q->fetch()) {
-
-            $field_array[$count] = $field_name;
-            $count++;
-
-        }
-
-        foreach ($field_array as $field) {
-
-            $full_field = "new_" . $field . "";
-            ${'new_' . $field} = $_POST[$full_field];
-
-        }
+        $field_array[] = $row->field_name;
 
     }
 
-    $q->close();
+    foreach ($field_array as $field) {
 
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
+        $full_field = "new_" . $field . "";
+        ${'new_' . $field} = $_POST[$full_field];
+
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -129,10 +116,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_fee_id = $result->id;
             $new_total_cost = $result->total_cost;
 
-        }
+        } else {
 
-        if ($new_fee_id == "") $new_fee_id = 0;
-        if ($new_total_cost == "") $new_total_cost = 0;
+            $new_fee_id = 0;
+            $new_total_cost = 0;
+
+        }
 
         $stmt = $pdo->prepare("
             INSERT INTO ssl_certs
@@ -170,55 +159,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $query = "SELECT field_name
-                  FROM ssl_cert_fields
-                  ORDER BY `name`";
-        $q = $dbcon->stmt_init();
+        $result = $pdo->query("
+            SELECT field_name
+            FROM ssl_cert_fields
+            ORDER BY `name`")->fetchAll();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($field_name);
+            $field_array = array();
 
-            if ($q->num_rows() > 0) {
+            foreach ($result as $row) {
 
-                $count = 0;
-
-                while ($q->fetch()) {
-
-                    $field_array[$count] = $field_name;
-                    $count++;
-
-                }
-
-                foreach ($field_array as $field) {
-
-                    $full_field = "new_" . $field;
-
-                    $query_f = "UPDATE ssl_cert_field_data
-                                SET `" . $field . "` = ?
-                                WHERE ssl_id = ?";
-                    $q_f = $dbcon->stmt_init();
-
-                    if ($q_f->prepare($query_f)) {
-
-                        $q_f->bind_param('si', ${$full_field}, $temp_ssl_id);
-                        $q_f->execute();
-                        $q_f->close();
-
-                    } else {
-                        $error->outputSqlError($dbcon, '1', 'ERROR');
-                    }
-
-                }
+                $field_array[] = $row->field_name;
 
             }
 
-            $q->close();
+            foreach ($field_array as $field) {
 
-        } else {
-            $error->outputSqlError($dbcon, '1', 'ERROR');
+                $full_field = "new_" . $field;
+
+                $stmt = $pdo->prepare("
+                    UPDATE ssl_cert_field_data
+                    SET `" . $field . "` = :full_field
+                    WHERE ssl_id = :temp_ssl_id");
+                $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                $stmt->bindValue('temp_ssl_id', $temp_ssl_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
         }
 
         $queryB = new DomainMOD\QueryBuild();
@@ -300,29 +269,23 @@ if ($new_expiry_date == '') {
 }
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
+$stmt = $pdo->prepare("
+    SELECT id, domain
+    FROM domains
+    WHERE (active NOT IN ('0', '10') OR id = :new_domain_id)
+    ORDER BY domain");
+$stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchAll();
+
 echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
-$query = "SELECT id, domain
-          FROM domains
-          WHERE (active NOT IN ('0', '10') OR id = ?)
-          ORDER BY domain";
-$q = $dbcon->stmt_init();
 
-if ($q->prepare($query)) {
+foreach ($result as $row) {
 
-    $q->bind_param('i', $new_domain_id);
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $domain);
+    echo $form->showDropdownOption($row->id, $row->domain, '');
 
-    while ($q->fetch()) {
+}
 
-        echo $form->showDropdownOption($id, $domain, '');
-
-    }
-
-    $q->close();
-
-} else $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -334,18 +297,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_ssl_provider_account'];
 
 }
-$sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
-                FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
-                WHERE sslpa.owner_id = o.id
-                  AND sslpa.ssl_provider_id = sslp.id
-                ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
-while ($row_account = mysqli_fetch_object($result_account)) {
 
-    echo $form->showDropdownOption($row_account->id, $row_account->sslp_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $to_compare);
+$result = $pdo->query("
+    SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
+    FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
+    WHERE sslpa.owner_id = o.id
+      AND sslpa.ssl_provider_id = sslp.id
+    ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC")->fetchAll();
+
+echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->sslp_name . ', ' . $row->o_name . ' (' . $row->username . ')', $to_compare);
 
 }
+
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -357,16 +324,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_ssl_type'];
 
 }
-$sql_type = "SELECT id, type
-             FROM ssl_cert_types
-             ORDER BY type ASC";
-$result_type = mysqli_query($dbcon, $sql_type) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
-while ($row_type = mysqli_fetch_object($result_type)) {
 
-    echo $form->showDropdownOption($row_type->id, $row_type->type, $to_compare);
+$result = $pdo->query("
+    SELECT id, type
+    FROM ssl_cert_types
+    ORDER BY type ASC")->fetchAll();
+
+echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->type, $to_compare);
 
 }
+
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -378,14 +349,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_ip_address_ssl'];
 
 }
-$sql_ip = "SELECT id, ip, `name`
-           FROM ip_addresses
-           ORDER BY `name`, ip";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
-while ($row_ip = mysqli_fetch_object($result_ip)) {
 
-    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $to_compare);
+$result = $pdo->query("
+    SELECT id, ip, `name`
+    FROM ip_addresses
+    ORDER BY `name`, ip")->fetchAll();
+
+echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $to_compare);
 
 }
 echo $form->showDropdownBottom('');
@@ -399,14 +373,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_system_default_category_ssl'];
 
 }
-$sql_cat = "SELECT id, `name`
-            FROM categories
-            ORDER BY `name`";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
-while ($row_cat = mysqli_fetch_object($result_cat)) {
 
-    echo $form->showDropdownOption($row_cat->id, $row_cat->name, $to_compare);
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY `name`")->fetchAll();
+
+echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->name, $to_compare);
 
 }
 echo $form->showDropdownBottom('');
@@ -421,87 +398,68 @@ echo $form->showDropdownBottom('');
 
 echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
-$query = "SELECT field_name
-          FROM ssl_cert_fields
-          ORDER BY type_id, `name`";
-$q = $dbcon->stmt_init();
+$result = $pdo->query("
+    SELECT field_name
+    FROM ssl_cert_fields
+    ORDER BY type_id ASC, `name`")->fetchAll();
 
-if ($q->prepare($query)) {
+if ($result) { ?>
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($field_name);
+    <h3>Custom Fields</h3><?php
 
-    if ($q->num_rows() > 0) { ?>
+    $field_array = array();
 
-        <h3>Custom Fields</h3><?php
+    foreach ($result as $row) {
 
-        $count = 0;
+        $field_array[] = $row->field_name;
 
-        while ($q->fetch()) {
+    }
 
-            $field_array[$count] = $field_name;
-            $count++;
+    foreach ($field_array as $field) {
 
-        }
+        $stmt = $pdo->prepare("
+            SELECT sf.name, sf.field_name, sf.type_id, sf.description
+            FROM ssl_cert_fields AS sf, custom_field_types AS cft
+            WHERE sf.type_id = cft.id
+              AND sf.field_name = :field");
+        $stmt->bindValue('field', $field, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        foreach ($field_array as $field) {
+        if ($result) {
 
-            $query_cf = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
-                         FROM ssl_cert_fields AS sf, custom_field_types AS cft
-                         WHERE sf.type_id = cft.id
-                           AND sf.field_name = ?";
-            $q_cf = $dbcon->stmt_init();
+            foreach ($result as $row) {
 
-            if ($q_cf->prepare($query_cf)) {
+                if ($row->type_id == "1") { // Check Box
 
-                $q_cf->bind_param('s', $field);
-                $q_cf->execute();
-                $q_cf->store_result();
-                $q_cf->bind_result($name, $field_name, $type_id, $description);
+                    echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $field}, '', '');
 
-                while ($q_cf->fetch()) {
+                } elseif ($row->type_id == "2") { // Text
 
-                    if ($type_id == "1") { // Check Box
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '255', '', '', '', '');
 
-                        echo $form->showCheckbox('new_' . $field_name, '1', $name, $description, ${'new_' . $field}, '', '');
+                } elseif ($row->type_id == "3") { // Text Area
 
-                    } elseif ($type_id == "2") { // Text
+                    echo $row->form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
 
-                        echo $form->showInputText('new_' . $field_name, $name, $description, ${'new_' . $field}, '255', '', '', '', '');
+                } elseif ($row->type_id == "4") { // Date
 
-                    } elseif ($type_id == "3") { // Text Area
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '10', '', '', '', '');
 
-                        echo $form->showInputTextarea('new_' . $field_name, $name, $description, ${'new_' . $field}, '', '', '');
+                } elseif ($row->type_id == "5") { // Time Stamp
 
-                    } elseif ($type_id == "4") { // Date
-
-                        echo $form->showInputText('new_' . $field_name, $name, $description, ${'new_' . $field}, '10', '', '', '', '');
-
-                    } elseif ($type_id == "5") { // Time Stamp
-
-                        echo $form->showInputText('new_' . $field_name, $name, $description, ${'new_' . $field}, '19', '', '', '', '');
-
-                    }
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '19', '', '', '', '');
 
                 }
 
-                $q_cf->close();
-
-            } else {
-                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
         }
 
-        echo "<BR>";
-
     }
 
-    $q->close();
+    echo "<BR>";
 
-} else {
-    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showSubmitButton('Add SSL Certificate', '', '');

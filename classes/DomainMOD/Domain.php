@@ -84,6 +84,32 @@ class Domain
         $this->writeNewExpiry($domain, $new_expiry, $notes);
     }
 
+    public function getDomain($domain_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT domain
+            FROM domains
+            WHERE id = :domain_id");
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = "Unable to retrieve domain";
+            $log_extra = array('Domain ID' => $domain_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
     public function getExpiry($domain)
     {
         $pdo = $this->system->db();

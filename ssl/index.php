@@ -33,6 +33,7 @@ $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $form = new DomainMOD\Form();
 $date = new DomainMOD\Date();
+$assets = new DomainMOD\Assets();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
@@ -41,6 +42,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/ssl-main.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
@@ -275,213 +277,100 @@ if ($export_data == "1") {
 
     if ($did > 0) {
 
-        $query = "SELECT domain
-                  FROM domains
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $domain = new DomainMOD\Domain();
+        $temp_domain = $domain->getDomain($did);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $did);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_domain);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Associated Domain:',
-                    $temp_domain
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Associated Domain:',
+            $temp_domain
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($sslpid > 0) {
 
-        $query = "SELECT `name`
-                  FROM ssl_providers
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_name = $assets->getSslProvider($sslpid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $sslpid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'SSL Provider:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'SSL Provider:',
+            $temp_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($sslpaid > 0) {
 
-        $query = "SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
-                  FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
-                  WHERE sslpa.ssl_provider_id = sslp.id
-                    AND sslpa.owner_id = o.id
-                    AND sslpa.id = ?";
-        $q = $dbcon->stmt_init();
+        $stmt = $pdo->prepare("
+            SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
+            FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
+            WHERE sslpa.ssl_provider_id = sslp.id
+              AND sslpa.owner_id = o.id
+              AND sslpa.id = :sslpaid");
+        $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-        if ($q->prepare($query)) {
+        if ($result) {
 
-            $q->bind_param('i', $sslpaid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_owner, $temp_username);
+            $row_contents = array(
+                'SSL Provider Account:',
+                $result->ssl_provider_name . " - " . $result->owner_name . " - " . $result->username
+            );
+            $export->writeRow($export_file, $row_contents);
 
-            while ($q->fetch()) {
 
-                $row_contents = array(
-                    'SSL Provider Account:',
-                    $temp_name . " - " . $temp_owner . " - " . $temp_username
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        }
 
     }
 
     if ($ssltid > 0) {
 
-        $query = "SELECT type
-                  FROM ssl_cert_types
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_type = $assets->getSslType($ssltid);
 
-        if ($q->prepare($query)) {
+        $row_contents = array(
+            'SSL Type:',
+            $temp_type
+        );
+        $export->writeRow($export_file, $row_contents);
 
-            $q->bind_param('i', $ssltid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_type);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'SSL Type:',
-                    $temp_type
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
     if ($sslipid > 0) {
 
-        $query = "SELECT `name`, ip
-                  FROM ip_addresses
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        list($temp_ip, $temp_ip_name) = $assets->getIpAndName($sslipid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $sslipid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name, $temp_ip);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'SSL IP Address:',
-                    $temp_name . ' (' . $temp_ip . ')'
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'SSL IP Address:',
+            $temp_ip_name . ' (' . $temp_ip . ')'
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($sslpcid > 0) {
 
-        $query = "SELECT `name`
-                  FROM categories
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_category = $assets->getCat($sslpcid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $sslpcid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'SSL Category:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'SSL Category:',
+            $temp_category
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
     if ($oid > 0) {
 
-        $query = "SELECT `name`
-                  FROM owners
-                  WHERE id = ?";
-        $q = $dbcon->stmt_init();
+        $temp_owner = $assets->getOwner($oid);
 
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $oid);
-            $q->execute();
-            $q->store_result();
-            $q->bind_result($temp_name);
-
-            while ($q->fetch()) {
-
-                $row_contents = array(
-                    'Owner:',
-                    $temp_name
-                );
-                $export->writeRow($export_file, $row_contents);
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($dbcon, '1', 'ERROR');
+        $row_contents = array(
+            'Owner:',
+            $temp_owner
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 

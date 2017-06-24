@@ -23,6 +23,15 @@ namespace DomainMOD;
 
 class Segment
 {
+    public $error;
+    public $log;
+    public $system;
+
+    public function __construct()
+    {
+        $this->log = new Log('segment.class');
+        $this->system = new System();
+    }
 
     public function trimLength($input_segment, $max_length)
     {
@@ -42,6 +51,84 @@ class Segment
         } else {
 
             return $input_segment;
+
+        }
+    }
+
+    public function getSegment($seg_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `segment`
+            FROM segments
+            WHERE id = :seg_id");
+        $stmt->bindValue('seg_id', $seg_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Segment';
+            $log_extra = array('Segment ID' => $seg_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getName($seg_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM segments
+            WHERE id = :seg_id");
+        $stmt->bindValue('seg_id', $seg_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Segment name';
+            $log_extra = array('Segment ID' => $seg_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getNumberOfDomains($seg_id)
+    {
+        $pdo = $this->system->db();
+
+        $stmt = $pdo->prepare("
+            SELECT number_of_domains
+            FROM segments
+            WHERE id = :seg_id");
+        $stmt->bindValue('seg_id', $seg_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Number of Domains for Segment';
+            $log_extra = array('Segment ID' => $seg_id);
+            $this->log->error($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
 
         }
     }

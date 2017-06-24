@@ -145,11 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 VALUES
                 (:new_segid, :domain, :timestamp)");
             $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
-            $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
+            $stmt->bindParam('domain', $bind_domain, PDO::PARAM_STR);
             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
 
             foreach ($domain_array as $domain) {
 
+                $bind_domain = $domain;
                 $stmt->execute();
 
             }
@@ -207,7 +208,8 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $temp_segment_name = $assets->getSegment($segid);
+    $segment = new DomainMOD\Segment();
+    $temp_segment_name = $segment->getName($segid);
 
     $stmt = $pdo->prepare("
         DELETE FROM segments
