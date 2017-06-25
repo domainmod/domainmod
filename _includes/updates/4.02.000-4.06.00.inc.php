@@ -1696,5 +1696,15 @@ if ($current_db_version === '4.05.03') {
 
     $pdo->query("ALTER TABLE users ENGINE=InnoDB");
 
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `expiration_emails` `expiration_emails` TINYINT(1) NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '4.06.00',
+            update_time = '" . $time->stamp() . "'");
+
+    $current_db_version = '4.06.00';
+
 }
 //@formatter:on

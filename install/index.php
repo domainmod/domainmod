@@ -134,7 +134,7 @@ if ($is_installed == '1') {
                 `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-                `expiration_emails` TINYINT(1) NOT NULL DEFAULT '1',
+                `expiration_emails` TINYINT(1) NOT NULL DEFAULT '0',
                 `number_of_domains` INT(5) NOT NULL DEFAULT '50',
                 `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50',
                 `display_domain_owner` TINYINT(1) NOT NULL DEFAULT '0',
