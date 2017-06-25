@@ -183,6 +183,8 @@ EOD;
 
         if ($api_call_status == '1') {
 
+            $dns_result = array();
+
             foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
                 // get expiration date

@@ -153,6 +153,8 @@ class DreamHost
 
             $expiration_date = $result->expiry_date;
 
+            $dns_result = array();
+
             $dns_result[0] = $result->ns1;
             $dns_result[1] = $result->ns2;
             $dns_result[2] = $result->ns3;

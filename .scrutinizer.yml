@@ -2,5 +2,7 @@ filter:
     excluded_paths:
         - _includes/theme/*
         - classes/DomainMOD/DomainQueue.php
+        - classes/DomainMOD/DwAccounts.php
+        - classes/DomainMOD/DwRecords.php
         - classes/DomainMOD/Page.php
         - vendor/*

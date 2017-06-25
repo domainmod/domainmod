@@ -76,6 +76,8 @@ class ResellerClub
             $api_results = $this->apiCall($api_url);
             $array_results = $this->convertToArray($api_results);
 
+            $dns_result = array();
+
             $dns_result[0] = $array_results['ns1'];
             $dns_result[1] = $array_results['ns2'];
             $dns_result[2] = $array_results['ns3'];
