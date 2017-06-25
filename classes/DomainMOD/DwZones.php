@@ -40,13 +40,13 @@ class DwZones
     {
         $this->system->db()->query("
             CREATE TABLE IF NOT EXISTS dw_dns_zones (
-                id INT(10) NOT NULL AUTO_INCREMENT,
-                server_id INT(10) NOT NULL,
+                id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                server_id INT(10) UNSIGNED NOT NULL,
                 domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 insert_time DATETIME NOT NULL,
                 PRIMARY KEY  (id)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
 
     public function getApiCall()

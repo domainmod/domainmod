@@ -63,11 +63,11 @@ if ($is_installed == '1') {
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
-                `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
+                `id` TINYINT(2) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO creation_types
@@ -84,7 +84,7 @@ if ($is_installed == '1') {
     $creation_type_id_manual = $system->getCreationTypeId('Manual');
 
     $sql = "CREATE TABLE IF NOT EXISTS `users` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `first_name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `last_name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `username` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -94,14 +94,14 @@ if ($is_installed == '1') {
                 `admin` TINYINT(1) NOT NULL DEFAULT '0',
                 `read_only` TINYINT(1) NOT NULL DEFAULT '1',
                 `active` TINYINT(1) NOT NULL DEFAULT '1',
-                `number_of_logins` INT(10) NOT NULL DEFAULT '0',
+                `number_of_logins` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `last_login` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $stmt = $pdo->prepare("
@@ -117,23 +117,23 @@ if ($is_installed == '1') {
     $stmt->execute();
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `user_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT(10) UNSIGNED NOT NULL,
                 `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `default_timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Canada/Pacific',
-                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_dns` INT(10) NOT NULL DEFAULT '0',
-                `default_host` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
+                `default_category_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_category_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_dns` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_host` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ip_address_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ip_address_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_owner_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_owner_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_registrar` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_registrar_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `expiration_emails` TINYINT(1) NOT NULL DEFAULT '1',
                 `number_of_domains` INT(5) NOT NULL DEFAULT '50',
                 `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50',
@@ -161,7 +161,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $temp_user_id = $pdo->query("
@@ -175,16 +175,16 @@ $temp_user_id = $pdo->query("
     $result_temp = mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `categories` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `stakeholder` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `categories`
@@ -194,16 +194,16 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `hosting`
@@ -213,16 +213,16 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `owners`
@@ -232,7 +232,7 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `currencies` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `currency` VARCHAR(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `symbol` VARCHAR(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -242,7 +242,7 @@ $temp_user_id = $pdo->query("
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO currencies
@@ -417,62 +417,62 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `currency_id` INT(10) NOT NULL,
-                `user_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `currency_id` INT(10) UNSIGNED NOT NULL,
+                `user_id` INT(10) UNSIGNED NOT NULL,
                 `conversion` DECIMAL(12,4) NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `fees` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `registrar_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `registrar_id` INT(10) UNSIGNED NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `initial_fee` DECIMAL(10,2) NOT NULL,
                 `renewal_fee` DECIMAL(10,2) NOT NULL,
                 `transfer_fee` DECIMAL(10,2) NOT NULL,
                 `privacy_fee` DECIMAL(10,2) NOT NULL,
                 `misc_fee` DECIMAL(10,2) NOT NULL,
-                `currency_id` INT(10) NOT NULL,
+                `currency_id` INT(10) UNSIGNED NOT NULL,
                 `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `ssl_provider_id` INT(10) NOT NULL,
-                `type_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `ssl_provider_id` INT(10) UNSIGNED NOT NULL,
+                `type_id` INT(10) UNSIGNED NOT NULL,
                 `initial_fee` DECIMAL(10,2) NOT NULL,
                 `renewal_fee` DECIMAL(10,2) NOT NULL,
                 `misc_fee` DECIMAL(10,2) NOT NULL,
-                `currency_id` INT(10) NOT NULL,
+                `currency_id` INT(10) UNSIGNED NOT NULL,
                 `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domains` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `owner_id` INT(10) NOT NULL DEFAULT '1',
-                `registrar_id` INT(10) NOT NULL DEFAULT '1',
-                `account_id` INT(10) NOT NULL DEFAULT '1',
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+                `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+                `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
-                `cat_id` INT(10) NOT NULL DEFAULT '1',
-                `fee_id` INT(10) NOT NULL DEFAULT '0',
+                `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+                `fee_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `total_cost` DECIMAL(10,2) NOT NULL,
-                `dns_id` INT(10) NOT NULL DEFAULT '1',
-                `ip_id` INT(10) NOT NULL DEFAULT '1',
-                `hosting_id` INT(10) NOT NULL DEFAULT '1',
+                `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+                `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+                `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
                 `function` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
@@ -480,28 +480,28 @@ $temp_user_id = $pdo->query("
                 `active` TINYINT(2) NOT NULL DEFAULT '1',
                 `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
-                `domain_id` INT(10) NOT NULL DEFAULT '0',
-                `owner_id` INT(10) NOT NULL DEFAULT '0',
-                `registrar_id` INT(10) NOT NULL DEFAULT '0',
-                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
-                `cat_id` INT(10) NOT NULL DEFAULT '0',
-                `dns_id` INT(10) NOT NULL DEFAULT '0',
-                `ip_id` INT(10) NOT NULL DEFAULT '0',
-                `hosting_id` INT(10) NOT NULL DEFAULT '0',
+                `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
                 `privacy` TINYINT(1) NOT NULL DEFAULT '0',
                 `processing` TINYINT(1) NOT NULL DEFAULT '0',
@@ -510,69 +510,69 @@ $temp_user_id = $pdo->query("
                 `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_history` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
-                `domain_id` INT(10) NOT NULL DEFAULT '0',
-                `owner_id` INT(10) NOT NULL DEFAULT '0',
-                `registrar_id` INT(10) NOT NULL DEFAULT '0',
-                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
-                `cat_id` INT(10) NOT NULL DEFAULT '0',
-                `dns_id` INT(10) NOT NULL DEFAULT '0',
-                `ip_id` INT(10) NOT NULL DEFAULT '0',
-                `hosting_id` INT(10) NOT NULL DEFAULT '0',
+                `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
                 `privacy` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
                 `domain_count` INT(6) NOT NULL DEFAULT '0',
-                `owner_id` INT(10) NOT NULL DEFAULT '0',
-                `registrar_id` INT(10) NOT NULL DEFAULT '0',
-                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `processing` TINYINT(1) NOT NULL DEFAULT '0',
                 `ready_to_import` TINYINT(1) NOT NULL DEFAULT '0',
                 `finished` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list_history` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
                 `domain_count` INT(6) NOT NULL DEFAULT '0',
-                `owner_id` INT(10) NOT NULL DEFAULT '0',
-                `registrar_id` INT(10) NOT NULL DEFAULT '0',
-                `account_id` INT(10) NOT NULL DEFAULT '0',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `account_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `account_id` INT(10) UNSIGNED NOT NULL,
                 `domain` VARCHAR(255) NOT NULL,
                 `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
                 `ns1` VARCHAR(255) NOT NULL,
@@ -589,16 +589,16 @@ $temp_user_id = $pdo->query("
                 `privacy` TINYINT(1) NOT NULL DEFAULT '0',
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
             PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO custom_field_types
@@ -612,63 +612,63 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `type_id` INT(10) NOT NULL,
+                `type_id` INT(10) UNSIGNED NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `domain_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `domain_id` INT(10) UNSIGNED NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `owner_id` INT(10) NOT NULL,
-                `ssl_provider_id` INT(10) NOT NULL,
-                `account_id` INT(10) NOT NULL,
-                `domain_id` INT(10) NOT NULL,
-                `type_id` INT(10) NOT NULL,
-                `ip_id` INT(10) NOT NULL,
-                `cat_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) UNSIGNED NOT NULL,
+                `ssl_provider_id` INT(10) UNSIGNED NOT NULL,
+                `account_id` INT(10) UNSIGNED NOT NULL,
+                `domain_id` INT(10) UNSIGNED NOT NULL,
+                `type_id` INT(10) UNSIGNED NOT NULL,
+                `ip_id` INT(10) UNSIGNED NOT NULL,
+                `cat_id` INT(10) UNSIGNED NOT NULL,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
-                `fee_id` INT(10) NOT NULL,
+                `fee_id` INT(10) UNSIGNED NOT NULL,
                 `total_cost` DECIMAL(10,2) NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `active` TINYINT(2) NOT NULL DEFAULT '1',
                 `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `type` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `ssl_cert_types`
@@ -681,31 +681,31 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `type_id` INT(10) NOT NULL,
+                `type_id` INT(10) UNSIGNED NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `ssl_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `ssl_id` INT(10) UNSIGNED NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `dns` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `dns1` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `dns2` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -730,11 +730,11 @@ $temp_user_id = $pdo->query("
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `number_of_servers` TINYINT(2) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `dns`
@@ -744,24 +744,24 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrars` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `api_registrar_id` TINYINT(3) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `owner_id` INT(10) NOT NULL,
-                `registrar_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) UNSIGNED NOT NULL,
+                `registrar_id` INT(10) UNSIGNED NOT NULL,
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -770,34 +770,34 @@ $temp_user_id = $pdo->query("
                 `api_app_name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `api_key` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `api_secret` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `api_ip_id` INT(10) NOT NULL DEFAULT '0',
+                `api_ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `registrar_id` (`registrar_id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `owner_id` INT(10) NOT NULL,
-                `ssl_provider_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) UNSIGNED NOT NULL,
+                `ssl_provider_id` INT(10) UNSIGNED NOT NULL,
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -805,32 +805,32 @@ $temp_user_id = $pdo->query("
                 `reseller_id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `ssl_provider_id` (`ssl_provider_id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `segments` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `segment` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `number_of_domains` INT(6) NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `segment_id` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `segment_id` INT(10) UNSIGNED NOT NULL,
                 `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `active` TINYINT(1) NOT NULL DEFAULT '0',
                 `inactive` TINYINT(1) NOT NULL DEFAULT '0',
@@ -839,21 +839,21 @@ $temp_user_id = $pdo->query("
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
             PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `ip` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `rdns` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `ip_addresses`
@@ -863,11 +863,11 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
-                `id` INT(5) NOT NULL AUTO_INCREMENT,
+                `id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `timezones`
@@ -877,7 +877,7 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `host` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `protocol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -886,29 +886,29 @@ $temp_user_id = $pdo->query("
                 `api_token` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `hash` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dw_accounts` INT(10) NOT NULL,
-                `dw_dns_zones` INT(10) NOT NULL,
-                `dw_dns_records` INT(10) NOT NULL,
+                `dw_accounts` INT(10) UNSIGNED NOT NULL,
+                `dw_dns_zones` INT(10) UNSIGNED NOT NULL,
+                `dw_dns_records` INT(10) UNSIGNED NOT NULL,
                 `build_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-                `build_time` INT(10) NOT NULL DEFAULT '0',
+                `build_time` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `has_ever_been_built` TINYINT(1) NOT NULL DEFAULT '0',
                 `build_status_overall` TINYINT(1) NOT NULL DEFAULT '0',
                 `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-                `build_time_overall` INT(10) NOT NULL DEFAULT '0',
+                `build_time_overall` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `has_ever_been_built_overall` TINYINT(1) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
-                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `scheduler` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -923,7 +923,7 @@ $temp_user_id = $pdo->query("
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+             ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO scheduler
@@ -956,7 +956,7 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `api_registrars` (
-                `id` TINYINT(3) NOT NULL AUTO_INCREMENT,
+                `id` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `req_account_username` TINYINT(1) NOT NULL DEFAULT '0',
                 `req_account_password` TINYINT(1) NOT NULL DEFAULT '0',
@@ -974,7 +974,7 @@ $temp_user_id = $pdo->query("
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO api_registrars
@@ -1000,25 +1000,25 @@ $temp_user_id = $pdo->query("
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `goal_activity` (
-                `id` int(10) NOT NULL AUTO_INCREMENT,
-                `type` varchar(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
-                `old_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
-                `new_version` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
-                `ip` varchar(45) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
-                `agent` longtext COLLATE utf8_unicode_ci NOT NULL,
-                `language` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `type` VARCHAR(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `old_version` VARCHAR(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `new_version` VARCHAR(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `ip` VARCHAR(45) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+                `agent` LONGTST COLLATE utf8_unicode_ci NOT NULL,
+                `language` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
                 `new_activity` TINYINT(1) NOT NULL DEFAULT '1',
-                `insert_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
-                `update_time` datetime NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY (`id`)
-            ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $goal->installation();
 
     $sql = "CREATE TABLE IF NOT EXISTS `log` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `user_id` INT(10) NOT NULL DEFAULT '0',
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `area` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `level` VARCHAR(9) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `message` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -1026,29 +1026,29 @@ $temp_user_id = $pdo->query("
                 `url` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
                 `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `upgrade_available` TINYINT(1) NOT NULL DEFAULT '0',
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `large_mode` TINYINT(1) NOT NULL DEFAULT '0',
-                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_dns` INT(10) NOT NULL DEFAULT '0',
-                `default_host` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
+                `default_category_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_category_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_dns` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_host` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ip_address_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ip_address_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_owner_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_owner_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_registrar` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_registrar_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `expiration_days` INT(3) NOT NULL DEFAULT '60',
                 `use_smtp` TINYINT(1) NOT NULL DEFAULT '0',
                 `smtp_server` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -1062,7 +1062,7 @@ $temp_user_id = $pdo->query("
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);

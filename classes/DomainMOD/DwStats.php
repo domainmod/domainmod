@@ -99,14 +99,14 @@ class DwStats
     {
         $this->system->db()->query("
             CREATE TABLE IF NOT EXISTS `dw_server_totals` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `dw_servers` INT(10) NOT NULL,
-                `dw_accounts` INT(10) NOT NULL,
-                `dw_dns_zones` INT(10) NOT NULL,
-                `dw_dns_records` INT(10) NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `dw_servers` INT(10) UNSIGNED NOT NULL,
+                `dw_accounts` INT(10) UNSIGNED NOT NULL,
+                `dw_dns_zones` INT(10) UNSIGNED NOT NULL,
+                `dw_dns_records` INT(10) UNSIGNED NOT NULL,
                 `insert_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;");
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;");
     }
 
     public function getTotalDwServers()

@@ -40,30 +40,30 @@ class DwRecords
     {
         $this->system->db()->query("
             CREATE TABLE IF NOT EXISTS dw_dns_records (
-                id INT(10) NOT NULL AUTO_INCREMENT,
-                server_id INT(10) NOT NULL,
-                dns_zone_id INT(10) NOT NULL,
+                id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                server_id INT(10) UNSIGNED NOT NULL,
+                dns_zone_id INT(10) UNSIGNED NOT NULL,
                 domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                new_order INT(10) NOT NULL,
+                new_order INT(10) UNSIGNED NOT NULL,
                 mname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 rname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `serial` INT(20) NOT NULL,
+                `serial` INT(10) UNSIGNED NOT NULL,
                 refresh VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                retry INT(10) NOT NULL,
+                retry INT(10) UNSIGNED NOT NULL,
                 expire VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                minimum INT(10) NOT NULL,
+                minimum INT(10) UNSIGNED NOT NULL,
                 nsdname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                ttl INT(10) NOT NULL,
+                ttl INT(10) UNSIGNED NOT NULL,
                 class VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 type VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 address VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 cname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `exchange` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                preference INT(10) NOT NULL,
+                preference INT(10) UNSIGNED NOT NULL,
                 txtdata LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                line INT(10) NOT NULL,
+                line INT(10) UNSIGNED NOT NULL,
                 nlines VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 raw LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 formatted_line VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -71,7 +71,7 @@ class DwRecords
                 formatted_output LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
                 insert_time DATETIME NOT NULL,
                 PRIMARY KEY  (id)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
 
     public function getApiCall($domain)

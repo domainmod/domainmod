@@ -40,8 +40,8 @@ class DwAccounts
     {
         $this->system->db()->query("
             CREATE TABLE IF NOT EXISTS dw_accounts (
-                id INT(10) NOT NULL AUTO_INCREMENT,
-                server_id INT(10) NOT NULL,
+                id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                server_id INT(10) UNSIGNED NOT NULL,
                 domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 ip VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -70,7 +70,7 @@ class DwAccounts
                 min_defer_fail_to_trigger_protection VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 insert_time DATETIME NOT NULL,
                 PRIMARY KEY  (id)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
 
     public function getApiCall()

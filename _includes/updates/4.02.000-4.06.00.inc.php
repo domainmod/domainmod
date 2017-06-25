@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/updates/4.02.000-current.inc.php
+ * /_includes/updates/4.02.000-4.06.00.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -1170,4 +1170,531 @@ if ($current_db_version === '4.05.02') {
 
 }
 
+// upgrade database from 4.05.03 to 4.06.00
+if ($current_db_version === '4.05.03') {
+
+    $pdo->query("
+        ALTER TABLE `creation_types` CHANGE `id` `id` TINYINT(2) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `users` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `users` CHANGE `number_of_logins` `number_of_logins` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `users` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `user_id` `user_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_category_domains` `default_category_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_category_ssl` `default_category_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_dns` `default_dns` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_host` `default_host` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_ip_address_domains` `default_ip_address_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_ip_address_ssl` `default_ip_address_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_owner_domains` `default_owner_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_owner_ssl` `default_owner_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_registrar` `default_registrar` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_registrar_account` `default_registrar_account` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_ssl_provider_account` `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_ssl_type` `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `user_settings` CHANGE `default_ssl_provider` `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `categories` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `categories` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `hosting` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `hosting` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `owners` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `owners` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `currencies` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `currency_conversions` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `currency_conversions` CHANGE `currency_id` `currency_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `currency_conversions` CHANGE `user_id` `user_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `fees` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `fees` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `fees` CHANGE `currency_id` `currency_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_fees` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_fees` CHANGE `ssl_provider_id` `ssl_provider_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_fees` CHANGE `type_id` `type_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_fees` CHANGE `currency_id` `currency_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `cat_id` `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `fee_id` `fee_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `dns_id` `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `ip_id` `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `hosting_id` `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '1'");
+
+    $pdo->query("
+        ALTER TABLE `domains` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `domain_id` `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `cat_id` `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `dns_id` `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `ip_id` `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `hosting_id` `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `domain_id` `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `cat_id` `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `dns_id` `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `ip_id` `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `hosting_id` `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_history` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list_history` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list_history` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list_history` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list_history` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_list_history` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_temp` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_queue_temp` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `custom_field_types` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_fields` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_fields` CHANGE `type_id` `type_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `domain_fields` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `domain_field_data` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `domain_field_data` CHANGE `domain_id` `domain_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `ssl_provider_id` `ssl_provider_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `account_id` `account_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `domain_id` `domain_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `type_id` `type_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `ip_id` `ip_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `cat_id` `cat_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `fee_id` `fee_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_certs` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_types` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_types` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_fields` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_fields` CHANGE `type_id` `type_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_fields` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_field_data` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_cert_field_data` CHANGE `ssl_id` `ssl_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dns` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `dns` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `registrars` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `registrars` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts` CHANGE `registrar_id` `registrar_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts` CHANGE `api_ip_id` `api_ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `registrar_accounts` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_providers` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_providers` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `ssl_accounts` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ssl_accounts` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_accounts` CHANGE `ssl_provider_id` `ssl_provider_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ssl_accounts` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segments` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `segments` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `segment_data` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `segment_data` CHANGE `segment_id` `segment_id` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `ip_addresses` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `ip_addresses` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `timezones` CHANGE `id` `id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `dw_accounts` `dw_accounts` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `dw_dns_zones` `dw_dns_zones` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `dw_dns_records` `dw_dns_records` INT(10) UNSIGNED NOT NULL");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `build_time` `build_time` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `build_time_overall` `build_time_overall` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `dw_servers` CHANGE `created_by` `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `scheduler` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `api_registrars` CHANGE `id` `id` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `goal_activity` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `log` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `log` CHANGE `user_id` `user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_category_domains` `default_category_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_category_ssl` `default_category_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_dns` `default_dns` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_host` `default_host` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_ip_address_domains` `default_ip_address_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_ip_address_ssl` `default_ip_address_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_owner_domains` `default_owner_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_owner_ssl` `default_owner_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_registrar` `default_registrar` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_registrar_account` `default_registrar_account` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_ssl_provider_account` `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_ssl_type` `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("
+        ALTER TABLE `settings` CHANGE `default_ssl_provider` `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
+
+    $pdo->query("ALTER TABLE api_registrars ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE categories ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE creation_types ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE currencies ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE currency_conversions ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE custom_field_types ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE dns ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_field_data ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_fields ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_queue ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_queue_history ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_queue_list ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_queue_list_history ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domain_queue_temp ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE domains ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE dw_servers ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE fees ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE goal_activity ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE hosting ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ip_addresses ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE log ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE owners ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE registrar_accounts ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE registrars ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE scheduler ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE segment_data ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE segments ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE settings ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_accounts ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_cert_field_data ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_cert_fields ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_cert_types ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_certs ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_fees ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE ssl_providers ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE timezones ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE user_settings ENGINE=InnoDB");
+
+    $pdo->query("ALTER TABLE users ENGINE=InnoDB");
+
+}
 //@formatter:on
