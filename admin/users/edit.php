@@ -270,7 +270,7 @@ if ($really_del == '1') {
 
         $stmt = $pdo->prepare("
             DELETE FROM users
-            WHERE id = ?");
+            WHERE id = :user_id");
         $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
         $stmt->execute();
 

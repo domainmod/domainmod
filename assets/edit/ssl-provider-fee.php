@@ -61,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt = $pdo->prepare("
             UPDATE ssl_fees
-            SET initial_fee = ?,
-                renewal_fee = ?,
-                misc_fee = ?,
-                currency_id = ?,
-                update_time = ?
-            WHERE ssl_provider_id = ?
-              AND type_id = ?");
+            SET initial_fee = :new_initial_fee,
+                renewal_fee = :new_renewal_fee,
+                misc_fee = :new_misc_fee,
+                currency_id = :new_currency_id,
+                update_time = :timestamp
+            WHERE ssl_provider_id = :sslpid
+              AND type_id = :new_type_id");
         $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
         $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
         $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);

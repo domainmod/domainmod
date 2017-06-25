@@ -680,7 +680,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
                     $sql = "UPDATE domains
-                            SET fee_id = '0', total_cost = '0'
+                            SET fee_id = '0',
+                                total_cost = '0'
                             WHERE domain IN (" . $in_list . ")";
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute($domain_array);

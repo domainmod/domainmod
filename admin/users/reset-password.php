@@ -97,6 +97,9 @@ if ($new_username != '') {
 
         } else {
 
+            $email_address = $result->email_address;
+            $first_name = $result->first_name;
+            $last_name = $result->last_name;
             require_once DIR_INC . '/email/send-new-password.inc.php';
             $_SESSION['s_message_success'] .= 'The password has been reset and emailed to the account holder<BR>';
 

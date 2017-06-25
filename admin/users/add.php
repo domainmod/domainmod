@@ -46,9 +46,6 @@ $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
 $new_email_address = $_POST['new_email_address'];
-$new_admin = $_POST['new_admin'];
-$new_read_only = $_POST['new_read_only'];
-$new_active = $_POST['new_active'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
     && $new_email_address != '') {
@@ -66,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($result) {
 
-        $existing_username = '1';
+        $existing_username = 1;
 
     }
 
@@ -80,14 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($result) {
 
-        $existing_email_address = '1';
+        $existing_email_address = 1;
 
     }
 
-    if ($existing_username == '1' || $existing_email_address == '1') {
+    if ($existing_username === 1 || $existing_email_address === 1) {
 
-        if ($existing_username == '1') $_SESSION['s_message_danger'] .= 'A user with that username already exists<BR>';
-        if ($existing_email_address == '1') $_SESSION['s_message_danger'] .= 'A user with that email address already exists<BR>';
+        if ($existing_username === 1) $_SESSION['s_message_danger'] .= 'A user with that username already exists<BR>';
+        if ($existing_email_address === 1) $_SESSION['s_message_danger'] .= 'A user with that email address already exists<BR>';
 
     } else {
 
@@ -95,19 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $stmt = $pdo->prepare("
             INSERT INTO users
-            (first_name, last_name, username, email_address, `password`, admin, `read_only`, active, created_by,
-             insert_time)
+            (first_name, last_name, username, email_address, `password`, created_by, insert_time)
             VALUES
-            (:first_name, :last_name, :username, :email_address, password(:password), :is_admin, :read_only, :active,
-             :created_by, :insert_time)");
+            (:first_name, :last_name, :username, :email_address, password(:password), :created_by, :insert_time)");
         $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
         $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
         $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
         $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
         $stmt->bindValue('password', $new_password, PDO::PARAM_STR);
-        $stmt->bindValue('is_admin', $new_admin, PDO::PARAM_INT);
-        $stmt->bindValue('read_only', $new_read_only, PDO::PARAM_INT);
-        $stmt->bindValue('active', $new_active, PDO::PARAM_INT);
         $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
         $bind_timestamp = $time->stamp();
         $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
@@ -156,18 +148,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        //@formatter:off
-        $_SESSION['s_message_success']
-            .= 'User ' . $new_first_name . ' ' . $new_last_name .
-            ' (' . $new_username . " / " . $new_password . ') Added
-            <BR><BR>You can either manually email the above credentials to the user, or you can
-            <a href="reset-password.php?new_username=' . $new_username . '">click here</a> to have ' .
-            SOFTWARE_TITLE . ' email them for you<BR><BR>';
+        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username .
+            " / " . $new_password . ') Added.<BR><BR>
+            
+            You can either manually email the above credentials to the user, or you can <a
+                href="reset-password.php?new_username=' . $new_username . '">click here</a> to have ' . SOFTWARE_TITLE .
+                ' email them for you.<BR><BR>
+                
+            Use the below form to customize the new user\'s account.<BR>';
         //@formatter:on
 
         $conversion->updateRates('USD', $temp_user_id);
 
-        header("Location: index.php");
+        header("Location: edit.php?uid=" . $temp_user_id);
         exit;
 
     }
@@ -199,21 +192,6 @@ echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_na
 echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '1', '', '');
 echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '1', '', '');
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
-echo $form->showRadioTop('Admin Privileges?', '', '');
-if ($new_admin == '') $new_admin = '0';
-echo $form->showRadioOption('new_admin', '1', 'Yes', $new_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_admin', '0', 'No', $new_admin, '', '');
-echo $form->showRadioBottom('');
-echo $form->showRadioTop('Read-Only User?', '', '');
-if ($new_read_only == '') $new_read_only = '1';
-echo $form->showRadioOption('new_read_only', '1', 'Yes', $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_read_only', '0', 'No', $new_read_only, '', '');
-echo $form->showRadioBottom('');
-echo $form->showRadioTop('Active Account?', '', '');
-if ($new_active == '') $new_active = '1';
-echo $form->showRadioOption('new_active', '1', 'Yes', $new_active, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_active', '0', 'No', $new_active, '', '');
-echo $form->showRadioBottom('');
 echo $form->showSubmitButton('Add User', '', '');
 echo $form->showFormBottom('');
 ?>
