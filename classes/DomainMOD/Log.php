@@ -79,7 +79,7 @@ class Log
      * EMERGENCY
      * System is unusable.
      */
-    public function emergency($message, $extra_info = '')
+    public function emergency($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('emergency', $message, $extra_info);
@@ -90,7 +90,7 @@ class Log
      * Action must be taken immediately.
      * Example: Entire website down, database unavailable, etc. This should trigger the SMS alerts and wake you up.
      */
-    public function alert($message, $extra_info = '')
+    public function alert($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('alert', $message, $extra_info);
@@ -101,7 +101,7 @@ class Log
      * Critical conditions.
      * Example: Application component unavailable, unexpected exception.
      */
-    public function critical($message, $extra_info = '')
+    public function critical($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('critical', $message, $extra_info);
@@ -111,7 +111,7 @@ class Log
      * ERROR
      * Runtime errors that do not require immediate action but should typically be logged and monitored.
      */
-    public function error($message, $extra_info = '')
+    public function error($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('error', $message, $extra_info);
@@ -122,7 +122,7 @@ class Log
      * Exceptional occurrences that are not errors.
      * Example: Use of deprecated APIs, poor use of an API, undesirable things that are not necessarily wrong.
      */
-    public function warning($message, $extra_info = '')
+    public function warning($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('warning', $message, $extra_info);
@@ -132,7 +132,7 @@ class Log
      * NOTICE
      * Normal but significant events.
      */
-    public function notice($message, $extra_info = '')
+    public function notice($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('notice', $message, $extra_info);
@@ -143,7 +143,7 @@ class Log
      * Interesting events.
      * Example: User logs in, SQL logs.
      */
-    public function info($message, $extra_info = '')
+    public function info($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('info', $message, $extra_info);
@@ -153,7 +153,7 @@ class Log
      * DEBUG
      * Detailed debug information.
      */
-    public function debug($message, $extra_info = '')
+    public function debug($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('debug', $message, $extra_info);
@@ -163,7 +163,7 @@ class Log
      * LOG
      * Logs with an arbitrary level.
      */
-    public function log($message, $extra_info = '')
+    public function log($message, $extra_info = array())
     {
         if (DEBUG_MODE != 1) return;
         $this->addEntry('log', $message, $extra_info);
