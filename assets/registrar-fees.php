@@ -139,7 +139,7 @@ if ($result2) { ?>
 
     foreach ($result2 as $row2) {
 
-        $temp_all_missing_fees .= "<a href=\"add/registrar-fee.php?rid=" . $rid . "&tld=" . $row2->tld . "\">." . $row2->tld . "</a>, ";
+        $temp_all_missing_fees .= "<a href=\"add/registrar-fee.php?rid=" . htmlentities($rid) . "&tld=" . $row2->tld . "\">." . $row2->tld . "</a>, ";
         $count++;
 
     }
