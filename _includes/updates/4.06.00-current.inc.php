@@ -20,3 +20,14 @@
  */
 ?>
 <?php
+// upgrade database from 4.06.00 to 4.06.01
+if ($current_db_version === '4.06.00') {
+
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '4.06.01',
+            update_time = '" . $time->stamp() . "'");
+
+    $current_db_version = '4.06.01';
+
+}
