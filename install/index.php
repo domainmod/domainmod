@@ -1005,7 +1005,7 @@ $temp_user_id = $pdo->query("
                 `old_version` VARCHAR(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
                 `new_version` VARCHAR(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
                 `ip` VARCHAR(45) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
-                `agent` LONGTST COLLATE utf8_unicode_ci NOT NULL,
+                `agent` LONGTEXT COLLATE utf8_unicode_ci NOT NULL,
                 `language` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
                 `new_activity` TINYINT(1) NOT NULL DEFAULT '1',
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
