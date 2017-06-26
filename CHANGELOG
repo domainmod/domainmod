@@ -1,5 +1,13 @@
 DomainMOD CHANGELOG
 ===================
+v4.06.00    2017-06-26
+- Migrate database tables from MyISAM to InnoDB
+- Finish converting main queries to PDO
+- Switch to Composer for PSR-4 Autoloading
+- Update Data Warehouse classes
+- Update DOCTYPE
+- Code cleanup
+
 v4.05.03    2017-06-03
 - Added Helper File mechanism
 - Added local logging of PHP errors
