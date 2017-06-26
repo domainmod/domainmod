@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.06.01    2017-06-26
+- Fix bug in installation script
+
 v4.06.00    2017-06-26
 - Migrate database tables from MyISAM to InnoDB
 - Finish converting main queries to PDO
