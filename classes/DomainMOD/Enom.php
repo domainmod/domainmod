@@ -29,7 +29,7 @@ class Enom
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('enom.class');
+        $this->log = new Log('class.enom');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)

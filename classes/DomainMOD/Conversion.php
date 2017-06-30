@@ -29,7 +29,7 @@ class Conversion
 
     public function __construct()
     {
-        $this->log = new Log('conversion.class');
+        $this->log = new Log('class.conversion');
         $this->system = new System();
         $this->time = new Time();
     }

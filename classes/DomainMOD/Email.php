@@ -29,7 +29,7 @@ class Email
 
     public function __construct()
     {
-        $this->log = new Log('email.class');
+        $this->log = new Log('class.email');
         $this->system = new System();
         $this->time = new Time();
     }

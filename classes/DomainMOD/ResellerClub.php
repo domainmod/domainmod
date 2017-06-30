@@ -29,7 +29,7 @@ class ResellerClub
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('resellerclub.class');
+        $this->log = new Log('class.resellerclub');
     }
 
     public function getApiUrl($reseller_id, $api_key, $command, $domain)

@@ -29,7 +29,7 @@ class Namecheap
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('namecheap.class');
+        $this->log = new Log('class.namecheap');
     }
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)

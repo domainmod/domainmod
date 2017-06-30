@@ -29,7 +29,7 @@ class Freenom
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('freenom.class');
+        $this->log = new Log('class.freenom');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)

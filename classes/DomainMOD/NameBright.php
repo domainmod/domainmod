@@ -29,7 +29,7 @@ class NameBright
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('namebright.class');
+        $this->log = new Log('class.namebright');
     }
 
     public function getApiUrl($account_username, $api_app_name, $api_secret, $command, $domain)

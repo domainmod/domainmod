@@ -30,7 +30,7 @@ class Assets
     public function __construct()
     {
         $this->system = new System();
-        $this->log = new Log('assets.class');
+        $this->log = new Log('class.assets');
     }
 
     public function getRegistrar($registrar_id)

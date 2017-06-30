@@ -29,7 +29,7 @@ class DnSimple
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('dnsimple.class');
+        $this->log = new Log('class.dnsimple');
     }
 
     public function getApiUrl($account_id, $command, $domain)

@@ -29,7 +29,7 @@ class NameCom
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('namecom.class');
+        $this->log = new Log('class.namecom');
     }
 
     public function getApiUrl($command, $domain)

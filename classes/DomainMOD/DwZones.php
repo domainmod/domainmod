@@ -31,7 +31,7 @@ class DwZones
     public function __construct()
     {
         $this->system = new System();
-        $this->log = new Log('dwzones.class');
+        $this->log = new Log('class.dwzones');
         $this->time = new Time();
         $this->dwbuild = new DwBuild();
     }

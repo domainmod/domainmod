@@ -27,7 +27,7 @@ class System
 
     public function __construct()
     {
-        $this->log = new Log('system.class');
+        $this->log = new Log('class.system');
     }
 
     public function db()

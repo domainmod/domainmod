@@ -29,7 +29,7 @@ class Segment
 
     public function __construct()
     {
-        $this->log = new Log('segment.class');
+        $this->log = new Log('class.segment');
         $this->system = new System();
     }
 

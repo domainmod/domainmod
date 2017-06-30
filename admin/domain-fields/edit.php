@@ -28,7 +28,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
-$log = new DomainMOD\Log('admin.domainfields.edit');
+$log = new DomainMOD\Log('/admin/domain-fields/edit.php');
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';

@@ -29,7 +29,7 @@ class OpenSrs
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('opensrs.class');
+        $this->log = new Log('class.opensrs');
     }
 
     public function domainList()

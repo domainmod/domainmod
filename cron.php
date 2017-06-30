@@ -29,7 +29,7 @@ $maint = new DomainMOD\Maintenance();
 $conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$log = new DomainMOD\Log('cron');
+$log = new DomainMOD\Log('/cron.php');
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';

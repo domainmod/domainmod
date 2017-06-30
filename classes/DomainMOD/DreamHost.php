@@ -30,7 +30,7 @@ class DreamHost
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('dreamhost.class');
+        $this->log = new Log('class.dreamhost');
         $this->system = new System();
     }
 

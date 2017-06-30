@@ -31,7 +31,7 @@ class DwRecords
     public function __construct()
     {
         $this->system = new System();
-        $this->log = new Log('dwrecords.class');
+        $this->log = new Log('class.dwrecords');
         $this->time = new Time();
         $this->dwbuild = new DwBuild();
     }

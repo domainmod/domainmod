@@ -29,7 +29,7 @@ class Currency
     public function __construct()
     {
         $this->system = new System();
-        $this->log = new Log('currency.class');
+        $this->log = new Log('class.currency');
     }
 
     public function format($amount, $symbol, $order, $space)

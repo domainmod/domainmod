@@ -27,7 +27,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
-$log = new DomainMOD\Log('admin.debuglog');
+$log = new DomainMOD\Log('/admin/debug-log/index.php');
 $time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';

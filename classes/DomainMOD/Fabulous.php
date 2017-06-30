@@ -29,7 +29,7 @@ class Fabulous
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('fabulous.class');
+        $this->log = new Log('class.fabulous');
     }
 
     public function getApiUrl($account_username, $account_password, $domain, $command)

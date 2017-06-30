@@ -29,7 +29,7 @@ class Dynadot
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('dynadot.class');
+        $this->log = new Log('class.dynadot');
     }
 
     public function getApiUrl($api_key, $command, $domain)

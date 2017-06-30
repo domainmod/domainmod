@@ -28,7 +28,7 @@ class DwBuild
 
     public function __construct()
     {
-        $this->log = new Log('dwbuild.class');
+        $this->log = new Log('class.dwbuild');
         $this->system = new System();
     }
 

@@ -35,7 +35,7 @@ class DomainQueue
     {
         $this->api = new Api();
         $this->domain = new Domain();
-        $this->log = new Log('domainqueue.class');
+        $this->log = new Log('class.domainqueue');
         $this->maint = new Maintenance();
         $this->queryB = new QueryBuild();
         $this->system = new System();

@@ -29,7 +29,7 @@ class NameSilo
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('namesilo.class');
+        $this->log = new Log('class.namesilo');
     }
 
     public function getApiUrl($api_key, $domain, $command)

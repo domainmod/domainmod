@@ -28,7 +28,7 @@ class Smtp
 
     public function __construct()
     {
-        $this->log = new Log('smtp.class');
+        $this->log = new Log('class.smtp');
         $this->system = new System();
     }
 

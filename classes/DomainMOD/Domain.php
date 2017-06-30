@@ -29,7 +29,7 @@ class Domain
 
     public function __construct()
     {
-        $this->log = new Log('domain.class');
+        $this->log = new Log('class.domain');
         $this->system = new System();
         $this->time = new Time();
     }

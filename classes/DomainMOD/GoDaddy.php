@@ -29,7 +29,7 @@ class GoDaddy
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('godaddy.class');
+        $this->log = new Log('class.godaddy');
     }
 
     public function getApiUrl($domain, $command)

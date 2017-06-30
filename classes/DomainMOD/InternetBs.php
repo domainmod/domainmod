@@ -29,7 +29,7 @@ class InternetBs
     public function __construct()
     {
         $this->format = new Format();
-        $this->log = new Log('internetbs.class');
+        $this->log = new Log('class.internetbs');
     }
 
     public function getApiUrl($api_key, $api_secret, $command, $domain)

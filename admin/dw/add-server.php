@@ -35,6 +35,7 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dw-add-server.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
@@ -52,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && ($new_api_token != "" || $new_hash != "")
     ) {
 
-        $pdo = $system->db();
         $stmt = $pdo->prepare("
             INSERT INTO dw_servers
             (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, notes, created_by, insert_time)

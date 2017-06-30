@@ -29,7 +29,7 @@ class Maintenance
 
     public function __construct()
     {
-        $this->log = new Log('maintenance.class');
+        $this->log = new Log('class.maintenance');
         $this->system = new System();
         $this->time = new Time();
     }
