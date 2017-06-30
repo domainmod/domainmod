@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $timestamp = $time->stamp();
@@ -37,7 +36,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/ssl-edit.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -179,16 +177,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $sql = "SELECT field_name
-                FROM ssl_cert_fields
-                ORDER BY `name`";
-        $result = mysqli_query($dbcon, $sql);
+        $result = $pdo->query("
+            SELECT field_name
+            FROM ssl_cert_fields
+            ORDER BY `name`")->fetchAll();
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
             $count = 0;
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $field_array[$count] = $row->field_name;
                 $count++;
@@ -199,11 +197,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $full_field = "new_" . $field;
 
-                $sql = "UPDATE ssl_cert_field_data
-                        SET `" . $field . "` = '" . mysqli_real_escape_string($dbcon, ${$full_field}) . "',
-                            update_time = '" . $timestamp . "'
-                        WHERE ssl_id = '" . mysqli_real_escape_string($dbcon, $sslcid) . "'";
-                $result = mysqli_query($dbcon, $sql);
+                $stmt = $pdo->prepare("
+                    UPDATE ssl_cert_field_data
+                    SET `" . $field . "` = :full_field,
+                        update_time = :timestamp
+                    WHERE ssl_id = :sslcid");
+                $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+                $stmt->execute();
 
             }
 
@@ -455,18 +457,18 @@ if ($new_notes != '') {
 }
 echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
-$sql = "SELECT field_name
-        FROM ssl_cert_fields
-        ORDER BY type_id, `name`";
-$result = mysqli_query($dbcon, $sql);
+$result = $pdo->query("
+    SELECT field_name
+    FROM ssl_cert_fields
+    ORDER BY type_id, `name`")->fetchAll();
 
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <h3>Custom Fields</h3><?php
 
     $count = 0;
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $field_array[$count] = $row->field_name;
         $count++;
@@ -475,13 +477,13 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     foreach ($field_array as $field) {
 
-        $sql = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
-                FROM ssl_cert_fields AS sf, custom_field_types AS cft
-                WHERE sf.type_id = cft.id
-                  AND sf.field_name = '" . $field . "'";
-        $result = mysqli_query($dbcon, $sql);
+        $result = $pdo->query("
+            SELECT sf.name, sf.field_name, sf.type_id, sf.description
+            FROM ssl_cert_fields AS sf, custom_field_types AS cft
+            WHERE sf.type_id = cft.id
+              AND sf.field_name = '" . $field . "'")->fetchAll();
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             if (${'new_' . $field}) {
 
@@ -489,16 +491,14 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             } else {
 
-                $sql_data = "SELECT " . $row->field_name . "
-                             FROM ssl_cert_field_data
-                             WHERE ssl_id = '" . mysqli_real_escape_string($dbcon, $sslcid) . "'";
-                $result_data = mysqli_query($dbcon, $sql_data);
-
-                while ($row_data = mysqli_fetch_object($result_data)) {
-
-                    $field_data = $row_data->{$row->field_name};
-
-                }
+                $stmt = $pdo->prepare("
+                    SELECT " . $row->field_name . "
+                    FROM ssl_cert_field_data
+                    WHERE ssl_id = :sslcid");
+                $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+                $stmt->execute();
+                $result_data = $stmt->fetch();
+                $field_data = $result_data->{$row->field_name};
 
             }
 

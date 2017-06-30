@@ -24,26 +24,26 @@
 // upgrade database from 3.0.1 to 3.0.2
 if ($current_db_version === '3.0.1') {
 
-    $sql = "ALTER TABLE `settings`
-            ADD `temp_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `full_url`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        ALTER TABLE `settings`
+        ADD `temp_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `full_url`");
 
-    $sql = "UPDATE `settings`
-            SET `temp_version` = `db_version`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE `settings`
+        SET `temp_version` = `db_version`");
 
-    $sql = "ALTER TABLE `settings`
-            DROP `db_version`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        ALTER TABLE `settings`
+        DROP `db_version`");
 
-    $sql = "ALTER TABLE `settings`
-            CHANGE `temp_version` `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        ALTER TABLE `settings`
+        CHANGE `temp_version` `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
 
-    $sql = "UPDATE settings
-            SET db_version = '3.0.2',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '3.0.2',
+            update_time = '" . $timestamp . "'");
 
     $current_db_version = '3.0.2';
 
@@ -52,45 +52,45 @@ if ($current_db_version === '3.0.1') {
 // upgrade database from 3.0.2 to 3.0.4
 if ($current_db_version === '3.0.2') {
 
-    $sql = "CREATE TABLE IF NOT EXISTS `scheduler` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `interval` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
-                `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
-                `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-                `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `sort_order` INT(4) NOT NULL DEFAULT '1',
-                `is_running` INT(1) NOT NULL DEFAULT '0',
-                `active` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
-                PRIMARY KEY  (`id`)
-             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `scheduler` (
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `interval` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
+            `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
+            `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+            `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+            `sort_order` INT(4) NOT NULL DEFAULT '1',
+            `is_running` INT(1) NOT NULL DEFAULT '0',
+            `active` INT(1) NOT NULL DEFAULT '1',
+            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+            PRIMARY KEY  (`id`)
+        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $sql = "INSERT INTO scheduler
-            (`name`, description, slug, sort_order, is_running, active, insert_time)
-             VALUES
-            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../settings/\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
-            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
-            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
-            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        INSERT INTO scheduler
+        (`name`, description, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../settings/\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '" . $timestamp . "'),
+        ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $timestamp . "'),
+        ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $timestamp . "'),
+        ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $timestamp . "')");
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-    $sql = "UPDATE scheduler
-            SET next_run = '" . $next_run . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE scheduler
+        SET next_run = '" . $next_run . "'");
 
-    $sql = "UPDATE settings
-            SET db_version = '3.0.4',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '3.0.4',
+            update_time = '" . $timestamp . "'");
 
     $current_db_version = '3.0.4';
 
@@ -99,14 +99,14 @@ if ($current_db_version === '3.0.2') {
 // upgrade database from 3.0.4 to 3.0.8
 if ($current_db_version === '3.0.4') {
 
-    $sql = "ALTER TABLE `domains`
-            ADD `autorenew` TINYINT(1) NOT NULL DEFAULT '0' AFTER `notes`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        ALTER TABLE `domains`
+        ADD `autorenew` TINYINT(1) NOT NULL DEFAULT '0' AFTER `notes`");
 
-    $sql = "UPDATE settings
-            SET db_version = '3.0.8',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '3.0.8',
+            update_time = '" . $timestamp . "'");
 
     $current_db_version = '3.0.8';
 
@@ -115,10 +115,10 @@ if ($current_db_version === '3.0.4') {
 // upgrade database from 3.0.8 to 3.0.9
 if ($current_db_version === '3.0.8') {
 
-    $sql = "UPDATE settings
-            SET db_version = '3.0.9',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '3.0.9',
+            update_time = '" . $timestamp . "'");
 
     $current_db_version = '3.0.9';
 
@@ -129,55 +129,54 @@ if ($current_db_version === '3.0.9') {
 
     $temp_message = "Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.";
 
-    $sql = "UPDATE scheduler
-            SET description = '" . $temp_message . "'
-            WHERE `name` = 'Send Expiration Email'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE scheduler
+        SET description = '" . $temp_message . "'
+        WHERE `name` = 'Send Expiration Email'");
 
     $temp_message = "Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.";
 
-    $sql = "UPDATE scheduler
-            SET description = '" . $temp_message . "'
-            WHERE `name` = 'Update Conversion Rates'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE scheduler
+        SET description = '" . $temp_message . "'
+        WHERE `name` = 'Update Conversion Rates'");
 
     $temp_message = "Checks to see if there is a newer version of DomainMOD available to download.";
 
-    $sql = "UPDATE scheduler
-            SET description = '" . $temp_message . "'
-            WHERE `name` = 'Check For New Version'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE scheduler
+        SET description = '" . $temp_message . "'
+        WHERE `name` = 'Check For New Version'");
 
-    $sql = "INSERT INTO scheduler
-            (`name`, description, slug, sort_order, is_running, active, insert_time)
-             VALUES
-            ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $time->stamp() . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        INSERT INTO scheduler
+        (`name`, description, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-    $sql = "UPDATE scheduler
-            SET next_run = '" . $next_run . "'
-            WHERE `name` = 'Data Warehouse Build'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE scheduler
+        SET next_run = '" . $next_run . "'
+        WHERE `name` = 'Data Warehouse Build'");
 
-    $sql = "ALTER TABLE `settings`
-            ADD `large_mode` TINYINT(1) NOT NULL DEFAULT '0' AFTER `email_address`;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        ALTER TABLE `settings`
+        ADD `large_mode` TINYINT(1) NOT NULL DEFAULT '0' AFTER `email_address`");
 
-    $sql = "UPDATE ssl_certs
-            SET active = '5'
-            WHERE active = '2'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE ssl_certs
+        SET active = '5'
+        WHERE active = '2'");
 
-    $sql = "UPDATE settings
-            SET db_version = '4.00.000',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET db_version = '4.00.000',
+            update_time = '" . $timestamp . "'");
 
     $current_db_version = '4.00.000';
 
 }
-
 //@formatter:on

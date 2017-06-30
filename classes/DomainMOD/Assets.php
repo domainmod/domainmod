@@ -31,7 +31,6 @@ class Assets
     {
         $this->system = new System();
         $this->log = new Log('assets.class');
-        $this->error = new Error();
     }
 
     public function getRegistrar($registrar_id)

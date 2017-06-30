@@ -31,7 +31,6 @@ class Api
     public function __construct()
     {
         $this->assets = new Assets();
-        $this->error = new Error();
         $this->log = new Log('api.class');
         $this->system = new System();
     }

@@ -26,7 +26,6 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
@@ -39,8 +38,8 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-ssl-cost-by-owner.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
@@ -66,34 +65,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT o.id, o.name, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
-        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
-        WHERE sslc.fee_id = f.id
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND sslc.owner_id = o.id
-          AND sslc.active NOT IN ('0')
-          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-          " . $range_string . "
-        GROUP BY `name`
-        ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$total_rows = mysqli_num_rows($result);
+$result = $pdo->query("
+    SELECT o.id, o.name, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.owner_id = o.id
+      AND sslc.active NOT IN ('0')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string . "
+    GROUP BY `name`
+    ORDER BY `name`")->fetchAll();
 
-$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
-                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
-                    WHERE sslc.fee_id = f.id
-                      AND f.currency_id = c.id
-                      AND c.id = cc.currency_id
-                      AND sslc.owner_id = o.id
-                      AND sslc.active NOT IN ('0')
-                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      " . $range_string . "";
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
+$total_rows = count($result);
 
-while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
+$result_grand_total = $pdo->query("
+    SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.owner_id = o.id
+      AND sslc.active NOT IN ('0')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string)->fetchAll();
+
+foreach ($result_grand_total as $row_grand_total) {
+
     $grand_total = $row_grand_total->grand_total;
     $number_of_certs_total = $row_grand_total->number_of_certs_total;
+
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
@@ -102,8 +104,6 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
-
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 
@@ -159,9 +159,9 @@ if ($submission_failed != '1' && $total_rows > 0) {
         );
         $export->writeRow($export_file, $row_contents);
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $per_cert = $row->total_cost / $row->number_of_certs;
 
@@ -219,7 +219,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         </thead>
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $per_cert = $row->total_cost / $row->number_of_certs;
 

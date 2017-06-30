@@ -26,7 +26,6 @@ require_once __DIR__ . '/_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';

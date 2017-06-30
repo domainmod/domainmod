@@ -26,7 +26,6 @@ require_once __DIR__ . '/_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $goal = new DomainMOD\Goal();
 
@@ -34,7 +33,6 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 
@@ -45,6 +43,7 @@ $message_success_cli = '';
 
 if ($current_db_version !== SOFTWARE_VERSION) {
 
+    $timestamp = $time->stamp();
     require_once DIR_INC . '/update.inc.php';
 
 }

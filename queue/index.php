@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $assets = new DomainMOD\Assets();
@@ -37,7 +36,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-main.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $queue = new DomainMOD\DomainQueue();
 
@@ -428,6 +426,9 @@ if ($really_dell == '1' && $list_id != '') {
 
     $_SESSION['s_message_success'] .= "Domain List deleted from Queue<BR>";
 
+    header("Location: index.php");
+    exit;
+
 }
 
 if ($deld != '' && $domain_id != '') {
@@ -447,6 +448,9 @@ if ($really_deld == '1' && $domain_id != '') {
     $queue->checkDomainQueue();
 
     $_SESSION['s_message_success'] .= "Domain deleted from Queue<BR>";
+
+    header("Location: index.php");
+    exit;
 
 }
 ?>

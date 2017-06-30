@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $maint = new DomainMOD\Maintenance();
 $date = new DomainMOD\Date();
@@ -43,7 +42,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -697,10 +695,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     foreach ($result as $row) {
 
-                        $sql_update = "UPDATE domains
-                                       SET fee_id = '" . $row->fee_id . "'
-                                       WHERE id = '" . $row->id . "'";
-                        $result_update = mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                        $pdo->query("
+                            UPDATE domains
+                            SET fee_id = '" . $row->fee_id . "'
+                            WHERE id = '" . $row->id . "'");
 
                     }
 
@@ -1275,10 +1273,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 foreach ($result as $row) {
 
-                    $sql_update = "UPDATE domains
-                                       SET total_cost = '" . $row->total_cost . "'
-                                       WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $pdo->query("
+                        UPDATE domains
+                        SET total_cost = '" . $row->total_cost . "'
+                        WHERE id = '" . $row->id . "'");
 
                 }
 
@@ -1335,10 +1333,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 foreach ($result as $row) {
 
-                    $sql_update = "UPDATE domains
-                                       SET total_cost = '" . $row->total_cost . "'
-                                       WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                    $pdo->query("
+                        UPDATE domains
+                        SET total_cost = '" . $row->total_cost . "'
+                        WHERE id = '" . $row->id . "'");
 
                 }
 
@@ -1608,13 +1606,13 @@ if ($action == "UCF") {
     echo $form->showDropdownTopJump('', '', '', '');
     echo $form->showDropdownOptionJump('index.php?action=', 'UCF', 'Choose the Custom Field to Edit', $action);
 
-    $sql = "SELECT df.id, df.name, df.type_id, cft.name AS type
-            FROM domain_fields AS df, custom_field_types AS cft
-            WHERE df.type_id = cft.id
-            ORDER BY df.name";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result = $pdo->query("
+        SELECT df.id, df.name, df.type_id, cft.name AS type
+        FROM domain_fields AS df, custom_field_types AS cft
+        WHERE df.type_id = cft.id
+        ORDER BY df.name")->fetchAll();
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         echo $form->showDropdownOptionJump('index.php?action=UCF&type_id=' . $row->type_id . '&field_id=', $row->id, $row->name . ' (' . $row->type . ')', $field_id);
 
@@ -1662,14 +1660,14 @@ if ($action == "AD") { // Add Domains
     // Registrar Account
     echo $form->showDropdownTop('new_raid', 'Registrar Account', '', '1', '');
 
-    $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                    FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                    WHERE ra.owner_id = o.id
-                      AND ra.registrar_id = r.id
-                    ORDER BY r_name, o_name, ra.username";
-    $result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result_account = $pdo->query("
+        SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+        FROM registrar_accounts AS ra, owners AS o, registrars AS r
+        WHERE ra.owner_id = o.id
+          AND ra.registrar_id = r.id
+        ORDER BY r_name, o_name, ra.username")->fetchAll();
 
-    while ($row_account = mysqli_fetch_object($result_account)) {
+    foreach ($result_account as $row_account) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_raid;
@@ -1685,12 +1683,12 @@ if ($action == "AD") { // Add Domains
     // DNS Profile
     echo $form->showDropdownTop('new_dnsid', 'DNS Profile', '', '1', '');
 
-    $sql_dns = "SELECT id, `name`
-                FROM dns
-                ORDER BY name";
-    $result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result_dns = $pdo->query("
+        SELECT id, `name`
+        FROM dns
+        ORDER BY name")->fetchAll();
 
-    while ($row_dns = mysqli_fetch_object($result_dns)) {
+    foreach ($result_dns as $row_dns) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_dnsid;
@@ -1706,12 +1704,12 @@ if ($action == "AD") { // Add Domains
     // IP Address
     echo $form->showDropdownTop('new_ipid', 'IP Address', '', '1', '');
 
-    $sql_ip = "SELECT id, `name`, ip
-               FROM ip_addresses
-               ORDER BY name, ip";
-    $result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result_ip = $pdo->query("
+        SELECT id, `name`, ip
+        FROM ip_addresses
+        ORDER BY name, ip")->fetchAll();
 
-    while ($row_ip = mysqli_fetch_object($result_ip)) {
+    foreach ($result_ip as $row_ip) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_ipid;
@@ -1727,12 +1725,12 @@ if ($action == "AD") { // Add Domains
     // Web Hosting Provider
     echo $form->showDropdownTop('new_whid', 'Web Hosting Provider', '', '1', '');
 
-    $sql_host = "SELECT id, `name`
-                 FROM hosting
-                 ORDER BY name";
-    $result_host = mysqli_query($dbcon, $sql_host) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result_host = $pdo->query("
+        SELECT id, `name`
+        FROM hosting
+        ORDER BY name")->fetchAll();
 
-    while ($row_host = mysqli_fetch_object($result_host)) {
+    foreach ($result_host as $row_host) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_whid;
@@ -1748,12 +1746,12 @@ if ($action == "AD") { // Add Domains
     // Category
     echo $form->showDropdownTop('new_pcid', 'Category', '', '1', '');
 
-    $sql_cat = "SELECT id, `name`
-                FROM categories
-                ORDER BY name";
-    $result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $result_cat = $pdo->query("
+        SELECT id, `name`
+        FROM categories
+        ORDER BY name")->fetchAll();
 
-    while ($row_cat = mysqli_fetch_object($result_cat)) {
+    foreach ($result_cat as $row_cat) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_pcid;
@@ -1811,11 +1809,12 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownTop('new_pcid', 'New Category', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Category', $new_pcid);
 
-    $sql_cat = "SELECT id, `name`
-                FROM categories
-                ORDER BY name";
-    $result_cat = mysqli_query($dbcon, $sql_cat);
-    while ($row_cat = mysqli_fetch_object($result_cat)) {
+    $result_cat = $pdo->query("
+        SELECT id, `name`
+        FROM categories
+        ORDER BY name")->fetchAll();
+
+    foreach ($result_cat as $row_cat) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_pcid;
@@ -1835,12 +1834,12 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownTop('new_dnsid', 'New DNS Profile', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' DNS Profile', $new_dnsid);
 
-    $sql_dns = "SELECT id, `name`
-                FROM dns
-                ORDER BY name ASC";
-    $result_dns = mysqli_query($dbcon, $sql_dns);
+    $result_dns = $pdo->query("
+        SELECT id, `name`
+        FROM dns
+        ORDER BY name ASC")->fetchAll();
 
-    while ($row_dns = mysqli_fetch_object($result_dns)) {
+    foreach ($result_dns as $row_dns) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_dnsid;
@@ -1859,12 +1858,12 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownTop('new_ipid', 'New IP Address', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' IP Address', $new_ipid);
 
-    $sql_ip = "SELECT id, `name`, ip
-               FROM ip_addresses
-               ORDER BY name ASC, ip ASC";
-    $result_ip = mysqli_query($dbcon, $sql_ip);
+    $result_ip = $pdo->query("
+        SELECT id, `name`, ip
+        FROM ip_addresses
+        ORDER BY name ASC, ip ASC")->fetchAll();
 
-    while ($row_ip = mysqli_fetch_object($result_ip)) {
+    foreach ($result_ip as $row_ip) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_ipid;
@@ -1883,19 +1882,15 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownTop('new_raid', 'New Registrar Account', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Registrar Account', $new_raid);
 
-    $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
-                    FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                    WHERE ra.registrar_id = r.id
-                      AND ra.owner_id = o.id" .
-                      $is_active_string .
-                      $oid_string .
-                      $rid_string .
-                      $tld_string . "
-                    GROUP BY r.name, o.name, ra.username
-                    ORDER BY r.name asc, o.name asc, ra.username asc";
-    $result_account = mysqli_query($dbcon, $sql_account);
+    $result_account = $pdo->query("
+        SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
+        FROM registrar_accounts AS ra, registrars AS r, owners AS o
+        WHERE ra.registrar_id = r.id
+          AND ra.owner_id = o.id
+        GROUP BY r.name, o.name, ra.username
+        ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
 
-    while ($row_account = mysqli_fetch_object($result_account)) {
+    foreach ($result_account as $row_account) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_raid;
@@ -1914,12 +1909,12 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownTop('new_whid', 'New Web Hosting Provider', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Web Hosting Provider', $new_whid);
 
-    $sql_host = "SELECT id, `name`
-                 FROM hosting
-                 ORDER BY name ASC";
-    $result_host = mysqli_query($dbcon, $sql_host);
+    $result_host = $pdo->query("
+        SELECT id, `name`
+        FROM hosting
+        ORDER BY name ASC")->fetchAll();
 
-    while ($row_host = mysqli_fetch_object($result_host)) {
+    foreach ($result_host as $row_host) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_to_compare = $new_whid;

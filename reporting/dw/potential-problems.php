@@ -26,8 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
-$layout = new DOmainMOD\Layout();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
 
@@ -36,36 +35,34 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-dw-potential-problems.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $generate = $_GET['generate'];
 $export_data = $_GET['export_data'];
 
-$sql_accounts_without_a_dns_zone = "SELECT domain
-                                    FROM dw_accounts
-                                    WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
-                                    ORDER BY domain";
-$result_accounts_without_a_dns_zone
-    = mysqli_query($dbcon, $sql_accounts_without_a_dns_zone) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
+$result_accounts_without_a_dns_zone = $pdo->query("
+    SELECT domain
+    FROM dw_accounts
+    WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
+    ORDER BY domain")->fetchAll();
+$sql_accounts_without_a_dns_zone = "";
+$temp_accounts_without_a_dns_zone = count($result_accounts_without_a_dns_zone);
 
-$sql_dns_zones_without_an_account = "SELECT domain
-                                     FROM dw_dns_zones
-                                     WHERE domain NOT IN (SELECT domain FROM dw_accounts)
-                                     ORDER BY domain";
-$result_dns_zones_without_an_account
-    = mysqli_query($dbcon, $sql_dns_zones_without_an_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
+$result_dns_zones_without_an_account = $pdo->query("
+    SELECT domain
+    FROM dw_dns_zones
+    WHERE domain NOT IN (SELECT domain FROM dw_accounts)
+    ORDER BY domain")->fetchAll();
+$temp_dns_zones_without_an_account = count($result_dns_zones_without_an_account);
 
-$sql_suspended_accounts = "SELECT domain
-                           FROM dw_accounts
-                           WHERE suspended = '1'
-                           ORDER BY domain";
-$result_suspended_accounts
-    = mysqli_query($dbcon, $sql_suspended_accounts) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
+$result_suspended_accounts = $pdo->query("
+    SELECT domain
+    FROM dw_accounts
+    WHERE suspended = '1'
+    ORDER BY domain")->fetchAll();
+$temp_suspended_accounts = count($result_suspended_accounts);
 
 if ($export_data == '1') {
 
@@ -84,7 +81,7 @@ if ($export_data == '1') {
 
     } else {
 
-        while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
+        foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
             $row_contents = array(
                 "Accounts without a DNS Zone (" . $temp_accounts_without_a_dns_zone . ")",
@@ -102,7 +99,7 @@ if ($export_data == '1') {
 
     } else {
 
-        while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
+        foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
 
             $row_contents = array(
                 "DNS Zones without an Account (" . $temp_dns_zones_without_an_account . ")",
@@ -120,7 +117,7 @@ if ($export_data == '1') {
 
     } else {
 
-        while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
+        foreach ($result_suspended_accounts as $row_suspended_accounts) {
 
             $row_contents = array(
                 "Suspended Accounts (" . $temp_suspended_accounts . ")",
@@ -165,7 +162,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
 
-            while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
+            foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
                 $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
 
@@ -195,7 +192,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
 
-            while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
+            foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
 
                 $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
 
@@ -225,7 +222,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
 
-            while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
+            foreach ($result_suspended_accounts as $row_suspended_accounts) {
 
                 $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
 

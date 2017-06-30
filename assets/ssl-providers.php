@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
@@ -35,19 +34,18 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-ssl-providers.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, `name`, url, notes, creation_type_id, created_by, insert_time, update_time
-        FROM ssl_providers
-        ORDER BY name ASC";
+$result = $pdo->query("
+    SELECT id, `name`, url, notes, creation_type_id, created_by, insert_time, update_time
+    FROM ssl_providers
+    ORDER BY name ASC")->fetchAll();
 
 if ($export_data == '1') {
-
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_provider_list', strtotime($time->stamp()));
@@ -72,28 +70,20 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result) > 0) {
+    if ($result) {
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
-            $sql_total_count = "SELECT count(*) AS total_count
-                                FROM ssl_accounts
-                                WHERE ssl_provider_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($dbcon, $sql_total_count);
+            $total_accounts = $pdo->query("
+                SELECT count(*)
+                FROM ssl_accounts
+                WHERE ssl_provider_id = '" . $row->id . "'")->fetchColumn();
 
-            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                $total_accounts = $row_total_count->total_count;
-            }
-
-            $sql_cert_count = "SELECT count(*) AS total_count
-                               FROM ssl_certs
-                               WHERE active != '0'
-                                 AND ssl_provider_id = '" . $row->id . "'";
-            $result_cert_count = mysqli_query($dbcon, $sql_cert_count);
-
-            while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
-                $total_certs = $row_cert_count->total_count;
-            }
+            $total_certs = $pdo->query("
+                SELECT count(*)
+                FROM ssl_certs
+                WHERE active != '0'
+                  AND ssl_provider_id = '" . $row->id . "'")->fetchColumn();
 
             if ($row->id == $_SESSION['s_default_ssl_provider']) {
 
@@ -159,9 +149,7 @@ Below is a list of all the SSL Certificate Providers that are stored in <?php ec
 <a href="add/ssl-provider.php"><?php echo $layout->showButton('button', 'Add SSL Provider'); ?></a>
 <a href="ssl-providers.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
@@ -176,26 +164,18 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
-            $sql_total_count = "SELECT count(*) AS total_count
-                                FROM ssl_accounts
-                                WHERE ssl_provider_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($dbcon, $sql_total_count);
+            $total_accounts = $pdo->query("
+                SELECT count(*)
+                FROM ssl_accounts
+                WHERE ssl_provider_id = '" . $row->id . "'")->fetchColumn();
 
-            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                $total_accounts = $row_total_count->total_count;
-            }
-
-            $sql_cert_count = "SELECT count(*) AS total_count
-                               FROM ssl_certs
-                               WHERE active != '0'
-                                 AND ssl_provider_id = '" . $row->id . "'";
-            $result_cert_count = mysqli_query($dbcon, $sql_cert_count);
-
-            while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
-                $total_certs = $row_cert_count->total_count;
-            }
+            $total_certs = $pdo->query("
+                SELECT count(*)
+                FROM ssl_certs
+                WHERE active != '0'
+                  AND ssl_provider_id = '" . $row->id . "'")->fetchColumn();
 
             if ($total_certs >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
 

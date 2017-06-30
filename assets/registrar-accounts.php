@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
@@ -35,8 +34,8 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-registrar-accounts.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $rid = (integer) $_GET['rid'];
@@ -48,21 +47,20 @@ if ($rid != '') { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else
 if ($raid != '') { $raid_string = " AND ra.id = '" . $raid . "' "; } else { $raid_string = ''; }
 if ($oid != '') { $oid_string = " AND ra.owner_id = '" . $oid . "' "; } else { $oid_string = ''; }
 
-$sql = "SELECT ra.id AS raid, ra.email_address, ra.username, ra.password, ra.reseller, ra.reseller_id, ra.api_app_name,
-            ra.api_key, ra.api_secret, ra.api_ip_id, ra.owner_id, ra.registrar_id, o.id AS oid, o.name AS oname,
-            r.id AS rid, r.name AS rname, ra.notes, ra.creation_type_id, ra.created_by, ra.insert_time, ra.update_time
-        FROM registrar_accounts AS ra, owners AS o, registrars AS r
-        WHERE ra.owner_id = o.id
-          AND ra.registrar_id = r.id" .
-          $rid_string .
-          $raid_string .
-          $oid_string . "
-        GROUP BY ra.username, oname, rname
-        ORDER BY rname, username, oname";
+$result = $pdo->query("
+    SELECT ra.id AS raid, ra.email_address, ra.username, ra.password, ra.reseller, ra.reseller_id, ra.api_app_name,
+        ra.api_key, ra.api_secret, ra.api_ip_id, ra.owner_id, ra.registrar_id, o.id AS oid, o.name AS oname,
+        r.id AS rid, r.name AS rname, ra.notes, ra.creation_type_id, ra.created_by, ra.insert_time, ra.update_time
+    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+    WHERE ra.owner_id = o.id
+      AND ra.registrar_id = r.id" .
+      $rid_string .
+      $raid_string .
+      $oid_string . "
+    GROUP BY ra.username, oname, rname
+    ORDER BY rname, username, oname")->fetchAll();
 
 if ($export_data == '1') {
-
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_account_list', strtotime($time->stamp()));
@@ -96,18 +94,18 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result) > 0) {
+    if ($result) {
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             if ($row->api_ip_id != '0') {
 
-                $sql_temp = "SELECT `name`, ip
-                             FROM ip_addresses
-                             WHERE id = '" . $row->api_ip_id . "'";
-                $result_temp = mysqli_query($dbcon, $sql_temp);
+                $result_temp = $pdo->query("
+                    SELECT `name`, ip
+                    FROM ip_addresses
+                    WHERE id = '" . $row->api_ip_id . "'")->fetchAll();
 
-                while ($row_temp = mysqli_fetch_object($result_temp)) {
+                foreach ($result_temp as $row_temp) {
 
                     $api_ip_name = $row_temp->name;
                     $api_ip_address = $row_temp->ip;
@@ -121,15 +119,11 @@ if ($export_data == '1') {
 
             }
 
-            $sql_domain_count = "SELECT count(*) AS total_domain_count
-                                 FROM domains
-                                 WHERE account_id = '" . $row->raid . "'
-                                   AND active NOT IN ('0', '10')";
-            $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
-
-            while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-                $total_domains = $row_domain_count->total_domain_count;
-            }
+            $total_domains = $pdo->query("
+                SELECT count(*)
+                FROM domains
+                WHERE account_id = '" . $row->raid . "'
+                  AND active NOT IN ('0', '10')")->fetchColumn();
 
             if ($row->raid == $_SESSION['s_default_registrar_account']) {
 
@@ -216,9 +210,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in <?php ec
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', 'Add Registrar Account'); ?></a>
 <a href="registrar-accounts.php?export_data=1&rid=<?php echo urlencode($rid); ?>&raid=<?php echo urlencode($raid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
@@ -233,17 +225,13 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         <tbody><?php
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
-            $sql_domain_count = "SELECT count(*) AS total_domain_count
-                                 FROM domains
-                                 WHERE account_id = '" . $row->raid . "'
-                                   AND active NOT IN ('0', '10')";
-            $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
-
-            while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-                $total_domains = $row_domain_count->total_domain_count;
-            }
+            $total_domains = $pdo->query("
+                SELECT count(*)
+                FROM domains
+                WHERE account_id = '" . $row->raid . "'
+                  AND active NOT IN ('0', '10')")->fetchColumn();
 
             if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
 
@@ -286,12 +274,12 @@ if (mysqli_num_rows($result) > 0) { ?>
 
 } else {
 
-    $sql = "SELECT id
-            FROM registrars
-            LIMIT 1";
-    $result = mysqli_query($dbcon, $sql);
+    $result = $pdo->query("
+        SELECT id
+        FROM registrars
+        LIMIT 1")->fetchAll();
 
-    if (mysqli_num_rows($result) == 0) { ?>
+    if (!$result) { ?>
 
         <BR>Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click here to add a Registrar</a>.<BR><?php
 

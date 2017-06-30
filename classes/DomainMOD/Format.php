@@ -47,11 +47,11 @@ class Format
         return array_unique($new_domain_list);
     }
 
-    public function formatForMysql($dbcon, $domain_list)
+    public function formatForMysql($domain_list)
     {
         $new_domain_list = array();
         foreach($domain_list as $value) {
-            $new_domain_list[] = mysqli_real_escape_string($dbcon, $value);
+            $new_domain_list[] = $value;
         }
         $list_formatted = implode("\r\n", $new_domain_list);
         $list_formatted = "'" . $list_formatted;

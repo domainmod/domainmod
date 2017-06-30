@@ -78,9 +78,9 @@ if ($current_db_version < SOFTWARE_VERSION) {
 
     $_SESSION['s_system_upgrade_available'] = '0';
 
-    $sql = "UPDATE settings
-            SET upgrade_available = '0'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $pdo->query("
+        UPDATE settings
+        SET upgrade_available = '0'");
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
     $message_success_cli = "Your database has been upgraded\r\n\r\n";

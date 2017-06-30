@@ -25,7 +25,6 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
@@ -36,7 +35,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/settings-defaults.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -194,63 +192,63 @@ foreach ($result as $row) {
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_registrar_account', 'Default Domain Registrar Account', '', '', '');
-$sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
-        FROM registrars AS r, registrar_accounts AS ra, owners AS o
-        WHERE r.id = ra.registrar_id
-          AND ra.owner_id = o.id
-        ORDER BY r.name, o.name, ra.username";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
+    FROM registrars AS r, registrar_accounts AS ra, owners AS o
+    WHERE r.id = ra.registrar_id
+      AND ra.owner_id = o.id
+    ORDER BY r.name, o.name, ra.username")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->r_name . ' :: ' . $row->o_name . ' :: ' . $row->username, $_SESSION['s_default_registrar_account']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_dns', 'Default DNS Profile', '', '', '');
-$sql = "SELECT id, `name`
-        FROM dns
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM dns
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_dns']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_host', 'Default Web Hosting Provider', '', '', '');
-$sql = "SELECT id, `name`
-        FROM hosting
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM hosting
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_host']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_ip_address_domains', 'Default IP Address', '', '', '');
-$sql = "SELECT id, ip, `name`
-        FROM ip_addresses
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, ip, `name`
+    FROM ip_addresses
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $_SESSION['s_default_ip_address_domains']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_category_domains', 'Default Category', '', '', '');
-$sql = "SELECT id, `name`
-        FROM categories
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_category_domains']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_owner_domains', 'Default Account Owner', '', '', '');
-$sql = "SELECT id, `name`
-        FROM owners
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM owners
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_owner_domains']);
 }
 echo $form->showDropdownBottom('<BR>'); ?>
@@ -259,63 +257,63 @@ echo $form->showDropdownBottom('<BR>'); ?>
 <h3>SSL Defaults</h3><?php
 
 echo $form->showDropdownTop('new_default_ssl_provider', 'Default SSL Provider', '', '', '');
-$sql = "SELECT id, `name`
-        FROM ssl_providers
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM ssl_providers
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_ssl_provider']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_ssl_provider_account', 'Default SSL Provider Account', '', '', '');
-$sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
-        FROM ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
-        WHERE sslp.id = sslpa.ssl_provider_id
-          AND sslpa.owner_id = o.id
-        ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
+    FROM ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+    WHERE sslp.id = sslpa.ssl_provider_id
+      AND sslpa.owner_id = o.id
+    ORDER BY sslp.name, o.name, sslpa.username")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->p_name . ' :: ' . $row->o_name . ' :: ' . $row->username, $_SESSION['s_default_ssl_provider_account']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_ssl_type', 'Default SSL Type', '', '', '');
-$sql = "SELECT id, type
-        FROM ssl_cert_types
-        ORDER BY type";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, type
+    FROM ssl_cert_types
+    ORDER BY type")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->type, $_SESSION['s_default_ssl_type']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_ip_address_ssl', 'Default IP Address', '', '', '');
-$sql = "SELECT id, ip, `name`
-        FROM ip_addresses
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, ip, `name`
+    FROM ip_addresses
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $_SESSION['s_default_ip_address_ssl']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_category_ssl', 'Default Category', '', '', '');
-$sql = "SELECT id, `name`
-        FROM categories
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_category_ssl']);
 }
 echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_default_owner_ssl', 'Default Account Owner', '', '', '');
-$sql = "SELECT id, `name`
-        FROM owners
-        ORDER BY name";
-$result = mysqli_query($dbcon, $sql);
-while ($row = mysqli_fetch_object($result)) {
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM owners
+    ORDER BY name")->fetchAll();
+foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_default_owner_ssl']);
 }
 echo $form->showDropdownBottom('');

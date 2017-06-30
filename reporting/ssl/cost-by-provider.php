@@ -26,7 +26,6 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
@@ -39,8 +38,8 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-ssl-cost-by-provider.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
@@ -66,41 +65,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username,
-            SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
-        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp,
-            ssl_accounts AS sslpa, owners AS o
-        WHERE sslc.fee_id = f.id
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND sslc.ssl_provider_id = sslp.id
-          AND sslc.account_id = sslpa.id
-          AND sslc.owner_id = o.id
-          AND sslc.active NOT IN ('0')
-          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-          " . $range_string . "
-        GROUP BY sslp.name, o.name, sslpa.username
-        ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$total_rows = mysqli_num_rows($result);
+$result = $pdo->query("
+    SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username,
+        SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp,
+        ssl_accounts AS sslpa, owners AS o
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.ssl_provider_id = sslp.id
+      AND sslc.account_id = sslpa.id
+      AND sslc.owner_id = o.id
+      AND sslc.active NOT IN ('0')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string . "
+    GROUP BY sslp.name, o.name, sslpa.username
+    ORDER BY sslp.name, o.name, sslpa.username")->fetchAll();
 
-$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
-                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
-                        ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
-                    WHERE sslc.fee_id = f.id
-                      AND f.currency_id = c.id
-                      AND c.id = cc.currency_id
-                      AND sslc.ssl_provider_id = sslp.id
-                      AND sslc.account_id = sslpa.id
-                      AND sslc.owner_id = o.id
-                      AND sslc.active NOT IN ('0')
-                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      " . $range_string . "";
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
+$total_rows = count($result);
 
-while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
+$result_grand_total = $pdo->query("
+    SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+        ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.ssl_provider_id = sslp.id
+      AND sslc.account_id = sslpa.id
+      AND sslc.owner_id = o.id
+      AND sslc.active NOT IN ('0')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string)->fetchAll();
+
+foreach ($result_grand_total as $row_grand_total) {
+
     $grand_total = $row_grand_total->grand_total;
     $number_of_certs_total = $row_grand_total->number_of_certs_total;
+
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
@@ -109,8 +111,6 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
-
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 
@@ -173,31 +173,32 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $new_provider = '';
         $last_provider = '';
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $new_provider = $row->provider_name;
 
-                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total,
-                                           count(*) AS number_of_certs_provider
-                                       FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c,
-                                           currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa,
-                                           owners AS o
-                                       WHERE sslc.fee_id = f.id
-                                         AND f.currency_id = c.id
-                                         AND c.id = cc.currency_id
-                                         AND sslc.ssl_provider_id = sslp.id
-                                         AND sslc.account_id = sslpa.id
-                                         AND sslc.owner_id = o.id
-                                         AND sslc.active NOT IN ('0')
-                                         AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                         AND sslp.id = '" . $row->id . "'
-                                         " . $range_string . "";
-                $result_provider_total = mysqli_query($dbcon, $sql_provider_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
-                while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
+                $result_provider_total = $pdo->query("
+                    SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
+                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c,
+                        currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+                    WHERE sslc.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND sslc.ssl_provider_id = sslp.id
+                      AND sslc.account_id = sslpa.id
+                      AND sslc.owner_id = o.id
+                      AND sslc.active NOT IN ('0')
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                      AND sslp.id = '" . $row->id . "'" .
+                      $range_string)->fetchAll();
+
+                foreach ($result_provider_total as $row_provider_total) {
+
                     $temp_provider_total = $row_provider_total->provider_total;
                     $number_of_certs_provider = $row_provider_total->number_of_certs_provider;
+
                 }
 
                 $per_cert_account = $row->total_cost / $row->number_of_certs;
@@ -277,27 +278,29 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         $new_provider = '';
         $last_provider = '';
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $new_provider = $row->provider_name;
 
-            $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
-                                   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
-                                   WHERE sslc.fee_id = f.id
-                                     AND f.currency_id = c.id
-                                     AND c.id = cc.currency_id
-                                     AND sslc.ssl_provider_id = sslp.id
-                                     AND sslc.account_id = sslpa.id
-                                     AND sslc.owner_id = o.id
-                                     AND sslc.active NOT IN ('0')
-                                     AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                     AND sslp.id = '" . $row->id . "'
-                                     " . $range_string . "";
-            $result_provider_total = mysqli_query($dbcon, $sql_provider_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
+            $result_provider_total = $pdo->query("
+                SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
+                FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+                WHERE sslc.fee_id = f.id
+                  AND f.currency_id = c.id
+                  AND c.id = cc.currency_id
+                  AND sslc.ssl_provider_id = sslp.id
+                  AND sslc.account_id = sslpa.id
+                  AND sslc.owner_id = o.id
+                  AND sslc.active NOT IN ('0')
+                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                  AND sslp.id = '" . $row->id . "'" .
+                  $range_string)->fetchAll();
 
-            while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
+            foreach ($result_provider_total as $row_provider_total) {
+
                 $temp_provider_total = $row_provider_total->provider_total;
                 $number_of_certs_provider = $row_provider_total->number_of_certs_provider;
+
             }
 
             $per_cert_account = $row->total_cost / $row->number_of_certs;

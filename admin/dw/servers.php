@@ -26,7 +26,6 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $layout = new DomainMOD\Layout();
 
@@ -35,21 +34,20 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dw-servers.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`, notes, dw_accounts, dw_dns_zones,
-            dw_dns_records, build_end_time, creation_type_id, created_by, insert_time, update_time
-        FROM dw_servers
-        ORDER BY `name`, `host`";
+$result = $pdo->query("
+    SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`, notes, dw_accounts, dw_dns_zones,
+        dw_dns_records, build_end_time, creation_type_id, created_by, insert_time, update_time
+    FROM dw_servers
+    ORDER BY `name`, `host`")->fetchAll();
 
 if ($export_data == "1") {
-
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_servers', strtotime($time->stamp()));
@@ -79,9 +77,9 @@ if ($export_data == "1") {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result) > 0) {
+    if ($result) {
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
@@ -130,9 +128,7 @@ if ($export_data == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <a href="add-server.php"><?php echo $layout->showButton('button', 'Add Web Server'); ?></a>
 <?php
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <a href="servers.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
 
@@ -150,7 +146,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         </thead>
     <tbody><?php
 
-    while ($row = mysqli_fetch_object($result)) { ?>
+    foreach ($result as $row) { ?>
 
         <tr>
             <td></td>

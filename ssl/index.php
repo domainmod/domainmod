@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
@@ -40,7 +39,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/ssl-main.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -200,42 +198,64 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
 $_SESSION['s_raw_list_query'] = $sql;
 
-$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
-                    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
-                    WHERE sslc.account_id = sslpa.id
-                      AND sslpa.ssl_provider_id = sslp.id
-                      AND sslpa.owner_id = o.id
-                      AND sslc.fee_id = f.id
-                      AND f.currency_id = c.id
-                      AND c.id = cc.currency_id
-                      AND sslc.domain_id = d.id
-                      AND sslc.type_id = sslcf.id
-                      AND sslc.ip_id = ip.id
-                      AND sslc.cat_id = cat.id
-                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      $is_active_string
-                      $oid_string
-                      $did_string
-                      $sslpid_string
-                      $sslpaid_string
-                      $ssltid_string
-                      $sslipid_string
-                      $sslpcid_string
-                      $range_string
-                      $search_string";
+// This query is identical to the main query, except that it only does a count
+$total_rows = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
+    WHERE sslc.account_id = sslpa.id
+      AND sslpa.ssl_provider_id = sslp.id
+      AND sslpa.owner_id = o.id
+      AND sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.domain_id = d.id
+      AND sslc.type_id = sslcf.id
+      AND sslc.ip_id = ip.id
+      AND sslc.cat_id = cat.id
+      AND sslc.id = sslfd.ssl_id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      $is_active_string
+      $oid_string
+      $did_string
+      $sslpid_string
+      $sslpaid_string
+      $ssltid_string
+      $sslipid_string
+      $sslpcid_string
+      $range_string
+      $search_string")->fetchColumn();
 
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
-while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
-    $grand_total = $row_grand_total->grand_total;
-}
+$grand_total = $pdo->query("
+    SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
+    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+    WHERE sslc.account_id = sslpa.id
+      AND sslpa.ssl_provider_id = sslp.id
+      AND sslpa.owner_id = o.id
+      AND sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.domain_id = d.id
+      AND sslc.type_id = sslcf.id
+      AND sslc.ip_id = ip.id
+      AND sslc.cat_id = cat.id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      $is_active_string
+      $oid_string
+      $did_string
+      $sslpid_string
+      $sslpaid_string
+      $ssltid_string
+      $sslipid_string
+      $sslpcid_string
+      $range_string
+      $search_string")->fetchColumn();
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-    $total_rows = number_format(mysqli_num_rows($result));
+    $result = $pdo->query($sql)->fetchAll();
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_results', strtotime($time->stamp()));
@@ -449,14 +469,14 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Updated";
     $row_contents[$count++] = "CUSTOM FIELDS";
 
-    $sql_field = "SELECT `name`
-                  FROM ssl_cert_fields
-                  ORDER BY `name` ASC";
-    $result_field = mysqli_query($dbcon, $sql_field);
+    $result_field = $pdo->query("
+        SELECT `name`
+        FROM ssl_cert_fields
+        ORDER BY `name` ASC")->fetchAll();
 
-    if (mysqli_num_rows($result_field) > 0) {
+    if ($result_field) {
 
-        while ($row_field = mysqli_fetch_object($result_field)) {
+        foreach ($result_field as $row_field) {
 
             $row_contents[$count++] = $row_field->name;
 
@@ -466,7 +486,7 @@ if ($export_data == "1") {
 
     $export->writeRow($export_file, $row_contents);
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
@@ -602,8 +622,7 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
     echo "<a href=\"add.php\">Click here to add an SSL Certificate &raquo;</a><BR>";
 }
 
-$result = mysqli_query($dbcon, $sql);
-$total_rows = number_format(mysqli_num_rows($result));
+$result = $pdo->query($sql)->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == '1') {
     $box_type = 'expanded';
@@ -695,26 +714,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_domain = "SELECT d.id, d.domain
-                           FROM domains AS d, ssl_certs AS sslc
-                           WHERE d.id = sslc.domain_id
-                             AND d.active not in ('0', '10')
-                             $is_active_string
-                             $oid_string
-                             $sslpid_string
-                             $sslpaid_string
-                             $ssltid_string
-                             $sslipid_string
-                             $sslpcid_string
-                             $range_string
-                             $search_string
-                           GROUP BY d.domain
-                           ORDER BY d.domain asc";
-            $result_domain = mysqli_query($dbcon, $sql_domain);
+            $result_domain = $pdo->query("
+                SELECT d.id, d.domain
+                FROM domains AS d, ssl_certs AS sslc
+                WHERE d.id = sslc.domain_id
+                  AND d.active not in ('0', '10')
+                  $is_active_string
+                  $oid_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY d.domain
+                ORDER BY d.domain asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Domain - ALL', 'null');
-            while ($row_domain = mysqli_fetch_object($result_domain)) {
+            foreach ($result_domain as $row_domain) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $row_domain->id . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_domain->id, $row_domain->domain, $did);
 
@@ -792,26 +811,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_ssl_provider = "SELECT sslp.id, sslp.name
-                                 FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
-                                 WHERE sslp.id = sslc.ssl_provider_id
-                                   AND sslc.domain_id = d.id
-                                   $is_active_string
-                                   $oid_string
-                                   $did_string
-                                   $sslpaid_string
-                                   $ssltid_string
-                                   $sslipid_string
-                                   $sslpcid_string
-                                   $range_string
-                                   $search_string
-                                 GROUP BY sslp.name
-                                 ORDER BY sslp.name asc";
-            $result_ssl_provider = mysqli_query($dbcon, $sql_ssl_provider);
+            $result_ssl_provider = $pdo->query("
+                SELECT sslp.id, sslp.name
+                FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
+                WHERE sslp.id = sslc.ssl_provider_id
+                  AND sslc.domain_id = d.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY sslp.name
+                ORDER BY sslp.name asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Provider - ALL', 'null');
-            while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
+            foreach ($result_ssl_provider as $row_ssl_provider) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $row_ssl_provider->id . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_ssl_provider->id, $row_ssl_provider->name, $sslpid);
 
@@ -889,28 +908,28 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
-                            FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
-                            WHERE sslpa.ssl_provider_id = sslp.id
-                              AND sslpa.owner_id = o.id
-                              AND sslpa.id = sslc.account_id
-                              AND sslc.domain_id = d.id
-                              $is_active_string
-                              $oid_string
-                              $did_string
-                              $sslpid_string
-                              $ssltid_string
-                              $sslipid_string
-                              $sslpcid_string
-                              $range_string
-                              $search_string
-                            GROUP BY sslp.name, o.name, sslpa.username
-                            ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
-            $result_account = mysqli_query($dbcon, $sql_account);
+            $result_account = $pdo->query("
+                SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
+                FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
+                WHERE sslpa.ssl_provider_id = sslp.id
+                  AND sslpa.owner_id = o.id
+                  AND sslpa.id = sslc.account_id
+                  AND sslc.domain_id = d.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY sslp.name, o.name, sslpa.username
+                ORDER BY sslp.name asc, o.name asc, sslpa.username asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Provider Account - ALL', 'null');
-            while ($row_account = mysqli_fetch_object($result_account)) {
+            foreach ($result_account as $row_account) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $row_account->sslpa_id . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_account->sslpa_id, $row_account->sslp_name . ', ' . $row_account->owner_name . ' (' . $row_account->username . ')', $sslpaid);
 
@@ -988,26 +1007,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_type = "SELECT sslc.type_id, sslcf.type
-                         FROM ssl_certs AS sslc, domains AS d, ssl_cert_types AS sslcf
-                         WHERE sslc.domain_id = d.id
-                           AND sslc.type_id = sslcf.id
-                           $is_active_string
-                           $oid_string
-                           $did_string
-                           $sslpid_string
-                           $sslpaid_string
-                           $sslipid_string
-                           $sslpcid_string
-                           $range_string
-                           $search_string
-                         GROUP BY sslcf.type
-                         ORDER BY sslcf.type asc";
-            $result_type = mysqli_query($dbcon, $sql_type);
+            $result_type = $pdo->query("
+                SELECT sslc.type_id, sslcf.type
+                FROM ssl_certs AS sslc, domains AS d, ssl_cert_types AS sslcf
+                WHERE sslc.domain_id = d.id
+                  AND sslc.type_id = sslcf.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY sslcf.type
+                ORDER BY sslcf.type asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Type - ALL', 'null');
-            while ($row_type = mysqli_fetch_object($result_type)) {
+            foreach ($result_type as $row_type) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $row_type->type_id . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_type->type_id, $row_type->type, $ssltid);
 
@@ -1085,26 +1104,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_ip = "SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
-                       FROM ssl_certs AS sslc, domains AS d, ip_addresses AS ip
-                       WHERE sslc.domain_id = d.id
-                         AND sslc.ip_id = ip.id
-                         $is_active_string
-                         $oid_string
-                         $did_string
-                         $sslpid_string
-                         $sslpaid_string
-                         $ssltid_string
-                         $sslpcid_string
-                         $range_string
-                         $search_string
-                       GROUP BY ip.name, ip.ip
-                       ORDER BY ip.name, ip.ip";
-            $result_ip = mysqli_query($dbcon, $sql_ip);
+            $result_ip = $pdo->query("
+                SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
+                FROM ssl_certs AS sslc, domains AS d, ip_addresses AS ip
+                WHERE sslc.domain_id = d.id
+                  AND sslc.ip_id = ip.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY ip.name, ip.ip
+                ORDER BY ip.name, ip.ip")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'IP Address - ALL', 'null');
-            while ($row_ip = mysqli_fetch_object($result_ip)) {
+            foreach ($result_ip as $row_ip) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $row_ip->ip_id . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_ip->ip_id, $row_ip->ip_name . ' (' . $row_ip->ip . ')', $sslipid);
 
@@ -1182,26 +1201,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_cat = "SELECT c.id AS cat_id, c.name AS cat_name
-                        FROM ssl_certs AS sslc, domains AS d, categories AS c
-                        WHERE sslc.domain_id = d.id
-                          AND sslc.cat_id = c.id
-                          $is_active_string
-                          $oid_string
-                          $did_string
-                          $sslpid_string
-                          $sslpaid_string
-                          $ssltid_string
-                          $sslipid_string
-                          $range_string
-                          $search_string
-                       GROUP BY c.name
-                       ORDER BY c.name";
-            $result_cat = mysqli_query($dbcon, $sql_cat);
+            $result_cat = $pdo->query("
+                SELECT c.id AS cat_id, c.name AS cat_name
+                FROM ssl_certs AS sslc, domains AS d, categories AS c
+                WHERE sslc.domain_id = d.id
+                  AND sslc.cat_id = c.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $range_string
+                  $search_string
+               GROUP BY c.name
+               ORDER BY c.name")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Category - ALL', 'null');
-            while ($row_cat = mysqli_fetch_object($result_cat)) {
+            foreach ($result_cat as $row_cat) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $row_cat->cat_id . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_cat->cat_id, $row_cat->cat_name, $sslpcid);
 
@@ -1279,26 +1298,26 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_owner = "SELECT o.id, o.name
-                          FROM owners AS o, ssl_certs AS sslc, domains AS d
-                          WHERE o.id = sslc.owner_id
-                            AND o.id = d.owner_id
-                            $is_active_string
-                            $did_string
-                            $sslpid_string
-                            $sslpaid_string
-                            $ssltid_string
-                            $sslipid_string
-                            $sslpcid_string
-                            $range_string
-                            $search_string
-                          GROUP BY o.name
-                          ORDER BY o.name asc";
-            $result_owner = mysqli_query($dbcon, $sql_owner);
+            $result_owner = $pdo->query("
+                SELECT o.id, o.name
+                FROM owners AS o, ssl_certs AS sslc, domains AS d
+                WHERE o.id = sslc.owner_id
+                  AND o.id = d.owner_id
+                  $is_active_string
+                  $did_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY o.name
+                ORDER BY o.name asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Owner - ALL', 'null');
-            while ($row_owner = mysqli_fetch_object($result_owner)) {
+            foreach ($result_owner as $row_owner) {
 
                 echo $form->showDropdownOptionJump('index.php?oid=' . $row_owner->id . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_owner->id, $row_owner->name, $oid);
 
@@ -1346,9 +1365,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $did_string = "";
             }
             if ($sslpid != "") {
-                $sslp_string = " AND ssl_provider_id = '$sslpid' ";
+                $sslpid_string = " AND ssl_provider_id = '$sslpid' ";
             } else {
-                $sslp_string = "";
+                $sslpid_string = "";
             }
             if ($sslpaid != "") {
                 $sslpaid_string = " AND account_id = '$sslpaid' ";
@@ -1381,25 +1400,25 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $sql_active = "SELECT active, count(*) AS total_count
-                           FROM ssl_certs
-                           WHERE id != '0'
-                             $oid_string
-                             $did_string
-                             $sslpid_string
-                             $sslpaid_string
-                             $ssltid_string
-                             $sslipid_string
-                             $sslpcid_string
-                             $range_string
-                             $search_string
-                           GROUP BY active
-                           ORDER BY active asc";
-            $result_active = mysqli_query($dbcon, $sql_active);
+            $result_active = $pdo->query("
+                SELECT active, count(*) AS total_count
+                FROM ssl_certs
+                WHERE id != '0'
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string
+                GROUP BY active
+                ORDER BY active asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=LIVE&from_dropdown=1&expand=1&null=', $is_active, '"Live" SSL Certificates (Active / Pending)', 'LIVE');
-            while ($row_active = mysqli_fetch_object($result_active)) {
+            foreach ($result_active as $row_active) {
 
                 if ($row_active->active == "0") {
                     $display_text = "Expired";
@@ -1453,16 +1472,16 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
 }
 
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add SSL Cert'); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
     <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
     <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
-    <strong>Number of SSL Certs:</strong> <?php echo number_format(mysqli_num_rows($result)); ?><BR><BR><?php
+    <strong>Number of SSL Certs:</strong> <?php echo number_format(count($result)); ?><BR><BR><?php
 
-    if ($totalrows != '0') { ?>
+    if ($total_rows) { ?>
 
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
             <thead>
@@ -1519,7 +1538,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             </tr>
             </thead>
             <tbody>
-            <?php while ($row = mysqli_fetch_object($result)) { ?>
+            <?php foreach ($result as $row) { ?>
             <tr>
                 <td></td>
                 <td>

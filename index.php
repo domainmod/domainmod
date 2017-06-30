@@ -26,7 +26,6 @@ require_once __DIR__ . '/_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $login = new DomainMOD\Login();
 $log = new DomainMOD\Log('/index.php');
@@ -39,7 +38,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->loginCheck();

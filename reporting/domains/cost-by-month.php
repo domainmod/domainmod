@@ -26,7 +26,6 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
@@ -39,8 +38,8 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-domain-cost-by-month.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
@@ -66,30 +65,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
-        FROM domains AS d, fees AS f, currencies AS c
-        WHERE d.fee_id = f.id
-          AND f.currency_id = c.id
-          AND d.active NOT IN ('0', '10')
-          " . $range_string . "
-        GROUP BY YEAR, MONTH
-        ORDER BY YEAR, MONTH";
-$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-$total_rows = mysqli_num_rows($result);
+$result = $pdo->query("
+    SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
+    FROM domains AS d, fees AS f, currencies AS c
+    WHERE d.fee_id = f.id
+      AND f.currency_id = c.id
+      AND d.active NOT IN ('0', '10')" .
+    $range_string . "
+    GROUP BY year, month
+    ORDER BY year, month")->fetchAll();
 
-$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
-                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                    WHERE d.fee_id = f.id
-                      AND f.currency_id = c.id
-                      AND c.id = cc.currency_id
-                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      AND d.active NOT IN ('0', '10')
-                      " . $range_string . "";
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
+$total_rows = count($result);
 
-while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
+$result_grand_total = $pdo->query("
+    SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
+    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+    WHERE d.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      AND d.active NOT IN ('0', '10')" .
+      $range_string)->fetchAll();
+
+foreach ($result_grand_total as $row_grand_total) {
+
     $grand_total = $row_grand_total->grand_total;
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
+
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
@@ -98,8 +100,6 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
-
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 
@@ -160,27 +160,29 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $new_month = '';
         $last_month = '';
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $new_year = $row->year;
                 $new_month = $row->month;
 
-                $sql_monthly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
-                                     FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                     WHERE d.fee_id = f.id
-                                       AND f.currency_id = c.id
-                                       AND c.id = cc.currency_id
-                                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                       AND d.active NOT IN ('0', '10')
-                                       AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                       AND MONTH(d.expiry_date) = '" . $row->month . "'
-                                       " . $range_string . "";
-                $result_monthly_cost = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                $result_monthly_cost = $pdo->query("
+                    SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                    WHERE d.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                      AND d.active NOT IN ('0', '10')
+                      AND YEAR(d.expiry_date) = '" . $row->year . "' 
+                      AND MONTH(d.expiry_date) = '" . $row->month . "'" .
+                      $range_string)->fetchAll();
 
-                while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
+                foreach ($result_monthly_cost as $row_monthly_cost) {
+
                     $monthly_cost = $row_monthly_cost->monthly_cost;
+
                 }
 
                 $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
@@ -200,19 +202,21 @@ if ($submission_failed != '1' && $total_rows > 0) {
                 } elseif ($row->month == '12') { $display_month = 'December';
                 }
 
-                $sql_yearly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
-                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                WHERE d.fee_id = f.id
-                                  AND f.currency_id = c.id
-                                  AND c.id = cc.currency_id
-                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                  AND d.active NOT IN ('0', '10')
-                                  AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                  " . $range_string . "";
-                $result_yearly_cost = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                $result_yearly_cost = $pdo->query("
+                    SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                    WHERE d.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                      AND d.active NOT IN ('0', '10')
+                      AND YEAR(d.expiry_date) = '" . $row->year . "'" .
+                      $range_string)->fetchAll();
 
-                while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
+                foreach ($result_yearly_cost as $row_yearly_cost) {
+
                     $yearly_cost = $row_yearly_cost->yearly_cost;
+
                 }
 
                 $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
@@ -274,25 +278,27 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         $new_month = '';
         $last_month = '';
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             $new_year = $row->year;
             $new_month = $row->month;
 
-            $sql_monthly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
-                                 FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                 WHERE d.fee_id = f.id
-                                   AND f.currency_id = c.id
-                                   AND c.id = cc.currency_id
-                                   AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                   AND d.active NOT IN ('0', '10')
-                                   AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                   AND MONTH(d.expiry_date) = '" . $row->month . "'
-                                   " . $range_string . "";
-            $result_monthly_cost = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
+            $result_monthly_cost = $pdo->query("
+                SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
+                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                WHERE d.fee_id = f.id
+                  AND f.currency_id = c.id
+                  AND c.id = cc.currency_id
+                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                  AND d.active NOT IN ('0', '10')
+                  AND YEAR(d.expiry_date) = '" . $row->year . "'
+                  AND MONTH(d.expiry_date) = '" . $row->month . "'" .
+                  $range_string)->fetchAll();
 
-            while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
+            foreach ($result_monthly_cost as $row_monthly_cost) {
+
                 $monthly_cost = $row_monthly_cost->monthly_cost;
+
             }
 
             $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
@@ -313,19 +319,21 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
             if ($new_year > $last_year || $new_year == '') {
 
-                $sql_yearly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
-                                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                    WHERE d.fee_id = f.id
-                                      AND f.currency_id = c.id
-                                      AND c.id = cc.currency_id
-                                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                      AND d.active NOT IN ('0', '10')
-                                      AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                      " . $range_string . "";
-                $result_yearly_cost = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
+                $result_yearly_cost = $pdo->query("
+                    SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                    WHERE d.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                      AND d.active NOT IN ('0', '10')
+                      AND YEAR(d.expiry_date) = '" . $row->year . "'" .
+                      $range_string)->fetchAll();
 
-                while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
+                foreach ($result_yearly_cost as $row_yearly_cost) {
+
                     $yearly_cost = $row_yearly_cost->yearly_cost;
+
                 }
 
                 $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>

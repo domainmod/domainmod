@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -37,7 +36,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-edit.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -62,16 +60,16 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
 // Custom Fields
-$sql = "SELECT field_name
-        FROM domain_fields
-        ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql);
+$result = $pdo->query("
+    SELECT field_name
+    FROM domain_fields
+    ORDER BY `name`")->fetchAll();
 
-if (mysqli_num_rows($result) > 0) {
+if ($result) {
 
     $count = 0;
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $field_array[$count] = $row->field_name;
         $count++;
@@ -144,15 +142,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        $sql = "SELECT (" . $fee_string . ") AS total_cost
-                FROM fees
-                WHERE registrar_id = '" . $new_registrar_id . "'
-                  AND tld = '" . mysqli_real_escape_string($dbcon, $new_tld) . "'";
-        $result = mysqli_query($dbcon, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-            $new_total_cost = $row->total_cost;
-        }
+        $stmt = $pdo->prepare("
+            SELECT (" . $fee_string . ")
+            FROM fees
+            WHERE registrar_id = :new_registrar_id
+              AND tld = :new_tld");
+        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
+        $new_total_cost = $stmt->fetchColumn();
 
         $stmt = $pdo->prepare("
             UPDATE domains
@@ -196,16 +194,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('did', $did, PDO::PARAM_INT);
         $stmt->execute();
 
-        $sql = "SELECT field_name
-                FROM domain_fields
-                ORDER BY `name`";
-        $result = mysqli_query($dbcon, $sql);
+        $result = $pdo->query("
+            SELECT field_name
+            FROM domain_fields
+            ORDER BY `name`")->fetchAll();
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result) {
 
             $count = 0;
 
-            while ($row = mysqli_fetch_object($result)) {
+            foreach ($result as $row) {
 
                 $field_array[$count] = $row->field_name;
                 $count++;
@@ -216,11 +214,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $full_field = "new_" . $field;
 
-                $sql = "UPDATE domain_field_data
-                        SET `" . $field . "` = '" . mysqli_real_escape_string($dbcon, ${$full_field}) . "',
-                            update_time = '" . $timestamp . "'
-                        WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
-                $result = mysqli_query($dbcon, $sql);
+                $stmt = $pdo->prepare("
+                    UPDATE domain_field_data
+                    SET `" . $field . "` = :full_field,
+                        update_time = :timestamp
+                    WHERE domain_id = :did");
+                $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->bindValue('did', $did, PDO::PARAM_INT);
+                $stmt->execute();
 
             }
 
@@ -505,18 +507,18 @@ if ($new_notes != '') {
 }
 echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
-$sql = "SELECT field_name
-        FROM domain_fields
-        ORDER BY type_id, `name`";
-$result = mysqli_query($dbcon, $sql);
+$result = $pdo->query("
+    SELECT field_name
+    FROM domain_fields
+    ORDER BY type_id, `name`")->fetchAll();
 
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <h3>Custom Fields</h3><?php
 
     $count = 0;
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $field_array[$count] = $row->field_name;
         $count++;
@@ -525,13 +527,13 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     foreach ($field_array as $field) {
 
-        $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.field_name = '" . $field . "'";
-        $result = mysqli_query($dbcon, $sql);
+        $result = $pdo->query("
+            SELECT df.name, df.field_name, df.type_id, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.field_name = '" . $field . "'")->fetchAll();
 
-        while ($row = mysqli_fetch_object($result)) {
+        foreach ($result as $row) {
 
             if (${'new_' . $field}) {
 
@@ -539,16 +541,14 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             } else {
 
-                $sql_data = "SELECT " . $row->field_name . "
-                             FROM domain_field_data
-                             WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
-                $result_data = mysqli_query($dbcon, $sql_data);
-
-                while ($row_data = mysqli_fetch_object($result_data)) {
-
-                    $field_data = $row_data->{$row->field_name};
-
-                }
+                $stmt = $pdo->prepare("
+                    SELECT " . $row->field_name . "
+                    FROM domain_field_data
+                    WHERE domain_id = :did");
+                $stmt->bindValue('did', $did, PDO::PARAM_INT);
+                $stmt->execute();
+                $result_data = $stmt->fetch();
+                $field_data = $result_data->{$row->field_name};
 
             }
 

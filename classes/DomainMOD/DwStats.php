@@ -144,4 +144,9 @@ class DwStats
         return array($result->dw_accounts, $result->dw_dns_zones, $result->dw_dns_records);
     }
 
+    public function checkForServerTotalsTable()
+    {
+        return $this->system->db()->query("SHOW TABLES LIKE 'dw_server_totals'")->fetchColumn();
+    }
+
 } //@formatter:on

@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
@@ -35,8 +34,8 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-ssl-provider-fees-missing.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -48,13 +47,13 @@ $system->authCheck();
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-$sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
-        FROM ssl_providers sp, ssl_certs sc
-        WHERE sp.id = sc.ssl_provider_id
-          AND sc.fee_id = '0'
-        GROUP BY sp.name
-        ORDER BY sp.name ASC";
-$result = mysqli_query($dbcon, $sql);
+$result = $pdo->query("
+    SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
+    FROM ssl_providers sp, ssl_certs sc
+    WHERE sp.id = sc.ssl_provider_id
+      AND sc.fee_id = '0'
+    GROUP BY sp.name
+    ORDER BY sp.name ASC")->fetchAll();
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these
 fees as soon as possible.<BR>
@@ -69,7 +68,7 @@ fees as soon as possible.<BR>
     </thead>
     <tbody><?php
 
-    while ($row = mysqli_fetch_object($result)) { ?>
+    foreach ($result as $row) { ?>
 
         <tr>
         <td></td>
@@ -78,18 +77,18 @@ fees as soon as possible.<BR>
         </td>
         <td><?php
 
-            $sql_missing_types = "SELECT sslct.id, sslct.type
-                                  FROM ssl_certs AS sslc, ssl_cert_types AS sslct
-                                  WHERE sslc.type_id = sslct.id
-                                    AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
-                                    AND sslc.fee_id = '0'
-                                  GROUP BY sslct.type
-                                  ORDER BY sslct.type ASC";
-            $result_missing_types = mysqli_query($dbcon, $sql_missing_types);
+            $result_missing_types = $pdo->query("
+                SELECT sslct.id, sslct.type
+                FROM ssl_certs AS sslc, ssl_cert_types AS sslct
+                WHERE sslc.type_id = sslct.id
+                  AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
+                  AND sslc.fee_id = '0'
+                GROUP BY sslct.type
+                ORDER BY sslct.type ASC")->fetchAll();
 
             $full_type_list = "";
 
-            while ($row_missing_types = mysqli_fetch_object($result_missing_types)) {
+            foreach ($result_missing_types as $row_missing_types) {
 
                 $full_type_list .= '<a href=\'' . $web_root . '/assets/add/ssl-provider-fee.php?sslpid=' . $row->ssl_provider_id . '&type_id=' . $row_missing_types->id . '\'>' . $row_missing_types->type . "</a>, ";
 

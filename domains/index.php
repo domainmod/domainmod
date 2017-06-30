@@ -26,7 +26,6 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
@@ -41,7 +40,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-main.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -293,47 +291,75 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_query'] = $sql;
 
-$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
-                    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
-                    WHERE d.account_id = ra.id
-                      AND ra.registrar_id = r.id
-                      AND ra.owner_id = o.id
-                      AND d.cat_id = cat.id
-                      AND d.fee_id = f.id
-                      AND d.dns_id = dns.id
-                      AND d.ip_id = ip.id
-                      AND d.hosting_id = h.id
-                      AND f.currency_id = c.id
-                      AND c.id = cc.currency_id
-                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      $is_active_string
-                      $segid_string
-                      $pcid_string
-                      $oid_string
-                      $dnsid_string
-                      $ipid_string
-                      $whid_string
-                      $rid_string
-                      $raid_string
-                      $range_string
-                      $tld_string
-                      $search_string";
+// This query is identical to the main query, except that it only does a count
+$total_rows = $pdo->query("
+    SELECT count(*)
+    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+    WHERE d.account_id = ra.id
+      AND ra.registrar_id = r.id
+      AND ra.owner_id = o.id
+      AND d.cat_id = cat.id
+      AND d.fee_id = f.id
+      AND d.dns_id = dns.id
+      AND d.ip_id = ip.id
+      AND d.hosting_id = h.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND d.id = dfd.domain_id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      $is_active_string
+      $segid_string
+      $pcid_string
+      $oid_string
+      $dnsid_string
+      $ipid_string
+      $whid_string
+      $rid_string
+      $raid_string
+      $range_string
+      $tld_string
+      $search_string
+      $sort_by_string")->fetchColumn();
 
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
-while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
-    $grand_total = $row_grand_total->grand_total;
-}
+$grand_total = $pdo->query("
+    SELECT SUM(d.total_cost * cc.conversion)
+    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+    WHERE d.account_id = ra.id
+      AND ra.registrar_id = r.id
+      AND ra.owner_id = o.id
+      AND d.cat_id = cat.id
+      AND d.fee_id = f.id
+      AND d.dns_id = dns.id
+      AND d.ip_id = ip.id
+      AND d.hosting_id = h.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      $is_active_string
+      $segid_string
+      $pcid_string
+      $oid_string
+      $dnsid_string
+      $ipid_string
+      $whid_string
+      $rid_string
+      $raid_string
+      $range_string
+      $tld_string
+      $search_string")->fetchColumn();
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($segid != "") {
 
-    $result = mysqli_query($dbcon, $sql);
+    $result = $pdo->query($sql)->fetchAll();
 
     $active_domains = "'";
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
+
         $active_domains .= $row->domain . "', '";
+
     }
     $active_domains .= "'";
     $active_domains = substr($active_domains, 0, -4);
@@ -346,26 +372,25 @@ if ($segid != "") {
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
 
-    $sql_filter_update = "UPDATE segment_data
-                          SET filtered = '1'
-                          WHERE active = '1'
-                            AND segment_id = '$segid'
-                            AND domain NOT IN ($active_domains)";
-    $result_filter_update = mysqli_query($dbcon, $sql_filter_update);
+    $pdo->query("
+        UPDATE segment_data
+        SET filtered = '1'
+        WHERE active = '1'
+          AND segment_id = '" . $segid . "'
+          AND domain NOT IN (" . $active_domains . ")")->fetchAll();
 
-    $sql_filter_update = "UPDATE segment_data
-                          SET filtered = '1'
-                          WHERE active = '1'
-                            AND segment_id = '$segid'
-                            AND domain NOT LIKE '%" . $search_for . "%'";
-    $result_filter_update = mysqli_query($dbcon, $sql_filter_update);
+    $pdo->query("
+        UPDATE segment_data
+        SET filtered = '1'
+        WHERE active = '1'
+          AND segment_id = '$segid'
+          AND domain NOT LIKE '%" . $search_for . "%'");
 
 }
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-    $total_rows = number_format(mysqli_num_rows($result));
+    $result = $pdo->query($sql)->fetchAll();
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('domain_results', strtotime($time->stamp()));
@@ -704,14 +729,14 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Updated";
     $row_contents[$count++] = "CUSTOM FIELDS";
 
-    $sql_field = "SELECT `name`
-                  FROM domain_fields
-                  ORDER BY `name` ASC";
-    $result_field = mysqli_query($dbcon, $sql_field);
+    $result_field = $pdo->query("
+        SELECT `name`
+        FROM domain_fields
+        ORDER BY `name` ASC")->fetchAll();
 
-    if (mysqli_num_rows($result_field) > 0) {
+    if ($result_field) {
 
-        while ($row_field = mysqli_fetch_object($result_field)) {
+        foreach ($result_field as $row_field) {
 
             $row_contents[$count++] = $row_field->name;
 
@@ -721,7 +746,7 @@ if ($export_data == "1") {
 
     $export->writeRow($export_file, $row_contents);
 
-    while ($row = mysqli_fetch_object($result)) {
+    foreach ($result as $row) {
 
         $temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
@@ -848,18 +873,18 @@ if ($export_data == "1") {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-$sql_supported = "SELECT `name`
-                  FROM api_registrars
-                  ORDER BY name ASC";
-$result_supported = mysqli_query($dbcon, $sql_supported);
+$result_supported = $pdo->query("
+    SELECT `name`
+    FROM api_registrars
+    ORDER BY name ASC")->fetchAll();
+
 $supported_registrars = '';
-while ($row_supported = mysqli_fetch_object($result_supported)) {
+foreach ($result_supported as $row_supported) {
 
     $supported_registrars .= ', ' . $row_supported->name;
 
 }
 $supported_registrars = substr($supported_registrars, 2);
-
 
 // Double check to make sure there are still no domains in the system
 if ($_SESSION['s_has_domain'] == '0') {
@@ -909,15 +934,13 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $totalrows = mysqli_num_rows(mysqli_query($dbcon, $sql));
-    $parameters = array($totalrows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+    $parameters = array($total_rows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
     $navigate = $layout->pageBrowser($parameters);
     $sql = $sql . $navigate[0];
 
 }
 
-$result = mysqli_query($dbcon, $sql);
-$total_rows = number_format(mysqli_num_rows($result));
+$result = $pdo->query($sql)->fetchAll();
 
 if ($segid != "") {
 
@@ -953,14 +976,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             echo $form->showFormTop('');
 
             // SEGMENT
-            $sql_segment = "SELECT id, `name`
-                            FROM segments
-                            ORDER BY `name` ASC";
-            $result_segment = mysqli_query($dbcon, $sql_segment);
+            $result_segment = $pdo->query("
+                SELECT id, `name`
+                FROM segments
+                ORDER BY `name` ASC")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Segment Filter - OFF', 'null');
-            while ($row_segment = mysqli_fetch_object($result_segment)) {
+            foreach ($result_segment as $row_segment) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&segid=' . $row_segment->id . '&tld=' . $tld . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_segment->id, $row_segment->name, $segid);
 
@@ -1050,27 +1073,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_registrar = "SELECT r.id, r.name
-                              FROM registrars AS r, domains AS d
-                              WHERE r.id = d.registrar_id
-                                $is_active_string
-                                $pcid_string
-                                $oid_string
-                                $dnsid_string
-                                $ipid_string
-                                $whid_string
-                                $raid_string
-                                $range_string
-                                $tld_string
-                                $search_string
-                                $segment_string
-                              GROUP BY r.name
-                              ORDER BY r.name asc";
-            $result_registrar = mysqli_query($dbcon, $sql_registrar);
+            $result_registrar = $pdo->query("
+                SELECT r.id, r.name
+                FROM registrars AS r, domains AS d
+                WHERE r.id = d.registrar_id
+                  $is_active_string
+                  $pcid_string
+                  $oid_string
+                  $dnsid_string
+                  $ipid_string
+                  $whid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY r.name
+                ORDER BY r.name asc")->fetchAll();
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar - ALL', 'null');
-            while ($row_registrar = mysqli_fetch_object($result_registrar)) {
+            foreach ($result_registrar as $row_registrar) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $row_registrar->id . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_registrar->id, $row_registrar->name, $rid);
 
@@ -1155,28 +1178,29 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
-                            FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
-                            WHERE ra.registrar_id = r.id
-                              AND ra.owner_id = o.id
-                              AND ra.id = d.account_id
-                              $is_active_string
-                              $pcid_string
-                              $oid_string
-                              $dnsid_string
-                              $ipid_string
-                              $whid_string
-                              $rid_string
-                              $range_string
-                              $tld_string
-                              $search_string
-                              $segment_string
-                            GROUP BY r.name, o.name, ra.username
-                            ORDER BY r.name asc, o.name asc, ra.username asc";
-            $result_account = mysqli_query($dbcon, $sql_account);
+            $result_account = $pdo->query("
+                SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
+                FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
+                WHERE ra.registrar_id = r.id
+                  AND ra.owner_id = o.id
+                  AND ra.id = d.account_id
+                  $is_active_string
+                  $pcid_string
+                  $oid_string
+                  $dnsid_string
+                  $ipid_string
+                  $whid_string
+                  $rid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY r.name, o.name, ra.username
+                ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar Account - ALL', 'null');
-            while ($row_account = mysqli_fetch_object($result_account)) {
+            foreach ($result_account as $row_account) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $row_account->ra_id . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_account->ra_id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $raid);
 
@@ -1266,26 +1290,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_dns = "SELECT dns.id, dns.name
-                        FROM dns AS dns, domains AS d
-                        WHERE dns.id = d.dns_id
-                          $is_active_string
-                          $pcid_string
-                          $oid_string
-                          $ipid_string
-                          $whid_string
-                          $rid_string
-                          $raid_string
-                          $range_string
-                          $tld_string
-                          $search_string
-                          $segment_string
-                        GROUP BY dns.name
-                        ORDER BY dns.name asc";
-            $result_dns = mysqli_query($dbcon, $sql_dns);
+            $result_dns = $pdo->query("
+                SELECT dns.id, dns.name
+                FROM dns AS dns, domains AS d
+                WHERE dns.id = d.dns_id
+                  $is_active_string
+                  $pcid_string
+                  $oid_string
+                  $ipid_string
+                  $whid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY dns.name
+                ORDER BY dns.name asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'DNS Profile - ALL', 'null');
-            while ($row_dns = mysqli_fetch_object($result_dns)) {
+            foreach ($result_dns as $row_dns) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $row_dns->id . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_dns->id, $row_dns->name, $dnsid);
 
@@ -1375,26 +1400,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_ip = "SELECT ip.id, ip.name, ip.ip
-                       FROM ip_addresses AS ip, domains AS d
-                       WHERE ip.id = d.ip_id
-                         $is_active_string
-                         $pcid_string
-                         $oid_string
-                         $dnsid_string
-                         $whid_string
-                         $rid_string
-                         $raid_string
-                         $range_string
-                         $tld_string
-                         $search_string
-                         $segment_string
-                       GROUP BY ip.name
-                       ORDER BY ip.name asc";
-            $result_ip = mysqli_query($dbcon, $sql_ip);
+            $result_ip = $pdo->query("
+                SELECT ip.id, ip.name, ip.ip
+                FROM ip_addresses AS ip, domains AS d
+                WHERE ip.id = d.ip_id
+                  $is_active_string
+                  $pcid_string
+                  $oid_string
+                  $dnsid_string
+                  $whid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY ip.name
+                ORDER BY ip.name asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'IP Address - ALL', 'null');
-            while ($row_ip = mysqli_fetch_object($result_ip)) {
+            foreach ($result_ip as $row_ip) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $row_ip->id . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $ipid);
 
@@ -1484,26 +1510,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_hosting = "SELECT h.id, h.name
-                            FROM hosting AS h, domains AS d
-                            WHERE h.id = d.hosting_id
-                              $is_active_string
-                              $pcid_string
-                              $oid_string
-                              $dnsid_string
-                              $ipid_string
-                              $rid_string
-                              $raid_string
-                              $range_string
-                              $tld_string
-                              $search_string
-                              $segment_string
-                            GROUP BY h.name
-                            ORDER BY h.name asc";
-            $result_hosting = mysqli_query($dbcon, $sql_hosting);
+            $result_hosting = $pdo->query("
+                SELECT h.id, h.name
+                FROM hosting AS h, domains AS d
+                WHERE h.id = d.hosting_id
+                  $is_active_string
+                  $pcid_string
+                  $oid_string
+                  $dnsid_string
+                  $ipid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY h.name
+                ORDER BY h.name asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Web Hosting Provider - ALL', 'null');
-            while ($row_hosting = mysqli_fetch_object($result_hosting)) {
+            foreach ($result_hosting as $row_hosting) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $row_hosting->id . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_hosting->id, $row_hosting->name, $whid);
 
@@ -1593,26 +1620,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_category = "SELECT c.id, c.name
-                             FROM categories AS c, domains AS d
-                             WHERE c.id = d.cat_id
-                               $is_active_string
-                               $oid_string
-                               $dnsid_string
-                               $ipid_string
-                               $whid_string
-                               $rid_string
-                               $raid_string
-                               $range_string
-                               $tld_string
-                               $search_string
-                               $segment_string
-                             GROUP BY c.name
-                             ORDER BY c.name asc";
-            $result_category = mysqli_query($dbcon, $sql_category);
+            $result_category = $pdo->query("
+                SELECT c.id, c.name
+                FROM categories AS c, domains AS d
+                WHERE c.id = d.cat_id
+                  $is_active_string
+                  $oid_string
+                  $dnsid_string
+                  $ipid_string
+                  $whid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY c.name
+                ORDER BY c.name asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Category - ALL', 'null');
-            while ($row_category = mysqli_fetch_object($result_category)) {
+            foreach ($result_category as $row_category) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $row_category->id . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_category->id, $row_category->name, $pcid);
 
@@ -1701,26 +1729,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_owner = "SELECT o.id, o.name
-                          FROM owners AS o, domains AS d
-                          WHERE o.id = d.owner_id
-                            $is_active_string
-                            $pcid_string
-                            $dnsid_string
-                            $ipid_string
-                            $whid_string
-                            $rid_string
-                            $raid_string
-                            $range_string
-                            $tld_string
-                            $search_string
-                            $segment_string
-                          GROUP BY o.name
-                          ORDER BY o.name asc";
-            $result_owner = mysqli_query($dbcon, $sql_owner);
+            $result_owner = $pdo->query("
+                SELECT o.id, o.name
+                FROM owners AS o, domains AS d
+                WHERE o.id = d.owner_id
+                  $is_active_string
+                  $pcid_string
+                  $dnsid_string
+                  $ipid_string
+                  $whid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY o.name
+                ORDER BY o.name asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Owner - ALL', 'null');
-            while ($row_owner = mysqli_fetch_object($result_owner)) {
+            foreach ($result_owner as $row_owner) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $row_owner->id . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_owner->id, $row_owner->name, $oid);
 
@@ -1810,25 +1839,26 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_tld = "SELECT tld, count(*) AS total_tld_count
-                        FROM domains
-                        $is_active_string
-                          $pcid_string
-                          $oid_string
-                          $dnsid_string
-                          $ipid_string
-                          $whid_string
-                          $rid_string
-                          $raid_string
-                          $range_string
-                          $search_string
-                          $segment_string
-                        GROUP BY tld
-                        ORDER BY tld asc";
-            $result_tld = mysqli_query($dbcon, $sql_tld);
+            $result_tld = $pdo->query("
+                SELECT tld, count(*) AS total_tld_count
+                FROM domains" .
+                $is_active_string .
+                  $pcid_string .
+                  $oid_string .
+                  $dnsid_string .
+                  $ipid_string .
+                  $whid_string .
+                  $rid_string .
+                  $raid_string .
+                  $range_string .
+                  $search_string .
+                  $segment_string . " 
+                GROUP BY tld 
+                ORDER BY tld asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'TLD - ALL', 'null');
-            while ($row_tld = mysqli_fetch_object($result_tld)) {
+            foreach ($result_tld as $row_tld) {
 
                 echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $row_tld->tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_tld->tld, $row_tld->tld, $tld);
 
@@ -1893,26 +1923,27 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $segment_string = "";
             }
 
-            $sql_active = "SELECT active, count(*) AS total_count
-                           FROM domains
-                           WHERE id != '0'
-                             $pcid_string
-                             $oid_string
-                             $dnsid_string
-                             $ipid_string
-                             $whid_string
-                             $rid_string
-                             $raid_string
-                             $range_string
-                             $tld_string
-                             $search_string
-                             $segment_string
-                           GROUP BY active
-                           ORDER BY active asc";
-            $result_active = mysqli_query($dbcon, $sql_active);
+            $result_active = $pdo->query("
+                SELECT active, count(*) AS total_count
+                FROM domains
+                WHERE id != '0'
+                  $pcid_string
+                  $oid_string
+                  $dnsid_string
+                  $ipid_string
+                  $whid_string
+                  $rid_string
+                  $raid_string
+                  $range_string
+                  $tld_string
+                  $search_string
+                  $segment_string
+                GROUP BY active
+                ORDER BY active asc")->fetchAll();
+
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=LIVE&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, '"Live" Domains (Active / Transfers / Pending)', 'LIVE');
-            while ($row_active = mysqli_fetch_object($result_active)) {
+            foreach ($result_active as $row_active) {
 
                 if ($row_active->active == "0") {
                     $display_text = "Expired";
@@ -2030,9 +2061,9 @@ if ($segid != "") {
     <strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 
     <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-        <strong>Matching Domains:</strong> <?php echo number_format($totalrows); ?><BR><BR>
+        <strong>Matching Domains:</strong> <?php echo number_format($total_rows); ?><BR><BR>
     <?php } else { ?>
-        <strong>Matching Domains:</strong> <?php echo number_format(mysqli_num_rows($result)); ?><BR><BR>
+        <strong>Matching Domains:</strong> <?php echo number_format(count($result)); ?><BR><BR>
     <?php } ?>
 
     <?php if ($totalrows_inactive > 0) { ?>
@@ -2050,7 +2081,7 @@ if ($segid != "") {
 
 }
 
-if (mysqli_num_rows($result) > 0) { ?>
+if ($result) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Domain'); ?></a>
     <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
@@ -2064,17 +2095,17 @@ if (mysqli_num_rows($result) > 0) { ?>
         <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
 
         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-            <strong>Number of Domains:</strong> <?php echo number_format($totalrows); ?><BR><BR>
+            <strong>Number of Domains:</strong> <?php echo number_format($total_rows); ?><BR><BR>
         <?php } else { ?>
-            <strong>Number of Domains:</strong> <?php echo number_format(mysqli_num_rows($result)); ?><BR><BR>
+            <strong>Number of Domains:</strong> <?php echo number_format(count($result)); ?><BR><BR>
         <?php } ?>
 
     <?php }
 
-    if ($totalrows != '0') {
+    if ($total_rows) {
 
         if ($_SESSION['s_system_large_mode'] == '1') {
-            require_once DIR_INC . '/layout/pagination-large-mode.inc.php';
+            require DIR_INC . '/layout/pagination-large-mode.inc.php';
         } ?>
 
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
@@ -2286,7 +2317,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             </tr>
             </thead>
             <tbody>
-            <?php while ($row = mysqli_fetch_object($result)) { ?>
+            <?php foreach ($result as $row) { ?>
                 <tr>
 
                     <?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
@@ -2377,10 +2408,12 @@ if (mysqli_num_rows($result) > 0) { ?>
             <?php } ?>
         </tbody>
         </table><BR><?php
+
     }
 
     if ($_SESSION['s_system_large_mode'] == '1') {
-        require_once DIR_INC . '/layout/pagination-large-mode.inc.php';
+
+        require DIR_INC . '/layout/pagination-large-mode.inc.php';
     }
 
 } else {
