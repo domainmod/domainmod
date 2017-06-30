@@ -63,18 +63,24 @@ class Domain
 
     public function checkFormat($input_domain)
     {
-/*
-        if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
+        if (
+            // positive
+            preg_match("/^(.+?)\.(.+?)$/", $input_domain) && // has at least one period in the middle
 
-            return $output_domain;
+            // negative
+            $input_domain[0] != '.' && // is the first character a period
+            $input_domain[strlen($input_domain) - 1] != '.' && // is the last character a period
+            !preg_match("/\\s/", $input_domain) && // are there any spaces
+            !preg_match("/\*/", $input_domain) // are there any asterisks
+        ) {
+
+            return true;
 
         } else {
 
             return false;
 
         }
-*/
-        return $input_domain;
     }
 
     public function renew($domain, $renewal_years, $notes)
