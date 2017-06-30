@@ -26,7 +26,7 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$error = new DomainMOD\Error();
+$dashboard = new DomainMOD\Dashboard();
 $time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
@@ -34,7 +34,6 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dashboard-main.inc.php';
-require_once DIR_INC . '/database.inc.php';
 
 $pdo = $system->db();
 $system->authCheck();
@@ -47,426 +46,312 @@ $system->authCheck();
 </head>
 <body class="hold-transition skin-red sidebar-mini" onLoad="document.forms[0].elements[0].focus()">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-
-<!-- Small boxes (Stat box) -->
+<?php
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// System Totals
+////////////////////////////////////////////////////////////////////////////////////////////////////
+?>
 <div class="row">
 
-    <!-- Expiring Boxes -->
-    <?php
-    $expiration_days = $pdo->query("
-        SELECT expiration_days
-        FROM settings")->fetchColumn();
-
-    $start_date = '2000-01-01';
-    $end_date = $time->timeBasicPlusDays($expiration_days);
-    $daterange = $start_date . ' - ' . $end_date;
-    ?>
-    <h3 style="padding-left:20px;">Expiring in the next <?php echo $expiration_days; ?> days</h3>
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <?php
-                $stmt = $pdo->prepare("
-                    SELECT id, expiry_date, domain
-                    FROM domains
-                    WHERE active NOT IN ('0', '10')
-                      AND expiry_date <= :end_date
-                    ORDER BY expiry_date, domain");
-                $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
-                $stmt->execute();
-                $result = $stmt->fetchAll();
-
-                if (!$result) {
-
-                    $to_display = '0';
-
-                } else {
-
-                    $stmt = $pdo->prepare("
-                        SELECT count(*)
-                        FROM domains
-                        WHERE active NOT IN ('0', '10')
-                          AND expiry_date <= :end_date");
-                    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $to_display = $stmt->fetchColumn();
-
-                }
-                ?>
-                <h3><?php echo number_format($to_display); ?></h3>
-                <p>Domains</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-close-circled" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?daterange=<?php echo urlencode($daterange); ?>" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <?php
-                $stmt = $pdo->prepare("
-                    SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
-                    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-                    WHERE sslc.type_id = sslt.id
-                      AND sslc.active NOT IN ('0')
-                      AND sslc.expiry_date <= :end_date
-                    ORDER BY sslc.expiry_date, sslc.name");
-                $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
-                $stmt->execute();
-                $result = $stmt->fetchAll();
-
-                if (!$result) {
-
-                    $to_display = '0';
-
-                } else {
-
-                    $stmt = $pdo->prepare("
-                        SELECT count(*)
-                        FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-                        WHERE sslc.type_id = sslt.id
-                          AND sslc.active NOT IN ('0')
-                          AND sslc.expiry_date <= :end_date");
-                    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $to_display = $stmt->fetchColumn();
-
-                }
-                ?>
-                <h3><?php echo number_format($to_display); ?></h3>
-                <p>SSL Certificates</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-close-circled" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/ssl/index.php?daterange=<?php echo urlencode($daterange); ?>" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-
-</div>
-
-<div class="row">
-
-    <!-- Main Boxes -->
     <h3 style="padding-left:20px;">System Totals</h3>
 
+    <?php
+    //////////////////////////////////////////////////
+    // Active Domains
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM domains
+        WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-    <?php // only display the queue widget if there are results
-    $sql = "SELECT id
-            FROM domain_queue
-            LIMIT 1";
-    $result = mysqli_query($dbcon, $sql);
+    echo $dashboard->displayPanel('Domains', $total_count, 'green', 'checkmark-circled', '/domains/index.php?is_active=LIVE');
 
-    if (mysqli_num_rows($result) > 0) { ?>
+    //////////////////////////////////////////////////
+    // Active SSL Certificates
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM ssl_certs
+        WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <?php
-                    $sql = "SELECT count(*) AS total_count
-                            FROM domain_queue";
-                    $result = mysqli_query($dbcon, $sql);
-                    while ($row = mysqli_fetch_object($result)) {
-                        $total_count = $row->total_count;
-                    }
-                    ?>
-                    <h3><?php echo number_format($total_count); ?></h3>
+    echo $dashboard->displayPanel('SSL Certificates', $total_count, 'green', 'checkmark-circled', '/ssl/index.php?is_active=LIVE');
 
-                    <p>Domains in Queue</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-clock" style="padding-top:16px;"></i>
-                </div>
-                <a href="<?php echo $web_root; ?>/queue/" class="small-box-footer">View <i
-                        class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col --><?php
+    //////////////////////////////////////////////////
+    // Sold Domains
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM domains
+        WHERE active = '10'")->fetchColumn();
+
+    if ($total_count) {
+
+        echo $dashboard->displayPanel('Sold Domains', $total_count, 'aqua', 'android-cart', '/domains/index.php?is_active=10');
 
     } ?>
 
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active NOT IN ('0', '10')";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
-
-                <p>Domains</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-checkmark-circled" style="padding-top:17px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=LIVE" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM ssl_certs
-                        WHERE active NOT IN ('0', '10')";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
-
-                <p>SSL Certificates</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-checkmark-circled" style="padding-top:17px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/ssl/index.php?is_active=LIVE" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-aqua">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active = '10'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
-                <p>Sold Domains</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-android-cart" style="padding-top:17px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=10" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-
 </div>
 
-<!-- Small boxes (Stat box) -->
-<div class="row">
+<?php
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Expiration Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$expiration_days = $pdo->query("
+    SELECT expiration_days
+    FROM settings")->fetchColumn();
 
-    <!-- Domain Panels -->
-    <h3 style="padding-left:20px;">Domains</h3>
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active = '3'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+$start_date = '2000-01-01';
+$end_date = $time->timeBasicPlusDays($expiration_days);
+$daterange = $start_date . ' - ' . $end_date;
 
-                <p>Pending Renewals</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=3" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
+$total_count_domains = $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active NOT IN ('0', '10')
+      AND expiry_date <= '" . $end_date . "'")->fetchColumn();
 
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active = '5'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+$total_count_ssl = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+    WHERE sslc.type_id = sslt.id
+      AND sslc.active NOT IN ('0')
+      AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
 
-                <p>Pending Registrations</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=5" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
+if ($total_count_domains || $total_count_ssl) { ?>
 
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-aqua">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active = '2'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
-                <p>Pending Transfers</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=2" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
+    <div class="row">
 
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM domains
-                        WHERE active = '4'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+        <h3 style="padding-left:20px;">Expiring in the next <?php echo $expiration_days; ?> days</h3>
 
-                <p>Pending (Other)</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/domains/index.php?is_active=4" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
+        <?php
+        //////////////////////////////////////////////////
+        // Expiring Domains
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+                SELECT count(*)
+                FROM domains
+                WHERE active NOT IN ('0', '10')
+                  AND expiry_date <= '" . $end_date . "'")->fetchColumn();
 
-</div>
+        if ($total_count) {
 
-<div class="row">
+            echo $dashboard->displayPanel('Domains', $total_count, 'red', 'close-circled', '/domains/index.php?daterange=' . urlencode($daterange));
 
-    <!-- SSL Certificate Panels -->
-    <h3 style="padding-left:20px;">SSL Certificates</h3>
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM ssl_certs
-                        WHERE active = '3'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+        }
 
-                <p>Pending Renewals</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/ssl/index.php?is_active=3" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
+        //////////////////////////////////////////////////
+        // Expiring SSL Certificates
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+                SELECT count(*)
+                FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                WHERE sslc.type_id = sslt.id
+                  AND sslc.active NOT IN ('0')
+                  AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
 
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM ssl_certs
-                        WHERE active = '5'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+        if ($total_count) {
 
-                <p>Pending Registrations</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/ssl/index.php?is_active=5" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
+            echo $dashboard->displayPanel('SSL Certificates', $total_count, 'red', 'close-circled', '/ssl/index.php?daterange=' . urlencode($daterange));
 
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <?php
-                $sql = "SELECT count(*) AS total_count
-                        FROM ssl_certs
-                        WHERE active = '4'";
-                $result = mysqli_query($dbcon, $sql);
-                while ($row = mysqli_fetch_object($result)) {
-                    $total_count = $row->total_count;
-                }
-                ?>
-                <h3><?php echo number_format($total_count); ?></h3>
+        } ?>
 
-                <p>Pending (Other)</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-clock" style="padding-top:16px;"></i>
-            </div>
-            <a href="<?php echo $web_root; ?>/ssl/index.php?is_active=4" class="small-box-footer">View <i
-                    class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
+    </div><?php
 
-</div>
-<!-- /.row -->
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Domain Queue
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count_processing = $pdo->query("
+    SELECT count(*)
+    FROM domain_queue
+    WHERE processing = '1'
+      AND finished != '1'")->fetchColumn();
+
+$total_count_pending = $pdo->query("
+    SELECT count(*)
+    FROM domain_queue
+    WHERE processing = '0'
+      AND finished != '1'")->fetchColumn();
+
+$total_count_finished = $pdo->query("
+    SELECT count(*)
+    FROM domain_queue
+    WHERE finished = '1'")->fetchColumn();
+
+if ($total_count_processing || $total_count_pending || $total_count_finished) { ?>
+
+    <div class="row">
+
+        <h3 style="padding-left:20px;">Domain Queue</h3>
+
+        <?php
+        //////////////////////////////////////////////////
+        // Processing
+        //////////////////////////////////////////////////
+        if ($total_count_processing) {
+
+            echo $dashboard->displayPanel('Processing', $total_count_processing, 'yellow', 'clock', '/queue/');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending
+        //////////////////////////////////////////////////
+        if ($total_count_pending) {
+
+            echo $dashboard->displayPanel('Pending', $total_count_pending, 'yellow', 'clock', '/queue/');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Finished
+        //////////////////////////////////////////////////
+        if ($total_count_finished) {
+
+            echo $dashboard->displayPanel('Finished', $total_count_finished, 'green', 'checkmark-circled', '/queue/');
+
+        } ?>
+
+    </div><?php
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Domain Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count = $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active IN ('3', '5', '2', '4')")->fetchColumn();
+
+if ($total_count) { ?>
+
+    <div class="row">
+
+        <h3 style="padding-left:20px;">Pending (Domains)</h3>
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '3'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending Renewals', $total_count, 'red', 'clock', '/domains/index.php?is_active=3');
+
+        } ?>
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Registrations (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '5'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending Registrations', $total_count, 'yellow', 'clock', '/domains/index.php?is_active=5');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Transfers (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '2'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending Transfers', $total_count, 'aqua', 'clock', '/domains/index.php?is_active=2');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '4'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending (Other)', $total_count, 'green', 'clock', '/domains/index.php?is_active=4');
+
+        } ?>
+
+    </div><?php
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SSL Certificate Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs
+    WHERE active IN ('3', '5', '4')")->fetchColumn();
+
+if ($total_count) { ?>
+
+    <div class="row">
+
+        <h3 style="padding-left:20px;">Pending (SSL Certificates)</h3>
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '3'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending Renewals', $total_count, 'red', 'clock', '/ssl/index.php?is_active=3');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Registrations (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '5'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending Registrations', $total_count, 'yellow', 'clock', '/ssl/index.php?is_active=5');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '4'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel('Pending (Other)', $total_count, 'green', 'clock', '/ssl/index.php?is_active=4');
+
+        } ?>
+
+    </div><?php
+
+} ?>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

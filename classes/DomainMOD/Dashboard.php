@@ -1,6 +1,6 @@
 <?php
 /**
- * /classes/DomainMOD/Error.php
+ * /classes/DomainMOD/Dashboard.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -21,25 +21,29 @@
 //@formatter:off
 namespace DomainMOD;
 
-class Error
+class Dashboard
 {
 
-    public function getLevel($level)
+    public function displayPanel($title, $count, $colour, $icon, $url)
     {
-        if ($level == '1') {
-            return E_USER_ERROR;
-        } elseif ($level == '2') {
-            return E_USER_WARNING;
-        } elseif ($level == '3') {
-            return E_USER_NOTICE;
-        } else {
-            return E_USER_ERROR;
-        }
-    }
+        ob_start(); ?>
 
-    public function outputSqlError($dbcon, $level, $message)
-    {
-        return trigger_error(htmlentities('[' . strtoupper($message) . ']: ' . mysqli_error($dbcon)), $this->getLevel($level));
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-<?php echo $colour; ?>">
+                <div class="inner">
+                    <h3><?php echo number_format($count); ?></h3>
+                    <p><?php echo $title; ?></p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-<?php echo $icon; ?>" style="padding-top:16px;"></i>
+                </div>
+                <?php if ($count != 0) { ?>
+                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
+                <?php } ?>
+            </div>
+        </div><?php
+
+        return ob_get_clean();
     }
 
 } //@formatter:on
