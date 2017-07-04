@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/ssl-fields/add.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $custom_field = new DomainMOD\CustomField();
@@ -63,54 +64,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
     } else {
 
-        $stmt = $pdo->prepare("
-            INSERT INTO ssl_cert_fields
-            (`name`, field_name, description, type_id, notes, created_by, insert_time)
-            VALUES
+        try {
+
+            $pdo->beginTransaction();
+
+            $stmt = $pdo->prepare("
+                INSERT INTO ssl_cert_fields
+                (`name`, field_name, description, type_id, notes, created_by, insert_time)
+                VALUES
             (:new_name, :new_field_name, :new_description, :new_field_type_id, :new_notes, :created_by, :timestamp)");
-        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_field_name', $new_field_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
-        $stmt->bindValue('new_field_type_id', $new_field_type_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->execute();
+            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_field_name', $new_field_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
+            $stmt->bindValue('new_field_type_id', $new_field_type_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
 
-        if ($new_field_type_id == '1') { // Check Box
+            if ($new_field_type_id == '1') { // Check Box
 
-            $sql = "ALTER TABLE `ssl_cert_field_data`
-                    ADD `" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'";
+                $sql = "ALTER TABLE `ssl_cert_field_data`
+                        ADD `" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'";
 
-        } elseif ($new_field_type_id == '2') { // Text
+            } elseif ($new_field_type_id == '2') { // Text
 
-            $sql = "ALTER TABLE `ssl_cert_field_data`
-                    ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+                $sql = "ALTER TABLE `ssl_cert_field_data`
+                        ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-        } elseif ($new_field_type_id == '3') { // Text Area
+            } elseif ($new_field_type_id == '3') { // Text Area
 
-            $sql = "ALTER TABLE `ssl_cert_field_data`
-                    ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+                $sql = "ALTER TABLE `ssl_cert_field_data`
+                        ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-        } elseif ($new_field_type_id == '4') { // Date
+            } elseif ($new_field_type_id == '4') { // Date
 
-            $sql = "ALTER TABLE `ssl_cert_field_data`
-                    ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
+                $sql = "ALTER TABLE `ssl_cert_field_data`
+                        ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
 
-        } elseif ($new_field_type_id == '5') { // Time Stamp
+            } elseif ($new_field_type_id == '5') { // Time Stamp
 
-            $sql = "ALTER TABLE `ssl_cert_field_data`
-                    ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+                $sql = "ALTER TABLE `ssl_cert_field_data`
+                        ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+
+            }
+
+            $pdo->query($sql);
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $new_field_name . ') added<BR>';
+
+            header("Location: ../ssl-fields/");
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to add custom SSL field';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
 
         }
-
-        $pdo->query($sql);
-
-        $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $new_field_name . ') Added<BR>';
-
-        header("Location: ../ssl-fields/");
-        exit;
 
     }
 

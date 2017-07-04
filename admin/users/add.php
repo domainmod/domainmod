@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/users/add.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
@@ -46,7 +47,8 @@ $new_username = $_POST['new_username'];
 $new_email_address = $_POST['new_email_address'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
-    && $new_email_address != '') {
+    && $new_email_address != ''
+) {
 
     $existing_username = '';
     $existing_email_address = '';
@@ -88,78 +90,99 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $new_password = substr(md5(time()), 0, 8);
 
-        $stmt = $pdo->prepare("
-            INSERT INTO users
-            (first_name, last_name, username, email_address, `password`, created_by, insert_time)
-            VALUES
-            (:first_name, :last_name, :username, :email_address, password(:password), :created_by, :insert_time)");
-        $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
-        $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
-        $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
-        $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-        $stmt->bindValue('password', $new_password, PDO::PARAM_STR);
-        $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $bind_timestamp = $time->stamp();
-        $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
-        $stmt->execute();
+        try {
 
-        $temp_user_id = $pdo->lastInsertId('id');
+            $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("
-            INSERT INTO user_settings
-            (user_id,
-             default_currency,
-             default_category_domains,
-             default_category_ssl,
-             default_dns,
-             default_host,
-             default_ip_address_domains,
-             default_ip_address_ssl,
-             default_owner_domains,
-             default_owner_ssl,
-             default_registrar,
-             default_registrar_account,
-             default_ssl_provider,
-             default_ssl_provider_account,
-             default_ssl_type,
-             insert_time)
-             VALUES
-             (:user_id, 'USD', :default_category_domains, :default_category_ssl, :default_dns, :default_host,
-              :default_ip_address_domains, :default_ip_address_ssl, :default_owner_domains, :default_owner_ssl,
-              :default_registrar, :default_registrar_account, :default_ssl_provider, :default_ssl_provider_account,
-              :default_ssl_type, :insert_time)");
-        $stmt->bindValue('user_id', $temp_user_id, PDO::PARAM_INT);
-        $stmt->bindValue('default_category_domains', $_SESSION['s_system_default_category_domains'], PDO::PARAM_INT);
-        $stmt->bindValue('default_category_ssl', $_SESSION['s_system_default_category_ssl'], PDO::PARAM_INT);
-        $stmt->bindValue('default_dns', $_SESSION['s_system_default_dns'], PDO::PARAM_INT);
-        $stmt->bindValue('default_host', $_SESSION['s_system_default_host'], PDO::PARAM_INT);
-        $stmt->bindValue('default_ip_address_domains', $_SESSION['s_system_default_ip_address_domains'], PDO::PARAM_INT);
-        $stmt->bindValue('default_ip_address_ssl', $_SESSION['s_system_default_ip_address_ssl'], PDO::PARAM_INT);
-        $stmt->bindValue('default_owner_domains', $_SESSION['s_system_default_owner_domains'], PDO::PARAM_INT);
-        $stmt->bindValue('default_owner_ssl', $_SESSION['s_system_default_owner_ssl'], PDO::PARAM_INT);
-        $stmt->bindValue('default_registrar', $_SESSION['s_system_default_registrar'], PDO::PARAM_INT);
-        $stmt->bindValue('default_registrar_account', $_SESSION['s_system_default_registrar_account'], PDO::PARAM_INT);
-        $stmt->bindValue('default_ssl_provider', $_SESSION['s_system_default_ssl_provider'], PDO::PARAM_INT);
-        $stmt->bindValue('default_ssl_provider_account', $_SESSION['s_system_default_ssl_provider_account'], PDO::PARAM_INT);
-        $stmt->bindValue('default_ssl_type', $_SESSION['s_system_default_ssl_type'], PDO::PARAM_INT);
-        $bind_timestamp = $time->stamp();
-        $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
-        $stmt->execute();
+            $stmt = $pdo->prepare("
+                INSERT INTO users
+                (first_name, last_name, username, email_address, `password`, created_by, insert_time)
+                VALUES
+                (:first_name, :last_name, :username, :email_address, password(:password), :created_by, :insert_time)");
+            $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
+            $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
+            $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
+            $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
+            $stmt->bindValue('password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $bind_timestamp = $time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
+            $stmt->execute();
 
-        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username .
-            " / " . $new_password . ') Added.<BR><BR>
+            $temp_user_id = $pdo->lastInsertId('id');
+
+            $stmt = $pdo->prepare("
+                INSERT INTO user_settings
+                (user_id,
+                 default_currency,
+                 default_category_domains,
+                 default_category_ssl,
+                 default_dns,
+                 default_host,
+                 default_ip_address_domains,
+                 default_ip_address_ssl,
+                 default_owner_domains,
+                 default_owner_ssl,
+                 default_registrar,
+                 default_registrar_account,
+                 default_ssl_provider,
+                 default_ssl_provider_account,
+                 default_ssl_type,
+                 insert_time)
+                 VALUES
+                 (:user_id, 'USD', :default_category_domains, :default_category_ssl, :default_dns, :default_host,
+                  :default_ip_address_domains, :default_ip_address_ssl, :default_owner_domains, :default_owner_ssl,
+                  :default_registrar, :default_registrar_account, :default_ssl_provider, :default_ssl_provider_account,
+                  :default_ssl_type, :insert_time)");
+            $stmt->bindValue('user_id', $temp_user_id, PDO::PARAM_INT);
+            $stmt->bindValue('default_category_domains', $_SESSION['s_system_default_category_domains'], PDO::PARAM_INT);
+            $stmt->bindValue('default_category_ssl', $_SESSION['s_system_default_category_ssl'], PDO::PARAM_INT);
+            $stmt->bindValue('default_dns', $_SESSION['s_system_default_dns'], PDO::PARAM_INT);
+            $stmt->bindValue('default_host', $_SESSION['s_system_default_host'], PDO::PARAM_INT);
+            $stmt->bindValue('default_ip_address_domains', $_SESSION['s_system_default_ip_address_domains'], PDO::PARAM_INT);
+            $stmt->bindValue('default_ip_address_ssl', $_SESSION['s_system_default_ip_address_ssl'], PDO::PARAM_INT);
+            $stmt->bindValue('default_owner_domains', $_SESSION['s_system_default_owner_domains'], PDO::PARAM_INT);
+            $stmt->bindValue('default_owner_ssl', $_SESSION['s_system_default_owner_ssl'], PDO::PARAM_INT);
+            $stmt->bindValue('default_registrar', $_SESSION['s_system_default_registrar'], PDO::PARAM_INT);
+            $stmt->bindValue('default_registrar_account', $_SESSION['s_system_default_registrar_account'], PDO::PARAM_INT);
+            $stmt->bindValue('default_ssl_provider', $_SESSION['s_system_default_ssl_provider'], PDO::PARAM_INT);
+            $stmt->bindValue('default_ssl_provider_account', $_SESSION['s_system_default_ssl_provider_account'], PDO::PARAM_INT);
+            $stmt->bindValue('default_ssl_type', $_SESSION['s_system_default_ssl_type'], PDO::PARAM_INT);
+            $bind_timestamp = $time->stamp();
+            $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
+            $stmt->execute();
+
+            //@formatter:on
+
+            $conversion->updateRates('USD', $temp_user_id);
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username .
+                " / " . $new_password . ') Added.<BR><BR>
             
             You can either manually email the above credentials to the user, or you can <a
                 href="reset-password.php?new_username=' . $new_username . '">click here</a> to have ' . SOFTWARE_TITLE .
                 ' email them for you.<BR><BR>
                 
             Use the below form to customize the new user\'s account.<BR>';
-        //@formatter:on
 
-        $conversion->updateRates('USD', $temp_user_id);
+            header("Location: edit.php?uid=" . $temp_user_id);
+            exit;
 
-        header("Location: edit.php?uid=" . $temp_user_id);
-        exit;
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to add user';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
 
     }
 

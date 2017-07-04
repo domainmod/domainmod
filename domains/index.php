@@ -45,19 +45,19 @@ $pdo = $system->db();
 $system->authCheck();
 
 $export_data = $_GET['export_data'];
-$pcid = $_REQUEST['pcid'];
-$oid = $_REQUEST['oid'];
-$dnsid = $_REQUEST['dnsid'];
-$ipid = $_REQUEST['ipid'];
-$whid = $_REQUEST['whid'];
-$rid = $_REQUEST['rid'];
-$raid = $_REQUEST['raid'];
+$pcid = (int) $_REQUEST['pcid'];
+$oid = (int) $_REQUEST['oid'];
+$dnsid = (int) $_REQUEST['dnsid'];
+$ipid = (int) $_REQUEST['ipid'];
+$whid = (int) $_REQUEST['whid'];
+$rid = (int) $_REQUEST['rid'];
+$raid = (int) $_REQUEST['raid'];
 $tld = $_REQUEST['tld'];
-$segid = $_REQUEST['segid'];
+$segid = (int) $_REQUEST['segid'];
 $is_active = $_REQUEST['is_active'];
 $search_for = urlencode($_REQUEST['search_for']);
-$from_dropdown = $_REQUEST['from_dropdown'];
-$expand = $_REQUEST['expand'];
+$from_dropdown = (int) $_REQUEST['from_dropdown'];
+$expand = (int) $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($export_data != "1") {
 
-    if ($from_dropdown != "1") {
+    if ($from_dropdown != 1) {
 
         if ($search_for != "") {
 
@@ -372,19 +372,23 @@ if ($segid != "") {
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
 
-    $pdo->query("
+    $stmt = $pdo->prepare("
         UPDATE segment_data
         SET filtered = '1'
         WHERE active = '1'
-          AND segment_id = '" . $segid . "'
-          AND domain NOT IN (" . $active_domains . ")")->fetchAll();
+          AND segment_id = :segid
+          AND domain NOT IN (" . $active_domains . ")");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
 
-    $pdo->query("
+    $stmt = $pdo->prepare("
         UPDATE segment_data
         SET filtered = '1'
         WHERE active = '1'
-          AND segment_id = '$segid'
+          AND segment_id = :segid
           AND domain NOT LIKE '%" . $search_for . "%'");
+    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+    $stmt->execute();
 
 }
 
@@ -948,7 +952,7 @@ if ($segid != "") {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == '1') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
     $box_type = 'expanded';
     $box_icon = 'minus';
 } else {

@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/ssl-provider.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
@@ -151,30 +152,50 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM ssl_fees
-        WHERE ssl_provider_id = :sslpid");
-    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-    $stmt->execute();
+    try {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM ssl_accounts
-        WHERE ssl_provider_id = :sslpid");
-    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-    $stmt->execute();
+        $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("
-        DELETE FROM ssl_providers
-        WHERE id = :sslpid");
-    $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-    $stmt->execute();
+        $stmt = $pdo->prepare("
+            DELETE FROM ssl_fees
+            WHERE ssl_provider_id = :sslpid");
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM ssl_accounts
+            WHERE ssl_provider_id = :sslpid");
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $system->checkExistingAssets();
+        $stmt = $pdo->prepare("
+            DELETE FROM ssl_providers
+            WHERE id = :sslpid");
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    header("Location: ../ssl-providers.php");
-    exit;
+        $system->checkExistingAssets();
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
+
+        header("Location: ../ssl-providers.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to delete SSL provider';
+        $log_extra = array('Error' => $e);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
+
+    }
 
 }
 ?>

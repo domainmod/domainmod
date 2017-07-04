@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/settings/profile/index.php');
 $conversion = new DomainMOD\Conversion();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
@@ -66,113 +67,133 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     } else {
 
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET first_name = :new_first_name,
-                last_name = :new_last_name,
-                email_address = :new_email_address,
-                update_time = :timestamp
-            WHERE id = :user_id
-              AND email_address = :email_address");
-        $stmt->bindValue('new_first_name', $new_first_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_last_name', $new_last_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
-        $stmt->execute();
+        try {
 
-        $stmt = $pdo->prepare("
-            SELECT default_currency, default_timezone
-            FROM user_settings
-            WHERE user_id = :user_id");
-        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
-
-        if ($result) {
-
-            $saved_currency = $result->default_currency;
-            $saved_timezone = $result->default_timezone;
-
-        }
-
-        if ($saved_currency != $new_currency) {
-
-            $currency = new DomainMOD\Currency();
-            $temp_new_currency_id = $currency->getCurrencyId($new_currency);
+            $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("
-                SELECT id
-                FROM currency_conversions
-                WHERE user_id = :user_id
-                  AND currency_id = :currency_id");
+                UPDATE users
+                SET first_name = :new_first_name,
+                    last_name = :new_last_name,
+                    email_address = :new_email_address,
+                    update_time = :timestamp
+                WHERE id = :user_id
+                  AND email_address = :email_address");
+            $stmt->bindValue('new_first_name', $new_first_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_last_name', $new_last_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
             $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-            $stmt->bindValue('currency_id', $temp_new_currency_id, PDO::PARAM_INT);
+            $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
             $stmt->execute();
-            $result = $stmt->fetchColumn();
 
-            if (!$result) {
+            $stmt = $pdo->prepare("
+                SELECT default_currency, default_timezone
+                FROM user_settings
+                WHERE user_id = :user_id");
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-                $stmt = $pdo->prepare("
-                    INSERT INTO currency_conversions
-                    (currency_id, user_id, conversion, insert_time, update_time)
-                    VALUES
-                    (:temp_new_currency_id, :user_id, '1', :timestamp_insert, :timestamp_update)");
-                $stmt->bindValue('temp_new_currency_id', $temp_new_currency_id, PDO::PARAM_INT);
-                $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-                $stmt->bindValue('timestamp_insert', $timestamp, PDO::PARAM_STR);
-                $stmt->bindValue('timestamp_update', $timestamp, PDO::PARAM_STR);
-                $stmt->execute();
+            if ($result) {
+
+                $saved_currency = $result->default_currency;
+                $saved_timezone = $result->default_timezone;
 
             }
 
-            $_SESSION['s_message_success'] .= $conversion->updateRates($new_currency, $_SESSION['s_user_id']);
+            if ($saved_currency != $new_currency) {
+
+                $currency = new DomainMOD\Currency();
+                $temp_new_currency_id = $currency->getCurrencyId($new_currency);
+
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM currency_conversions
+                    WHERE user_id = :user_id
+                      AND currency_id = :currency_id");
+                $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                $stmt->bindValue('currency_id', $temp_new_currency_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetchColumn();
+
+                if (!$result) {
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO currency_conversions
+                        (currency_id, user_id, conversion, insert_time, update_time)
+                        VALUES
+                        (:temp_new_currency_id, :user_id, '1', :timestamp_insert, :timestamp_update)");
+                    $stmt->bindValue('temp_new_currency_id', $temp_new_currency_id, PDO::PARAM_INT);
+                    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                    $stmt->bindValue('timestamp_insert', $timestamp, PDO::PARAM_STR);
+                    $stmt->bindValue('timestamp_update', $timestamp, PDO::PARAM_STR);
+                    $stmt->execute();
+
+                }
+
+                $_SESSION['s_message_success'] .= $conversion->updateRates($new_currency, $_SESSION['s_user_id']);
+
+            }
+
+            $stmt = $pdo->prepare("
+                UPDATE user_settings
+                SET default_currency = :new_currency,
+                    default_timezone = :new_timezone,
+                    expiration_emails = :new_expiration_email,
+                    update_time = :timestamp
+                WHERE user_id = :user_id");
+            $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+            $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
+            $stmt->bindValue('new_expiration_email', $new_expiration_email, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+
+            $_SESSION['s_first_name'] = $new_first_name;
+            $_SESSION['s_last_name'] = $new_last_name;
+            $_SESSION['s_email_address'] = $new_email_address;
+            $_SESSION['s_default_currency'] = $new_currency;
+            $_SESSION['s_default_timezone'] = $new_timezone;
+            $_SESSION['s_expiration_email'] = $new_expiration_email;
+
+            $stmt = $pdo->prepare("
+                SELECT `name`, symbol, symbol_order, symbol_space
+                FROM currencies
+                WHERE currency = :new_currency");
+            $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch();
+
+            if ($result) {
+
+                $_SESSION['s_default_currency_name'] = $result->name;
+                $_SESSION['s_default_currency_symbol'] = $result->symbol;
+                $_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
+                $_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
+
+            }
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "Your profile was updated<BR>";
+
+            header("Location: ../index.php");
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to update profile';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
 
         }
-
-        $stmt = $pdo->prepare("
-            UPDATE user_settings
-            SET default_currency = :new_currency,
-                default_timezone = :new_timezone,
-                expiration_emails = :new_expiration_email,
-                update_time = :timestamp
-            WHERE user_id = :user_id");
-        $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
-        $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
-        $stmt->bindValue('new_expiration_email', $new_expiration_email, PDO::PARAM_INT);
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $stmt->execute();
-
-        $_SESSION['s_first_name'] = $new_first_name;
-        $_SESSION['s_last_name'] = $new_last_name;
-        $_SESSION['s_email_address'] = $new_email_address;
-        $_SESSION['s_default_currency'] = $new_currency;
-        $_SESSION['s_default_timezone'] = $new_timezone;
-        $_SESSION['s_expiration_email'] = $new_expiration_email;
-
-        $stmt = $pdo->prepare("
-            SELECT `name`, symbol, symbol_order, symbol_space
-            FROM currencies
-            WHERE currency = :new_currency");
-        $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetch();
-
-        if ($result) {
-
-            $_SESSION['s_default_currency_name'] = $result->name;
-            $_SESSION['s_default_currency_symbol'] = $result->symbol;
-            $_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
-            $_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
-
-        }
-
-        $_SESSION['s_message_success'] .= "Your profile was updated<BR>";
-
-        header("Location: ../index.php");
-        exit;
 
     }
 
@@ -200,13 +221,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <?php
 echo $form->showFormTop('');
 
-if ($new_first_name != "") { $temp_first_name = $new_first_name; } else { $temp_first_name = $_SESSION['s_first_name']; }
+if ($new_first_name != "") {
+    $temp_first_name = $new_first_name;
+} else {
+    $temp_first_name = $_SESSION['s_first_name'];
+}
 echo $form->showInputText('new_first_name', 'First Name (50)', '', $temp_first_name, '50', '', '1', '', '');
 
-if ($new_last_name != "") { $temp_last_name = $new_last_name; } else { $temp_last_name = $_SESSION['s_last_name']; }
+if ($new_last_name != "") {
+    $temp_last_name = $new_last_name;
+} else {
+    $temp_last_name = $_SESSION['s_last_name'];
+}
 echo $form->showInputText('new_last_name', 'Last Name (50)', '', $temp_last_name, '50', '', '1', '', '');
 
-if ($new_email_address != "") { $temp_email_address = $new_email_address; } else { $temp_email_address = $_SESSION['s_email_address']; }
+if ($new_email_address != "") {
+    $temp_email_address = $new_email_address;
+} else {
+    $temp_email_address = $_SESSION['s_email_address'];
+}
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $temp_email_address, '100', '', '1', '', '');
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
@@ -239,7 +272,11 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('');
 
-if ($new_expiration_email != "") { $temp_expiration_email = $new_expiration_email; } else { $temp_expiration_email = $_SESSION['s_expiration_email']; }
+if ($new_expiration_email != "") {
+    $temp_expiration_email = $new_expiration_email;
+} else {
+    $temp_expiration_email = $_SESSION['s_expiration_email'];
+}
 echo $form->showRadioTop('Subscribe to Domain & SSL Certificate expiration emails?', '', '');
 echo $form->showRadioOption('new_expiration_email', '1', 'Yes', $temp_expiration_email, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_expiration_email', '0', 'No', $temp_expiration_email, '', '');

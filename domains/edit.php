@@ -26,6 +26,7 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/domains/edit.php');
 $maint = new DomainMOD\Maintenance();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -40,7 +41,7 @@ require_once DIR_INC . '/settings/domains-edit.inc.php';
 $pdo = $system->db();
 $system->authCheck();
 
-$did = (integer) $_REQUEST['did'];
+$did = (integer)$_REQUEST['did'];
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -93,152 +94,173 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" &&
         $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" &&
-        $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
+        $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != ''
+    ) {
 
-        $stmt = $pdo->prepare("
-            SELECT registrar_id, owner_id
-            FROM registrar_accounts
-            WHERE id = :new_account_id");
-        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
+        try {
 
-        if ($result) {
+            $pdo->beginTransaction();
 
-            $new_registrar_id = $result->registrar_id;
-            $new_owner_id = $result->owner_id;
+            $stmt = $pdo->prepare("
+                SELECT registrar_id, owner_id
+                FROM registrar_accounts
+                WHERE id = :new_account_id");
+            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
 
-        }
+            if ($result) {
 
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM fees
-            WHERE registrar_id = :new_registrar_id
-              AND tld = :new_tld");
-        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
-
-        if (!$result) {
-
-            $temp_fee_id = "0";
-            $temp_fee_fixed = "0";
-
-        } else {
-
-            $temp_fee_id = $result;
-            $temp_fee_fixed = "1";
-
-        }
-
-        if ($new_privacy == "1") {
-
-            $fee_string = "renewal_fee + privacy_fee + misc_fee";
-
-        } else {
-
-            $fee_string = "renewal_fee + misc_fee";
-
-        }
-
-        $stmt = $pdo->prepare("
-            SELECT (" . $fee_string . ")
-            FROM fees
-            WHERE registrar_id = :new_registrar_id
-              AND tld = :new_tld");
-        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->execute();
-        $new_total_cost = $stmt->fetchColumn();
-
-        $stmt = $pdo->prepare("
-            UPDATE domains
-            SET owner_id = :new_owner_id,
-                registrar_id = :new_registrar_id,
-                account_id = :new_account_id,
-                tld = :new_tld,
-                expiry_date = :new_expiry_date,
-                cat_id = :new_cat_id,
-                dns_id = :new_dns_id,
-                ip_id = :new_ip_id,
-                hosting_id = :new_hosting_id,
-                fee_id = :temp_fee_id,
-                total_cost = :new_total_cost,
-                `function` = :new_function,
-                notes = :new_notes,
-                autorenew = :new_autorenew,
-                privacy = :new_privacy,
-                active = :new_active,
-                fee_fixed = :temp_fee_fixed,
-                update_time = :timestamp
-            WHERE id = :did");
-        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
-        $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
-        $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
-        $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
-        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-        $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
-        $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
-        $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
-        $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('did', $did, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $result = $pdo->query("
-            SELECT field_name
-            FROM domain_fields
-            ORDER BY `name`")->fetchAll();
-
-        if ($result) {
-
-            $count = 0;
-
-            foreach ($result as $row) {
-
-                $field_array[$count] = $row->field_name;
-                $count++;
+                $new_registrar_id = $result->registrar_id;
+                $new_owner_id = $result->owner_id;
 
             }
 
-            foreach ($field_array as $field) {
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM fees
+                WHERE registrar_id = :new_registrar_id
+                  AND tld = :new_tld");
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchColumn();
 
-                $full_field = "new_" . $field;
+            if (!$result) {
 
-                $stmt = $pdo->prepare("
-                    UPDATE domain_field_data
-                    SET `" . $field . "` = :full_field,
-                        update_time = :timestamp
-                    WHERE domain_id = :did");
-                $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
-                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                $stmt->bindValue('did', $did, PDO::PARAM_INT);
-                $stmt->execute();
+                $temp_fee_id = "0";
+                $temp_fee_fixed = "0";
+
+            } else {
+
+                $temp_fee_id = $result;
+                $temp_fee_fixed = "1";
 
             }
 
+            if ($new_privacy == "1") {
+
+                $fee_string = "renewal_fee + privacy_fee + misc_fee";
+
+            } else {
+
+                $fee_string = "renewal_fee + misc_fee";
+
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT (" . $fee_string . ")
+                FROM fees
+                WHERE registrar_id = :new_registrar_id
+                  AND tld = :new_tld");
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+            $stmt->execute();
+            $new_total_cost = $stmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                UPDATE domains
+                SET owner_id = :new_owner_id,
+                    registrar_id = :new_registrar_id,
+                    account_id = :new_account_id,
+                    tld = :new_tld,
+                    expiry_date = :new_expiry_date,
+                    cat_id = :new_cat_id,
+                    dns_id = :new_dns_id,
+                    ip_id = :new_ip_id,
+                    hosting_id = :new_hosting_id,
+                    fee_id = :temp_fee_id,
+                    total_cost = :new_total_cost,
+                    `function` = :new_function,
+                    notes = :new_notes,
+                    autorenew = :new_autorenew,
+                    privacy = :new_privacy,
+                    active = :new_active,
+                    fee_fixed = :temp_fee_fixed,
+                    update_time = :timestamp
+                WHERE id = :did");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+            $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
+            $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+            $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+            $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+            $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+            $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('did', $did, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $pdo->query("
+                SELECT field_name
+                FROM domain_fields
+                ORDER BY `name`")->fetchAll();
+
+            if ($result) {
+
+                $count = 0;
+
+                foreach ($result as $row) {
+
+                    $field_array[$count] = $row->field_name;
+                    $count++;
+
+                }
+
+                foreach ($field_array as $field) {
+
+                    $full_field = "new_" . $field;
+
+                    $stmt = $pdo->prepare("
+                        UPDATE domain_field_data
+                        SET `" . $field . "` = :full_field,
+                            update_time = :timestamp
+                        WHERE domain_id = :did");
+                    $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+                    $stmt->execute();
+
+                }
+
+            }
+
+            $maint->updateSegments();
+
+            $queryB = new DomainMOD\QueryBuild();
+
+            $sql = $queryB->missingFees('domains');
+            $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "Domain " . $new_domain . " updated<BR>";
+
+            header('Location: edit.php?did=' . $did);
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to edit domain';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
         }
-
-        $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Updated<BR>";
-
-        $maint->updateSegments();
-
-        $queryB = new DomainMOD\QueryBuild();
-
-        $sql = $queryB->missingFees('domains');
-        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
-
-        header('Location: edit.php?did=' . $did);
-        exit;
 
     } else {
 
@@ -346,26 +368,46 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM domains
-        WHERE id = :did");
-    $stmt->bindValue('did', $did, PDO::PARAM_INT);
-    $stmt->execute();
+    try {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM domain_field_data
-        WHERE domain_id = :did");
-    $stmt->bindValue('did', $did, PDO::PARAM_INT);
-    $stmt->execute();
+        $pdo->beginTransaction();
 
-    $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM domains
+            WHERE id = :did");
+        $stmt->bindValue('did', $did, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $maint->updateSegments();
+        $stmt = $pdo->prepare("
+            DELETE FROM domain_field_data
+            WHERE domain_id = :did");
+        $stmt->bindValue('did', $did, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $system->checkExistingAssets();
+        $maint->updateSegments();
 
-    header("Location: ../domains/index.php");
-    exit;
+        $system->checkExistingAssets();
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= "Domain " . $new_domain . " deleted<BR>";
+
+        header("Location: ../domains/index.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to delete domain';
+        $log_extra = array('Error' => $e);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
+
+    }
 
 }
 ?>
@@ -380,7 +422,7 @@ if ($really_del == "1") {
 <?php
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
-echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'). '<BR><BR>';
+echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '<BR><BR>';
 echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
@@ -614,32 +656,32 @@ if ($dw_has_accounts === 1) { ?>
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
-    <table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
-        <thead>
+<table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
+    <thead>
+    <tr>
+        <th width="20px"></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody><?php
+
+    foreach ($result as $row) { ?>
+
         <tr>
-            <th width="20px"></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody><?php
+        <td></td>
+        <td><?php echo $row->name; ?></td>
 
-            foreach ($result as $row) { ?>
+        <?php echo $dwdisplay->account($row->id, $new_domain); ?>
 
-                <tr>
-                    <td></td>
-                    <td><?php echo $row->name; ?></td>
+        </tr><?php
 
-                    <?php echo $dwdisplay->account($row->id, $new_domain); ?>
+    } ?>
 
-                </tr><?php
-
-            } ?>
-
-        </tbody>
+    </tbody>
     </table><?php
 
 }
@@ -660,29 +702,29 @@ if ($dw_has_zones === 1) { ?>
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
-    <table id="<?php echo $slug; ?>-zone" class="<?php echo $datatable_class; ?>">
-        <thead>
+<table id="<?php echo $slug; ?>-zone" class="<?php echo $datatable_class; ?>">
+    <thead>
+    <tr>
+        <th width="20px"></th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody><?php
+
+    foreach ($result as $row) { ?>
+
         <tr>
-            <th width="20px"></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody><?php
+        <td></td>
+        <td valign="top"><?php echo $row->name; ?></td>
+        <td>
+            <?php echo $dwdisplay->zone($row->dw_server_id, $new_domain); ?>
+        </td>
+        </tr><?php
 
-        foreach ($result as $row) { ?>
+    } ?>
 
-            <tr>
-                <td></td>
-                <td valign="top"><?php echo $row->name; ?></td>
-                <td>
-                    <?php echo $dwdisplay->zone($row->dw_server_id, $new_domain); ?>
-                </td>
-            </tr><?php
-
-        } ?>
-
-        </tbody>
+    </tbody>
     </table><?php
 }
 ?>

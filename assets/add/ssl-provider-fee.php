@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/add/ssl-provider-fee.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -85,58 +86,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $currency = new DomainMOD\Currency();
-            $currency_id = $currency->getCurrencyId($new_currency);
+            try {
 
-            $stmt = $pdo->prepare("
-                INSERT INTO ssl_fees
-                (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
-                VALUES
-                (:sslpid, :new_type_id, :new_initial_fee, :new_renewal_fee, :new_misc_fee, :currency_id, :timestamp)");
-            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
-            $stmt->bindValue('currency_id', $currency_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
+                $pdo->beginTransaction();
 
-            $new_fee_id = $pdo->lastInsertId('id');
+                $currency = new DomainMOD\Currency();
+                $currency_id = $currency->getCurrencyId($new_currency);
 
-            $stmt = $pdo->prepare("
-                UPDATE ssl_certs
-                SET fee_id = :new_fee_id,
-                    update_time = :timestamp
-                WHERE ssl_provider_id = :sslpid
-                  AND type_id = :new_type_id");
-            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
-            $stmt->execute();
+                $stmt = $pdo->prepare("
+                    INSERT INTO ssl_fees
+                    (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
+                    VALUES
+                    (:sslpid, :new_type_id, :new_initial_fee, :new_renewal_fee, :new_misc_fee, :currency_id, :timestamp)");
+                $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+                $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+                $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+                $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+                $stmt->bindValue('currency_id', $currency_id, PDO::PARAM_INT);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->execute();
 
-            $temp_type = $assets->getSslType($new_type_id);
+                $new_fee_id = $pdo->lastInsertId('id');
 
-            $stmt = $pdo->prepare("
-                UPDATE ssl_certs sslc
-                JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
-                SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
-                WHERE sslc.fee_id = :new_fee_id");
-            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
-            $stmt->execute();
+                $stmt = $pdo->prepare("
+                    UPDATE ssl_certs
+                    SET fee_id = :new_fee_id,
+                        update_time = :timestamp
+                    WHERE ssl_provider_id = :sslpid
+                      AND type_id = :new_type_id");
+                $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+                $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+                $stmt->execute();
 
-            $queryB = new DomainMOD\QueryBuild();
+                $temp_type = $assets->getSslType($new_type_id);
 
-            $sql = $queryB->missingFees('ssl_certs');
-            $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
+                $stmt = $pdo->prepare("
+                    UPDATE ssl_certs sslc
+                    JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                    SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                    WHERE sslc.fee_id = :new_fee_id");
+                $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+                $stmt->execute();
 
-            $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+                $queryB = new DomainMOD\QueryBuild();
 
-            $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
+                $sql = $queryB->missingFees('ssl_certs');
+                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
-            header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
-            exit;
+                $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+                $pdo->commit();
+
+                $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
+
+                header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
+                exit;
+
+            } catch (Exception $e) {
+
+                $pdo->rollback();
+
+                $log_message = 'Unable to add SSL provider fee';
+                $log_extra = array('Error' => $e);
+                $log->error($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
+            }
 
         }
 

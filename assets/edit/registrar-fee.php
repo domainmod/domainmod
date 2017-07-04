@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/registrar-fee.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -58,66 +59,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_initial_fee != '' && $new_renewal_fee != '' && $new_transfer_fee != '') {
 
-        $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
+        try {
 
-        $stmt = $pdo->prepare("
-            UPDATE fees
-            SET initial_fee = :new_initial_fee,
-                renewal_fee = :new_renewal_fee,
-                transfer_fee = :new_transfer_fee,
-                privacy_fee =:new_privacy_fee,
-                misc_fee = :new_misc_fee,
-                currency_id = :new_currency_id,
-                update_time = :timestamp
-            WHERE registrar_id = :rid
-              AND tld = :new_tld");
-        $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
-        $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
-        $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
-        $stmt->bindValue('new_privacy_fee', strval($new_privacy_fee), PDO::PARAM_STR);
-        $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
-        $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->execute();
+            $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("
-            UPDATE domains
-            SET fee_id = :fee_id,
-                update_time = :timestamp
-            WHERE registrar_id = :rid
-              AND tld = :new_tld");
-        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->execute();
+            $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
 
-        $stmt = $pdo->prepare("
-            UPDATE domains d
-            JOIN fees f ON d.fee_id = f.id
-            SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-            WHERE d.privacy = '1'
-              AND d.fee_id = :fee_id");
-        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $pdo->prepare("
+                UPDATE fees
+                SET initial_fee = :new_initial_fee,
+                    renewal_fee = :new_renewal_fee,
+                    transfer_fee = :new_transfer_fee,
+                    privacy_fee =:new_privacy_fee,
+                    misc_fee = :new_misc_fee,
+                    currency_id = :new_currency_id,
+                    update_time = :timestamp
+                WHERE registrar_id = :rid
+                  AND tld = :new_tld");
+            $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_privacy_fee', strval($new_privacy_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+            $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+            $stmt->execute();
 
-        $stmt = $pdo->prepare("
-            UPDATE domains d
-            JOIN fees f ON d.fee_id = f.id
-            SET d.total_cost = f.renewal_fee + f.misc_fee
-            WHERE d.privacy = '0'
-              AND d.fee_id = :fee_id");
-        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $pdo->prepare("
+                UPDATE domains
+                SET fee_id = :fee_id,
+                    update_time = :timestamp
+                WHERE registrar_id = :rid
+                  AND tld = :new_tld");
+            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+            $stmt->execute();
 
-        $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+            $stmt = $pdo->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                WHERE d.privacy = '1'
+                  AND d.fee_id = :fee_id");
+            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
+            $stmt = $pdo->prepare("
+                UPDATE domains d
+                JOIN fees f ON d.fee_id = f.id
+                SET d.total_cost = f.renewal_fee + f.misc_fee
+                WHERE d.privacy = '0'
+                  AND d.fee_id = :fee_id");
+            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
-        exit;
+            $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
+
+            header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to update registrar fee';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
 
     } else {
 

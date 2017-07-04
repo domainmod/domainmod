@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/registrar.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
@@ -48,7 +49,7 @@ $new_api_registrar_id = $_POST['new_api_registrar_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_registrar != "") {
@@ -150,30 +151,50 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM fees
-        WHERE registrar_id = :rid");
-    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-    $stmt->execute();
+    try {
 
-    $stmt = $pdo->prepare("
-        DELETE FROM registrar_accounts
-        WHERE registrar_id = :rid");
-    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-    $stmt->execute();
+        $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("
-        DELETE FROM registrars
-        WHERE id = :rid");
-    $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-    $stmt->execute();
+        $stmt = $pdo->prepare("
+            DELETE FROM fees
+            WHERE registrar_id = :rid");
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM registrar_accounts
+            WHERE registrar_id = :rid");
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    $system->checkExistingAssets();
+        $stmt = $pdo->prepare("
+            DELETE FROM registrars
+            WHERE id = :rid");
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    header("Location: ../registrars.php");
-    exit;
+        $system->checkExistingAssets();
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
+
+        header("Location: ../registrars.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to delete registrar';
+        $log_extra = array('Error' => $e);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
+
+    }
 
 }
 ?>

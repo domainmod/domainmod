@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/ssl-provider-account.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
@@ -54,46 +55,65 @@ $new_notes = $_POST['new_notes'];
 $new_sslpaid = $_POST['new_sslpaid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 
-        $stmt = $pdo->prepare("
-            UPDATE ssl_accounts
-            SET owner_id = :new_owner_id,
-                ssl_provider_id = :new_ssl_provider_id,
-                email_address = :new_email_address,
-                username = :new_username,
-                `password` =:new_password,
-                reseller = :new_reseller,
-                reseller_id = :new_reseller_id,
-                notes = :new_notes,
-                update_time = :timestamp
-            WHERE id = :new_sslpaid");
-        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
-        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
-        $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
-        $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
-        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
 
-        $sslpaid = $new_sslpaid;
+            $pdo->beginTransaction();
 
-        $temp_ssl_provider = $assets->getSslProvider($new_ssl_provider_id);
+            $stmt = $pdo->prepare("
+                UPDATE ssl_accounts
+                SET owner_id = :new_owner_id,
+                    ssl_provider_id = :new_ssl_provider_id,
+                    email_address = :new_email_address,
+                    username = :new_username,
+                    `password` =:new_password,
+                    reseller = :new_reseller,
+                    reseller_id = :new_reseller_id,
+                    notes = :new_notes,
+                    update_time = :timestamp
+                WHERE id = :new_sslpaid");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+            $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
+            $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $temp_owner = $assets->getOwner($new_owner_id);
+            $sslpaid = $new_sslpaid;
 
-        $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Updated<BR>";
+            $temp_ssl_provider = $assets->getSslProvider($new_ssl_provider_id);
+            $temp_owner = $assets->getOwner($new_owner_id);
 
-        header("Location: ../ssl-accounts.php");
-        exit;
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") updated<BR>";
+
+            header("Location: ../ssl-accounts.php");
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to update SSL provider account';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
 
     } else {
 
@@ -109,7 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter a username<BR>"; }
+        if ($new_username == "") {
+            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
+        }
 
     }
 
@@ -266,7 +288,8 @@ echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-provider-account.php?sslpaid=<?php echo urlencode($sslpaid); ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
+<BR><a href="ssl-provider-account.php?sslpaid=<?php echo urlencode($sslpaid); ?>&del=1">DELETE THIS SSL PROVIDER
+    ACCOUNT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

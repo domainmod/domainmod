@@ -26,6 +26,7 @@ require_once __DIR__ . '/_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/update.php');
 $time = new DomainMOD\Time();
 $goal = new DomainMOD\Goal();
 

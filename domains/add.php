@@ -26,6 +26,7 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/domains/add.php');
 $maint = new DomainMOD\Maintenance();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -87,7 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $domain->checkFormat($new_domain) && $new_cat_id != "" &&
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
-        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
+        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != ''
+    ) {
 
         $stmt = $pdo->prepare("
             SELECT domain
@@ -104,143 +106,163 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+            try {
 
-            $stmt = $pdo->prepare("
-                SELECT registrar_id, owner_id
-                FROM registrar_accounts
-                WHERE id = :new_account_id");
-            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch();
+                $pdo->beginTransaction();
 
-            if ($result) {
+                $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-                $new_registrar_id = $result->registrar_id;
-                $new_owner_id = $result->owner_id;
+                $stmt = $pdo->prepare("
+                    SELECT registrar_id, owner_id
+                    FROM registrar_accounts
+                    WHERE id = :new_account_id");
+                $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetch();
 
-            }
+                if ($result) {
 
-            if ($new_privacy == "1") {
-
-                $fee_string = 'renewal_fee + privacy_fee + misc_fee';
-
-            } else {
-
-                $fee_string = 'renewal_fee + misc_fee';
-
-            }
-
-            $stmt = $pdo->prepare("
-                SELECT id, (" . $fee_string . ") AS total_cost
-                FROM fees
-                WHERE registrar_id = :new_registrar_id
-                  AND tld = :tld");
-            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-            $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
-            $stmt->execute();
-            $result = $stmt->fetch();
-
-            if ($result) {
-
-                $new_fee_id = $result->id;
-                $new_total_cost = $result->total_cost;
-
-            } else {
-
-                $new_fee_id = 0;
-                $new_total_cost = 0;
-
-            }
-
-            $stmt = $pdo->prepare("
-                INSERT INTO domains
-                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
-                 hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, created_by,
-                 active, insert_time)
-                VALUES
-                (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
-                 :new_dns_id, :new_ip_id, :new_hosting_id, :new_fee_id, :new_total_cost, :new_function, :new_notes,
-                 :new_autorenew, :new_privacy, :user_id, :new_active, :timestamp)");
-            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
-            $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
-            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
-            $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
-            $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
-            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-            $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
-            $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
-            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-            $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $temp_domain_id = $pdo->lastInsertId('id');
-
-            $stmt = $pdo->prepare("
-                INSERT INTO domain_field_data
-                (domain_id, insert_time)
-                VALUES
-                (:temp_domain_id, :timestamp)");
-            $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $result = $pdo->query("
-                SELECT field_name
-                FROM domain_fields
-                ORDER BY `name`")->fetchAll();
-
-            if ($result) {
-
-                $field_array = array();
-
-                foreach ($result as $row) {
-
-                    $field_array[] = $row->field_name;
+                    $new_registrar_id = $result->registrar_id;
+                    $new_owner_id = $result->owner_id;
 
                 }
 
-                foreach ($field_array as $field) {
+                if ($new_privacy == "1") {
 
-                    $full_field = "new_" . $field;
+                    $fee_string = 'renewal_fee + privacy_fee + misc_fee';
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domain_field_data
-                        SET `" . $field . "` = :full_field
-                        WHERE domain_id = :temp_domain_id");
-                    $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
-                    $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
-                    $stmt->execute();
+                } else {
+
+                    $fee_string = 'renewal_fee + misc_fee';
 
                 }
 
+                $stmt = $pdo->prepare("
+                    SELECT id, (" . $fee_string . ") AS total_cost
+                    FROM fees
+                    WHERE registrar_id = :new_registrar_id
+                      AND tld = :tld");
+                $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+                $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetch();
+
+                if ($result) {
+
+                    $new_fee_id = $result->id;
+                    $new_total_cost = $result->total_cost;
+
+                } else {
+
+                    $new_fee_id = 0;
+                    $new_total_cost = 0;
+
+                }
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                     hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, created_by,
+                     active, insert_time)
+                    VALUES
+                    (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
+                     :new_dns_id, :new_ip_id, :new_hosting_id, :new_fee_id, :new_total_cost, :new_function, :new_notes,
+                     :new_autorenew, :new_privacy, :user_id, :new_active, :timestamp)");
+                $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
+                $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+                $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+                $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+                $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+                $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+                $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->execute();
+
+                $temp_domain_id = $pdo->lastInsertId('id');
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO domain_field_data
+                    (domain_id, insert_time)
+                    VALUES
+                    (:temp_domain_id, :timestamp)");
+                $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->execute();
+
+                $result = $pdo->query("
+                    SELECT field_name
+                    FROM domain_fields
+                    ORDER BY `name`")->fetchAll();
+
+                if ($result) {
+
+                    $field_array = array();
+
+                    foreach ($result as $row) {
+
+                        $field_array[] = $row->field_name;
+
+                    }
+
+                    foreach ($field_array as $field) {
+
+                        $full_field = "new_" . $field;
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domain_field_data
+                            SET `" . $field . "` = :full_field
+                            WHERE domain_id = :temp_domain_id");
+                        $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                        $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+                        $stmt->execute();
+
+                    }
+
+                }
+
+                $maint->updateDomainFee($temp_domain_id);
+
+                $queryB = new DomainMOD\QueryBuild();
+                $sql = $queryB->missingFees('domains');
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+
+                $maint->updateSegments();
+
+                $system->checkExistingAssets();
+
+                $pdo->commit();
+
+                $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' added<BR>';
+
+            } catch (Exception $e) {
+
+                $pdo->rollback();
+
+                $log_message = 'Unable to add domain';
+                $log_extra = array('Error' => $e);
+                $log->error($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
             }
-
-            $maint->updateDomainFee($temp_domain_id);
-
-            $queryB = new DomainMOD\QueryBuild();
-            $sql = $queryB->missingFees('domains');
-            $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
-
-            $maint->updateSegments();
-
-            $system->checkExistingAssets();
-
-            $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
 
         }
 
     } else {
-        
+
         if (!$domain->checkFormat($new_domain)) {
             $_SESSION['s_message_danger'] .= "The domain format is incorrect<BR>";
         }

@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/registrar-account.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
@@ -63,56 +64,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
-        $stmt = $pdo->prepare("
-            UPDATE registrar_accounts
-            SET owner_id = :new_owner_id,
-                registrar_id = :new_registrar_id,
-                email_address = :new_email_address,
-                username = :new_username,
-                `password` = :new_password,
-                reseller = :new_reseller,
-                reseller_id = :new_reseller_id,
-                api_app_name = :new_api_app_name,
-                api_key = :new_api_key,
-                api_secret = :new_api_secret,
-                api_ip_id = :new_api_ip_id,
-                notes = :new_notes,
-                update_time = :timestamp
-            WHERE id = :new_raid");
-        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
-        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
-        $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
-        $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_api_key', $new_api_key, PDO::PARAM_STR);
-        $stmt->bindValue('new_api_secret', $new_api_secret, PDO::PARAM_STR);
-        $stmt->bindValue('new_api_ip_id', $new_api_ip_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
 
-        $stmt = $pdo->prepare("
-            UPDATE domains
-            SET owner_id = :new_owner_id
-            WHERE account_id = :new_raid");
-        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-        $stmt->execute();
+            $pdo->beginTransaction();
 
-        $raid = $new_raid;
+            $stmt = $pdo->prepare("
+                UPDATE registrar_accounts
+                SET owner_id = :new_owner_id,
+                    registrar_id = :new_registrar_id,
+                    email_address = :new_email_address,
+                    username = :new_username,
+                    `password` = :new_password,
+                    reseller = :new_reseller,
+                    reseller_id = :new_reseller_id,
+                    api_app_name = :new_api_app_name,
+                    api_key = :new_api_key,
+                    api_secret = :new_api_secret,
+                    api_ip_id = :new_api_ip_id,
+                    notes = :new_notes,
+                    update_time = :timestamp
+                WHERE id = :new_raid");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
+            $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
+            $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_api_key', $new_api_key, PDO::PARAM_STR);
+            $stmt->bindValue('new_api_secret', $new_api_secret, PDO::PARAM_STR);
+            $stmt->bindValue('new_api_ip_id', $new_api_ip_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $temp_registrar = $assets->getRegistrar($new_registrar_id);
-        $temp_owner = $assets->getOwner($new_owner_id);
+            $stmt = $pdo->prepare("
+                UPDATE domains
+                SET owner_id = :new_owner_id,
+                    registrar_id = :new_registrar_id
+                WHERE account_id = :new_raid");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
+            $raid = $new_raid;
 
-        header("Location: ../registrar-accounts.php");
-        exit;
+            $temp_registrar = $assets->getRegistrar($new_registrar_id);
+            $temp_owner = $assets->getOwner($new_owner_id);
+
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
+
+            header("Location: ../registrar-accounts.php");
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to update registrar account';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
 
     } else {
 
@@ -128,7 +151,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter the username<BR>"; }
+        if ($new_username == "") {
+            $_SESSION['s_message_danger'] .= "Enter the username<BR>";
+        }
 
     }
 
@@ -189,36 +214,56 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $stmt = $pdo->prepare("
-        SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
-        FROM registrar_accounts AS ra, owners AS o, registrars AS r
-        WHERE ra.owner_id = o.id
-          AND ra.registrar_id = r.id
-          AND ra.id = :raid");
-    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
+    try {
 
-    if ($result) {
+        $pdo->beginTransaction();
 
-        $temp_username = $result->username;
-        $temp_owner_name = $result->owner_name;
-        $temp_registrar_name = $result->registrar_name;
+        $stmt = $pdo->prepare("
+            SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
+            FROM registrar_accounts AS ra, owners AS o, registrars AS r
+            WHERE ra.owner_id = o.id
+              AND ra.registrar_id = r.id
+              AND ra.id = :raid");
+        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+
+        if ($result) {
+
+            $temp_username = $result->username;
+            $temp_owner_name = $result->owner_name;
+            $temp_registrar_name = $result->registrar_name;
+
+        }
+
+        $stmt = $pdo->prepare("
+            DELETE FROM registrar_accounts
+            WHERE id = :raid");
+        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $system->checkExistingAssets();
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
+
+        header("Location: ../registrar-accounts.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to delete registrar account';
+        $log_extra = array('Error' => $e);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
 
     }
-
-    $stmt = $pdo->prepare("
-        DELETE FROM registrar_accounts
-        WHERE id = :raid");
-    $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
-
-    $system->checkExistingAssets();
-
-    header("Location: ../registrar-accounts.php");
-    exit;
 
 }
 
@@ -320,7 +365,9 @@ if ($has_api_support >= 1) { ?>
     <div class="box box-default collapsed-box box-solid">
         <div class="box-header with-border">
             <h3 class="box-title" style="padding-top: 3px;">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;API Credentials
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                </button>
+                &nbsp;API Credentials
             </h3>
         </div>
         <div class="box-body">

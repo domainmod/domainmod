@@ -26,6 +26,7 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/users/edit.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
@@ -148,58 +149,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
-    && $new_email_address != '' && $invalid_username != '1' && $invalid_email_address != '1') {
+    && $new_email_address != '' && $invalid_username != '1' && $invalid_email_address != '1'
+) {
 
-    $stmt = $pdo->prepare("
-        UPDATE users
-        SET first_name = :first_name,
-            last_name = :last_name,
-            username = :username,
-            email_address = :email_address,
-            admin = :admin,
-            `read_only` = :read_only,
-            active = :active,
-            update_time = :update_time
-        WHERE id = :user_id");
-    $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
-    $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
-    $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
-    $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-    $stmt->bindValue('admin', $new_is_admin, PDO::PARAM_INT);
-    $stmt->bindValue('read_only', $new_read_only, PDO::PARAM_INT);
-    $stmt->bindValue('active', $new_is_active, PDO::PARAM_INT);
-    $bind_timestamp = $time->stamp();
-    $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
-    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
-    $stmt->execute();
+    try {
 
-    $stmt = $pdo->prepare("
-        UPDATE user_settings
-        SET default_currency = :new_currency,
-            default_timezone = :new_timezone,
-            expiration_emails = :new_expiration_emails,
-            update_time = :update_time
-        WHERE user_id = :user_id");
-    $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
-    $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
-    $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
-    $bind_timestamp = $time->stamp();
-    $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
-    $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
-    $stmt->execute();
+        $pdo->beginTransaction();
 
-    $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET first_name = :first_name,
+                last_name = :last_name,
+                username = :username,
+                email_address = :email_address,
+                admin = :admin,
+                `read_only` = :read_only,
+                active = :active,
+                update_time = :update_time
+            WHERE id = :user_id");
+        $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
+        $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
+        $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
+        $stmt->bindValue('admin', $new_is_admin, PDO::PARAM_INT);
+        $stmt->bindValue('read_only', $new_read_only, PDO::PARAM_INT);
+        $stmt->bindValue('active', $new_is_active, PDO::PARAM_INT);
+        $bind_timestamp = $time->stamp();
+        $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+        $stmt->execute();
 
-    if ($_SESSION['s_username'] == $new_username) {
+        $stmt = $pdo->prepare("
+            UPDATE user_settings
+            SET default_currency = :new_currency,
+                default_timezone = :new_timezone,
+                expiration_emails = :new_expiration_emails,
+                update_time = :update_time
+            WHERE user_id = :user_id");
+        $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+        $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
+        $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
+        $bind_timestamp = $time->stamp();
+        $stmt->bindValue('update_time', $bind_timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
+        $stmt->execute();
 
-        $_SESSION['s_first_name'] = $new_first_name;
-        $_SESSION['s_last_name'] = $new_last_name;
-        $_SESSION['s_email_address'] = $new_email_address;
+        if ($_SESSION['s_username'] == $new_username) {
+
+            $_SESSION['s_first_name'] = $new_first_name;
+            $_SESSION['s_last_name'] = $new_last_name;
+            $_SESSION['s_email_address'] = $new_email_address;
+
+        }
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
+
+        header("Location: index.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to update user';
+        $log_extra = array('Error' => $e);
+        $log->error($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
 
     }
-
-    header("Location: index.php");
-    exit;
 
 } else {
 
@@ -401,8 +423,10 @@ echo $form->showSubmitButton('Save', '', '');
 
 echo $form->showFormBottom('');
 ?>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1">RESET AND DISPLAY
+    PASSWORD</a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>">RESET AND EMAIL NEW PASSWORD TO
+    USER</a><BR>
 <BR><a href="edit.php?uid=<?php echo urlencode($uid); ?>&del=1">DELETE THIS USER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

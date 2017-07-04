@@ -26,6 +26,7 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/queue/add.php');
 $layout = new DomainMOD\Layout();
 $domain = new DomainMOD\Domain();
 $time = new DomainMOD\Time();
@@ -102,48 +103,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $stmt = $pdo->prepare("
-                SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                FROM registrar_accounts AS ra, registrars AS r
-                WHERE ra.registrar_id = r.id
-                  AND ra.id = :new_raid");
-            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch();
+            try {
 
-            if ($result) {
+                $pdo->beginTransaction();
 
-                $temp_owner_id = $result->owner_id;
-                $temp_registrar_id = $result->registrar_id;
-                $temp_api_registrar_id = $result->api_registrar_id;
+                $stmt = $pdo->prepare("
+                    SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                    FROM registrar_accounts AS ra, registrars AS r
+                    WHERE ra.registrar_id = r.id
+                      AND ra.id = :new_raid");
+                $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetch();
+
+                if ($result) {
+
+                    $temp_owner_id = $result->owner_id;
+                    $temp_registrar_id = $result->registrar_id;
+                    $temp_api_registrar_id = $result->api_registrar_id;
+
+                }
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO domain_queue_list
+                    (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
+                    VALUES
+                    (:api_registrar_id, :owner_id, :registrar_id, :new_raid, :user_id, :timestamp)");
+                $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
+                $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
+                $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                $timestamp = $time->stamp();
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->execute();
+
+                $_SESSION['s_domains_in_list_queue'] = '1';
+
+                $pdo->commit();
+
+                $_SESSION['s_message_success'] .= "Registrar Account Added To Domain List Queue<BR>";
+
+                header("Location: index.php");
+                exit;
+
+            } catch (Exception $e) {
+
+                $pdo->rollback();
+
+                $log_message = 'Unable to add registrar account to domain list queue';
+                $log_extra = array('Error' => $e);
+                $log->error($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
 
             }
-
-            $stmt = $pdo->prepare("
-                INSERT INTO domain_queue_list
-                (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
-                VALUES
-                (:api_registrar_id, :owner_id, :registrar_id, :new_raid, :user_id, :timestamp)");
-            $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
-            $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
-            $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-            $timestamp = $time->stamp();
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $_SESSION['s_domains_in_list_queue'] = '1';
-
-            $_SESSION['s_message_success'] .= "Registrar Account Added To Domain List Queue<BR>";
-
-            header("Location: index.php");
-            exit;
 
         }
 
     } else { // If the registrar's API DOES NOT have the ability to retrieve the list of domains, or if there's a
-             // problem with he automatic import, use the list supplied
+        // problem with he automatic import, use the list supplied
 
         // check to make sure that the registrar associated with the account has API support
         $stmt = $pdo->prepare("
@@ -277,55 +298,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $stmt = $pdo->prepare("
-                        SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                        FROM registrar_accounts AS ra, registrars AS r
-                        WHERE ra.registrar_id = r.id
-                          AND ra.id = :raid");
-                    $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
-                    $stmt->execute();
-                    $result = $stmt->fetch();
+                    try {
 
-                    if ($result) {
-
-                        $temp_owner_id = $result->owner_id;
-                        $temp_registrar_id = $result->registrar_id;
-                        $temp_api_registrar_id = $result->api_registrar_id;
-
-                    }
-
-                    reset($domain_array);
-
-                    // cycle through domains here
-                    while (list($key, $new_domain) = each($domain_array)) {
-
-                        $domain_temp = new DomainMOD\Domain();
-                        $new_tld = $domain_temp->getTld($new_domain);
+                        $pdo->beginTransaction();
 
                         $stmt = $pdo->prepare("
-                            INSERT INTO domain_queue
-                            (api_registrar_id, domain, owner_id, registrar_id, account_id, tld, created_by, insert_time)
-                            VALUES
-                            (:api_registrar_id, :new_domain, :owner_id, :registrar_id, :new_raid, :new_tld, :user_id, :timestamp)");
-                        $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
-                        $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
-                        $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-                        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-                        $timestamp = $time->stamp();
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                            FROM registrar_accounts AS ra, registrars AS r
+                            WHERE ra.registrar_id = r.id
+                              AND ra.id = :raid");
+                        $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
                         $stmt->execute();
+                        $result = $stmt->fetch();
 
-                    } // finish cycling through domains here
+                        if ($result) {
 
-                    $_SESSION['s_domains_in_queue'] = '1';
+                            $temp_owner_id = $result->owner_id;
+                            $temp_registrar_id = $result->registrar_id;
+                            $temp_api_registrar_id = $result->api_registrar_id;
 
-                    $_SESSION['s_message_success'] .= "Domains Added To Queue<BR>";
+                        }
 
-                    header('Location: index.php');
-                    exit;
+                        reset($domain_array);
+
+                        // cycle through domains here
+                        while (list($key, $new_domain) = each($domain_array)) {
+
+                            $domain_temp = new DomainMOD\Domain();
+                            $new_tld = $domain_temp->getTld($new_domain);
+
+                            $stmt = $pdo->prepare("
+                                INSERT INTO domain_queue
+                                (api_registrar_id, domain, owner_id, registrar_id, account_id, tld, created_by, insert_time)
+                                VALUES
+                                (:api_registrar_id, :new_domain, :owner_id, :registrar_id, :new_raid, :new_tld, :user_id, :timestamp)");
+                            $stmt->bindValue('api_registrar_id', $temp_api_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                            $stmt->bindValue('owner_id', $temp_owner_id, PDO::PARAM_INT);
+                            $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                            $timestamp = $time->stamp();
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->execute();
+
+                        } // finish cycling through domains here
+
+                        $_SESSION['s_domains_in_queue'] = '1';
+
+                        $pdo->commit();
+
+                        $_SESSION['s_message_success'] .= "Domains Added To Queue<BR>";
+
+                        header('Location: index.php');
+                        exit;
+
+                    } catch (Exception $e) {
+
+                        $pdo->rollback();
+
+                        $log_message = 'Unable to add domains to queue';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
+
+                    }
 
                 }
 
@@ -349,9 +390,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Domain Queue & API Prerequisites</strong><BR>
 Before you can add domains to DomainMOD using the Domain Queue you must first do the following:
 <ol>
-<li>Ensure that the registrar has an API and that your account has been granted access to it</li>
-<li>Enable API Support on the <a href="<?php echo $web_root; ?>/assets/registrars.php">registrar asset</a></li>
-<li>Save the required API credentials with the <a href="<?php echo $web_root; ?>/assets/registrar-accounts.php">registrar account asset</a></li>
+    <li>Ensure that the registrar has an API and that your account has been granted access to it</li>
+    <li>Enable API Support on the <a href="<?php echo $web_root; ?>/assets/registrars.php">registrar asset</a></li>
+    <li>Save the required API credentials with the <a href="<?php echo $web_root; ?>/assets/registrar-accounts.php">registrar
+            account asset</a></li>
 </ol><?php
 
 echo $form->showFormTop('');
@@ -378,57 +420,87 @@ echo $form->showDropdownBottom('');
 if ($new_raid != '') { ?>
 
     <strong>API Requirements</strong><BR>
-    <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo urlencode($new_raid); ?>">registrar account asset</a>.
+    <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the
+    <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo urlencode($new_raid); ?>">registrar
+        account asset</a>.
 
     <ul><?php
 
-        $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>missing - click here to enter</strong></span></a>)';
-        $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
+    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>missing - click here to enter</strong></span></a>)';
+    $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
 
-        if ($req_account_username == '1') {
-            echo '<li>Registrar Account Username';
-            if ($account_username == '') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+    if ($req_account_username == '1') {
+        echo '<li>Registrar Account Username';
+        if ($account_username == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_account_password == '1') {
-            echo '<li>Registrar Account Password';
-            if ($account_password == '') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+        echo '</li>';
+    }
+    if ($req_account_password == '1') {
+        echo '<li>Registrar Account Password';
+        if ($account_password == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_reseller_id == '1') {
-            echo '<li>Reseller ID';
-            if ($reseller_id == '' || $reseller_id == '0') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+        echo '</li>';
+    }
+    if ($req_reseller_id == '1') {
+        echo '<li>Reseller ID';
+        if ($reseller_id == '' || $reseller_id == '0') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_api_app_name == '1') {
-            echo '<li>API Application Name';
-            if ($api_app_name == '') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+        echo '</li>';
+    }
+    if ($req_api_app_name == '1') {
+        echo '<li>API Application Name';
+        if ($api_app_name == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_api_key == '1') {
-            echo '<li>API Key';
-            if ($api_key == '') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+        echo '</li>';
+    }
+    if ($req_api_key == '1') {
+        echo '<li>API Key';
+        if ($api_key == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_api_secret == '1') {
-            echo '<li>API Secret';
-            if ($api_secret == '') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
+        echo '</li>';
+    }
+    if ($req_api_secret == '1') {
+        echo '<li>API Secret';
+        if ($api_secret == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
         }
-        if ($req_ip_address == '1') {
-            echo '<li>Connecting IP Address';
-            if ($api_ip_id == '0') { echo $missing_text; } else { echo $saved_text; }
-            echo '</li>';
-        } ?>
+        echo '</li>';
+    }
+    if ($req_ip_address == '1') {
+        echo '<li>Connecting IP Address';
+        if ($api_ip_id == '0') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
+        }
+        echo '</li>';
+    } ?>
     </ul><?php
 
 }
 
 if ($registrar_notes != '') {
-    
+
     echo '<strong>Registrar Notes</strong><BR>';
     echo $registrar_notes . "<BR><BR>";
-    
+
 }
 
 if ($new_raid != '') {

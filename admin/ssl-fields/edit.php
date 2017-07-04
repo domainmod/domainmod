@@ -26,9 +26,9 @@ require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/ssl-fields/edit.php');
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
-$log = new DomainMOD\Log('admin.sslfields.edit');
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
@@ -71,45 +71,57 @@ if (!$result) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
-    $stmt = $pdo->prepare("
-        SELECT field_name
-        FROM ssl_cert_fields
-        WHERE id = :new_csfid");
-    $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetchColumn();
+    try {
 
-    if (!$result) {
+        $pdo->beginTransaction();
 
-        $log_message = 'Unable to retrieve Custom SSL Field ID';
-        $log_extra = array('Custom SSL Field Name' => $new_name, 'Custom SSL Field ID' => $new_csfid);
+        $stmt = $pdo->prepare("
+            SELECT field_name
+            FROM ssl_cert_fields
+            WHERE id = :new_csfid");
+        $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if ($result) {
+
+            $stmt = $pdo->prepare("
+                UPDATE ssl_cert_fields
+                SET `name` = :new_name,
+                    description = :new_description,
+                    notes = :new_notes,
+                    update_time = :timestamp
+                WHERE id = :new_csfid");
+            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
+            $stmt->execute();
+
+        }
+
+        $pdo->commit();
+
+        $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $result . ') updated<BR>';
+
+        header("Location: ../ssl-fields/");
+        exit;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+
+        $log_message = 'Unable to edit custom SSL field';
+        $log_extra = array('Error' => $e);
         $log->error($log_message, $log_extra);
 
         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-    } else {
-
-        $stmt = $pdo->prepare("
-            UPDATE ssl_cert_fields
-            SET `name` = :new_name,
-                description = :new_description,
-                notes = :new_notes,
-                update_time = :timestamp
-            WHERE id = :new_csfid");
-        $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
-        $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
-        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('new_csfid', $new_csfid, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $result . ') Updated<BR>';
+        throw $e;
 
     }
-
-    header("Location: ../ssl-fields/");
-    exit;
 
 } else {
 
@@ -157,39 +169,50 @@ if ($really_del == '1') {
 
     } else {
 
-        $stmt = $pdo->prepare("
-            SELECT `name`, field_name
-            FROM ssl_cert_fields
-            WHERE id = :csfid");
-        $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
+        try {
 
-        if (!$result) {
-
-            $log_message = 'Unable to delete Custom SSL Field';
-            $log_extra = array('Custom SSL Field Name' => $new_name, 'Custom SSL Field ID' => $csfid);
-            $log->error($log_message, $log_extra);
-
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-
-        } else {
-
-            $pdo->query("
-                ALTER TABLE `ssl_cert_field_data`
-                DROP `" . $result->field_name . "`");
+            $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("
-                DELETE FROM ssl_cert_fields
+                SELECT `name`, field_name
+                FROM ssl_cert_fields
                 WHERE id = :csfid");
             $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
             $stmt->execute();
+            $result = $stmt->fetch();
+
+            if ($result) {
+
+                $pdo->query("
+                    ALTER TABLE `ssl_cert_field_data`
+                    DROP `" . $result->field_name . "`");
+
+                $stmt = $pdo->prepare("
+                    DELETE FROM ssl_cert_fields
+                    WHERE id = :csfid");
+                $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
+            $pdo->commit();
 
             $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $result->name . ' (' . $result->field_name . ') deleted<BR>';
 
             header("Location: ../ssl-fields/");
             exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to delete custom SSL field';
+            $log_extra = array('Error' => $e);
+            $log->error($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
 
         }
 

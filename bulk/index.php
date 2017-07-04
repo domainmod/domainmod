@@ -26,6 +26,7 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/bulk/index.php');
 $layout = new DomainMOD\Layout();
 $maint = new DomainMOD\Maintenance();
 $date = new DomainMOD\Date();
@@ -142,15 +143,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($action == "RENEW") {
 
-                foreach ($domain_array as $each_domain) {
+                try {
 
-                    $domain->renew($each_domain, $new_renewal_years, $new_notes);
+                    $pdo->beginTransaction();
+
+                    foreach ($domain_array as $each_domain) {
+
+                        $domain->renew($each_domain, $new_renewal_years, $new_notes);
+
+                    }
+
+                    $maint->updateSegments();
+
+                    $pdo->commit();
+
+                    $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
+
+                } catch (Exception $e) {
+
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to renew domains';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "AD") {
 
@@ -189,234 +210,274 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $stmt = $pdo->prepare("
-                        SELECT owner_id, registrar_id
-                        FROM registrar_accounts
-                        WHERE id = :raid");
-                    $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
-                    $stmt->execute();
-                    $result = $stmt->fetch();
+                    try {
 
-                    if ($result) {
-
-                        $temp_owner_id = $result->owner_id;
-                        $temp_registrar_id = $result->registrar_id;
-
-                    }
-
-                    reset($domain_array);
-
-                    // cycle through domains here
-                    while (list($key, $new_domain) = each($domain_array)) {
-
-                        $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+                        $pdo->beginTransaction();
 
                         $stmt = $pdo->prepare("
-                            SELECT id
-                            FROM fees
-                            WHERE registrar_id = :registrar_id
-                              AND tld = :new_tld");
-                        $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                            SELECT owner_id, registrar_id
+                            FROM registrar_accounts
+                            WHERE id = :raid");
+                        $stmt->bindValue('raid', $new_raid, PDO::PARAM_INT);
                         $stmt->execute();
-                        $temp_fee_id = $stmt->fetchColumn();
+                        $result = $stmt->fetch();
 
-                        if ($temp_fee_id == '0' || $temp_fee_id == "") {
+                        if ($result) {
 
-                            $temp_fee_fixed = 0;
+                            $temp_owner_id = $result->owner_id;
+                            $temp_registrar_id = $result->registrar_id;
+
+                        }
+
+                        reset($domain_array);
+
+                        // cycle through domains here
+                        while (list($key, $new_domain) = each($domain_array)) {
+
+                            $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+
+                            $stmt = $pdo->prepare("
+                                SELECT id
+                                FROM fees
+                                WHERE registrar_id = :registrar_id
+                                  AND tld = :new_tld");
+                            $stmt->bindValue('registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                            $stmt->execute();
+                            $temp_fee_id = $stmt->fetchColumn();
+
+                            if ($temp_fee_id == '0' || $temp_fee_id == "") {
+
+                                $temp_fee_fixed = 0;
+                                $temp_fee_id = 0;
+
+                            } else {
+
+                                $temp_fee_fixed = 1;
+
+                            }
+
+                            if ($new_privacy == "1") {
+
+                                $fee_string = "renewal_fee + privacy_fee + misc_fee";
+
+                            } else {
+
+                                $fee_string = "renewal_fee + misc_fee";
+
+                            }
+
+                            $stmt = $pdo->prepare("
+                                SELECT (" . $fee_string . ") AS total_cost
+                                FROM fees
+                                WHERE registrar_id = :temp_registrar_id
+                                  AND tld = :new_tld");
+                            $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                            $stmt->execute();
+                            $result = $stmt->fetchColumn();
+
+                            if ($result) {
+
+                                $new_total_cost = $result;
+
+                            } else {
+
+                                $new_total_cost = 0;
+
+                            }
+
+                            $stmt = $pdo->prepare("
+                                INSERT INTO domains
+                                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
+                                 total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
+                                 creation_type_id, created_by, active, fee_fixed, insert_time)
+                                VALUES
+                                (:temp_owner_id, :temp_registrar_id, :new_raid, :new_domain, :new_tld, :new_expiry_date,
+                                 :new_pcid, :temp_fee_id, :new_total_cost, :new_dnsid, :new_ipid, :new_whid, :new_function,
+                                 :new_notes, :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active,
+                                 :temp_fee_fixed, :timestamp)");
+                            $stmt->bindValue('temp_owner_id', $temp_owner_id, PDO::PARAM_INT);
+                            $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
+                            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+                            $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
+                            $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
+                            $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
+                            $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
+                            $creation_type_id = $system->getCreationTypeId('Bulk Updater');
+                            $stmt->bindValue('creation_type_id', $creation_type_id, PDO::PARAM_INT);
+                            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                            $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
+                            $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->execute();
+
                             $temp_fee_id = 0;
 
-                        } else {
+                            $temp_domain_id = $pdo->lastInsertId('id');
 
-                            $temp_fee_fixed = 1;
+                            $stmt = $pdo->prepare("
+                                INSERT INTO domain_field_data
+                                (domain_id, insert_time)
+                                VALUES
+                                (:temp_domain_id, :timestamp)");
+                            $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->execute();
 
-                        }
+                            $result = $pdo->query("
+                                SELECT field_name
+                                FROM domain_fields
+                                ORDER BY `name`")->fetchAll();
 
-                        if ($new_privacy == "1") {
+                            if ($result) {
 
-                            $fee_string = "renewal_fee + privacy_fee + misc_fee";
+                                $field_array = array();
 
-                        } else {
+                                foreach ($result as $row) {
 
-                            $fee_string = "renewal_fee + misc_fee";
+                                    $field_array[] = $row->field_name;
 
-                        }
+                                }
 
-                        $stmt = $pdo->prepare("
-                            SELECT (" . $fee_string . ") AS total_cost
-                            FROM fees
-                            WHERE registrar_id = :temp_registrar_id
-                              AND tld = :new_tld");
-                        $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-                        $stmt->execute();
-                        $result = $stmt->fetchColumn();
+                                foreach ($field_array as $field) {
 
-                        if ($result) {
+                                    $full_field = "new_" . $field;
 
-                            $new_total_cost = $result;
+                                    $stmt = $pdo->prepare("
+                                        UPDATE domain_field_data
+                                        SET {$field} = :full_field
+                                        WHERE domain_id = :domain_id");
+                                    $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                                    $stmt->bindValue('domain_id', $temp_domain_id, PDO::PARAM_INT);
+                                    $stmt->execute();
 
-                        } else {
-
-                            $new_total_cost = 0;
-
-                        }
-
-                        $stmt = $pdo->prepare("
-                            INSERT INTO domains
-                            (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
-                             total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
-                             creation_type_id, created_by, active, fee_fixed, insert_time)
-                            VALUES
-                            (:temp_owner_id, :temp_registrar_id, :new_raid, :new_domain, :new_tld, :new_expiry_date,
-                             :new_pcid, :temp_fee_id, :new_total_cost, :new_dnsid, :new_ipid, :new_whid, :new_function,
-                             :new_notes, :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active,
-                             :temp_fee_fixed, :timestamp)");
-                        $stmt->bindValue('temp_owner_id', $temp_owner_id, PDO::PARAM_INT);
-                        $stmt->bindValue('temp_registrar_id', $temp_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
-                        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-                        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
-                        $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
-                        $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
-                        $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('new_autorenew', $new_autorenew, PDO::PARAM_INT);
-                        $stmt->bindValue('new_privacy', $new_privacy, PDO::PARAM_INT);
-                        $creation_type_id = $system->getCreationTypeId('Bulk Updater');
-                        $stmt->bindValue('creation_type_id', $creation_type_id, PDO::PARAM_INT);
-                        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-                        $stmt->bindValue('new_active', $new_active, PDO::PARAM_INT);
-                        $stmt->bindValue('temp_fee_fixed', $temp_fee_fixed, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->execute();
-
-                        $temp_fee_id = 0;
-
-                        $temp_domain_id = $pdo->lastInsertId('id');
-
-                        $stmt = $pdo->prepare("
-                            INSERT INTO domain_field_data
-                            (domain_id, insert_time)
-                            VALUES
-                            (:temp_domain_id, :timestamp)");
-                        $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->execute();
-
-                        $result = $pdo->query("
-                            SELECT field_name
-                            FROM domain_fields
-                            ORDER BY `name`")->fetchAll();
-
-                        if ($result) {
-
-                            $field_array = array();
-
-                            foreach ($result as $row) {
-
-                                $field_array[] = $row->field_name;
+                                }
 
                             }
 
-                            foreach ($field_array as $field) {
+                        } // finish cycling through domains here
 
-                                $full_field = "new_" . $field;
+                        $queryB = new DomainMOD\QueryBuild();
 
-                                $stmt = $pdo->prepare("
-                                    UPDATE domain_field_data
-                                    SET {$field} = :full_field
-                                    WHERE domain_id = :domain_id");
-                                $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
-                                $stmt->bindValue('domain_id', $temp_domain_id, PDO::PARAM_INT);
-                                $stmt->execute();
+                        $sql = $queryB->missingFees('domains');
+                        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-                            }
+                        $maint->updateSegments();
 
-                        }
+                        $maint->updateTlds();
 
-                    } // finish cycling through domains here
+                        $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains Added<BR>";
+                        $_SESSION['s_message_success'] .= "Domains Added<BR>";
 
-                    $queryB = new DomainMOD\QueryBuild();
+                    } catch (Exception $e) {
 
-                    $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+                        $pdo->rollback();
 
-                    $maint->updateSegments();
+                        $log_message = 'Unable to add domains';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
 
-                    $maint->updateTlds();
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
+
+                    }
 
                 }
 
             } elseif ($action == "FR") {
 
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $sql = "SELECT domain, expiry_date
-                        FROM domains
-                        WHERE domain IN (" . $in_list . ")";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($domain_array);
-                $result = $stmt->fetchAll();
+                try {
 
-                foreach ($result as $row) {
+                    $pdo->beginTransaction();
 
-                    $expiry_pieces = explode("-", $row->expiry_date);
-                    $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
-                    $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                    $sql = "SELECT domain, expiry_date
+                            FROM domains
+                            WHERE domain IN (" . $in_list . ")";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($domain_array);
+                    $result = $stmt->fetchAll();
 
-                    if ($new_renewal_years == "1") {
-                        $renewal_years_string = $new_renewal_years . " Year";
-                    } else {
-                        $renewal_years_string = $new_renewal_years . " Years";
+                    foreach ($result as $row) {
+
+                        $expiry_pieces = explode("-", $row->expiry_date);
+                        $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+                        $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+
+                        if ($new_renewal_years == "1") {
+                            $renewal_years_string = $new_renewal_years . " Year";
+                        } else {
+                            $renewal_years_string = $new_renewal_years . " Years";
+                        }
+
+                        $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
+
+                        if ($new_notes != "") {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET expiry_date = :new_expiry,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', :new_notes_renewal, '\r\n\r\n', notes),
+                                    active = '1',
+                                    update_time = :update_time
+                                WHERE domain = :domain");
+                            $stmt->bindValue('new_expiry', $new_expiry, PDO::PARAM_STR);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('new_notes_renewal', $new_notes_renewal, PDO::PARAM_LOB);
+                            $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindValue('domain', $row->domain, PDO::PARAM_STR);
+                            $stmt->execute();
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET expiry_date = :new_expiry,
+                                    notes = CONCAT(:new_notes_renewal, '\r\n\r\n', notes),
+                                    active = '1',
+                                    update_time = :update_time
+                                WHERE domain = :domain");
+                            $stmt->bindValue('new_expiry', $new_expiry, PDO::PARAM_STR);
+                            $stmt->bindValue('new_notes_renewal', $new_notes_renewal, PDO::PARAM_LOB);
+                            $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindValue('domain', $row->domain, PDO::PARAM_STR);
+                            $stmt->execute();
+
+                        }
+
                     }
 
-                    $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
+                    $maint->updateSegments();
 
-                    if ($new_notes != "") {
+                    $pdo->commit();
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET expiry_date = :new_expiry,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', :new_notes_renewal, '\r\n\r\n', notes),
-                                active = '1',
-                                update_time = :update_time
-                            WHERE domain = :domain");
-                        $stmt->bindValue('new_expiry', $new_expiry, PDO::PARAM_STR);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('new_notes_renewal', $new_notes_renewal, PDO::PARAM_LOB);
-                        $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindValue('domain', $row->domain, PDO::PARAM_STR);
-                        $stmt->execute();
+                    $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
 
-                    } else {
+                } catch (Exception $e) {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET expiry_date = :new_expiry,
-                                notes = CONCAT(:new_notes_renewal, '\r\n\r\n', notes),
-                                active = '1',
-                                update_time = :update_time
-                            WHERE domain = :domain");
-                        $stmt->bindValue('new_expiry', $new_expiry, PDO::PARAM_STR);
-                        $stmt->bindValue('new_notes_renewal', $new_notes_renewal, PDO::PARAM_LOB);
-                        $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindValue('domain', $row->domain, PDO::PARAM_STR);
-                        $stmt->execute();
+                    $pdo->rollback();
 
-                    }
+                    $log_message = 'Unable to fully renew domains';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $maint->updateSegments();
-
-                $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
 
             } elseif ($action == "CPC") {
 
@@ -427,45 +488,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    if ($new_notes != "") {
+                    try {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET cat_id  = :new_pcid,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                                update_time = :update_time
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $pdo->beginTransaction();
 
-                        foreach ($domain_array as $each_domain) {
+                        if ($new_notes != "") {
 
-                            $stmt->execute();
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET cat_id  = :new_pcid,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :update_time
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET cat_id  = :new_pcid,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
 
                         }
 
-                    } else {
+                        $pdo->commit();
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET cat_id  = :new_pcid,
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $_SESSION['s_message_success'] .= "Category Changed<BR>";
 
-                        foreach ($domain_array as $each_domain) {
+                    } catch (Exception $e) {
 
-                            $stmt->execute();
+                        $pdo->rollback();
 
-                        }
+                        $log_message = 'Unable to change category';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
 
                     }
-
-                    $_SESSION['s_message_success'] .= "Category Changed<BR>";
 
                 }
 
@@ -478,45 +559,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    if ($new_notes != "") {
+                    try {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET dns_id  = :new_dnsid,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $pdo->beginTransaction();
 
-                        foreach ($domain_array as $each_domain) {
+                        if ($new_notes != "") {
 
-                            $stmt->execute();
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET dns_id  = :new_dnsid,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET dns_id  = :new_dnsid,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
 
                         }
 
-                    } else {
+                        $pdo->commit();
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET dns_id  = :new_dnsid,
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $_SESSION['s_message_success'] .= "DNS Profile Changed<BR>";
 
-                        foreach ($domain_array as $each_domain) {
+                    } catch (Exception $e) {
 
-                            $stmt->execute();
+                        $pdo->rollback();
 
-                        }
+                        $log_message = 'Unable to change DNS profile';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
 
                     }
 
-                    $_SESSION['s_message_success'] .= "DNS Profile Changed<BR>";
                 }
 
             } elseif ($action == "CIP") {
@@ -528,45 +630,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    if ($new_notes != "") {
+                    try {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET ip_id  = :new_ipid,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $pdo->beginTransaction();
 
-                        foreach ($domain_array as $each_domain) {
+                        if ($new_notes != "") {
 
-                            $stmt->execute();
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET ip_id  = :new_ipid,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET ip_id  = :new_ipid,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
 
                         }
 
-                    } else {
+                        $pdo->commit();
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET ip_id  = :new_ipid,
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $_SESSION['s_message_success'] .= "IP Address Changed<BR>";
 
-                        foreach ($domain_array as $each_domain) {
+                    } catch (Exception $e) {
 
-                            $stmt->execute();
+                        $pdo->rollback();
 
-                        }
+                        $log_message = 'Unable to change IP address';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
 
                     }
-
-                    $_SESSION['s_message_success'] .= "IP Address Changed<BR>";
 
                 }
 
@@ -579,22 +701,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    try {
 
-                    foreach ($domain_array as $each_domain) {
+                        $pdo->beginTransaction();
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                        $pdo->commit();
+
+                        $_SESSION['s_message_success'] .= "Note Added<BR>";
+
+                    } catch (Exception $e) {
+
+                        $pdo->rollback();
+
+                        $log_message = 'Unable to add note';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
 
                     }
-
-                    $_SESSION['s_message_success'] .= "Note Added<BR>";
 
                 }
 
@@ -607,124 +749,144 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $stmt = $pdo->prepare("
-                        SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
-                        FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                        WHERE ra.registrar_id = r.id
-                          AND ra.owner_id = o.id
-                          AND ra.id = :new_raid
-                        GROUP BY r.name, o.name, ra.username
-                        ORDER BY r.name ASC, o.name ASC, ra.username ASC");
-                    $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
-                    $stmt->execute();
-                    $result = $stmt->fetch();
+                    try {
 
-                    if ($result) {
-
-                        $new_registrar_account_id = $result->ra_id;
-                        $new_username = $result->username;
-                        $new_registrar_id = $result->r_id;
-                        $new_registrar_name = $result->r_name;
-                        $new_owner_id = $result->o_id;
-                        $new_owner_name = $result->o_name;
-
-                    }
-
-                    if ($new_notes != "") {
+                        $pdo->beginTransaction();
 
                         $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET owner_id = :new_owner_id,
-                                registrar_id = :new_registrar_id,
-                                account_id = :new_registrar_account_id,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
+                            FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                            WHERE ra.registrar_id = r.id
+                              AND ra.owner_id = o.id
+                              AND ra.id = :new_raid
+                            GROUP BY r.name, o.name, ra.username
+                            ORDER BY r.name ASC, o.name ASC, ra.username ASC");
+                        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $result = $stmt->fetch();
 
-                        foreach ($domain_array as $each_domain) {
+                        if ($result) {
 
-                            $stmt->execute();
+                            $new_registrar_account_id = $result->ra_id;
+                            $new_username = $result->username;
+                            $new_registrar_id = $result->r_id;
+                            $new_registrar_name = $result->r_name;
+                            $new_owner_id = $result->o_id;
+                            $new_owner_name = $result->o_name;
 
                         }
 
-                    } else {
+                        if ($new_notes != "") {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET owner_id = :new_owner_id,
-                                registrar_id = :new_registrar_id,
-                                account_id = :new_registrar_account_id,
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
-                        $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET owner_id = :new_owner_id,
+                                    registrar_id = :new_registrar_id,
+                                    account_id = :new_registrar_account_id,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $each_domain) {
 
-                            $stmt->execute();
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET owner_id = :new_owner_id,
+                                    registrar_id = :new_registrar_id,
+                                    account_id = :new_registrar_account_id,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
+                            $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
 
                         }
 
+                        $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                        $sql = "UPDATE domains
+                                SET fee_id = '0',
+                                    total_cost = '0'
+                                WHERE domain IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_array);
+
+                        $sql = "SELECT d.id, f.id AS fee_id
+                                FROM domains AS d, fees AS f
+                                WHERE d.registrar_id = f.registrar_id
+                                  AND d.tld = f.tld
+                                  AND d.domain IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_array);
+                        $result = $stmt->fetchAll();
+
+                        foreach ($result as $row) {
+
+                            $pdo->query("
+                                UPDATE domains
+                                SET fee_id = '" . $row->fee_id . "'
+                                WHERE id = '" . $row->id . "'");
+
+                        }
+
+                        $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                        $sql = "UPDATE domains d
+                                JOIN fees f ON d.fee_id = f.id
+                                SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                                WHERE d.privacy = '1'
+                                  AND d.domain IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_array);
+
+                        $sql = "UPDATE domains d
+                                JOIN fees f ON d.fee_id = f.id
+                                SET d.total_cost = f.renewal_fee + f.misc_fee
+                                WHERE d.privacy = '0'
+                                  AND d.domain IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_array);
+
+                        $queryB = new DomainMOD\QueryBuild();
+
+                        $sql = $queryB->missingFees('domains');
+                        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+
+                        $pdo->commit();
+
+                        $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
+
+                    } catch (Exception $e) {
+
+                        $pdo->rollback();
+
+                        $log_message = 'Unable to change registrar account';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
+
                     }
-
-                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                    $sql = "UPDATE domains
-                            SET fee_id = '0',
-                                total_cost = '0'
-                            WHERE domain IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_array);
-
-                    $sql = "SELECT d.id, f.id AS fee_id
-                            FROM domains AS d, fees AS f
-                            WHERE d.registrar_id = f.registrar_id
-                              AND d.tld = f.tld
-                              AND d.domain IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_array);
-                    $result = $stmt->fetchAll();
-
-                    foreach ($result as $row) {
-
-                        $pdo->query("
-                            UPDATE domains
-                            SET fee_id = '" . $row->fee_id . "'
-                            WHERE id = '" . $row->id . "'");
-
-                    }
-
-                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                    $sql = "UPDATE domains d
-                            JOIN fees f ON d.fee_id = f.id
-                            SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                            WHERE d.privacy = '1'
-                              AND d.domain IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_array);
-
-                    $sql = "UPDATE domains d
-                            JOIN fees f ON d.fee_id = f.id
-                            SET d.total_cost = f.renewal_fee + f.misc_fee
-                            WHERE d.privacy = '0'
-                              AND d.domain IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_array);
-
-                    $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
-
-                    $queryB = new DomainMOD\QueryBuild();
-
-                    $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
                 }
 
@@ -737,15 +899,171 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
+                    try {
+
+                        $pdo->beginTransaction();
+
+                        if ($new_notes != "") {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET hosting_id  = :new_whid,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET hosting_id  = :new_whid,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        }
+
+                        $pdo->commit();
+
+                        $_SESSION['s_message_success'] .= "Web Hosting Provider Changed<BR>";
+
+                    } catch (Exception $e) {
+
+                        $pdo->rollback();
+
+                        $log_message = 'Unable to chnage web hosting provider';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
+
+                    }
+
+                }
+
+            } elseif ($action == "DD") {
+
+                try {
+
+                    $pdo->beginTransaction();
+
+                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                    $sql = "SELECT id
+                            FROM domains
+                            WHERE domain IN (" . $in_list . ")";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($domain_array);
+                    $result = $stmt->fetchAll();
+
+                    if ($result) {
+
+                        $domain_id_list = array();
+
+                        foreach ($result as $row) {
+
+                            $domain_id_list[] = $row->id;
+
+                        }
+
+                        $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
+
+                        $sql = "DELETE FROM domains
+                                WHERE id IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_id_list);
+
+                        $sql = "DELETE FROM domain_field_data
+                                WHERE domain_id IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_id_list);
+
+                        $sql = "SELECT id
+                                FROM ssl_certs
+                                WHERE domain_id IN (" . $in_list . ")";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($domain_id_list);
+                        $result_ssl = $stmt->fetchAll();
+
+                        if ($result_ssl) {
+
+                            $ssl_id_list = array();
+
+                            foreach ($result_ssl as $row_ssl) {
+
+                                $ssl_id_list[] = $row_ssl->id;
+
+                            }
+
+                            $in_list = str_repeat('?, ', count($ssl_id_list) - 1) . '?';
+
+                            $sql = "DELETE FROM ssl_certs
+                                    WHERE id IN (" . $in_list . ")";
+                            $stmt = $pdo->prepare($sql);
+                            $stmt->execute($ssl_id_list);
+
+                            $sql = "DELETE FROM ssl_cert_field_data
+                                    WHERE ssl_id IN (" . $in_list . ")";
+                            $stmt = $pdo->prepare($sql);
+                            $stmt->execute($ssl_id_list);
+
+                        }
+
+                    }
+
+                    $maint->updateSegments();
+
+                    $pdo->commit();
+
+                    $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
+
+                } catch (Exception $e) {
+
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to delete domains';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
+
+                }
+
+            } elseif ($action == "E") {
+
+                try {
+
+                    $pdo->beginTransaction();
+
                     if ($new_notes != "") {
 
                         $stmt = $pdo->prepare("
                             UPDATE domains
-                            SET hosting_id  = :new_whid,
+                            SET active = '0',
                                 notes = CONCAT(:new_notes, '\r\n\r\n', notes),
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
-                        $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
                         $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
@@ -760,10 +1078,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $stmt = $pdo->prepare("
                             UPDATE domains
-                            SET hosting_id  = :new_whid,
+                            SET active = '0',
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
-                        $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
                         $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
 
@@ -775,572 +1092,677 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] .= "Web Hosting Provider Changed<BR>";
+                    $maint->updateSegments();
+
+                    $pdo->commit();
+
+                    $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
+
+                } catch (Exception $e) {
+
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as expired';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-            } elseif ($action == "DD") {
-
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $sql = "SELECT id
-                        FROM domains
-                        WHERE domain IN (" . $in_list . ")";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($domain_array);
-                $result = $stmt->fetchAll();
-
-                if ($result) {
-
-                    $domain_id_list = array();
-
-                    foreach ($result as $row) {
-
-                        $domain_id_list[] = $row->id;
-
-                    }
-
-                    $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
-
-                    $sql = "DELETE FROM domains
-                            WHERE id IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_id_list);
-
-                    $sql = "DELETE FROM domain_field_data
-                            WHERE domain_id IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_id_list);
-
-                    $sql = "SELECT id
-                            FROM ssl_certs
-                            WHERE domain_id IN (" . $in_list . ")";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($domain_id_list);
-                    $result_ssl = $stmt->fetchAll();
-
-                    if ($result_ssl) {
-
-                        $ssl_id_list = array();
-
-                        foreach ($result_ssl as $row_ssl) {
-
-                            $ssl_id_list[] = $row_ssl->id;
-
-                        }
-
-                        $in_list = str_repeat('?, ', count($ssl_id_list) - 1) . '?';
-
-                        $sql = "DELETE FROM ssl_certs
-                                WHERE id IN (" . $in_list . ")";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->execute($ssl_id_list);
-
-                        $sql = "DELETE FROM ssl_cert_field_data
-                                WHERE ssl_id IN (" . $in_list . ")";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->execute($ssl_id_list);
-
-                    }
-
-                }
-
-                $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
-
-                $maint->updateSegments();
-
-            } elseif ($action == "E") {
-
-                if ($new_notes != "") {
-
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '0',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
-
-                    foreach ($domain_array as $each_domain) {
-
-                        $stmt->execute();
-
-                    }
-
-                } else {
-
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '0',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
-
-                    foreach ($domain_array as $each_domain) {
-
-                        $stmt->execute();
-
-                    }
-
-                }
-
-                $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "S") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '10',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '10',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '10',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '10',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as sold';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "A") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '1',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '1',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '1',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '1',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as active';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "T") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '2',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '2',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '2',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '2',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as pending transfer';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "PRg") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '5',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '5',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '5',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '5',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as pending registration';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "PRn") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '3',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '3',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '3',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '3',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as pending renewal';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "PO") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '4',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '4',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET active = '4',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET active = '4',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as pending other';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "AURNE") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET autorenew = '1',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET autorenew = '1',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET autorenew = '1',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $maint->updateSegments();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET autorenew = '1',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->commit();
 
-                    foreach ($domain_array as $each_domain) {
+                    $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
 
-                        $stmt->execute();
+                } catch (Exception $e) {
 
-                    }
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as auto renewal';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "AURND") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET autorenew = '0',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET autorenew = '0',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET autorenew = '0',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $pdo->commit();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET autorenew = '0',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $_SESSION['s_message_success'] .= "Domains marked as Manual Renewal<BR>";
 
-                    foreach ($domain_array as $each_domain) {
+                } catch (Exception $e) {
 
-                        $stmt->execute();
+                    $pdo->rollback();
 
-                    }
+                    $log_message = 'Unable to mark domains as manual renewal';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Manual Renewal<BR>";
 
             } elseif ($action == "PRVE") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET privacy = '1',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET privacy = '1',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET privacy = '1',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                    $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
+                            FROM domains AS d, fees AS f
+                            WHERE d.fee_id = f.id
+                              AND d.domain IN (" . $in_list . ")";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($domain_array);
+                    $result = $stmt->fetchAll();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET privacy = '1',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    foreach ($result as $row) {
 
-                    foreach ($domain_array as $each_domain) {
-
-                        $stmt->execute();
+                        $pdo->query("
+                            UPDATE domains
+                            SET total_cost = '" . $row->total_cost . "'
+                            WHERE id = '" . $row->id . "'");
 
                     }
 
+                    $maint->updateSegments();
+
+                    $pdo->commit();
+
+                    $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
+
+                } catch (Exception $e) {
+
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as private WHOIS';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
+
                 }
-
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
-                        FROM domains AS d, fees AS f
-                        WHERE d.fee_id = f.id
-                          AND d.domain IN (" . $in_list . ")";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($domain_array);
-                $result = $stmt->fetchAll();
-
-                foreach ($result as $row) {
-
-                    $pdo->query("
-                        UPDATE domains
-                        SET total_cost = '" . $row->total_cost . "'
-                        WHERE id = '" . $row->id . "'");
-
-                }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
-
-                $maint->updateSegments();
 
             } elseif ($action == "PRVD") {
 
-                if ($new_notes != "") {
+                try {
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET privacy = '0',
-                            notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    $pdo->beginTransaction();
 
-                    foreach ($domain_array as $each_domain) {
+                    if ($new_notes != "") {
 
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET privacy = '0',
+                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
+
+                    } else {
+
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET privacy = '0',
+                                update_time = :timestamp
+                            WHERE domain = :each_domain");
+                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                        foreach ($domain_array as $each_domain) {
+
+                            $stmt->execute();
+
+                        }
 
                     }
 
-                } else {
+                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                    $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
+                            FROM domains AS d, fees AS f
+                            WHERE d.fee_id = f.id
+                              AND d.domain IN (" . $in_list . ")";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($domain_array);
+                    $result = $stmt->fetchAll();
 
-                    $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET privacy = '0',
-                            update_time = :timestamp
-                        WHERE domain = :each_domain");
-                    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                    $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                    foreach ($result as $row) {
 
-                    foreach ($domain_array as $each_domain) {
-
-                        $stmt->execute();
+                        $pdo->query("
+                            UPDATE domains
+                            SET total_cost = '" . $row->total_cost . "'
+                            WHERE id = '" . $row->id . "'");
 
                     }
 
-                }
+                    $pdo->commit();
 
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
-                        FROM domains AS d, fees AS f
-                        WHERE d.fee_id = f.id
-                          AND d.domain IN (" . $in_list . ")";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($domain_array);
-                $result = $stmt->fetchAll();
+                    $_SESSION['s_message_success'] .= "Domains marked as Public WHOIS<BR>";
 
-                foreach ($result as $row) {
+                } catch (Exception $e) {
 
-                    $pdo->query("
-                        UPDATE domains
-                        SET total_cost = '" . $row->total_cost . "'
-                        WHERE id = '" . $row->id . "'");
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to mark domains as public WHOIS';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
 
                 }
-
-                $_SESSION['s_message_success'] .= "Domains marked as Public WHOIS<BR>";
 
             } elseif ($action == "CED") {
 
@@ -1351,110 +1773,150 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    if ($new_notes != "") {
+                    try {
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET expiry_date = :new_expiry_date,
-                                notes = CONCAT(:new_notes, '\r\n\r\n', notes),
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
-                        $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $pdo->beginTransaction();
 
-                        foreach ($domain_array as $each_domain) {
+                        if ($new_notes != "") {
 
-                            $stmt->execute();
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET expiry_date = :new_expiry_date,
+                                    notes = CONCAT(:new_notes, '\r\n\r\n', notes),
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+                            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
+
+                        } else {
+
+                            $stmt = $pdo->prepare("
+                                UPDATE domains
+                                SET expiry_date = :new_expiry_date,
+                                    update_time = :timestamp
+                                WHERE domain = :each_domain");
+                            $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
+                            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+
+                            foreach ($domain_array as $each_domain) {
+
+                                $stmt->execute();
+
+                            }
 
                         }
 
-                    } else {
+                        $pdo->commit();
 
-                        $stmt = $pdo->prepare("
-                            UPDATE domains
-                            SET expiry_date = :new_expiry_date,
-                                update_time = :timestamp
-                            WHERE domain = :each_domain");
-                        $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
-                        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $_SESSION['s_message_success'] .= "Expiry Date Updated<BR>";
 
-                        foreach ($domain_array as $each_domain) {
+                    } catch (Exception $e) {
 
-                            $stmt->execute();
+                        $pdo->rollback();
 
-                        }
+                        $log_message = 'Unable to update expiry date';
+                        $log_extra = array('Error' => $e);
+                        $log->error($log_message, $log_extra);
+
+                        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                        throw $e;
 
                     }
-
-                    $_SESSION['s_message_success'] .= "Expiry Date Updated<BR>";
 
                 }
 
             } elseif ($action == "UCF") {
 
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $sql = "SELECT id
-                        FROM domains
-                        WHERE domain IN (" . $in_list . ")";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($domain_array);
-                $result = $stmt->fetchAll();
+                try {
 
-                $domain_id_list = array();
+                    $pdo->beginTransaction();
 
-                foreach ($result as $row) {
+                    $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
+                    $sql = "SELECT id
+                            FROM domains
+                            WHERE domain IN (" . $in_list . ")";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($domain_array);
+                    $result = $stmt->fetchAll();
 
-                    $domain_id_list[] = $row->id;
+                    $domain_id_list = array();
 
-                }
-                $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
+                    foreach ($result as $row) {
 
-                $stmt = $pdo->prepare("
-                    SELECT `name`, field_name
-                    FROM domain_fields
-                    WHERE id = :field_id");
-                $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
-                $stmt->execute();
+                        $domain_id_list[] = $row->id;
 
-                $result = $stmt->fetch();
-
-                if ($result) {
-
-                    $temp_name = $result->name;
-                    $temp_field_name = $result->field_name;
-
-                }
-
-                $full_field = "new_" . $temp_field_name;
-
-                $stmt = $pdo->prepare("
-                    UPDATE domain_field_data
-                    SET `" . $temp_field_name . "` = ?,
-                         update_time = ?
-                    WHERE domain_id IN (" . $in_list . ")");
-                $array1 = array(${$full_field}, $timestamp);
-                $array2 = $domain_id_list;
-                $full_array = array_merge($array1, $array2);
-                $stmt->execute($full_array);
-
-                if ($new_notes != "") {
+                    }
+                    $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
 
                     $stmt = $pdo->prepare("
-                        UPDATE domains
-                        SET notes = CONCAT(?, '\r\n\r\n', notes),
-                            update_time = ?
-                        WHERE id IN (" . $in_list . ")");
-                    $array1 = array($new_notes, $timestamp);
+                        SELECT `name`, field_name
+                        FROM domain_fields
+                        WHERE id = :field_id");
+                    $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+                    $stmt->execute();
+
+                    $result = $stmt->fetch();
+
+                    if ($result) {
+
+                        $temp_name = $result->name;
+                        $temp_field_name = $result->field_name;
+
+                    }
+
+                    $full_field = "new_" . $temp_field_name;
+
+                    $stmt = $pdo->prepare("
+                        UPDATE domain_field_data
+                        SET `" . $temp_field_name . "` = ?,
+                             update_time = ?
+                        WHERE domain_id IN (" . $in_list . ")");
+                    $array1 = array(${$full_field}, $timestamp);
                     $array2 = $domain_id_list;
                     $full_array = array_merge($array1, $array2);
                     $stmt->execute($full_array);
 
-                }
+                    if ($new_notes != "") {
 
-                $_SESSION['s_message_success'] .= "Custom Field " . $name_array[0] . " Updated<BR>";
+                        $stmt = $pdo->prepare("
+                            UPDATE domains
+                            SET notes = CONCAT(?, '\r\n\r\n', notes),
+                                update_time = ?
+                            WHERE id IN (" . $in_list . ")");
+                        $array1 = array($new_notes, $timestamp);
+                        $array2 = $domain_id_list;
+                        $full_array = array_merge($array1, $array2);
+                        $stmt->execute($full_array);
+
+                    }
+
+                    $pdo->commit();
+
+                    $_SESSION['s_message_success'] .= "Custom Field " . $name_array[0] . " Updated<BR>";
+
+                } catch (Exception $e) {
+
+                    $pdo->rollback();
+
+                    $log_message = 'Unable to update custom field';
+                    $log_extra = array('Error' => $e);
+                    $log->error($log_message, $log_extra);
+
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
+
+                }
 
             }
 
@@ -1477,30 +1939,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php //@formatter:off
-if ($action == "AD") { $breadcrumb_text = 'Add Domains'; }
-elseif ($action == "RENEW") { $breadcrumb_text = 'Renew Domains'; }
-elseif ($action == "FR") { $breadcrumb_text = 'Fully Renew Domains'; }
-elseif ($action == "E") { $breadcrumb_text = 'Mark as Expired'; }
-elseif ($action == "S") { $breadcrumb_text = 'Mark as Sold'; }
-elseif ($action == "A") { $breadcrumb_text = 'Mark as Active'; }
-elseif ($action == "T") { $breadcrumb_text = 'Mark as Pending Transfer'; }
-elseif ($action == "PRg") { $breadcrumb_text = 'Mark as Pending Registration'; }
-elseif ($action == "PRn") { $breadcrumb_text = 'Mark as Pending Renewal'; }
-elseif ($action == "PO") { $breadcrumb_text = 'Mark as Pending (Other)'; }
-elseif ($action == "AURNE") { $breadcrumb_text = 'Mark as Auto Renewal'; }
-elseif ($action == "AURND") { $breadcrumb_text = 'Mark as Manual Renewal'; }
-elseif ($action == "PRVE") { $breadcrumb_text = 'Mark as Private WHOIS'; }
-elseif ($action == "PRVD") { $breadcrumb_text = 'Mark as Public WHOIS'; }
-elseif ($action == "CED") { $breadcrumb_text = 'Change Expiry Date'; }
-elseif ($action == "CPC") { $breadcrumb_text = 'Change Category'; }
-elseif ($action == "CDNS") { $breadcrumb_text = 'Change DNS Profile'; }
-elseif ($action == "CIP") { $breadcrumb_text = 'Change IP Address'; }
-elseif ($action == "CRA") { $breadcrumb_text = 'Change Registrar Account'; }
-elseif ($action == "CWH") { $breadcrumb_text = 'Change Hosting Provider'; }
-elseif ($action == "DD") { $breadcrumb_text = 'Delete Domains'; }
-elseif ($action == "AN") { $breadcrumb_text = 'Add A Note'; }
-elseif ($action == "UCF") { $breadcrumb_text = 'Update Custom Domain Field'; }
-else { $breadcrumb_text = ''; }
+if ($action == "AD") {
+    $breadcrumb_text = 'Add Domains';
+} elseif ($action == "RENEW") {
+    $breadcrumb_text = 'Renew Domains';
+} elseif ($action == "FR") {
+    $breadcrumb_text = 'Fully Renew Domains';
+} elseif ($action == "E") {
+    $breadcrumb_text = 'Mark as Expired';
+} elseif ($action == "S") {
+    $breadcrumb_text = 'Mark as Sold';
+} elseif ($action == "A") {
+    $breadcrumb_text = 'Mark as Active';
+} elseif ($action == "T") {
+    $breadcrumb_text = 'Mark as Pending Transfer';
+} elseif ($action == "PRg") {
+    $breadcrumb_text = 'Mark as Pending Registration';
+} elseif ($action == "PRn") {
+    $breadcrumb_text = 'Mark as Pending Renewal';
+} elseif ($action == "PO") {
+    $breadcrumb_text = 'Mark as Pending (Other)';
+} elseif ($action == "AURNE") {
+    $breadcrumb_text = 'Mark as Auto Renewal';
+} elseif ($action == "AURND") {
+    $breadcrumb_text = 'Mark as Manual Renewal';
+} elseif ($action == "PRVE") {
+    $breadcrumb_text = 'Mark as Private WHOIS';
+} elseif ($action == "PRVD") {
+    $breadcrumb_text = 'Mark as Public WHOIS';
+} elseif ($action == "CED") {
+    $breadcrumb_text = 'Change Expiry Date';
+} elseif ($action == "CPC") {
+    $breadcrumb_text = 'Change Category';
+} elseif ($action == "CDNS") {
+    $breadcrumb_text = 'Change DNS Profile';
+} elseif ($action == "CIP") {
+    $breadcrumb_text = 'Change IP Address';
+} elseif ($action == "CRA") {
+    $breadcrumb_text = 'Change Registrar Account';
+} elseif ($action == "CWH") {
+    $breadcrumb_text = 'Change Hosting Provider';
+} elseif ($action == "DD") {
+    $breadcrumb_text = 'Delete Domains';
+} elseif ($action == "AN") {
+    $breadcrumb_text = 'Add A Note';
+} elseif ($action == "UCF") {
+    $breadcrumb_text = 'Update Custom Domain Field';
+} else {
+    $breadcrumb_text = '';
+}
 
 if ($breadcrumb_text != '') {
     $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
@@ -1508,7 +1995,8 @@ if ($breadcrumb_text != '') {
 ?>
 
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.<BR>
+The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple
+thousand, all with a few clicks.<BR>
 <?php if ($done == "1") { ?>
 
     <?php if ($submission_failed != "1") { ?>
@@ -1516,12 +2004,14 @@ The Bulk Updater allows you add or modify multiple domains at the same time, whe
         <?php if ($action == "AD") { ?>
             <BR><strong>The following domains were added:</strong><BR>
         <?php } elseif ($action == "RENEW") { ?>
-            <BR><strong>The following domains were renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
+            <BR><strong>The following domains were renewed
+                for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
                 year<?php if ($new_renewal_years > 1) {
                     echo "s";
                 } ?>:</strong><BR>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong>The following domains were fully renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
+            <BR><strong>The following domains were fully renewed
+                for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
                 year<?php if ($new_renewal_years > 1) {
                     echo "s";
                 } ?>:</strong><BR>
@@ -1888,7 +2378,7 @@ if ($action == "AD") { // Add Domains
         WHERE ra.registrar_id = r.id
           AND ra.owner_id = o.id
         GROUP BY r.name, o.name, ra.username
-        ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
+        ORDER BY r.name ASC, o.name ASC, ra.username ASC")->fetchAll();
 
     foreach ($result_account as $row_account) {
 

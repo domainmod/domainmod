@@ -25,8 +25,9 @@ require_once __DIR__ . '/../_includes/init.inc.php';
 
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/segments/add.php');
+$maint = new DomainMOD\Maintenance();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
 $timestamp = $time->stamp();
@@ -90,65 +91,85 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $number_of_domains = count($domain_array);
+            try {
 
-            $domain = new DomainMOD\Domain();
+                $pdo->beginTransaction();
 
-            while (list($key, $new_domain) = each($domain_array)) {
+                $number_of_domains = count($domain_array);
 
-                if (!$domain->checkFormat($new_domain)) {
-                    echo 'invalid domain ' . $key;
-                    exit;
+                $domain = new DomainMOD\Domain();
+
+                while (list($key, $new_domain) = each($domain_array)) {
+
+                    if (!$domain->checkFormat($new_domain)) {
+                        echo 'invalid domain ' . $key;
+                        exit;
+                    }
+
                 }
 
-            }
+                $new_data_formatted = $format->formatForMysql($domain_array);
 
-            $new_data_formatted = $format->formatForMysql($domain_array);
-
-            $stmt = $pdo->prepare("
-                INSERT INTO segments
-                (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
-                VALUES
-                (:new_name, :new_description, :new_data_formatted, :number_of_domains, :new_notes, :user_id,
-                 :timestamp)");
-            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
-            $stmt->bindValue('new_description', $new_description, PDO::PARAM_LOB);
-            $stmt->bindValue('new_data_formatted', $new_data_formatted, PDO::PARAM_LOB);
-            $stmt->bindValue('number_of_domains', $number_of_domains, PDO::PARAM_INT);
-            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $temp_segment_id = $pdo->lastInsertId('id');
-
-            $stmt = $pdo->prepare("
-                DELETE FROM segment_data
-                WHERE segment_id = :temp_segment_id");
-            $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $stmt = $pdo->prepare("
-                INSERT INTO segment_data
-                (segment_id, domain, insert_time)
-                VALUES
-                (:temp_segment_id, :domain, :timestamp)");
-            $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
-            $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-
-            foreach ($domain_array as $domain) {
-
+                $stmt = $pdo->prepare("
+                    INSERT INTO segments
+                    (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
+                    VALUES
+                    (:new_name, :new_description, :new_data_formatted, :number_of_domains, :new_notes, :user_id,
+                     :timestamp)");
+                $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+                $stmt->bindValue('new_description', $new_description, PDO::PARAM_LOB);
+                $stmt->bindValue('new_data_formatted', $new_data_formatted, PDO::PARAM_LOB);
+                $stmt->bindValue('number_of_domains', $number_of_domains, PDO::PARAM_INT);
+                $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+                $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
                 $stmt->execute();
 
+                $temp_segment_id = $pdo->lastInsertId('id');
+
+                $stmt = $pdo->prepare("
+                    DELETE FROM segment_data
+                    WHERE segment_id = :temp_segment_id");
+                $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO segment_data
+                    (segment_id, domain, insert_time)
+                    VALUES
+                    (:temp_segment_id, :domain, :timestamp)");
+                $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
+                $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+
+                foreach ($domain_array as $domain) {
+
+                    $stmt->execute();
+
+                }
+
+                $maint->updateSegments();
+
+                $pdo->commit();
+
+                $_SESSION['s_message_success'] .= "Segment " . $new_name . " Added<BR>";
+
+                header("Location: ../segments/");
+                exit;
+
+            } catch (Exception $e) {
+
+                $pdo->rollback();
+
+                $log_message = 'Unable to add segment';
+                $log_extra = array('Error' => $e);
+                $log->error($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
             }
-
-            $_SESSION['s_message_success'] .= "Segment " . $new_name . " Added<BR>";
-
-            $maint->updateSegments();
-
-            header("Location: ../segments/");
-            exit;
 
         }
 
