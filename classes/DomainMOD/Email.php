@@ -52,7 +52,6 @@ class Email
         $message_html .= $this->messageBottomHtml($full_url);
 
         list($result_domains, $result_ssl) = $this->checkExpiring($number_of_days, $from_cron);
-        $message_text = '';
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText($number_of_days);
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);

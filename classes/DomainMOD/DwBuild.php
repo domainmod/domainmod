@@ -172,7 +172,6 @@ class DwBuild
     public function apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash)
     {
         $query = $protocol . "://" . $host . ":" . $port . $api_call;
-        $header = '';
         $curl = curl_init(); // Create Curl Object
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // Allow certs that do not match the domain
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // Allow self-signed certs

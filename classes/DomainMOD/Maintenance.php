@@ -184,9 +184,9 @@ class Maintenance
 
             foreach ($result as $row) {
 
+                $bind_fee_id = $row->id;
                 $bind_registrar_id = $row->registrar_id;
                 $bind_tld = $row->tld;
-                $bind_fee_id = $row->id;
 
                 $stmt->execute();
 
@@ -233,8 +233,8 @@ class Maintenance
                 update_time = :update_time
             WHERE registrar_id = :registrar_id
               AND tld = :tld");
-        $bind_timestamp = $this->time->stamp();
-        $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+        $timestamp = $this->time->stamp();
+        $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
         $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
         $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
         $stmt->execute();
@@ -291,8 +291,8 @@ class Maintenance
                     update_time = :update_time
                 WHERE registrar_id = :registrar_id
                   AND tld = :tld");
-            $bind_timestamp = $this->time->stamp();
-            $stmt4->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $timestamp = $this->time->stamp();
+            $stmt4->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
             $stmt4->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
             $stmt4->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
 
@@ -308,7 +308,7 @@ class Maintenance
 
                 $stmt3->execute();
 
-                $stmt->execute();
+                $stmt4->execute();
 
             }
 
@@ -325,8 +325,8 @@ class Maintenance
             UPDATE ssl_fees
             SET fee_fixed = '0',
                 update_time = :update_time");
-        $bind_timestamp = $this->time->stamp();
-        $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+        $timestamp = $this->time->stamp();
+        $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
         $stmt->execute();
 
         $result = $pdo->query("
@@ -362,8 +362,8 @@ class Maintenance
                     update_time = :update_time
                 WHERE ssl_provider_id = :ssl_provider_id
                   AND type_id = :type_id");
-            $bind_timestamp = $this->time->stamp();
-            $stmt3->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
+            $timestamp = $this->time->stamp();
+            $stmt3->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
             $stmt3->bindParam('ssl_provider_id', $bind_ssl_provider_id, \PDO::PARAM_INT);
             $stmt3->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
 
