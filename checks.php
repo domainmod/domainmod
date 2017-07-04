@@ -27,6 +27,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/checks.php');
+$upgrade = new DomainMOD\Upgrade();
 $maint = new DomainMOD\Maintenance();
 $login = new DomainMOD\Login();
 $time = new DomainMOD\Time();

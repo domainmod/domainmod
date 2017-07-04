@@ -24,12 +24,24 @@
 // upgrade database from 4.06.00 to 4.06.01
 if ($current_db_version === '4.06.00') {
 
-    $pdo->query("
-        UPDATE settings
-        SET db_version = '4.06.01',
-            update_time = '" . $timestamp . "'");
+    $old_version = '4.06.00';
+    $new_version = '4.06.01';
 
-    $current_db_version = '4.06.01';
+    try {
+
+        $pdo->beginTransaction();
+        $upgrade->database($new_version);
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
 
 }
+
 //@formatter:on
