@@ -50,7 +50,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP Version:</strong> <?php echo phpversion(); ?><BR>
-<strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log');; ?><BR>
+<strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log'); ?><BR>
 <strong>MySQL Version:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
