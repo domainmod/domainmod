@@ -282,7 +282,7 @@ if (file_exists($full_filename)) {
     //Initialize Select2 Elements
     $(".select2").select2();
 
-    <?php echo $datatable_options; ?>
+    <?php echo isset( $datatable_options ) ?$datatable_options :''; ?>
 
     //Red color scheme for iCheck
     $('input[type="checkbox"].square-red, input[type="radio"].square-red').iCheck({
@@ -291,7 +291,7 @@ if (file_exists($full_filename)) {
     });
 
     //Colorpicker
-    $(".my-colorpicker1").colorpicker();
+    //$(".my-colorpicker1").colorpicker();
 
   });
 </script>
