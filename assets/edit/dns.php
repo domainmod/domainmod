@@ -38,6 +38,7 @@ require_once DIR_INC . '/settings/assets-edit-dns.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
 $system->authCheck();
+$pdo = $system->db();
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -159,6 +160,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
+
+   ini_set('display_errors','On');
+   error_reporting(E_ALL);
     $stmt = $pdo->prepare("
         SELECT `name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7,
             ip8, ip9, ip10, notes
