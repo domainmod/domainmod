@@ -25,7 +25,8 @@
 
         <li<?php if ($software_section == "domains") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/domains/"><i class="fa fa-sitemap"></i> <span>Domains</span></a></li>
 
-        <?php if ($_SESSION['s_domains_in_list_queue'] == '1' || $_SESSION['s_domains_in_queue'] == '1') { ?>
+        <?php if (( isset( $_SESSION['s_domains_in_list_queue'] ) && $_SESSION['s_domains_in_list_queue'] == '1' ) ||
+         ( isset( $_SESSION['s_domains_in_queue'] ) && $_SESSION['s_domains_in_queue'] == '1')) { ?>
         <li<?php if ($software_section == "queue") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/queue/"><i class="fa fa-hourglass-2"></i> <span>Queue</span></a></li>
         <?php } ?>
 

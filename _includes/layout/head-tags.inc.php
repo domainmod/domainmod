@@ -25,7 +25,7 @@
         overflow-y: scroll;
     }
 
-    <?php echo $datatable_css; ?>
+    <?php echo isset( $datatable_css ) ?$datatable_css : ''; ?>
 </style>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta charset="utf-8">
