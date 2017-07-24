@@ -291,7 +291,7 @@ if (file_exists($full_filename)) {
     });
 
     //Colorpicker
-    $(".my-colorpicker1").colorpicker();
+    //$(".my-colorpicker1").colorpicker();
 
   });
 </script>
