@@ -32,7 +32,18 @@ class System
 
     public function db()
     {
-        $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        // Test database connection settings.
+        try
+        {
+            $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        }
+        catch( \PDOException $e )
+        {
+            exit( 'Failed to connect to database.'
+                .' Please check your config settings. '
+                . $e->getMessage() );
+        }
+
         $pdo->exec("SET NAMES utf8");
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
