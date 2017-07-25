@@ -132,17 +132,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $stmt = $pdo->prepare("
                 INSERT INTO segment_data
-                (segment_id, domain, insert_time)
+                (segment_id, domain, insert_time, update_time)
                 VALUES
-                (:temp_segment_id, :domain, :timestamp)");
+                (:temp_segment_id, :domain, :timestamp1, :timestamp2)");
             $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
-            $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindParam('domain', $bind_domain, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp1', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp2', $timestamp, PDO::PARAM_STR);
 
-            foreach ($domain_array as $domain) {
+            foreach ($domain_array as $bind_domain) {
 
                 $stmt->execute();
-
+                
             }
 
             $_SESSION['s_message_success'] .= "Segment " . $new_name . " Added<BR>";
