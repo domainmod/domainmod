@@ -141,12 +141,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $stmt = $pdo->prepare("
                 INSERT INTO segment_data
-                (segment_id, domain, update_time)
+                (segment_id, domain, update_time, insert_time)
                 VALUES
-                (:new_segid, :domain, :timestamp)");
+                (:new_segid, :domain, :timestamp1, :timestamp2)");
             $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
             $stmt->bindParam('domain', $bind_domain, PDO::PARAM_STR);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp1', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('timestamp2', $timestamp, PDO::PARAM_STR);
 
             foreach ($domain_array as $domain) {
 

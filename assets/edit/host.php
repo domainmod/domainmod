@@ -38,6 +38,7 @@ require_once DIR_INC . '/settings/assets-edit-host.inc.php';
 require_once DIR_INC . '/database.inc.php';
 
 $system->authCheck();
+$pdo = $system->db();
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];

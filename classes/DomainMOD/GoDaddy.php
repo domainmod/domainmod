@@ -50,8 +50,20 @@ class GoDaddy
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Authorization: sso-key ' . $api_key . ':' . $api_secret,
             'Accept: application/json'));
+        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec($handle);
+        $cError = curl_error( $handle );
+
+        if( $cError )
+        {
+                // Log this error.
+                $this->log->error('apiCall error', array(
+                    'message' => $cError,
+                    'url' => $full_url
+                    ) );
+        }
+        
         curl_close($handle);
         return $result;
     }
@@ -77,7 +89,7 @@ class GoDaddy
 
         } else {
 
-            $log_message = 'Unable to get domain list';
+            $log_message = 'Unable to get domain list: '.$api_results;
             $log_extra = array('API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
 

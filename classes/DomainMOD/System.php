@@ -32,7 +32,18 @@ class System
 
     public function db()
     {
-        $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        // Test database connection settings.
+        try
+        {
+            $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        }
+        catch( \PDOException $e )
+        {
+            exit( 'Failed to connect to database.'
+                .' Please check your config settings. '
+                . $e->getMessage() );
+        }
+
         $pdo->exec("SET NAMES utf8");
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
@@ -89,6 +100,16 @@ class System
 
     public function getLiveVersion()
     {
+        // Need openssl support to file_get_contents https urls.
+        if( !extension_loaded( 'openssl' ) ) {
+            exit( 'Please enable php openssl support for domainmod version checking.' );
+        }
+
+        // Need allow_url_fopen support to file_get_contents urls.
+        if( !ini_get( 'allow_url_fopen' ) ) {
+            exit( 'Please turn on allow_url_fopen support for domainmod version checking.');
+        }
+        
         $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt';
         $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
         $version_fgc = file_get_contents($version_file, false, $context);
