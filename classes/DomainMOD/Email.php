@@ -229,13 +229,13 @@ class Email
                 if ($row_domains->expiry_date < $timestamp_basic) { ?>
 
                     <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
-                        href="<?php echo $full_url; ?>/edit/domain.php?did=<?php echo $row_domains->id;
+                        href="<?php echo $full_url; ?>/domains/edit.php?did=<?php echo $row_domains->id;
                         ?>"><?php echo $row_domains->domain; ?></a>&nbsp;&nbsp;<font
                         color="#CC0000">*EXPIRED*</font><BR><?php
                 } else { ?>
 
                     <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
-                    ?>/edit/domain.php?did=<?php echo $row_domains->id; ?>"><?php echo $row_domains->domain;
+                    ?>/domains/edit.php?did=<?php echo $row_domains->id; ?>"><?php echo $row_domains->domain;
                         ?></a><BR><?php
                 }
             }
@@ -268,12 +268,12 @@ class Email
             foreach ($result_ssl as $row_ssl) {
                 if ($row_ssl->expiry_date < $timestamp_basic) { ?>
                     <font color="#CC0000"><?php echo $row_ssl->expiry_date; ?></font>&nbsp;&nbsp;<a
-                        href="<?php echo $full_url; ?>/edit/ssl-cert.php?sslcid=<?php echo $row_ssl->id;
+                        href="<?php echo $full_url; ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id;
                         ?>"><?php echo $row_ssl->name; ?> (<?php echo $row_ssl->type; ?>)</a>&nbsp;&nbsp;<font
                         color="#CC0000">*EXPIRED*</font><BR><?php
                 } else { ?>
                     <?php echo $row_ssl->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
-                    ?>/edit/ssl-cert.php?sslcid=<?php echo $row_ssl->id; ?>"><?php echo $row_ssl->name; ?>
+                    ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id; ?>"><?php echo $row_ssl->name; ?>
                         (<?php echo $row_ssl->type; ?>)</a><BR><?php
                 }
             }
@@ -311,8 +311,8 @@ class Email
         <BR><hr width="100%" size="2" noshade>You've received this email because you're currently subscribed to receive
         expiration notifications from the <?php echo SOFTWARE_TITLE; ?> installation located at: <a target="_blank"
         href="<?php echo $full_url; ?>/"><?php echo $full_url; ?>/</a><BR><BR>To unsubscribe from these notifications
-        please visit: <BR><a target="_blank" href="<?php echo $full_url; ?>/settings/email/"><?php echo $full_url;
-        ?>/settings/email/</a><BR><BR></font>
+        please visit: <BR><a target="_blank" href="<?php echo $full_url; ?>/settings/profile/"><?php echo $full_url;
+        ?>/settings/profile/</a><BR><BR></font>
         </td></tr>
         </table>
         </body>
@@ -329,7 +329,7 @@ class Email
         $message .= "greg@domainmod.org\n\n";
         $message .= "---\n\n";
         $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . SOFTWARE_TITLE . " installation located at: " . $full_url . "\n\n";
-        $message .= "To unsubscribe from these notifications please visit: " . $full_url . "/settings/email/";
+        $message .= "To unsubscribe from these notifications please visit: " . $full_url . "/settings/profile/";
         return $message;
     }
 
