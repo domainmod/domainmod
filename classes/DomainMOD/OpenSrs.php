@@ -132,9 +132,11 @@ EOD;
             'Content-Type:text/xml',
             'X-Username:' . $account_username,
             'X-Signature:' . md5(md5($xml . $api_key) .  $api_key)));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handle, CURLOPT_POST, 1);
         curl_setopt($handle, CURLOPT_POSTFIELDS, $xml);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($handle);
         return $result;
     }

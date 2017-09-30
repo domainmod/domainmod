@@ -60,10 +60,12 @@ class NameBright
 
             $handle = curl_init($full_url);
             curl_setopt($handle, CURLOPT_HEADER, true);
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_POST, true);
             curl_setopt($handle, CURLOPT_HEADER, 'Content-Type: application/x-www-form-urlencoded');
+            curl_setopt($handle, CURLOPT_POST, true);
             curl_setopt($handle, CURLOPT_POSTFIELDS, $post_fields);
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
             $result = curl_exec($handle);
             curl_close($handle);
 
@@ -73,7 +75,9 @@ class NameBright
             curl_setopt($handle, CURLOPT_HTTPHEADER, array(
                 'Authorization: Bearer ' . $access_token,
                 'Accept: application/json'));
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
             $result = curl_exec($handle);
             curl_close($handle);
 

@@ -50,7 +50,9 @@ class GoDaddy
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Authorization: sso-key ' . $api_key . ':' . $api_secret,
             'Accept: application/json'));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;

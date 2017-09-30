@@ -97,6 +97,8 @@ class System
         } else {
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($handle, CURLOPT_URL, $version_file);
             $result = curl_exec($handle);
             curl_close($handle);

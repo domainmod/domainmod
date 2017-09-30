@@ -142,6 +142,8 @@ class Goal
         if (!$result) {
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($handle, CURLOPT_URL, $goal_url);
             curl_exec($handle);
             curl_close($handle);
