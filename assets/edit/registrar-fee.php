@@ -39,9 +39,9 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-edit-registrar-fee.inc.php';
 
-$timestamp = $time->stamp();
 $pdo = $system->db();
 $system->authCheck();
+$timestamp = $time->stamp();
 
 $fee_id = $_REQUEST['fee_id'];
 $rid = $_REQUEST['rid'];
