@@ -35,6 +35,7 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-edit-dns.inc.php';
 
+$pdo = $system->db();
 $system->authCheck();
 
 $del = $_GET['del'];
