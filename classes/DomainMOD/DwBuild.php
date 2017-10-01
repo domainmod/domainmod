@@ -173,6 +173,7 @@ class DwBuild
     {
         $query = $protocol . "://" . $host . ":" . $port . $api_call;
         $curl = curl_init(); // Create Curl Object
+        $header = array();
         if ($api_token != "") {
             $header[0] = "Authorization: WHM " . $username . ":" . $api_token;
         } else {
@@ -182,7 +183,6 @@ class DwBuild
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // Return contents of transfer on curl_exec
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); // Allow certs that do not match the domain
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // Allow self-signed certs
-        $header = array();
         curl_setopt($curl, CURLOPT_URL, $query); // Set your URL
         $api_results = curl_exec($curl); // Execute Query, assign to $api_results
         if ($api_results === false) {
