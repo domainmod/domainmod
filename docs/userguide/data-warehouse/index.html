@@ -211,7 +211,10 @@
                 
                 <p>DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.</p>
 <p>If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into DomainMOD, you can ignore this section.</p>
-<p><strong>NOTE:</strong> Importing your web server(s) into the Data Warehouse will not modify any of your other DomainMOD data, nor any of the data on your web server.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Importing your web server(s) into the Data Warehouse will not modify any of your other DomainMOD data, nor any of the data on your web server.</p>
+</div>
 <h2 id="supported-data">Supported Data</h2>
 <p>The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.</p>
 <p><strong>Accounts</strong><br />
@@ -222,6 +225,10 @@ Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refr
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data</p>
 <h2 id="setup">Setup</h2>
 <p>In order to use the Data Warehouse you first need to add your web server(s).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When adding your server you will be asked for either an API Token or a Remote Access Key/Hash, which can be found in your WHM (see below). The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use.</p>
+</div>
 <p><strong>Adding A Web Server</strong></p>
 <ol>
 <li>
@@ -235,7 +242,6 @@ TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data
 </li>
 <li>
 <p>Enter your web server's details and then click the <strong>Add Server</strong> button.</p>
-<p><strong>NOTE:</strong> When adding your server you will be asked for either an API Token or a Remote Access Key/Hash, which can be found in your WHM (see below). The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use.</p>
 </li>
 </ol>
 <p><strong>Retrieving Your Remote Access Key/Hash</strong></p>

@@ -210,8 +210,12 @@
 
                 
                 <h2 id="installation">Installation</h2>
-<p><h4>Do you support the MySQL extension in PHP, or just the MySQLi extension?</h4></p>
-<p>For security reasons DomainMOD only supports the MySQLi extension. If you're receiving messages that the MySQLi extension is unavailable, you will need to install and enable it on your server before you can use DomainMOD.</p>
+<p><h4>Is the MySQL extension supported in PHP, or just the MySQLi extension?</h4></p>
+<p>For security reasons DomainMOD only supports the MySQLi extension. If you're receiving messages that the MySQLi extension is unavailable in PHP you will need to install and enable it on your server before you can use DomainMOD.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of v4.07, DomainMOD uses the PDO extension instead of the MySQLi extension.</p>
+</div>
 <h2 id="configuration"><BR>Configuration</h2>
 <p><h4>Can I import my domains into DomainMOD using a CSV file?</h4></p>
 <p>Not currently, but this is something that we're investigating for the future. If your domain registrar has an API, and it's <a href="../domain-queue/#supported-registrars">supported by DomainMOD</a>, you can use the <a href="../domain-queue/">Domain Queue</a> to automatically import your domains.</p>
