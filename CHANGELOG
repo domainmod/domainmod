@@ -1,5 +1,15 @@
 DomainMOD CHANGELOG
 ===================
+v4.07.00    2017-10-01
+- Finished converting MySQLi to PDO
+- Implemented database transactions
+- Implemented Database class
+- Implemented Upgrade class
+- Updated Dashboard panels
+- Updated rules in checkFormat method
+- Updated PHPMailer (5.2.23 -> 5.2.25)
+- Fixed expiration email URLs
+
 v4.06.01    2017-06-26
 - Fixed bug in installation script
 
