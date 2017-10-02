@@ -23,22 +23,22 @@ namespace DomainMOD;
 
 class DwZones
 {
-    public $system;
+    public $deeb;
+    public $dwbuild;
     public $log;
     public $time;
-    public $dwbuild;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
+        $this->dwbuild = new DwBuild();
         $this->log = new Log('class.dwzones');
         $this->time = new Time();
-        $this->dwbuild = new DwBuild();
     }
 
     public function createTable()
     {
-        $this->system->db()->query("
+        $this->deeb->cnxx->query("
             CREATE TABLE IF NOT EXISTS dw_dns_zones (
                 id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 server_id INT(10) UNSIGNED NOT NULL,
@@ -56,7 +56,7 @@ class DwZones
 
     public function insertZones($api_results, $server_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $array_results = $this->dwbuild->convertToArray($api_results);
 
         if ($array_results['metadata']['result'] !== 1) {
@@ -91,7 +91,7 @@ class DwZones
 
     public function getInsertedZones($server_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id, domain
@@ -120,14 +120,14 @@ class DwZones
 
     public function getTotalDwZones()
     {
-        return $this->system->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT count(*)
             FROM `dw_dns_zones`")->fetchColumn();
     }
 
     public function checkForZones($domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id

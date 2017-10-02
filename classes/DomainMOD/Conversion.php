@@ -23,20 +23,20 @@ namespace DomainMOD;
 
 class Conversion
 {
+    public $deeb;
     public $log;
-    public $system;
     public $time;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.conversion');
-        $this->system = new System();
         $this->time = new Time();
     }
 
     public function updateRates($default_currency, $user_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $result = $this->getActiveCurrencies();
 
         $stmt = $pdo->prepare("
@@ -81,7 +81,7 @@ class Conversion
 
     public function getActiveCurrencies()
     {
-        $result = $this->system->db()->query("
+        $result = $this->deeb->cnxx->query("
             SELECT id, currency
             FROM
             (  SELECT c.id, c.currency
@@ -140,7 +140,7 @@ class Conversion
 
     public function updateConversionRate($conversion_rate, $is_existing, $currency_id, $user_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         if ($is_existing == '1') {
 

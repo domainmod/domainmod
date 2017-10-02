@@ -23,14 +23,13 @@ namespace DomainMOD;
 
 class Segment
 {
-    public $error;
+    public $deeb;
     public $log;
-    public $system;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.segment');
-        $this->system = new System();
     }
 
     public function trimLength($input_segment, $max_length)
@@ -57,7 +56,7 @@ class Segment
 
     public function getSegment($seg_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `segment`
@@ -83,7 +82,7 @@ class Segment
 
     public function getName($seg_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -109,7 +108,7 @@ class Segment
 
     public function getNumberOfDomains($seg_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT number_of_domains

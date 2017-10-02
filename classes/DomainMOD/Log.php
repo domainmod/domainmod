@@ -43,8 +43,8 @@ class Log
 
     public function addEntry($level, $message, $extra_info)
     {
-        $system = new System();
-        $pdo = $system->db();
+        $deeb = Database::getInstance();
+        $pdo = $deeb->cnxx;
         if ($extra_info != '') {
             $extra_info_formatted = $this->formatExtraInfo($extra_info);
         } else {

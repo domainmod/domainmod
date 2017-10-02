@@ -22,25 +22,25 @@
 <?php
 require_once __DIR__ . '/_includes/start-session.inc.php';
 require_once __DIR__ . '/_includes/init.inc.php';
-
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
-$maint = new DomainMOD\Maintenance();
-$login = new DomainMOD\Login();
-$log = new DomainMOD\Log('/index.php');
-$time = new DomainMOD\Time();
+$deeb = DomainMOD\Database::getInstance();
 $form = new DomainMOD\Form();
 $format = new DomainMOD\Format();
+$log = new DomainMOD\Log('/index.php');
+$login = new DomainMOD\Login();
+$maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
-require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
-$pdo = $system->db();
 $system->loginCheck();
+$pdo = $deeb->cnxx;
 
 list($installation_mode, $result_message) = $system->installCheck();
 $_SESSION['s_installation_mode'] = $installation_mode;

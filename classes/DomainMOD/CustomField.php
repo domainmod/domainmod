@@ -23,11 +23,11 @@ namespace DomainMOD;
 
 class CustomField
 {
-    public $system;
+    public $deeb;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
     }
 
     public function checkFieldFormat($input_field)
@@ -65,7 +65,7 @@ class CustomField
 
     public function queryCustomFields($table_name)
     {
-        return $this->system->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT field_name
             FROM " . $table_name . "
             ORDER BY `name` ASC")->fetchAll();

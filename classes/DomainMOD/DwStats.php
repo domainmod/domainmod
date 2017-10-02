@@ -23,12 +23,12 @@ namespace DomainMOD;
 
 class DwStats
 {
-    public $system;
+    public $deeb;
     public $time;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->time = new Time();
     }
 
@@ -46,7 +46,7 @@ class DwStats
 
     public function getTotals($server_id, $table)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT count(*)
@@ -60,7 +60,7 @@ class DwStats
 
     public function updateServerTotals($server_id, $total_accounts, $total_dns_zones, $total_dns_records)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             UPDATE dw_servers
@@ -92,12 +92,12 @@ class DwStats
 
     public function deleteTotalsTable()
     {
-        $this->system->db()->query("DROP TABLE IF EXISTS dw_server_totals");
+        $this->deeb->cnxx->query("DROP TABLE IF EXISTS dw_server_totals");
     }
 
     public function recreateDwTotalsTable()
     {
-        $this->system->db()->query("
+        $this->deeb->cnxx->query("
             CREATE TABLE IF NOT EXISTS `dw_server_totals` (
                 `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `dw_servers` INT(10) UNSIGNED NOT NULL,
@@ -111,14 +111,14 @@ class DwStats
 
     public function getTotalDwServers()
     {
-        return $this->system->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT count(*)
             FROM `dw_servers`")->fetchColumn();
     }
 
     public function updateTable($total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             INSERT INTO dw_server_totals
@@ -137,7 +137,7 @@ class DwStats
 
     public function getServerTotals()
     {
-        $result = $this->system->db()->query("
+        $result = $this->deeb->cnxx->query("
             SELECT dw_accounts, dw_dns_zones, dw_dns_records
             FROM dw_server_totals")->fetch();
 
@@ -146,7 +146,7 @@ class DwStats
 
     public function checkForServerTotalsTable()
     {
-        return $this->system->db()->query("SHOW TABLES LIKE 'dw_server_totals'")->fetchColumn();
+        return $this->deeb->cnxx->query("SHOW TABLES LIKE 'dw_server_totals'")->fetchColumn();
     }
 
 } //@formatter:on

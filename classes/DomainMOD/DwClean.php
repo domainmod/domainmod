@@ -23,11 +23,11 @@ namespace DomainMOD;
 
 class DwClean
 {
-    public $system;
+    public $deeb;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
     }
 
     public function all()
@@ -44,7 +44,7 @@ class DwClean
 
     public function prep()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $pdo->query("
             DELETE FROM dw_dns_records
             WHERE type = ':RAW'
@@ -73,7 +73,7 @@ class DwClean
 
     public function wrapLine($field, $wrap_at)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $result = $pdo->query("
             SELECT id, " . $field . "
@@ -102,7 +102,7 @@ class DwClean
 
     public function lines()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $pdo->query("
             UPDATE dw_dns_records
             SET `formatted_line` = concat(' | ', `line`, ' | ')
@@ -116,14 +116,14 @@ class DwClean
 
     public function types()
     {
-        $this->system->db()->query("
+        $this->deeb->cnxx->query("
             UPDATE dw_dns_records
             SET `formatted_type` = concat('<strong" . ">" . "', `type`, '</strong" . ">" . "')");
     }
 
     public function content()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `address`, ' | ', `ttl`)
@@ -177,7 +177,7 @@ class DwClean
 
     public function reorderRecords()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $type_order = array();
         $count = 0;

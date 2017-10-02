@@ -23,15 +23,15 @@ namespace DomainMOD;
 
 class AboveCom
 {
+    public $deeb;
     public $format;
     public $log;
-    public $system;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->format = new Format();
         $this->log = new Log('class.abovecom');
-        $this->system = new System();
     }
 
     public function getApiUrl($api_key, $command)
@@ -67,7 +67,7 @@ class AboveCom
         // confirm that the api call was successful
         if ($array_results[0]['@attributes']['code'] == '100') {
 
-            $pdo = $this->system->db();
+            $pdo = $this->deeb->cnxx;
             $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_temp
                 (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
@@ -126,7 +126,7 @@ class AboveCom
 
     public function getFullInfo($account_id, $domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $expiration_date = '';
         $dns_servers = array();

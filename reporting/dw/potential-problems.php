@@ -22,22 +22,22 @@
 <?php
 require_once __DIR__ . '/../../_includes/start-session.inc.php';
 require_once __DIR__ . '/../../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$layout = new DomainMOD\Layout();
-$time = new DomainMOD\Time();
-$reporting = new DomainMOD\Reporting();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$layout = new DomainMOD\Layout();
+$reporting = new DomainMOD\Reporting();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-dw-potential-problems.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $generate = $_GET['generate'];
 $export_data = $_GET['export_data'];

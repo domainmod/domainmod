@@ -22,25 +22,25 @@
 <?php //@formatter:off
 require_once __DIR__ . '/../../_includes/start-session.inc.php';
 require_once __DIR__ . '/../../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$layout = new DomainMOD\Layout;
-$time = new DomainMOD\Time();
-$reporting = new DomainMOD\Reporting();
-$currency = new DomainMOD\Currency();
-$form = new DomainMOD\Form();
-$date = new DomainMOD\Date();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$currency = new DomainMOD\Currency();
+$date = new DomainMOD\Date();
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout;
+$reporting = new DomainMOD\Reporting();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-ssl-cost-by-ip.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $export_data = $_GET['export_data'];
 $all = $_GET['all'];

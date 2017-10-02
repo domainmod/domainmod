@@ -24,20 +24,20 @@ namespace DomainMOD;
 class Api
 {
     public $assets;
+    public $deeb;
     public $error;
     public $log;
-    public $system;
 
     public function __construct()
     {
         $this->assets = new Assets();
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.api');
-        $this->system = new System();
     }
 
     public function getKey($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT api_key
@@ -64,7 +64,7 @@ class Api
 
     public function getKeySecret($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT api_key, api_secret
@@ -91,7 +91,7 @@ class Api
 
     public function getUserKey($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT username, api_key
@@ -118,7 +118,7 @@ class Api
 
     public function getUserAppSecret($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT username, api_app_name, api_secret
@@ -145,7 +145,7 @@ class Api
 
     public function getUserKeyIp($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT ra.username, ra.api_key, ip.ip
@@ -173,7 +173,7 @@ class Api
 
     public function getReselleridKey($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT reseller_id, api_key
@@ -200,7 +200,7 @@ class Api
 
     public function getUserPass($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT username, `password`
@@ -227,7 +227,7 @@ class Api
 
     public function getApiRegistrarName($api_registrar_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`

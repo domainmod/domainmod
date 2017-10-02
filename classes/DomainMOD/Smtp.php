@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class Smtp
 {
+    public $deeb;
     public $log;
-    public $system;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.smtp');
-        $this->system = new System();
     }
 
     public function send($reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
@@ -71,7 +71,7 @@ class Smtp
         $username = '';
         $password = '';
 
-        $result = $this->system->db()->query("
+        $result = $this->deeb->cnxx->query("
             SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password
             FROM settings")->fetch();
 

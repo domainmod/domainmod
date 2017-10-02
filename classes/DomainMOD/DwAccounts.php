@@ -23,22 +23,22 @@ namespace DomainMOD;
 
 class DwAccounts
 {
-    public $system;
+    public $deeb;
+    public $dwbuild;
     public $log;
     public $time;
-    public $dwbuild;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
+        $this->dwbuild = new DwBuild();
         $this->log = new Log('class.dwaccounts');
         $this->time = new Time();
-        $this->dwbuild = new DwBuild();
     }
 
     public function createTable()
     {
-        $this->system->db()->query("
+        $this->deeb->cnxx->query("
             CREATE TABLE IF NOT EXISTS dw_accounts (
                 id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 server_id INT(10) UNSIGNED NOT NULL,
@@ -80,7 +80,7 @@ class DwAccounts
 
     public function insertAccounts($api_results, $server_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $array_results = $this->dwbuild->convertToArray($api_results);
 
         if ($array_results['metadata']['result'] !== 1) {
@@ -170,14 +170,14 @@ class DwAccounts
 
     public function getTotalDwAccounts()
     {
-        return $this->system->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT count(*)
             FROM `dw_accounts`")->fetchColumn();
     }
 
     public function checkForAccounts($domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id

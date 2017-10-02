@@ -1,6 +1,6 @@
 <?php
 /**
- * /classes/DomainMOD/User.php
+ * /classes/DomainMOD/Database.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -21,36 +21,31 @@
 //@formatter:off
 namespace DomainMOD;
 
-class User
+class Database
 {
-    public $deeb;
 
-    public function __construct()
+    public $cnxx;
+    public $log;
+    private static $instance;
+
+    private function __construct()
     {
-        $this->deeb = Database::getInstance();
+        $this->log = new Log('class.database');
+
+        $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        $this->cnxx->exec("SET NAMES utf8");
+        $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+        $this->cnxx->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+        $this->cnxx->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
-    public function getAdminId()
+    public static function getInstance()
     {
-        return $this->deeb->cnxx->query("
-            SELECT id
-            FROM users
-            WHERE username = 'admin'")->fetchColumn();
-    }
-
-    public function getFullName($user_id)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT first_name, last_name
-            FROM users
-            WHERE id = :user_id");
-        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
-
-        return $result->first_name . ' ' . $result->last_name;
+        if (!isset(self::$instance)) {
+            $object = __CLASS__;
+            self::$instance = new $object;
+        }
+        return self::$instance;
     }
 
 } //@formatter:on

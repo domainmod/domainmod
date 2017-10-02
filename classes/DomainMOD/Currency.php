@@ -23,12 +23,12 @@ namespace DomainMOD;
 
 class Currency
 {
-    public $system;
+    public $deeb;
     public $log;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.currency');
     }
 
@@ -49,7 +49,7 @@ class Currency
 
     public function getCurrencyId($currency)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id

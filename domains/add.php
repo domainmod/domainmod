@@ -22,26 +22,26 @@
 <?php
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
 $log = new DomainMOD\Log('/domains/add.php');
 $maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
 $timestamp = $time->stamp();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/config.inc.php';
-require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-add.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$pdo = $deeb->cnxx;
 
 $new_domain = $_POST['new_domain'];
 $new_expiry_date = $_POST['new_expiry_date'];

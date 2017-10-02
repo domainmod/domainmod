@@ -22,23 +22,23 @@
 <?php
 require_once __DIR__ . '/../../_includes/start-session.inc.php';
 require_once __DIR__ . '/../../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/admin/users/edit.php');
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$log = new DomainMOD\Log('/admin/users/edit.php');
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-users-edit.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
+$pdo = $deeb->cnxx;
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];

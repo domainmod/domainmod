@@ -22,22 +22,22 @@
 <?php
 require_once __DIR__ . '/_includes/start-session.inc.php';
 require_once __DIR__ . '/_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$maint = new DomainMOD\Maintenance();
-$layout = new DomainMOD\Layout();
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout();
+$maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
-$pdo = $system->db();
 $system->loginCheck();
+$pdo = $deeb->cnxx;
 
 $page_title = "Reset Password";
 $software_section = "resetpassword";

@@ -21,23 +21,23 @@
 ?>
 <?php
 require_once __DIR__ . '/_includes/init.inc.php';
-
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
-$maint = new DomainMOD\Maintenance();
 $conversion = new DomainMOD\Conversion();
-$schedule = new DomainMOD\Scheduler();
-$time = new DomainMOD\Time();
+$deeb = DomainMOD\Database::getInstance();
 $log = new DomainMOD\Log('/cron.php');
+$maint = new DomainMOD\Maintenance();
+$schedule = new DomainMOD\Scheduler();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
-require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
-$pdo = $system->db();
+$pdo = $deeb->cnxx;
 
 if (DEMO_INSTALLATION != '1') {
 

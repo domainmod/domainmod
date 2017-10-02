@@ -22,27 +22,27 @@
 <?php //@formatter:off
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$layout = new DomainMOD\Layout();
-$time = new DomainMOD\Time();
-$currency = new DomainMOD\Currency();
-$customField = new DomainMOD\CustomField();
-$form = new DomainMOD\Form();
-$date = new DomainMOD\Date();
-$segment = new DomainMOD\Segment();
-$assets = new DomainMOD\Assets();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$assets = new DomainMOD\Assets();
+$currency = new DomainMOD\Currency();
+$customField = new DomainMOD\CustomField();
+$date = new DomainMOD\Date();
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout();
+$segment = new DomainMOD\Segment();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/domains-main.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $export_data = $_GET['export_data'];
 $pcid = (int) $_REQUEST['pcid'];

@@ -23,18 +23,18 @@ namespace DomainMOD;
 
 class Scheduler
 {
-    public $system;
+    public $deeb;
     public $time;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->time = new Time();
     }
 
     public function isRunning($task_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             UPDATE scheduler
@@ -46,7 +46,7 @@ class Scheduler
 
     public function isFinished($task_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             UPDATE scheduler
@@ -61,7 +61,7 @@ class Scheduler
         $current_time = $this->time->stamp();
         $duration = $this->getTimeDifference($timestamp, $current_time);
 
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             UPDATE scheduler
@@ -91,7 +91,7 @@ class Scheduler
 
     public function getTask($task_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active

@@ -23,16 +23,16 @@ namespace DomainMOD;
 
 class DwServers
 {
-    public $system;
+    public $deeb;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
     }
 
     public function get()
     {
-        return $this->system->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT id, `host`, protocol, `port`, username, api_token, `hash`
             FROM dw_servers
             ORDER BY `name`")->fetchAll();
@@ -45,7 +45,7 @@ class DwServers
         $zones = new DwZones();
         $time = new Time();
 
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $stmt = $pdo->prepare("
             UPDATE dw_servers
             SET build_start_time = :build_start_time,
@@ -80,7 +80,7 @@ class DwServers
 
     public function serverFinish($server_id, $build_start_time)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $build = new DwBuild();
 

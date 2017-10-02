@@ -22,25 +22,25 @@
 <?php
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/queue/add.php');
-$layout = new DomainMOD\Layout();
-$domain = new DomainMOD\Domain();
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$domain = new DomainMOD\Domain();
+$form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout();
+$log = new DomainMOD\Log('/queue/add.php');
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-add.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$pdo = $deeb->cnxx;
 
 $new_raid = $_REQUEST['new_raid'];
 $raw_domain_list = $_POST['raw_domain_list'];

@@ -22,24 +22,24 @@
 <?php //@formatter:off
 require_once __DIR__ . '/../../_includes/start-session.inc.php';
 require_once __DIR__ . '/../../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/admin/domain-fields/add.php');
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
-$custom_field = new DomainMOD\CustomField();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$custom_field = new DomainMOD\CustomField();
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$log = new DomainMOD\Log('/admin/domain-fields/add.php');
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-add-custom-domain-field.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
+$pdo = $deeb->cnxx;
 
 $new_name = $_POST['new_name'];
 $new_field_name = $_POST['new_field_name'];

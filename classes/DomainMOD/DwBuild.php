@@ -23,13 +23,13 @@ namespace DomainMOD;
 
 class DwBuild
 {
+    public $deeb;
     public $log;
-    public $system;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.dwbuild');
-        $this->system = new System();
     }
 
     public function build()
@@ -41,7 +41,7 @@ class DwBuild
         $stats = new DwStats();
         $time = new Time();
 
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $result = $servers->get();
 
         if (!$result) {
@@ -94,7 +94,7 @@ class DwBuild
 
     public function dropDwTables()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $pdo->query("DROP TABLE IF EXISTS dw_accounts");
         $pdo->query("DROP TABLE IF EXISTS dw_dns_zones");
         $pdo->query("DROP TABLE IF EXISTS dw_dns_records");
@@ -102,7 +102,7 @@ class DwBuild
 
     public function buildFinish($build_start_time_o)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
 
@@ -146,7 +146,7 @@ class DwBuild
     {
         if ($empty_assets == '1') {
 
-            $this->system->db()->query("
+            $this->deeb->cnxx->query("
                 UPDATE dw_servers
                 SET build_status_overall = '0',
                     build_start_time_overall = '1978-01-23 00:00:00',

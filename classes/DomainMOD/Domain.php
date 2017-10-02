@@ -23,14 +23,14 @@ namespace DomainMOD;
 
 class Domain
 {
+    public $deeb;
     public $log;
-    public $system;
     public $time;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.domain');
-        $this->system = new System();
         $this->time = new Time();
     }
 
@@ -92,7 +92,7 @@ class Domain
 
     public function getDomain($domain_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT domain
@@ -118,7 +118,7 @@ class Domain
 
     public function getExpiry($domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT expiry_date
@@ -150,7 +150,7 @@ class Domain
 
     public function writeNewExpiry($domain, $new_expiry, $notes)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         if ($notes != '') {
 

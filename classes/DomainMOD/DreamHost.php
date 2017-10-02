@@ -23,15 +23,15 @@ namespace DomainMOD;
 
 class DreamHost
 {
+    public $deeb;
     public $format;
     public $log;
-    public $system;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->format = new Format();
         $this->log = new Log('class.dreamhost');
-        $this->system = new System();
     }
 
     public function getApiUrl($api_key, $command)
@@ -57,7 +57,7 @@ class DreamHost
 
     public function getDomainList($api_key, $account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $domain_list = array();
         $domain_count = 0;
@@ -126,7 +126,7 @@ class DreamHost
 
     public function getFullInfo($account_id, $domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $expiration_date = '';
         $dns_servers = array();

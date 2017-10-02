@@ -23,11 +23,11 @@ namespace DomainMOD;
 
 class DwDisplay
 {
-    public $system;
+    public $deeb;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
     }
 
     public function account($server_id, $domain)
@@ -77,7 +77,7 @@ class DwDisplay
 
     public function getAccount($server_id, $domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
@@ -178,7 +178,7 @@ class DwDisplay
 
     public function getZonefile($server_id, $domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT zonefile
@@ -194,7 +194,7 @@ class DwDisplay
 
     public function getServerName($server_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -208,7 +208,7 @@ class DwDisplay
 
     public function getZone($server_id, $domain)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
@@ -225,7 +225,7 @@ class DwDisplay
 
     public function getRecords($zone_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT address, cname, `exchange`, `expire`, line, minimum, mname, `name`, nsdname, preference, raw,

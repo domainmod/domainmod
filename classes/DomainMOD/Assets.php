@@ -23,19 +23,19 @@ namespace DomainMOD;
 
 class Assets
 {
-    public $system;
+    public $deeb;
     public $error;
     public $log;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.assets');
     }
 
     public function getRegistrar($registrar_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -61,7 +61,7 @@ class Assets
 
     public function getRegistrarByAcc($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT r.name
@@ -89,7 +89,7 @@ class Assets
 
     public function getSslType($type_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT type
@@ -115,7 +115,7 @@ class Assets
 
     public function getDnsName($dns_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -141,7 +141,7 @@ class Assets
 
     public function getIpName($ip_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -167,7 +167,7 @@ class Assets
 
     public function getIpAndName($ip_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`, ip
@@ -193,7 +193,7 @@ class Assets
 
     public function getSslProvider($ssl_provider_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -219,7 +219,7 @@ class Assets
 
     public function getOwner($owner_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -245,7 +245,7 @@ class Assets
 
     public function getHost($host_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -271,7 +271,7 @@ class Assets
 
     public function getCat($cat_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT `name`
@@ -297,7 +297,7 @@ class Assets
 
     public function getUsername($account_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT username

@@ -23,14 +23,14 @@ namespace DomainMOD;
 
 class Email
 {
+    public $deeb;
     public $log;
-    public $system;
     public $time;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.email');
-        $this->system = new System();
         $this->time = new Time();
     }
 
@@ -86,7 +86,7 @@ class Email
         $days = '';
         $use_smtp = '';
 
-        $result = $this->system->db()->query("
+        $result = $this->deeb->cnxx->query("
             SELECT full_url, email_address, expiration_days, use_smtp
             FROM settings")->fetch();
 
@@ -109,7 +109,7 @@ class Email
     public function checkExpiring($days, $from_cron)
     {
         $date = $this->time->timeBasicPlusDays($days);
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id, expiry_date, domain
@@ -163,7 +163,7 @@ class Email
 
     public function getRecipients()
     {
-        $result = $this->system->db()->query("
+        $result = $this->deeb->cnxx->query("
             SELECT u.email_address, u.first_name, u.last_name
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id

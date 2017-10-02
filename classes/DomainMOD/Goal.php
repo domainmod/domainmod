@@ -23,18 +23,18 @@ namespace DomainMOD;
 
 class Goal
 {
-    public $system;
+    public $deeb;
     public $time;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->time = new Time();
     }
 
     public function installation()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $act_software_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
@@ -57,7 +57,7 @@ class Goal
 
     public function upgrade($act_old_version)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $act_new_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
@@ -81,7 +81,7 @@ class Goal
 
     public function remote()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $result = $pdo->query("
             SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time

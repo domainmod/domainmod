@@ -22,24 +22,24 @@
 <?php
 require_once __DIR__ . '/_includes/start-session.inc.php';
 require_once __DIR__ . '/_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/checks.php');
-$upgrade = new DomainMOD\Upgrade();
-$maint = new DomainMOD\Maintenance();
-$login = new DomainMOD\Login();
-$time = new DomainMOD\Time();
-$goal = new DomainMOD\Goal();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$goal = new DomainMOD\Goal();
+$log = new DomainMOD\Log('/checks.php');
+$login = new DomainMOD\Login();
+$maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+$upgrade = new DomainMOD\Upgrade();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $_SESSION['s_running_login_checks'] = '1';
 

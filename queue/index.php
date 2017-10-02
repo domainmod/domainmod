@@ -22,25 +22,24 @@
 <?php //@formatter:off
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
-$layout = new DomainMOD\Layout();
-$time = new DomainMOD\Time();
 $assets = new DomainMOD\Assets();
+$deeb = DomainMOD\Database::getInstance();
+$layout = new DomainMOD\Layout();
+$queue = new DomainMOD\DomainQueue();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
 $user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/config.inc.php';
-require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-main.inc.php';
 
-$queue = new DomainMOD\DomainQueue();
-
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $list_id = $_GET['list_id'];
 $dell = $_GET['dell'];

@@ -23,14 +23,14 @@ namespace DomainMOD;
 
 class Maintenance
 {
+    public $deeb;
     public $log;
-    public $system;
     public $time;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.maintenance');
-        $this->system = new System();
         $this->time = new Time();
     }
 
@@ -51,18 +51,18 @@ class Maintenance
 
     public function lowercaseDomains()
     {
-        $this->system->db()->query("UPDATE domains SET domain = LOWER(domain)");
+        $this->deeb->cnxx->query("UPDATE domains SET domain = LOWER(domain)");
     }
 
     public function updateTlds()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $result = $pdo->query("SELECT id, domain FROM domains")->fetchAll();
 
         if ($result) {
 
-            $pdo = $this->system->db();
+            $pdo = $this->deeb->cnxx;
             $stmt = $pdo->prepare("
                 UPDATE domains
                 SET tld = :tld
@@ -88,7 +88,7 @@ class Maintenance
 
     public function updateSegments()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $pdo->query("
             UPDATE segment_data
             SET active = '0',
@@ -120,7 +120,7 @@ class Maintenance
 
     public function updateDomainFees()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $pdo->query("UPDATE domains SET fee_fixed = '0'");
 
@@ -203,7 +203,7 @@ class Maintenance
 
     public function updateDomainFee($domain_id)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT registrar_id, tld
@@ -317,7 +317,7 @@ class Maintenance
 
     public function updateSslFees()
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $pdo->query("UPDATE ssl_certs SET fee_fixed = '0'");
 
@@ -386,7 +386,7 @@ class Maintenance
 
     public function deleteUnusedFees($fee_table, $compare_table)
     {
-        $this->system->db()->query("
+        $this->deeb->cnxx->query("
             DELETE FROM " . $fee_table . "
             WHERE id NOT IN (
                              SELECT fee_id
@@ -397,7 +397,7 @@ class Maintenance
     public function zeroInvalidIpIds()
     { // This zeroes out API IP address IDs in the registrar_account table that are no longer valid. For example, if an
       // IP has been deleted.
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
 
         $result = $pdo->query("
             SELECT id

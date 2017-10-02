@@ -23,20 +23,20 @@ namespace DomainMOD;
 
 class Upgrade
 {
-    public $system;
+    public $deeb;
     public $log;
     public $time;
 
     public function __construct()
     {
-        $this->system = new System();
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.upgrade');
         $this->time = new Time();
     }
 
     public function database($new_version)
     {
-        $pdo = $this->system->db();
+        $pdo = $this->deeb->cnxx;
         $timestamp = $this->time->stamp();
         $pdo->query("
             UPDATE settings

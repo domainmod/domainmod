@@ -22,31 +22,31 @@
 <?php
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/bulk/index.php');
-$layout = new DomainMOD\Layout();
-$maint = new DomainMOD\Maintenance();
 $date = new DomainMOD\Date();
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
+$deeb = DomainMOD\Database::getInstance();
 $domain = new DomainMOD\Domain();
+$form = new DomainMOD\Form();
+$layout = new DomainMOD\Layout();
+$log = new DomainMOD\Log('/bulk/index.php');
+$maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/config.inc.php';
-require_once DIR_INC . '/software.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$pdo = $deeb->cnxx;
 
 $jumpMenu = $_GET['jumpMenu'];
 $action = $_REQUEST['action'];

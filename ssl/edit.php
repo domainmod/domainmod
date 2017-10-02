@@ -22,24 +22,24 @@
 <?php
 require_once __DIR__ . '/../_includes/start-session.inc.php';
 require_once __DIR__ . '/../_includes/init.inc.php';
-
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-$log = new DomainMOD\Log('/ssl/edit.php');
-$time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
-$timestamp = $time->stamp();
-$assets = new DomainMOD\Assets();
-
-require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$assets = new DomainMOD\Assets();
+$deeb = DomainMOD\Database::getInstance();
+$form = new DomainMOD\Form();
+$log = new DomainMOD\Log('/ssl/edit.php');
+$system = new DomainMOD\System();
+$time = new DomainMOD\Time();
+$timestamp = $time->stamp();
+
+require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/ssl-edit.inc.php';
 
-$pdo = $system->db();
 $system->authCheck();
+$pdo = $deeb->cnxx;
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
