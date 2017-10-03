@@ -187,20 +187,20 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
         <?php
         //////////////////////////////////////////////////
-        // Processing
-        //////////////////////////////////////////////////
-        if ($total_count_processing) {
-
-            echo $dashboard->displayPanel('Processing', $total_count_processing, 'yellow', 'clock', '/queue/');
-
-        }
-
-        //////////////////////////////////////////////////
         // Pending
         //////////////////////////////////////////////////
         if ($total_count_pending) {
 
             echo $dashboard->displayPanel('Pending', $total_count_pending, 'yellow', 'clock', '/queue/');
+
+        }
+
+        //////////////////////////////////////////////////
+        // Processing
+        //////////////////////////////////////////////////
+        if ($total_count_processing) {
+
+            echo $dashboard->displayPanel('Processing', $total_count_processing, 'yellow', 'clock', '/queue/');
 
         }
 
