@@ -503,9 +503,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('update_time', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -520,9 +520,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE domain = :each_domain");
                             $stmt->bindValue('new_pcid', $new_pcid, PDO::PARAM_INT);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -574,9 +574,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -591,9 +591,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE domain = :each_domain");
                             $stmt->bindValue('new_dnsid', $new_dnsid, PDO::PARAM_INT);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -645,9 +645,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -662,9 +662,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE domain = :each_domain");
                             $stmt->bindValue('new_ipid', $new_ipid, PDO::PARAM_INT);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -712,9 +712,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -791,9 +791,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -812,9 +812,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
                             $stmt->bindValue('new_registrar_account_id', $new_registrar_account_id, PDO::PARAM_INT);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -914,9 +914,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -931,9 +931,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE domain = :each_domain");
                             $stmt->bindValue('new_whid', $new_whid, PDO::PARAM_INT);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -1066,9 +1066,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1082,9 +1082,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1128,9 +1128,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1144,9 +1144,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1190,9 +1190,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1206,9 +1206,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1252,9 +1252,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1268,9 +1268,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1314,9 +1314,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1330,9 +1330,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1376,9 +1376,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1392,9 +1392,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1438,9 +1438,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1454,9 +1454,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1500,9 +1500,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1516,9 +1516,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1562,9 +1562,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1578,9 +1578,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1622,9 +1622,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1638,9 +1638,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1702,9 +1702,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE domain = :each_domain");
                         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1718,9 +1718,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 update_time = :timestamp
                             WHERE domain = :each_domain");
                         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                        $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                        $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                        foreach ($domain_array as $each_domain) {
+                        foreach ($domain_array as $bind_each_domain) {
 
                             $stmt->execute();
 
@@ -1788,9 +1788,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
                             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 
@@ -1805,9 +1805,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE domain = :each_domain");
                             $stmt->bindValue('new_expiry_date', $new_expiry_date, PDO::PARAM_STR);
                             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                            $stmt->bindParam('each_domain', $each_domain, PDO::PARAM_STR);
+                            $stmt->bindParam('each_domain', $bind_each_domain, PDO::PARAM_STR);
 
-                            foreach ($domain_array as $each_domain) {
+                            foreach ($domain_array as $bind_each_domain) {
 
                                 $stmt->execute();
 

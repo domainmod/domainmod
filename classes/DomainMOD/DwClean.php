@@ -195,11 +195,11 @@ class DwClean
         $stmt = $pdo->prepare("
             UPDATE dw_dns_records
             SET new_order = :new_order
-            WHERE type = :key");
+            WHERE type = :type");
         $stmt->bindValue('new_order', $new_order, \PDO::PARAM_INT);
-        $stmt->bindParam('key', $key, \PDO::PARAM_STR);
+        $stmt->bindParam('type', $bind_type, \PDO::PARAM_STR);
 
-        foreach ($type_order as $key) {
+        foreach ($type_order as $bind_type) {
 
             $stmt->execute();
 

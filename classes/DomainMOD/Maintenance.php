@@ -67,12 +67,12 @@ class Maintenance
                 UPDATE domains
                 SET tld = :tld
                 WHERE id = :id");
-            $stmt->bindParam('tld', $tld, \PDO::PARAM_STR);
+            $stmt->bindParam('tld', $bind_tld, \PDO::PARAM_STR);
             $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
 
             foreach ($result as $row) {
 
-                $tld = $this->getTld($row->domain);
+                $bind_tld = $this->getTld($row->domain);
                 $bind_id = $row->id;
                 $stmt->execute();
 

@@ -51,12 +51,12 @@ class DwServers
             SET build_start_time = :build_start_time,
                 build_status = '0'
             WHERE id = :id");
-        $stmt->bindParam('build_start_time', $build_start_time, \PDO::PARAM_STR);
+        $stmt->bindParam('build_start_time', $bind_build_start_time, \PDO::PARAM_STR);
         $stmt->bindParam('id', $bind_id, \PDO::PARAM_INT);
 
         foreach ($result as $row) {
 
-            $build_start_time = $time->stamp();
+            $bind_build_start_time = $time->stamp();
             $bind_id = $row->id;
             $stmt->execute();
 
@@ -73,7 +73,7 @@ class DwServers
             $result_zones = $zones->getInsertedZones($row->id);
             $zones->processEachZone($result_zones, $row->id, $row->protocol, $row->host, $row->port, $row->username,
                 $row->api_token, $row->hash);
-            $this->serverFinish($row->id, $build_start_time);
+            $this->serverFinish($row->id, $bind_build_start_time);
 
         }
     }

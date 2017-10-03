@@ -139,10 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     VALUES
                     (:temp_segment_id, :domain, :timestamp)");
                 $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
-                $stmt->bindParam('domain', $domain, PDO::PARAM_STR);
+                $stmt->bindParam('domain', $bind_domain, PDO::PARAM_STR);
                 $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
 
-                foreach ($domain_array as $domain) {
+                foreach ($domain_array as $bind_domain) {
 
                     $stmt->execute();
 
