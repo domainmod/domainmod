@@ -213,7 +213,7 @@
 
                 
                 <h2 id="installation">Installation</h2>
-<p><h4>During installation the database tables are being created but some of the data isn't getting inserted.</h4></p>
+<p><a name="strictmode"></a><h4>I get a blank page and can't go any further OR I get an Error 500 OR The database tables are being created but some of the data isn't getting inserted.</h4></p>
 <p>MySQL strict mode may be enabled on your server. In order for DomainMOD to install and run, strict mode must to be disabled.</p>
 <p>To disable strict mode you need to edit your MySQL configuration file. In it there will be a line that looks like:</p>
 <pre><code>sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
@@ -283,6 +283,9 @@
 <p>In case there's a problem with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
 <p>If that doesn't work you can try clearing the queue items that are currently processing by going to Administration -&gt; Maintenance, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
 <p>If that still doesn't do it go to Administration -&gt; Maintenance, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
+<h4>Form fields aren't displaying properly, such as checkboxes and text fields showing as empty boxes.</h4>
+
+<p>This is caused by JavaScript being disabled in your web browser. If enabling JavaScript doesn't fix the issue try disabling any ad blockers or other content blockers you may have installed.</p>
 <h2 id="debugging"><BR>Debugging</h2>
 <p>If you're still having problems you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors. This can help us troubleshoot your issue.</p>
 <div class="admonition note">
