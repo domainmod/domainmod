@@ -49,7 +49,7 @@ class Conversion
 
         foreach ($result as $row) {
 
-			$conversion_rate = $row->currency == $default_currency ? 1 : $this->getConversionRate($row->currency, $default_currency);
+            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConversionRate($row->currency, $default_currency);
 
             $bind_currency_id = $row->id;
             $stmt->execute();
@@ -113,15 +113,15 @@ class Conversion
 
     public function getConversionRate($from_currency, $to_currency)
     {
-		$full_url = "https://api.fixer.io/latest?base=" . $from_currency . '&symbols=' . $to_currency;
+        $full_url = 'https://api.fixer.io/latest?base=' . $from_currency . '&symbols=' . $to_currency;
         $handle = curl_init($full_url);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($handle);
         curl_close($handle);
-		$json_result = json_decode($result);
-		$conversion_rate = $json_result->rates->$to_currency;
+        $json_result = json_decode($result);
+        $conversion_rate = $json_result->rates->$to_currency;
 
         if ($conversion_rate != '' && $conversion_rate != 'N/A' && $conversion_rate != 'n/a') {
 
@@ -129,7 +129,7 @@ class Conversion
 
         } else {
 
-            $log_message = 'Unable to retrieve Yahoo! Finance currency conversion';
+            $log_message = 'Unable to retrieve Fixer.io currency conversion';
             $log_extra = array('From Currency' => $from_currency, 'To Currency' => $to_currency,
                                'Conversion Rate Result' => $conversion_rate);
             $this->log->error($log_message, $log_extra);
