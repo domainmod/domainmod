@@ -36,7 +36,7 @@ class GoDaddy
     {
         $base_url = 'https://api.godaddy.com/v1/';
         if ($command == 'domainlist') {
-            return $base_url . 'domains?statusGroups=VISIBLE&limit=10000';
+            return $base_url . 'domains?statusGroups=VISIBLE&limit=1000';
         } elseif ($command == 'info') {
             return $base_url . 'domains/' . $domain;
         } else {
