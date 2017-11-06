@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.08.00    2017-11-06
+- Replaced Yahoo Finance API with Fixer.io API
+- Changed GoDaddy domain list limit to 1,000
+- Reordered Dashboard Panels
+- Added lowercaseTlds method to Maintenance class
+- Removed line break from end of version.txt
+
 v4.07.00    2017-10-01
 - Finished converting MySQLi to PDO
 - Implemented database transactions
