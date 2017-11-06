@@ -37,6 +37,7 @@ class Maintenance
     public function performCleanup()
     {
         $this->lowercaseDomains();
+        $this->lowercaseTlds();
         $this->updateTlds();
         $this->updateSegments();
         $this->updateAllFees();
@@ -52,6 +53,11 @@ class Maintenance
     public function lowercaseDomains()
     {
         $this->deeb->cnxx->query("UPDATE domains SET domain = LOWER(domain)");
+    }
+
+    public function lowercaseTlds()
+    {
+        $this->deeb->cnxx->query("UPDATE fees SET tld = LOWER(tld)");
     }
 
     public function updateTlds()
