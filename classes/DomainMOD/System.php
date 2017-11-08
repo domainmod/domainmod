@@ -81,6 +81,16 @@ class System
 
     public function getLiveVersion()
     {
+        // Need allow_url_fopen support to file_get_contents URLs
+        if(!ini_get('allow_url_fopen')) {
+            exit ('allow_url_fopen PHP support required for DomainMOD version checking.');
+        }
+
+        // Need OpenSSL support to file_get_contents HTTPS URLs
+        if (!extension_loaded('openssl')) {
+            exit ('OpenSSL PHP support required for DomainMOD version checking.');
+        }
+
         $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt';
         $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
         $version_fgc = file_get_contents($version_file, false, $context);
