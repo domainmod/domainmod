@@ -55,8 +55,35 @@ class Smtp
         $mail->Subject = $subject;
         $mail->Body = $message_html;
         $mail->AltBody = $message_text;
+        
+        // Specify additonal options for success!
+        $mail->SMTPOptions = array (
+            'ssl' => array(
+                // Only care that the connection is secure.
+                'verify_peer'  => false
+            )
+        );
 
-        if(!$mail->send()) {
+        if( $mail->send() )
+        {
+            // Huzzah! We did it!
+            $this->log->debug( 'Email sent!', 
+                array(
+                    'to' => $to_address,
+                    'subject' => $subject,
+                    'message' => substr( $message_text, 0, 20 )
+                ) );
+        }
+        else
+        {
+            // Log this error.
+            $this->log->error( 'E-mail failed', 
+                array( 
+                    'error' => $mail->ErrorInfo,
+                    'subject' => $subject,
+                    'message' => substr( $message_text, 0, 20 )
+                ) );
+
             echo 'Message could not be sent.<BR><BR>Please check your SMTP server and account information and try again.';
             exit;
         }
