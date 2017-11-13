@@ -62,20 +62,31 @@ class Email
 
             $full_to = '"' . $row_recipients->first_name . ' ' . $row_recipients->last_name . '"' . ' <' . $row_recipients->email_address . '>';
 
+            $s_message_success = false;
             if ($use_smtp != '1') {
 
-                mail($full_to, $subject, $message_html, $headers, '-f' . $from_address);
+                if (mail($full_to, $subject, $message_html, $headers, '-f' . $from_address)) {
+                    $s_message_success = true;
+                }
 
             } else {
 
                 $smtp = new Smtp();
-                $smtp->send($from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
-                    $row_recipients->last_name, $subject, $message_html, $message_text);
+
+                if ($smtp->send($from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
+                    $row_recipients->last_name, $subject, $message_html, $message_text)) {
+                    $s_message_success = true;
+            }
 
             }
             sleep(2);
 
-            $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
+            $_SESSION['s_message_success'] .= 'Expiration Email to ';
+            $_SESSION['s_message_success'] .= '<em><strong>';
+            $_SESSION['s_message_success'] .= htmlentities($full_to);
+            $_SESSION['s_message_success'] .= '</strong></em> ';
+            $_SESSION['s_message_success'] .= ($s_message_success ? 'was successfully' : 'could not be');
+            $_SESSION['s_message_success'] .= ' sent.<BR>';
         }
     }
 
