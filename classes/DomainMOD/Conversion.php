@@ -113,7 +113,8 @@ class Conversion
 
     public function getConversionRate($from_currency, $to_currency)
     {
-        $full_url = 'https://api.fixer.io/latest?base=' . $from_currency . '&symbols=' . $to_currency;
+        $currency_slug = $from_currency . '_' . $to_currency;
+        $full_url = 'https://free.currencyconverterapi.com/api/v5/convert?q=' . $currency_slug . '&compact=y';
         $handle = curl_init($full_url);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
@@ -121,7 +122,7 @@ class Conversion
         $result = curl_exec($handle);
         curl_close($handle);
         $json_result = json_decode($result);
-        $conversion_rate = $json_result->rates->$to_currency;
+        $conversion_rate = $json_result->{$currency_slug}->val;
 
         if ($conversion_rate != '' && $conversion_rate != 'N/A' && $conversion_rate != 'n/a') {
 
@@ -129,7 +130,7 @@ class Conversion
 
         } else {
 
-            $log_message = 'Unable to retrieve Fixer.io currency conversion';
+            $log_message = 'Unable to retrieve Currency Converter API (FREE) currency conversion';
             $log_extra = array('From Currency' => $from_currency, 'To Currency' => $to_currency,
                                'Conversion Rate Result' => $conversion_rate);
             $this->log->error($log_message, $log_extra);
