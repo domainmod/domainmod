@@ -45,7 +45,7 @@ class Log
     {
         $deeb = Database::getInstance();
         $pdo = $deeb->cnxx;
-        if ($extra_info != '') {
+        if (!empty($extra_info)) {
             $extra_info_formatted = $this->formatExtraInfo($extra_info);
         } else {
             $extra_info_formatted = '';
