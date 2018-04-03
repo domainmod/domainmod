@@ -36,7 +36,21 @@ class Email
 
     public function intPhpMail($headers, $from_address, $full_to_address, $subject, $message)
     {
-        mail($full_to_address, $subject, $message, $headers, '-f' . $from_address);
+        $log_extra = array('To' => $full_to_address, 'From' => $from_address, 'Subject' => $subject);
+
+        if (mail($full_to_address, $subject, $message, $headers, '-f' . $from_address)) {
+
+            $log_message = $email_title . ' Email :: SEND SUCCEEDED';
+            $this->log->debug($log_message, $log_extra);
+            return true;
+
+        } else {
+
+            $log_message = $email_title . ' Email :: SEND FAILED';
+            $this->log->debug($log_message, $log_extra);
+            return false;
+
+        }
     }
 
     public function sendExpirations($from_cron)
