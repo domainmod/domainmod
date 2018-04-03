@@ -36,7 +36,8 @@ class Email
 
     public function intPhpMail($headers, $from_address, $full_to_address, $subject, $message)
     {
-        $log_extra = array('To' => $full_to_address, 'From' => $from_address, 'Subject' => $subject);
+        $log_extra = array('Method' => 'PHP mail()', 'To' => $full_to_address, 'From' => $from_address,
+            'Subject' => $subject);
 
         if (mail($full_to_address, $subject, $message, $headers, '-f' . $from_address)) {
 
