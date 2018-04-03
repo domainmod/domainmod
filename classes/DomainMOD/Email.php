@@ -69,7 +69,7 @@ class Email
             } else {
 
                 $smtp = new Smtp();
-                $smtp->send($from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
+                $smtp->send('Expiration', $from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
                     $row_recipients->last_name, $subject, $message_html, $message_text);
 
             }

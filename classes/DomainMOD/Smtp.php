@@ -25,14 +25,16 @@ class Smtp
 {
     public $deeb;
     public $log;
+    public $format;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.smtp');
+        $this->format = new Format();
     }
 
-    public function send($reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
+    public function send($email_title, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
     {
         require_once DIR_ROOT . '/vendor/autoload.php';
         $mail = new \PHPMailer();
@@ -56,9 +58,22 @@ class Smtp
         $mail->Body = $message_html;
         $mail->AltBody = $message_text;
 
-        if(!$mail->send()) {
-            echo 'Message could not be sent.<BR><BR>Please check your SMTP server and account information and try again.';
-            exit;
+        $log_extra = array('To' => $to_address, 'From' => $email_address, 'Subject' => $subject, 'Server' => $server,
+            'Port' => $port, 'Protocol' => $protocol, 'Username' => $this->format->obfusc($username),
+            'Password' => $this->format->obfusc($password), 'CharSet' => EMAIL_ENCODING_TYPE);
+
+        if ($mail->send()) {
+
+            $log_message = $email_title . ' Email :: SEND SUCCEEDED';
+            $this->log->debug($log_message, $log_extra);
+            return true;
+
+        } else {
+
+            $log_message = $email_title . ' Email :: SEND FAILED';
+            $this->log->debug($log_message, $log_extra);
+            return false;
+
         }
     }
 

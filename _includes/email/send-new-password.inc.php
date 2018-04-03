@@ -130,6 +130,7 @@ if ($use_smtp != '1') {
 } else {
 
     $smtp = new DomainMOD\Smtp();
-    $smtp->send($from_address, $to_address, $first_name . ' ' . $last_name, $subject, $message_html, $message_text);
+    $smtp->send('Password Reset', $from_address, $to_address, $first_name . ' ' . $last_name,
+        $subject, $message_html, $message_text);
 
 }
