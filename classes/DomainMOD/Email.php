@@ -69,7 +69,7 @@ class Email
 
             if ($use_smtp != '1') {
 
-                mail($full_to, $subject, $message_html, $headers, '-f' . $from_address);
+                $this->intPhpMail($headers, $from_address, $full_to, $subject, $message_html);
 
             } else {
 

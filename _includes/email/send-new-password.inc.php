@@ -125,7 +125,7 @@ $message_text .= "If you did not request this yourself, it sounds like somebody 
 
 if ($use_smtp != '1') {
 
-    mail($to_address, $subject, $message_html, $headers, '-f' . $from_address);
+    $email->intPhpMail($headers, $from_address, $to_address, $subject, $message_html);
 
 } else {
 
