@@ -34,6 +34,11 @@ class Email
         $this->time = new Time();
     }
 
+    public function intPhpMail($headers, $from_address, $full_to_address, $subject, $message)
+    {
+        mail($full_to_address, $subject, $message, $headers, '-f' . $from_address);
+    }
+
     public function sendExpirations($from_cron)
     {
         $timestamp_basic = $this->time->timeBasic();
