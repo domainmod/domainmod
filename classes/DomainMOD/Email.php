@@ -34,7 +34,7 @@ class Email
         $this->time = new Time();
     }
 
-    public function intPhpMail($headers, $from_address, $full_to_address, $subject, $message)
+    public function intPhpMail($email_title, $headers, $from_address, $full_to_address, $subject, $message)
     {
         $log_extra = array('Method' => 'PHP mail()', 'To' => $full_to_address, 'From' => $from_address,
             'Subject' => $subject);
@@ -84,7 +84,7 @@ class Email
 
             if ($use_smtp != '1') {
 
-                $this->intPhpMail($headers, $from_address, $full_to, $subject, $message_html);
+                $this->intPhpMail('Expiration', $headers, $from_address, $full_to, $subject, $message_html);
 
             } else {
 

@@ -125,7 +125,7 @@ $message_text .= "If you did not request this yourself, it sounds like somebody 
 
 if ($use_smtp != '1') {
 
-    $email->intPhpMail($headers, $from_address, $to_address, $subject, $message_html);
+    $email->intPhpMail('Password Reset', $headers, $from_address, $to_address, $subject, $message_html);
 
 } else {
 
