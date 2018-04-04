@@ -300,7 +300,7 @@ class DomainQueue
 
                 }
 
-                // make sure the domain details was successfully retrieved
+                // make sure the domain details were successfully retrieved
                 if ($expiration_date != '' && $expiration_date != '0000-00-00' && $expiration_date != '1970-01-01'
                     && $dns_servers != '' && $privacy_status != '' && $autorenew_status != '') {
 
