@@ -26,41 +26,47 @@ class Smtp
     public $deeb;
     public $log;
     public $format;
+    public $server;
+    public $protocol;
+    public $port;
+    public $email_address;
+    public $username;
+    public $password;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.smtp');
         $this->format = new Format();
+        list($this->server, $this->protocol, $this->port, $this->email_address, $this->username, $this->password)
+            = $this->getSettings();
     }
 
-    public function send($email_title, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
+    public function send($email_title, $to_address, $reply_address, $subject, $message_html, $message_text)
     {
         require_once DIR_ROOT . '/vendor/autoload.php';
         $mail = new \PHPMailer();
 
-        list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings();
-
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
         $mail->CharSet = EMAIL_ENCODING_TYPE;
-        $mail->SMTPSecure = $protocol;
-        $mail->Host = $server;
-        $mail->Port = $port;
+        $mail->SMTPSecure = $this->protocol;
+        $mail->Host = $this->server;
+        $mail->Port = $this->port;
         $mail->SMTPAuth = true;
-        $mail->Username = $username;
-        $mail->Password = $password;
-        $mail->setFrom($email_address, 'DomainMOD');
-        $mail->addAddress($to_address, $to_name);
-        $mail->addReplyTo($reply_address, 'DomainMOD System Admin');
+        $mail->Username = $this->username;
+        $mail->Password = $this->password;
+        $mail->setFrom($this->email_address, 'DomainMOD');
+        $mail->addAddress($to_address);
+        $mail->addReplyTo($reply_address, 'DomainMOD Admin');
         $mail->isHTML(true);  // Set email format to HTML
         $mail->Subject = $subject;
         $mail->Body = $message_html;
         $mail->AltBody = $message_text;
 
-        $log_extra = array('Method' => 'SMTP', 'To' => $to_address, 'From' => $email_address, 'Subject' => $subject,
-            'Server' => $server, 'Port' => $port, 'Protocol' => $protocol,
-            'Username' => $this->format->obfusc($username), 'Password' => $this->format->obfusc($password),
+        $log_extra = array('Method' => 'SMTP', 'To' => $to_address, 'From' => $this->email_address,
+            'Subject' => $subject, 'Server' => $this->server, 'Port' => $this->port, 'Protocol' => $this->protocol,
+            'Username' => $this->format->obfusc($this->username), 'Password' => $this->format->obfusc($this->password),
             'CharSet' => EMAIL_ENCODING_TYPE);
 
         if ($mail->send()) {

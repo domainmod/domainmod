@@ -26,20 +26,40 @@ class Email
     public $deeb;
     public $log;
     public $time;
+    public $full_url;
+    public $from_address;
+    public $number_of_days;
+    public $use_smtp;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.email');
         $this->time = new Time();
+        list($this->full_url, $this->from_address, $this->number_of_days, $this->use_smtp) = $this->getSettings();
     }
 
-    public function intPhpMail($email_title, $headers, $from_address, $full_to_address, $subject, $message)
+    public function send($email_title, $to_address, $subject, $message_html, $message_text)
     {
-        $log_extra = array('Method' => 'PHP mail()', 'To' => $full_to_address, 'From' => $from_address,
+        if ($this->use_smtp == '1') {
+
+            $smtp = new Smtp();
+            $smtp->send($email_title, $to_address, $this->from_address, $subject, $message_html, $message_text);
+
+        } else {
+
+            $this->intPhpMail($email_title, $to_address, $subject, $message_html);
+
+        }
+    }
+
+    public function intPhpMail($email_title, $to_address, $subject, $message)
+    {
+        $headers = $this->getHeaders();
+        $log_extra = array('Method' => 'PHP mail()', 'To' => $to_address, 'From' => $this->from_address,
             'Subject' => $subject);
 
-        if (mail($full_to_address, $subject, $message, $headers, '-f' . $from_address)) {
+        if (mail($to_address, $subject, $message, $headers, '-f' . $this->from_address)) {
 
             $log_message = $email_title . ' Email :: SEND SUCCEEDED';
             $this->log->debug($log_message, $log_extra);
@@ -59,44 +79,31 @@ class Email
         $timestamp_basic = $this->time->timeBasic();
         $timestamp_long = $this->time->timeLong();
 
-        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings();
-        $send_to = $this->getRecipients();
+        $send_to = $this->getExpEmRecip();
         $subject = "Upcoming Expirations - " . $timestamp_long;
-        $headers = $this->getHeaders($from_address);
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($from_cron);
         $message_html = '';
-        $message_html .= $this->messageTopHtml($full_url, $subject, $number_of_days);
-        $message_html .= $this->showDomainsHtml($result_domains, $full_url, $timestamp_basic);
-        $message_html .= $this->showSslHtml($result_ssl, $full_url, $timestamp_basic);
-        $message_html .= $this->messageBottomHtml($full_url);
+        $message_html .= $this->messageTopHtml($subject);
+        $message_html .= $this->showDomainsHtml($result_domains, $timestamp_basic);
+        $message_html .= $this->showSslHtml($result_ssl, $timestamp_basic);
+        $message_html .= $this->messageBottomHtml();
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($from_cron);
         $message_text = $subject . "\n\n";
-        $message_text .= $this->messageTopText($number_of_days);
+        $message_text .= $this->messageTopText();
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
         $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
-        $message_text .= $this->messageBottomText($full_url);
+        $message_text .= $this->messageBottomText();
 
         foreach ($send_to as $row_recipients) {
 
-            $full_to = '"' . $row_recipients->first_name . ' ' . $row_recipients->last_name . '"' . ' <' . $row_recipients->email_address . '>';
-
-            if ($use_smtp != '1') {
-
-                $this->intPhpMail('Expiration', $headers, $from_address, $full_to, $subject, $message_html);
-
-            } else {
-
-                $smtp = new Smtp();
-                $smtp->send('Expiration', $from_address, $row_recipients->email_address, $row_recipients->first_name . ' ' .
-                    $row_recipients->last_name, $subject, $message_html, $message_text);
-
-            }
+            $this->send('Expiration', $row_recipients->email_address, $subject, $message_html, $message_text);
             sleep(2);
 
-            $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
         }
+
+        $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
     }
 
     public function getSettings()
@@ -126,9 +133,9 @@ class Email
         return array($url, $email, $days, $use_smtp);
     }
 
-    public function checkExpiring($days, $from_cron)
+    public function checkExpiring($from_cron)
     {
-        $date = $this->time->timeBasicPlusDays($days);
+        $date = $this->time->timeBasicPlusDays($this->number_of_days);
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
@@ -181,10 +188,10 @@ class Email
         }
     }
 
-    public function getRecipients()
+    public function getExpEmRecip()
     {
         $result = $this->deeb->cnxx->query("
-            SELECT u.email_address, u.first_name, u.last_name
+            SELECT u.email_address
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.active = '1'
@@ -202,20 +209,20 @@ class Email
         }
     }
 
-    public function getHeaders($from_address)
+    public function getHeaders()
     {
         $headers = '';
         $headers .= 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=' . EMAIL_ENCODING_TYPE . "\r\n";
-        $headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $from_address . ">\r\n";
-        $headers .= 'Return-Path: ' . $from_address . "\r\n";
-        $headers .= 'Reply-to: ' . $from_address . "\r\n";
+        $headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $this->from_address . ">\r\n";
+        $headers .= 'Return-Path: ' . $this->from_address . "\r\n";
+        $headers .= 'Reply-to: ' . $this->from_address . "\r\n";
         $version = phpversion();
         $headers .= 'X-Mailer: PHP/' . $version . "\r\n";
         return $headers;
     }
 
-    public function messageTopHtml($full_url, $subject, $number_of_days)
+    public function messageTopHtml($subject)
     {
         ob_start(); ?>
         <html>
@@ -225,21 +232,21 @@ class Email
         <tr>
         <td width="100%" bgcolor="#FFFFFF">
         <font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
-        <a title="<?php echo SOFTWARE_TITLE; ?>" href="<?php echo $full_url; ?>/"><img border="0" alt="<?php
-            echo SOFTWARE_TITLE; ?>" src="<?php echo $full_url; ?>/images/logo.png"></a><BR><BR>Below is a
+        <a title="<?php echo SOFTWARE_TITLE; ?>" href="<?php echo $this->full_url; ?>/"><img border="0" alt="<?php
+            echo SOFTWARE_TITLE; ?>" src="<?php echo $this->full_url; ?>/images/logo.png"></a><BR><BR>Below is a
         list of all the Domains & SSL Certificates in <?php echo SOFTWARE_TITLE; ?> that are expiring in the next
-        <?php echo $number_of_days; ?> days.<BR> <BR>If you would like to change the frequency of this email
+        <?php echo $this->number_of_days; ?> days.<BR> <BR>If you would like to change the frequency of this email
         notification please contact your <?php echo SOFTWARE_TITLE; ?> administrator.<BR><BR><?php
         return ob_get_clean();
     }
 
-    public function messageTopText($number_of_days)
+    public function messageTopText()
     {
-        $message = "Below is a list of all the Domains & SSL Certificates in " . SOFTWARE_TITLE . " that are expiring in the next " . $number_of_days . " days.\n\nIf you would like to change the frequency of this email notification please contact your " . SOFTWARE_TITLE . " administrator.\n\n";
+        $message = "Below is a list of all the Domains & SSL Certificates in " . SOFTWARE_TITLE . " that are expiring in the next " . $this->number_of_days . " days.\n\nIf you would like to change the frequency of this email notification please contact your " . SOFTWARE_TITLE . " administrator.\n\n";
         return $message;
     }
 
-    public function showDomainsHtml($result_domains, $full_url, $timestamp_basic)
+    public function showDomainsHtml($result_domains, $timestamp_basic)
     {
         ob_start();
         if ($result_domains) { ?>
@@ -248,12 +255,12 @@ class Email
                 if ($row_domains->expiry_date < $timestamp_basic) { ?>
 
                     <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
-                        href="<?php echo $full_url; ?>/domains/edit.php?did=<?php echo $row_domains->id;
+                        href="<?php echo $this->full_url; ?>/domains/edit.php?did=<?php echo $row_domains->id;
                         ?>"><?php echo $row_domains->domain; ?></a>&nbsp;&nbsp;<font
                         color="#CC0000">*EXPIRED*</font><BR><?php
                 } else { ?>
 
-                    <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
+                    <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $this->full_url;
                     ?>/domains/edit.php?did=<?php echo $row_domains->id; ?>"><?php echo $row_domains->domain;
                         ?></a><BR><?php
                 }
@@ -279,7 +286,7 @@ class Email
         return $message;
     }
 
-    public function showSslHtml($result_ssl, $full_url, $timestamp_basic)
+    public function showSslHtml($result_ssl, $timestamp_basic)
     {
         ob_start();
         if ($result_ssl) { ?>
@@ -287,11 +294,11 @@ class Email
             foreach ($result_ssl as $row_ssl) {
                 if ($row_ssl->expiry_date < $timestamp_basic) { ?>
                     <font color="#CC0000"><?php echo $row_ssl->expiry_date; ?></font>&nbsp;&nbsp;<a
-                        href="<?php echo $full_url; ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id;
+                        href="<?php echo $this->full_url; ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id;
                         ?>"><?php echo $row_ssl->name; ?> (<?php echo $row_ssl->type; ?>)</a>&nbsp;&nbsp;<font
                         color="#CC0000">*EXPIRED*</font><BR><?php
                 } else { ?>
-                    <?php echo $row_ssl->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
+                    <?php echo $row_ssl->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $this->full_url;
                     ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id; ?>"><?php echo $row_ssl->name; ?>
                         (<?php echo $row_ssl->type; ?>)</a><BR><?php
                 }
@@ -317,7 +324,7 @@ class Email
         return $message;
     }
 
-    public function messageBottomHtml($full_url)
+    public function messageBottomHtml()
     {
         ob_start(); ?>
         <BR>Best Regards,<BR><BR>Greg Chetcuti<BR><a
@@ -329,8 +336,9 @@ class Email
         <td width="100%"><font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
         <BR><hr width="100%" size="2" noshade>You've received this email because you're currently subscribed to receive
         expiration notifications from the <?php echo SOFTWARE_TITLE; ?> installation located at: <a target="_blank"
-        href="<?php echo $full_url; ?>/"><?php echo $full_url; ?>/</a><BR><BR>To unsubscribe from these notifications
-        please visit: <BR><a target="_blank" href="<?php echo $full_url; ?>/settings/profile/"><?php echo $full_url;
+        href="<?php echo $this->full_url; ?>/"><?php echo $this->full_url; ?>/</a><BR><BR>To unsubscribe from these
+        notifications please visit: <BR><a target="_blank" href="<?php echo $this->full_url; ?>/settings/profile/"><?php
+        echo $this->full_url;
         ?>/settings/profile/</a><BR><BR></font>
         </td></tr>
         </table>
@@ -339,7 +347,7 @@ class Email
         return ob_get_clean();
     }
 
-    public function messageBottomText($full_url)
+    public function messageBottomText()
     {
         $message = '';
         $message .= "Best Regards,\n";
@@ -347,8 +355,8 @@ class Email
         $message .= "Greg Chetcuti\n";
         $message .= "greg@domainmod.org\n\n";
         $message .= "---\n\n";
-        $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . SOFTWARE_TITLE . " installation located at: " . $full_url . "\n\n";
-        $message .= "To unsubscribe from these notifications please visit: " . $full_url . "/settings/profile/";
+        $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . SOFTWARE_TITLE . " installation located at: " . $this->full_url . "\n\n";
+        $message .= "To unsubscribe from these notifications please visit: " . $this->full_url . "/settings/profile/";
         return $message;
     }
 
