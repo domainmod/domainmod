@@ -280,7 +280,7 @@ class DomainQueue
 
                     $registrar = new NameSilo();
                     $api_key = $this->api->getKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
+                    list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
@@ -322,6 +322,12 @@ class DomainQueue
                     }
 
                 } else {
+
+                    if ($domain_status == 'invalid') {
+
+                        $this->markInvalidDomain($row->id);
+
+                    }
 
                     $this->markNotProcessingDomain($row->id);
 
@@ -1058,6 +1064,20 @@ class DomainQueue
         $stmt = $pdo->prepare("
             UPDATE domain_queue
             SET processing = '0'
+            WHERE id = :queue_domain_id");
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+    }
+
+    public function markInvalidDomain($queue_domain_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            UPDATE domain_queue
+            SET finished = '1',
+                invalid_domain = '1'
             WHERE id = :queue_domain_id");
         $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
         $stmt->execute();

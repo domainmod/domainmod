@@ -68,7 +68,7 @@ $result_lists = $pdo->query("
 $result_domains = $pdo->query("
     SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
         dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
-        dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue,
+        dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue, dq.invalid_domain,
         dq.copied_to_history, dq.created_by, dq.insert_time, r.name AS registrar_name,
         ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
     FROM domain_queue AS dq, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
@@ -175,6 +175,7 @@ if ($export_data == '1') {
             'Ready To Import',
             'Already in Domains',
             'Already in Queue',
+            'Invalid Domain',
             'Copied To History',
             'Added By',
             'Inserted',
@@ -199,6 +200,10 @@ if ($export_data == '1') {
                         $export_processing = 'Already in Domain Queue';
                         $already_exists = '1';
 
+                    } elseif ($row_domains->invalid_domain === 1) {
+
+                        $export_processing = 'Invalid Domain';
+
                     } else {
 
                         $export_processing = 'Successfully Imported';
@@ -221,7 +226,7 @@ if ($export_data == '1') {
 
                 if ($row_domains->expiry_date == '0000-00-00') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $export_expiry_date = '-';
 
@@ -233,13 +238,21 @@ if ($export_data == '1') {
 
                 } else {
 
-                    $export_expiry_date = $row_domains->expiry_date;
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                        $export_expiry_date = '-';
+
+                    } else {
+
+                        $export_expiry_date = $row_domains->expiry_date;
+
+                    }
 
                 }
 
                 if ($row_domains->dns_id == '0') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $export_dns = '-';
 
@@ -257,7 +270,7 @@ if ($export_data == '1') {
 
                 if ($row_domains->ip_id == '0') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $export_ip_name = '-';
                         $export_ip_address = '-';
@@ -275,7 +288,7 @@ if ($export_data == '1') {
 
                     if ($row_domains->hosting_id == '0') {
 
-                        if ($already_exists == '1') {
+                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                             $export_host = '-';
 
@@ -293,7 +306,7 @@ if ($export_data == '1') {
 
                     if ($row_domains->cat_id == '0') {
 
-                        if ($already_exists == '1') {
+                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                             $export_category = '-';
 
@@ -317,7 +330,15 @@ if ($export_data == '1') {
 
                         if ($row_domains->finished == '1') {
 
-                            $export_autorenew = 'No';
+                            if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                                $export_autorenew = '-';
+
+                            } else {
+
+                                $export_autorenew = 'No';
+
+                            }
 
                         } else {
 
@@ -335,7 +356,15 @@ if ($export_data == '1') {
 
                         if ($row_domains->finished == '1') {
 
-                            $export_privacy = 'No';
+                            if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                                $export_privacy = '-';
+
+                            } else {
+
+                                $export_privacy = 'No';
+
+                            }
 
                         } else {
 
@@ -376,6 +405,7 @@ if ($export_data == '1') {
                         $row_domains->ready_to_import,
                         $row_domains->already_in_domains,
                         $row_domains->already_in_queue,
+                        $row_domains->invalid_domain,
                         $row_domains->copied_to_history,
                         $full_name_export,
                         $time->toUserTimezone($row_domains->insert_time),
@@ -627,6 +657,10 @@ if (!$result_domains) {
                         echo $layout->highlightText('red', 'Already in Domain Queue');
                         $already_exists = '1';
 
+                    } elseif ($row_domains->invalid_domain === 1) {
+
+                        echo $layout->highlightText('red', 'Invalid Domain');
+
                     } else {
 
                         echo $layout->highlightText('green', 'Successfully Imported');
@@ -657,7 +691,7 @@ if (!$result_domains) {
             <td><?php
                 if ($row_domains->expiry_date == '0000-00-00') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $to_display = '-';
 
@@ -669,7 +703,15 @@ if (!$result_domains) {
 
                 } else {
 
-                    $to_display = $row_domains->expiry_date;
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                        $to_display = '-';
+
+                    } else {
+
+                        $to_display = $row_domains->expiry_date;
+
+                    }
 
                 }
                 echo $to_display; ?>
@@ -677,7 +719,7 @@ if (!$result_domains) {
             <td><?php
                 if ($row_domains->dns_id == '0') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $to_display = '-';
 
@@ -697,7 +739,7 @@ if (!$result_domains) {
             <td><?php
                 if ($row_domains->ip_id == '0') {
 
-                    if ($already_exists == '1') {
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
                         $to_display = '-';
 
