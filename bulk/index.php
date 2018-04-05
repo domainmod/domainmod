@@ -949,7 +949,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->rollback();
 
-                        $log_message = 'Unable to chnage web hosting provider';
+                        $log_message = 'Unable to change web hosting provider';
                         $log_extra = array('Error' => $e);
                         $log->critical($log_message, $log_extra);
 
