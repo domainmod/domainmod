@@ -586,7 +586,7 @@ class DomainQueue
         $live_ip = gethostbyname($domain . '.');
 
         // If the domain doesn't resolve assign an IP and rDNS of 0.0.0.0
-        if ($live_ip == $domain) {
+        if ($live_ip == $domain || $live_ip == $domain . '.') {
 
             $live_ip = '0.0.0.0';
             $rdns = '0.0.0.0';
