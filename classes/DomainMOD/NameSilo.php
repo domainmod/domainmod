@@ -117,6 +117,13 @@ class NameSilo
             $autorenewal_result = $array_results[0]["reply"]["auto_renew"];
             $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
+        } elseif ($array_results[0]['reply']['detail'] == 'Domain is not active, or does not belong to this user') {
+
+            $domain_status = 'invalid';
+            $log_message = 'Invalid domain';
+            $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key));
+            $this->log->error($log_message, $log_extra);
+
         } else {
 
             $log_message = 'Unable to get domain details';
@@ -125,7 +132,7 @@ class NameSilo
 
         }
 
-        return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+        return array($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 
     public function convertToArray($api_result)
