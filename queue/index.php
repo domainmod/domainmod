@@ -437,6 +437,9 @@ if ($really_clear == "1") {
 
     $_SESSION['s_message_success'] .= "Completed items cleared from the queue<BR>";
 
+    header("Location: index.php");
+    exit;
+
 }
 
 if ($dell != '' && $list_id != '') {
