@@ -52,7 +52,7 @@ class Api
             $log_message = 'Unable to retrieve API Key';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -79,7 +79,7 @@ class Api
             $log_message = 'Unable to retrieve API Key & API Secret';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message);
 
         } else {
@@ -106,7 +106,7 @@ class Api
             $log_message = 'Unable to retrieve Username & API Key';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message);
 
         } else {
@@ -133,7 +133,7 @@ class Api
             $log_message = 'Unable to retrieve Username, API App Name, & API Secret';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message, $log_message);
 
         } else {
@@ -161,7 +161,7 @@ class Api
             $log_message = 'Unable to retrieve Username, API Key, & IP Address';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message, $log_message);
 
         } else {
@@ -188,7 +188,7 @@ class Api
             $log_message = 'Unable to retrieve Reseller ID & API Key';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message);
 
         } else {
@@ -215,7 +215,7 @@ class Api
             $log_message = 'Unable to retrieve Username & Password';
             $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
                                'Account Username' => $this->assets->getUsername($account_id));
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, $log_message);
 
         } else {
@@ -241,7 +241,7 @@ class Api
 
             $log_message = 'Unable to retrieve API Registrar Name';
             $log_extra = array('API Registrar ID' => $api_registrar_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

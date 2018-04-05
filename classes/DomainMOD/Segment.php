@@ -70,7 +70,7 @@ class Segment
 
             $log_message = 'Unable to retrieve Segment';
             $log_extra = array('Segment ID' => $seg_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -96,7 +96,7 @@ class Segment
 
             $log_message = 'Unable to retrieve Segment name';
             $log_extra = array('Segment ID' => $seg_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -122,7 +122,7 @@ class Segment
 
             $log_message = 'Unable to retrieve Number of Domains for Segment';
             $log_extra = array('Segment ID' => $seg_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

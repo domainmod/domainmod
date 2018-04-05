@@ -88,7 +88,7 @@ class DwRecords
 
             $log_message = 'Unable to retrieve DNS Records from WHM';
             $log_extra = array('Server ID' => $server_id, 'Domain' => $domain, 'Zone ID' => $zone_id, 'API Results' => $array_results);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
 
         } else {
 

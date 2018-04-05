@@ -59,7 +59,7 @@ if (DEMO_INSTALLATION != '1') {
 
         $log_message = 'Unable to get scheduled task';
         $log_extra = array('Task ID' => $id);
-        $log->info($log_message, $log_extra);
+        $log->critical($log_message, $log_extra);
 
     } else {
 
@@ -79,7 +79,7 @@ if (DEMO_INSTALLATION != '1') {
         if ($result->slug == 'cleanup') {
 
             $log_message = '[START] Cleanup Tasks';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
             $maint->performCleanup();
@@ -87,14 +87,14 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] Cleanup Tasks';
-            $log->info($log_message);
+            $log->notice($log_message);
 
             $_SESSION['s_message_success'] .= "System Cleanup Performed";
 
         } elseif ($result->slug == 'expiration-email') {
 
             $log_message = '[START] Send Expiration Email';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $email = new DomainMOD\Email();
             $schedule->isRunning($id);
@@ -103,12 +103,12 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] Send Expiration Email';
-            $log->info($log_message);
+            $log->notice($log_message);
 
         } elseif ($result->slug == 'update-conversion-rates') {
 
             $log_message = '[START] Update Conversion Rates';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
 
@@ -119,7 +119,7 @@ if (DEMO_INSTALLATION != '1') {
             if (!$result_conversion) {
 
                 $log_message = 'No user currencies found';
-                $log->error($log_message);
+                $log->critical($log_message);
 
             } else {
 
@@ -135,14 +135,14 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] Update Conversion Rates';
-            $log->info($log_message);
+            $log->notice($log_message);
 
             $_SESSION['s_message_success'] .= "Conversion Rates Updated";
 
         } elseif ($result->slug == 'check-new-version') {
 
             $log_message = '[START] New Version Check';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
             $system->checkVersion(SOFTWARE_VERSION);
@@ -150,14 +150,14 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] New Version Check';
-            $log->info($log_message);
+            $log->notice($log_message);
 
             $_SESSION['s_message_success'] .= "No Upgrade Available";
 
         } elseif ($result->slug == 'data-warehouse-build') {
 
             $log_message = '[START] Build Data Warehouse';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $dw = new DomainMOD\DwBuild();
             $schedule->isRunning($id);
@@ -166,14 +166,14 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] Build Data Warehouse';
-            $log->info($log_message);
+            $log->notice($log_message);
 
             $_SESSION['s_message_success'] .= "Data Warehouse Rebuilt";
 
         } elseif ($result->slug == 'domain-queue') {
 
             $log_message = '[START] Process Domain Queue';
-            $log->info($log_message, $log_extra);
+            $log->notice($log_message, $log_extra);
 
             $queue = new DomainMOD\DomainQueue();
             $schedule->isRunning($id);
@@ -183,7 +183,7 @@ if (DEMO_INSTALLATION != '1') {
             $schedule->isFinished($id);
 
             $log_message = '[END] Process Domain Queue';
-            $log->info($log_message);
+            $log->notice($log_message);
 
             $_SESSION['s_message_success'] .= "Domain Queue Processed";
 

@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         $log_message = 'Unable to login';
         $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
-        $log->error($log_message, $log_extra);
+        $log->warning($log_message, $log_extra);
 
         $_SESSION['s_message_danger'] .= "Login Failed<BR>";
 

@@ -59,7 +59,7 @@ class DomainQueue
         }  else {
 
             $log_message = '[START] Processing Domain Queue Lists';
-            $this->log->info($log_message);
+            $this->log->notice($log_message);
 
             foreach ($result as $row) {
 
@@ -177,7 +177,7 @@ class DomainQueue
             }
 
             $log_message = '[END] Processing Domain Queue Lists';
-            $this->log->info($log_message);
+            $this->log->notice($log_message);
 
         }
 
@@ -201,7 +201,7 @@ class DomainQueue
         } else {
 
             $log_message = '[START] Processing domains in the Domain Queue';
-            $this->log->info($log_message);
+            $this->log->notice($log_message);
 
             foreach ($result as $row) {
 
@@ -336,7 +336,7 @@ class DomainQueue
             }
 
             $log_message = '[END] Processing domains in the Domain Queue';
-            $this->log->info($log_message);
+            $this->log->notice($log_message);
 
         }
 
@@ -888,7 +888,7 @@ class DomainQueue
 
             $log_message = 'Unable to retrieve domains from queue';
             $log_extra = array('Queue Domain ID' => $queue_domain_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -1028,7 +1028,7 @@ class DomainQueue
                 $expiration_date, 'DNS ID' => $dns_id, 'IP ID' => $ip_id, 'Category ID' => $cat_id, 'Hosting ID' =>
                 $hosting_id, 'Privacy Status' => $privacy_status, 'Autorenew Status' => $autorenew_status,
                 'Creation Type ID' => $creation_type_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
 
         } else {
 

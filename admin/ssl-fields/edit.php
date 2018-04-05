@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         $log_message = 'Unable to edit custom SSL field';
         $log_extra = array('Error' => $e);
-        $log->error($log_message, $log_extra);
+        $log->critical($log_message, $log_extra);
 
         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -208,7 +208,7 @@ if ($really_del == '1') {
 
             $log_message = 'Unable to delete custom SSL field';
             $log_extra = array('Error' => $e);
-            $log->error($log_message, $log_extra);
+            $log->critical($log_message, $log_extra);
 
             $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 

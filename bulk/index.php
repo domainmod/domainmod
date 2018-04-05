@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to renew domains';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -386,7 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to add domains';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -471,7 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to fully renew domains';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -540,7 +540,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to change category';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -611,7 +611,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to change DNS profile';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -682,7 +682,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to change IP address';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -730,7 +730,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to add note';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -880,7 +880,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to change registrar account';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -951,7 +951,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to chnage web hosting provider';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1042,7 +1042,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to delete domains';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1104,7 +1104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as expired';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1166,7 +1166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as sold';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1228,7 +1228,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as active';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1290,7 +1290,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as pending transfer';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1352,7 +1352,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as pending registration';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1414,7 +1414,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as pending renewal';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1476,7 +1476,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as pending other';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1538,7 +1538,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as auto renewal';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1598,7 +1598,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as manual renewal';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1678,7 +1678,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as private WHOIS';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1756,7 +1756,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to mark domains as public WHOIS';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1825,7 +1825,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to update expiry date';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -1910,7 +1910,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = 'Unable to update custom field';
                     $log_extra = array('Error' => $e);
-                    $log->error($log_message, $log_extra);
+                    $log->critical($log_message, $log_extra);
 
                     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 

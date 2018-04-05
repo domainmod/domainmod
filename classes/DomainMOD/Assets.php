@@ -49,7 +49,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Registrar name';
             $log_extra = array('Registrar ID' => $registrar_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -77,7 +77,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Registrar name';
             $log_extra = array('Account ID' => $account_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -103,7 +103,7 @@ class Assets
 
             $log_message = 'Unable to retrieve SSL Type';
             $log_extra = array('SSL Type ID' => $type_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -129,7 +129,7 @@ class Assets
 
             $log_message = 'Unable to retrieve DNS Profile name';
             $log_extra = array('DNS Profile ID' => $dns_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -155,7 +155,7 @@ class Assets
 
             $log_message = 'Unable to retrieve IP Address name';
             $log_extra = array('IP Address ID' => $ip_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -181,7 +181,7 @@ class Assets
 
             $log_message = 'Unable to retrieve IP Address name & IP Address';
             $log_extra = array('IP Address ID' => $ip_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return array($log_message, '');
 
         } else {
@@ -207,7 +207,7 @@ class Assets
 
             $log_message = 'Unable to retrieve SSL Provider name';
             $log_extra = array('SSL Provider ID' => $ssl_provider_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -233,7 +233,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Owner name';
             $log_extra = array('Owner ID' => $owner_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -259,7 +259,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Hosting name';
             $log_extra = array('Hosting ID' => $host_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -285,7 +285,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Category';
             $log_extra = array('Category ID' => $cat_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -312,7 +312,7 @@ class Assets
 
             $log_message = 'Unable to retrieve Registrar Account Username';
             $log_extra = array('Account ID' => $account_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

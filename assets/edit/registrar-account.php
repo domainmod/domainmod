@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $log_message = 'Unable to update registrar account';
             $log_extra = array('Error' => $e);
-            $log->error($log_message, $log_extra);
+            $log->critical($log_message, $log_extra);
 
             $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -257,7 +257,7 @@ if ($really_del == "1") {
 
         $log_message = 'Unable to delete registrar account';
         $log_extra = array('Error' => $e);
-        $log->error($log_message, $log_extra);
+        $log->critical($log_message, $log_extra);
 
         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 

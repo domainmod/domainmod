@@ -106,7 +106,7 @@ class Domain
 
             $log_message = "Unable to retrieve domain";
             $log_extra = array('Domain ID' => $domain_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -132,7 +132,7 @@ class Domain
 
             $log_message = "Unable to retrieve domain's expiry date";
             $log_extra = array('Domain' => $domain);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

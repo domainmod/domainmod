@@ -62,7 +62,7 @@ class Conversion
                 $log_message = 'Unable to retrieve user currency';
                 $log_extra = array('User ID' => $user_id, 'Currency ID' => $row->id, 'Default Currency' =>
                     $default_currency, 'Conversion Rate' => $conversion_rate);
-                $this->log->error($log_message, $log_extra);
+                $this->log->critical($log_message, $log_extra);
 
             } else {
 
@@ -101,7 +101,7 @@ class Conversion
         if (!$result) {
 
             $log_message = 'Unable to retrieve active currencies';
-            $this->log->error($log_message);
+            $this->log->critical($log_message);
             return $log_message;
 
         } else {
@@ -133,7 +133,7 @@ class Conversion
             $log_message = 'Unable to retrieve Currency Converter API (FREE) currency conversion';
             $log_extra = array('From Currency' => $from_currency, 'To Currency' => $to_currency,
                                'Conversion Rate Result' => $conversion_rate);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         }

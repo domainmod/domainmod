@@ -63,7 +63,7 @@ class Currency
 
             $log_message = 'Unable to retrieve Currency ID';
             $log_extra = array('Currency' => $currency);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

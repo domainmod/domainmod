@@ -62,13 +62,13 @@ class Email
         if (mail($to_address, $subject, $message, $headers, '-f' . $this->from_address)) {
 
             $log_message = $email_title . ' Email :: SEND SUCCEEDED';
-            $this->log->debug($log_message, $log_extra);
+            $this->log->info($log_message, $log_extra);
             return true;
 
         } else {
 
             $log_message = $email_title . ' Email :: SEND FAILED';
-            $this->log->debug($log_message, $log_extra);
+            $this->log->error($log_message, $log_extra);
             return false;
 
         }
@@ -120,7 +120,7 @@ class Email
         if (!$result) {
 
             $log_message = 'Unable to retrieve email settings';
-            $this->log->error($log_message);
+            $this->log->critical($log_message);
 
         } else {
 

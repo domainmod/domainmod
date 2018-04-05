@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $log_message = 'Unable to add registrar account to domain list queue';
                 $log_extra = array('Error' => $e);
-                $log->error($log_message, $log_extra);
+                $log->critical($log_message, $log_extra);
 
                 $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
@@ -360,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $log_message = 'Unable to add domains to queue';
                         $log_extra = array('Error' => $e);
-                        $log->error($log_message, $log_extra);
+                        $log->critical($log_message, $log_extra);
 
                         $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 

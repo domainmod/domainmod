@@ -48,7 +48,7 @@ class Upgrade
     {
         $log_message = 'Upgrade failed';
         $log_extra = array('Current Version' => $old_version, 'New Version' => $new_version, 'Error' => $error);
-        $this->log->error($log_message, $log_extra);
+        $this->log->critical($log_message, $log_extra);
     }
 
 } //@formatter:on

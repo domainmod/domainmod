@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
             $log_message = 'Unable to add custom SSL field';
             $log_extra = array('Error' => $e);
-            $log->error($log_message, $log_extra);
+            $log->critical($log_message, $log_extra);
 
             $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 

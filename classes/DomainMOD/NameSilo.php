@@ -122,7 +122,7 @@ class NameSilo
             $domain_status = 'invalid';
             $log_message = 'Invalid domain';
             $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key));
-            $this->log->error($log_message, $log_extra);
+            $this->log->warning($log_message, $log_extra);
 
         } else {
 

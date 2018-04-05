@@ -72,7 +72,7 @@ if ($export_data == '1') {
     if (!$result) {
 
         $log_message = 'Unable to retrieve debugging data';
-        $log->error($log_message);
+        $log->critical($log_message);
 
     } else {
 

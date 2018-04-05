@@ -268,7 +268,7 @@ class System
 
             $log_message = 'Unable to retrieve creation type';
             $log_extra = array('Creation Type ID' => $creation_type_id);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {
@@ -293,7 +293,7 @@ class System
 
             $log_message = 'Unable to retrieve creation type ID';
             $log_extra = array('Creation Type' => $creation_type, 'Result' => $result);
-            $this->log->error($log_message, $log_extra);
+            $this->log->critical($log_message, $log_extra);
             return $log_message;
 
         } else {

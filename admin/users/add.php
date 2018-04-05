@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $log_message = 'Unable to add user';
             $log_extra = array('Error' => $e);
-            $log->error($log_message, $log_extra);
+            $log->critical($log_message, $log_extra);
 
             $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
