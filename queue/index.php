@@ -286,134 +286,134 @@ if ($export_data == '1') {
 
                     list($export_ip_address, $export_ip_name) = $assets->getIpAndName($row_domains->ip_id);
 
-                    if ($row_domains->hosting_id == '0') {
+                }
 
-                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+                if ($row_domains->hosting_id == '0') {
 
-                            $export_host = '-';
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
-                        } else {
-
-                            $export_host = 'Pending';
-
-                        }
+                        $export_host = '-';
 
                     } else {
 
-                        $export_host = $assets->getHost($row_domains->hosting_id);
+                        $export_host = 'Pending';
 
                     }
 
-                    if ($row_domains->cat_id == '0') {
+                } else {
 
-                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
-
-                            $export_category = '-';
-
-                        } else {
-
-                            $export_category = 'Pending';
-
-                        }
-
-                    } else {
-
-                        $export_category = $assets->getCat($row_domains->cat_id);
-
-                    }
-
-                    if ($row_domains->autorenew == '1') {
-
-                        $export_autorenew = 'Yes';
-
-                    } else {
-
-                        if ($row_domains->finished == '1') {
-
-                            if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
-
-                                $export_autorenew = '-';
-
-                            } else {
-
-                                $export_autorenew = 'No';
-
-                            }
-
-                        } else {
-
-                            $export_autorenew = 'Pending';
-
-                        }
-
-                    }
-
-                    if ($row_domains->privacy == '1') {
-
-                        $export_privacy = 'Yes';
-
-                    } else {
-
-                        if ($row_domains->finished == '1') {
-
-                            if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
-
-                                $export_privacy = '-';
-
-                            } else {
-
-                                $export_privacy = 'No';
-
-                            }
-
-                        } else {
-
-                            $export_privacy = 'Pending';
-
-                        }
-
-                    }
-
-                    $account_export = $assets->getUsername($row_domains->account_id);
-
-                    if ($row_domains->created_by == '0') {
-
-                        $full_name_export = '[unknown]';
-
-                    } else {
-
-                        $full_name_export = $user->getFullName($row_domains->created_by);
-
-                    }
-
-                    $row_contents = array(
-                        $export_processing,
-                        $row_domains->domain,
-                        $row_domains->api_registrar_name,
-                        $row_domains->registrar_name,
-                        $row_domains->owner,
-                        $account_export,
-                        $row_domains->tld,
-                        $export_expiry_date,
-                        $export_dns,
-                        $export_ip_name,
-                        $export_ip_address,
-                        $export_host,
-                        $export_category,
-                        $export_autorenew,
-                        $export_privacy,
-                        $row_domains->ready_to_import,
-                        $row_domains->already_in_domains,
-                        $row_domains->already_in_queue,
-                        $row_domains->invalid_domain,
-                        $row_domains->copied_to_history,
-                        $full_name_export,
-                        $time->toUserTimezone($row_domains->insert_time),
-                        $row_domains->domain_id
-                    );
-                    $export->writeRow($export_file, $row_contents);
+                    $export_host = $assets->getHost($row_domains->hosting_id);
 
                 }
+
+                if ($row_domains->cat_id == '0') {
+
+                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                        $export_category = '-';
+
+                    } else {
+
+                        $export_category = 'Pending';
+
+                    }
+
+                } else {
+
+                    $export_category = $assets->getCat($row_domains->cat_id);
+
+                }
+
+                if ($row_domains->autorenew == '1') {
+
+                    $export_autorenew = 'Yes';
+
+                } else {
+
+                    if ($row_domains->finished == '1') {
+
+                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                            $export_autorenew = '-';
+
+                        } else {
+
+                            $export_autorenew = 'No';
+
+                        }
+
+                    } else {
+
+                        $export_autorenew = 'Pending';
+
+                    }
+
+                }
+
+                if ($row_domains->privacy == '1') {
+
+                    $export_privacy = 'Yes';
+
+                } else {
+
+                    if ($row_domains->finished == '1') {
+
+                        if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
+
+                            $export_privacy = '-';
+
+                        } else {
+
+                            $export_privacy = 'No';
+
+                        }
+
+                    } else {
+
+                        $export_privacy = 'Pending';
+
+                    }
+
+                }
+
+                $account_export = $assets->getUsername($row_domains->account_id);
+
+                if ($row_domains->created_by == '0') {
+
+                    $full_name_export = '[unknown]';
+
+                } else {
+
+                    $full_name_export = $user->getFullName($row_domains->created_by);
+
+                }
+
+                $row_contents = array(
+                    $export_processing,
+                    $row_domains->domain,
+                    $row_domains->api_registrar_name,
+                    $row_domains->registrar_name,
+                    $row_domains->owner,
+                    $account_export,
+                    $row_domains->tld,
+                    $export_expiry_date,
+                    $export_dns,
+                    $export_ip_name,
+                    $export_ip_address,
+                    $export_host,
+                    $export_category,
+                    $export_autorenew,
+                    $export_privacy,
+                    $row_domains->ready_to_import,
+                    $row_domains->already_in_domains,
+                    $row_domains->already_in_queue,
+                    $row_domains->invalid_domain,
+                    $row_domains->copied_to_history,
+                    $full_name_export,
+                    $time->toUserTimezone($row_domains->insert_time),
+                    $row_domains->domain_id
+                );
+                $export->writeRow($export_file, $row_contents);
 
             }
 
