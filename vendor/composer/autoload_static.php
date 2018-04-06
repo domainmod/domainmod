@@ -24,7 +24,7 @@ class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
         ),
         'Cron\\' => 
         array (
-            0 => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron',
+            0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
         ),
     );
 

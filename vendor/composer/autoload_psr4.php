@@ -7,5 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'DomainMOD\\' => array($baseDir . '/classes/DomainMOD'),
-    'Cron\\' => array($vendorDir . '/mtdowling/cron-expression/src/Cron'),
+    'Cron\\' => array($vendorDir . '/dragonmantank/cron-expression/src/Cron'),
 );
