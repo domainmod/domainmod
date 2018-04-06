@@ -25,11 +25,64 @@ class System
 {
     public $deeb;
     public $log;
+    public $layout;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.system');
+        $this->layout = new Layout();
+    }
+
+    public function getRequirements()
+    {
+        $req_text .= 'PHP Extensions: ';
+        $req_html .= '<STRONG>PHP Extensions</STRONG><BR>';
+
+        $extensions = array('pdo_mysql' => 'PDO (MySQL)',
+                            'curl' => 'cURL',
+                            'openssl' => 'OpenSSL');
+
+        foreach ($extensions as $key => $value) {
+
+            if (extension_loaded($key)) {
+
+                $req_text .= $value . ': Enabled, ';
+                $req_html .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
+
+            } else {
+
+                $req_text .= $value . ': Disabled, ';
+                $req_html .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
+
+            }
+
+        }
+
+        $req_text .= ' / PHP Settings: ';
+        $req_html .= '<BR><STRONG>PHP Settings</STRONG><BR>';
+
+        $settings = array('allow_url_fopen');
+
+        foreach ($settings as $value) {
+
+            if (ini_get($value)) {
+
+                $req_text .= $value . ': Enabled, ';
+                $req_html .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
+
+            } else {
+
+                $req_text .= $value . ': Disabled, ';
+                $req_html .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
+
+            }
+
+        }
+
+        $req_text = substr($req_text, 0, -2);
+
+        return array($req_text, $req_html);
     }
 
     public function installCheck()
