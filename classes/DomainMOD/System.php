@@ -36,8 +36,44 @@ class System
 
     public function getRequirements()
     {
-        $req_text .= 'PHP Extensions: ';
-        $req_html .= '<STRONG>PHP Extensions</STRONG><BR>';
+        // SERVER SOFTWARE
+        $req_text .= 'Server Software: ';
+        $req_html .= '<STRONG>Server Software</STRONG><BR>';
+
+        // PHP
+        $software = 'PHP v5.3.2+';
+        $min_php_version = '5.3.2';
+        $installed_php_version = phpversion();
+
+        if ($installed_php_version >= $min_php_version) {
+
+            $req_text .= $software . ': Pass, ';
+            $req_html .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
+
+        } else {
+
+            $req_text .= $software . ': Fail, ';
+            $req_html .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
+
+        }
+
+        // MySQL
+        $software = 'MySQL';
+        if (extension_loaded('pdo_mysql')) {
+
+            $req_text .= $software . ': Pass';
+            $req_html .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
+
+        } else {
+
+            $req_text .= $software . ': Fail';
+            $req_html .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
+
+        }
+
+        // PHP Extensions
+        $req_text .= ' / PHP Extensions: ';
+        $req_html .= '<BR><STRONG>PHP Extensions</STRONG><BR>';
 
         $extensions = array('pdo_mysql' => 'PDO (MySQL)',
                             'curl' => 'cURL',
@@ -59,6 +95,9 @@ class System
 
         }
 
+        $req_text = substr($req_text, 0, -2);
+
+        // PHP SETTINGS
         $req_text .= ' / PHP Settings: ';
         $req_html .= '<BR><STRONG>PHP Settings</STRONG><BR>';
 
