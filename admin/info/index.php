@@ -53,7 +53,11 @@ $pdo = $deeb->cnxx;
 <strong>PHP Version:</strong> <?php echo phpversion(); ?><BR>
 <strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log'); ?><BR>
 <strong>MySQL Version:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
-
+<BR>
+<?php
+list($null, $requirements) = $system->getRequirements();
+echo $requirements;
+?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
