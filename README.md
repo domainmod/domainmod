@@ -119,6 +119,10 @@ Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refr
 **DNS Records**  
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data
 
+Code of Conduct
+---------------
+Please see CODE_OF_CONDUCT.md for a detailed explanation of our code of conduct.
+
 Support
 -------
 For the DomainMOD documentation please visit <https://domainmod.org/docs/>, or access the /docs/ folder within your DomainMOD installation.
