@@ -137,17 +137,8 @@ class Goal
 
     public function triggerGoal($goal_url)
     {
-        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-        $result = file_get_contents($goal_url, false, $context);
-        if (!$result) {
-            $handle = curl_init();
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($handle, CURLOPT_URL, $goal_url);
-            curl_exec($handle);
-            curl_close($handle);
-        }
+        $system = new System();
+        $system->getFileContents('Log Goal', 'error', $goal_url);
     }
 
 } //@formatter:on

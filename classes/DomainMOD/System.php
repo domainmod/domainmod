@@ -81,32 +81,8 @@ class System
 
     public function getLiveVersion()
     {
-        // Need allow_url_fopen support to file_get_contents URLs
-        if(!ini_get('allow_url_fopen')) {
-            exit ('allow_url_fopen PHP support required for DomainMOD version checking.');
-        }
-
-        // Need OpenSSL support to file_get_contents HTTPS URLs
-        if (!extension_loaded('openssl')) {
-            exit ('OpenSSL PHP support required for DomainMOD version checking.');
-        }
-
         $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt';
-        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-        $version_fgc = file_get_contents($version_file, false, $context);
-        if ($version_fgc) {
-            $live_version = $version_fgc;
-        } else {
-            $handle = curl_init();
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($handle, CURLOPT_URL, $version_file);
-            $result = curl_exec($handle);
-            curl_close($handle);
-            $live_version = $result;
-        }
-        return $live_version;
+        return $this->getFileContents('Get Live Version', 'error', $version_file);
     }
 
     public function getDbVersion()
@@ -301,6 +277,39 @@ class System
             return $result;
 
         }
+    }
+
+    public function getFileContents($file_title, $log_severity, $filename)
+    {
+
+        if (ini_get('allow_url_fopen') && extension_loaded('openssl')) {
+
+            $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
+            $get_file_contents = file_get_contents($filename, false, $context);
+            $file_contents = $get_file_contents;
+
+        } elseif (extension_loaded('curl')) {
+
+            $handle = curl_init();
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($handle, CURLOPT_URL, $filename);
+            $result = curl_exec($handle);
+            curl_close($handle);
+            $file_contents = $result;
+
+        } else {
+
+            $log_message = 'Unable to get file contents';
+            list($requirements, $null) = $this->getRequirements();
+            $log_extra = array('File Title' => $file_title, 'Requirements' => $requirements);
+            $this->log->{$log_severity}($log_message, $log_extra);
+            $file_contents = '';
+
+        }
+
+        return $file_contents;
     }
 
 } //@formatter:on
