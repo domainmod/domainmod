@@ -1432,6 +1432,24 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                     $display_text = "Pending (Registration)";
                 }
 
+                /* TODO: This needs to be fixed, but it's going to be a very big refactoring job, and this is the best temporary band-aid solution. */
+                /*
+                 * The problem is that the showDropdownOptionJump method uses the == comparison operator instead of ===,
+                 * so 0 technically equals "LIVE", and Expired gets selected in the dropdown menu by default, since it
+                 * overrides the actual "LIVE" option.
+                 *
+                 * It would be easy to just change the == operator to ===, however this may break other instances of
+                 * the method, so to fix this properly it's going to take some time.
+                 *
+                 * This issue also exists on the main Domains page.
+                 *
+                 * START
+                 */
+                if ($row_active->active === 0) $row_active->active = '0';
+                /*
+                 * END
+                 */
+
                 echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $row_active->active . '&from_dropdown=1&expand=1&null=', $is_active, $display_text, $row_active->active);
 
             }
