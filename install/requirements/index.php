@@ -1,6 +1,6 @@
 <?php
 /**
- * /install/index.php
+ * /install/requirements/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2018 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/../_includes/start-session.inc.php';
-require_once __DIR__ . '/../_includes/init.inc.php';
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
@@ -31,13 +31,9 @@ $layout = new DomainMOD\Layout();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/install.main.inc.php';
+require_once DIR_INC . '/settings/install.requirements.inc.php';
 
 $system->loginCheck();
-
-unset($_SESSION['new_system_email']);
-unset($_SESSION['new_admin_email']);
-
 $system->installCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -53,9 +49,23 @@ $system->installCheck();
 </head>
 <body>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
-You're just a few steps away from having <?php echo SOFTWARE_TITLE; ?> up-and-running!<BR>
+The first thing we need to do is check to see if your web server meets the software's requirements.<BR>
 <BR>
-<a href="<?php echo WEB_ROOT; ?>/install/requirements/"><?php echo $layout->showButton('button', 'Let\'s Go!'); ?></a>
+All of the below items should say "<?php echo $layout->highlightText('green', 'Pass'); ?>" or
+"<?php echo $layout->highlightText('green', 'Enabled'); ?>". If they don't, you still may be able
+to install <?php echo SOFTWARE_TITLE; ?>, but certain features might not work completely.<BR>
+<BR>
+If any of the items say "<?php echo $layout->highlightText('red', 'Fail'); ?>" or "<?php
+echo $layout->highlightText('red', 'Disabled'); ?>", we recommend you install and/or update
+the appropriate software so that all of the requirements are met.<BR>
+<BR>
+<?php
+list($null, $requirements) = $system->getRequirements();
+echo $requirements;
+echo "<BR>";
+?>
+<a href="../"><?php echo $layout->showButton('button', 'Go Back'); ?></a>
+<a href="<?php echo WEB_ROOT; ?>/install/email-system/"><?php echo $layout->showButton('button', 'Next Step'); ?></a>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>
 </body>
 </html>

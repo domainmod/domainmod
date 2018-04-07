@@ -124,25 +124,11 @@ class System
         return array($req_text, $req_html);
     }
 
-    public function installCheck()
+    public function installMode()
     {
-        $full_install_path = DIR_ROOT . '/install/';
-
         $result = $this->checkForSettingsTable();
-
-        if (!$result && is_dir($full_install_path)) {
-
-            $installation_mode = 1;
-            $result_message = 'DomainMOD is not yet installed<BR>';
-
-        } else {
-
-            $installation_mode = 0;
-            $result_message = '';
-
-        }
-
-        return array($installation_mode, $result_message);
+        $install_mode = !$result ? 1 : 0;
+        return $install_mode;
     }
 
     public function checkForSettingsTable()
@@ -228,6 +214,15 @@ class System
         if ($_SESSION['s_is_logged_in'] != 1) {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
             $_SESSION['s_message_danger'] .= 'You must be logged in to access this area<BR>';
+            header('Location: ' . WEB_ROOT . '/');
+            exit;
+        }
+    }
+
+    public function installCheck()
+    {
+        if ($this->installMode() === 0) {
+            $_SESSION['s_message_danger'] .= SOFTWARE_TITLE . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
             header('Location: ' . WEB_ROOT . '/');
             exit;
         }

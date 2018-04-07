@@ -38,45 +38,24 @@ $time = new DomainMOD\Time();
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
 require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/login.inc.php';
 
 $system->loginCheck();
 $pdo = $deeb->cnxx;
 
-list($installation_mode, $result_message) = $system->installCheck();
-$_SESSION['s_installation_mode'] = $installation_mode;
-$_SESSION['s_message_danger'] .= $result_message;
+$_SESSION['s_installation_mode'] = $system->installMode();
 
-if ($_SESSION['s_installation_mode'] == '1') {
+if ($_SESSION['s_installation_mode'] === 1) {
 
-    $page_title = "";
-    $software_section = "installation";
-
-} else {
-
-    $page_title = "";
-    $software_section = "login";
+    header("Location: install/");
+    exit;
 
 }
 
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
-$from_install_form = $_POST['from_install_form'];
-$new_install_email = $_POST['new_install_email'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form == '1') {
-
-    if ($new_install_email != '') {
-
-        $_SESSION['new_install_email'] = $new_install_email;
-
-        header("Location: install/");
-        exit;
-
-    }
-
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "" && $from_install_form != '1') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 
     $_SESSION['s_read_only'] = '1';
 
@@ -115,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 } else {
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form != '1') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_username == "" && $new_password == "") {
 
@@ -127,10 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             if ($new_password == "") $_SESSION['s_message_danger'] .= "Enter your password<BR>";
 
         }
-
-    } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form == '1') {
-
-        $_SESSION['s_message_danger'] .= "<BR>Enter the system/administrator email address<BR>";
 
     }
 
@@ -160,35 +135,21 @@ if ($new_username == "") { ?>
 } ?>
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 <?php
-if ($_SESSION['s_installation_mode'] == '0') {
+echo $form->showFormTop('');
 
-    echo $form->showFormTop('');
+if (DEMO_INSTALLATION == '1') { ?>
+    <strong>Demo Username:</strong> demo<BR>
+    <strong>Demo Password:</strong> demo<BR><BR><?php
+}
 
-    if (DEMO_INSTALLATION == '1') { ?>
-        <strong>Demo Username:</strong> demo<BR>
-        <strong>Demo Password:</strong> demo<BR><BR><?php
-    }
+echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
+echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '', '');
+echo $form->showSubmitButton('Login', '', '');
+echo $form->showFormBottom('');
 
-    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
-    echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '', '');
-    echo $form->showSubmitButton('Login', '', '');
-    echo $form->showFormBottom('');
+if (DEMO_INSTALLATION != '1') { ?>
 
-    if (DEMO_INSTALLATION != '1') { ?>
-
-        <BR><a href="reset.php">Forgot your Password?</a><?php
-
-    }
-
-} else {
-
-    $email_address_text = 'This email address will be used in various locations by the system (such as the FROM address when expiration emails are sent to users), as well as be used as the primary system administrator\'s email address.<BR><BR>Please double check that this address is valid, as it will be required if the system administrator forgets their password.';
-    echo $form->showFormTop('');
-    echo $form->showInputText('new_install_email', 'Enter The System/Administrator Email Address', $email_address_text, $new_install_email, '100', '', '', '', '');
-    echo $form->showSubmitButton('Install DomainMOD', '', '');
-    echo $form->showInputHidden('from_install_form', '1');
-    echo $form->showFormBottom('');
-
+    <BR><a href="reset.php">Forgot your Password?</a><?php
 
 }
 ?>
