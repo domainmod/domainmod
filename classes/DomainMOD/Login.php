@@ -82,20 +82,6 @@ class Login
         return $stmt->fetch();
     }
 
-    public function getCurrencyInfo($currency)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT `name`, symbol, symbol_order, symbol_space
-            FROM currencies
-            WHERE currency = :currency");
-        $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
-        $stmt->execute();
-
-        return $stmt->fetch();
-    }
-
     public function setLastLogin($user_id)
     {
         $pdo = $this->deeb->cnxx;

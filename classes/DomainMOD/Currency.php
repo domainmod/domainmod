@@ -74,4 +74,19 @@ class Currency
 
     }
 
+    public function getCurrencyInfo($currency)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT `name`, symbol, symbol_order, symbol_space
+            FROM currencies
+            WHERE currency = :currency");
+        $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch();
+
+        return array($result->name, $result->symbol, $result->symbol_order, $result->symbol_space);
+    }
+
 } //@formatter:on

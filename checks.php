@@ -34,6 +34,7 @@ $maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
 $upgrade = new DomainMOD\Upgrade();
+$currency = new DomainMOD\Currency();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -138,11 +139,9 @@ $_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
 $_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
 
 // Load Currency Info
-$result = $login->getCurrencyInfo($_SESSION['s_default_currency']);
-$_SESSION['s_default_currency_name'] = $result->name;
-$_SESSION['s_default_currency_symbol'] = $result->symbol;
-$_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
-$_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
+list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space'])
+    = $currency->getCurrencyInfo($_SESSION['s_default_currency']);
 
 // Check to see if there are any domain lists or domains in the queue
 $queue = new DomainMOD\DomainQueue();

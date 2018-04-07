@@ -32,6 +32,7 @@ $form = new DomainMOD\Form();
 $log = new DomainMOD\Log('/settings/profile/index.php');
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
+$currency = new DomainMOD\Currency();
 $timestamp = $time->stamp();
 
 require_once DIR_INC . '/head.inc.php';
@@ -157,22 +158,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $_SESSION['s_default_timezone'] = $new_timezone;
             $_SESSION['s_expiration_email'] = $new_expiration_email;
 
-            $stmt = $pdo->prepare("
-                SELECT `name`, symbol, symbol_order, symbol_space
-                FROM currencies
-                WHERE currency = :new_currency");
-            $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
-            $stmt->execute();
-            $result = $stmt->fetch();
-
-            if ($result) {
-
-                $_SESSION['s_default_currency_name'] = $result->name;
-                $_SESSION['s_default_currency_symbol'] = $result->symbol;
-                $_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
-                $_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
-
-            }
+            list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
+                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space'])
+                = $currency->getCurrencyInfo($new_currency);
 
             $pdo->commit();
 
