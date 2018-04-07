@@ -151,7 +151,7 @@
                         Currency: <?php echo $_SESSION['s_default_currency']; ?><BR>
                         Time Zone: <?php echo $_SESSION['s_default_timezone']; ?><BR>
                         Expiration Emails: <?php
-                        if ($_SESSION['s_expiration_email'] == '1') {
+                        if ($_SESSION['s_expiration_emails'] == '1') {
                             echo "Yes";
                         } else {
                             echo "No";

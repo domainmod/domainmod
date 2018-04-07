@@ -47,7 +47,7 @@ $new_last_name = $_POST['new_last_name'];
 $new_email_address = $_POST['new_email_address'];
 $new_currency = $_POST['new_currency'];
 $new_timezone = $_POST['new_timezone'];
-$new_expiration_email = $_POST['new_expiration_email'];
+$new_expiration_emails = $_POST['new_expiration_emails'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_email_address != "") {
 
@@ -141,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 UPDATE user_settings
                 SET default_currency = :new_currency,
                     default_timezone = :new_timezone,
-                    expiration_emails = :new_expiration_email,
+                    expiration_emails = :new_expiration_emails,
                     update_time = :timestamp
                 WHERE user_id = :user_id");
             $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
             $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
-            $stmt->bindValue('new_expiration_email', $new_expiration_email, PDO::PARAM_INT);
+            $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
             $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
             $stmt->execute();
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $_SESSION['s_email_address'] = $new_email_address;
             $_SESSION['s_default_currency'] = $new_currency;
             $_SESSION['s_default_timezone'] = $new_timezone;
-            $_SESSION['s_expiration_email'] = $new_expiration_email;
+            $_SESSION['s_expiration_emails'] = $new_expiration_emails;
 
             list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
                 $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space'])
@@ -260,14 +260,14 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('');
 
-if ($new_expiration_email != "") {
-    $temp_expiration_email = $new_expiration_email;
+if ($new_expiration_emails != "") {
+    $temp_expiration_emails = $new_expiration_emails;
 } else {
-    $temp_expiration_email = $_SESSION['s_expiration_email'];
+    $temp_expiration_emails = $_SESSION['s_expiration_emails'];
 }
 echo $form->showRadioTop('Subscribe to Domain & SSL Certificate expiration emails?', '', '');
-echo $form->showRadioOption('new_expiration_email', '1', 'Yes', $temp_expiration_email, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_expiration_email', '0', 'No', $temp_expiration_email, '', '');
+echo $form->showRadioOption('new_expiration_emails', '1', 'Yes', $temp_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_expiration_emails', '0', 'No', $temp_expiration_emails, '', '');
 echo $form->showRadioBottom('');
 
 echo $form->showSubmitButton('Update Profile', '', '');

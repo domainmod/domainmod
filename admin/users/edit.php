@@ -211,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $_SESSION['s_email_address'] = $new_email_address;
             $_SESSION['s_default_currency'] = $new_currency;
             $_SESSION['s_default_timezone'] = $new_timezone;
-            $_SESSION['s_expiration_email'] = $new_expiration_emails;
+            $_SESSION['s_expiration_emails'] = $new_expiration_emails;
 
             list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
                 $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space'])
