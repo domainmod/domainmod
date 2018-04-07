@@ -123,7 +123,6 @@ $_SESSION['s_display_domain_category'] = $result->display_domain_category;
 $_SESSION['s_display_domain_dns'] = $result->display_domain_dns;
 $_SESSION['s_display_domain_host'] = $result->display_domain_host;
 $_SESSION['s_display_domain_ip'] = $result->display_domain_ip;
-$_SESSION['s_display_domain_host'] = $result->display_domain_host;
 $_SESSION['s_display_domain_tld'] = $result->display_domain_tld;
 $_SESSION['s_display_domain_fee'] = $result->display_domain_fee;
 $_SESSION['s_display_ssl_owner'] = $result->display_ssl_owner;
