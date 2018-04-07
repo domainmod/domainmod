@@ -36,6 +36,17 @@ class System
 
     public function getRequirements()
     {
+        list($req_text, $req_html) = $this->getReqServerSoft();
+        list($req_text, $req_html) = $this->getReqExtensions($req_text, $req_html);
+        list($req_text, $req_html) = $this->getReqSettings($req_text, $req_html);
+        return array($req_text, $req_html);
+    }
+
+    public function getReqServerSoft()
+    {
+        $req_text = '';
+        $req_html = '';
+
         // SERVER SOFTWARE
         $req_text .= 'Server Software: ';
         $req_html .= '<STRONG>Server Software</STRONG><BR>';
@@ -71,6 +82,11 @@ class System
 
         }
 
+        return array($req_text, $req_html);
+    }
+
+    public function getReqExtensions($req_text, $req_html)
+    {
         // PHP Extensions
         $req_text .= ' / PHP Extensions: ';
         $req_html .= '<BR><STRONG>PHP Extensions</STRONG><BR>';
@@ -97,6 +113,11 @@ class System
 
         $req_text = substr($req_text, 0, -2);
 
+        return array($req_text, $req_html);
+    }
+
+    public function getReqSettings($req_text, $req_html)
+    {
         // PHP SETTINGS
         $req_text .= ' / PHP Settings: ';
         $req_html .= '<BR><STRONG>PHP Settings</STRONG><BR>';
@@ -371,20 +392,11 @@ class System
 
         if (ini_get('allow_url_fopen') && extension_loaded('openssl')) {
 
-            $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-            $get_file_contents = file_get_contents($filename, false, $context);
-            $file_contents = $get_file_contents;
+            $file_contents = $this->getFileContFopen($filename);
 
         } elseif (extension_loaded('curl')) {
 
-            $handle = curl_init();
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($handle, CURLOPT_URL, $filename);
-            $result = curl_exec($handle);
-            curl_close($handle);
-            $file_contents = $result;
+            $file_contents = $this->getFileContCurl($filename);
 
         } else {
 
@@ -397,6 +409,24 @@ class System
         }
 
         return $file_contents;
+    }
+
+    public function getFileContFopen($filename)
+    {
+        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
+        return file_get_contents($filename, false, $context);
+    }
+
+    public function getFileContCurl($filename)
+    {
+        $handle = curl_init();
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($handle, CURLOPT_URL, $filename);
+        $result = curl_exec($handle);
+        curl_close($handle);
+        return $result;
     }
 
 } //@formatter:on
