@@ -54,8 +54,7 @@ class Layout
         } elseif ($colour == 'green') {
             $text_colour = '#009933';
         }
-        ob_start(); ?>
-        <strong><span style="color:<?php echo $text_colour; ?>"><?php echo $text_to_display; ?></span></strong><?php
+        ob_start(); ?><strong><span style="color:<?php echo $text_colour; ?>"><?php echo $text_to_display; ?></span></strong><?php
         return ob_get_clean();
     }
 
