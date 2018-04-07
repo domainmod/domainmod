@@ -202,6 +202,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         }
 
+        // If they're editing themselves
+        if ($_SESSION['s_user_id'] == $new_uid) {
+
+            $_SESSION['s_first_name'] = $new_first_name;
+            $_SESSION['s_last_name'] = $new_last_name;
+            $_SESSION['s_email_address'] = $new_email_address;
+            $_SESSION['s_default_currency'] = $new_currency;
+            $_SESSION['s_default_timezone'] = $new_timezone;
+            $_SESSION['s_expiration_email'] = $new_expiration_emails;
+
+            $stmt = $pdo->prepare("
+                SELECT `name`, symbol, symbol_order, symbol_space
+                FROM currencies
+                WHERE currency = :new_currency");
+            $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch();
+
+            if ($result) {
+
+                $_SESSION['s_default_currency_name'] = $result->name;
+                $_SESSION['s_default_currency_symbol'] = $result->symbol;
+                $_SESSION['s_default_currency_symbol_order'] = $result->symbol_order;
+                $_SESSION['s_default_currency_symbol_space'] = $result->symbol_space;
+
+            }
+
+        }
+
         $pdo->commit();
 
         $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
