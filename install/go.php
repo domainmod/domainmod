@@ -496,6 +496,7 @@ try {
             `finished` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+            `invalid_domain` TINYINT(1) NOT NULL DEFAULT '0',
             `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
@@ -971,19 +972,19 @@ try {
          VALUES
         ('Above.com', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('DNSimple', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
-        ('DreamHost', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved using their API, so all domains added to the queue from a DreamHost account will have their WHOIS privacy status set to No.', '" . $timestamp . "'),
+        ('DreamHost', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a DreamHost account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "'),
         ('Dynadot', '0', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('eNom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Freenom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $timestamp . "'),
-        ('GoDaddy', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
+        ('GoDaddy', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "'),
         ('Internet.bs', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Name.com', '1', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('NameBright', '1', '0', '0', '1', '0', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Namecheap', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
-        ('NameSilo', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
+        ('NameSilo', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'NameSilo\'s domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer<BR><BR>When retrieving your list of domains via the API, <STRONG>Inactive</STRONG> domains are not returned.<BR><BR>When retrieving the details of a specific domain via the API, <STRONG>Inactive</STRONG> and <STRONG>Expired (pending delete)</STRONG> domains will not return any data.', '" . $timestamp . "'),
         ('OpenSRS', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
-        ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not currently allow the auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a ResellerClub account will have their auto renewal status set to No.', '" . $timestamp . "')");
+        ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `goal_activity` (
@@ -1064,19 +1065,6 @@ try {
     $stmt->bindValue('new_system_email', $_SESSION['new_system_email'], PDO::PARAM_STR);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
     $stmt->execute();
-
-    $default_currency = $pdo->query("
-        SELECT default_currency
-        FROM user_settings
-        WHERE user_id = '" . $temp_user_id . "'")->fetchColumn();
-
-    $stmt = $pdo->prepare("
-        SELECT `name`, symbol, symbol_order, symbol_space
-        FROM currencies
-        WHERE currency = :default_currency");
-    $stmt->bindValue('default_currency', $default_currency, PDO::PARAM_STR);
-    $stmt->execute();
-    $result = $stmt->fetch();
 
     // Without this, the "DomainMOD is not yet installed" message will continue to display after installation. The header isn't displayed on the install file, which is when this normally unsets.
     unset($_SESSION['s_message_danger']);
