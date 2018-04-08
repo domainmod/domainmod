@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.09.01    2018-04-08
+- Fixed upgrade recording
+
 v4.09.00    2018-04-07
 - Added Requirements to README
 - Added Code of Conduct to README
