@@ -127,6 +127,13 @@
 <li>
           
             <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../conduct/">Code of Conduct</a>
+        
+    </li>
+<li>
+          
+            <li>
     <li class="toctree-l1 current">
         <a class="current" href="./">Troubleshooting</a>
         
@@ -145,13 +152,6 @@
                 
             
             </ul>
-        
-    </li>
-<li>
-          
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../contribute/">Contribute</a>
         
     </li>
 <li>
@@ -232,7 +232,7 @@
 <pre><code>$web_root = "";
 </code></pre>
 <h2 id="upgrading"><BR>Upgrading</h2>
-<p><h4>There was a problem while upgrading and now I can't access DomainMOD.</h4></p>
+<p><h4>There was an issue while upgrading and now I can't access DomainMOD.</h4></p>
 <p>Although we personally haven't see this happen yet, it's definitely possible. This is why we recommend you make a backup of your entire DomainMOD database before upgrading (you did make that backup, right?).</p>
 <p>Follow these steps to restore your copy of DomainMOD:</p>
 <ol>
@@ -259,7 +259,7 @@
 </li>
 </ol>
 <h2 id="usage"><BR>Usage</h2>
-<p><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
+<p><a name="errorlevel"></a><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
 <p>This is related to the error reporting level that you have turned on in PHP. Although these are only warnings and won't actually be breaking anything, you can get rid of them by editing your php.ini file and changing the error_reporting line.</p>
 <p>Right now you probably have something that looks like this:</p>
 <pre><code>error_reporting = E_ALL
@@ -280,17 +280,16 @@
 <p>We would recommend trying some of the suggestions for this error in Google and see if any of them help: <a href="https://www.google.com/search?q=Database+Connection+Error%3A+1045">https://www.google.com/search?q=Database+Connection+Error%3A+1045</a>.</p>
 <h4>I'm trying to import data using the Domain Queue, but everything is stuck on "Processing".</h4>
 
-<p>In case there's a problem with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
+<p>In case there's an issue with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
 <p>If that doesn't work you can try clearing the queue items that are currently processing by going to Administration -&gt; Maintenance, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
 <p>If that still doesn't do it go to Administration -&gt; Maintenance, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
-<h4>Form fields aren't displaying properly, such as checkboxes and text fields showing as empty boxes.</h4>
-
-<p>This is caused by JavaScript being disabled in your web browser. If enabling JavaScript doesn't fix the issue try disabling any ad blockers or other content blockers you may have installed.</p>
+<p><a name="javascript"></a><h4>Form fields aren't displaying properly, such as checkboxes and text fields showing as empty boxes.</h4></p>
+<p>This is usually caused by JavaScript being disabled in your web browser. If enabling JavaScript doesn't fix the issue try disabling any ad blockers or other content blockers you may have installed.</p>
 <h2 id="debugging"><BR>Debugging</h2>
-<p>If you're still having problems you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors. This can help us troubleshoot your issue.</p>
+<p>If you're still having issues you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors, which can help us troubleshoot your issue.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>No sensitive information gets stored in the logs. Passwords, API keys, and other sensitive information is replaced with asterisks, so we will never be able to view your private data.</p>
+<p>No sensitive information gets stored in the debugging log. Passwords, API keys, and other sensitive information is replaced with asterisks, so we will never be able to view your private data.</p>
 </div>
 <p>To enable Debugging Mode:</p>
 <ol>
@@ -304,7 +303,7 @@
 <p>Click the <strong>Update System Settings</strong> button.</p>
 </li>
 </ol>
-<p>Once debugging is enabled use DomainMOD as you normally would, repeating the steps you took when you first encountered a problem. Once you've done this follow the steps below to report your issue.</p>
+<p>Once debugging is enabled use DomainMOD as you normally would, repeating the steps you took when you first encountered the issue. Once you've done this continue with the below steps.</p>
 <ol>
 <li>
 <p>If you haven't already, visit the DomainMOD support forum and post about your issue: <a href="https://domainmod.org/forum/">https://domainmod.org/forum/</a></p>
@@ -315,11 +314,19 @@
 <li>
 <p>Click the <strong>Export</strong> button to export the debugging log.</p>
 </li>
+</ol>
+<p>In addition to the debugging log you should also retrieve your PHP error log, which will give us additional information about your issue.</p>
+<p>To find the location of your PHP error log:</p>
+<ol>
 <li>
-<p>Send an email to <a href="../debugging@domainmod.org">debugging@domainmod.org</a> and attach the log file that you just exported, and also include a link to your forum post.</p>
+<p>In DomainMOD, click on <strong>Administration</strong> and then <strong>System Information</strong>.</p>
+</li>
+<li>
+<p>Look for the heading named <strong>PHP Error Log Location</strong>. This will show you the location of the PHP error log on your web server.</p>
 </li>
 </ol>
-<p>We will review your debugging log and get back to you as soon as we can!</p>
+<p>Once you have both your debugging log and PHP error log send an email to <a href="../debugging@domainmod.org">debugging@domainmod.org</a> and attach the log files. Please also include the URL to your forum post so that we can determine the issue you're contacting us about.</p>
+<p>We will review your logs and get back to you as soon as we can!</p>
 <p>Also, if you haven't already, make sure you disable Debugging Mode.</p>
                 
             </div>
@@ -328,10 +335,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../contribute/" class="btn btn-neutral float-right" title="Contribute">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../support/" class="btn btn-neutral float-right" title="Support">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../faq/" class="btn btn-neutral" title="Frequently Asked Questions"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
+        <a href="../conduct/" class="btn btn-neutral" title="Code of Conduct"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
       
     </div>
   
@@ -343,7 +350,7 @@
   </div>
 
   <span style="font-family: 'Verdana'; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright &copy; 2017 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+  Copyright (c) 2010-2018 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
 </footer>
 	  
         </div>
@@ -359,10 +366,10 @@
           <a href="https://github.com/domainmod/userguide/" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../faq/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../conduct/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../contribute/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../support/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
