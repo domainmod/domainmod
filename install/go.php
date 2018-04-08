@@ -1001,8 +1001,6 @@ try {
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-    $goal->installation();
-
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `log` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1072,6 +1070,8 @@ try {
     unset($_SESSION['new_system_email']);
     unset($_SESSION['new_admin_email']);
     unset($_SESSION['s_installation_mode']);
+
+    $goal->installation();
 
     $pdo->commit();
 
