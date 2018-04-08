@@ -1,5 +1,22 @@
 DomainMOD CHANGELOG
 ===================
+v4.09.00    2018-04-07
+- Added Requirements to README
+- Added Code of Conduct to README
+- Added PHP mail() wrapper
+- Added logging to email sends
+- Expanded the installation process
+- Updated Composer (1.4.1 -> 1.4.2)
+- Updated PHPMailer (5.2.25 -> 5.2.26)
+- Updated PHP Cron Expression Parser (1.2.0 -> 1.2.1)
+- Switched from Fixer.io to Currency Converter API
+- Updated Email Send code
+- Updated remote file retrieval code
+- Updated System Information page with more data
+- Updated logging to include more information
+- Updated Registrar API writeups
+- Various fixes & code cleanup
+
 v4.08.00    2017-11-06
 - Replaced Yahoo Finance API with Fixer.io API
 - Changed GoDaddy domain list limit to 1,000
