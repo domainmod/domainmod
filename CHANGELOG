@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.09.02    2018-04-09
+- Updated error_get_last for PHP 5.3 compatibility
+- Updated GoDaddy API domain checks
+- Updated NameSilo API log details
+
 v4.09.01    2018-04-08
 - Fixed upgrade recording
 
