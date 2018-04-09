@@ -120,7 +120,7 @@ class NameSilo
         } elseif ($array_results[0]['reply']['detail'] == 'Domain is not active, or does not belong to this user') {
 
             $domain_status = 'invalid';
-            $log_message = 'Invalid domain';
+            $log_message = 'Invalid domain (inactive or nonexistent)';
             $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key));
             $this->log->warning($log_message, $log_extra);
 
