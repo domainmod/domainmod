@@ -157,6 +157,10 @@ $login->setLastLogin($_SESSION['s_user_id']);
 
 if ($_SESSION['s_version_error'] != '1') {
 
+    // Log installation and upgrade activity
+    $goal->remote();
+
+    // Notify if there's a new version available for download
     if ($_SESSION['s_system_upgrade_available'] == '1') {
 
         if ($_SESSION['s_is_admin'] === 1) {
@@ -169,14 +173,15 @@ if ($_SESSION['s_version_error'] != '1') {
 
     $queryB = new DomainMOD\QueryBuild();
 
+    // Check for missing domain fees
     $sql = $queryB->missingFees('domains');
     $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-    $queryB = new DomainMOD\QueryBuild();
-
+    // Check for missing ssl fees
     $sql = $queryB->missingFees('ssl_certs');
     $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
+    // If it's a new password ask the user to change it
     if ($_SESSION['s_is_new_password'] == 1) {
 
         $_SESSION['s_message_danger'] .= "Your password should be changed for security purposes<BR>";
@@ -189,9 +194,6 @@ if ($_SESSION['s_version_error'] != '1') {
 
 // Check GitHub to see if a newer version is available
 $system->checkVersion(SOFTWARE_VERSION);
-
-// Log installation and upgrade activity
-$goal->remote();
 
 unset($_SESSION['s_running_login_checks']);
 
