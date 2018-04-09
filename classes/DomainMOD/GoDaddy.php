@@ -100,7 +100,13 @@ class GoDaddy
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if (isset($array_results['domain'])) {
+        /*
+         * The $array_results['expires'] and $array_results['contactRegistrant']['nameFirst'] checks were put in place
+         * because GoDaddy's domain list API command returns domains that aren't necessarily registered with them (such
+         * as domains that are registered elsewhere but the DNS is hosted at GoDaddy). These additional checks ensure
+         * that the domain details will only be processed for domains that are actually registered at GoDaddy.
+         */
+        if (isset($array_results['domain']) && isset($array_results['expires']) && isset($array_results['contactRegistrant']['nameFirst'])) {
 
             // get expiration date
             $expiration_date = substr($array_results['expires'], 0, 10);
@@ -117,6 +123,13 @@ class GoDaddy
             $autorenewal_result = (string) $array_results['renewAuto'];
             $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
+        } elseif (isset($array_results['domain']) && !isset($array_results['expires']) && !isset($array_results['contactRegistrant']['nameFirst'])) {
+
+            $domain_status = 'invalid';
+            $log_message = 'Invalid domain (not registered at GoDaddy)';
+            $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
+            $this->log->warning($log_message, $log_extra);
+
         } else {
 
             $log_message = 'Unable to get domain details';
@@ -125,7 +138,7 @@ class GoDaddy
 
         }
 
-        return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+        return array($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 
     public function convertToArray($api_result)

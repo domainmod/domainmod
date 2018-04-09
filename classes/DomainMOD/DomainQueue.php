@@ -250,7 +250,7 @@ class DomainQueue
 
                     $registrar = new GoDaddy();
                     list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
+                    list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
