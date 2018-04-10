@@ -429,4 +429,9 @@ class System
         return $result;
     }
 
+    public function getIpRemotely()
+    {
+        return $this->getFileContents('External IP API Call (ipify)', 'warning', 'https://api.ipify.org');
+    }
+
 } //@formatter:on
