@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.09.03    2018-04-09
+- Added ipify support for remote IP address reporting
+
 v4.09.02    2018-04-09
 - Updated error_get_last for PHP 5.3 compatibility
 - Updated GoDaddy API domain checks
