@@ -50,7 +50,7 @@ $new_name = $_POST['new_name'];
 $new_type_id = (integer)$_POST['new_type_id'];
 $new_ip_id = (integer)$_POST['new_ip_id'];
 $new_cat_id = (integer)$_POST['new_cat_id'];
-$new_expiry_date = $_POST['new_expiry_date'];
+$new_expiry_date = $_POST['datepick'];
 $new_account_id = (integer)$_POST['new_account_id'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
@@ -377,13 +377,14 @@ if ($really_del == "1") {
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
 echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -578,5 +579,6 @@ echo $form->showFormBottom('');
 ?>
 <BR><a href="edit.php?sslcid=<?php echo urlencode($sslcid); ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>

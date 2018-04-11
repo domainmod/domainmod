@@ -51,7 +51,7 @@ $pdo = $deeb->cnxx;
 $jumpMenu = $_GET['jumpMenu'];
 $action = $_REQUEST['action'];
 $raw_domain_list = $_POST['raw_domain_list'];
-$new_expiry_date = $_POST['new_expiry_date'];
+$new_expiry_date = $_POST['datepick'];
 $new_function = $_POST['new_function'];
 $new_pcid = $_POST['new_pcid'];
 $new_dnsid = $_POST['new_dnsid'];
@@ -1935,6 +1935,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
@@ -2145,7 +2146,7 @@ if ($action == "AD") { // Add Domains
     } else {
         $temp_expiry_date = $timestamp_basic_plus_one_year;
     }
-    echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
+    echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
     // Registrar Account
     echo $form->showDropdownTop('new_raid', 'Registrar Account', '', '1', '');
@@ -2425,8 +2426,7 @@ if ($action == "AD") { // Add Domains
     } else {
         $temp_expiry_date = $timestamp_basic;
     }
-
-    echo $form->showInputText('new_expiry_date', 'New Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
+    echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
 } elseif ($action == "UCF") {
 
@@ -2755,5 +2755,6 @@ echo $form->showFormBottom('');
 ?>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>

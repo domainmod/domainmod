@@ -48,7 +48,7 @@ $really_del = $_GET['really_del'];
 
 $new_domain = $_POST['new_domain'];
 $new_tld = $_POST['new_tld'];
-$new_expiry_date = $_POST['new_expiry_date'];
+$new_expiry_date = $_POST['datepick'];
 $new_function = $_POST['new_function'];
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
@@ -416,6 +416,7 @@ if ($really_del == "1") {
 <head>
     <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -424,7 +425,7 @@ echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
 echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '<BR><BR>';
 echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $result = $pdo->query("
     SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
@@ -730,5 +731,6 @@ if ($dw_has_zones === 1) { ?>
 ?>
 <BR><a href="edit.php?did=<?php echo urlencode($did); ?>&del=1">DELETE THIS DOMAIN</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>
