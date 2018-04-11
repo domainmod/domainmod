@@ -36,20 +36,22 @@ class System
 
     public function getRequirements()
     {
-        list($req_text, $req_html) = $this->getReqServerSoft();
-        list($req_text, $req_html) = $this->getReqExtensions($req_text, $req_html);
-        list($req_text, $req_html) = $this->getReqSettings($req_text, $req_html);
-        return array($req_text, $req_html);
+        list($req_text, $req_html_short, $req_html_long) = $this->getReqServerSoft();
+        list($req_text, $req_html_short, $req_html_long) = $this->getReqExtensions($req_text, $req_html_short, $req_html_long);
+        list($req_text, $req_html_short, $req_html_long) = $this->getReqSettings($req_text, $req_html_short, $req_html_long);
+        return array($req_text, $req_html_short, $req_html_long);
     }
 
     public function getReqServerSoft()
     {
         $req_text = '';
-        $req_html = '';
+        $req_html_short = '';
+        $req_html_long = '';
 
         // SERVER SOFTWARE
         $req_text .= 'Server Software: ';
-        $req_html .= '<STRONG>Server Software</STRONG><BR>';
+        $req_html_short .= '<STRONG>Server Software:</STRONG> ';
+        $req_html_long .= '<STRONG>Server Software</STRONG><BR>';
 
         // PHP
         $software = 'PHP v5.3.2+';
@@ -59,12 +61,14 @@ class System
         if ($installed_php_version >= $min_php_version) {
 
             $req_text .= $software . ': Pass, ';
-            $req_html .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
+            $req_html_short .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . ', ';
+            $req_html_long .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
 
         } else {
 
             $req_text .= $software . ': Fail, ';
-            $req_html .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
+            $req_html_short .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . ', ';
+            $req_html_long .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
 
         }
 
@@ -73,23 +77,28 @@ class System
         if (extension_loaded('pdo_mysql')) {
 
             $req_text .= $software . ': Pass';
-            $req_html .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
+            $req_html_short .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . ', ';
+            $req_html_long .= $software . ': ' . $this->layout->highlightText('green', 'Pass') . '<BR>';
 
         } else {
 
             $req_text .= $software . ': Fail';
-            $req_html .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
+            $req_html_short .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . ', ';
+            $req_html_long .= $software . ': ' . $this->layout->highlightText('red', 'Fail') . '<BR>';
 
         }
 
-        return array($req_text, $req_html);
+        $req_html_short = substr($req_html_short, 0, -2);
+
+        return array($req_text, $req_html_short, $req_html_long);
     }
 
-    public function getReqExtensions($req_text, $req_html)
+    public function getReqExtensions($req_text, $req_html_short, $req_html_long)
     {
         // PHP Extensions
         $req_text .= ' / PHP Extensions: ';
-        $req_html .= '<BR><STRONG>PHP Extensions</STRONG><BR>';
+        $req_html_short .= '<BR><STRONG>PHP Extensions:</STRONG> ';
+        $req_html_long .= '<BR><STRONG>PHP Extensions</STRONG><BR>';
 
         $extensions = array('pdo_mysql' => 'PDO (MySQL)',
                             'curl' => 'cURL',
@@ -100,27 +109,31 @@ class System
             if (extension_loaded($key)) {
 
                 $req_text .= $value . ': Enabled, ';
-                $req_html .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
+                $req_html_short .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . ', ';
+                $req_html_long .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
 
             } else {
 
                 $req_text .= $value . ': Disabled, ';
-                $req_html .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
+                $req_html_short .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . ', ';
+                $req_html_long .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
 
             }
 
         }
 
         $req_text = substr($req_text, 0, -2);
+        $req_html_short = substr($req_html_short, 0, -2);
 
-        return array($req_text, $req_html);
+        return array($req_text, $req_html_short, $req_html_long);
     }
 
-    public function getReqSettings($req_text, $req_html)
+    public function getReqSettings($req_text, $req_html_short, $req_html_long)
     {
         // PHP SETTINGS
         $req_text .= ' / PHP Settings: ';
-        $req_html .= '<BR><STRONG>PHP Settings</STRONG><BR>';
+        $req_html_short .= '<BR><STRONG>PHP Settings:</STRONG> ';
+        $req_html_long .= '<BR><STRONG>PHP Settings</STRONG><BR>';
 
         $settings = array('allow_url_fopen');
 
@@ -129,20 +142,23 @@ class System
             if (ini_get($value)) {
 
                 $req_text .= $value . ': Enabled, ';
-                $req_html .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
+                $req_html_short .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . ', ';
+                $req_html_long .= $value . ': ' . $this->layout->highlightText('green', 'Enabled') . '<BR>';
 
             } else {
 
                 $req_text .= $value . ': Disabled, ';
-                $req_html .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
+                $req_html_short .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . ', ';
+                $req_html_long .= $value . ': ' . $this->layout->highlightText('red', 'Disabled') . '<BR>';
 
             }
 
         }
 
         $req_text = substr($req_text, 0, -2);
+        $req_html_short = substr($req_html_short, 0, -2);
 
-        return array($req_text, $req_html);
+        return array($req_text, $req_html_short, $req_html_long);
     }
 
     public function installMode()
@@ -401,7 +417,7 @@ class System
         } else {
 
             $log_message = 'Unable to get file contents';
-            list($requirements, $null) = $this->getRequirements();
+            list($requirements, $null, $null) = $this->getRequirements();
             $log_extra = array('File Title' => $file_title, 'Requirements' => $requirements);
             $this->log->{$log_severity}($log_message, $log_extra);
             $file_contents = '';

@@ -60,7 +60,7 @@ echo $layout->highlightText('red', 'Disabled'); ?>", we recommend you install an
 the appropriate software so that all of the requirements are met.<BR>
 <BR>
 <?php
-list($null, $requirements) = $system->getRequirements();
+list($null, $null, $requirements) = $system->getRequirements();
 echo $requirements;
 echo "<BR>";
 ?>
