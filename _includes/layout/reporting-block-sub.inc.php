@@ -19,7 +19,7 @@
  *
  */
 ?>
-<?php if ($all != '1') { ?>
+<?php if ($new_start_date != '' && $new_end_date != '') { ?>
 
     <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR>
 

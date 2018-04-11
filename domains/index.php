@@ -2015,13 +2015,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             <?php echo $form->showInputText('search_for', 'Domain Keyword Search', '', $_SESSION['s_search_for'], '100', '', '', '', ''); ?>
 
             <?php
-            if ($new_start_date == "") {
-                $new_start_date = $time->toUserTimezone($time->timeBasic(), 'Y-m-d');
-            }
-            if ($new_end_date == "") {
-                $new_end_date = '3000-12-31';
-            }
-            echo $form->showInputText('daterange', 'Expiring Between', '', $new_start_date . ' - ' . $new_end_date, '23', '', '', '', '');
+            echo $form->showInputText('daterange', 'Expiring Between', '', $daterange, '23', '', '', '', '');
 
             echo $form->showInputHidden('pcid', $pcid);
             echo $form->showInputHidden('oid', $oid);

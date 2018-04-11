@@ -43,7 +43,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $export_data = $_GET['export_data'];
-$all = $_GET['all'];
 $daterange = $_REQUEST['daterange'];
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
@@ -59,11 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
 
-    $all = '0';
-
 }
 
-$range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
+$range_string = $reporting->getRangeString('d.expiry_date', $new_start_date, $new_end_date);
 
 $result = $pdo->query("
     SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
@@ -112,7 +109,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         $export = new DomainMOD\Export();
 
-        if ($all == '1') {
+        if ($daterange == '') {
 
             $export_file = $export->openFile('domain_cost_by_registrar_report_all', strtotime($time->stamp()));
 
@@ -130,13 +127,13 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         $export->writeBlankRow($export_file);
 
-        if ($all != '1') {
+        if ($daterange == '') {
 
-            $row_contents = array('Date Range:', $new_start_date, $new_end_date);
+            $row_contents = array('Date Range:', 'ALL');
 
         } else {
 
-            $row_contents = array('Date Range:', 'ALL');
+            $row_contents = array('Date Range:', $daterange);
 
         }
         $export->writeRow($export_file, $row_contents);

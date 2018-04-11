@@ -1460,13 +1460,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             <?php echo $form->showInputText('search_for', 'SSL Keyword Search', '', $_SESSION['s_search_for_ssl'], '100', '', '', '', ''); ?>
 
             <?php
-            if ($new_start_date == "") {
-                $new_start_date = $time->toUserTimezone($time->timeBasic(), 'Y-m-d');
-            }
-            if ($new_end_date == "") {
-                $new_end_date = '3000-12-31';
-            }
-            echo $form->showInputText('daterange', 'Expiring Between', '', $new_start_date . ' - ' . $new_end_date, '23', '', '', '', '');
+            echo $form->showInputText('daterange', 'Expiring Between', '', $daterange, '23', '', '', '', '');
 
             echo $form->showInputHidden('oid', $oid);
             echo $form->showInputHidden('did', $did);

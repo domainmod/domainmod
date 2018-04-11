@@ -21,14 +21,24 @@
 ?>
 <script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/moment.min.js"></script>
 <script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker.js"></script>
-<script>
-    $('input[name="daterange"]').daterangepicker(
-{
-    locale: {
-      format: 'YYYY-MM-DD'
-    },
-    startDate: '<?php echo $new_start_date; ?>',
-    endDate: '<?php echo $new_end_date; ?>'
-}
-);
+<script type="text/javascript">
+$(function() {
+
+  $('input[name="daterange"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+  });
+
+  $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+
+});
 </script>
