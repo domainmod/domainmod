@@ -1,5 +1,17 @@
 DomainMOD CHANGELOG
 ===================
+v4.10.0    2018-05-27
+- Added date picker to all expiry date fields
+- Added DIR_TEMP constant to init.inc.php
+- Added /temp folder to .gitignore
+- Added date picker to all expiry date fields
+- Added a short version of the system requirements
+- Added File class
+- Updated how the date range picker functions
+- Updated type casting from (integer) to (int)
+- Fixed CVE-2018-11403
+- Fixed CVE-2018-11404
+
 v4.09.03    2018-04-09
 - Added ipify support for remote IP address reporting
 
