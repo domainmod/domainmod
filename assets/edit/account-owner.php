@@ -41,11 +41,11 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$oid = $_GET['oid'];
+$oid = (int) $_GET['oid'];
 
 $new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
-$new_oid = $_POST['new_oid'];
+$new_oid = (int) $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
