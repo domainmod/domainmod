@@ -25,14 +25,12 @@ class Database
 {
 
     public $cnxx;
-    public $log;
     private static $instance;
 
     private function __construct()
     {
-        $this->log = new Log('class.database');
-
         $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+
         $this->cnxx->exec("SET NAMES utf8");
         $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $this->cnxx->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
