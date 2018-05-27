@@ -23,6 +23,7 @@
 // PHP named constants
 define('DIR_ROOT', dirname(dirname(__FILE__)));
 define('DIR_INC', DIR_ROOT . '/_includes');
+define('DIR_TEMP', DIR_ROOT . '/temp');
 define('WEBROOT_THEME', '_includes/theme');
 define('EMAIL_ENCODING_TYPE', 'UTF-8'); // UTF-8 or iso-8859-1
 
