@@ -43,7 +43,7 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$sslpaid = $_GET['sslpaid'];
+$sslpaid = (int) $_GET['sslpaid'];
 $new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_email_address = $_POST['new_email_address'];
@@ -52,7 +52,7 @@ $new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
 $new_reseller_id = $_POST['new_reseller_id'];
 $new_notes = $_POST['new_notes'];
-$new_sslpaid = $_POST['new_sslpaid'];
+$new_sslpaid = (int) $_POST['new_sslpaid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
