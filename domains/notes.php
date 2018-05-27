@@ -35,7 +35,7 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$did = (integer)$_GET['did'];
+$did = (int) $_GET['did'];
 
 $stmt = $pdo->prepare("
     SELECT domain, notes

@@ -38,9 +38,9 @@ require_once DIR_INC . '/settings/assets-registrar-accounts.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$rid = (integer) $_GET['rid'];
-$raid = (integer) $_GET['raid'];
-$oid = (integer) $_GET['oid'];
+$rid = (int) $_GET['rid'];
+$raid = (int) $_GET['raid'];
+$oid = (int) $_GET['oid'];
 $export_data = $_GET['export_data'];
 
 if ($rid != '') { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else { $rid_string = ''; }

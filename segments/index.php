@@ -38,7 +38,7 @@ require_once DIR_INC . '/settings/segments-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = (integer) $_GET['segid'];
+$segid = (int) $_GET['segid'];
 $export_data = $_GET['export_data'];
 
 if ($export_data == "1") {

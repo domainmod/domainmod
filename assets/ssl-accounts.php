@@ -38,9 +38,9 @@ require_once DIR_INC . '/settings/assets-ssl-accounts.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslpid = (integer) $_GET['sslpid'];
-$sslpaid = (integer) $_GET['sslpaid'];
-$oid = (integer) $_GET['oid'];
+$sslpid = (int) $_GET['sslpid'];
+$sslpaid = (int) $_GET['sslpaid'];
+$oid = (int) $_GET['oid'];
 $export_data = $_GET['export_data'];
 
 if ($sslpid != '') { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }

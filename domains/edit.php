@@ -41,7 +41,7 @@ require_once DIR_INC . '/settings/domains-edit.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$did = (integer)$_REQUEST['did'];
+$did = (int) $_REQUEST['did'];
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];

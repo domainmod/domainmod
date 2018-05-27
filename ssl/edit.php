@@ -44,14 +44,14 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$sslcid = (integer)$_REQUEST['sslcid'];
-$new_domain_id = (integer)$_POST['new_domain_id'];
+$sslcid = (int) $_REQUEST['sslcid'];
+$new_domain_id = (int) $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
-$new_type_id = (integer)$_POST['new_type_id'];
-$new_ip_id = (integer)$_POST['new_ip_id'];
-$new_cat_id = (integer)$_POST['new_cat_id'];
+$new_type_id = (int) $_POST['new_type_id'];
+$new_ip_id = (int) $_POST['new_ip_id'];
+$new_cat_id = (int) $_POST['new_cat_id'];
 $new_expiry_date = $_POST['datepick'];
-$new_account_id = (integer)$_POST['new_account_id'];
+$new_account_id = (int) $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
