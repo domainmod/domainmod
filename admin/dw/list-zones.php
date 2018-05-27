@@ -42,11 +42,6 @@ $pdo = $deeb->cnxx;
 $domain = $_GET['domain'];
 $export_data = $_GET['export_data'];
 
-// Search Navigation Variables
-$numBegin = $_REQUEST['numBegin'];
-$begin = $_REQUEST['begin'];
-$num = $_REQUEST['num'];
-
 if ($_SESSION['s_dw_view_all'] == "1") {
 
     $where_clause = "";
