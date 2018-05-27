@@ -198,6 +198,31 @@ if ($current_db_version === '4.09.02') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.09.03 to 4.10.0
+if ($current_db_version === '4.09.03') {
+
+    $old_version = '4.09.03';
+    $new_version = '4.10.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
