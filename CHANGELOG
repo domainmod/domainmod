@@ -1,5 +1,15 @@
 DomainMOD CHANGELOG
 ===================
+v4.11.0    2018-08-29
+- Added DW table checks to prevent fatal errors
+- Added MYSQL_ATTR_USE_BUFFERED_QUERY true to PDO options
+- Added MySQL mode declaration during DB connection
+- Added MySQL mode to System Information page
+- Fixed Textarea field display on add SSL page
+- Fixed readOnlyCheck method
+- Fixed add segment URL
+- Fixed search_for search box code
+
 v4.10.0    2018-05-27
 - Added date picker to all expiry date fields
 - Added DIR_TEMP constant to init.inc.php
