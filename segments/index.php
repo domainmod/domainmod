@@ -219,7 +219,7 @@ $has_existing_segments = $pdo->query("
 
 if (!$has_existing_segments) { ?>
 
-    You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR><?php
+    You don't currently have any Segments. <a href="add.php">Click here to add one</a>.<BR><BR><?php
 
 } else { ?>
 
