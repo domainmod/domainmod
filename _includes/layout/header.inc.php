@@ -220,7 +220,7 @@
       <!-- search form -->
       <form action="<?php echo $web_root; ?>/domains/index.php" method="get" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="search_for" class="form-control" placeholder="Domain Keyword Search"<?php if ($search_for && $search_for != '') echo 'value="' . $search_for . '"'; ?>"'>
+          <input type="text" name="search_for" class="form-control" placeholder="Domain Keyword Search"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
