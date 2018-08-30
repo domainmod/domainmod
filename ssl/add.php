@@ -460,7 +460,7 @@ if ($result) { ?>
 
                 } elseif ($row->type_id == "3") { // Text Area
 
-                    echo $row->form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
+                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
 
                 } elseif ($row->type_id == "4") { // Date
 
