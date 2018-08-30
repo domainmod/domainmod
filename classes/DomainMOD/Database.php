@@ -35,6 +35,7 @@ class Database
         $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $this->cnxx->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         $this->cnxx->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->cnxx->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
     }
 
     public static function getInstance()
