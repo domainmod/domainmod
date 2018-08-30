@@ -175,22 +175,37 @@ class DwAccounts
             FROM `dw_accounts`")->fetchColumn();
     }
 
+    public function checkForAccountTable()
+    {
+        return $this->deeb->cnxx->query("SHOW TABLES LIKE 'dw_accounts'")->fetchColumn();
+    }
+
     public function checkForAccounts($domain)
     {
-        $pdo = $this->deeb->cnxx;
+        $table_exists = $this->checkForAccountTable();
 
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM dw_accounts
-            WHERE domain = :domain
-            LIMIT 1");
-        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
+        if ($table_exists) {
 
-        if ($result) {
+            $pdo = $this->deeb->cnxx;
 
-            return 1;
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM dw_accounts
+                WHERE domain = :domain
+                LIMIT 1");
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchColumn();
+
+            if ($result) {
+
+                return 1;
+
+            } else {
+
+                return 0;
+
+            }
 
         } else {
 

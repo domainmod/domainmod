@@ -125,22 +125,37 @@ class DwZones
             FROM `dw_dns_zones`")->fetchColumn();
     }
 
+    public function checkForZoneTable()
+    {
+        return $this->deeb->cnxx->query("SHOW TABLES LIKE 'dw_dns_zones'")->fetchColumn();
+    }
+
     public function checkForZones($domain)
     {
-        $pdo = $this->deeb->cnxx;
+        $table_exists = $this->checkForZoneTable();
 
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM dw_dns_zones
-            WHERE domain = :domain
-            LIMIT 1");
-        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
+        if ($table_exists) {
 
-        if ($result) {
+            $pdo = $this->deeb->cnxx;
 
-            return 1;
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM dw_dns_zones
+                WHERE domain = :domain
+                LIMIT 1");
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchColumn();
+
+            if ($result) {
+
+                return 1;
+
+            } else {
+
+                return 0;
+
+            }
 
         } else {
 
