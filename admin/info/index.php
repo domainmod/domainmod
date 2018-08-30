@@ -54,6 +54,7 @@ $pdo = $deeb->cnxx;
 <strong>PHP Version:</strong> <?php echo phpversion(); ?><BR>
 <strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log'); ?><BR>
 <strong>MySQL Version:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
+<strong>MySQL Mode:</strong> <?php echo $pdo->query('select @@sql_mode')->fetchColumn(); ?><BR>
 <BR>
 <?php
 list($null, $requirements, $null) = $system->getRequirements();
