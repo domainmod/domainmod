@@ -29,7 +29,8 @@ class Database
 
     private function __construct()
     {
-        $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
+        $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD,
+                               array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'));
 
         $this->cnxx->exec("SET NAMES utf8");
         $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
