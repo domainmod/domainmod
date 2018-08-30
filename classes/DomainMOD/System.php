@@ -269,8 +269,7 @@ class System
     {
         if ($_SESSION['s_read_only'] == '1') {
             $_SESSION['s_message_danger'] .= "You are not authorized to perform that action<BR>";
-            $temp_redirect_url = urlencode($redirect_url);
-            header('Location: ' . $temp_redirect_url);
+            header('Location: ' . $redirect_url);
             exit;
         }
     }
