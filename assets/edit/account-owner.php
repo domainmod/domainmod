@@ -88,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     $new_owner = $result->name;
     $new_notes = $result->notes;
@@ -104,6 +105,7 @@ if ($del == "1") {
     $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -119,6 +121,7 @@ if ($del == "1") {
     $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -134,6 +137,7 @@ if ($del == "1") {
     $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -149,6 +153,7 @@ if ($del == "1") {
     $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 

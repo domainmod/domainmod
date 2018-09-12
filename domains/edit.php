@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
+            $stmt->closeCursor();
 
             if ($result) {
 
@@ -316,6 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindValue('did', $did, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -591,6 +593,7 @@ if ($result) { ?>
                 $stmt->bindValue('did', $did, PDO::PARAM_INT);
                 $stmt->execute();
                 $result_data = $stmt->fetch();
+                $stmt->closeCursor();
                 $field_data = $result_data->{$row->field_name};
 
             }

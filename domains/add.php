@@ -119,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
                 $stmt->execute();
                 $result = $stmt->fetch();
+                $stmt->closeCursor();
 
                 if ($result) {
 
@@ -146,6 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindValue('tld', $tld, PDO::PARAM_STR);
                 $stmt->execute();
                 $result = $stmt->fetch();
+                $stmt->closeCursor();
 
                 if ($result) {
 

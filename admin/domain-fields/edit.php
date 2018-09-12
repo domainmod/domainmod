@@ -140,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         $stmt->bindValue('cdfid', $cdfid, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if ($result) {
 
@@ -180,6 +181,7 @@ if ($really_del == '1') {
             $stmt->bindValue('cdfid', $cdfid, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
+            $stmt->closeCursor();
 
             if ($result) {
 

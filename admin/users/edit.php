@@ -96,8 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
     $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
     $stmt->execute();
-
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -114,8 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
     $stmt->bindValue('user_id', $new_uid, PDO::PARAM_INT);
     $stmt->execute();
-
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($result) {
 
@@ -258,8 +258,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
               AND u.id = :user_id");
         $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
         $stmt->execute();
-
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if ($result) {
 

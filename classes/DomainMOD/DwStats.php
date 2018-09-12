@@ -137,9 +137,14 @@ class DwStats
 
     public function getServerTotals()
     {
-        $result = $this->deeb->cnxx->query("
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
             SELECT dw_accounts, dw_dns_zones, dw_dns_records
-            FROM dw_server_totals")->fetch();
+            FROM dw_server_totals");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         return array($result->dw_accounts, $result->dw_dns_zones, $result->dw_dns_records);
     }

@@ -49,6 +49,7 @@ class User
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         return $result->first_name . ' ' . $result->last_name;
     }

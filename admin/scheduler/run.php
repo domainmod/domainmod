@@ -52,8 +52,8 @@ if (DEMO_INSTALLATION != '1') {
         WHERE id = :id");
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();
-
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if (!$result) {
 

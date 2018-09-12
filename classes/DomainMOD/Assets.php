@@ -176,6 +176,7 @@ class Assets
         $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 

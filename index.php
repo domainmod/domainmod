@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
     $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if (!$result) {
 

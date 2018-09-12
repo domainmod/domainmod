@@ -113,9 +113,14 @@ class Email
         $days = '';
         $use_smtp = '';
 
-        $result = $this->deeb->cnxx->query("
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
             SELECT full_url, email_address, expiration_days, use_smtp
-            FROM settings")->fetch();
+            FROM settings");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 

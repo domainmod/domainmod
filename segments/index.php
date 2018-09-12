@@ -54,6 +54,7 @@ if ($export_data == "1") {
         $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if ($result) {
 

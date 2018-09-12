@@ -142,8 +142,8 @@ class AboveCom
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
         $stmt->execute();
-
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 

@@ -44,19 +44,28 @@ class Login
               AND active = '1'");
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
         $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
-        return $stmt->fetch();
+        return $result;
     }
 
     public function getSystemSettings()
     {
-        return $this->deeb->cnxx->query("
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
             SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
                 default_category_ssl, default_dns, default_host, default_ip_address_domains,
                 default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                 default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
                 expiration_days, local_php_log
-            FROM settings")->fetch();
+            FROM settings");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        return $result;
     }
 
     public function getUserSettings($user_id)
@@ -78,8 +87,10 @@ class Login
             WHERE user_id = :user_id");
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
         $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
-        return $stmt->fetch();
+        return $result;
     }
 
     public function setLastLogin($user_id)

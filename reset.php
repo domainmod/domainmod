@@ -54,8 +54,8 @@ if ($user_identifier != '') {
     $stmt->bindValue('username', $user_identifier, PDO::PARAM_STR);
     $stmt->bindValue('email_address', $user_identifier, PDO::PARAM_STR);
     $stmt->execute();
-
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     if (!$result) {
 

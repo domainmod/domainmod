@@ -85,6 +85,7 @@ class Currency
         $stmt->bindValue('currency', $currency, \PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         return array($result->name, $result->symbol, $result->symbol_order, $result->symbol_space);
     }

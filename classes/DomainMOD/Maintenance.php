@@ -218,6 +218,7 @@ class Maintenance
         $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if ($result) {
 

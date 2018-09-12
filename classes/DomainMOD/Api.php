@@ -73,6 +73,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
@@ -100,6 +101,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
@@ -127,6 +129,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
@@ -155,6 +158,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
@@ -182,6 +186,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
@@ -209,6 +214,7 @@ class Api
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 

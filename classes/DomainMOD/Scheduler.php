@@ -100,8 +100,10 @@ class Scheduler
             ORDER BY sort_order ASC");
         $stmt->bindValue('task_id', $task_id, \PDO::PARAM_INT);
         $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
-        return $stmt->fetch();
+        return $result;
     }
 
     public function createActive($active, $task_id)

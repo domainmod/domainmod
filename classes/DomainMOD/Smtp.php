@@ -93,9 +93,14 @@ class Smtp
         $username = '';
         $password = '';
 
-        $result = $this->deeb->cnxx->query("
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
             SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password
-            FROM settings")->fetch();
+            FROM settings");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 

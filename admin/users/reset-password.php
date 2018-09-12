@@ -53,6 +53,7 @@ if ($new_username != '') {
     $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
     $stmt->execute();
     $result = $stmt->fetch();
+    $stmt->closeCursor();
 
     // Apparently doing a second query to get the row count is the best approach with PDO, which is kind of ridiculous
     $stmt = $pdo->prepare("

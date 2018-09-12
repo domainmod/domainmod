@@ -110,10 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     } else {
 
-        $result = $pdo->query("
+        $stmt = $pdo->prepare("
             SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
                 smtp_email_address, smtp_username, smtp_password, expiration_days, debug_mode, local_php_log
-            FROM settings")->fetch();
+            FROM settings");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if ($result) {
 

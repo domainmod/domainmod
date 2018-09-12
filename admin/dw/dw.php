@@ -61,6 +61,7 @@ if ($action != "") {
             $stmt->bindValue('id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
+            $stmt->closeCursor();
 
             if ($result) {
 
@@ -91,6 +92,7 @@ if ($action != "") {
             $stmt->bindValue('id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
+            $stmt->closeCursor();
 
             if ($result) {
 
@@ -236,12 +238,15 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
 }
 
-$result = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT build_status_overall, build_start_time_overall, build_end_time_overall, build_time_overall,
         has_ever_been_built_overall
     FROM dw_servers
     ORDER BY build_end_time_overall DESC
-    LIMIT 1")->fetch();
+    LIMIT 1");
+$stmt->execute();
+$result = $stmt->fetch();
+$stmt->closeCursor();
 
 if (!$result) {
 
@@ -538,9 +543,12 @@ if ($result) {
             </thead>
             <tbody><?php
 
-        $result2 = $pdo->query("
+        $stmt2 = $pdo->prepare("
             SELECT dw_servers, dw_accounts, dw_dns_zones, dw_dns_records
-            FROM dw_server_totals")->fetch();
+            FROM dw_server_totals");
+        $stmt2->execute();
+        $result2 = $stmt2->fetch();
+        $stmt2->closeCursor();
 
         if ($result2) {
 

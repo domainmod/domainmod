@@ -44,6 +44,7 @@ $stmt = $pdo->prepare("
 $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetch();
+$stmt->closeCursor();
 
 if ($result) {
 

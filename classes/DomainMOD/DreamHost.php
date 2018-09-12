@@ -126,12 +126,12 @@ class DreamHost
 
     public function getFullInfo($account_id, $domain)
     {
-        $pdo = $this->deeb->cnxx;
-
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';
         $autorenewal_status = '';
+
+        $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
@@ -142,8 +142,8 @@ class DreamHost
         $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
         $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
         $stmt->execute();
-
         $result = $stmt->fetch();
+        $stmt->closeCursor();
 
         if (!$result) {
 
