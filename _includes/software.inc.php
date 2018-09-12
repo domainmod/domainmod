@@ -21,7 +21,7 @@
 ?>
 <?php
 define('SOFTWARE_TITLE', 'DomainMOD');
-define('SOFTWARE_VERSION', '4.11.0');
+define('SOFTWARE_VERSION', '4.11.01');
 define('WEB_ROOT', $web_root);
 define('DB_HOSTNAME', $dbhostname);
 define('DB_NAME', $dbname);
