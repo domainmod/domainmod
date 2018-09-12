@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.11.01   2018-09-11
+- Implemented Unbuffered Query fix
+
 v4.11.0    2018-08-29
 - Added DW table checks to prevent fatal errors
 - Added MYSQL_ATTR_USE_BUFFERED_QUERY true to PDO options
