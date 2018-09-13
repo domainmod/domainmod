@@ -45,7 +45,7 @@ $system->installCheck();
 <head>
     <?php
     if ($page_title != "") { ?>
-        <title><?php echo $system->pageTitle($page_title); ?></title><?php
+        <title><?php echo $layout->pageTitle($page_title); ?></title><?php
     } else { ?>
         <title><?php echo SOFTWARE_TITLE; ?></title><?php
     } ?>

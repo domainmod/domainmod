@@ -26,12 +26,12 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$assets = new DomainMOD\Assets();
 $deeb = DomainMOD\Database::getInstance();
-$layout = new DomainMOD\Layout();
-$queue = new DomainMOD\DomainQueue();
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$assets = new DomainMOD\Assets();
+$queue = new DomainMOD\DomainQueue();
 $user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
@@ -491,7 +491,7 @@ if ($really_deld == '1' && $domain_id != '') {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">

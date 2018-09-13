@@ -27,6 +27,7 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/settings/invalid-page.inc.php';
@@ -35,7 +36,7 @@ require_once DIR_INC . '/debug.inc.php';
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">

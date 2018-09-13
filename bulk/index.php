@@ -26,15 +26,15 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$date = new DomainMOD\Date();
 $deeb = DomainMOD\Database::getInstance();
-$domain = new DomainMOD\Domain();
-$form = new DomainMOD\Form();
-$layout = new DomainMOD\Layout();
+$system = new DomainMOD\System();
 $log = new DomainMOD\Log('/bulk/index.php');
 $maint = new DomainMOD\Maintenance();
-$system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
+$date = new DomainMOD\Date();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
+$domain = new DomainMOD\Domain();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -1936,7 +1936,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
     <?php echo $layout->jumpMenu(); ?>

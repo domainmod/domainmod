@@ -26,9 +26,9 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$form = new DomainMOD\Form();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <?php
     if ($page_title != "") { ?>
-        <title><?php echo $system->pageTitle($page_title); ?></title><?php
+        <title><?php echo $layout->pageTitle($page_title); ?></title><?php
     } else { ?>
         <title><?php echo SOFTWARE_TITLE; ?></title><?php
     } ?>

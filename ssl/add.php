@@ -27,10 +27,12 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
-$form = new DomainMOD\Form();
-$log = new DomainMOD\Log('/ssl/add.php');
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/ssl/add.php');
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
+
 $timestamp = $time->stamp();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
@@ -278,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">

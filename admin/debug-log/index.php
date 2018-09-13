@@ -27,9 +27,9 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
-$layout = new DomainMOD\Layout();
-$log = new DomainMOD\Log('/admin/debug-log/index.php');
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/debug-log/index.php');
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
@@ -101,7 +101,7 @@ if ($export_data == '1') {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">

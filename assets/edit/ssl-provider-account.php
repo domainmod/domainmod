@@ -26,12 +26,13 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$assets = new DomainMOD\Assets();
 $deeb = DomainMOD\Database::getInstance();
-$form = new DomainMOD\Form();
-$log = new DomainMOD\Log('/assets/edit/ssl-provider-account.php');
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/ssl-provider-account.php');
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
+$assets = new DomainMOD\Assets();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -231,7 +232,7 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">

@@ -27,13 +27,14 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
+$system = new DomainMOD\System();
+$log = new DomainMOD\Log('/index.php');
+$maint = new DomainMOD\Maintenance();
+$layout = new DomainMOD\Layout();
+$login = new DomainMOD\Login();
+$time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $format = new DomainMOD\Format();
-$log = new DomainMOD\Log('/index.php');
-$login = new DomainMOD\Login();
-$maint = new DomainMOD\Maintenance();
-$system = new DomainMOD\System();
-$time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
@@ -118,7 +119,7 @@ $new_password = "";
 <head>
     <?php
     if ($page_title != "") { ?>
-        <title><?php echo $system->pageTitle($page_title); ?></title><?php
+        <title><?php echo $layout->pageTitle($page_title); ?></title><?php
     } else { ?>
         <title><?php echo SOFTWARE_TITLE; ?></title><?php
     } ?>

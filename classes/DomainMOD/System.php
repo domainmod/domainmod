@@ -213,11 +213,6 @@ class System
                 href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
     }
 
-    public function pageTitle($page_title)
-    {
-        return SOFTWARE_TITLE . ' :: ' . $page_title;
-    }
-
     public function checkExistingAssets()
     {
         $queryB = new QueryBuild();

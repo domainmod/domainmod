@@ -26,10 +26,11 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$dashboard = new DomainMOD\Dashboard();
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$dashboard = new DomainMOD\Dashboard();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -41,7 +42,7 @@ $pdo = $deeb->cnxx;
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini" onLoad="document.forms[0].elements[0].focus()">

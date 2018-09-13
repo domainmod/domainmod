@@ -26,15 +26,15 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+$deeb = DomainMOD\Database::getInstance();
+$system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
+$date = new DomainMOD\Date();
+$time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
-$date = new DomainMOD\Date();
-$deeb = DomainMOD\Database::getInstance();
-$form = new DomainMOD\Form();
-$layout = new DomainMOD\Layout();
-$system = new DomainMOD\System();
-$time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -581,7 +581,7 @@ if ($export_data == "1") {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
     <?php echo $layout->jumpMenu(); ?>

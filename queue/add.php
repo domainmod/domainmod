@@ -27,12 +27,12 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
-$domain = new DomainMOD\Domain();
-$form = new DomainMOD\Form();
-$layout = new DomainMOD\Layout();
-$log = new DomainMOD\Log('/queue/add.php');
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/queue/add.php');
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
+$domain = new DomainMOD\Domain();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -384,7 +384,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>

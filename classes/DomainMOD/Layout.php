@@ -24,6 +24,11 @@ namespace DomainMOD;
 class Layout
 {
 
+    public function pageTitle($page_title)
+    {
+        return SOFTWARE_TITLE . ' :: ' . $page_title;
+    }
+
     public function jumpMenu()
     {
         ob_start(); ?>
