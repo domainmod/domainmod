@@ -13,18 +13,16 @@
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="../css/highlight.css">
   
   <script>
     // Current page data
     var mkdocs_page_name = "Troubleshooting";
     var mkdocs_page_input_path = "troubleshooting.md";
-    var mkdocs_page_url = "/troubleshooting/";
+    var mkdocs_page_url = null;
   </script>
   
-  <script src="../js/jquery-2.1.1.min.js"></script>
-  <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script> 
   
 </head>
 
@@ -32,136 +30,105 @@
 
   <div class="wy-grid-for-nav">
 
-  
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-
-	<div class="wy-side-nav-search">
-	<!---->
-		<!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
-	<!---->
+      <div class="wy-side-nav-search">
+        <!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search The User Guide" />
+    <input type="text" name="q" placeholder="Search the User Guide" title="Search the User Guide" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        <ul class="current">
+	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="..">Home</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../getting-started/">Getting Started</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../getting-started/">Getting Started</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../first-run/">First Run</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../first-run/">First Run</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../upgrading/">Upgrading</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../upgrading/">Upgrading</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../creating-assets/">Creating Assets</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../creating-assets/">Creating Assets</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../adding-domains/">Adding Domains</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../adding-domains/">Adding Domains</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../domain-queue/">Domain Queue</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../domain-queue/">Domain Queue</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../bulk-updater/">Bulk Updater</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../bulk-updater/">Bulk Updater</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../administration/">Administration</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../administration/">Administration</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../data-warehouse/">Data Warehouse</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../data-warehouse/">Data Warehouse</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../faq/">Frequently Asked Questions</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../faq/">Frequently Asked Questions</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../conduct/">Code of Conduct</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../conduct/">Code of Conduct</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Troubleshooting</a>
-        
-            <ul>
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Troubleshooting</a>
+    <ul class="subnav">
             
-                <li class="toctree-l3"><a href="#installation">Installation</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#upgrading">Upgrading</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#usage">Usage</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#debugging">Debugging</a></li>
-                
-            
-            </ul>
-        
-    </li>
-<li>
+    <li class="toctree-l2"><a href="#installation">Installation</a></li>
+    
+
+    <li class="toctree-l2"><a href="#upgrading">Upgrading</a></li>
+    
+
+    <li class="toctree-l2"><a href="#usage">Usage</a></li>
+    
+
+    <li class="toctree-l2"><a href="#debugging">Debugging</a></li>
+    
+
+    </ul>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../support/">Support</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../support/">Support</a>
+	    </li>
           
         </ul>
       </div>
@@ -174,12 +141,11 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
         <!--<a href="..">DomainMOD User Guide</a>-->
-        <a href="..">User Guide</a>
+        <a href="">User Guide</a>
       </nav>
 
       
-
-	  <div class="wy-nav-content">
+      <div class="wy-nav-content">
 
         <span class="domainmod-logo">
           <a href="https://domainmod.org"><img width="264" height="40" src="../img/logo.png"></a>
@@ -329,7 +295,7 @@
 <p>Look for the heading named <strong>PHP Error Log Location</strong>. This will show you the location of the PHP error log on your web server.</p>
 </li>
 </ol>
-<p>Once you have both your debugging log and PHP error log send an email to <a href="../debugging@domainmod.org">debugging@domainmod.org</a> and attach the log files. Please also include the URL to your support forum post or issue tracker ticket so that we can determine the issue you're contacting us about.</p>
+<p>Once you have both your debugging log and PHP error log send an email to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;">&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;</a> and attach the log files. Please also include the URL to your support forum post or issue tracker ticket so that we can determine the issue you're contacting us about.</p>
 <p>We will review your logs and get back to you as soon as we can!</p>
 <p>Also, if you haven't already, make sure you disable Debugging Mode.</p>
                 
@@ -350,24 +316,26 @@
   <hr/>
 
   <div role="contentinfo">
+    <!-- Copyright etc -->
     
   </div>
 
-  <span style="font-family: 'Verdana'; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
+  <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
   Copyright (c) 2010-2018 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+
 </footer>
-	  
+      
         </div>
       </div>
 
     </section>
-    
+
   </div>
 
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a href="https://github.com/domainmod/userguide/" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../conduct/" style="color: #fcfcfc;">&laquo; Previous</a></span>
@@ -377,7 +345,9 @@
       
     </span>
 </div>
-    <script src="../js/theme.js"></script>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
 
 </body>
 </html>

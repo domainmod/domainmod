@@ -1,4 +1,4 @@
-/*
+    /*
  * Sphinx doesn't have support for section dividers like we do in
  * MkDocs, this styles the section titles in the nav
  *
@@ -22,10 +22,25 @@
  * area doesn't scroll.
  *
  * https://github.com/mkdocs/mkdocs/pull/202
+ *
+ * Builds upon pull 202 https://github.com/mkdocs/mkdocs/pull/202
+ * to make toc scrollbar end before navigations buttons to not be overlapping.
  */
 .wy-nav-side {
-    height: 100%;
+    height: calc(100% - 45px);
     overflow-y: auto;
+    min-height: 0;
+}
+
+.rst-versions{
+    border-top: 0;
+    height: 45px;
+}
+
+@media screen and (max-width: 768px) {
+    .wy-nav-side {
+        height: 100%;
+    }
 }
 
 /*
@@ -113,8 +128,11 @@ pre .cs, pre .c {
  * Additions specific to the search functionality provided by MkDocs
  */
 
-.search-results article {
+.search-results {
     margin-top: 23px;
+}
+
+.search-results article {
     border-top: 1px solid #E1E4E5;
     padding-top: 24px;
 }
@@ -161,7 +179,7 @@ form .search-query {
 /*
  * Account for wide tables which go off the side.
  * Override borders to avoid wierdness on narrow tables.
- * 
+ *
  * https://github.com/mkdocs/mkdocs/issues/834
  * https://github.com/mkdocs/mkdocs/pull/1034
  */
@@ -171,18 +189,18 @@ form .search-query {
     display: block;
     border: none;
 }
+
 td, th {
    border: 1px solid #e1e4e5 !important; /* csslint allow: important */
    border-collapse: collapse;
 }
-
 
 /* Custom CSS for DomainMOD theme */
 html {
     overflow-y: scroll;
 }
 p {
-    font-family: "Verdana";
+    font-family: "Verdana", sans-serif;
     line-height: 18px;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 12px 0px;
@@ -249,7 +267,9 @@ ol li:not(:last-child) {
     padding-top: 10px;
 }
 .rst-versions{
+    background: #222c32;
     border-top:solid 0px #222c32;
+    padding-top: 4px;
     cursor: auto;
 }
 .rst-versions .rst-current-version {
