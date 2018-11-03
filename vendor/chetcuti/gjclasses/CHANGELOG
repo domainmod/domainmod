@@ -1,0 +1,82 @@
+GJClasses CHANGELOG
+===================
+v0.16.0    2018-11-03
+- Added Time class example
+- Added Export class example
+- Code cleanup
+
+v0.15.0    2018-10-28
+- Added System class
+- Added Format class
+- Added Format class example
+- Added Push class
+- Added Push class example
+- Added Pushbullet class
+- Added Pushbullet class example
+
+v0.14.0    2018-10-28
+- Added Mail class
+- Added Mail class example
+- Added MailPhp class
+- Added MailPhp class example
+- Updated named constant names
+- Updated class examples
+- Cleaned up MailSmtp send code
+
+v0.13.0    2018-10-27
+- Renamed Smtp class to MailSmtp
+- Updated MailSmtp class
+- Updated MailSmtp class example
+
+v0.12.0    2018-10-26
+- Added Smtp class
+- Added Smtp class example
+- Renamed named constants in init.inc.php
+
+v0.11.0    2018-10-25
+- Added Final Destination Domain Apex to the results
+
+v0.10.0    2018-10-24
+- Updated HttpHeader rules
+
+v0.9.0    2018-10-22
+- Updated HttpHeader rules
+
+v0.8.0    2018-10-19
+- Updated HttpHeader class
+
+v0.7.0    2018-10-18
+- Added HttpHeader class
+- Added HttpHeader class example
+
+v0.6.0    2018-09-10
+- Added Ping class
+- Added Ping class example
+- Added composer.lock file
+- Added GJC_DIR_TEMP declaration to init.inc.php
+- Updated location of log file
+
+v0.5.0    2018-04-13
+- Added convertAmount method to Money class
+
+v0.4.0    2018-04-13
+- Changed PHP version requirement from 5.3 to 5.4
+- Added PHPMailer (5.2.*) requirement via Composer
+- Added Pushbullet for PHP (3.*) requirement via Composer
+- Added Remote class
+- Added Money class
+- Added Money class example
+
+v0.3.0    2018-04-13
+- Add Log class
+- Add Log class table SQL
+- Add Log class example
+- Add Time class
+- Add Export class
+- Add init.inc.php
+
+v0.2.0    2018-04-12
+- Add Database class
+
+v0.1.0    2018-04-11
+- Initial release
