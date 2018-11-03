@@ -20,8 +20,12 @@
  */
 ?>
 <?php
-define('DEMO_URL', 'demo.domainmod.org');
+if ($_SERVER['HTTP_HOST'] == 'demo.domainmod.org') {
 
-if ($_SERVER['HTTP_HOST'] == DEMO_URL) {
-    define('DEMO_INSTALLATION', '1');
+    define('DEMO_INSTALLATION', 1);
+
+} else {
+
+    define('DEMO_INSTALLATION', 0);
+
 }

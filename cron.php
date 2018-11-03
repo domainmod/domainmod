@@ -39,7 +39,7 @@ require_once DIR_INC . '/debug.inc.php';
 
 $pdo = $deeb->cnxx;
 
-if (DEMO_INSTALLATION != '1') {
+if (DEMO_INSTALLATION !== 1) {
 
     $pdo->query("UPDATE scheduler SET is_running = '0'");
 

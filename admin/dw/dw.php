@@ -248,13 +248,13 @@ $stmt->execute();
 $result = $stmt->fetch();
 $stmt->closeCursor();
 
+$result_count = $pdo->query("
+    SELECT count(*)
+    FROM dw_servers")->fetchColumn();
+
 if (!$result) {
 
     $no_results_build_info = 1;
-
-} else {
-
-    $temp_build_info = count($result);
 
 }
 
@@ -263,7 +263,7 @@ if ($no_results_build_info !== 1) { ?>
     <BR><h3>Build Information</h3>
     <table id="<?php echo $slug; ?>-build" class="<?php echo $datatable_class; ?>"><?php
 
-    if ($temp_build_info == 0) {
+    if ($result_count == 0) {
 
         echo "<BR>You don't currently have any servers setup in your Data Warehouse. <a href=\"add-server.php\">Click here to add one</a>.";
 
