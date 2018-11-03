@@ -86,7 +86,7 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 5. Do not give the URL to anyone who does not need to access DomainMOD. You should treat the URL like a password.
 
-6. Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerability that are found and fixed.
+6. Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerabilities that are found and fixed.
 
 Upgrading
 ---------
