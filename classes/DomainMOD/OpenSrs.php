@@ -152,7 +152,7 @@ EOD;
 
         if ($api_call_status == '1') {
 
-            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+            foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
                 if (preg_match('/<item key="name">(.*)<\/item>/', $xml_line, $match)) {
                     $domain_list[] = $match[1];
@@ -187,7 +187,7 @@ EOD;
 
             $dns_result = array();
 
-            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+            foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
                 // get expiration date
                 if (preg_match('/<item key="expiredate">(.*)<\/item>/', $xml_line, $match)) {
@@ -222,7 +222,7 @@ EOD;
 
         if ($api_call_status == '1') {
 
-            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+            foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
                 // get privacy status
                 if (preg_match('/<item key="state">(.*)<\/item>/', $xml_line, $match)) {
@@ -245,7 +245,7 @@ EOD;
     public function apiStatus($api_results)
     {
         $status = '';
-        foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
             if (preg_match('/<item key="response_code">200<\/item>/', $xml_line)) {
                 $status = '1';
             }

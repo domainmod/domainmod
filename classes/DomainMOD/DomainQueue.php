@@ -510,7 +510,7 @@ class DomainQueue
             $count = 0;
 
             // Make sure DNS servers were returned
-            foreach($dns_servers as $server) {
+            foreach ($dns_servers as $server) {
 
                 $new_servers[$count++] = strtolower($server);
 

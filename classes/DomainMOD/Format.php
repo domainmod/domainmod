@@ -41,7 +41,7 @@ class Format
         $clean_domain_list = $this->stripSpacing($raw_domain_list);
         $domain_list = explode("\r\n", $clean_domain_list);
         $new_domain_list = array();
-        foreach($domain_list as $value) {
+        foreach ($domain_list as $value) {
             $new_domain_list[] = urlencode($this->stripSpacing($value));
         }
         return array_unique($new_domain_list);
@@ -50,7 +50,7 @@ class Format
     public function formatForMysql($domain_list)
     {
         $new_domain_list = array();
-        foreach($domain_list as $value) {
+        foreach ($domain_list as $value) {
             $new_domain_list[] = $value;
         }
         $list_formatted = implode("\r\n", $new_domain_list);

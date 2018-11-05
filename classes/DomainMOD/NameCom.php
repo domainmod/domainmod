@@ -72,7 +72,7 @@ class NameCom
         // confirm that the api call was successful
         if ($array_results['result']['message'] == "Command Successful") {
 
-            foreach(array_keys($array_results['domains']) as $domain) {
+            foreach (array_keys($array_results['domains']) as $domain) {
 
                 $domain_list[] = $domain;
                 $domain_count++;
