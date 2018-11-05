@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $domain = new DomainMOD\Domain();
 
-                while (list($key, $new_domain) = each($domain_array)) {
+                foreach ($domain_array as $key => $new_domain) {
 
                     if (!$domain->checkFormat($new_domain)) {
                         echo 'invalid domain ' . $key;

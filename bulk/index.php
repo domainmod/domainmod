@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $date = new DomainMOD\Date();
 
                 // cycle through domains here
-                while (list($key, $new_domain) = each($domain_array)) {
+                foreach ($domain_array as $key => $new_domain) {
 
                     $stmt = $pdo->prepare("
                         SELECT domain
@@ -230,10 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         }
 
-                        reset($domain_array);
-
                         // cycle through domains here
-                        while (list($key, $new_domain) = each($domain_array)) {
+                        foreach ($domain_array as $key => $new_domain) {
 
                             $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
@@ -1924,7 +1922,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             $done = "1";
-            reset($domain_array);
             $new_data_unformatted = implode(", ", $domain_array);
 
         }

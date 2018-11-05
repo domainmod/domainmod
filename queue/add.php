@@ -248,10 +248,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $date = new DomainMOD\Date();
 
-                reset($domain_array);
-
                 // cycle through domains here
-                while (list($key, $new_domain) = each($domain_array)) {
+                foreach ($domain_array as $key => $new_domain) {
 
                     $stmt = $pdo->prepare("
                         SELECT domain
@@ -269,10 +267,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                reset($domain_array);
-
                 // cycle through domains here
-                while (list($key, $new_domain) = each($domain_array)) {
+                foreach ($domain_array as $key => $new_domain) {
 
                     $stmt = $pdo->prepare("
                         SELECT domain
@@ -322,10 +318,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         }
 
-                        reset($domain_array);
-
                         // cycle through domains here
-                        while (list($key, $new_domain) = each($domain_array)) {
+                        foreach ($domain_array as $key => $new_domain) {
 
                             $domain_temp = new DomainMOD\Domain();
                             $new_tld = $domain_temp->getTld($new_domain);

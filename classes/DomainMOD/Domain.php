@@ -41,7 +41,7 @@ class Domain
         $invalid_count = 0;
         $result_message = '';
 
-        while (list($key, $domain) = each($lines)) {
+        foreach ($lines as $key => $domain) {
 
             if (!$this->checkFormat($domain)) {
 
