@@ -2384,7 +2384,7 @@ if ($result) { ?>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                         <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
-                            <a href="edit.php?did=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
+                            <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>">.<?php echo $row->tld; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
