@@ -3,13 +3,6 @@ namespace GJClasses;
 
 class Ping
 {
-    public $log;
-
-    public function __construct()
-    {
-        $this->log = new Log('class.ping');
-    }
-
     public function ping($host)
     {
         $is_valid_ip = $this->isValidIp($host);

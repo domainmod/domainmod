@@ -3,14 +3,7 @@ namespace GJClasses;
 
 class Remote
 {
-    public $log;
-
-    public function __construct()
-    {
-        $this->log = new Log('class.remote');
-    }
-
-    public function getFileContents($file_title, $log_severity, $filename)
+    public function getFileContents($filename)
     {
         if (ini_get('allow_url_fopen') && extension_loaded('openssl')) {
 
@@ -22,10 +15,7 @@ class Remote
 
         } else {
 
-            $log_message = 'Unable to get file contents';
-            $log_extra = array('File Title' => $file_title, 'Filename' => $filename);
-            $this->log->{$log_severity}($log_message, $log_extra);
-            return $log_message;
+            return false;
 
         }
     }
@@ -49,10 +39,7 @@ class Remote
 
         } else {
 
-            $log_message = 'Unable to determine URI scheme';
-            $log_extra = array('Filename' => $filename);
-            $this->log->critical($log_message, $log_extra);
-            return $log_message;
+            return false;
 
         }
     }

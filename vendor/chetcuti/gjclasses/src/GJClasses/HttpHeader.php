@@ -3,13 +3,6 @@ namespace GJClasses;
 
 class HttpHeader
 {
-    public $log;
-
-    public function __construct()
-    {
-        $this->log = new Log('class.httpheader');
-    }
-
     public function process($domain)
     {
         $headers = $this->retrieve($domain);

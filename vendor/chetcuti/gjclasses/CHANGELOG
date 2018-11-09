@@ -1,5 +1,13 @@
 GJClasses CHANGELOG
 ===================
+v0.18.0    2018-11-08
+- Updated project dependencies
+
+v0.17.0    2018-11-08
+- Removed logging from all classes but Log
+- Removed unused $file_title from getFileContents
+- Code cleanup
+
 v0.16.0    2018-11-03
 - Added Time class example
 - Added Export class example
