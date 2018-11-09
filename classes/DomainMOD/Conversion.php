@@ -49,7 +49,8 @@ class Conversion
 
         foreach ($result as $row) {
 
-            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConversionRate($row->currency, $default_currency);
+            $money = new \GJClasses\Money();
+            $conversion_rate = $row->currency == $default_currency ? 1 : $money->getConvRate($row->currency, $default_currency);
 
             $bind_currency_id = $row->id;
             $stmt->execute();
