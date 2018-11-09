@@ -2185,9 +2185,9 @@ if ($result) { ?>
                             } else {
                                 echo "df_a";
                             }
-                            ?>&from_dropdown=1" style="color:#000000;">Fee</a>
+                            ?>&from_dropdown=1" style="color:#000000;">Fee (<?php echo $_SESSION['s_default_currency']; ?>)</a>
                         <?php } else { ?>
-                                Fee
+                                Fee (<?php echo $_SESSION['s_default_currency']; ?>)
                         <?php } ?>
                     </th>
                 <?php } ?>
