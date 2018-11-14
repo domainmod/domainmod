@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
 {
     public static $prefixLengthsPsr4 = array (
+        'd' => 
+        array (
+            'donatj\\Pushover\\' => 16,
+        ),
         'P' => 
         array (
             'Pushbullet\\' => 11,
@@ -26,6 +30,10 @@ class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
     );
 
     public static $prefixDirsPsr4 = array (
+        'donatj\\Pushover\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/donatj/pushover/src',
+        ),
         'Pushbullet\\' => 
         array (
             0 => __DIR__ . '/..' . '/ivkos/pushbullet/src/Pushbullet',
