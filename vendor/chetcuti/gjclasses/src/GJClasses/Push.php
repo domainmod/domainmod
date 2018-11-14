@@ -1,4 +1,5 @@
 <?php
+
 namespace GJClasses;
 
 class Push
@@ -10,12 +11,17 @@ class Push
         $this->service = $service;
     }
 
-    public function push($api_key, $type, $subject, $content, $url)
+    public function push($api_key, $user_key, $subject, $content, $url)
     {
         if ($this->service == 'pushbullet') {
 
             $push = new Pushbullet();
-            $result_message = $push->push($api_key, $type, $subject, $content, $url);
+            $result_message = $push->push($api_key, $subject, $content, $url);
+
+        } elseif ($this->service == 'pushover') {
+
+            $push = new Pushover();
+            $result_message = $push->push($api_key, $user_key, $subject, $content, $url);
 
         } else {
 
@@ -24,6 +30,11 @@ class Push
         }
 
         return $result_message;
+    }
+
+    public function getPushType($url)
+    {
+        return (isset($url) && $url != '') ? 'url' : 'note';
     }
 
 }

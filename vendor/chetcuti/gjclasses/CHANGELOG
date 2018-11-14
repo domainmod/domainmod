@@ -1,5 +1,19 @@
 GJClasses CHANGELOG
 ===================
+v0.21.0    2018-11-11
+- Separated Email & Push Subjects (Notify Class)
+
+v0.20.0    2018-11-10
+- Added Notify class
+- Added Notify class example
+
+v0.19.0    2018-11-10
+- Added donatj/pushover to Composer requirements
+- Added Pushover class
+- Added Pushover class example
+- Added Pushover support to Push class
+- Cleaned up Pushbullet Class and example
+
 v0.18.0    2018-11-08
 - Updated project dependencies
 

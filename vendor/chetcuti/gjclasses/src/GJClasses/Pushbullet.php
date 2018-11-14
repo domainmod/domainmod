@@ -1,10 +1,14 @@
 <?php
+
 namespace GJClasses;
 
 class Pushbullet
 {
-    public function push($api_key, $type, $subject, $content, $url)
+    public function push($api_key, $subject, $content, $url)
     {
+        $push = new \GJClasses\Push('pushbullet');
+        $type = $push->getPushType($url);
+
         if ($type == 'note') {
 
             $message = $this->pushNote($api_key, $subject, $content);
