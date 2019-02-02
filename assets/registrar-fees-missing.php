@@ -30,7 +30,6 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
