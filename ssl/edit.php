@@ -32,6 +32,8 @@ $log = new DomainMOD\Log('/ssl/edit.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 $assets = new DomainMOD\Assets();
 
 $timestamp = $time->stamp();
@@ -48,14 +50,14 @@ $really_del = $_GET['really_del'];
 
 $sslcid = (int) $_REQUEST['sslcid'];
 $new_domain_id = (int) $_POST['new_domain_id'];
-$new_name = $_POST['new_name'];
+$new_name = $sanitize->text($_POST['new_name']);
 $new_type_id = (int) $_POST['new_type_id'];
 $new_ip_id = (int) $_POST['new_ip_id'];
 $new_cat_id = (int) $_POST['new_cat_id'];
 $new_expiry_date = $_POST['datepick'];
 $new_account_id = (int) $_POST['new_account_id'];
-$new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_active = (int) $_POST['new_active'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 // Custom Fields
 $result = $pdo->query("
@@ -387,7 +389,7 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_name', 'Host / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
 echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
@@ -502,7 +504,7 @@ if ($new_notes != '') {
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name

@@ -29,6 +29,8 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -37,8 +39,8 @@ require_once DIR_INC . '/settings/install.email.admin.inc.php';
 $system->loginCheck();
 $system->installCheck();
 
-$new_admin_email1 = $_POST['new_admin_email1'];
-$new_admin_email2 = $_POST['new_admin_email2'];
+$new_admin_email1 = $sanitize->text($_POST['new_admin_email1']);
+$new_admin_email2 = $sanitize->text($_POST['new_admin_email2']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -82,8 +84,8 @@ This email address will be used for the first administrator account, which will 
 <BR>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_admin_email1', 'Enter Email', '', $new_admin_email1, '100', '', '', '', '');
-echo $form->showInputText('new_admin_email2', 'Confirm Email', '', $new_admin_email2, '100', '', '', '', '');
+echo $form->showInputText('new_admin_email1', 'Enter Email', '', $unsanitize->text($new_admin_email1), '100', '', '', '', '');
+echo $form->showInputText('new_admin_email2', 'Confirm Email', '', $unsanitize->text($new_admin_email2), '100', '', '', '', '');
 ?>
 <a href="../email-system/"><?php echo $layout->showButton('button', 'Go Back'); ?></a>
 <?php

@@ -29,6 +29,8 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -44,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_system_email']) {
 
 } else {
 
-    $new_system_email1 = $_POST['new_system_email1'];
-    $new_system_email2 = $_POST['new_system_email2'];
+    $new_system_email1 = $sanitize->text($_POST['new_system_email1']);
+    $new_system_email2 = $sanitize->text($_POST['new_system_email2']);
 
 }
 
@@ -91,8 +93,8 @@ This email address will be used in various locations by the system, such as the 
 <BR>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_system_email1', 'Enter Email', '', $new_system_email1, '100', '', '', '', '');
-echo $form->showInputText('new_system_email2', 'Confirm Email', '', $new_system_email2, '100', '', '', '', '');
+echo $form->showInputText('new_system_email1', 'Enter Email', '', $unsanitize->text($new_system_email1), '100', '', '', '', '');
+echo $form->showInputText('new_system_email2', 'Confirm Email', '', $unsanitize->text($new_system_email2), '100', '', '', '', '');
 ?>
 <BR>
 <a href="../requirements/"><?php echo $layout->showButton('button', 'Go Back'); ?></a>

@@ -33,6 +33,8 @@ $log = new DomainMOD\Log('/admin/ssl-fields/add.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,11 +44,11 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$new_name = $_POST['new_name'];
-$new_field_name = $_POST['new_field_name'];
-$new_description = $_POST['new_description'];
-$new_field_type_id = $_POST['new_field_type_id'];
-$new_notes = $_POST['new_notes'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_field_name = $sanitize->text($_POST['new_field_name']);
+$new_description = $sanitize->text($_POST['new_description']);
+$new_field_type_id = (int) $_POST['new_field_type_id'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name)) {
 
@@ -157,8 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '1', '', '');
-echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $new_field_name, '30', '', '1', '', '');
+echo $form->showInputText('new_name', 'Display Name (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
+echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $unsanitize->text($new_field_name), '30', '', '1', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
@@ -179,8 +181,8 @@ if ($result) {
 
 }
 
-echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_description', 'Description (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton('Add Custom Field', '', '');
 echo $form->showFormBottom('');
 ?>

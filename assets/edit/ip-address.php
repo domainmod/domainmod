@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,12 +44,12 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$ipid = $_GET['ipid'];
-$new_name = $_POST['new_name'];
-$new_ip = $_POST['new_ip'];
-$new_rdns = $_POST['new_rdns'];
-$new_ipid = $_POST['new_ipid'];
-$new_notes = $_POST['new_notes'];
+$ipid = (int) $_GET['ipid'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_ip = $sanitize->text($_POST['new_ip']);
+$new_rdns = $sanitize->text($_POST['new_rdns']);
+$new_ipid = (int) $_POST['new_ipid'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
@@ -157,10 +159,10 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '1', '', '');
-echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '1', '', '');
-echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_name', 'IP Address Name (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_ip', 'IP Address (100)', '', $unsanitize->text($new_ip), '100', '', '1', '', '');
+echo $form->showInputText('new_rdns', 'rDNS (100)', '', $unsanitize->text($new_rdns), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

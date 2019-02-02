@@ -35,6 +35,8 @@ $date = new DomainMOD\Date();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -49,23 +51,23 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
 $jumpMenu = $_GET['jumpMenu'];
-$action = $_REQUEST['action'];
-$raw_domain_list = $_POST['raw_domain_list'];
+$action = $sanitize->text($_REQUEST['action']);
+$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
 $new_expiry_date = $_POST['datepick'];
-$new_function = $_POST['new_function'];
-$new_pcid = $_POST['new_pcid'];
-$new_dnsid = $_POST['new_dnsid'];
-$new_ipid = $_POST['new_ipid'];
-$new_whid = $_POST['new_whid'];
-$new_raid = $_POST['new_raid'];
-$new_autorenew = $_POST['new_autorenew'];
-$new_privacy = $_POST['new_privacy'];
-$new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
-$new_renewal_years = $_POST['new_renewal_years'];
-$new_field_type_id = $_POST['new_field_type_id'];
-$type_id = $_REQUEST['type_id'];
-$field_id = $_REQUEST['field_id'];
+$new_function = $sanitize->text($_POST['new_function']);
+$new_pcid = (int) $_POST['new_pcid'];
+$new_dnsid = (int) $_POST['new_dnsid'];
+$new_ipid = (int) $_POST['new_ipid'];
+$new_whid = (int) $_POST['new_whid'];
+$new_raid = (int) $_POST['new_raid'];
+$new_autorenew = (int) $_POST['new_autorenew'];
+$new_privacy = (int) $_POST['new_privacy'];
+$new_active = (int) $_POST['new_active'];
+$new_notes = $sanitize->text($_POST['new_notes']);
+$new_renewal_years = (int) $_POST['new_renewal_years'];
+$new_field_type_id = (int) $_POST['new_field_type_id'];
+$type_id = (int) $_REQUEST['type_id'];
+$field_id = (int) $_REQUEST['field_id'];
 
 // Custom Fields
 $result = $pdo->query("
@@ -2130,7 +2132,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
     }
 
-    echo $form->showInputTextarea('raw_domain_list', $text, '', $raw_domain_list, '1', '', '');
+    echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', '', '');
 
 }
 
@@ -2138,7 +2140,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 if ($action == "AD") { // Add Domains
 
     // Function
-    echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
+    echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 
     // Expiry Date
     if ($new_expiry_date != "") {
@@ -2555,11 +2557,11 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
         if ($action == "AN") {
 
-            echo $form->showInputTextarea('new_notes', $notes_heading, '', $new_notes, '1', '', '');
+            echo $form->showInputTextarea('new_notes', $notes_heading, '', $unsanitize->text($new_notes), '1', '', '');
 
         } else {
 
-            echo $form->showInputTextarea('new_notes', $notes_heading, '', $new_notes, '', '', '');
+            echo $form->showInputTextarea('new_notes', $notes_heading, '', $unsanitize->text($new_notes), '', '', '');
         }
 
     }

@@ -39,12 +39,12 @@ require_once DIR_INC . '/settings/settings-display.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_number_of_domains = $_POST['new_number_of_domains'];
-$new_number_of_ssl_certs = $_POST['new_number_of_ssl_certs'];
+$new_number_of_domains = (int) $_POST['new_number_of_domains'];
+$new_number_of_ssl_certs = (int) $_POST['new_number_of_ssl_certs'];
 $domain_column_options = $_POST['domain_column_options'];
 $ssl_column_options = $_POST['ssl_column_options'];
-$new_display_inactive_assets = $_POST['new_display_inactive_assets'];
-$new_display_dw_intro_page = $_POST['new_display_dw_intro_page'];
+$new_display_inactive_assets = (int) $_POST['new_display_inactive_assets'];
+$new_display_dw_intro_page = (int) $_POST['new_display_dw_intro_page'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

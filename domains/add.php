@@ -33,6 +33,8 @@ $maint = new DomainMOD\Maintenance();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
@@ -45,18 +47,18 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_domain = $_POST['new_domain'];
+$new_domain = $sanitize->text($_POST['new_domain']);
 $new_expiry_date = $_POST['new_expiry_date'];
-$new_function = $_POST['new_function'];
-$new_cat_id = $_POST['new_cat_id'];
-$new_dns_id = $_POST['new_dns_id'];
-$new_ip_id = $_POST['new_ip_id'];
-$new_hosting_id = $_POST['new_hosting_id'];
-$new_account_id = $_POST['new_account_id'];
-$new_autorenew = $_POST['new_autorenew'];
-$new_privacy = $_POST['new_privacy'];
-$new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_function = $sanitize->text($_POST['new_function']);
+$new_cat_id = (int) $_POST['new_cat_id'];
+$new_dns_id = (int) $_POST['new_dns_id'];
+$new_ip_id = (int) $_POST['new_ip_id'];
+$new_hosting_id = (int) $_POST['new_hosting_id'];
+$new_account_id = (int) $_POST['new_account_id'];
+$new_autorenew = (int) $_POST['new_autorenew'];
+$new_privacy = (int) $_POST['new_privacy'];
+$new_active = (int) $_POST['new_active'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 // Custom Fields
 $result = $pdo->query("
@@ -325,8 +327,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_domain', 'Domain (255)', '', $new_domain, '255', '', '1', '', '');
-echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
+echo $form->showInputText('new_domain', 'Domain (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '');
+echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
@@ -500,7 +502,7 @@ echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&n
 echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name

@@ -34,6 +34,8 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,18 +45,18 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$rid = $_REQUEST['rid'];
-$tld = $_GET['tld'];
+$rid = (int) $_REQUEST['rid'];
+$tld = $sanitize->text($_GET['tld']);
 if ($tld != '') {
     $new_tld = $tld;
 } else {
-    $new_tld = $_POST['new_tld'];
+    $new_tld = $sanitize->text($_POST['new_tld']);
 }
-$new_initial_fee = $_POST['new_initial_fee'];
-$new_renewal_fee = $_POST['new_renewal_fee'];
-$new_transfer_fee = $_POST['new_transfer_fee'];
-$new_privacy_fee = $_POST['new_privacy_fee'];
-$new_misc_fee = $_POST['new_misc_fee'];
+$new_initial_fee = (float) $_POST['new_initial_fee'];
+$new_renewal_fee = (float) $_POST['new_renewal_fee'];
+$new_transfer_fee = (float) $_POST['new_transfer_fee'];
+$new_privacy_fee = (float) $_POST['new_privacy_fee'];
+$new_misc_fee = (float) $_POST['new_misc_fee'];
 $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -194,7 +196,7 @@ echo $form->showFormTop('');
 <strong>Domain Registrar</strong><BR>
 <?php echo $assets->getRegistrar($rid); ?><BR><BR><?php
 
-echo $form->showInputText('new_tld', 'TLD', '', $new_tld, '50', '', '1', '', '');
+echo $form->showInputText('new_tld', 'TLD', '', $unsanitize->text($new_tld), '50', '', '1', '', '');
 echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_transfer_fee', 'Transfer Fee', '', $new_transfer_fee, '10', '', '1', '', '');

@@ -33,6 +33,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $conversion = new DomainMOD\Conversion();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,10 +44,10 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$new_first_name = $_POST['new_first_name'];
-$new_last_name = $_POST['new_last_name'];
-$new_username = $_POST['new_username'];
-$new_email_address = $_POST['new_email_address'];
+$new_first_name = $sanitize->text($_POST['new_first_name']);
+$new_last_name = $sanitize->text($_POST['new_last_name']);
+$new_username = $sanitize->text($_POST['new_username']);
+$new_email_address = $sanitize->text($_POST['new_email_address']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
     && $new_email_address != ''
@@ -210,10 +212,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '1', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '1', '', '');
-echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '1', '', '');
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $sanitize->text($new_last_name), '50', '', '1', '', '');
+echo $form->showInputText('new_username', 'Username (30)', '', $sanitize->text($new_username), '30', '', '1', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $sanitize->text($new_email_address), '100', '', '1', '', '');
 echo $form->showSubmitButton('Add User', '', '');
 echo $form->showFormBottom('');
 ?>

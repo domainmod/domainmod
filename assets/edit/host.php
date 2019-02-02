@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,11 +44,11 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$whid = $_GET['whid'];
-$new_host = $_REQUEST['new_host'];
-$new_url = $_POST['new_url'];
-$new_notes = $_REQUEST['new_notes'];
-$new_whid = $_REQUEST['new_whid'];
+$whid = (int) $_GET['whid'];
+$new_host = $sanitize->text($_REQUEST['new_host']);
+$new_url = $sanitize->text($_POST['new_url']);
+$new_notes = $sanitize->text($_REQUEST['new_notes']);
+$new_whid = (int) $_REQUEST['new_whid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -152,9 +154,9 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_host', 'Web Host Name (100)', '', $unsanitize->text($new_host), '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_whid', $whid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

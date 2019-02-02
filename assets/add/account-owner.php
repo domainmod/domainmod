@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -39,8 +41,8 @@ require_once DIR_INC . '/settings/assets-add-owner.inc.php';
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-$new_owner = $_POST['new_owner'];
-$new_notes = $_POST['new_notes'];
+$new_owner = $sanitize->text($_POST['new_owner']);
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -83,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_owner', 'Owner Name (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton('Add Owner', '', '');
 echo $form->showFormBottom('');
 ?>

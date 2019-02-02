@@ -34,6 +34,8 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,16 +45,16 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$sslpid = $_REQUEST['sslpid'];
-$type_id = $_GET['type_id'];
+$sslpid = (int) $_REQUEST['sslpid'];
+$type_id = (int) $_GET['type_id'];
 if ($type_id != '') {
     $new_type_id = $type_id;
 } else {
-    $new_type_id = $_POST['new_type_id'];
+    $new_type_id = (int) $_POST['new_type_id'];
 }
-$new_initial_fee = $_POST['new_initial_fee'];
-$new_renewal_fee = $_POST['new_renewal_fee'];
-$new_misc_fee = $_POST['new_misc_fee'];
+$new_initial_fee = (float) $_POST['new_initial_fee'];
+$new_renewal_fee = (float) $_POST['new_renewal_fee'];
+$new_misc_fee = (float) $_POST['new_misc_fee'];
 $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

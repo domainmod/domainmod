@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,12 +44,12 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$pcid = $_GET['pcid'];
+$pcid = (int) $_GET['pcid'];
 
-$new_category = $_REQUEST['new_category'];
-$new_stakeholder = $_REQUEST['new_stakeholder'];
-$new_notes = $_REQUEST['new_notes'];
-$new_pcid = $_REQUEST['new_pcid'];
+$new_category = $sanitize->text($_REQUEST['new_category']);
+$new_stakeholder = $sanitize->text($_REQUEST['new_stakeholder']);
+$new_notes = $sanitize->text($_REQUEST['new_notes']);
+$new_pcid = (int) $_REQUEST['new_pcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -154,9 +156,9 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '1', '', '');
-echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_category', 'Category Name (150)', '', $unsanitize->text($new_category), '150', '', '1', '', '');
+echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $unsanitize->text($new_stakeholder), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_pcid', $pcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

@@ -33,6 +33,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,8 +44,8 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_raid = $_REQUEST['new_raid'];
-$raw_domain_list = $_POST['raw_domain_list'];
+$new_raid = (int) $_REQUEST['new_raid'];
+$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
 
 if ($new_raid != '') {
 
@@ -506,11 +508,11 @@ if ($new_raid != '') {
 
         echo '<strong>Domain List</strong><BR>';
         echo htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8') . '\'s API has a domain list feature, so you don\'t even have to supply a list of the domains you want to import, DomainMOD will retrieve them for you automatically. If for some reason you\'re having issues with the automatic import though, you can still manually paste a list of domains to import below.<BR><BR>';
-        echo $form->showInputTextarea('raw_domain_list', '[OPTIONAL] Domains to add (one per line)', '', $raw_domain_list, '', '', '');
+        echo $form->showInputTextarea('raw_domain_list', '[OPTIONAL] Domains to add (one per line)', '', $unsanitize->text($raw_domain_list), '', '', '');
 
     } else {
 
-        echo $form->showInputTextarea('raw_domain_list', 'Domains to add (one per line)', '', $raw_domain_list, '1', '', '');
+        echo $form->showInputTextarea('raw_domain_list', 'Domains to add (one per line)', '', $unsanitize->text($raw_domain_list), '1', '', '');
     }
 
 }

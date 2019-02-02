@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,11 +44,11 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$ssltid = $_GET['ssltid'];
+$ssltid = (int) $_GET['ssltid'];
 
-$new_type = $_REQUEST['new_type'];
-$new_notes = $_REQUEST['new_notes'];
-$new_ssltid = $_REQUEST['new_ssltid'];
+$new_type = $sanitize->text($_REQUEST['new_type']);
+$new_notes = $sanitize->text($_REQUEST['new_notes']);
+$new_ssltid = (int) $_REQUEST['new_ssltid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -149,8 +151,8 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_type', 'Type (100)', '', $new_type, '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_type', 'Type (100)', '', $unsanitize->text($new_type), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

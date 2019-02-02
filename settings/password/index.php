@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -39,8 +41,8 @@ require_once DIR_INC . '/settings/settings-password.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_password = $_POST['new_password'];
-$new_password_confirmation = $_POST['new_password_confirmation'];
+$new_password = $sanitize->text($_POST['new_password']);
+$new_password_confirmation = $sanitize->text($_POST['new_password_confirmation']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" &&
     $new_password == $new_password_confirmation

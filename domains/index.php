@@ -37,6 +37,8 @@ $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $segment = new DomainMOD\Segment();
 $validate = new DomainMOD\Validate();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -53,7 +55,7 @@ $ipid = (int) $_REQUEST['ipid'];
 $whid = (int) $_REQUEST['whid'];
 $rid = (int) $_REQUEST['rid'];
 $raid = (int) $_REQUEST['raid'];
-$tld = $_REQUEST['tld'];
+$tld = $sanitize->text($_REQUEST['tld']);
 $segid = (int) $_REQUEST['segid'];
 $is_active = $_REQUEST['is_active'];
 $search_for = urlencode($_REQUEST['search_for']);

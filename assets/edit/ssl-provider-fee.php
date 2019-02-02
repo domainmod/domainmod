@@ -42,13 +42,13 @@ require_once DIR_INC . '/settings/assets-edit-ssl-provider-fee.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$fee_id = $_REQUEST['fee_id'];
-$sslpid = $_REQUEST['sslpid'];
-$new_type_id = $_POST['new_type_id'];
-$new_initial_fee = $_POST['new_initial_fee'];
-$new_renewal_fee = $_POST['new_renewal_fee'];
-$new_misc_fee = $_POST['new_misc_fee'];
-$new_currency_id = $_POST['new_currency_id'];
+$fee_id = (int) $_REQUEST['fee_id'];
+$sslpid = (int) $_REQUEST['sslpid'];
+$new_type_id = (int) $_POST['new_type_id'];
+$new_initial_fee = (float) $_POST['new_initial_fee'];
+$new_renewal_fee = (float) $_POST['new_renewal_fee'];
+$new_misc_fee = (float) $_POST['new_misc_fee'];
+$new_currency_id = (int) $_POST['new_currency_id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

@@ -32,6 +32,8 @@ $log = new DomainMOD\Log('/settings/profile/index.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 $currency = new DomainMOD\Currency();
 $conversion = new DomainMOD\Conversion();
 
@@ -44,12 +46,12 @@ require_once DIR_INC . '/settings/settings-profile.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_first_name = $_POST['new_first_name'];
-$new_last_name = $_POST['new_last_name'];
-$new_email_address = $_POST['new_email_address'];
+$new_first_name = $sanitize->text($_POST['new_first_name']);
+$new_last_name = $sanitize->text($_POST['new_last_name']);
+$new_email_address = $sanitize->text($_POST['new_email_address']);
 $new_currency = $_POST['new_currency'];
 $new_timezone = $_POST['new_timezone'];
-$new_expiration_emails = $_POST['new_expiration_emails'];
+$new_expiration_emails = (int) $_POST['new_expiration_emails'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_email_address != "") {
 
@@ -217,21 +219,21 @@ if ($new_first_name != "") {
 } else {
     $temp_first_name = $_SESSION['s_first_name'];
 }
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $temp_first_name, '50', '', '1', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($temp_first_name), '50', '', '1', '', '');
 
 if ($new_last_name != "") {
     $temp_last_name = $new_last_name;
 } else {
     $temp_last_name = $_SESSION['s_last_name'];
 }
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $temp_last_name, '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $unsanitize->text($temp_last_name), '50', '', '1', '', '');
 
 if ($new_email_address != "") {
     $temp_email_address = $new_email_address;
 } else {
     $temp_email_address = $_SESSION['s_email_address'];
 }
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $temp_email_address, '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($temp_email_address), '100', '', '1', '', '');
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 

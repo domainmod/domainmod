@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -40,10 +42,10 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_registrar = $_POST['new_registrar'];
-$new_url = $_POST['new_url'];
-$new_api_registrar_id = $_POST['new_api_registrar_id'];
-$new_notes = $_POST['new_notes'];
+$new_registrar = $sanitize->text($_POST['new_registrar']);
+$new_url = $sanitize->text($_POST['new_url']);
+$new_api_registrar_id = (int) $_POST['new_api_registrar_id'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -96,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '', '');
+echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
@@ -114,7 +116,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton('Add Domain Registrar', '', '');
 echo $form->showFormBottom('');
 ?>

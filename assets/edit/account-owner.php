@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -44,8 +46,8 @@ $really_del = $_GET['really_del'];
 
 $oid = (int) $_GET['oid'];
 
-$new_owner = $_POST['new_owner'];
-$new_notes = $_POST['new_notes'];
+$new_owner = $sanitize->text($_POST['new_owner']);
+$new_notes = $sanitize->text($_POST['new_notes']);
 $new_oid = (int) $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -218,8 +220,8 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_owner', 'Owner Name (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_oid', $oid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

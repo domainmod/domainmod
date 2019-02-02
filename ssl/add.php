@@ -32,6 +32,8 @@ $log = new DomainMOD\Log('/ssl/add.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
@@ -44,15 +46,15 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_domain_id = $_POST['new_domain_id'];
-$new_name = $_POST['new_name'];
-$new_type_id = $_POST['new_type_id'];
-$new_ip_id = $_POST['new_ip_id'];
-$new_cat_id = $_POST['new_cat_id'];
+$new_domain_id = (int) $_POST['new_domain_id'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_type_id = (int) $_POST['new_type_id'];
+$new_ip_id = (int) $_POST['new_ip_id'];
+$new_cat_id = (int) $_POST['new_cat_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
-$new_account_id = $_POST['new_account_id'];
-$new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_account_id = (int) $_POST['new_account_id'];
+$new_active = (int) $_POST['new_active'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 // Custom Fields
 $result = $pdo->query("
@@ -287,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_name', 'Host / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
@@ -420,7 +422,7 @@ echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
 echo $form->showDropdownOption('0', 'Expired', $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name

@@ -33,6 +33,8 @@ $maint = new DomainMOD\Maintenance();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 
@@ -44,10 +46,10 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_name = $_POST['new_name'];
-$new_description = $_POST['new_description'];
-$raw_domain_list = $_POST['raw_domain_list'];
-$new_notes = $_POST['new_notes'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_description = $sanitize->text($_POST['new_description']);
+$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -198,10 +200,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '1', '', '');
-echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $raw_domain_list, '1', '', '');
-echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_name', 'Segment Name (35)', '', $unsanitize->text($new_name), '35', '', '1', '', '');
+echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $unsanitize->text($raw_domain_list), '1', '', '');
+echo $form->showInputTextarea('new_description', 'Description', '', $unsanitize->text($new_description), '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton('Add Segment', '', '');
 echo $form->showFormBottom('');
 ?>

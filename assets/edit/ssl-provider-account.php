@@ -33,6 +33,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -45,14 +47,14 @@ $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $sslpaid = (int) $_GET['sslpaid'];
-$new_owner_id = $_POST['new_owner_id'];
-$new_ssl_provider_id = $_POST['new_ssl_provider_id'];
-$new_email_address = $_POST['new_email_address'];
-$new_username = $_POST['new_username'];
-$new_password = $_POST['new_password'];
-$new_reseller = $_POST['new_reseller'];
-$new_reseller_id = $_POST['new_reseller_id'];
-$new_notes = $_POST['new_notes'];
+$new_owner_id = (int) $_POST['new_owner_id'];
+$new_ssl_provider_id = (int) $_POST['new_ssl_provider_id'];
+$new_email_address = $sanitize->text($_POST['new_email_address']);
+$new_username = $sanitize->text($_POST['new_username']);
+$new_password = $sanitize->text($_POST['new_password']);
+$new_reseller = (int) $_POST['new_reseller'];
+$new_reseller_id = $sanitize->text($_POST['new_reseller_id']);
+$new_notes = $sanitize->text($_POST['new_notes']);
 $new_sslpaid = (int) $_POST['new_sslpaid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -278,15 +280,15 @@ if ($result) {
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

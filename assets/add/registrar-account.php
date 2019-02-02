@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -40,18 +42,18 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
-$new_owner_id = $_POST['new_owner_id'];
-$new_registrar_id = $_POST['new_registrar_id'];
-$new_email_address = $_POST['new_email_address'];
-$new_username = $_POST['new_username'];
-$new_password = $_POST['new_password'];
-$new_api_app_name = $_POST['new_api_app_name'];
-$new_api_key = $_POST['new_api_key'];
-$new_api_secret = $_POST['new_api_secret'];
-$new_api_ip_id = $_POST['new_api_ip_id'];
-$new_reseller = $_POST['new_reseller'];
-$new_reseller_id = $_POST['new_reseller_id'];
-$new_notes = $_POST['new_notes'];
+$new_owner_id = (int) $_POST['new_owner_id'];
+$new_registrar_id = (int) $_POST['new_registrar_id'];
+$new_email_address = $sanitize->text($_POST['new_email_address']);
+$new_username = $sanitize->text($_POST['new_username']);
+$new_password = $sanitize->text($_POST['new_password']);
+$new_api_app_name = $sanitize->text($_POST['new_api_app_name']);
+$new_api_key = $sanitize->text($_POST['new_api_key']);
+$new_api_secret = $sanitize->text($_POST['new_api_secret']);
+$new_api_ip_id = (int) $_POST['new_api_ip_id'];
+$new_reseller = (int) $_POST['new_reseller'];
+$new_reseller_id = $sanitize->text($_POST['new_reseller_id']);
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -160,9 +162,9 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 
 echo $form->showRadioTop('Reseller Account?', '', '');
 if ($new_reseller == '') $new_reseller = '0';
@@ -181,9 +183,9 @@ echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_resel
     </div>
     <div class="box-body"><?php
 
-        echo $form->showInputText('new_api_app_name', 'API App Name', '', $new_api_app_name, '255', '', '', '', '');
-        echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '', '');
-        echo $form->showInputText('new_api_secret', 'API Secret', '', $new_api_secret, '255', '', '', '', '');
+        echo $form->showInputText('new_api_app_name', 'API App Name', '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
+        echo $form->showInputText('new_api_key', 'API Key', '', $unsanitize->text($new_api_key), '255', '', '', '', '');
+        echo $form->showInputText('new_api_secret', 'API Secret', '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
 
         echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access.', '', '');
         echo $form->showDropdownOption('0', 'n/a', '0');
@@ -199,7 +201,7 @@ echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_resel
     </div>
 </div><BR><?php
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton('Add Registrar Account', '', '');
 echo $form->showFormBottom('');
 ?>

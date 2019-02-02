@@ -34,6 +34,8 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,15 +45,15 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
-$fee_id = $_REQUEST['fee_id'];
-$rid = $_REQUEST['rid'];
-$new_tld = $_POST['new_tld'];
-$new_initial_fee = $_POST['new_initial_fee'];
-$new_renewal_fee = $_POST['new_renewal_fee'];
-$new_transfer_fee = $_POST['new_transfer_fee'];
-$new_privacy_fee = $_POST['new_privacy_fee'];
-$new_misc_fee = $_POST['new_misc_fee'];
-$new_currency_id = $_POST['new_currency_id'];
+$fee_id = (int) $_REQUEST['fee_id'];
+$rid = (int) $_REQUEST['rid'];
+$new_tld = $sanitize->text($_POST['new_tld']);
+$new_initial_fee = (float) $_POST['new_initial_fee'];
+$new_renewal_fee = (float) $_POST['new_renewal_fee'];
+$new_transfer_fee = (float) $_POST['new_transfer_fee'];
+$new_privacy_fee = (float) $_POST['new_privacy_fee'];
+$new_misc_fee = (float) $_POST['new_misc_fee'];
+$new_currency_id = (int) $_POST['new_currency_id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     

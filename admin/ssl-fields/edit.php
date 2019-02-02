@@ -32,6 +32,8 @@ $log = new DomainMOD\Log('/admin/ssl-fields/edit.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -44,12 +46,12 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$csfid = $_GET['csfid'];
+$csfid = (int) $_GET['csfid'];
 
-$new_name = $_POST['new_name'];
-$new_description = $_POST['new_description'];
-$new_csfid = $_POST['new_csfid'];
-$new_notes = $_POST['new_notes'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_description = $sanitize->text($_POST['new_description']);
+$new_csfid = (int) $_POST['new_csfid'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($new_csfid == '') $new_csfid = $csfid;
 
@@ -233,13 +235,13 @@ if ($really_del == '1') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '1', '', '');
+echo $form->showInputText('new_name', 'Display Name (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
 ?>
 <strong>Database Field Name</strong><BR><?php echo $new_field_name; ?><BR><BR>
 <strong>Data Type</strong><BR><?php echo $new_field_type; ?><BR><BR>
 <?php
-echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_description', 'Description (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_csfid', $csfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

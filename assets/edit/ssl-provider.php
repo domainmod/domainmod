@@ -32,6 +32,8 @@ $log = new DomainMOD\Log('/assets/edit/ssl-provider.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,11 +45,11 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$sslpid = $_GET['sslpid'];
-$new_ssl_provider = $_POST['new_ssl_provider'];
-$new_url = $_POST['new_url'];
-$new_notes = $_POST['new_notes'];
-$new_sslpid = $_POST['new_sslpid'];
+$sslpid = (int) $_GET['sslpid'];
+$new_ssl_provider = $sanitize->text($_POST['new_ssl_provider']);
+$new_url = $sanitize->text($_POST['new_url']);
+$new_notes = $sanitize->text($_POST['new_notes']);
+$new_sslpid = (int) $_POST['new_sslpid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -211,9 +213,9 @@ if ($really_del == "1") {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $new_ssl_provider, '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $new_url, '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $unsanitize->text($new_ssl_provider), '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_sslpid', $sslpid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

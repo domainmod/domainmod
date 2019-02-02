@@ -33,6 +33,8 @@ $maint = new DomainMOD\Maintenance();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 
@@ -51,16 +53,16 @@ $really_del = $_GET['really_del'];
 $new_domain = $_POST['new_domain'];
 $new_tld = $_POST['new_tld'];
 $new_expiry_date = $_POST['datepick'];
-$new_function = $_POST['new_function'];
-$new_cat_id = $_POST['new_cat_id'];
-$new_dns_id = $_POST['new_dns_id'];
-$new_ip_id = $_POST['new_ip_id'];
-$new_hosting_id = $_POST['new_hosting_id'];
-$new_account_id = $_POST['new_account_id'];
-$new_autorenew = $_POST['new_autorenew'];
-$new_privacy = $_POST['new_privacy'];
-$new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_function = $sanitize->text($_POST['new_function']);
+$new_cat_id = (int) $_POST['new_cat_id'];
+$new_dns_id = (int) $_POST['new_dns_id'];
+$new_ip_id = (int) $_POST['new_ip_id'];
+$new_hosting_id = (int) $_POST['new_hosting_id'];
+$new_account_id = (int) $_POST['new_account_id'];
+$new_autorenew = (int) $_POST['new_autorenew'];
+$new_privacy = (int) $_POST['new_privacy'];
+$new_active = (int) $_POST['new_active'];
+$new_notes = $sanitize->text($_POST['new_notes']);
 
 // Custom Fields
 $result = $pdo->query("
@@ -428,7 +430,7 @@ if ($really_del == "1") {
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
 echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '<BR><BR>';
-echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
+echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $result = $pdo->query("
@@ -552,7 +554,7 @@ if ($new_notes != '') {
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name

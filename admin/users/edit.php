@@ -33,6 +33,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $currency = new DomainMOD\Currency();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -45,20 +47,20 @@ $pdo = $deeb->cnxx;
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-$uid = $_GET['uid'];
+$uid = (int) $_GET['uid'];
 
-$new_first_name = $_POST['new_first_name'];
-$new_last_name = $_POST['new_last_name'];
-$new_username = $_POST['new_username'];
-$original_username = $_POST['original_username'];
-$new_email_address = $_POST['new_email_address'];
+$new_first_name = $sanitize->text($_POST['new_first_name']);
+$new_last_name = $sanitize->text($_POST['new_last_name']);
+$new_username = $sanitize->text($_POST['new_username']);
+$original_username = $sanitize->text($_POST['original_username']);
+$new_email_address = $sanitize->text($_POST['new_email_address']);
 $new_currency = $_POST['new_currency'];
 $new_timezone = $_POST['new_timezone'];
-$new_expiration_emails = $_POST['new_expiration_emails'];
-$new_is_admin = $_POST['new_is_admin'];
-$new_read_only = $_POST['new_read_only'];
-$new_is_active = $_POST['new_is_active'];
-$new_uid = $_POST['new_uid'];
+$new_expiration_emails = (int) $_POST['new_expiration_emails'];
+$new_is_admin = (int) $_POST['new_is_admin'];
+$new_read_only = (int) $_POST['new_read_only'];
+$new_is_active = (int) $_POST['new_is_active'];
+$new_uid = (int) $_POST['new_uid'];
 
 if ($new_uid == '') $new_uid = $uid;
 
@@ -331,20 +333,20 @@ if ($really_del == '1') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '1', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '1', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $unsanitize->text($new_last_name), '50', '', '1', '', '');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Username</strong><BR><?php echo htmlentities($new_username, ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
+    <strong>Username</strong><BR><?php echo $new_username; ?><BR><BR><?php
 
 } else {
 
-    echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '1', '', '');
+    echo $form->showInputText('new_username', 'Username (30)', '', $unsanitize->text($new_username), '30', '', '1', '', '');
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '1', '', '');
 
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 
