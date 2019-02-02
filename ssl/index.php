@@ -43,18 +43,18 @@ require_once DIR_INC . '/settings/ssl-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
-$oid = $_REQUEST['oid'];
-$did = $_REQUEST['did'];
-$sslpid = $_REQUEST['sslpid'];
-$sslpaid = $_REQUEST['sslpaid'];
-$ssltid = $_REQUEST['ssltid'];
-$sslipid = $_REQUEST['sslipid'];
-$sslpcid = $_REQUEST['sslpcid'];
+$export_data = (int) $_GET['export_data'];
+$oid = (int) $_REQUEST['oid'];
+$did = (int) $_REQUEST['did'];
+$sslpid = (int) $_REQUEST['sslpid'];
+$sslpaid = (int) $_REQUEST['sslpaid'];
+$ssltid = (int) $_REQUEST['ssltid'];
+$sslipid = (int) $_REQUEST['sslipid'];
+$sslpcid = (int) $_REQUEST['sslpcid'];
 $is_active = $_REQUEST['is_active'];
 $search_for = urlencode($_REQUEST['search_for']);
-$from_dropdown = $_REQUEST['from_dropdown'];
-$expand = $_REQUEST['expand'];
+$from_dropdown = (int) $_REQUEST['from_dropdown'];
+$expand = (int) $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($export_data != "1") {
+if ($export_data !== 1) {
 
-    if ($from_dropdown != "1") {
+    if ($from_dropdown !== 1) {
 
         if ($search_for != "") {
 
@@ -253,7 +253,7 @@ $grand_total = $pdo->query("
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
     $result = $pdo->query($sql)->fetchAll();
 
@@ -625,7 +625,7 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
 
 $result = $pdo->query($sql)->fetchAll();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == '1') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand === 1) {
     $box_type = 'expanded';
     $box_icon = 'minus';
 } else {
