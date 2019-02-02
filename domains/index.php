@@ -36,6 +36,7 @@ $assets = new DomainMOD\Assets();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $segment = new DomainMOD\Segment();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -136,7 +137,15 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 if ($is_active == "") $is_active = "LIVE";
 
-if ($tld == "0") $tld = "";
+if ($tld && $tld != '') {
+
+    if ($validate->tld($tld) === false || $tld == '0') {
+
+        $tld = '';
+
+    }
+
+}
 
 if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
 } elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' ";
