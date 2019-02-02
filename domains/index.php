@@ -45,7 +45,7 @@ require_once DIR_INC . '/settings/domains-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 $pcid = (int) $_REQUEST['pcid'];
 $oid = (int) $_REQUEST['oid'];
 $dnsid = (int) $_REQUEST['dnsid'];
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($export_data != "1") {
+if ($export_data !== 1) {
 
     if ($from_dropdown != 1) {
 
@@ -401,7 +401,7 @@ if ($segid != "") {
 
 }
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
     $result = $pdo->query($sql)->fetchAll();
 
