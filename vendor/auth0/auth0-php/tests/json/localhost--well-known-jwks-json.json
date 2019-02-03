@@ -1,0 +1,13 @@
+{"keys": [
+  {
+    "x5c": [ "__test_x5c_1__" ],
+    "kid": "__test_kid_1__"
+  },
+  {
+    "x5c": [ "__test_x5c_2__" ],
+    "kid": "__test_kid_2__"
+  },
+  {
+    "kid": "__no_x5c_test_kid_2__"
+  }
+] }

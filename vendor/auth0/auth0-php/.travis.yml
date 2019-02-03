@@ -1,0 +1,45 @@
+language: php
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+branches:
+  except:
+    - /^analysis-.*$/
+
+php:
+  - 5.5
+  - 7.1
+
+env:
+  global:
+    - TEST_COMMAND="composer test"
+
+matrix:
+  fast_finish: true
+  include:
+    - php: hhvm
+      dist: trusty
+    - php: 5.5
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
+
+install:
+  - if [[ $COVERAGE = true ]]; then composer require codeclimate/php-test-reporter:^0.2 --no-update; fi
+  - travis_retry composer update ${COMPOSER_FLAGS} --prefer-dist --no-interaction
+
+script:
+  - ./vendor/bin/phpunit --coverage-clover=coverage.xml
+
+after_success:
+  - if [[ $COVERAGE = true ]]; then vendor/bin/test-reporter; fi
+  - bash <(curl -s https://codecov.io/bash)
+
+notifications:
+  email: false
+  slack:
+    secure: JDwvFc7HdGkAkgNMMZ37RmztzICOQWYhKlvQgwzgQee37D3NWYzssMgj7QMIOtRy6CO3CEvgO6Nnp33hn8eMGtpEZkjgweKhKrdVWzdOKPRcAJ8WAKiWc8EEiwBmjC11VK7rNiO6ppIB5UyBYpmOyO6Uzk2bqXCtF9xEUBouiRg=
+
+addons:
+  code_climate:
+    repo_token:
+      secure: w73sOC3Dvc5qAo/UFgA+9y8Ig3xh+fYFY45ynX9X9sSR5aH3IDBtwEu/NGpEtv7JF4TeQW/fZHMQOKybaDCn37i0lXsYqenGYofb+RHNtt8qnXhIlI7/0bll6chat7BCJ55RfyPNorTqTD+TWMqp8lKNtkm6pPhq+Arh8e5ryNw=

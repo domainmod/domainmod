@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<ruleset name="Auth0-PHP" namespace="Auth0PHP\CS\Standard">
+    <description>A custom coding standard for the Auth0 PHP SDK</description>
+
+    <file>.</file>
+
+    <exclude-pattern>/examples/*</exclude-pattern>
+    <exclude-pattern>/vendor/*</exclude-pattern>
+
+    <!-- Only check PHP files. -->
+    <arg name="extensions" value="php"/>
+
+    <!-- Show progress, show the error codes for each message (source). -->
+    <arg value="sp"/>
+
+    <!-- Strip the filepaths down to the relevant bit. -->
+    <arg name="basepath" value="."/>
+
+    <!-- Show coloured output, if available. -->
+    <arg name="colors"/>
+
+    <!--
+    PHPCompatibility sniffs to check for PHP cross-version incompatible code.
+    https://github.com/PHPCompatibility/PHPCompatibility
+    -->
+    <config name="testVersion" value="5.5-"/>
+    <rule ref="PHPCompatibility"/>
+
+    <!--
+    Generic sniffs
+    https://github.com/squizlabs/PHP_CodeSniffer/tree/master/src/Standards/Generic/Sniffs
+    -->
+    <rule ref="Generic.Arrays">
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+    </rule>
+    <rule ref="Generic.Classes.DuplicateClassName"/>
+    <rule ref="Generic.CodeAnalysis"/>
+    <rule ref="Generic.Commenting"/>
+    <rule ref="Generic.ControlStructures"/>
+    <rule ref="Generic.Files">
+        <exclude name="Generic.Files.EndFileNoNewline"/>
+        <exclude name="Generic.Files.LowercasedFilename"/>
+    </rule>
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="120"/>
+        </properties>
+    </rule>
+    <rule ref="Generic.Formatting">
+        <exclude name="Generic.Formatting.NoSpaceAfterCast"/>
+    </rule>
+    <rule ref="Generic.Functions">
+        <exclude name="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+    </rule>
+    <rule ref="Generic.Metrics"/>
+    <rule ref="Generic.NamingConventions">
+        <exclude name="Generic.NamingConventions.CamelCapsFunctionName.ScopeNotCamelCaps"/>
+    </rule>
+    <rule ref="Generic.PHP">
+        <exclude name="Generic.PHP.ClosingPHPTag"/>
+        <exclude name="Generic.PHP.UpperCaseConstant"/>
+    </rule>
+    <rule ref="Generic.Strings"/>
+    <rule ref="Generic.WhiteSpace">
+        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent"/>
+    </rule>
+
+    <!--
+    Squiz Labs sniffs
+    https://github.com/squizlabs/PHP_CodeSniffer/wiki/Customisable-Sniff-Properties
+    -->
+    <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+    <rule ref="Squiz.Classes"/>
+    <rule ref="Squiz.Commenting">
+        <exclude name="Squiz.Commenting.ClosingDeclarationComment"/>
+        <exclude name="Squiz.Commenting.ClassComment.TagNotAllowed"/>
+        <exclude name="Squiz.Commenting.FileComment"/>
+        <exclude name="Squiz.Commenting.LongConditionClosingComment"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing"/>
+        <exclude name="Squiz.Commenting.FunctionCommentThrowTag.WrongNumber"/>
+    </rule>
+    <rule ref="Squiz.ControlStructures"/>
+    <rule ref="Squiz.Functions">
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.NewlineBeforeOpenBrace"/>
+        <exclude name="Squiz.ControlStructures.InlineIfDeclaration.NoBrackets"/>
+    </rule>
+    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+        <properties>
+            <property name="equalsSpacing" value="1"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.Operators">
+        <exclude name="Squiz.Operators.ComparisonOperatorUsage.NotAllowed"/>
+        <exclude name="Squiz.Operators.ComparisonOperatorUsage.ImplicitTrue"/>
+    </rule>
+    <rule ref="Squiz.PHP">
+        <exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedComparison"/>
+        <exclude name="Squiz.PHP.DisallowInlineIf.Found"/>
+        <exclude name="Squiz.PHP.DisallowBooleanStatement.Found"/>
+    </rule>
+    <rule ref="Squiz.Scope"/>
+    <rule ref="Squiz.Strings"/>
+    <rule ref="Squiz.WhiteSpace">
+        <exclude name="Squiz.WhiteSpace.FunctionClosingBraceSpace"/>
+        <exclude name="Squiz.WhiteSpace.FunctionSpacing"/>
+        <exclude name="Squiz.WhiteSpace.ObjectOperatorSpacing"/>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="spacingBeforeFirst" value="0"/>
+            <property name="spacingAfterLast" value="0"/>
+        </properties>
+    </rule>
+</ruleset>

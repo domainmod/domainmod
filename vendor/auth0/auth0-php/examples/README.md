@@ -1,0 +1,1 @@
+Please see our Quickstarts for a [PHP application](https://auth0.com/docs/quickstart/webapp/php) and a [PHP API](https://auth0.com/docs/quickstart/backend/php) for examples showing how to use this SDK.
