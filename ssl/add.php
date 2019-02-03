@@ -51,7 +51,7 @@ $new_name = $sanitize->text($_POST['new_name']);
 $new_type_id = (int) $_POST['new_type_id'];
 $new_ip_id = (int) $_POST['new_ip_id'];
 $new_cat_id = (int) $_POST['new_cat_id'];
-$new_expiry_date = $_POST['new_expiry_date'];
+$new_expiry_date = $_POST['datepick'];
 $new_account_id = (int) $_POST['new_account_id'];
 $new_active = (int) $_POST['new_active'];
 $new_notes = $sanitize->text($_POST['new_notes']);
@@ -284,6 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -293,7 +294,7 @@ echo $form->showInputText('new_name', 'Host / Label (100)', '', $unsanitize->tex
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -492,5 +493,6 @@ echo $form->showSubmitButton('Add SSL Certificate', '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>
