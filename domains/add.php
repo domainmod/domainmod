@@ -48,7 +48,7 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 $pdo = $deeb->cnxx;
 
 $new_domain = $sanitize->text($_POST['new_domain']);
-$new_expiry_date = $_POST['new_expiry_date'];
+$new_expiry_date = $_POST['datepick'];
 $new_function = $sanitize->text($_POST['new_function']);
 $new_cat_id = (int) $_POST['new_cat_id'];
 $new_dns_id = (int) $_POST['new_dns_id'];
@@ -322,6 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -332,7 +333,7 @@ echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->tex
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -570,5 +571,6 @@ echo $form->showSubmitButton('Add Domain', '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>
