@@ -41,7 +41,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $sslpid = $_GET['sslpid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $ssl_provider_name = $assets->getSslProvider($sslpid);
 
@@ -56,7 +56,7 @@ $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_provider_fee_list', strtotime($time->stamp()));

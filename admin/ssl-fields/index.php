@@ -39,7 +39,7 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type
@@ -47,7 +47,7 @@ $result = $pdo->query("
     WHERE f.type_id = t.id
     ORDER BY f.name")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('custom_ssl_field_list', strtotime($time->stamp()));

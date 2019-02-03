@@ -96,9 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ($date->checkDateFormat($new_expiry_date) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" &&
-        $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" &&
-        $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != ''
+    if ($date->checkDateFormat($new_expiry_date) && $new_cat_id !== 0 && $new_dns_id !== 0 && $new_ip_id !== 0 &&
+        $new_hosting_id !== 0 && $new_account_id !== 0
     ) {
 
         try {
@@ -143,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            if ($new_privacy == "1") {
+            if ($new_privacy === 1) {
 
                 $fee_string = "renewal_fee + privacy_fee + misc_fee";
 
@@ -273,39 +272,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
         }
 
-        if ($new_account_id == '' || $new_account_id == '0') {
+        if ($new_account_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
 
         }
 
-        if ($new_dns_id == '' || $new_dns_id == '0') {
+        if ($new_dns_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
 
         }
 
-        if ($new_ip_id == '' || $new_ip_id == '0') {
+        if ($new_ip_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
 
         }
 
-        if ($new_hosting_id == '' || $new_hosting_id == '0') {
+        if ($new_hosting_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
 
         }
 
-        if ($new_cat_id == '' || $new_cat_id == '0') {
+        if ($new_cat_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
-
-        }
-
-        if ($new_active == '') {
-
-            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
 
         }
 
@@ -550,7 +543,7 @@ echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?did=' . htmlentities($did, ENT_QUOTES, 'UTF-8') . '">view full notes</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">view full notes</a>]';
 } else {
     $subtext = '';
 }
@@ -736,7 +729,7 @@ if ($dw_has_zones === 1) { ?>
     </table><?php
 }
 ?>
-<BR><a href="edit.php?did=<?php echo urlencode($did); ?>&del=1">DELETE THIS DOMAIN</a>
+<BR><a href="edit.php?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>

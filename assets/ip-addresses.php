@@ -38,14 +38,14 @@ require_once DIR_INC . '/settings/assets-ip-addresses.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, `name`, ip, rdns, notes, creation_type_id, created_by, insert_time, update_time
     FROM ip_addresses
     ORDER BY `name`")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ip_address_list', strtotime($time->stamp()));

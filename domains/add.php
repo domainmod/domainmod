@@ -90,10 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = new DomainMOD\Date();
     $domain = new DomainMOD\Domain();
 
-    if ($date->checkDateFormat($new_expiry_date) && $domain->checkFormat($new_domain) && $new_cat_id != "" &&
-        $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
-        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != ''
-    ) {
+    if ($date->checkDateFormat($new_expiry_date) && $domain->checkFormat($new_domain) && $new_cat_id !== 0 &&
+        $new_dns_id !== 0 && $new_ip_id !== 0 && $new_hosting_id !== 0 && $new_account_id !== 0) {
 
         $stmt = $pdo->prepare("
             SELECT domain
@@ -132,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                if ($new_privacy == "1") {
+                if ($new_privacy === 1) {
 
                     $fee_string = 'renewal_fee + privacy_fee + misc_fee';
 
@@ -277,39 +275,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
         }
 
-        if ($new_account_id == '' || $new_account_id == '0') {
+        if ($new_account_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
 
         }
 
-        if ($new_dns_id == '' || $new_dns_id == '0') {
+        if ($new_dns_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
 
         }
 
-        if ($new_ip_id == '' || $new_ip_id == '0') {
+        if ($new_ip_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
 
         }
 
-        if ($new_hosting_id == '' || $new_hosting_id == '0') {
+        if ($new_hosting_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
 
         }
 
-        if ($new_cat_id == '' || $new_cat_id == '0') {
+        if ($new_cat_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
-
-        }
-
-        if ($new_active == '') {
-
-            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
 
         }
 
@@ -492,12 +484,10 @@ echo $form->showDropdownOption('0', 'Expired', $new_active);
 echo $form->showDropdownBottom('');
 
 echo $form->showRadioTop('Auto Renewal?', '', '');
-if ($new_autorenew == '') $new_autorenew = '1';
 echo $form->showRadioOption('new_autorenew', '1', 'Yes', $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_autorenew', '0', 'No', $new_autorenew, '', '');
 echo $form->showRadioBottom('');
 
-if ($new_privacy == '') $new_privacy = '1';
 echo $form->showRadioTop('Privacy Enabled?', '', '');
 echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');

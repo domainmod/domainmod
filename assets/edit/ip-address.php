@@ -167,7 +167,7 @@ echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ip-address.php?ipid=<?php echo urlencode($ipid); ?>&del=1">DELETE THIS IP ADDRESS</a>
+<BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

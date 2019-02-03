@@ -40,7 +40,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $segid = $_GET['segid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 $type = $_GET['type'];
 
 if ($type == "inactive") {
@@ -115,7 +115,7 @@ if ($type == "inactive") {
 
 }
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
     if ($type == "inactive") {
 

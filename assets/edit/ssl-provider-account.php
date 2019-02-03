@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
+    if ($new_username != "" && $new_owner_id !== 0 && $new_ssl_provider_id !== 0) {
 
         try {
 
@@ -120,13 +120,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_owner_id == '' || $new_owner_id == '0') {
+        if ($new_owner_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
 
         }
 
-        if ($new_ssl_provider_id == '' || $new_ssl_provider_id == '0') {
+        if ($new_ssl_provider_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the SSL Provider<BR>";
 
@@ -293,7 +293,7 @@ echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-provider-account.php?sslpaid=<?php echo urlencode($sslpaid); ?>&del=1">DELETE THIS SSL PROVIDER
+<BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER
     ACCOUNT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

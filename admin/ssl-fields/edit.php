@@ -53,7 +53,7 @@ $new_description = $sanitize->text($_POST['new_description']);
 $new_csfid = (int) $_POST['new_csfid'];
 $new_notes = $sanitize->text($_POST['new_notes']);
 
-if ($new_csfid == '') $new_csfid = $csfid;
+if ($new_csfid === 0) $new_csfid = $csfid;
 
 $stmt = $pdo->prepare("
     SELECT id
@@ -167,7 +167,7 @@ if ($del == '1') {
 
 if ($really_del == '1') {
 
-    if ($csfid == '') {
+    if ($csfid === 0) {
 
         $_SESSION['s_message_danger'] .= 'The Custom SSL Field cannot be deleted<BR>';
 
@@ -246,7 +246,7 @@ echo $form->showInputHidden('new_csfid', $csfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?csfid=<?php echo urlencode($csfid); ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
+<BR><a href="edit.php?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

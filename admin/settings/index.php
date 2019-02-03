@@ -56,7 +56,7 @@ $new_smtp_password = $sanitize->text($_POST['new_smtp_password']);
 $new_debug_mode = (int) $_POST['new_debug_mode'];
 $new_local_php_log = (int) $_POST['new_local_php_log'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days !== 0) {
 
     $stmt = $pdo->prepare("
         UPDATE settings
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
     $stmt->bindValue('new_use_smtp', $new_use_smtp, PDO::PARAM_INT);
     $stmt->bindValue('new_smtp_server', $new_smtp_server, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_protocol', $new_smtp_protocol, PDO::PARAM_STR);
-    $stmt->bindValue('new_smtp_port', $new_smtp_port, PDO::PARAM_STR);
+    $stmt->bindValue('new_smtp_port', $new_smtp_port, PDO::PARAM_INT);
     $stmt->bindValue('new_smtp_email_address', $new_smtp_email_address, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_username', $new_smtp_username, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);

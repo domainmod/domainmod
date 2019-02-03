@@ -40,7 +40,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
 $domain = $_GET['domain'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 if ($_SESSION['s_dw_view_all'] == "1") {
 
@@ -79,7 +79,7 @@ if ($domain != "") {
 
 }
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_dns_zones', strtotime($time->stamp()));

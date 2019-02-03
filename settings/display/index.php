@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new_number_of_ssl_certs !== 0) {
 
     $stmt = $pdo->prepare("
         UPDATE user_settings
@@ -165,8 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_number_of_domains == "") $_SESSION['s_message_danger'] .= "Enter the default number of domains to display<BR>";
-        if ($new_number_of_ssl_certs == "") $_SESSION['s_message_danger'] .= "Enter the default number of SSL certficates to display<BR>";
+        if ($new_number_of_domains === 0) $_SESSION['s_message_danger'] .= "Enter the default number of domains to display<BR>";
+        if ($new_number_of_ssl_certs === 0) $_SESSION['s_message_danger'] .= "Enter the default number of SSL certficates to display<BR>";
 
     } else {
 
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 <h3>Main Domain Page</h3><?php
 
-if ($new_number_of_domains != "") {
+if ($new_number_of_domains !== 0) {
     $temp_number_of_domains = $new_number_of_domains;
 } else {
     $temp_number_of_domains = '';
@@ -251,7 +251,7 @@ echo $form->showMultipleSelectBottom('<BR>');
 
 <h3>Main SSL Certificate Page</h3><?php
 
-if ($new_number_of_ssl_certs != "") {
+if ($new_number_of_ssl_certs !== 0) {
     $temp_number_of_ssl_certs = $new_number_of_ssl_certs;
 } else {
     $temp_number_of_ssl_certs = '';

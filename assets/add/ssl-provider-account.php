@@ -54,7 +54,7 @@ $new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
+    if ($new_username != "" && $new_owner_id !== 0 && $new_ssl_provider_id !== 0) {
 
         $stmt = $pdo->prepare("
             INSERT INTO ssl_accounts
@@ -94,13 +94,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_owner_id == '' || $new_owner_id == '0') {
+        if ($new_owner_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the owner<BR>";
 
         }
 
-        if ($new_ssl_provider_id == '' || $new_ssl_provider_id == '0') {
+        if ($new_ssl_provider_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the SSL Provider<BR>";
 
@@ -125,7 +125,7 @@ echo $form->showFormTop('');
 
 echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '1', '');
 
-if ($new_ssl_provider_id == '') {
+if ($new_ssl_provider_id === 0) {
 
     $to_compare = $_SESSION['s_default_ssl_provider'];
 
@@ -147,7 +147,7 @@ echo $form->showDropdownBottom('');
 
 echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
 
-if ($new_owner_id == '') {
+if ($new_owner_id === 0) {
 
     $to_compare = $_SESSION['s_default_owner_ssl'];
 
@@ -171,7 +171,6 @@ echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsan
 echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
-if ($new_reseller == '') $new_reseller = '0';
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');

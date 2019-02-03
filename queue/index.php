@@ -33,6 +33,8 @@ $time = new DomainMOD\Time();
 $assets = new DomainMOD\Assets();
 $queue = new DomainMOD\DomainQueue();
 $user = new DomainMOD\User();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -41,18 +43,18 @@ require_once DIR_INC . '/settings/queue-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$list_id = $_GET['list_id'];
-$dell = $_GET['dell'];
-$really_dell = $_GET['really_dell'];
+$list_id = (int) $_GET['list_id'];
+$dell = (int) $_GET['dell'];
+$really_dell = (int) $_GET['really_dell'];
 
-$domain_id = $_GET['domain_id'];
-$deld = $_GET['deld'];
-$really_deld = $_GET['really_deld'];
+$domain_id = (int) $_GET['domain_id'];
+$deld = (int) $_GET['deld'];
+$really_deld = (int) $_GET['really_deld'];
 
-$clear = $_GET['clear'];
-$really_clear = $_GET['really_clear'];
-$s = $_GET['s'];
-$export_data = $_GET['export_data'];
+$clear = (int) $_GET['clear'];
+$really_clear = (int) $_GET['really_clear'];
+$s = $sanitize->text($_GET['s']);
+$export_data = (int) $_GET['export_data'];
 
 $result_lists = $pdo->query("
     SELECT dql.id, dql.api_registrar_id, dql.domain_count, dql.owner_id, dql.registrar_id, dql.account_id,
@@ -78,7 +80,7 @@ $result_domains = $pdo->query("
       AND dq.api_registrar_id = ar.id
     ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     if ($s == 'lists') {
 
@@ -427,13 +429,13 @@ if ($export_data == '1') {
 
 }
 
-if ($clear == "1") {
+if ($clear === 1) {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to clear completed items from the queue?<BR><BR>Before clearing the queue you should review the results to make sure that everything is correct.<BR><BR><a href=\"index.php?really_clear=1\">YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE</a><BR>";
 
 }
 
-if ($really_clear == "1") {
+if ($really_clear === 1) {
 
     $queue->clearFinished();
 
@@ -444,13 +446,13 @@ if ($really_clear == "1") {
 
 }
 
-if ($dell != '' && $list_id != '') {
+if ($dell === 1 && $list_id !== 0) {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain List from the Queue?<BR><BR><a href=\"index.php?really_dell=1&list_id=" . $list_id . "\">YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE</a><BR>";
 
 }
 
-if ($really_dell == '1' && $list_id != '') {
+if ($really_dell === 1 && $list_id !== 0) {
 
     $stmt = $pdo->prepare("
         DELETE FROM domain_queue_list
@@ -465,13 +467,13 @@ if ($really_dell == '1' && $list_id != '') {
 
 }
 
-if ($deld != '' && $domain_id != '') {
+if ($deld === 1 && $domain_id !== 0) {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain from the Queue?<BR><BR><a href=\"index.php?really_deld=1&domain_id=" . $domain_id . "\">YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE</a><BR>";
 
 }
 
-if ($really_deld == '1' && $domain_id != '') {
+if ($really_deld === 1 && $domain_id !== 0) {
 
     $stmt = $pdo->prepare("
         DELETE FROM domain_queue

@@ -40,7 +40,7 @@ require_once DIR_INC . '/settings/reporting-domain-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 $all = $_GET['all'];
 
 if ($all == "1") {
@@ -75,7 +75,7 @@ $total_rows = count($result);
 
 if ($total_rows > 0) {
 
-    if ($export_data == "1") {
+    if ($export_data === 1) {
 
         $export = new DomainMOD\Export();
 

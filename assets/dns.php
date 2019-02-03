@@ -38,7 +38,7 @@ require_once DIR_INC . '/settings/assets-dns.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, `name`, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3,
@@ -46,7 +46,7 @@ $result = $pdo->query("
     FROM dns
     ORDER BY `name` ASC, number_of_servers DESC")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dns_profile_list', strtotime($time->stamp()));

@@ -40,7 +40,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $generate = $_GET['generate'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result_accounts_without_a_dns_zone = $pdo->query("
     SELECT domain
@@ -64,7 +64,7 @@ $result_suspended_accounts = $pdo->query("
     ORDER BY domain")->fetchAll();
 $temp_suspended_accounts = count($result_suspended_accounts);
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
 

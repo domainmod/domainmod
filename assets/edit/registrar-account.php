@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
+    if ($new_username != "" && $new_owner_id !== 0 && $new_registrar_id !== 0) {
 
         try {
 
@@ -142,13 +142,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_owner_id == '' || $new_owner_id == '0') {
+        if ($new_owner_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
 
         }
 
-        if ($new_registrar_id == '' || $new_registrar_id == '0') {
+        if ($new_registrar_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Registrar<BR>";
 
@@ -406,7 +406,7 @@ if ($has_api_support >= 1) { ?>
                 }
                 if ($req_reseller_id == '1') {
                     echo '<li>Reseller ID';
-                    if ($new_reseller_id == '' || $new_reseller_id == '0') {
+                    if ($new_reseller_id === 0) {
                         echo $missing_text;
                     } else {
                         echo $saved_text;
@@ -442,7 +442,7 @@ if ($has_api_support >= 1) { ?>
                 }
                 if ($req_ip_address == '1') {
                     echo '<li>Connecting IP Address';
-                    if ($new_api_ip_id == '0') {
+                    if ($new_api_ip_id === 0) {
                         echo $missing_text;
                     } else {
                         echo $saved_text;
@@ -493,7 +493,7 @@ echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="registrar-account.php?raid=<?php echo urlencode($raid); ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
+<BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

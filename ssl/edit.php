@@ -91,9 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" &&
-        $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0"
-        && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0" && $new_active != ''
+    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id !== 0 && $new_account_id !== 0 &&
+        $new_type_id !== 0 && $new_ip_id !== 0 && $new_cat_id !== 0
     ) {
 
         try {
@@ -257,39 +256,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
         }
 
-        if ($new_domain_id == '' || $new_domain_id == '0') {
+        if ($new_domain_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the domain<BR>";
 
         }
 
-        if ($new_account_id == '' || $new_account_id == '0') {
+        if ($new_account_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the SSL Provider Account<BR>";
 
         }
 
-        if ($new_type_id == '' || $new_type_id == '0') {
+        if ($new_type_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
 
         }
 
-        if ($new_ip_id == '' || $new_ip_id == '0') {
+        if ($new_ip_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
 
         }
 
-        if ($new_cat_id == '' || $new_cat_id == '0') {
+        if ($new_cat_id === 0) {
 
             $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
-
-        }
-
-        if ($new_active == '') {
-
-            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
 
         }
 
@@ -500,7 +493,7 @@ echo $form->showDropdownOption('0', 'Expired', $new_active);
 echo $form->showDropdownBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . htmlentities($sslcid, ENT_QUOTES, 'UTF-8') . '">view full notes</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">view full notes</a>]';
 } else {
     $subtext = '';
 }
@@ -584,7 +577,7 @@ echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?sslcid=<?php echo urlencode($sslcid); ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
+<BR><a href="edit.php?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>

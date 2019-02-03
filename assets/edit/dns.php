@@ -370,7 +370,7 @@ echo $form->showInputHidden('new_dnsid', $dnsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="dns.php?dnsid=<?php echo urlencode($dnsid); ?>&del=1">DELETE THIS DNS PROFILE</a>
+<BR><a href="dns.php?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

@@ -39,11 +39,11 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $segid = (int) $_GET['segid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
-    if ($segid != "") {
+    if ($segid !== 0) {
 
         $seg_clause = " AND s.id = :segid ";
 
@@ -77,7 +77,7 @@ if ($export_data == "1") {
 
     }
 
-    if ($segid != "") {
+    if ($segid !== 0) {
 
         $base_filename = "segment";
 
@@ -90,7 +90,7 @@ if ($export_data == "1") {
     $export = new DomainMOD\Export();
     $export_file = $export->openFile($base_filename, strtotime($time->stamp()));
 
-    if ($segid != "") {
+    if ($segid !== 0) {
 
         $row_contents = array(
             'Segment:',
@@ -133,7 +133,7 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Segment";
     $row_contents[$count++] = "Description";
     $row_contents[$count++] = "Domain";
-    if ($segid == "") {
+    if ($segid === 0) {
 
         $row_contents[$count++] = "Number of Domains in Segment";
 
@@ -152,7 +152,7 @@ if ($export_data == "1") {
         WHERE s.id = sd.segment_id" .
         $seg_clause . "
         ORDER BY s.name ASC, sd.domain ASC");
-    if ($segid != '') {
+    if ($segid !== 0) {
         $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     }
     $stmt->execute();
@@ -177,7 +177,7 @@ if ($export_data == "1") {
             $row_contents[$count++] = $row->name;
             $row_contents[$count++] = $row->description;
             $row_contents[$count++] = $row->domain;
-            if ($segid == "") {
+            if ($segid === 0) {
 
                 $row_contents[$count++] = $row->number_of_domains;
             }

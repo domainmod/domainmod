@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($export_data !== 1) {
 
-    if ($from_dropdown != 1) {
+    if ($from_dropdown !== 1) {
 
         if ($search_for != "") {
 
@@ -165,7 +165,7 @@ if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
 } else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
 }
 
-if ($segid != "") {
+if ($segid !== 0) {
 
     $temp_segment = $segment->getSegment($segid);
 
@@ -176,43 +176,43 @@ if ($segid != "") {
     $segid_string = "";
 }
 
-if ($pcid != "") {
+if ($pcid !== 0) {
     $pcid_string = " AND d.cat_id = '$pcid' ";
 } else {
     $pcid_string = "";
 }
 
-if ($oid != "") {
+if ($oid !== 0) {
     $oid_string = " AND o.id = '$oid' ";
 } else {
     $oid_string = "";
 }
 
-if ($dnsid != "") {
+if ($dnsid !== 0) {
     $dnsid_string = " AND dns.id = '$dnsid' ";
 } else {
     $dnsid_string = "";
 }
 
-if ($ipid != "") {
+if ($ipid !== 0) {
     $ipid_string = " AND ip.id = '$ipid' ";
 } else {
     $ipid_string = "";
 }
 
-if ($whid != "") {
+if ($whid !== 0) {
     $whid_string = " AND h.id = '$whid' ";
 } else {
     $whid_string = "";
 }
 
-if ($rid != "") {
+if ($rid !== 0) {
     $rid_string = " AND r.id = '$rid' ";
 } else {
     $rid_string = "";
 }
 
-if ($raid != "") {
+if ($raid !== 0) {
     $raid_string = " AND d.account_id = '$raid' ";
 } else {
     $raid_string = "";
@@ -362,7 +362,7 @@ $grand_total = $pdo->query("
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-if ($segid != "") {
+if ($segid !== 0) {
 
     $result = $pdo->query($sql)->fetchAll();
 
@@ -415,7 +415,7 @@ if ($export_data === 1) {
 
     $export->writeBlankRow($export_file);
 
-    if ($segid == "") {
+    if ($segid === 0) {
 
         $row_contents = array(
             'Total Cost:',
@@ -455,7 +455,7 @@ if ($export_data === 1) {
 
     }
 
-    if ($segid != "") {
+    if ($segid !== 0) {
 
         $stmt = $pdo->prepare("
             SELECT count(*)
@@ -484,7 +484,7 @@ if ($export_data === 1) {
         $stmt->execute();
         $totalrows_filtered = $stmt->fetchColumn();
 
-        if ($segid != "") {
+        if ($segid !== 0) {
 
             $number_of_domains = $segment->getNumberOfDomains($segid);
 
@@ -962,13 +962,13 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 $result = $pdo->query($sql)->fetchAll();
 
-if ($segid != "") {
+if ($segid !== 0) {
 
     $number_of_domains = $segment->getNumberOfDomains($segid);
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand === 1) {
     $box_type = 'expanded';
     $box_icon = 'minus';
 } else {
@@ -1042,32 +1042,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1087,7 +1087,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1152,32 +1152,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
@@ -1192,7 +1192,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1259,32 +1259,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1304,7 +1304,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1369,32 +1369,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1414,7 +1414,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1479,32 +1479,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1524,7 +1524,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1589,32 +1589,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND d.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1634,7 +1634,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1698,32 +1698,32 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND d.cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND d.dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND d.ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND d.hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND d.registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND d.account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1743,7 +1743,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1808,37 +1808,37 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
             }
 
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1853,7 +1853,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -1887,37 +1887,37 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 
             // STATUS
-            if ($pcid != "") {
+            if ($pcid !== 0) {
                 $pcid_string = " AND cat_id = '$pcid' ";
             } else {
                 $pcid_string = "";
             }
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($dnsid != "") {
+            if ($dnsid !== 0) {
                 $dnsid_string = " AND dns_id = '$dnsid' ";
             } else {
                 $dnsid_string = "";
             }
-            if ($ipid != "") {
+            if ($ipid !== 0) {
                 $ipid_string = " AND ip_id = '$ipid' ";
             } else {
                 $ipid_string = "";
             }
-            if ($whid != "") {
+            if ($whid !== 0) {
                 $whid_string = " AND hosting_id = '$whid' ";
             } else {
                 $whid_string = "";
             }
-            if ($rid != "") {
+            if ($rid !== 0) {
                 $rid_string = " AND registrar_id = '$rid' ";
             } else {
                 $rid_string = "";
             }
-            if ($raid != "") {
+            if ($raid !== 0) {
                 $raid_string = " AND account_id = '$raid' ";
             } else {
                 $raid_string = "";
@@ -1937,7 +1937,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } else {
                 $search_string = "";
             }
-            if ($segid != "") {
+            if ($segid !== 0) {
                 $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
             } else {
                 $segment_string = "";
@@ -2061,7 +2061,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 }
 
-if ($segid != "") {
+if ($segid !== 0) {
 
     $stmt = $pdo->prepare("
         SELECT count(*)
@@ -2100,15 +2100,15 @@ if ($segid != "") {
 
     <?php if ($totalrows_inactive > 0) { ?>
         <strong>Matching But Inactive Domains:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
-            target="_blank" href="results.php?type=inactive&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_filtered > 0) { ?>
         <strong>Matching But Filtered Domains:</strong> <?php echo number_format($totalrows_filtered); ?> [<a
-            target="_blank" href="results.php?type=filtered&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_missing > 0) { ?>
         <strong>Missing Domains:</strong> <?php echo number_format($totalrows_missing); ?> [<a
-            target="_blank" href="results.php?type=missing&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
     <?php }
 
 }
@@ -2120,7 +2120,7 @@ if ($result) { ?>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
     <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
-    <?php if ($segid != "") { ?>
+    <?php if ($segid !== 0) { ?>
         <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
         <BR><BR>
     <?php } else { ?>
@@ -2149,10 +2149,10 @@ if ($result) { ?>
 
                 <th class="all">
                     <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                        ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                        echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date); ?>&segid=<?php
-                        echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active); ?>&result_limit=<?php
+                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                        echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date); ?>&segid=<?php
+                        echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active); ?>&result_limit=<?php
                         echo urlencode($result_limit); ?>&sort_by=<?php
                         if ($sort_by == "dn_a") {
                             echo "dn_d";
@@ -2166,10 +2166,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php
-                            echo urlencode($dnsid); ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid);
-                            ?>&raid=<?php echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                            echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
+                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
+                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                            echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
                             echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ed_a") {
                                 echo "ed_d";
@@ -2185,10 +2185,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php
-                            echo urlencode($dnsid); ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid);
-                            ?>&raid=<?php echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                            echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
+                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
+                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                            echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
                             echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit);
                             ?>&sort_by=<?php
                             if ($sort_by == "df_a") {
@@ -2205,10 +2205,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                        ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                        echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                        echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                        echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                        echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
                         echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                         if ($sort_by == "tld_a") {
                             echo "tld_d";
@@ -2223,10 +2223,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "r_a") {
                                 echo "r_d";
@@ -2241,10 +2241,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ra_a") {
                                 echo "ra_d";
@@ -2259,10 +2259,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "dns_a") {
                                 echo "dns_d";
@@ -2277,10 +2277,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ip_a") {
                                 echo "ip_d";
@@ -2295,10 +2295,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "wh_a") {
                                 echo "wh_d";
@@ -2313,10 +2313,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "pc_a") {
                                 echo "pc_d";
@@ -2331,10 +2331,10 @@ if ($result) { ?>
                 <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
-                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
-                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
+                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
+                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "o_a") {
                                 echo "o_d";

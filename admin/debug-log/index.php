@@ -40,14 +40,14 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, user_id, area, `level`, message, extra, url, insert_time
     FROM log
     ORDER BY insert_time DESC, id DESC")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('debug_log', strtotime($time->stamp()));

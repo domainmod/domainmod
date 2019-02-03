@@ -41,7 +41,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $rid = $_GET['rid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $registrar_name = $assets->getRegistrar($rid);
 
@@ -55,7 +55,7 @@ $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_fee_list', strtotime($time->stamp()));

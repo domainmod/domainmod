@@ -61,12 +61,9 @@ $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_tld == '' || $new_initial_fee == '' || $new_renewal_fee == '' || $new_transfer_fee == '') {
+    if ($new_tld == '') {
 
         if ($new_tld == '') $_SESSION['s_message_danger'] .= "Enter the TLD<BR>";
-        if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
-        if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
-        if ($new_transfer_fee == '') $_SESSION['s_message_danger'] .= "Enter the transfer fee<BR>";
 
     } else {
 
@@ -87,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($fee_id) {
 
             $_SESSION['s_message_danger'] .= 'A fee for this TLD already exists [<a href=\'' . WEB_ROOT .
-                '/assets/edit/registrar-fee.php?rid=' . urlencode($rid) . '&fee_id=' . urlencode($fee_id) .
+                '/assets/edit/registrar-fee.php?rid=' . $rid . '&fee_id=' . urlencode($fee_id) .
                 '\'>edit fee</a>]<BR>';
 
         } else {
@@ -158,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "The fee for " . $new_tld . " has been added<BR>";
 
-                header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
+                header("Location: ../registrar-fees.php?rid=" . $rid);
                 exit;
 
             } catch (Exception $e) {
@@ -189,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../registrar-fees.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
+<a href="../registrar-fees.php?rid=<?php echo $rid; ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>

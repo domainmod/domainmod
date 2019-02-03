@@ -65,7 +65,7 @@ $new_privacy = (int) $_POST['new_privacy'];
 $new_active = (int) $_POST['new_active'];
 $new_notes = $sanitize->text($_POST['new_notes']);
 $new_renewal_years = (int) $_POST['new_renewal_years'];
-$new_field_type_id = (int) $_POST['new_field_type_id'];
+// $new_field_type_id = (int) $_POST['new_field_type_id'];
 $type_id = (int) $_REQUEST['type_id'];
 $field_id = (int) $_REQUEST['field_id'];
 
@@ -198,15 +198,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                if (!$date->checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0" || $has_existing_domains == '1') {
+                if (!$date->checkDateFormat($new_expiry_date) || $new_pcid === 0 || $new_dnsid === 0 || $new_ipid === 0 || $new_whid === 0 || $new_raid === 0 || $has_existing_domains == '1') {
 
                     if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
                     if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_message_danger'] .= "You have entered an invalid expiry date<BR>";
-                    if ($new_pcid == "" || $new_pcid == "0") $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
-                    if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
-                    if ($new_ipid == "" || $new_ipid == "0") $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
-                    if ($new_whid == "" || $new_whid == "0") $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
-                    if ($new_raid == "" || $new_raid == "0") $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
+                    if ($new_pcid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
+                    if ($new_dnsid === 0) $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
+                    if ($new_ipid === 0) $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
+                    if ($new_whid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
+                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
 
                     $submission_failed = 1;
 
@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             }
 
-                            if ($new_privacy == "1") {
+                            if ($new_privacy === 1) {
 
                                 $fee_string = "renewal_fee + privacy_fee + misc_fee";
 
@@ -417,7 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
                         $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
 
-                        if ($new_renewal_years == "1") {
+                        if ($new_renewal_years === 1) {
                             $renewal_years_string = $new_renewal_years . " Year";
                         } else {
                             $renewal_years_string = $new_renewal_years . " Years";
@@ -482,7 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } elseif ($action == "CPC") {
 
-                if ($new_pcid == "" || $new_pcid == 0) {
+                if ($new_pcid === 0) {
 
                     $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
                     $submission_failed = 1;
@@ -553,7 +553,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } elseif ($action == "CDNS") {
 
-                if ($new_dnsid == "" || $new_dnsid == 0) {
+                if ($new_dnsid === 0) {
 
                     $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
                     $submission_failed = 1;
@@ -624,7 +624,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } elseif ($action == "CIP") {
 
-                if ($new_ipid == "" || $new_ipid == 0) {
+                if ($new_ipid === 0) {
 
                     $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
                     $submission_failed = 1;
@@ -743,7 +743,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } elseif ($action == "CRA") {
 
-                if ($new_raid == "" || $new_raid == 0) {
+                if ($new_raid === 0) {
 
                     $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
                     $submission_failed = 1;
@@ -894,7 +894,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } elseif ($action == "CWH") {
 
-                if ($new_whid == "" || $new_whid == 0) {
+                if ($new_whid === 0) {
 
                     $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
                     $submission_failed = 1;
@@ -2115,7 +2115,7 @@ if ($action == "UCF") {
 
 }
 
-if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != "")) {
+if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0)) {
 
     if ($action == "DD") {
 
@@ -2270,13 +2270,11 @@ if ($action == "AD") { // Add Domains
 
     // Auto Renewal
     echo $form->showRadioTop('Auto Renewal?', '', '');
-    if ($new_autorenew == '') $new_autorenew = '1';
     echo $form->showRadioOption('new_autorenew', '1', 'Yes', $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
     echo $form->showRadioOption('new_autorenew', '0', 'No', $new_autorenew, '', '');
     echo $form->showRadioBottom('');
 
     // WHOIS Privacy Status
-    if ($new_privacy == '') $new_privacy = '1';
     echo $form->showRadioTop('Privacy Enabled?', '', '');
     echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
     echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
@@ -2432,7 +2430,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "UCF") {
 
-    if ($type_id == "1") {
+    if ($type_id === 1) {
 
         $stmt = $pdo->prepare("
             SELECT df.name, df.field_name, df.description
@@ -2453,7 +2451,7 @@ if ($action == "AD") { // Add Domains
 
         }
 
-    } elseif ($type_id == "2") {
+    } elseif ($type_id === 2) {
 
         $stmt = $pdo->prepare("
             SELECT df.name, df.field_name, df.description
@@ -2470,7 +2468,7 @@ if ($action == "AD") { // Add Domains
 
         }
 
-    } elseif ($type_id == "3") {
+    } elseif ($type_id === 3) {
 
         $stmt = $pdo->prepare("
             SELECT df.name, df.field_name, df.description
@@ -2491,7 +2489,7 @@ if ($action == "AD") { // Add Domains
 
         }
 
-    } elseif ($type_id == "4") {
+    } elseif ($type_id === 4) {
 
         $stmt = $pdo->prepare("
             SELECT df.name, df.field_name, df.description
@@ -2512,7 +2510,7 @@ if ($action == "AD") { // Add Domains
 
         }
 
-    } elseif ($type_id == "5") {
+    } elseif ($type_id === 5) {
 
         $stmt = $pdo->prepare("
             SELECT df.name, df.field_name, df.description
@@ -2537,7 +2535,7 @@ if ($action == "AD") { // Add Domains
 
 }
 
-if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != "")) {
+if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0)) {
 
     if ($action == "AD") {
 
@@ -2600,23 +2598,23 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
                     foreach ($result as $row) {
 
-                        if ($row->type_id == "1") { // Check Box
+                        if ($row->type_id === 1) { // Check Box
 
                             echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, '', '', '');
 
-                        } elseif ($row->type_id == "2") { // Text
+                        } elseif ($row->type_id === 2) { // Text
 
                             echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
-                        } elseif ($row->type_id == "3") { // Text Area
+                        } elseif ($row->type_id === 3) { // Text Area
 
                             echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
 
-                        } elseif ($row->type_id == "4") { // Date
+                        } elseif ($row->type_id === 4) { // Date
 
                             echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '');
 
-                        } elseif ($row->type_id == "5") { // Time Stamp
+                        } elseif ($row->type_id === 5) { // Time Stamp
 
                             echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '');
 

@@ -38,14 +38,14 @@ require_once DIR_INC . '/settings/assets-ssl-types.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, type, notes, creation_type_id, created_by, insert_time, update_time
     FROM ssl_cert_types
     ORDER BY type ASC")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_certificate_type_list', strtotime($time->stamp()));

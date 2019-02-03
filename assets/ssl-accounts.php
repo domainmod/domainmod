@@ -41,11 +41,11 @@ $pdo = $deeb->cnxx;
 $sslpid = (int) $_GET['sslpid'];
 $sslpaid = (int) $_GET['sslpaid'];
 $oid = (int) $_GET['oid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
-if ($sslpid != '') { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }
-if ($sslpaid != '') { $sslpaid_string = ' AND sa.id = ' . $sslpaid . ' '; } else { $sslpaid_string = ''; }
-if ($oid != '') { $oid_string = ' AND sa.owner_id = ' . $oid . ' '; } else { $oid_string = ''; }
+if ($sslpid !== 0) { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }
+if ($sslpaid !== 0) { $sslpaid_string = ' AND sa.id = ' . $sslpaid . ' '; } else { $sslpaid_string = ''; }
+if ($oid !== 0) { $oid_string = ' AND sa.owner_id = ' . $oid . ' '; } else { $oid_string = ''; }
 
 $result = $pdo->query("
     SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
@@ -59,7 +59,7 @@ $result = $pdo->query("
     GROUP BY sa.username, oname, sslpname
     ORDER BY sslpname, username, oname")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_provider_account_list', strtotime($time->stamp()));
@@ -174,7 +174,7 @@ if ($export_data == '1') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 Below is a list of all the SSL Provider Accounts that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
 <a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', 'Add SSL Account'); ?></a>
-<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo urlencode($sslpid); ?>&sslpaid=<?php echo urlencode($sslpaid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 if ($result) { ?>
 

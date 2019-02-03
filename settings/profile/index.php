@@ -265,7 +265,7 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('');
 
-if ($new_expiration_emails != "") {
+if ($new_expiration_emails !== 0) {
     $temp_expiration_emails = $new_expiration_emails;
 } else {
     $temp_expiration_emails = $_SESSION['s_expiration_emails'];

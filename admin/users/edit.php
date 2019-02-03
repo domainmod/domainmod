@@ -62,7 +62,7 @@ $new_read_only = (int) $_POST['new_read_only'];
 $new_is_active = (int) $_POST['new_is_active'];
 $new_uid = (int) $_POST['new_uid'];
 
-if ($new_uid == '') $new_uid = $uid;
+if ($new_uid === 0) $new_uid = $uid;
 
 $stmt = $pdo->prepare("
     SELECT username
@@ -447,7 +447,7 @@ echo $form->showFormBottom('');
     PASSWORD</a><BR>
 <BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>">RESET AND EMAIL NEW PASSWORD TO
     USER</a><BR>
-<BR><a href="edit.php?uid=<?php echo urlencode($uid); ?>&del=1">DELETE THIS USER</a>
+<BR><a href="edit.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

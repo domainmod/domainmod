@@ -41,11 +41,11 @@ $pdo = $deeb->cnxx;
 $rid = (int) $_GET['rid'];
 $raid = (int) $_GET['raid'];
 $oid = (int) $_GET['oid'];
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
-if ($rid != '') { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else { $rid_string = ''; }
-if ($raid != '') { $raid_string = " AND ra.id = '" . $raid . "' "; } else { $raid_string = ''; }
-if ($oid != '') { $oid_string = " AND ra.owner_id = '" . $oid . "' "; } else { $oid_string = ''; }
+if ($rid !== 0) { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else { $rid_string = ''; }
+if ($raid !== 0) { $raid_string = " AND ra.id = '" . $raid . "' "; } else { $raid_string = ''; }
+if ($oid !== 0) { $oid_string = " AND ra.owner_id = '" . $oid . "' "; } else { $oid_string = ''; }
 
 $result = $pdo->query("
     SELECT ra.id AS raid, ra.email_address, ra.username, ra.password, ra.reseller, ra.reseller_id, ra.api_app_name,
@@ -60,7 +60,7 @@ $result = $pdo->query("
     GROUP BY ra.username, oname, rname
     ORDER BY rname, username, oname")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_account_list', strtotime($time->stamp()));
@@ -208,7 +208,7 @@ if ($export_data == '1') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 Below is a list of all the Domain Registrar Accounts that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', 'Add Registrar Account'); ?></a>
-<a href="registrar-accounts.php?export_data=1&rid=<?php echo urlencode($rid); ?>&raid=<?php echo urlencode($raid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 if ($result) { ?>
 

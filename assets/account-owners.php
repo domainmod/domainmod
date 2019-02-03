@@ -38,14 +38,14 @@ require_once DIR_INC . '/settings/assets-owners.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, `name`, notes, creation_type_id, created_by, insert_time, update_time
     FROM owners
     ORDER BY `name` ASC")->fetchAll();
 
-if ($export_data == '1') {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('account_owner_list', strtotime($time->stamp()));

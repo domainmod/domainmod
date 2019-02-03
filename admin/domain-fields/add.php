@@ -86,27 +86,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
             $stmt->execute();
 
-            if ($new_field_type_id == '1') { // Check Box
+            if ($new_field_type_id === 1) { // Check Box
 
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'";
 
-            } elseif ($new_field_type_id == '2') { // Text
+            } elseif ($new_field_type_id === 2) { // Text
 
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-            } elseif ($new_field_type_id == '3') { // Text Area
+            } elseif ($new_field_type_id === 3) { // Text Area
 
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
 
-            } elseif ($new_field_type_id == '4') { // Date
+            } elseif ($new_field_type_id === 4) { // Date
 
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
 
-            } elseif ($new_field_type_id == '5') { // Time Stamp
+            } elseif ($new_field_type_id === 5) { // Time Stamp
 
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";

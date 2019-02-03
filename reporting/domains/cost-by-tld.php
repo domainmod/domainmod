@@ -42,7 +42,7 @@ require_once DIR_INC . '/settings/reporting-domain-cost-by-tld.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 $daterange = $_REQUEST['daterange'];
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
@@ -98,7 +98,7 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 
 if ($submission_failed != '1' && $total_rows > 0) {
 
-    if ($export_data == '1') {
+    if ($export_data === 1) {
 
         $export = new DomainMOD\Export();
 

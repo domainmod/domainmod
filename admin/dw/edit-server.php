@@ -58,7 +58,7 @@ $new_dwsid = (int) $_POST['new_dwsid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name == "" || $new_host == "" || $new_protocol == "" || $new_port == "" || $new_username == "" || ($new_api_token == "" && $new_hash == "")
+    if ($new_name == "" || $new_host == "" || $new_protocol == "" || $new_port === 0 || $new_username == "" || ($new_api_token == "" && $new_hash == "")
     ) {
 
         if ($new_name == "") {
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_protocol == "") {
             $_SESSION['s_message_danger'] .= "Enter the protocol<BR>";
         }
-        if ($new_port == "") {
+        if ($new_port === 0) {
             $_SESSION['s_message_danger'] .= "Enter the port<BR>";
         }
         if ($new_username == "") {
@@ -228,7 +228,7 @@ echo $form->showInputHidden('new_dwsid', $dwsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit-server.php?dwsid=<?php echo urlencode($dwsid); ?>&del=1">DELETE THIS SERVER</a>
+<BR><a href="edit-server.php?dwsid=<?php echo $dwsid; ?>&del=1">DELETE THIS SERVER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

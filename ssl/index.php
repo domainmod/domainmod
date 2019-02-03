@@ -123,37 +123,37 @@ if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' ";
 } elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
 }
 
-if ($oid != "") {
+if ($oid !== 0) {
     $oid_string = " AND o.id = '$oid' ";
 } else {
     $oid_string = "";
 }
-if ($did != "") {
+if ($did !== 0) {
     $did_string = " AND d.id = '$did' ";
 } else {
     $did_string = "";
 }
-if ($sslpid != "") {
+if ($sslpid !== 0) {
     $sslpid_string = " AND sslp.id = '$sslpid' ";
 } else {
     $sslpid_string = "";
 }
-if ($sslpaid != "") {
+if ($sslpaid !== 0) {
     $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
 } else {
     $sslpaid_string = "";
 }
-if ($ssltid != "") {
+if ($ssltid !== 0) {
     $ssltid_string = " AND sslc.type_id = '$ssltid' ";
 } else {
     $ssltid_string = "";
 }
-if ($sslipid != "") {
+if ($sslipid !== 0) {
     $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
 } else {
     $sslipid_string = "";
 }
-if ($sslpcid != "") {
+if ($sslpcid !== 0) {
     $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
 } else {
     $sslpcid_string = "";
@@ -674,32 +674,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -771,32 +771,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -868,32 +868,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -967,32 +967,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -1064,32 +1064,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -1161,32 +1161,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND sslc.owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
@@ -1258,32 +1258,32 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND sslc.domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND sslc.type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";
@@ -1355,37 +1355,37 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($oid != "") {
+            if ($oid !== 0) {
                 $oid_string = " AND owner_id = '$oid' ";
             } else {
                 $oid_string = "";
             }
-            if ($did != "") {
+            if ($did !== 0) {
                 $did_string = " AND domain_id = '$did' ";
             } else {
                 $did_string = "";
             }
-            if ($sslpid != "") {
+            if ($sslpid !== 0) {
                 $sslpid_string = " AND ssl_provider_id = '$sslpid' ";
             } else {
                 $sslpid_string = "";
             }
-            if ($sslpaid != "") {
+            if ($sslpaid !== 0) {
                 $sslpaid_string = " AND account_id = '$sslpaid' ";
             } else {
                 $sslpaid_string = "";
             }
-            if ($ssltid != "") {
+            if ($ssltid !== 0) {
                 $ssltid_string = " AND type_id = '$ssltid' ";
             } else {
                 $ssltid_string = "";
             }
-            if ($sslipid != "") {
+            if ($sslipid !== 0) {
                 $sslipid_string = " AND ip_id = '$sslipid' ";
             } else {
                 $sslipid_string = "";
             }
-            if ($sslpcid != "") {
+            if ($sslpcid !== 0) {
                 $sslpcid_string = " AND cat_id = '$sslpcid' ";
             } else {
                 $sslpcid_string = "";

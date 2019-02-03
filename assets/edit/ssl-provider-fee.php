@@ -54,15 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_initial_fee != '' && $new_renewal_fee != '') {
+    try {
 
-        try {
+        $pdo->beginTransaction();
 
-            $pdo->beginTransaction();
+        $timestamp = $time->stamp();
 
-            $timestamp = $time->stamp();
-
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE ssl_fees
                 SET initial_fee = :new_initial_fee,
                     renewal_fee = :new_renewal_fee,
@@ -71,77 +69,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     update_time = :timestamp
                 WHERE ssl_provider_id = :sslpid
                   AND type_id = :new_type_id");
-            $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 SELECT id
                 FROM ssl_fees
                 WHERE ssl_provider_id = :sslpid
                   AND type_id = :new_type_id
                   AND currency_id = :new_currency_id
                 LIMIT 1");
-            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $new_fee_id = $stmt->fetchColumn();
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $new_fee_id = $stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE ssl_certs
                 SET fee_id = :new_fee_id,
                     update_time = :timestamp
                 WHERE ssl_provider_id = :sslpid
                   AND type_id = :new_type_id");
-            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-            $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+        $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $temp_type = $assets->getSslType($new_type_id);
+        $temp_type = $assets->getSslType($new_type_id);
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE ssl_certs sslc
                 JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
                 SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                 WHERE sslc.fee_id = :new_fee_id");
-            $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+        $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-            $pdo->commit();
+        $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been updated<BR>";
+        $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been updated<BR>";
 
-            header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
-            exit;
+        header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
+        exit;
 
-        } catch (Exception $e) {
+    } catch (Exception $e) {
 
-            $pdo->rollback();
+        $pdo->rollback();
 
-            $log_message = 'Unable to update fee';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
+        $log_message = 'Unable to update fee';
+        $log_extra = array('Error' => $e);
+        $log->critical($log_message, $log_extra);
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-            throw $e;
-
-        }
-
-    } else {
-
-        if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
-        if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
+        throw $e;
 
     }
 
@@ -177,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
+<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>

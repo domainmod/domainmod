@@ -39,7 +39,7 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$export_data = $_GET['export_data'];
+$export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
     SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`, notes, dw_accounts, dw_dns_zones,
@@ -47,7 +47,7 @@ $result = $pdo->query("
     FROM dw_servers
     ORDER BY `name`, `host`")->fetchAll();
 
-if ($export_data == "1") {
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_servers', strtotime($time->stamp()));

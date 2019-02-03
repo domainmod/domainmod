@@ -47,7 +47,7 @@ $pdo = $deeb->cnxx;
 $new_raid = (int) $_REQUEST['new_raid'];
 $raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
 
-if ($new_raid != '') {
+if ($new_raid !== 0) {
 
     $stmt = $pdo->prepare("
         SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
@@ -100,9 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // If the registrar has the ability to retrieve the list of domains
     if ($lists_domains == '1' && $raw_domain_list == '') {
 
-        if ($new_raid == '') {
+        if ($new_raid === 0) {
 
-            if ($new_raid == '') $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
+            if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
 
         } else {
 
@@ -199,15 +199,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
+        if ($new_raid === 0 || $raw_domain_list == '' || $has_api_support != '1') {
 
-            if ($has_api_support != '1' && $new_raid != '') {
+            if ($has_api_support != '1' && $new_raid !== 0) {
 
                 $_SESSION['s_message_danger'] .= "Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.<BR><BR>Please check the <a href='" . $web_root . "/assets/edit/registrar.php?rid=" . $temp_registrar_id . "'>registrar</a> and try again.";
 
             } else {
 
-                if ($new_raid == '') $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
+                if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
                 if ($raw_domain_list == '') $_SESSION['s_message_danger'] .= "Enter the list of domains to add to the queue<BR>";
 
             }
@@ -288,11 +288,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                if ($new_raid == "" || $new_raid == "0" || $has_existing_domains == '1' || $has_existing_domains_queue == '1') {
+                if ($new_raid === 0 || $has_existing_domains == '1' || $has_existing_domains_queue == '1') {
 
                     if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
                     if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered is already in the domain queue.<BR>";
-                    if ($new_raid == "" || $new_raid == "0") $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
+                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
 
                     $submission_failed = 1;
 
@@ -416,11 +416,11 @@ foreach ($result_account as $row_account) {
 }
 echo $form->showDropdownBottom('');
 
-if ($new_raid != '') { ?>
+if ($new_raid !== 0) { ?>
 
     <strong>API Requirements</strong><BR>
     <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the
-    <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo urlencode($new_raid); ?>">registrar
+    <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo $new_raid; ?>">registrar
         account asset</a>.
 
     <ul><?php
@@ -502,7 +502,7 @@ if ($registrar_notes != '') {
 
 }
 
-if ($new_raid != '') {
+if ($new_raid !== 0) {
 
     if ($lists_domains == '1') {
 
@@ -517,7 +517,7 @@ if ($new_raid != '') {
 
 }
 
-if ($new_raid != '') {
+if ($new_raid !== 0) {
 
     echo $form->showSubmitButton('Add Domains', '', '');
 

@@ -53,7 +53,7 @@ $new_notes = $sanitize->text($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && ($new_api_token != "" || $new_hash != "")
+    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port !== 0 && $new_username != "" && ($new_api_token != "" || $new_hash != "")
     ) {
 
         $stmt = $pdo->prepare("
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter a display name for the server<BR>";
         if ($new_host == "") $_SESSION['s_message_danger'] .= "Enter the hostname<BR>";
         if ($new_protocol == "") $_SESSION['s_message_danger'] .= "Enter the protocol<BR>";
-        if ($new_port == "") $_SESSION['s_message_danger'] .= "Enter the port<BR>";
+        if ($new_port === 0) $_SESSION['s_message_danger'] .= "Enter the port<BR>";
         if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter the username<BR>"; }
         if ($new_api_token == "" && $new_hash == "") { $_SESSION['s_message_danger'] .= "Enter either the API token or remote access key/hash<BR>"; }
 

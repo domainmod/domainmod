@@ -59,15 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_initial_fee != '' && $new_renewal_fee != '' && $new_transfer_fee != '') {
+    try {
 
-        try {
+        $pdo->beginTransaction();
 
-            $pdo->beginTransaction();
+        $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
 
-            $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
-
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE fees
                 SET initial_fee = :new_initial_fee,
                     renewal_fee = :new_renewal_fee,
@@ -78,75 +76,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     update_time = :timestamp
                 WHERE registrar_id = :rid
                   AND tld = :new_tld");
-            $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_privacy_fee', strval($new_privacy_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
-            $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-            $stmt->execute();
+        $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_privacy_fee', strval($new_privacy_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
+        $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE domains
                 SET fee_id = :fee_id,
                     update_time = :timestamp
                 WHERE registrar_id = :rid
                   AND tld = :new_tld");
-            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-            $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-            $stmt->execute();
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                 WHERE d.privacy = '1'
                   AND d.fee_id = :fee_id");
-            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
                 UPDATE domains d
                 JOIN fees f ON d.fee_id = f.id
                 SET d.total_cost = f.renewal_fee + f.misc_fee
                 WHERE d.privacy = '0'
                   AND d.fee_id = :fee_id");
-            $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+        $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-            $pdo->commit();
+        $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
+        $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
 
-            header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
-            exit;
+        header("Location: ../registrar-fees.php?rid=" . $rid);
+        exit;
 
-        } catch (Exception $e) {
+    } catch (Exception $e) {
 
-            $pdo->rollback();
+        $pdo->rollback();
 
-            $log_message = 'Unable to update registrar fee';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
+        $log_message = 'Unable to update registrar fee';
+        $log_extra = array('Error' => $e);
+        $log->critical($log_message, $log_extra);
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-            throw $e;
-
-        }
-
-    } else {
-
-        if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
-        if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
-        if ($new_transfer_fee == '') $_SESSION['s_message_danger'] .= "Enter the transfer fee<BR>";
+        throw $e;
 
     }
 
@@ -184,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../registrar-fees.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
+<a href="../registrar-fees.php?rid=<?php echo $rid; ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 $temp_registrar = $assets->getRegistrar($rid);

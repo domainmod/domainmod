@@ -53,7 +53,7 @@ $new_description = $sanitize->text($_POST['new_description']);
 $new_cdfid = (int) $_POST['new_cdfid'];
 $new_notes = $sanitize->text($_POST['new_notes']);
 
-if ($new_cdfid == '') $new_cdfid = $cdfid;
+if ($new_cdfid === 0) $new_cdfid = $cdfid;
 
 $stmt = $pdo->prepare("
     SELECT id
@@ -167,7 +167,7 @@ if ($del == '1') {
 
 if ($really_del == '1') {
 
-    if ($cdfid == '') {
+    if ($cdfid === 0) {
 
         $_SESSION['s_message_danger'] .= 'The Custom Domain Field cannot be deleted<BR>';
 
@@ -246,7 +246,7 @@ echo $form->showInputHidden('new_cdfid', $cdfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?cdfid=<?php echo urlencode($cdfid); ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
+<BR><a href="edit.php?cdfid=<?php echo $cdfid; ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

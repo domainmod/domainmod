@@ -157,7 +157,7 @@ echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-type.php?ssltid=<?php echo urlencode($ssltid); ?>&del=1">DELETE THIS SSL TYPE</a>
+<BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS SSL TYPE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

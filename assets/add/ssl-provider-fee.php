@@ -47,7 +47,7 @@ $pdo = $deeb->cnxx;
 
 $sslpid = (int) $_REQUEST['sslpid'];
 $type_id = (int) $_GET['type_id'];
-if ($type_id != '') {
+if ($type_id !== 0) {
     $new_type_id = $type_id;
 } else {
     $new_type_id = (int) $_POST['new_type_id'];
@@ -59,11 +59,9 @@ $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_type_id == '' || $new_type_id == '0' || $new_initial_fee == '' || $new_renewal_fee == '') {
+    if ($new_type_id === 0) {
 
-        if ($new_type_id == '' || $new_type_id == '0') $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
-        if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
-        if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
+        if ($new_type_id === 0) $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
 
     } else {
 
@@ -83,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($fee_id) {
 
             $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists [<a href=\'' . WEB_ROOT .
-                '/assets/edit/ssl-provider-fee.php?sslpid=' . urlencode($sslpid) . '&fee_id=' . urlencode($fee_id) .
+                '/assets/edit/ssl-provider-fee.php?sslpid=' . $sslpid . '&fee_id=' . urlencode($fee_id) .
                 '\'>edit fee</a>]<BR>';
 
         } else {
@@ -144,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
 
-                header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
+                header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
                 exit;
 
             } catch (Exception $e) {
@@ -175,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
+<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>
