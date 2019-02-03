@@ -129,6 +129,10 @@ Code of Conduct
 ---------------
 Please see CODE_OF_CONDUCT.md for a detailed explanation of our code of conduct.
 
+Contributing
+------------
+Please see CONTRIBUTING.md for our contributing guidelines.
+
 Support
 -------
 For the DomainMOD documentation please visit <https://domainmod.org/docs/>, or access the /docs/ folder within your DomainMOD installation.
