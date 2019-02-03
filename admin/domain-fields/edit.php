@@ -43,8 +43,8 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $cdfid = (int) $_GET['cdfid'];
 
@@ -159,13 +159,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
 }
 
-if ($del == '1') {
+if ($del === 1) {
 
     $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Custom Domain Field?<BR><BR><a href="edit.php?cdfid=' . $cdfid . '&really_del=1">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>';
 
 }
 
-if ($really_del == '1') {
+if ($really_del === 1) {
 
     if ($cdfid === 0) {
 

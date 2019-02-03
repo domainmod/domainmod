@@ -46,8 +46,8 @@ $pdo = $deeb->cnxx;
 
 $segid = $_GET['segid'];
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $new_name = $_POST['new_name'];
 $new_description = $_POST['new_description'];
@@ -221,14 +221,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($del == "1") {
+if ($del === 1) {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Segment?<BR><BR><a
         href=\"edit.php?segid=" . $segid . "&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
 
-if ($really_del == "1") {
+if ($really_del === 1) {
 
     try {
 

@@ -41,8 +41,8 @@ require_once DIR_INC . '/settings/assets-edit-ssl-type.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $ssltid = (int) $_GET['ssltid'];
 
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($del == "1") {
+if ($del === 1) {
 
     $stmt = $pdo->prepare("
         SELECT type_id
@@ -126,7 +126,7 @@ if ($del == "1") {
 
 }
 
-if ($really_del == "1") {
+if ($really_del === 1) {
 
     $stmt = $pdo->prepare("
         DELETE FROM ssl_cert_types

@@ -41,8 +41,8 @@ require_once DIR_INC . '/settings/assets-edit-ip-address.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $ipid = (int) $_GET['ipid'];
 $new_name = $sanitize->text($_POST['new_name']);
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($del == "1") {
+if ($del === 1) {
 
     $stmt = $pdo->prepare("
         SELECT ip_id
@@ -134,7 +134,7 @@ if ($del == "1") {
 
 }
 
-if ($really_del == "1") {
+if ($really_del === 1) {
 
     $stmt = $pdo->prepare("
         DELETE FROM ip_addresses

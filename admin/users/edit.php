@@ -44,8 +44,8 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $uid = (int) $_GET['uid'];
 
@@ -282,13 +282,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     }
 }
-if ($del == '1') {
+if ($del === 1) {
 
     $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this User?<BR><BR><a href="edit.php?uid=' . $uid . '&really_del=1">YES, REALLY DELETE THIS USER</a><BR>';
 
 }
 
-if ($really_del == '1') {
+if ($really_del === 1) {
 
     $temp_uid = $pdo->query("
         SELECT id

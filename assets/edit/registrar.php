@@ -42,8 +42,8 @@ require_once DIR_INC . '/settings/assets-edit-registrar.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $rid = (int) $_REQUEST['rid'];
 $new_registrar = $sanitize->text($_POST['new_registrar']);
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($del == "1") {
+if ($del === 1) {
 
     $stmt = $pdo->prepare("
         SELECT registrar_id
@@ -153,7 +153,7 @@ if ($del == "1") {
 
 }
 
-if ($really_del == "1") {
+if ($really_del === 1) {
 
     try {
 

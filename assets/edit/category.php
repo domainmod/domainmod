@@ -41,8 +41,8 @@ require_once DIR_INC . '/settings/assets-edit-category.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = $_GET['del'];
-$really_del = $_GET['really_del'];
+$del = (int) $_GET['del'];
+$really_del = (int) $_GET['really_del'];
 
 $pcid = (int) $_GET['pcid'];
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($del == "1") {
+if ($del === 1) {
 
     $stmt = $pdo->prepare("
         SELECT cat_id
@@ -131,7 +131,7 @@ if ($del == "1") {
 
 }
 
-if ($really_del == "1") {
+if ($really_del === 1) {
 
     $stmt = $pdo->prepare("
         DELETE FROM categories
