@@ -1,5 +1,24 @@
 GJClasses CHANGELOG
 ===================
+v0.25.0    2019-02-03
+- Added Sanitize class
+- Added Sanitize class example
+- Added Unsanitize class
+- Added Unsanitize class example
+
+v0.24.0    2018-11-21
+- Updated Auth0 class
+- Updated Auth0 class example
+
+v0.23.0    2018-11-20
+- Updated Auth0 class
+- Updated Auth0 class example
+
+v0.22.0    2018-11-19
+- Added auth0/auth0-php ~5.0 to Composer requirements
+- Added Auth0 class
+- Added Auth0 class example
+
 v0.21.0    2018-11-11
 - Separated Email & Push Subjects (Notify Class)
 
