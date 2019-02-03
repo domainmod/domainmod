@@ -1,5 +1,29 @@
 DomainMOD CHANGELOG
 ===================
+v4.12.0    2019-02-03
+- Added Sanitize class
+- Added Unsanitize class
+- Added Validate class
+- Added GJClasses Composer package
+- Added Date Picker to Add Domain
+- Added Date Picker to Add SSL Certificate
+- Added Contributing Guidelines
+- Implemented GJClasses for currency conversions
+- Updated Composer
+- Updated Security section of README
+- Updated README
+- Updated copyright
+- Validations to prevent Cross-Site Scripting
+- Validations to prevent SQL Injection
+- Further sanitize user input
+- Linked TLD results to registrar fee edit
+- Showed default currency with Fee heading
+- Refactored each() statements for PHP 7.2 compatibility
+- Moved pageTitle method from System to Layout
+- Removed unused getConversionRate method
+- Removed unused Form class calls
+- Code cleanup
+
 v4.11.01   2018-09-11
 - Implemented Unbuffered Query fix
 
