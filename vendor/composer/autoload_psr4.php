@@ -8,7 +8,13 @@ $baseDir = dirname($vendorDir);
 return array(
     'donatj\\Pushover\\' => array($vendorDir . '/donatj/pushover/src'),
     'Pushbullet\\' => array($vendorDir . '/ivkos/pushbullet/src/Pushbullet'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
+    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
+    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
+    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'GJClasses\\' => array($vendorDir . '/chetcuti/gjclasses/src/GJClasses'),
+    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
     'DomainMOD\\' => array($baseDir . '/classes/DomainMOD'),
     'Cron\\' => array($vendorDir . '/dragonmantank/cron-expression/src/Cron'),
+    'Auth0\\SDK\\' => array($vendorDir . '/auth0/auth0-php/src'),
 );
