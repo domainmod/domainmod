@@ -84,6 +84,8 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 4. Do not host DomainMOD on a public website or on an easy-to-guess URL.
 
+    If you do end up hosting DomainMOD on a public website, you should use your website's robots.txt file to block bots and spiders from crawling your site.
+
 5. Do not give the URL to anyone who does not need to access DomainMOD. You should treat the URL like a password.
 
 6. Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerabilities that are found and fixed.
