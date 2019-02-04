@@ -139,7 +139,7 @@ if ($new_username == "") { ?>
 <?php
 echo $form->showFormTop('');
 
-if (DEMO_INSTALLATION === 1) { ?>
+if (DEMO_INSTALLATION === true) { ?>
     <strong>Demo Username:</strong> demo<BR>
     <strong>Demo Password:</strong> demo<BR><BR><?php
 }
@@ -149,7 +149,7 @@ echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', ''
 echo $form->showSubmitButton('Login', '', '');
 echo $form->showFormBottom('');
 
-if (DEMO_INSTALLATION !== 1) { ?>
+if (DEMO_INSTALLATION === false) { ?>
 
     <BR><a href="reset.php">Forgot your Password?</a><?php
 

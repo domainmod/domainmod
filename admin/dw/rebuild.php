@@ -48,7 +48,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-if (DEMO_INSTALLATION !== 1) {
+if (DEMO_INSTALLATION === false) {
 
     $result_message = $dw->build();
 

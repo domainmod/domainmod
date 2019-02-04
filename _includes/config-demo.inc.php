@@ -22,10 +22,10 @@
 <?php
 if ($_SERVER['HTTP_HOST'] == 'demo.domainmod.org') {
 
-    define('DEMO_INSTALLATION', 1);
+    define('DEMO_INSTALLATION', true);
 
 } else {
 
-    define('DEMO_INSTALLATION', 0);
+    define('DEMO_INSTALLATION', false);
 
 }
