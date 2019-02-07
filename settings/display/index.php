@@ -31,6 +31,7 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$custom_field = new DomainMOD\CustomField();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,6 +43,8 @@ $pdo = $deeb->cnxx;
 $new_number_of_domains = (int) $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = (int) $_POST['new_number_of_ssl_certs'];
 $domain_column_options = $_POST['domain_column_options'];
+$custom_domain_fields = $_POST['custom_domain_fields'];
+$custom_ssl_fields = $_POST['custom_ssl_fields'];
 $ssl_column_options = $_POST['ssl_column_options'];
 $new_display_inactive_assets = (int) $_POST['new_display_inactive_assets'];
 $new_display_dw_intro_page = (int) $_POST['new_display_dw_intro_page'];
@@ -49,7 +52,53 @@ $new_display_dw_intro_page = (int) $_POST['new_display_dw_intro_page'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (is_null($domain_column_options)) $domain_column_options = array('');
+    if (is_null($custom_domain_fields)) $custom_domain_fields = array('');
+    if (is_null($custom_ssl_fields)) $custom_ssl_fields = array('');
     if (is_null($ssl_column_options)) $ssl_column_options = array('');
+
+    foreach ($_SESSION['s_cdf_data'] as $field) {
+
+        if (in_array($field['display_field'], $custom_domain_fields)) {
+
+            $pdo->query("
+                UPDATE `user_settings`
+                SET " . $field['display_field'] . " = '1'
+                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+
+        } else {
+
+            $pdo->query("
+                UPDATE `user_settings`
+                SET " . $field['display_field'] . " = '0'
+                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+
+        }
+
+        $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
+
+    }
+
+    foreach ($_SESSION['s_csf_data'] as $field) {
+
+        if (in_array($field['display_field'], $custom_ssl_fields)) {
+
+            $pdo->query("
+                UPDATE `user_settings`
+                SET " . $field['display_field'] . " = '1'
+                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+
+        } else {
+
+            $pdo->query("
+                UPDATE `user_settings`
+                SET " . $field['display_field'] . " = '0'
+                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+
+        }
+
+        $_SESSION['s_csf_data'] = $custom_field->getCSFData();
+
+    }
 
     if (in_array("expiry", $domain_column_options)) { $new_display_domain_expiry_date = '1'; } else { $new_display_domain_expiry_date = '0'; }
     if (in_array("fee", $domain_column_options)) { $new_display_domain_fee = '1'; } else { $new_display_domain_fee = '0'; }
@@ -213,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
         }
 
     }
+
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -246,6 +296,20 @@ echo $form->showMultipleSelectOption('IP Address', 'ip', $new_display_domain_ip)
 echo $form->showMultipleSelectOption('Web Host', 'host', $new_display_domain_host);
 echo $form->showMultipleSelectOption('Category', 'category', $new_display_domain_category);
 echo $form->showMultipleSelectOption('Owner', 'owner', $new_display_domain_owner);
+echo $form->showMultipleSelectBottom('');
+
+echo $form->showMultipleSelectTop('custom_domain_fields', 'Custom Domain Fields to Display', '');
+
+foreach ($_SESSION['s_cdf_data'] as $field) {
+
+    if ($field['type_id'] != '3') { // Don't show Text Areas
+
+        echo $form->showMultipleSelectOption($field['name'], $field['display_field'], $field['value']);
+
+    }
+
+}
+
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
@@ -268,6 +332,20 @@ echo $form->showMultipleSelectOption('SSL Type', 'type', $new_display_ssl_type);
 echo $form->showMultipleSelectOption('IP Address', 'ip', $new_display_ssl_ip);
 echo $form->showMultipleSelectOption('Category', 'category', $new_display_ssl_category);
 echo $form->showMultipleSelectOption('Owner', 'owner', $new_display_ssl_owner);
+echo $form->showMultipleSelectBottom('');
+
+echo $form->showMultipleSelectTop('custom_ssl_fields', 'Custom SSL Fields to Display', '');
+
+foreach ($_SESSION['s_csf_data'] as $field) {
+
+    if ($field['type_id'] != '3') { // Don't show Text Areas
+
+        echo $form->showMultipleSelectOption($field['name'], $field['display_field'], $field['value']);
+
+    }
+
+}
+
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 

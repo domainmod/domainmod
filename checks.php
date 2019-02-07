@@ -35,6 +35,7 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
 $upgrade = new DomainMOD\Upgrade();
 $currency = new DomainMOD\Currency();
+$custom_field = new DomainMOD\CustomField();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -137,6 +138,12 @@ $_SESSION['s_display_ssl_expiry_date'] = $result->display_ssl_expiry_date;
 $_SESSION['s_display_ssl_fee'] = $result->display_ssl_fee;
 $_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
 $_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
+
+// Load Custom Domain Field Data
+$_SESSION['s_cdf_data'] = $custom_field->getCDFData();
+
+// Load Custom SSL Field Data
+$_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
 // Load Currency Info
 list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
