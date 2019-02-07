@@ -1548,6 +1548,23 @@ if ($result) { ?>
                     Owner
                 </th>
                 <?php } ?>
+                <?php if ($_SESSION['s_csf_data']) {
+
+                    foreach ($_SESSION['s_csf_data'] as $field) {
+
+                        if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
+
+                            <th>
+
+                                <?php echo $field['name']; ?>
+
+                            </th><?php
+
+                        }
+
+                    }
+
+                } ?>
             </tr>
             </thead>
             <tbody>
@@ -1620,6 +1637,56 @@ if ($result) { ?>
                     <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
                 </td>
                 <?php } ?>
+
+                <?php if ($_SESSION['s_csf_data']) {
+
+                    foreach ($_SESSION['s_csf_data'] as $field) {
+
+                        if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
+
+                        <td><?php
+
+                            if ($field['type_id'] === 1) { // Check Box
+
+                                echo ($row->{$field['field']} === 1 ? 'Yes' : 'No');
+
+                            } elseif ($field['type_id'] === 2) { // Text
+
+                                echo $row->{$field['field']};
+
+                            } elseif ($field['type_id'] === 4) { // Date
+
+                                if ($row->{$field['field']} == '1978-01-23') {
+
+                                    echo '';
+
+                                } else {
+
+                                    echo $row->{$field['field']};
+
+                                }
+
+                            } elseif ($field['type_id'] === 5) { // Time Stamp
+
+                                if ($row->{$field['field']} == '1978-01-23 00:00:00') {
+
+                                    echo '';
+
+                                } else {
+
+                                    echo $row->{$field['field']};
+
+                                }
+
+                            } ?>
+
+                        </td><?php
+
+                        }
+
+                    }
+
+                } ?>
 
             </tr>
             <?php } ?>

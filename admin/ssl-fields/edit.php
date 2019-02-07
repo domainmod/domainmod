@@ -32,6 +32,7 @@ $log = new DomainMOD\Log('/admin/ssl-fields/edit.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$custom_field = new DomainMOD\CustomField();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 
@@ -106,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         }
 
         $pdo->commit();
+
+        $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
         $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $new_name . ' (' . $result . ') updated<BR>';
 
@@ -198,9 +201,15 @@ if ($really_del === 1) {
                 $stmt->bindValue('csfid', $csfid, PDO::PARAM_INT);
                 $stmt->execute();
 
+                $pdo->query("
+                    ALTER TABLE `user_settings`
+                    DROP `dispcsf_" . $result->field_name . "`");
+
             }
 
             $pdo->commit();
+
+            $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
             $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $result->name . ' (' . $result->field_name . ') deleted<BR>';
 
