@@ -26,6 +26,9 @@ $software_section = "domains";
 $software_section_logo = "fa-sitemap";
 $slug = "domains-main";
 
+// If the expiry date is visible sort by it, otherwise sort by the domain
+$_SESSION['s_display_domain_expiry_date'] == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
+
 if ($_SESSION['s_system_large_mode'] != '1') {
 
     $datatable_css = '#' . $slug . ' thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
@@ -52,7 +55,7 @@ if ($_SESSION['s_system_large_mode'] != '1') {
                                                targets:   0
                                                } ],
                               "ordering": true,
-                              "order": [[ 2, "asc" ]],
+                              "order": [[ ' . $default_sort_by . ', "asc" ]],
                               "bSortClasses": false,
                               "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                               "fnDrawCallback": function (o) {

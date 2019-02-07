@@ -32,6 +32,7 @@ $log = new DomainMOD\Log('/admin/domain-fields/edit.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$custom_field = new DomainMOD\CustomField();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 
@@ -106,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         }
 
         $pdo->commit();
+
+        $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
         $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $result . ') updated<BR>';
 
@@ -198,9 +201,15 @@ if ($really_del === 1) {
                 $stmt->bindValue('cdfid', $cdfid, PDO::PARAM_INT);
                 $stmt->execute();
 
+                $pdo->query("
+                    ALTER TABLE `user_settings`
+                    DROP `dispcdf_" . $result->field_name . "`");
+
             }
 
             $pdo->commit();
+
+            $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
             $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $result->name . ' (' . $result->field_name . ') deleted<BR>';
 

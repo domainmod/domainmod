@@ -37,6 +37,7 @@ $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$custom_field = new DomainMOD\CustomField();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -1904,6 +1905,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
 
                     $pdo->commit();
+
+                    $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
                     $_SESSION['s_message_success'] .= "Custom Field " . $name_array[0] . " Updated<BR>";
 

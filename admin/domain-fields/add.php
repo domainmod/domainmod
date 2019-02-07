@@ -115,7 +115,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
             $pdo->query($sql);
 
+            $pdo->query("
+                ALTER TABLE `user_settings`
+                ADD `dispcdf_" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'");
+
             $pdo->commit();
+
+            $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
             $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $new_field_name . ') added<BR>';
 
