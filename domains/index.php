@@ -383,14 +383,18 @@ if ($segid !== 0) {
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
 
-    $stmt = $pdo->prepare("
-        UPDATE segment_data
-        SET filtered = '1'
-        WHERE active = '1'
-          AND segment_id = :segid
-          AND domain NOT IN (" . $active_domains . ")");
-    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-    $stmt->execute();
+    if ($active_domains) {
+
+        $stmt = $pdo->prepare("
+            UPDATE segment_data
+            SET filtered = '1'
+            WHERE active = '1'
+              AND segment_id = :segid
+              AND domain NOT IN (" . $active_domains . ")");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+
+    }
 
     $stmt = $pdo->prepare("
         UPDATE segment_data
