@@ -1656,7 +1656,7 @@ if ($result) { ?>
 
                             } elseif ($field['type_id'] === 4) { // Date
 
-                                if ($row->{$field['field']} == '1978-01-23') {
+                                if ($row->{$field['field']} == '1970-01-01') {
 
                                     echo '';
 
@@ -1668,7 +1668,7 @@ if ($result) { ?>
 
                             } elseif ($field['type_id'] === 5) { // Time Stamp
 
-                                if ($row->{$field['field']} == '1978-01-23 00:00:00') {
+                                if ($row->{$field['field']} == '1970-01-01 00:00:00') {
 
                                     echo '';
 

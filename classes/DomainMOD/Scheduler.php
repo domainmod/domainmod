@@ -119,7 +119,7 @@ class Scheduler
 
     public function getDateOutput($next_run)
     {
-        if ($next_run == '1978-01-23 00:00:00') {
+        if ($next_run == '1970-01-01 00:00:00') {
             return 'n/a';
         } else {
             return $next_run;

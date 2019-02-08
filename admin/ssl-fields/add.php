@@ -104,12 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
             } elseif ($new_field_type_id === 4) { // Date
 
                 $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1978-01-23'";
+                        ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1970-01-01'";
 
             } elseif ($new_field_type_id === 5) { // Time Stamp
 
                 $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00'";
+                        ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00'";
 
             }
 

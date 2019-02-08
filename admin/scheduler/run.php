@@ -70,7 +70,7 @@ if (DEMO_INSTALLATION === false) {
 
         } else {
 
-            $next_run = '1978-01-23 00:00:00';
+            $next_run = '1970-01-01 00:00:00';
 
         }
 

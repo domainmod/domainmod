@@ -90,7 +90,7 @@ if ($a == 'u') {
     $stmt = $pdo->prepare("
         UPDATE scheduler
         SET active = '0', 
-            next_run = '1978-01-23 00:00:00'
+            next_run = '1970-01-01 00:00:00'
         WHERE id = :id");
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();

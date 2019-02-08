@@ -86,7 +86,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             <strong>Status:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
 
-            if ($row->last_run != '1978-01-23 00:00:00') {
+            if ($row->last_run != '1970-01-01 00:00:00') {
                 $last_run = $time->toUserTimezone($schedule->getDateOutput($row->last_run));
             } else {
                 $last_run = '-';
@@ -95,7 +95,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
 
-            if ($row->next_run != '1978-01-23 00:00:00') {
+            if ($row->next_run != '1970-01-01 00:00:00') {
                 $next_run = $time->toUserTimezone($schedule->getDateOutput($row->next_run));
                 $hour = date('H', strtotime($next_run));
             } else {
