@@ -264,6 +264,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
 
+} else {
+
+    // Casting $new_active as int sets it to 0 on first load, which sets the default status to 'Expired'. The below
+    // line sets the default to 'Active' instead.
+    $new_active = 1;
+
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
