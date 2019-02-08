@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['s_message_success'] .= "The System Defaults were updated<BR>";
 
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit;
 
 }

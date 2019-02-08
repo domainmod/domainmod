@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     $_SESSION['s_message_success'] .= "Display Settings updated<BR>";
 
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit;
 
 } else {

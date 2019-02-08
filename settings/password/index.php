@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         } else {
 
-            header('Location: ../index.php');
+            header('Location: index.php');
 
         }
         exit;

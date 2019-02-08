@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             $_SESSION['s_message_success'] .= "Your profile was updated<BR>";
 
-            header("Location: ../index.php");
+            header("Location: index.php");
             exit;
 
         } catch (Exception $e) {
