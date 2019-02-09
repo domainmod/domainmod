@@ -74,7 +74,7 @@ class Email
         }
     }
 
-    public function sendExpirations($from_cron)
+    public function sendExpirations($from_cron = false)
     {
         $timestamp_basic = $this->time->timeBasic();
         $timestamp_long = $this->time->timeLong();
@@ -138,7 +138,7 @@ class Email
         return array($url, $email, $days, $use_smtp);
     }
 
-    public function checkExpiring($from_cron)
+    public function checkExpiring($from_cron = false)
     {
         $date = $this->time->timeBasicPlusDays($this->number_of_days);
         $pdo = $this->deeb->cnxx;
