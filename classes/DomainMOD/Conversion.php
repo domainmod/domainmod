@@ -49,8 +49,7 @@ class Conversion
 
         foreach ($result as $row) {
 
-            $money = new \GJClasses\Money();
-            $conversion_rate = $row->currency == $default_currency ? 1 : $money->getConvRate($row->currency, $default_currency);
+            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency);
 
             $bind_currency_id = $row->id;
             $stmt->execute();
@@ -154,6 +153,12 @@ class Conversion
             $this->log->info($log_message, $log_extra);
 
         }
+    }
+
+    public function getConvRate($from_currency, $to_currency)
+    {
+        $conversion = new \GJClasses\Money();
+        return $conversion->getConvRate($from_currency, $to_currency);
     }
 
 } //@formatter:on
