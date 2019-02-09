@@ -27,14 +27,18 @@ class Notice
     public function dbUpgrade()
     {
         $layout = new Layout();
-        $_SESSION['s_notice_page_title'] = 'Database Upgrade Available<BR><em>v' . $_SESSION['s_system_db_version'] . ' to
-            v' . SOFTWARE_VERSION . '</em>';
+        $_SESSION['s_notice_page_title'] = 'Database Upgrade Available<BR><em>v' . $_SESSION['s_system_db_version'] . '
+        to v' . SOFTWARE_VERSION . '</em>';
         $_SESSION['s_notice'] = "<BR>Your " . SOFTWARE_TITLE . " software was recently updated, so we now need to
-            upgrade your database.<BR><BR><strong>***** WARNING *****<BR>WE STRONGLY RECOMMEND THAT YOU BACKUP YOUR
-            ENTIRE DOMAINMOD DATABASE BEFORE PROCEEDING WITH THE UPGRADE.<BR>IF SOMETHING GOES WRONG DURING THE UPGRADE
-            AND YOU HAVEN'T CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER.<BR>***** WARNING *****</strong><BR><BR>          
-            Please be patient, this may take a moment.<BR><BR>
-            <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
+        upgrade your database.<BR><BR><strong><span style='font-size: 125%; color: red;'>***** CRITICAL WARNING --
+        PLEASE READ *****</span><BR>WE <span style='font-size: 150%;'>STRONGLY</span> RECOMMEND THAT YOU BACKUP YOUR
+        DOMAINMOD INSTALLATION DIRECTORY AND DATABASE BEFORE PROCEEDING WITH THE UPGRADE<BR>IF SOMETHING GOES WRONG DURING THE UPGRADE AND
+        YOU HAVEN'T CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER YOUR DATA<BR><span
+        style='font-size: 125%; color: red; line-height: 45px;'>***** CRITICAL WARNING -- PLEASE READ *****</span>
+        </strong><BR><BR>Please be patient, this may take a moment. The older your current version is, the longer the
+        upgrade will take.<BR><BR><a href='checks.php?u=1'>" . $layout->showButton('button',
+        'Upgrade Database') . "</a>";
+
     }
 
 } //@formatter:on
