@@ -26,8 +26,8 @@ class Unsanitize
 
    public function text($text)
     {
-        return htmlspecialchars_decode($text, ENT_QUOTES);
-
+        $unsanitize = new \GJClasses\Unsanitize();
+        return $unsanitize->text($text);
     }
 
 } //@formatter:on
