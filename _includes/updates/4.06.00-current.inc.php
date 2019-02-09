@@ -298,6 +298,925 @@ if ($current_db_version === '4.11.01') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.12.0 to 4.13.0
+if ($current_db_version === '4.12.0') {
+
+    $old_version = '4.12.0';
+    $new_version = '4.13.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $result = $pdo->query("SELECT `field_name` FROM domain_fields")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `user_settings`
+                    ADD `dispcdf_" . $row->field_name . "` TINYINT(1) NOT NULL DEFAULT '0'");
+
+            }
+
+        }
+
+        $result = $pdo->query("SELECT `field_name` FROM ssl_cert_fields")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `user_settings`
+                    ADD `dispcsf_" . $row->field_name . "` TINYINT(1) NOT NULL DEFAULT '0'");
+
+            }
+
+        }
+
+        $pdo->query("
+            ALTER TABLE `creation_types`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `creation_types`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `users`
+            ALTER `last_login` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `users`
+            SET `last_login` = '1970-01-01 00:00:00'
+            WHERE `last_login` = '1978-01-23 00:00:00'
+              OR `last_login` = '0000-00-00 00:00:00'
+              OR `last_login` IS NULL");
+
+        $pdo->query("
+            UPDATE `users`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `users`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `user_settings`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `user_settings`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `user_settings`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `categories`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `categories`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `categories`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `hosting`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `hosting`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `hosting`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `owners`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `owners`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `owners`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `currencies`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `currencies`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `currencies`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `currency_conversions`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `currency_conversions`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `currency_conversions`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `fees`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `fees`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `fees`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_fees`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_fees`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_fees`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domains`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domains`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `domains`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_queue`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue_history`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_queue_history`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue_list`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_queue_list`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue_list_history`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_queue_list_history`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `custom_field_types`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `custom_field_types`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `custom_field_types`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_fields`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_fields`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `domain_fields`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_field_data`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `domain_field_data`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `domain_field_data`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_certs`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_certs`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_certs`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_cert_types`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_cert_types`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_cert_types`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_cert_fields`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_cert_fields`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_cert_fields`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_cert_field_data`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_cert_field_data`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_cert_field_data`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `dns`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `dns`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `dns`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `registrars`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `registrars`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `registrars`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `registrar_accounts`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `registrar_accounts`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `registrar_accounts`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_providers`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_providers`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_providers`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_accounts`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ssl_accounts`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ssl_accounts`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `segments`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `segments`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `segments`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `segment_data`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `segment_data`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `segment_data`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ip_addresses`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `ip_addresses`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `ip_addresses`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `timezones`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `timezones`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `dw_servers`
+            ALTER `build_start_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `build_end_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `build_start_time_overall` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `build_end_time_overall` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `build_start_time` = '1970-01-01 00:00:00'
+            WHERE `build_start_time` = '1978-01-23 00:00:00'
+              OR `build_start_time` = '0000-00-00 00:00:00'
+              OR `build_start_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `build_end_time` = '1970-01-01 00:00:00'
+            WHERE `build_end_time` = '1978-01-23 00:00:00'
+              OR `build_end_time` = '0000-00-00 00:00:00'
+              OR `build_end_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `build_start_time_overall` = '1970-01-01 00:00:00'
+            WHERE `build_start_time_overall` = '1978-01-23 00:00:00'
+              OR `build_start_time_overall` = '0000-00-00 00:00:00'
+              OR `build_start_time_overall` IS NULL");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `build_end_time_overall` = '1970-01-01 00:00:00'
+            WHERE `build_end_time_overall` = '1978-01-23 00:00:00'
+              OR `build_end_time_overall` = '0000-00-00 00:00:00'
+              OR `build_end_time_overall` IS NULL");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `dw_servers`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `scheduler`
+            ALTER `last_run` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `next_run` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `scheduler`
+            SET `last_run` = '1970-01-01 00:00:00'
+            WHERE `last_run` = '1978-01-23 00:00:00'
+              OR `last_run` = '0000-00-00 00:00:00'
+              OR `last_run` IS NULL");
+
+        $pdo->query("
+            UPDATE `scheduler`
+            SET `next_run` = '1970-01-01 00:00:00'
+            WHERE `next_run` = '1978-01-23 00:00:00'
+              OR `next_run` = '0000-00-00 00:00:00'
+              OR `next_run` IS NULL");
+
+        $pdo->query("
+            UPDATE `scheduler`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `scheduler`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `api_registrars`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `api_registrars`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `api_registrars`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `goal_activity`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `goal_activity`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `goal_activity`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `log`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `log`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `settings`
+            ALTER `insert_time` SET DEFAULT '1970-01-01 00:00:00',
+            ALTER `update_time` SET DEFAULT '1970-01-01 00:00:00'");
+
+        $pdo->query("
+            UPDATE `settings`
+            SET `insert_time` = '1970-01-01 00:00:00'
+            WHERE `insert_time` = '1978-01-23 00:00:00'
+              OR `insert_time` = '0000-00-00 00:00:00'
+              OR `insert_time` IS NULL");
+
+        $pdo->query("
+            UPDATE `settings`
+            SET `update_time` = '1970-01-01 00:00:00'
+            WHERE `update_time` = '1978-01-23 00:00:00'
+              OR `update_time` = '0000-00-00 00:00:00'
+              OR `update_time` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domains`
+            ALTER `expiry_date` SET DEFAULT '1970-01-01'");
+
+        $pdo->query("
+            UPDATE `domains`
+            SET `expiry_date` = '1970-01-01'
+            WHERE `expiry_date` = '1978-01-23'
+              OR `expiry_date` = '0000-00-00'
+              OR `expiry_date` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue`
+            ALTER `expiry_date` SET DEFAULT '1970-01-01'");
+
+        $pdo->query("
+            UPDATE `domain_queue`
+            SET `expiry_date` = '1970-01-01'
+            WHERE `expiry_date` = '1978-01-23'
+              OR `expiry_date` = '0000-00-00'
+              OR `expiry_date` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue_history`
+            ALTER `expiry_date` SET DEFAULT '1970-01-01'");
+
+        $pdo->query("
+            UPDATE `domain_queue_history`
+            SET `expiry_date` = '1970-01-01'
+            WHERE `expiry_date` = '1978-01-23'
+              OR `expiry_date` = '0000-00-00'
+              OR `expiry_date` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `domain_queue_temp`
+            ALTER `expiry_date` SET DEFAULT '1970-01-01'");
+
+        $pdo->query("
+            UPDATE `domain_queue_temp`
+            SET `expiry_date` = '1970-01-01'
+            WHERE `expiry_date` = '1978-01-23'
+              OR `expiry_date` = '0000-00-00'
+              OR `expiry_date` IS NULL");
+
+        $pdo->query("
+            ALTER TABLE `ssl_certs`
+            ALTER `expiry_date` SET DEFAULT '1970-01-01'");
+
+        $pdo->query("
+            UPDATE `ssl_certs`
+            SET `expiry_date` = '1970-01-01'
+            WHERE `expiry_date` = '1978-01-23'
+              OR `expiry_date` = '0000-00-00'
+              OR `expiry_date` IS NULL");
+
+        $result = $pdo->query("
+            SELECT `COLUMN_NAME` AS field_name
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = '" . $dbname . "'
+              AND `TABLE_NAME` = 'domain_field_data'
+              AND `COLUMN_TYPE` = 'datetime'")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `domain_field_data`
+                    ALTER `" . $row->field_name . "` SET DEFAULT '1970-01-01 00:00:00'");
+
+                $pdo->query("
+                    UPDATE `domain_field_data`
+                    SET `" . $row->field_name . "` = '1970-01-01 00:00:00'
+                    WHERE `" . $row->field_name . "` = '1978-01-23 00:00:00'
+                      OR `" . $row->field_name . "` = '0000-00-00 00:00:00'
+                      OR `" . $row->field_name . "` IS NULL");
+
+            }
+
+        }
+
+        $result = $pdo->query("
+            SELECT `COLUMN_NAME` AS field_name
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = '" . $dbname . "'
+              AND `TABLE_NAME` = 'ssl_cert_field_data'
+              AND `COLUMN_TYPE` = 'datetime'")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `ssl_cert_field_data`
+                    ALTER `" . $row->field_name . "` SET DEFAULT '1970-01-01 00:00:00'");
+
+                $pdo->query("
+                    UPDATE `ssl_cert_field_data`
+                    SET `" . $row->field_name . "` = '1970-01-01 00:00:00'
+                    WHERE `" . $row->field_name . "` = '1978-01-23 00:00:00'
+                      OR `" . $row->field_name . "` = '0000-00-00 00:00:00'
+                      OR `" . $row->field_name . "` IS NULL");
+
+            }
+
+        }
+
+        $result = $pdo->query("
+            SELECT `COLUMN_NAME` AS field_name
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = '" . $dbname . "'
+              AND `TABLE_NAME` = 'domain_field_data'
+              AND `COLUMN_TYPE` = 'date'")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `domain_field_data`
+                    ALTER `" . $row->field_name . "` SET DEFAULT '1970-01-01'");
+
+                $pdo->query("
+                    UPDATE `domain_field_data`
+                    SET `" . $row->field_name . "` = '1970-01-01'
+                    WHERE `" . $row->field_name . "` = '1978-01-23'
+                      OR `" . $row->field_name . "` = '0000-00-00'
+                      OR `" . $row->field_name . "` IS NULL");
+
+            }
+
+        }
+
+        $result = $pdo->query("
+            SELECT `COLUMN_NAME` AS field_name
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = '" . $dbname . "'
+              AND `TABLE_NAME` = 'ssl_cert_field_data'
+              AND `COLUMN_TYPE` = 'date'")->fetchAll();
+
+        if ($result) {
+
+            foreach ($result as $row) {
+
+                $pdo->query("
+                    ALTER TABLE `ssl_cert_field_data`
+                    ALTER `" . $row->field_name . "` SET DEFAULT '1970-01-01'");
+
+                $pdo->query("
+                    UPDATE `ssl_cert_field_data`
+                    SET `" . $row->field_name . "` = '1970-01-01'
+                    WHERE `" . $row->field_name . "` = '1978-01-23'
+                      OR `" . $row->field_name . "` = '0000-00-00'
+                      OR `" . $row->field_name . "` IS NULL");
+
+            }
+
+        }
+
+        $pdo->query("
+            ALTER TABLE `settings`
+            ADD `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'fcca' AFTER `expiration_days`");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
@@ -316,6 +1235,4 @@ if ($current_db_version === '4.11.01') {
 
     }
 
-}
-
-//@formatter:on
+} //@formatter:on

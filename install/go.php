@@ -51,7 +51,7 @@ try {
         CREATE TABLE IF NOT EXISTS `creation_types` (
             `id` TINYINT(2) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -81,11 +81,11 @@ try {
             `read_only` TINYINT(1) NOT NULL DEFAULT '1',
             `active` TINYINT(1) NOT NULL DEFAULT '1',
             `number_of_logins` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `last_login` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `last_login` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -144,8 +144,8 @@ try {
             `display_ssl_fee` TINYINT(1) NOT NULL DEFAULT '0',
             `display_inactive_assets` TINYINT(1) NOT NULL DEFAULT '1',
             `display_dw_intro_page` TINYINT(1) NOT NULL DEFAULT '1',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -168,8 +168,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -187,8 +187,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -205,8 +205,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `name` (`name`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -226,8 +226,8 @@ try {
             `symbol_order` TINYINT(1) NOT NULL DEFAULT '0',
             `symbol_space` TINYINT(1) NOT NULL DEFAULT '0',
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -408,8 +408,8 @@ try {
             `currency_id` INT(10) UNSIGNED NOT NULL,
             `user_id` INT(10) UNSIGNED NOT NULL,
             `conversion` DECIMAL(12,4) NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -425,8 +425,8 @@ try {
             `misc_fee` DECIMAL(10,2) NOT NULL,
             `currency_id` INT(10) UNSIGNED NOT NULL,
             `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -440,8 +440,8 @@ try {
             `misc_fee` DECIMAL(10,2) NOT NULL,
             `currency_id` INT(10) UNSIGNED NOT NULL,
             `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -453,7 +453,7 @@ try {
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `fee_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `total_cost` DECIMAL(10,2) NOT NULL,
@@ -468,8 +468,8 @@ try {
             `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `domain` (`domain`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -484,7 +484,7 @@ try {
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -499,7 +499,7 @@ try {
             `invalid_domain` TINYINT(1) NOT NULL DEFAULT '0',
             `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -513,7 +513,7 @@ try {
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -523,7 +523,7 @@ try {
             `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -540,7 +540,7 @@ try {
             `finished` TINYINT(1) NOT NULL DEFAULT '0',
             `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -553,7 +553,7 @@ try {
             `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -562,7 +562,7 @@ try {
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `account_id` INT(10) UNSIGNED NOT NULL,
             `domain` VARCHAR(255) NOT NULL,
-            `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `ns1` VARCHAR(255) NOT NULL,
             `ns2` VARCHAR(255) NOT NULL,
             `ns3` VARCHAR(255) NOT NULL,
@@ -583,8 +583,8 @@ try {
         CREATE TABLE IF NOT EXISTS `custom_field_types` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
         PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -608,8 +608,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -617,8 +617,8 @@ try {
         CREATE TABLE IF NOT EXISTS `domain_field_data` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `domain_id` INT(10) UNSIGNED NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -633,7 +633,7 @@ try {
             `ip_id` INT(10) UNSIGNED NOT NULL,
             `cat_id` INT(10) UNSIGNED NOT NULL,
             `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `expiry_date` DATE NOT NULL DEFAULT '1978-01-23',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `fee_id` INT(10) UNSIGNED NOT NULL,
             `total_cost` DECIMAL(10,2) NOT NULL,
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -641,8 +641,8 @@ try {
             `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -653,8 +653,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -677,8 +677,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -686,8 +686,8 @@ try {
         CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `ssl_id` INT(10) UNSIGNED NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -719,8 +719,8 @@ try {
             `number_of_servers` TINYINT(2) NOT NULL DEFAULT '0',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -739,8 +739,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `name` (`name`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -762,8 +762,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `registrar_id` (`registrar_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -776,8 +776,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -794,8 +794,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `ssl_provider_id` (`ssl_provider_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
@@ -810,8 +810,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -824,8 +824,8 @@ try {
             `inactive` TINYINT(1) NOT NULL DEFAULT '0',
             `missing` TINYINT(1) NOT NULL DEFAULT '0',
             `filtered` TINYINT(1) NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
         PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -838,8 +838,8 @@ try {
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -853,7 +853,7 @@ try {
         CREATE TABLE IF NOT EXISTS `timezones` (
             `id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
             `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -878,19 +878,19 @@ try {
             `dw_dns_zones` INT(10) UNSIGNED NOT NULL,
             `dw_dns_records` INT(10) UNSIGNED NOT NULL,
             `build_status` TINYINT(1) NOT NULL DEFAULT '0',
-            `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `build_start_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `build_end_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `build_time` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `has_ever_been_built` TINYINT(1) NOT NULL DEFAULT '0',
             `build_status_overall` TINYINT(1) NOT NULL DEFAULT '0',
-            `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `build_start_time_overall` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `build_end_time_overall` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `build_time_overall` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `has_ever_been_built_overall` TINYINT(1) NOT NULL DEFAULT '0',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -902,14 +902,14 @@ try {
             `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `interval` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
             `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
-            `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `last_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `next_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `sort_order` INT(4) NOT NULL DEFAULT '1',
             `is_running` TINYINT(1) NOT NULL DEFAULT '0',
             `active` TINYINT(1) NOT NULL DEFAULT '1',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
          ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -959,8 +959,8 @@ try {
             `ret_privacy_status` TINYINT(1) NOT NULL DEFAULT '0',
             `ret_autorenewal_status` TINYINT(1) NOT NULL DEFAULT '0',
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -996,8 +996,8 @@ try {
             `agent` LONGTEXT COLLATE utf8_unicode_ci NOT NULL,
             `language` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
             `new_activity` TINYINT(1) NOT NULL DEFAULT '1',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
@@ -1010,7 +1010,7 @@ try {
             `message` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `extra` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `url` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
@@ -1036,6 +1036,7 @@ try {
             `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `expiration_days` INT(3) NOT NULL DEFAULT '60',
+            `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'fcca',
             `use_smtp` TINYINT(1) NOT NULL DEFAULT '0',
             `smtp_server` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `smtp_protocol` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'tls',
@@ -1045,8 +1046,8 @@ try {
             `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `debug_mode` TINYINT(1) NOT NULL DEFAULT '0',
             `local_php_log` TINYINT(1) NOT NULL DEFAULT '0',
-            `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
-            `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
