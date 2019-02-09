@@ -31,15 +31,16 @@ class Notice
         to v' . SOFTWARE_VERSION . '</em>';
 
         $_SESSION['s_notice'] = "<BR>Your " . SOFTWARE_TITLE . " software was recently updated, so we now need to
-        upgrade your database.<BR><BR><strong><span style='font-size: 225%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> *****
+        upgrade your database.<BR><BR><strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> *****
         CRITICAL WARNING -- PLEASE READ ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>WE
         <span style='font-size: 175%;'>STRONGLY</span> RECOMMEND THAT YOU BACKUP YOUR DOMAINMOD INSTALLATION DIRECTORY
         AND DATABASE BEFORE PROCEEDING WITH THE UPGRADE<BR>IF SOMETHING GOES WRONG DURING THE UPGRADE AND YOU HAVEN'T
-        CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER YOUR DATA<BR><BR><span style='font-size: 225%; color: red; line-height: 45px;'><i class=\"fa
-        fa-exclamation-triangle\"></i> ***** CRITICAL WARNING -- PLEASE READ ***** <i class=\"fa
-        fa-exclamation-triangle\"></i></span></strong><BR><BR>Please be patient, this may take a moment. The older your
-        current version is, the longer the upgrade will take.<BR><BR><a href='checks.php?u=1'>" .
-            $layout->showButton('button', 'Upgrade Database') . "</a>";
+        CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER YOUR DATA<BR>YOU SHOULD ALSO MAKE A NOTE OF YOUR CURRENT
+        VERSION (" . $_SESSION['s_system_db_version'] . "), AS THIS MAY BE REQUIRED BY THE RECOVERY PROCESS<BR><BR><span
+        style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> *****
+        CRITICAL WARNING -- PLEASE READ ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>Please
+        be patient, this may take a moment. The older your current version is, the longer the upgrade will take.<BR><BR>
+        <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
 
     }
 
