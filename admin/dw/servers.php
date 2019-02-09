@@ -164,7 +164,7 @@ if ($result) { ?>
             </td>
             <td><?php
 
-                if ($row->insert_time != "0000-00-00 00:00:00") {
+                if ($row->insert_time != '1970-01-01 00:00:00') {
 
                     $temp_time = $time->toUserTimezone($row->insert_time);
 
@@ -178,7 +178,7 @@ if ($result) { ?>
             </td>
             <td><?php
 
-                if ($row->update_time != "0000-00-00 00:00:00") {
+                if ($row->update_time != '1970-01-01 00:00:00') {
 
                     $temp_time = $time->toUserTimezone($row->update_time);
 

@@ -228,7 +228,7 @@ if ($export_data === 1) {
 
                 }
 
-                if ($row_domains->expiry_date == '0000-00-00') {
+                if ($row_domains->expiry_date == '1970-01-01') {
 
                     if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
@@ -599,7 +599,7 @@ if (!$result_lists) {
             </td>
             <td><?php
 
-                if ($row_lists->insert_time != '0000-00-00 00:00:00') {
+                if ($row_lists->insert_time != '1970-01-01 00:00:00') {
 
                     $to_display = $time->toUserTimezone($row_lists->insert_time);
 
@@ -696,7 +696,7 @@ if (!$result_domains) {
                 (<?php echo $row_domains->username; ?>)
             </td>
             <td><?php
-                if ($row_domains->expiry_date == '0000-00-00') {
+                if ($row_domains->expiry_date == '1970-01-01') {
 
                     if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
 
@@ -776,7 +776,7 @@ if (!$result_domains) {
                 echo $to_display; ?>
             </td>
             <td><?php
-                if ($row_domains->insert_time != '0000-00-00 00:00:00') {
+                if ($row_domains->insert_time != '1970-01-01 00:00:00') {
 
                     $to_display = $time->toUserTimezone($row_domains->insert_time);
 

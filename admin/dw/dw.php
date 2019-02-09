@@ -269,22 +269,22 @@ if ($no_results_build_info !== 1) { ?>
 
     } else {
 
-        if ($result->build_start_time_overall != "0000-00-00 00:00:00" &&
-            $result->build_end_time_overall != "0000-00-00 00:00:00") {
+        if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
+            $result->build_end_time_overall != '1970-01-01 00:00:00') {
 
             $temp_build_status_overall = "Successful";
 
         }
 
-        if ($result->build_start_time_overall != "0000-00-00 00:00:00" &&
+        if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
             $result->has_ever_been_built_overall == 0) {
 
             $temp_build_status_overall = "Building...";
 
         }
 
-        if ($result->build_start_time_overall != "0000-00-00 00:00:00" &&
-            $result->build_end_time_overall == "0000-00-00 00:00:00" &&
+        if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
+            $result->build_end_time_overall == '1970-01-01 00:00:00' &&
             $result->build_status_overall == 0) {
 
             $result2 = $pdo->query("
@@ -307,14 +307,14 @@ if ($no_results_build_info !== 1) { ?>
 
         }
 
-        if ($result->build_start_time_overall == "0000-00-00 00:00:00" &&
+        if ($result->build_start_time_overall == '1970-01-01 00:00:00' &&
             $result->has_ever_been_built_overall == 0) {
 
             $temp_build_status_overall = "Never Built";
 
         }
 
-        if ($result->build_start_time_overall == "0000-00-00 00:00:00") {
+        if ($result->build_start_time_overall == '1970-01-01 00:00:00') {
 
             $temp_build_start_time_overall = "-";
 
@@ -324,7 +324,7 @@ if ($no_results_build_info !== 1) { ?>
 
         }
 
-        if ($result->build_end_time_overall == "0000-00-00 00:00:00") {
+        if ($result->build_end_time_overall == '1970-01-01 00:00:00') {
 
             $temp_build_end_time_overall = "-";
 
@@ -389,20 +389,20 @@ if ($no_results_build_info !== 1) { ?>
 
             //@formatter:off
 
-            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
+            if ($row->build_start_time != '1970-01-01 00:00:00' && $row->build_end_time != '1970-01-01 00:00:00') {
 
                 $temp_build_status = "Successful";
 
             }
 
-            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time == "0000-00-00 00:00:00" &&
+            if ($row->build_start_time != '1970-01-01 00:00:00' && $row->build_end_time == '1970-01-01 00:00:00' &&
                 $row->build_status == 0) {
 
                 $temp_build_status = "Building...";
 
             }
 
-            if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
+            if ($row->build_start_time == '1970-01-01 00:00:00' && $row->has_ever_been_built == 0) {
 
                 if ($is_building == 1) {
 
@@ -416,19 +416,19 @@ if ($no_results_build_info !== 1) { ?>
 
             }
 
-            if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 1) {
+            if ($row->build_start_time == '1970-01-01 00:00:00' && $row->has_ever_been_built == 1) {
 
                 $temp_build_status = "Pending";
 
             }
 
-            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
+            if ($row->build_start_time != '1970-01-01 00:00:00' && $row->has_ever_been_built == 0) {
 
                 $temp_build_status = "Building...";
 
             }
 
-            if ($row->build_start_time == "0000-00-00 00:00:00") {
+            if ($row->build_start_time == '1970-01-01 00:00:00') {
 
                 $temp_build_start_time = "-";
 
@@ -438,7 +438,7 @@ if ($no_results_build_info !== 1) { ?>
 
             }
 
-            if ($row->build_end_time == "0000-00-00 00:00:00") {
+            if ($row->build_end_time == '1970-01-01 00:00:00') {
 
                 $temp_build_end_time = "-";
 

@@ -217,7 +217,7 @@ if ($total_rows > 0) {
             $new_ssl_provider = $row->ssl_provider;
             $new_type = $row->type;
 
-            if ($row->update_time == "0000-00-00 00:00:00") {
+            if ($row->update_time == '1970-01-01 00:00:00') {
                 $row->update_time = $row->insert_time;
             }
             $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
