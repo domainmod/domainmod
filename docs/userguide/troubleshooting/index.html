@@ -184,7 +184,11 @@
 
                 
                 <h2 id="installation">Installation</h2>
-<p><a name="strictmode"></a><h4>I get a blank page and can't go any further OR I get an Error 500 OR The database tables are being created but some of the data isn't getting inserted.</h4></p>
+<p><a name="strictmode"></a><h4>
+The database tables are being created but some of the data isn't getting inserted
+I get a blank page and can't go any further<br />
+I get an "Error 500" message<br />
+</h4></p>
 <p>MySQL strict mode may be enabled on your server. In order for DomainMOD to install and run, strict mode must to be disabled.</p>
 <p>To disable strict mode you need to edit your MySQL configuration file. In it there will be a line that looks like:</p>
 <pre><code>sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
@@ -195,10 +199,12 @@
 <p>Once disabled you will need to restart MySQL, and then DomainMOD should install properly.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As of v4.11, DomainMOD now tries to disable strict mode automatically during the database connection, but if you're still experiencing issues you should follow the steps above.</p>
+<p>As of v4.11, DomainMOD will try to disable strict mode automatically during the database connection, but if you're still experiencing issues you should follow the steps above.</p>
 </div>
-<h4>The images and CSS are broken or you're receiving an error that there are too many redirects.</h4>
-
+<p><a name="webroot"></a><h4>
+I'm receiving an error that there are too many redirects<br />
+The images and CSS are broken<br />
+</h4></p>
 <p>This is generally caused by an invalid web root in your config.inc.php file. Please double check your config.inc.php file and confirm that the $web_root variable reflects the directory where you installed DomainMOD.</p>
 <p>For example, if you access DomainMOD via the URL http://example.com/domains/ the $web_root variable should be:</p>
 <pre><code>$web_root = "/domains"; (don't include a trailing slash!)
@@ -207,8 +213,10 @@
 <pre><code>$web_root = "";
 </code></pre>
 <h2 id="upgrading"><BR>Upgrading</h2>
-<p><h4>There was an issue while upgrading and now I can't access DomainMOD.</h4></p>
-<p>Although we personally haven't see this happen yet, it's definitely possible. This is why we recommend you make a backup of your entire DomainMOD database before upgrading (you did make that backup, right?).</p>
+<p><a name="upgrading"></a><h4>
+There was an issue while upgrading and now I can't access DomainMOD
+</h4></p>
+<p>Although we personally haven't see this happen yet, it's definitely possible. This is why we recommend you backup your DomainMOD installation directory and database before upgrading (you did make that backup, right?).</p>
 <p>Follow these steps to restore your copy of DomainMOD:</p>
 <ol>
 <li>
@@ -234,7 +242,9 @@
 </li>
 </ol>
 <h2 id="usage"><BR>Usage</h2>
-<p><a name="errorlevel"></a><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
+<p><a name="errorlevel"></a><h4>
+The software seems to be working properly, but some messages are being displayed, such as "<em>undefined index</em>" and "<em>undefined variable</em>"
+</h4></p>
 <p>This is related to the error reporting level that you have turned on in PHP. Although these are only warnings and won't actually be breaking anything, you can get rid of them by editing your php.ini file and changing the error_reporting line.</p>
 <p>Right now you probably have something that looks like this:</p>
 <pre><code>error_reporting = E_ALL
@@ -243,23 +253,46 @@
 <pre><code>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_STRICT &amp; ~E_DEPRECATED
 </code></pre>
 <p>Commented out in your php.ini file, above the error_reporting directive, there may be a suggested error reporting line for a "Production" environment. Try using that line instead of what you're using now, restart Apache/PHP, and that should get rid of the errors.</p>
-<h4>I'm trying to connect DomainMOD to my domain registrar account using the API so that I can import my domains, but everything in the Domain Queue just says "Pending".</h4>
-
+<p><a name="pending"></a><h4>
+I'm trying to connect DomainMOD to my domain registrar account using the API so that I can import my domains, but everything in the Domain Queue just says "Pending"
+</h4> </p>
 <p>In order to import your domains using the domain registrar's API you must setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD. In addition to having the cron job running, you must also have your API credential saved along with your registrar account Asset.</p>
-<h4>I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server.</h4>
-
+<p><a name="processing"></a><h4>
+I'm trying to import data using the Domain Queue, but everything is stuck on "Processing"
+</h4></p>
+<p>In case there's an issue with the cron job you can also try triggering the queue manually. Go to <em>Administration -&gt; Task Scheduler</em>, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
+<p>If that doesn't work you can try clearing the queue items that are currently processing by going to <em>Administration -&gt; Maintenance</em>, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
+<p>If that still doesn't do it go to <em>Administration -&gt; Maintenance</em>, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
+<p><a name="dwprop"></a><h4>
+I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server
+</h4></p>
 <p>The Data Warehouse is read-only. You can import data from your web server into your Data Warehouse, but this data is for informational purposes only, and you can't edit your server data within DomainMOD and have it update your web server. This is something that will be worked on in the future, but is currently not possible.</p>
-<h4>I'm getting the error, "Database Connection Error: 1045".</h4>
-
+<p><a name="dberr1045"></a><h4>
+I'm getting the error, "Database Connection Error: 1045"
+</h4></p>
 <p>Error 1045 is an access denied error, which seems to be caused when the user doesn't have appropriate permissions on the database, or there's another privilege issue with the database. Unfortunately this is pretty difficult to troubleshoot on our end, as there are many things that can cause this.</p>
 <p>We would recommend trying some of the suggestions for this error in Google and see if any of them help: <a href="https://www.google.com/search?q=Database+Connection+Error%3A+1045">https://www.google.com/search?q=Database+Connection+Error%3A+1045</a>.</p>
-<h4>I'm trying to import data using the Domain Queue, but everything is stuck on "Processing".</h4>
-
-<p>In case there's an issue with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
-<p>If that doesn't work you can try clearing the queue items that are currently processing by going to Administration -&gt; Maintenance, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
-<p>If that still doesn't do it go to Administration -&gt; Maintenance, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
-<p><a name="javascript"></a><h4>Form fields aren't displaying properly, such as checkboxes and text fields showing as empty boxes.</h4></p>
+<p><a name="javascript"></a><h4>
+Form fields aren't displaying properly, such as checkboxes and text fields showing as empty boxes
+</h4></p>
 <p>This is usually caused by JavaScript being disabled in your web browser. If enabling JavaScript doesn't fix the issue try disabling any ad blockers or other content blockers you may have installed.</p>
+<p><a name="currency"></a><h4>
+The currency conversions aren't working properly<br />
+My fees are all showing up as zero
+</h4></p>
+<p>This is usually caused by a currency converter that's experiencing downtime. You can fix this by changing the currency conversion source.</p>
+<ol>
+<li>
+<p>Click <strong>Administration</strong> on the main menu, then click <strong>System Settings</strong>.</p>
+</li>
+<li>
+<p>Click on the <strong>Currency Converter</strong> dropdown menu and choose a new source.</p>
+</li>
+<li>
+<p>Click the <strong>Update System Settings</strong> button. </p>
+</li>
+</ol>
+<p>After the Currency Converter source has been changed you can force a currency conversion update by going to <em>Maintenance -&gt; Update Conversion Rates</em>.</p>
 <h2 id="debugging"><BR>Debugging</h2>
 <p>If you're still having issues you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors, which can help us troubleshoot your issue.</p>
 <div class="admonition note">
