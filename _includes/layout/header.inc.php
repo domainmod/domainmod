@@ -274,6 +274,11 @@
             unset($_SESSION['s_message_success']);
         }
 
+        if ($_SESSION['s_message_info'] != "") {
+            echo $system->showMessageInfo($_SESSION['s_message_info']);
+            unset($_SESSION['s_message_info']);
+        }
+
         require_once DIR_INC . '/layout/table-maintenance.inc.php';
         ?>
 

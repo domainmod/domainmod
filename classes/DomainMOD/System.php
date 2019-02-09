@@ -325,6 +325,20 @@ class System
         return ob_get_clean();
     }
 
+    public function showMessageInfo($result_message)
+    {
+        ob_start(); ?>
+        <BR>
+        <div class="alert alert-info alert-dismissible">
+        <?php /* ?>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <?php */ ?>
+            <h4><i class="icon fa fa-info"></i> Info</h4>
+            <?php echo $result_message; ?>
+        </div><?php
+        return ob_get_clean();
+    }
+
     public function showMaintenanceTable($result_message)
     {
         ob_start(); ?>

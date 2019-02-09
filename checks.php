@@ -172,7 +172,7 @@ if ($_SESSION['s_version_error'] != '1') {
 
         if ($_SESSION['s_is_admin'] === 1) {
 
-            $_SESSION['s_message_danger'] .= $system->getUpgradeMessage();
+            $_SESSION['s_message_info'] .= $system->getUpgradeMessage();
 
         }
 
