@@ -116,7 +116,7 @@ if (DEMO_INSTALLATION === false) {
 
                     foreach ($result_conversion as $row_conversion) {
 
-                        $conversion->updateRates($row_conversion->default_currency, $row_conversion->user_id);
+                        $conversion->updateRates($row_conversion->default_currency, $row_conversion->user_id, true);
 
                     }
 

@@ -59,7 +59,7 @@ class Login
                 default_category_ssl, default_dns, default_host, default_ip_address_domains,
                 default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                 default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
-                expiration_days, local_php_log
+                expiration_days, currency_converter, local_php_log
             FROM settings");
         $stmt->execute();
         $result = $stmt->fetch();

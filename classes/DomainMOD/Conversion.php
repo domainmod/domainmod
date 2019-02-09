@@ -34,7 +34,7 @@ class Conversion
         $this->time = new Time();
     }
 
-    public function updateRates($default_currency, $user_id)
+    public function updateRates($default_currency, $user_id, $from_cron = false)
     {
         $pdo = $this->deeb->cnxx;
         $result = $this->getActiveCurrencies();
@@ -49,7 +49,7 @@ class Conversion
 
         foreach ($result as $row) {
 
-            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency);
+            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency, $from_cron);
 
             $bind_currency_id = $row->id;
             $stmt->execute();
@@ -155,10 +155,22 @@ class Conversion
         }
     }
 
-    public function getConvRate($from_currency, $to_currency)
+    public function getConvRate($from_currency, $to_currency, $from_cron = false)
     {
-        $conversion = new \GJClasses\Money();
-        return $conversion->getConvRate($from_currency, $to_currency);
+        if ($from_cron === false) {
+
+            $converter_source = $_SESSION['s_system_currency_converter'];
+
+        } elseif ($from_cron === true) {
+
+            $converter_source = $this->deeb->cnxx->query("
+                SELECT `currency_converter`
+                FROM `settings`")->fetchColumn();
+
+        }
+
+        $currency = new \GJClasses\Currency($converter_source);
+        return $currency->getConvRate($from_currency, $to_currency);
     }
 
 } //@formatter:on
