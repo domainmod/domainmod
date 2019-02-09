@@ -1,5 +1,11 @@
 GJClasses CHANGELOG
 ===================
+v0.27.0    2019-02-08
+- Updated Money class
+- Updated Money class example
+- Renamed Money class to Currency class
+- Changed insert_time default to unix epoch time
+
 v0.26.0    2019-02-03
 - Updated Composer
 
