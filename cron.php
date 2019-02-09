@@ -89,7 +89,7 @@ if (DEMO_INSTALLATION === false) {
 
                 $email = new DomainMOD\Email();
                 $schedule->isRunning($row->id);
-                $email->sendExpirations('1');
+                $email->sendExpirations(true);
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 

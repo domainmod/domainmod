@@ -98,7 +98,7 @@ if (DEMO_INSTALLATION === false) {
 
             $email = new DomainMOD\Email();
             $schedule->isRunning($id);
-            $email->sendExpirations('0');
+            $email->sendExpirations(false);
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
