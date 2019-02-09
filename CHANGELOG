@@ -1,5 +1,22 @@
 DomainMOD CHANGELOG
 ===================
+v4.13.0    2019-02-09
+- Added Custom Domain Fields to main Domains page
+- Added Custom SSL Fields to main SSL page
+- Added the ability to change Currency Converter
+- Fixed Segment filtering bug when no active domains
+- Switched placeholder date to unix epoch time
+- Switched DEMO_INSTALLATION from integer to boolean
+- Switched $from_cron from integer to boolean
+- Switched 'Upgrade Available' message colour
+- Updated text sanitization to use GJClasses
+- Updated redirect on various settings pages
+- Updated Conversion class
+- Updated sendExpirations & checkExpiring classes
+- Updated Composer
+- Updated GJClasses (0.21.0 -> 0.27.0)
+- Updated PHPMailer (5.2.26 -> 5.2.27)
+
 v4.12.0    2019-02-03
 - Added Sanitize class
 - Added Unsanitize class
