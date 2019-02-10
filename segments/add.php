@@ -132,12 +132,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $temp_segment_id = $pdo->lastInsertId('id');
 
                 $stmt = $pdo->prepare("
-                    DELETE FROM segment_data
-                    WHERE segment_id = :temp_segment_id");
-                $stmt->bindValue('temp_segment_id', $temp_segment_id, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $stmt = $pdo->prepare("
                     INSERT INTO segment_data
                     (segment_id, domain, insert_time)
                     VALUES
