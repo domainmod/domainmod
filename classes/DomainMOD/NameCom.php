@@ -32,34 +32,6 @@ class NameCom
         $this->log = new Log('class.namecom');
     }
 
-    public function getApiUrl($command, $domain)
-    {
-        $base_url = 'https://api.name.com/api/';
-        if ($command == 'domainlist') {
-            return $base_url . 'domain/list';
-        } elseif ($command == 'info') {
-            return $base_url . 'domain/get/' . $domain;
-        } elseif ($command == 'autorenewal') {
-            return $base_url . 'domain/get/' . $domain;
-        } else {
-            return 'Unable to build API URL';
-        }
-    }
-
-    public function apiCall($full_url, $account_username, $api_key)
-    {
-        $handle = curl_init($full_url);
-        curl_setopt($handle, CURLOPT_HTTPHEADER, array(
-            'Api-Username: ' . $account_username,
-            'Api-Token: ' . $api_key));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($handle);
-        curl_close($handle);
-        return $result;
-    }
-
     public function getDomainList($account_username, $api_key)
     {
         $domain_list = array();
@@ -70,11 +42,11 @@ class NameCom
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['result']['message'] == "Command Successful") {
+        if ($array_results['domains']) {
 
-            foreach (array_keys($array_results['domains']) as $domain) {
+            foreach ($array_results['domains'] as $domain) {
 
-                $domain_list[] = $domain;
+                $domain_list[] = $domain['domainName'];
                 $domain_count++;
 
             }
@@ -90,6 +62,43 @@ class NameCom
         return array($domain_count, $domain_list);
     }
 
+    public function getApiUrl($command, $domain)
+    {
+        $base_url = 'https://api.name.com/v4/';
+
+        if ($command == 'domainlist') {
+
+            return $base_url . 'domains';
+
+        } elseif ($command == 'info') {
+
+            return $base_url . 'domains/' . $domain;
+
+        } else {
+
+            return 'Unable to build API URL';
+
+        }
+    }
+
+    public function apiCall($full_url, $account_username, $api_key)
+    {
+        $handle = curl_init($full_url);
+        curl_setopt($handle, CURLOPT_USERPWD, $account_username . ':' . $api_key);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($handle);
+        curl_close($handle);
+        return $result;
+    }
+
+    public function convertToArray($api_result)
+    {
+        return json_decode($api_result, true);
+
+    }
+
     public function getFullInfo($account_username, $api_key, $domain)
     {
         $expiration_date = '';
@@ -102,22 +111,20 @@ class NameCom
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['result']['message'] == "Command Successful") {
+        if ($array_results['domainName'] == $domain) {
 
             // get expiration date
-            $expiration_date = substr($array_results['expire_date'], 0, 10);
+            $expiration_date = substr($array_results['expireDate'], 0, 10);
 
             // get dns servers
             $dns_result = $array_results['nameservers'];
             $dns_servers = $this->processDns($dns_result);
 
             // get privacy status
-            $privacy_result = (string) $array_results['whois_privacy']['enabled'];
-            $privacy_status = $this->processPrivacy($privacy_result);
+            $privacy_status = $this->processPrivacy($array_results['privacyEnabled']);
 
             // get auto renewal status
-            $autorenewal_result = (string) $array_results['auto_renew'];
-            $autorenewal_status = $this->processAutorenew($autorenewal_result);
+            $autorenewal_status = $this->processAutorenew($array_results['autorenewEnabled']);
 
         } else {
 
@@ -128,11 +135,6 @@ class NameCom
         }
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
-    }
-
-    public function convertToArray($api_result)
-    {
-        return json_decode($api_result, true);
     }
 
     public function processDns($dns_result)
@@ -149,22 +151,12 @@ class NameCom
 
     public function processPrivacy($privacy_result)
     {
-        if ($privacy_result == '1') {
-            $privacy_status = '1';
-        } else {
-            $privacy_status = '0';
-        }
-        return $privacy_status;
+        return ($privacy_result === true ? '1' : '0');
     }
 
     public function processAutorenew($autorenewal_result)
     {
-        if ($autorenewal_result == '1') {
-            $autorenewal_status = '1';
-        } else {
-            $autorenewal_status = '0';
-        }
-        return $autorenewal_status;
+        return ($autorenewal_result === true ? '1' : '0');
     }
 
 } //@formatter:on
