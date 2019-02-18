@@ -50,7 +50,7 @@ $did = (int) $_REQUEST['did'];
 $del = (int) $_GET['del'];
 $really_del = (int) $_GET['really_del'];
 
-$new_domain = $_POST['new_domain'];
+$new_domain = $sanitize->text($_POST['new_domain']);
 $new_tld = $_POST['new_tld'];
 $new_expiry_date = $_POST['datepick'];
 $new_function = $sanitize->text($_POST['new_function']);
