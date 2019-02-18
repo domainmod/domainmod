@@ -49,8 +49,8 @@ $pdo = $deeb->cnxx;
 $new_first_name = $sanitize->text($_POST['new_first_name']);
 $new_last_name = $sanitize->text($_POST['new_last_name']);
 $new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_currency = $_POST['new_currency'];
-$new_timezone = $_POST['new_timezone'];
+$new_currency = $sanitize->text($_POST['new_currency']);
+$new_timezone = $sanitize->text($_POST['new_timezone']);
 $new_expiration_emails = (int) $_POST['new_expiration_emails'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_email_address != "") {
