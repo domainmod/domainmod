@@ -34,6 +34,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
 
@@ -49,11 +51,11 @@ $segid = $_GET['segid'];
 $del = (int) $_GET['del'];
 $really_del = (int) $_GET['really_del'];
 
-$new_name = $_POST['new_name'];
-$new_description = $_POST['new_description'];
-$raw_domain_list = $_POST['raw_domain_list'];
-$new_notes = $_POST['new_notes'];
-$new_segid = $_POST['new_segid'];
+$new_name = $sanitize->text($_POST['new_name']);
+$new_description = $sanitize->text($_POST['new_description']);
+$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
+$new_notes = $sanitize->text($_POST['new_notes']);
+$new_segid = (int) $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -282,10 +284,10 @@ if ($really_del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '1', '', '');
-echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $raw_domain_list, '1', '', '');
-echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
+echo $form->showInputText('new_name', 'Segment Name (35)', '', $unsanitize->text($new_name), '35', '', '1', '', '');
+echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $unsanitize->text($raw_domain_list), '1', '', '');
+echo $form->showInputTextarea('new_description', 'Description', '', $unsanitize->text($new_description), '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_segid', $segid);
 echo $form->showSubmitButton('Update Segment', '', '');
 echo $form->showFormBottom('');
