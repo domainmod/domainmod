@@ -32,6 +32,7 @@ $log = new DomainMOD\Log('/admin/users/add.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$user = new DomainMOD\User();
 $conversion = new DomainMOD\Conversion();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
@@ -91,7 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else {
 
-        $new_password = substr(md5(time()), 0, 8);
+        $new_password = $user->generatePassword(30);
+        $new_hash = $user->generateHash($new_password);
 
         try {
 
@@ -101,12 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                 INSERT INTO users
                 (first_name, last_name, username, email_address, `password`, created_by, insert_time)
                 VALUES
-                (:first_name, :last_name, :username, :email_address, password(:password), :created_by, :insert_time)");
+                (:first_name, :last_name, :username, :email_address, :new_hash, :created_by, :insert_time)");
             $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
             $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
             $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
             $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-            $stmt->bindValue('password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
             $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
             $bind_timestamp = $time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);

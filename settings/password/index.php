@@ -31,6 +31,7 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$user = new DomainMOD\User();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 
@@ -75,14 +76,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     } else {
 
+        $temp_password = $unsanitize->text($new_password);
+        $temp_hash = $user->generateHash($temp_password);
+
         $stmt = $pdo->prepare("
             UPDATE users
-            SET `password` = password(:new_password),
+            SET `password` = :temp_hash,
                 new_password = '0',
                 update_time = :timestamp
             WHERE id = :user_id
               AND email_address = :email_address");
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('temp_hash', $temp_hash, PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
@@ -133,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_password', 'New Password (255)', '', '', '255', '1', '1', '', '');
-echo $form->showInputText('new_password_confirmation', 'Confirm New Password', '', '', '255', '1', '1', '', '');
+echo $form->showInputText('new_password', 'New Password (72)', '', '', '72', '1', '1', '', '');
+echo $form->showInputText('new_password_confirmation', 'Confirm New Password (72)', '', '', '72', '1', '1', '', '');
 echo $form->showSubmitButton('Change Password', '', '');
 echo $form->showFormBottom('');
 ?>
