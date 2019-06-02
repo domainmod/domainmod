@@ -38,11 +38,20 @@ class User
             WHERE username = 'admin'")->fetchColumn();
     }
 
+    public function getUserId($username)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id
+            FROM users
+            WHERE username = :username");
+        $stmt->bindValue('username', $username, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
     public function getFullName($user_id)
     {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
+        $stmt = $this->deeb->cnxx->prepare("
             SELECT first_name, last_name
             FROM users
             WHERE id = :user_id");
@@ -50,8 +59,18 @@ class User
         $stmt->execute();
         $result = $stmt->fetch();
         $stmt->closeCursor();
-
         return $result->first_name . ' ' . $result->last_name;
+    }
+
+    public function generatePassword($password_length = 72)
+    {
+        $character_pool = 'abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        return substr(str_shuffle($character_pool), 0, $password_length);
+    }
+
+    public function generateHash($password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
 } //@formatter:on

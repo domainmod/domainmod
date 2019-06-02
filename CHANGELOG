@@ -1,4 +1,4 @@
-DomainMOD CHANGELOG
+pkannetwork.org
 ===================
 v4.13.0    2019-02-09
 - Added Custom Domain Fields to main Domains page
@@ -6,7 +6,8 @@ v4.13.0    2019-02-09
 - Added the ability to change Currency Converter
 - Fixed Segment filtering bug when no active domains
 - Switched placeholder date to unix epoch time
-- Switched DEMO_INSTALLATION from integer to boolean
+- เปลี่ยน INSTALLATION จากจำนวนเต็มเป็นบูลีน
+
 - Switched $from_cron from integer to boolean
 - Switched 'Upgrade Available' message colour
 - Updated text sanitization to use GJClasses

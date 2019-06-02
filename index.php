@@ -32,6 +32,7 @@ $log = new DomainMOD\Log('/index.php');
 $maint = new DomainMOD\Maintenance();
 $layout = new DomainMOD\Layout();
 $login = new DomainMOD\Login();
+$user = new DomainMOD\User();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $format = new DomainMOD\Format();
@@ -60,8 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
     $_SESSION['s_read_only'] = '1';
 
+    // Check to see if the user's password is using the old md5 hashing
     $stmt = $pdo->prepare("
-        SELECT id, username
+        SELECT id
         FROM users
         WHERE username = :new_username
           AND `password` = password(:new_password)
@@ -72,18 +74,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    if (!$result) {
+    // Update the stored password to use stronger hashing than md5
+    if ($result) {
 
-        $log_message = 'Unable to login';
-        $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
-        $log->warning($log_message, $log_extra);
+        $new_hashed_password = $user->generateHash($new_password);
 
-        $_SESSION['s_message_danger'] .= "Login Failed<BR>";
+        $stmt = $pdo->prepare("
+            UPDATE `users`
+            SET password = :new_hashed_password
+            WHERE username = :new_username
+              AND `password` = password(:new_password)
+              AND active = '1'");
+        $stmt->bindValue('new_hashed_password', $new_hashed_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->execute();
 
-    } else {
+    }
 
-        $_SESSION['s_user_id'] = $result->id;
-        $_SESSION['s_username'] = $result->username;
+    // Check to see if the user's password matches
+    $stmt = $pdo->prepare("
+        SELECT `password`
+        FROM users
+        WHERE username = :new_username
+          AND active = '1'");
+    $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+    $stmt->execute();
+    $stored_hash = $stmt->fetchColumn();
+
+    if (password_verify($new_password, $stored_hash)) {
+
+        $_SESSION['s_user_id'] = $user->getUserId($new_username);
+        $_SESSION['s_username'] = $new_username;
 
         $_SESSION['s_system_db_version'] = $system->getDbVersion();
 
@@ -91,6 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         header("Location: checks.php");
         exit;
+
+    } else {
+
+        $log_message = 'Unable to login';
+        $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
+        $log->warning($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= "Login Failed<BR>";
 
     }
 
@@ -145,7 +175,7 @@ if (DEMO_INSTALLATION === true) { ?>
 }
 
 echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
-echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '', '');
+echo $form->showInputText('new_password', 'Password', '', '', '72', '1', '', '', '');
 echo $form->showSubmitButton('Login', '', '');
 echo $form->showFormBottom('');
 

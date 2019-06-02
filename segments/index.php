@@ -259,7 +259,7 @@ if (!$has_existing_segments) { ?>
                     <?php echo $trimmed_segment; ?>
                 </td>
                 <td>
-                    <?php echo $row->number_of_domains; ?>
+                    <?php echo number_format($row->number_of_domains); ?>
                 </td>
                 <td>
                     <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>">EXPORT</a>

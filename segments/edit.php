@@ -138,25 +138,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
                 $stmt->execute();
 
+                // Delete domains that have been removed from the segment
                 $stmt = $pdo->prepare("
                     DELETE FROM segment_data
-                    WHERE segment_id = :new_segid");
+                    WHERE segment_id = :new_segid
+                      AND domain NOT IN (" . $new_data_formatted . ")");
                 $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
                 $stmt->execute();
 
+                // Get the old segment domains
+                $stmt = $pdo->prepare("
+                    SELECT domain
+                    FROM segment_data
+                    WHERE segment_id = :new_segid");
+                $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                // Find the domains that need updating (ie. they're in both the old segment as well as the new segment)
+                $common_domains = array_intersect($domain_array, $result);
+                $common_domains_formatted = $format->formatForMysql($common_domains);
+
+                // Update domains that were already in the segment
+                $stmt = $pdo->prepare("
+                        UPDATE segment_data
+                        SET update_time = :timestamp
+                        WHERE segment_id = :new_segid
+                          AND domain IN (" . $common_domains_formatted . ")");
+                $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+                $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
+                $stmt->execute();
+
+                // Find the domains that need inserting (ie. they don't exist in the old segment)
+                $new_domains = array_diff($domain_array, $result);
+
                 $stmt = $pdo->prepare("
                     INSERT INTO segment_data
-                    (segment_id, domain, update_time)
+                    (segment_id, domain, insert_time)
                     VALUES
                     (:new_segid, :domain, :timestamp)");
                 $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
-                $stmt->bindParam('domain', $bind_domain, PDO::PARAM_STR);
+                $stmt->bindParam('domain', $bind_new_domain, PDO::PARAM_STR);
                 $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
 
-                foreach ($domain_array as $domain) {
+                foreach ($new_domains as $bind_new_domain) {
 
-                    $bind_domain = $domain;
-                    $stmt->execute();
+                        // Insert domains that were not already in the segment
+                        $stmt->execute();
 
                 }
 

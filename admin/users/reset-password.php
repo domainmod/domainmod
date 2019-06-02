@@ -28,6 +28,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
+$user = new DomainMOD\User();
 $time = new DomainMOD\Time();
 
 require_once DIR_INC . '/head.inc.php';
@@ -74,16 +75,17 @@ if ($new_username != '') {
 
     } else {
 
-        $new_password = substr(md5(time()), 0, 8);
+        $new_password = $user->generatePassword(30);
+        $new_hash = $user->generateHash($new_password);
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET password = password(:new_password),
+            SET password = :new_hash,
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
@@ -96,9 +98,10 @@ if ($new_username != '') {
 
         } else {
 
-            $email_address = $result->email_address;
             $first_name = $result->first_name;
             $last_name = $result->last_name;
+            $username = $result->username;
+            $email_address = $result->email_address;
             require_once DIR_INC . '/email/send-new-password.inc.php';
             $_SESSION['s_message_success'] .= 'The password has been reset and emailed to the account holder<BR>';
 

@@ -32,6 +32,7 @@ $maint = new DomainMOD\Maintenance();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -59,23 +60,24 @@ if ($user_identifier != '') {
 
     if (!$result) {
 
-        $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
+        $_SESSION['s_message_success'] .= "If there's a matching username or email address your new password will been emailed to you.<BR>";
 
         header('Location: ' . $web_root . "/");
         exit;
 
     } else {
 
-        $new_password = substr(md5(time()), 0, 8);
+        $new_password = $user->generatePassword(30);
+        $new_hash = $user->generateHash($new_password);
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET `password` = password(:new_password),
+            SET `password` = :new_hash,
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
         $bind_timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
@@ -88,7 +90,7 @@ if ($user_identifier != '') {
         $email_address = $result->email_address;
         require_once DIR_INC . '/email/send-new-password.inc.php';
 
-        $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
+        $_SESSION['s_message_success'] .= "If there's a matching username or email address your new password will been emailed to you.<BR>";
 
         header('Location: ' . $web_root . "/");
         exit;
