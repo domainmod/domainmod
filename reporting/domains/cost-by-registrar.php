@@ -32,6 +32,7 @@ $layout = new DomainMOD\Layout;
 $date = new DomainMOD\Date();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 
 require_once DIR_INC . '/head.inc.php';
