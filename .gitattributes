@@ -1,0 +1,37 @@
+*           text=auto   eol=lf
+
+*.css       text
+*.csv       text
+*.htaccess  text
+*.htm       text        diff=html
+*.html      text        diff=html
+*.js        text
+*.json      text
+*.markdown  text
+*.md        text
+*.php       text        diff=php
+*.php3      text        diff=php
+*.py        text        diff=python
+*.sql       text
+*.txt       text
+*.xhtml     text        diff=html
+*.xml       text
+*.yaml      text
+*.yml       text
+
+*.GIF       binary
+*.gif       binary
+*.ICO       binary
+*.ico       binary
+*.JPG       binary
+*.jpg       binary
+*.PNG       binary
+*.png       binary
+*.PSD       binary
+*.psd       binary
+
+*.7gz       binary
+*.7z        binary
+*.gz        binary
+*.tar       binary
+*.zip       binary
