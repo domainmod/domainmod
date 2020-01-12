@@ -148,7 +148,7 @@ Please see the CHANGELOG file that came with DomainMOD, or view the Changelog on
 License
 -------
 DomainMOD is an open source domain and internet asset manager.  
-Copyright (c) 2010-2019 Greg Chetcuti <greg@chetcuti.com>
+Copyright (c) 2010-2020 Greg Chetcuti <greg@chetcuti.com>
 
 DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
