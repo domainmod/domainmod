@@ -32,11 +32,11 @@ class Namecheap
         $this->log = new Log('class.namecheap');
     }
 
-    public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)
+    public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address, $pageid)
     {
         $base_url = 'https://api.namecheap.com/xml.response?&ApiUser=' . $account_username . '&ApiKey=' . $api_key . '&UserName=' . $account_username;
         if ($command == 'domainlist') {
-            return $base_url . '&Command=namecheap.domains.getList&ClientIp=' . $api_ip_address . '&PageSize=100';
+            return $base_url . '&Command=namecheap.domains.getList&ClientIp=' . $api_ip_address . '&PageSize=100' . '&Page=' . $pageid;
         } elseif ($command == 'info') {
             return $base_url . '&Command=namecheap.domains.getinfo&ClientIp=' . $api_ip_address . '&DomainName=' . $domain;
         } elseif ($command == 'autorenewal') {
@@ -62,27 +62,33 @@ class Namecheap
         $domain_list = array();
         $domain_count = 0;
 
-        $api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address);
-        $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $cnt = 1;
+        $error = 0;
+        while ($error == 0) {
+					$api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address, $cnt);
+					$api_results = $this->apiCall($api_url);
 
-        // confirm that the api call was successful
-        if ($array_results[0]['@attributes']['Status'] == "OK") {
-
-            foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
-
-                $domain_list[] = $domain['@attributes']['Name'];
-                $domain_count++;
-
-            }
-
-        } else {
-
-            $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
-            $this->log->error($log_message, $log_extra);
-
-        }
+					if (strlen($api_results) > 600) {
+						$array_results = $this->convertToArray($api_results);
+						
+						// confirm that the api call was successful
+						if ($array_results[0]['@attributes']['Status'] == "OK") {
+							foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
+								$domain_list[] = $domain['@attributes']['Name'];
+								$domain_count++;
+							}
+						} else {
+							$log_message = 'Unable to get domain list';
+							$log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
+							$this->log->error($log_message, $log_extra);
+						}
+		  
+						$cnt++;
+					} else {
+						$error = 1;
+					}
+				
+				}
 
         return array($domain_count, $domain_list);
     }
@@ -94,7 +100,7 @@ class Namecheap
         $privacy_status = '';
         $autorenewal_status = '';
 
-        $api_url = $this->getApiUrl($api_key, 'info', $domain, $account_username, $api_ip_address);
+        $api_url = $this->getApiUrl($api_key, 'info', $domain, $account_username, $api_ip_address, '');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
@@ -122,7 +128,7 @@ class Namecheap
 
         // since the auto renewal status can only be retrieved through Namecheap's getList command, I have to re-run
         // a new command just for this
-        $api_url = $this->getApiUrl($api_key, 'autorenewal', $domain, $account_username, $api_ip_address);
+        $api_url = $this->getApiUrl($api_key, 'autorenewal', $domain, $account_username, $api_ip_address, '');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
