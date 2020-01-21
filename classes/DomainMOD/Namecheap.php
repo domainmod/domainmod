@@ -65,30 +65,30 @@ class Namecheap
         $cnt = 1;
         $error = 0;
         while ($error == 0) {
-					$api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address, $cnt);
-					$api_results = $this->apiCall($api_url);
+		$api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address, $cnt);
+		$api_results = $this->apiCall($api_url);
 
-					if (strlen($api_results) > 600) {
-						$array_results = $this->convertToArray($api_results);
+		if (strlen($api_results) > 600) {
+			$array_results = $this->convertToArray($api_results);
 						
-						// confirm that the api call was successful
-						if ($array_results[0]['@attributes']['Status'] == "OK") {
-							foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
-								$domain_list[] = $domain['@attributes']['Name'];
-								$domain_count++;
-							}
-						} else {
-							$log_message = 'Unable to get domain list';
-							$log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
-							$this->log->error($log_message, $log_extra);
-						}
-		  
-						$cnt++;
-					} else {
-						$error = 1;
-					}
-				
+			// confirm that the api call was successful
+			if ($array_results[0]['@attributes']['Status'] == "OK") {
+				foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
+					$domain_list[] = $domain['@attributes']['Name'];
+					$domain_count++;
 				}
+			} else {
+				$log_message = 'Unable to get domain list';
+				$log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
+				$this->log->error($log_message, $log_extra);
+			}
+		  
+			$cnt++;
+		} else {
+			$error = 1;
+		}
+				
+	}
 
         return array($domain_count, $domain_list);
     }
