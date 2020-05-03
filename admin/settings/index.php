@@ -161,7 +161,6 @@ echo $form->showInputText('new_full_url', 'Full ' . SOFTWARE_TITLE . ' URL (100)
 echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is monitored by the ' . SOFTWARE_TITLE . ' System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by ' . SOFTWARE_TITLE . '.', $unsanitize->text($new_email_address), '100', '', '1', '', '');
 echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '1', '', '');
 echo $form->showDropdownTop('new_currency_converter', 'Currency Converter', 'Although it doesn\'t happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren\'t working properly, try a different source.', '', '');
-echo $form->showDropdownOption('fcca', 'Free Currency Converter API', $new_currency_converter);
 echo $form->showDropdownOption('era', 'Exchange Rates API', $new_currency_converter);
 echo $form->showDropdownBottom('');
 echo $form->showRadioTop('Large Mode', 'If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.', '');
