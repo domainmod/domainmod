@@ -1,5 +1,8 @@
 GJClasses CHANGELOG
 ===================
+v0.28.0    2020-05-03
+- Removed the Free Currency Converter API
+
 v0.27.0    2019-02-08
 - Updated Money class
 - Updated Money class example
