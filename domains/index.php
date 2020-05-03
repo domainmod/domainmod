@@ -2354,7 +2354,7 @@ if ($result) { ?>
 
                     foreach ($_SESSION['s_cdf_data'] as $field) {
 
-                        if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
+                        if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
 
                             <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
 
@@ -2470,19 +2470,19 @@ if ($result) { ?>
 
                         foreach ($_SESSION['s_cdf_data'] as $field) {
 
-                            if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
+                            if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
 
                             <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>><?php
 
-                                if ($field['type_id'] === 1) { // Check Box
+                                if ($field['type_id'] == '1') { // Check Box
 
-                                    echo ($row->{$field['field']} === 1 ? 'Yes' : 'No');
+                                    echo ($row->{$field['field']} == '1' ? 'Yes' : 'No');
 
-                                } elseif ($field['type_id'] === 2) { // Text
+                                } elseif ($field['type_id'] == '2') { // Text
 
                                     echo $row->{$field['field']};
 
-                                } elseif ($field['type_id'] === 4) { // Date
+                                } elseif ($field['type_id'] == '4') { // Date
 
                                     if ($row->{$field['field']} == '1970-01-01') {
 
@@ -2494,7 +2494,7 @@ if ($result) { ?>
 
                                     }
 
-                                } elseif ($field['type_id'] === 5) { // Time Stamp
+                                } elseif ($field['type_id'] == '5') { // Time Stamp
 
                                     if ($row->{$field['field']} == '1970-01-01 00:00:00') {
 
