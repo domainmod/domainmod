@@ -45,6 +45,7 @@ $pdo = $deeb->cnxx;
 $new_full_url = $sanitize->text($_POST['new_full_url']);
 $new_email_address = $sanitize->text($_POST['new_email_address']);
 $new_expiration_days = (int) $_POST['new_expiration_days'];
+$new_email_signature = (int) $_POST['new_email_signature'];
 $new_currency_converter = $sanitize->text($_POST['new_currency_converter']);
 $new_large_mode = (int) $_POST['new_large_mode'];
 $new_use_smtp = (int) $_POST['new_use_smtp'];
@@ -57,7 +58,7 @@ $new_smtp_password = $sanitize->text($_POST['new_smtp_password']);
 $new_debug_mode = (int) $_POST['new_debug_mode'];
 $new_local_php_log = (int) $_POST['new_local_php_log'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days !== 0) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0) {
 
     $stmt = $pdo->prepare("
         UPDATE settings
@@ -72,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
             smtp_username = :new_smtp_username,
             smtp_password = :new_smtp_password,
             expiration_days = :new_expiration_days,
+            email_signature = :new_email_signature,
             currency_converter = :new_currency_converter,
             debug_mode = :new_debug_mode,
             local_php_log = :new_local_php_log,
@@ -87,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
     $stmt->bindValue('new_smtp_username', $new_smtp_username, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);
     $stmt->bindValue('new_expiration_days', $new_expiration_days, PDO::PARAM_INT);
+    $stmt->bindValue('new_email_signature', $new_email_signature, PDO::PARAM_INT);
     $stmt->bindValue('new_currency_converter', $new_currency_converter, PDO::PARAM_STR);
     $stmt->bindValue('new_debug_mode', $new_debug_mode, PDO::PARAM_INT);
     $stmt->bindValue('new_local_php_log', $new_local_php_log, PDO::PARAM_INT);
@@ -98,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
     $_SESSION['s_system_email_address'] = $new_email_address;
     $_SESSION['s_system_large_mode'] = $new_large_mode;
     $_SESSION['s_system_expiration_days'] = $new_expiration_days;
+    $_SESSION['s_system_email_signature'] = $new_email_signature;
     $_SESSION['s_system_currency_converter'] = $new_currency_converter;
     $_SESSION['s_system_local_php_log'] = $new_local_php_log;
 
@@ -118,8 +122,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
         $stmt = $pdo->prepare("
             SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
-                smtp_email_address, smtp_username, smtp_password, expiration_days, currency_converter, debug_mode,
-                local_php_log
+                smtp_email_address, smtp_username, smtp_password, expiration_days, email_signature, currency_converter,
+                debug_mode, local_php_log
             FROM settings");
         $stmt->execute();
         $result = $stmt->fetch();
@@ -138,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
             $new_smtp_username = $result->smtp_username;
             $new_smtp_password = $result->smtp_password;
             $new_expiration_days = $result->expiration_days;
+            $new_email_signature = $result->email_signature;
             $new_currency_converter = $result->currency_converter;
             $new_debug_mode = $result->debug_mode;
             $new_local_php_log = $result->local_php_log;
@@ -160,6 +165,18 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', 'Full ' . SOFTWARE_TITLE . ' URL (100)', 'Enter the full URL of your ' . SOFTWARE_TITLE . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $unsanitize->text($new_full_url), '100', '', '1', '', '');
 echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is monitored by the ' . SOFTWARE_TITLE . ' System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by ' . SOFTWARE_TITLE . '.', $unsanitize->text($new_email_address), '100', '', '1', '', '');
 echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '1', '', '');
+echo $form->showDropdownTop('new_email_signature', 'Email Signature', 'Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user\'s full name and email address. Use the below menu to choose the user that you would like to appear in your system\'s email signature.', '1', '');
+$result = $pdo->query("
+    SELECT id, `first_name`, `last_name`
+    FROM users
+    ORDER BY first_name, last_name")->fetchAll();
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->first_name . ' ' . $row->last_name, $_SESSION['s_system_email_signature']);
+
+}
+echo $form->showDropdownBottom('');
 echo $form->showDropdownTop('new_currency_converter', 'Currency Converter', 'Although it doesn\'t happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren\'t working properly, try a different source.', '', '');
 echo $form->showDropdownOption('era', 'Exchange Rates API', $new_currency_converter);
 echo $form->showDropdownBottom('');

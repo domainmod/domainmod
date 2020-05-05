@@ -22,7 +22,8 @@
 <?php
 $email = new DomainMOD\Email();
 
-list($full_url, $null_variable1, $null_variable2, $null_variable3) = $email->getSettings();
+list($full_url, $null_variable1, $null_variable2, $null_variable3, $null_variable4) = $email->getSettings();
+list($first_name_sig, $last_name_sig, $email_address_sig) = $email->getEmailSignature();
 
 $to_address = $email_address;
 $from_name = SOFTWARE_TITLE;
@@ -59,9 +60,9 @@ $message_html .= 'Your New Password: ' . $new_password . '<BR>';
 $message_html .= "<BR>";
 $message_html .= "Best Regards,<BR>";
 $message_html .= "<BR>";
-$message_html .= "Greg Chetcuti<BR>";
+$message_html .= $first_name_sig . ' ' . $last_name_sig . "<BR>";
 $message_html .= "<a target=\"_blank\"
-                            href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
+                            href=\"mailto:" . $email_address_sig . "\">" . $email_address_sig . "</a><BR>";
 $message_html .= "<BR>";
 $message_html .= "</font>
                     </td>
@@ -107,8 +108,8 @@ $message_text .= "Your New Password: " . $new_password . "\n";
 $message_text .= "\n";
 $message_text .= "Best Regards,\n";
 $message_text .= "\n";
-$message_text .= "Greg Chetcuti\n";
-$message_text .= "greg@domainmod.org\n";
+$message_text .= $first_name_sig . ' ' . $last_name_sig . "\n";
+$message_text .= $email_address_sig . "\n";
 $message_text .= "\n---\n\n";
 $message_text .= "You've received this notification because someone requested a password reset for your " . SOFTWARE_TITLE . " account.\n";
 $message_text .= "\n";

@@ -95,6 +95,7 @@ $_SESSION['s_system_default_ssl_provider_account'] = $result->default_ssl_provid
 $_SESSION['s_system_default_ssl_type'] = $result->default_ssl_type;
 $_SESSION['s_system_default_ssl_provider'] = $result->default_ssl_provider;
 $_SESSION['s_system_expiration_days'] = $result->expiration_days;
+$_SESSION['s_system_email_signature'] = $result->email_signature;
 $_SESSION['s_system_currency_converter'] = $result->currency_converter;
 $_SESSION['s_system_local_php_log'] = $result->local_php_log;
 

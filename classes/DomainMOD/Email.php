@@ -29,6 +29,10 @@ class Email
     public $full_url;
     public $from_address;
     public $number_of_days;
+    public $email_signature;
+    public $first_name;
+    public $last_name;
+    public $email_address;
     public $use_smtp;
 
     public function __construct()
@@ -36,7 +40,8 @@ class Email
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.email');
         $this->time = new Time();
-        list($this->full_url, $this->from_address, $this->number_of_days, $this->use_smtp) = $this->getSettings();
+        list($this->full_url, $this->from_address, $this->number_of_days, $this->email_signature, $this->use_smtp) = $this->getSettings();
+        list($this->first_name, $this->last_name, $this->email_address) = $this->getEmailSignature();
     }
 
     public function send($email_title, $to_address, $subject, $message_html, $message_text)
@@ -111,12 +116,13 @@ class Email
         $url = '';
         $email = '';
         $days = '';
+        $signature = '';
         $use_smtp = '';
 
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT full_url, email_address, expiration_days, use_smtp
+            SELECT full_url, email_address, expiration_days, email_signature, use_smtp
             FROM settings");
         $stmt->execute();
         $result = $stmt->fetch();
@@ -132,10 +138,43 @@ class Email
             $url = $result->full_url;
             $email = $result->email_address;
             $days = $result->expiration_days;
+            $signature = $result->email_signature;
             $use_smtp = $result->use_smtp;
 
         }
-        return array($url, $email, $days, $use_smtp);
+        return array($url, $email, $days, $signature, $use_smtp);
+    }
+
+    public function getEmailSignature()
+    {
+        $first_name = '';
+        $last_name = '';
+        $email_address = '';
+
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT first_name, last_name, email_address
+            FROM users
+            WHERE id = :user_id");
+        $stmt->bindValue('user_id', $this->email_signature, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve email signature user ID';
+            $this->log->critical($log_message);
+
+        } else {
+
+            $first_name = $result->first_name;
+            $last_name = $result->last_name;
+            $email_address = $result->email_address;
+
+        }
+        return array($first_name, $last_name, $email_address);
     }
 
     public function checkExpiring($from_cron = false)
@@ -332,8 +371,8 @@ class Email
     public function messageBottomHtml()
     {
         ob_start(); ?>
-        <BR>Best Regards,<BR><BR>Greg Chetcuti<BR><a
-            target="_blank" href="mailto:greg@domainmod.org">greg@domainmod.org</a><BR>
+        <BR>Best Regards,<BR><BR><?php echo $this->first_name . ' ' . $this->last_name; ?><BR><a
+            target="_blank" href="mailto:<?php echo $this->email_address; ?>"><?php echo $this->email_address; ?></a><BR>
         </font>
         </td></tr>
         </table>
@@ -357,8 +396,8 @@ class Email
         $message = '';
         $message .= "Best Regards,\n";
         $message .= "\n";
-        $message .= "Greg Chetcuti\n";
-        $message .= "greg@domainmod.org\n\n";
+        $message .= $this->first_name . ' ' . $this->last_name . "\n";
+        $message .= $this->email_address . "\n\n";
         $message .= "---\n\n";
         $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . SOFTWARE_TITLE . " installation located at: " . $this->full_url . "\n\n";
         $message .= "To unsubscribe from these notifications please visit: " . $this->full_url . "/settings/profile/";
