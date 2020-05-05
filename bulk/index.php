@@ -2155,7 +2155,7 @@ if ($action == "AD") { // Add Domains
     if ($new_expiry_date != "") {
         $temp_expiry_date = $new_expiry_date;
     } else {
-        $temp_expiry_date = $timestamp_basic_plus_one_year;
+        $temp_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
     }
     echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
@@ -2433,7 +2433,7 @@ if ($action == "AD") { // Add Domains
     if ($new_expiry_date != "") {
         $temp_expiry_date = $new_expiry_date;
     } else {
-        $temp_expiry_date = $timestamp_basic;
+        $temp_expiry_date = $time->toUserTimezone($timestamp_basic, 'Y-m-d');
     }
     echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
