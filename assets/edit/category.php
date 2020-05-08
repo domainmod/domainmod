@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $pcid = (int) $_GET['pcid'];
 
@@ -124,25 +123,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Category?<BR><BR><a
-        href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM categories
+            WHERE id = :pcid");
+        $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "Category " . $new_category . " Deleted<BR>";
+
+        header("Location: ../categories.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM categories
-        WHERE id = :pcid");
-    $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "Category " . $new_category . " Deleted<BR>";
-
-    header("Location: ../categories.php");
-    exit;
 
 }
 ?>
@@ -162,8 +154,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_pcid', $pcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Category', $new_category, 'category.php?pcid=' . $pcid . '&del=1');
 ?>
-<BR><a href="category.php?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

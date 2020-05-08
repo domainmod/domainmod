@@ -48,7 +48,6 @@ $pdo = $deeb->cnxx;
 $did = (int) $_REQUEST['did'];
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $new_domain = $sanitize->text($_POST['new_domain']);
 $new_tld = $_POST['new_tld'];
@@ -359,52 +358,46 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a href=\"edit.php?did=" . $did . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+        try {
 
-    }
+            $pdo->beginTransaction();
 
-}
+            $stmt = $pdo->prepare("
+                DELETE FROM domains
+                WHERE id = :did");
+            $stmt->bindValue('did', $did, PDO::PARAM_INT);
+            $stmt->execute();
 
-if ($really_del === 1) {
+            $stmt = $pdo->prepare("
+                DELETE FROM domain_field_data
+                WHERE domain_id = :did");
+            $stmt->bindValue('did', $did, PDO::PARAM_INT);
+            $stmt->execute();
 
-    try {
+            $maint->updateSegments();
 
-        $pdo->beginTransaction();
+            $system->checkExistingAssets();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM domains
-            WHERE id = :did");
-        $stmt->bindValue('did', $did, PDO::PARAM_INT);
-        $stmt->execute();
+            $pdo->commit();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM domain_field_data
-            WHERE domain_id = :did");
-        $stmt->bindValue('did', $did, PDO::PARAM_INT);
-        $stmt->execute();
+            $_SESSION['s_message_success'] .= "Domain " . $new_domain . " deleted<BR>";
 
-        $maint->updateSegments();
+            header("Location: ../domains/index.php");
+            exit;
 
-        $system->checkExistingAssets();
+        } catch (Exception $e) {
 
-        $pdo->commit();
+            $pdo->rollback();
 
-        $_SESSION['s_message_success'] .= "Domain " . $new_domain . " deleted<BR>";
+            $log_message = 'Unable to delete domain';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
 
-        header("Location: ../domains/index.php");
-        exit;
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-    } catch (Exception $e) {
+            throw $e;
 
-        $pdo->rollback();
-
-        $log_message = 'Unable to delete domain';
-        $log_extra = array('Error' => $e);
-        $log->critical($log_message, $log_extra);
-
-        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-        throw $e;
+        }
 
     }
 
@@ -728,8 +721,9 @@ if ($dw_has_zones === 1) { ?>
     </tbody>
     </table><?php
 }
+
+$layout->deleteButton('Domain', $new_domain, 'edit.php?did=' . $did . '&del=1');
 ?>
-<BR><a href="edit.php?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>

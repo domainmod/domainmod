@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $dnsid = (int) $_GET['dnsid'];
 
@@ -217,25 +216,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this DNS Profile?<BR><BR><a
-        href=\"dns.php?dnsid=" . $dnsid . "&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM dns
+            WHERE id = :dnsid");
+        $stmt->bindValue('dnsid', $dnsid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "DNS Profile " . $new_name . " Deleted<BR>";
+
+        header("Location: ../dns.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM dns
-        WHERE id = :dnsid");
-    $stmt->bindValue('dnsid', $dnsid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "DNS Profile " . $new_name . " Deleted<BR>";
-
-    header("Location: ../dns.php");
-    exit;
 
 }
 ?>
@@ -369,8 +361,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_dnsid', $dnsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('DNS Profile', $new_name, 'dns.php?dnsid=' . $dnsid . '&del=1');
 ?>
-<BR><a href="dns.php?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

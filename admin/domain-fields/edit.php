@@ -45,7 +45,6 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $cdfid = (int) $_GET['cdfid'];
 
@@ -164,12 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
 if ($del === 1) {
 
-    $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Custom Domain Field?<BR><BR><a href="edit.php?cdfid=' . $cdfid . '&really_del=1">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>';
-
-}
-
-if ($really_del === 1) {
-
     if ($cdfid === 0) {
 
         $_SESSION['s_message_danger'] .= 'The Custom Domain Field cannot be deleted<BR>';
@@ -254,8 +247,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_cdfid', $cdfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Custom Domain Field', $new_name, 'edit.php?cdfid=' . $cdfid . '&del=1');
 ?>
-<BR><a href="edit.php?cdfid=<?php echo $cdfid; ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

@@ -45,7 +45,6 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $uid = (int) $_GET['uid'];
 
@@ -282,13 +281,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     }
 }
+
 if ($del === 1) {
-
-    $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this User?<BR><BR><a href="edit.php?uid=' . $uid . '&really_del=1">YES, REALLY DELETE THIS USER</a><BR>';
-
-}
-
-if ($really_del === 1) {
 
     $temp_uid = $pdo->query("
         SELECT id
@@ -447,7 +441,10 @@ echo $form->showFormBottom('');
     PASSWORD</a><BR>
 <BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>">RESET AND EMAIL NEW PASSWORD TO
     USER</a><BR>
-<BR><a href="edit.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
+<BR>
+<?php
+$layout->deleteButton('User', $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1');
+?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

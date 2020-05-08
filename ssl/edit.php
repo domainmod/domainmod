@@ -46,7 +46,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $sslcid = (int) $_REQUEST['sslcid'];
 $new_domain_id = (int) $_POST['new_domain_id'];
@@ -321,13 +320,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
-        <a href=\"edit.php?sslcid=" . $sslcid . "&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
-
-}
-
-if ($really_del === 1) {
-
     try {
 
         $pdo->beginTransaction();
@@ -576,8 +568,9 @@ if ($result) { ?>
 echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('SSL Certificate', $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1');
 ?>
-<BR><a href="edit.php?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>

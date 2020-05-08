@@ -134,4 +134,46 @@ class Layout
         return array($sqlprod, $wheToWhe, $wholePiece);
     }
 
+    public function deleteButton($item_type, $item_name, $url)
+    {
+        echo $this->modalButton('DELETE THIS ' . strtoupper($item_type));
+        echo $this->modal('Delete ' . $item_type, $item_name, $url, 'CANCEL', 'YES, DELETE');
+    }
+
+    public function modalButton($name)
+    {
+        ob_start(); ?>
+
+            <button type="button" class="btn btn-danger btn-md" data-toggle="modal" data-target="#myModal">
+              <?php echo $name; ?>
+            </button><?php
+
+        return ob_get_clean();
+    }
+
+    public function modal($title, $item_name, $url, $left_button, $right_button)
+    {
+        ob_start(); ?>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"><?php echo $title; ?></h4>
+                  </div>
+                  <div class="modal-body">
+                      Are you sure you want to delete <strong><?php echo $item_name; ?></strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?php echo $left_button; ?></button>
+                      <a href="<?php echo $url; ?>"><type="button" class="btn btn-danger"><?php echo $right_button; ?></button></a>
+                  </div>
+                </div>
+              </div>
+            </div><?php
+
+        return ob_get_clean();
+    }
+
 } //@formatter:on

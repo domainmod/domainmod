@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $oid = (int) $_GET['oid'];
 
@@ -188,25 +187,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Owner?<BR><BR><a
-            href="account-owner.php?oid=' . $oid . '&really_del=1">YES, REALLY DELETE THIS OWNER</a><BR>';
+        $stmt = $pdo->prepare("
+            DELETE FROM owners
+            WHERE id = :oid");
+        $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "Owner " . $new_owner . " Deleted<BR>";
+
+        header("Location: ../account-owners.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM owners
-        WHERE id = :oid");
-    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "Owner " . $new_owner . " Deleted<BR>";
-
-    header("Location: ../account-owners.php");
-    exit;
 
 }
 ?>
@@ -225,8 +217,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_oid', $oid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Owner', $new_owner, 'account-owner.php?oid=' . $oid . '&del=1');
 ?>
-<BR><a href="account-owner.php?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

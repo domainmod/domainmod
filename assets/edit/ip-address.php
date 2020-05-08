@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $ipid = (int) $_GET['ipid'];
 $new_name = $sanitize->text($_POST['new_name']);
@@ -127,25 +126,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this IP Address?<BR><BR><a
-            href="ip-address.php?ipid=' . $ipid . '&really_del=1">YES, REALLY DELETE THIS IP ADDRESS</a><BR>';
+        $stmt = $pdo->prepare("
+            DELETE FROM ip_addresses
+            WHERE id = :ipid");
+        $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
+
+        header("Location: ../ip-addresses.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM ip_addresses
-        WHERE id = :ipid");
-    $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
-
-    header("Location: ../ip-addresses.php");
-    exit;
 
 }
 ?>
@@ -166,8 +158,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('IP Address', $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1');
 ?>
-<BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $whid = (int) $_GET['whid'];
 $new_host = $sanitize->text($_REQUEST['new_host']);
@@ -122,25 +121,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Web Host?<BR><BR><a href="host.php?whid=' .
-            $whid . '&really_del=1">YES, REALLY DELETE THIS WEB HOST</a><BR>';
+        $stmt = $pdo->prepare("
+            DELETE FROM hosting
+            WHERE id = :whid");
+        $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Deleted<BR>";
+
+        header("Location: ../hosting.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM hosting
-        WHERE id = :whid");
-    $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Deleted<BR>";
-
-    header("Location: ../hosting.php");
-    exit;
 
 }
 ?>
@@ -160,8 +152,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_whid', $whid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Web Host', $new_host, 'host.php?whid=' . $whid . '&del=1');
 ?>
-<BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

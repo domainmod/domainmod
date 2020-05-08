@@ -45,7 +45,6 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $csfid = (int) $_GET['csfid'];
 
@@ -164,12 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
 if ($del === 1) {
 
-    $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Custom SSL Field?<BR><BR><a href="edit.php?csfid=' . $csfid . '&really_del=1">YES, REALLY DELETE THIS CUSTOM SSL FIELD</a><BR>';
-
-}
-
-if ($really_del === 1) {
-
     if ($csfid === 0) {
 
         $_SESSION['s_message_danger'] .= 'The Custom SSL Field cannot be deleted<BR>';
@@ -254,8 +247,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_csfid', $csfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Custom SSL Field', $new_name, 'edit.php?csfid=' . $csfid . '&del=1');
 ?>
-<BR><a href="edit.php?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

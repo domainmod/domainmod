@@ -43,7 +43,6 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $dwsid = (int) $_GET['dwsid'];
 $new_name = $sanitize->text($_POST['new_name']);
@@ -143,13 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 if ($del === 1) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Server?<BR><BR><a
-    href=\"edit-server.php?dwsid=" . $dwsid . "&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
-
-}
-
-if ($really_del === 1) {
-
     $stmt = $pdo->prepare("
         SELECT `name`, `host`
         FROM dw_servers
@@ -227,8 +219,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_dwsid', $dwsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Server', $new_name, 'edit-server.php?dwsid=' . $dwsid . '&del=1');
 ?>
-<BR><a href="edit-server.php?dwsid=<?php echo $dwsid; ?>&del=1">DELETE THIS SERVER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

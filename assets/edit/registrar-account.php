@@ -44,7 +44,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $raid = (int) $_GET['raid'];
 $new_owner_id = (int) $_POST['new_owner_id'];
@@ -208,65 +207,57 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar Account?<BR><BR><a
-            href=\"registrar-account.php?raid=" . $raid . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR
-            ACCOUNT</a><BR>";
+        try {
 
-    }
+            $pdo->beginTransaction();
 
-}
+            $stmt = $pdo->prepare("
+                SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
+                FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                WHERE ra.owner_id = o.id
+                  AND ra.registrar_id = r.id
+                  AND ra.id = :raid");
+            $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stmt->closeCursor();
 
-if ($really_del === 1) {
+            if ($result) {
 
-    try {
+                $temp_username = $result->username;
+                $temp_owner_name = $result->owner_name;
+                $temp_registrar_name = $result->registrar_name;
 
-        $pdo->beginTransaction();
+            }
 
-        $stmt = $pdo->prepare("
-            SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
-            FROM registrar_accounts AS ra, owners AS o, registrars AS r
-            WHERE ra.owner_id = o.id
-              AND ra.registrar_id = r.id
-              AND ra.id = :raid");
-        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
-        $stmt->closeCursor();
+            $stmt = $pdo->prepare("
+                DELETE FROM registrar_accounts
+                WHERE id = :raid");
+            $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        if ($result) {
+            $system->checkExistingAssets();
 
-            $temp_username = $result->username;
-            $temp_owner_name = $result->owner_name;
-            $temp_registrar_name = $result->registrar_name;
+            $pdo->commit();
+
+            $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
+
+            header("Location: ../registrar-accounts.php");
+            exit;
+
+        } catch (Exception $e) {
+
+            $pdo->rollback();
+
+            $log_message = 'Unable to delete registrar account';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
 
         }
-
-        $stmt = $pdo->prepare("
-            DELETE FROM registrar_accounts
-            WHERE id = :raid");
-        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $system->checkExistingAssets();
-
-        $pdo->commit();
-
-        $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
-
-        header("Location: ../registrar-accounts.php");
-        exit;
-
-    } catch (Exception $e) {
-
-        $pdo->rollback();
-
-        $log_message = 'Unable to delete registrar account';
-        $log_extra = array('Error' => $e);
-        $log->critical($log_message, $log_extra);
-
-        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-        throw $e;
 
     }
 
@@ -492,8 +483,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Registrar Account', $new_username, 'registrar-account.php?raid=' . $raid . '&del=1');
 ?>
-<BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

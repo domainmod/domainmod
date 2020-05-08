@@ -44,7 +44,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $sslpaid = (int) $_GET['sslpaid'];
 $new_owner_id = (int) $_POST['new_owner_id'];
@@ -188,46 +187,39 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Account?<BR><BR><a
-            href=\"ssl-provider-account.php?sslpaid=" . $sslpaid . "&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
+        $stmt = $pdo->prepare("
+            SELECT a.username AS username, o.name AS owner_name, p.name AS ssl_provider_name
+            FROM ssl_accounts AS a, owners AS o, ssl_providers AS p
+            WHERE a.owner_id = o.id
+              AND a.ssl_provider_id = p.id
+              AND a.id = :sslpaid");
+        $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result) {
+
+            $temp_username = $result->username;
+            $temp_owner_name = $result->owner_name;
+            $temp_ssl_provider_name = $result->ssl_provider_name;
+
+        }
+
+        $stmt = $pdo->prepare("
+            DELETE FROM ssl_accounts
+            WHERE id = :sslpaid");
+        $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
+
+        $system->checkExistingAssets();
+
+        header("Location: ../ssl-accounts.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        SELECT a.username AS username, o.name AS owner_name, p.name AS ssl_provider_name
-        FROM ssl_accounts AS a, owners AS o, ssl_providers AS p
-        WHERE a.owner_id = o.id
-          AND a.ssl_provider_id = p.id
-          AND a.id = :sslpaid");
-    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
-
-    if ($result) {
-
-        $temp_username = $result->username;
-        $temp_owner_name = $result->owner_name;
-        $temp_ssl_provider_name = $result->ssl_provider_name;
-
-    }
-
-    $stmt = $pdo->prepare("
-        DELETE FROM ssl_accounts
-        WHERE id = :sslpaid");
-    $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
-
-    $system->checkExistingAssets();
-
-    header("Location: ../ssl-accounts.php");
-    exit;
 
 }
 ?>
@@ -292,9 +284,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('SSL Provider Account', $new_username, 'ssl-provider-account.php?sslpaid=' . $sslpaid . '&del=1');
 ?>
-<BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER
-    ACCOUNT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

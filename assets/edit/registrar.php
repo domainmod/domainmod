@@ -43,7 +43,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $rid = (int) $_REQUEST['rid'];
 $new_registrar = $sanitize->text($_POST['new_registrar']);
@@ -146,57 +145,50 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar?<BR><BR><a
-            href=\"registrar.php?rid=" . $rid . "&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+        try {
 
-    }
+            $pdo->beginTransaction();
 
-}
+            $stmt = $pdo->prepare("
+                DELETE FROM fees
+                WHERE registrar_id = :rid");
+            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+            $stmt->execute();
 
-if ($really_del === 1) {
+            $stmt = $pdo->prepare("
+                DELETE FROM registrar_accounts
+                WHERE registrar_id = :rid");
+            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+            $stmt->execute();
 
-    try {
+            $stmt = $pdo->prepare("
+                DELETE FROM registrars
+                WHERE id = :rid");
+            $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $pdo->beginTransaction();
+            $system->checkExistingAssets();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM fees
-            WHERE registrar_id = :rid");
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->execute();
+            $pdo->commit();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM registrar_accounts
-            WHERE registrar_id = :rid");
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->execute();
+            $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
 
-        $stmt = $pdo->prepare("
-            DELETE FROM registrars
-            WHERE id = :rid");
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->execute();
+            header("Location: ../registrars.php");
+            exit;
 
-        $system->checkExistingAssets();
+        } catch (Exception $e) {
 
-        $pdo->commit();
+            $pdo->rollback();
 
-        $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
+            $log_message = 'Unable to delete registrar';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
 
-        header("Location: ../registrars.php");
-        exit;
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-    } catch (Exception $e) {
+            throw $e;
 
-        $pdo->rollback();
-
-        $log_message = 'Unable to delete registrar';
-        $log_extra = array('Error' => $e);
-        $log->critical($log_message, $log_extra);
-
-        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-        throw $e;
+        }
 
     }
 
@@ -240,8 +232,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('rid', $rid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Registrar', $new_registrar, 'registrar.php?rid=' . $rid . '&del=1');
 ?>
-<BR><a href="registrar.php?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

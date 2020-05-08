@@ -42,7 +42,6 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $ssltid = (int) $_GET['ssltid'];
 
@@ -119,25 +118,18 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Type?<BR><BR><a
-            href=\"ssl-type.php?ssltid=" . $ssltid . "&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
+        $stmt = $pdo->prepare("
+            DELETE FROM ssl_cert_types
+            WHERE id = :ssltid");
+        $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Deleted<BR>";
+
+        header("Location: ../ssl-types.php");
+        exit;
 
     }
-
-}
-
-if ($really_del === 1) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM ssl_cert_types
-        WHERE id = :ssltid");
-    $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Deleted<BR>";
-
-    header("Location: ../ssl-types.php");
-    exit;
 
 }
 ?>
@@ -156,8 +148,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('SSL Type', $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1');
 ?>
-<BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS SSL TYPE</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

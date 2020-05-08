@@ -43,7 +43,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
+
 
 $sslpid = (int) $_GET['sslpid'];
 $new_ssl_provider = $sanitize->text($_POST['new_ssl_provider']);
@@ -147,57 +147,50 @@ if ($del === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Provider?<BR><BR><a
-            href=\"ssl-provider.php?sslpid=" . $sslpid . "&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
+        try {
 
-    }
+            $pdo->beginTransaction();
 
-}
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_fees
+                WHERE ssl_provider_id = :sslpid");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
 
-if ($really_del === 1) {
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_accounts
+                WHERE ssl_provider_id = :sslpid");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
 
-    try {
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_providers
+                WHERE id = :sslpid");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $pdo->beginTransaction();
+            $system->checkExistingAssets();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM ssl_fees
-            WHERE ssl_provider_id = :sslpid");
-        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-        $stmt->execute();
+            $pdo->commit();
 
-        $stmt = $pdo->prepare("
-            DELETE FROM ssl_accounts
-            WHERE ssl_provider_id = :sslpid");
-        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-        $stmt->execute();
+            $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
 
-        $stmt = $pdo->prepare("
-            DELETE FROM ssl_providers
-            WHERE id = :sslpid");
-        $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
-        $stmt->execute();
+            header("Location: ../ssl-providers.php");
+            exit;
 
-        $system->checkExistingAssets();
+        } catch (Exception $e) {
 
-        $pdo->commit();
+            $pdo->rollback();
 
-        $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
+            $log_message = 'Unable to delete SSL provider';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
 
-        header("Location: ../ssl-providers.php");
-        exit;
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
-    } catch (Exception $e) {
+            throw $e;
 
-        $pdo->rollback();
-
-        $log_message = 'Unable to delete SSL provider';
-        $log_extra = array('Error' => $e);
-        $log->critical($log_message, $log_extra);
-
-        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-        throw $e;
+        }
 
     }
 
@@ -219,8 +212,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_sslpid', $sslpid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('SSL Provider', $new_ssl_provider, 'ssl-provider.php?sslpid=' . $sslpid . '&del=1');
 ?>
-<BR><a href="ssl-provider.php?sslpid=<?php echo $sslpid; ?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

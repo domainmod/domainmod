@@ -49,7 +49,6 @@ $pdo = $deeb->cnxx;
 $segid = $_GET['segid'];
 
 $del = (int) $_GET['del'];
-$really_del = (int) $_GET['really_del'];
 
 $new_name = $sanitize->text($_POST['new_name']);
 $new_description = $sanitize->text($_POST['new_description']);
@@ -253,13 +252,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Segment?<BR><BR><a
-        href=\"edit.php?segid=" . $segid . "&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
-
-}
-
-if ($really_del === 1) {
-
     try {
 
         $pdo->beginTransaction();
@@ -319,8 +311,9 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_n
 echo $form->showInputHidden('new_segid', $segid);
 echo $form->showSubmitButton('Update Segment', '', '');
 echo $form->showFormBottom('');
+
+$layout->deleteButton('Segment', $new_name, 'edit.php?segid=' . $segid . '&del=1');
 ?>
-<BR><a href="edit.php?segid=<?php echo urlencode($segid); ?>&del=1">DELETE THIS SEGMENT</a>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
