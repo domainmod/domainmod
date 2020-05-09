@@ -91,6 +91,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
             $stmt->execute();
 
+            $stmt = $pdo->prepare("
+                UPDATE ssl_certs
+                SET owner_id = :new_owner_id,
+                    ssl_provider_id = :new_ssl_provider_id
+                WHERE account_id = :new_sslpaid");
+            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+            $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
+            $stmt->execute();
+
             $sslpaid = $new_sslpaid;
 
             $temp_ssl_provider = $assets->getSslProvider($new_ssl_provider_id);
