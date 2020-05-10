@@ -1,5 +1,8 @@
 GJClasses CHANGELOG
 ===================
+v0.29.0    2020-05-09
+- Removed ext- composer dependencies
+
 v0.28.0    2020-05-03
 - Removed the Free Currency Converter API
 
