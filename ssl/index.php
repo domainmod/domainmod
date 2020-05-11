@@ -35,6 +35,8 @@ $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -55,7 +57,7 @@ $is_active = $_REQUEST['is_active'];
 $search_for = urlencode($_REQUEST['search_for']);
 $from_dropdown = (int) $_REQUEST['from_dropdown'];
 $expand = (int) $_REQUEST['expand'];
-$daterange = $_REQUEST['daterange'];
+$daterange = $sanitize->text($_REQUEST['daterange']);
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 

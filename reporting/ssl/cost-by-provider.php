@@ -34,6 +34,8 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,7 +45,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $export_data = (int) $_GET['export_data'];
-$daterange = $_REQUEST['daterange'];
+$daterange = $sanitize->text($_REQUEST['daterange']);
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
