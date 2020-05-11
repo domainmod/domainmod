@@ -7,6 +7,18 @@ namespace Composer\Autoload;
 class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
 {
     public static $prefixLengthsPsr4 = array (
+        'i' => 
+        array (
+            'iamdual\\' => 8,
+        ),
+        'T' => 
+        array (
+            'Thamaraiselvam\\MysqlImport\\' => 27,
+        ),
+        'I' => 
+        array (
+            'Ifsnop\\' => 7,
+        ),
         'G' => 
         array (
             'GJClasses\\' => 10,
@@ -22,6 +34,18 @@ class ComposerStaticInitb2ab50c1bc2ddce3c955d66d9b575d56
     );
 
     public static $prefixDirsPsr4 = array (
+        'iamdual\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/iamdual/uploader/src',
+        ),
+        'Thamaraiselvam\\MysqlImport\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/thamaraiselvam/mysql-import',
+        ),
+        'Ifsnop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ifsnop/mysqldump-php/src/Ifsnop',
+        ),
         'GJClasses\\' => 
         array (
             0 => __DIR__ . '/..' . '/chetcuti/gjclasses/src/GJClasses',
