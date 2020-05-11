@@ -1,6 +1,5 @@
 /_includes/layout/footer.DEMO.inc.php
 /_includes/config.inc.php
-/temp
 .htaccess
 domainmod.log
 error_log

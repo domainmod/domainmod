@@ -89,6 +89,7 @@
                   <li<?php if ($slug == "admin-custom-ssl-fields" || $slug == "admin-add-custom-ssl-field" || $slug == "admin-edit-custom-ssl-field") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/ssl-fields/"><i class="fa"></i>Custom SSL Fields</a></li>
                   <li<?php if ($slug == "admin-scheduler-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/scheduler/"><i class="fa"></i>Task Scheduler</a></li>
                   <li<?php if ($slug == "admin-maintenance-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/maintenance/"><i class="fa"></i>Maintenance</a></li>
+                  <li<?php if ($slug == "admin-backup-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/backup/"><i class="fa"></i>Backup & Restore</a></li>
                   <li<?php if ($slug == "admin-debug-log-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/debug-log/"><i class="fa"></i>Debug Log</a></li>
                   <li<?php if ($slug == "admin-info") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/info/"><i class="fa"></i>System Information</a></li>
               </ul>

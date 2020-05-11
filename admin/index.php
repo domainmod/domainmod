@@ -51,6 +51,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 <a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/maintenance/">Maintenance</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/backup/">Backup & Restore</a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/debug-log/">Debug Log</a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
