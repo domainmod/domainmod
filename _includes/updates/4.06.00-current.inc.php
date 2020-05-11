@@ -1217,6 +1217,43 @@ if ($current_db_version === '4.12.0') {
             ALTER TABLE `settings`
             ADD `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'fcca' AFTER `expiration_days`");
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.13.0 to 4.14.0
+if ($current_db_version === '4.13.0') {
+
+    $old_version = '4.13.0';
+    $new_version = '4.14.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+            ALTER TABLE `settings`
+            CHANGE `currency_converter` `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'era'");
+
+        $pdo->query("
+            UPDATE `settings`
+            SET currency_converter = 'era'");
+
+        $pdo->query("
+            ALTER TABLE `settings`
+            ADD `email_signature` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `expiration_days`");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
