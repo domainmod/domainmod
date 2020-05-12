@@ -506,7 +506,7 @@ class DomainQueue
         // If the DNS Profile doesn't exist create a new one
         if ($has_match != '1') {
 
-            $new_servers = '';
+            $new_servers = array();
             $count = 0;
 
             // Make sure DNS servers were returned
