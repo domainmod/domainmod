@@ -32,7 +32,12 @@ class Log
     {
         $this->area = $area;
         $this->time = new Time();
-        $this->url = $_SERVER['REQUEST_URI'];
+
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $this->url = $_SERVER['REQUEST_URI'];
+        } else {
+            $this->url = '';
+        }
 
         if (isset($_SESSION['s_user_id'])) {
             $this->user_id = $_SESSION['s_user_id'];
