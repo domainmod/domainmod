@@ -54,7 +54,7 @@ class Conversion
             $bind_currency_id = $row->id;
             $stmt->execute();
 
-            $result_conversion = $stmt->fetchColumn();
+            $result_conversion = $stmt->fetchAll();
 
             if (!$result_conversion) {
 
