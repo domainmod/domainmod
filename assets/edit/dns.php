@@ -33,6 +33,7 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -73,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
+    if ($validate->text($new_name) && $validate->text($new_dns1) && $validate->text($new_dns2)) {
 
         $new_number_of_servers = 10;
 
@@ -152,9 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter a name for the DNS profile<BR>";
-        if ($new_dns1 == "") $_SESSION['s_message_danger'] .= "Enter the first DNS server<BR>";
-        if ($new_dns2 == "") $_SESSION['s_message_danger'] .= "Enter the second DNS server<BR>";
+        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= "Enter a name for the DNS profile<BR>";
+        if (!$validate->text($new_dns1)) $_SESSION['s_message_danger'] .= "Enter the first DNS server<BR>";
+        if (!$validate->text($new_dns2)) $_SESSION['s_message_danger'] .= "Enter the second DNS server<BR>";
 
     }
 

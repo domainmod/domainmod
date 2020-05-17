@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new \DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -64,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_username != "" && $new_owner_id !== 0 && $new_registrar_id !== 0) {
+    if ($validate->text($new_username) && $new_owner_id !== 0 && $new_registrar_id !== 0) {
 
         try {
 
@@ -153,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_username == "") {
+        if (!$validate->text($new_username)) {
             $_SESSION['s_message_danger'] .= "Enter the username<BR>";
         }
 

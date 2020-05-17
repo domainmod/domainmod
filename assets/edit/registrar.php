@@ -34,6 +34,7 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new \DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_registrar != "") {
+    if ($validate->text($new_registrar)) {
 
         $stmt = $pdo->prepare("
             UPDATE registrars
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_registrar == "") $_SESSION['s_message_danger'] .= "Enter the registrar name<BR>";
+        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= "Enter the registrar name<BR>";
 
     }
 

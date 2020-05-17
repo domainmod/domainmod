@@ -38,4 +38,27 @@ class Validate
 
     }
 
+   public function text($text)
+    {
+        /*
+         * Strip whitespace from beginning and end of value
+         * Make sure there's a value
+         * Make sure the value isn't all whitespace
+         * Make sure the value is 2 or more characters
+         */
+
+        $clean_text = trim($text);
+
+        if($clean_text != '' && !ctype_space($clean_text) && strlen($clean_text) >= 2) {
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
+
+    }
+
 } //@formatter:on

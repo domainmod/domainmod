@@ -33,6 +33,7 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-    if ($new_name != "" && $new_ip != "") {
+    if ($validate->text($new_name) && $validate->text($new_ip)) {
 
         $stmt = $pdo->prepare("
             UPDATE ip_addresses
@@ -82,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter a name for the IP Address<BR>";
-        if ($new_ip == "") $_SESSION['s_message_danger'] .= "Enter the IP Address<BR>";
+        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= "Enter a name for the IP Address<BR>";
+        if (!$validate->text($new_ip)) $_SESSION['s_message_danger'] .= "Enter the IP Address<BR>";
 
     }
 
