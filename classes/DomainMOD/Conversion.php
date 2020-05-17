@@ -36,6 +36,7 @@ class Conversion
 
     public function updateRates($default_currency, $user_id, $from_cron = false)
     {
+        $result_message = '';
         $pdo = $this->deeb->cnxx;
         $result = $this->getActiveCurrencies();
 
@@ -47,34 +48,38 @@ class Conversion
         $stmt->bindParam('currency_id', $bind_currency_id, \PDO::PARAM_INT);
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
 
-        foreach ($result as $row) {
+        if ($result) {
 
-            $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency, $from_cron);
+            foreach ($result as $row) {
 
-            $bind_currency_id = $row->id;
-            $stmt->execute();
+                $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency, $from_cron);
 
-            $result_conversion = $stmt->fetchAll();
+                $bind_currency_id = $row->id;
+                $stmt->execute();
 
-            if (!$result_conversion) {
+                $result_conversion = $stmt->fetchAll();
 
-                $is_existing = '0';
-                $log_message = 'Unable to retrieve user currency';
-                $log_extra = array('User ID' => $user_id, 'Currency ID' => $row->id, 'Default Currency' =>
-                    $default_currency, 'Conversion Rate' => $conversion_rate);
-                $this->log->critical($log_message, $log_extra);
+                if (!$result_conversion) {
 
-            } else {
+                    $is_existing = '0';
+                    $log_message = 'Unable to retrieve user currency';
+                    $log_extra = array('User ID' => $user_id, 'Currency ID' => $row->id, 'Default Currency' =>
+                        $default_currency, 'Conversion Rate' => $conversion_rate);
+                    $this->log->critical($log_message, $log_extra);
 
-                $is_existing = '1';
+                } else {
+
+                    $is_existing = '1';
+
+                }
+
+                $this->updateConversionRate($conversion_rate, $is_existing, $row->id, $user_id);
 
             }
 
-            $this->updateConversionRate($conversion_rate, $is_existing, $row->id, $user_id);
+            $result_message = 'Conversion Rates updated<BR>';
 
         }
-
-        $result_message = 'Conversion Rates updated<BR>';
 
         return $result_message;
     }
@@ -102,7 +107,7 @@ class Conversion
 
             $log_message = 'Unable to retrieve active currencies';
             $this->log->critical($log_message);
-            return $log_message;
+            return false;
 
         } else {
 
