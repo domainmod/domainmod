@@ -141,7 +141,7 @@ if ($is_active == "") $is_active = "LIVE";
 
 if ($tld && $tld != '') {
 
-    if ($validate->tld($tld) === false || $tld == '0') {
+    if ($validate->tld($tld) == false || $tld == '0') {
 
         $tld = '';
 
@@ -407,7 +407,7 @@ if ($segid !== 0) {
 
 }
 
-if ($export_data === 1) {
+if ($export_data == 1) {
 
     $result = $pdo->query($sql)->fetchAll();
 
@@ -419,7 +419,7 @@ if ($export_data === 1) {
 
     $export->writeBlankRow($export_file);
 
-    if ($segid === 0) {
+    if ($segid == 0) {
 
         $row_contents = array(
             'Total Cost:',
@@ -972,7 +972,7 @@ if ($segid !== 0) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand === 1) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
     $box_type = 'expanded';
     $box_icon = 'minus';
 } else {

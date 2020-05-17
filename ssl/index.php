@@ -255,7 +255,7 @@ $grand_total = $pdo->query("
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-if ($export_data === 1) {
+if ($export_data == 1) {
 
     $result = $pdo->query($sql)->fetchAll();
 
@@ -627,7 +627,7 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
 
 $result = $pdo->query($sql)->fetchAll();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand === 1) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
     $box_type = 'expanded';
     $box_icon = 'minus';
 } else {
@@ -1554,7 +1554,7 @@ if ($result) { ?>
 
                     foreach ($_SESSION['s_csf_data'] as $field) {
 
-                        if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
+                        if ($field['value'] == 1 && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
 
                             <th>
 
@@ -1644,19 +1644,19 @@ if ($result) { ?>
 
                     foreach ($_SESSION['s_csf_data'] as $field) {
 
-                        if ($field['value'] === 1 && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
+                        if ($field['value'] == 1 && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
 
                         <td><?php
 
-                            if ($field['type_id'] === 1) { // Check Box
+                            if ($field['type_id'] == 1) { // Check Box
 
-                                echo ($row->{$field['field']} === 1 ? 'Yes' : 'No');
+                                echo ($row->{$field['field']} == 1 ? 'Yes' : 'No');
 
-                            } elseif ($field['type_id'] === 2) { // Text
+                            } elseif ($field['type_id'] == 2) { // Text
 
                                 echo $row->{$field['field']};
 
-                            } elseif ($field['type_id'] === 4) { // Date
+                            } elseif ($field['type_id'] == 4) { // Date
 
                                 if ($row->{$field['field']} == '1970-01-01') {
 
@@ -1668,7 +1668,7 @@ if ($result) { ?>
 
                                 }
 
-                            } elseif ($field['type_id'] === 5) { // Time Stamp
+                            } elseif ($field['type_id'] == 5) { // Time Stamp
 
                                 if ($row->{$field['field']} == '1970-01-01 00:00:00') {
 
