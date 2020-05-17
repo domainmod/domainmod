@@ -44,7 +44,7 @@ $pdo = $deeb->cnxx;
 
 $id = $_GET['id'];
 
-if (DEMO_INSTALLATION === false) {
+if (DEMO_INSTALLATION == false) {
 
     $stmt = $pdo->prepare("
         SELECT `name`, slug, expression, active
@@ -193,7 +193,7 @@ if (DEMO_INSTALLATION === false) {
 
 } else {
 
-    if (DEMO_INSTALLATION === true) {
+    if (DEMO_INSTALLATION == true) {
 
         $_SESSION['s_message_danger'] .= "Tasks Disabled in Demo Mode";
 
