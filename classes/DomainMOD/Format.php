@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class Format
 {
+    public $sanitize;
+
+    public function __construct()
+    {
+        $this->sanitize = new Sanitize();
+    }
 
     public function stripSpacing($input)
     {
@@ -42,7 +48,7 @@ class Format
         $domain_list = explode("\r\n", $clean_domain_list);
         $new_domain_list = array();
         foreach ($domain_list as $value) {
-            $new_domain_list[] = urlencode($this->stripSpacing($value));
+            $new_domain_list[] = $this->sanitize->text($this->stripSpacing($value));
         }
         return array_unique($new_domain_list);
     }
