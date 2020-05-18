@@ -17,7 +17,7 @@ So go ahead, take the live demo for a test drive before you install: <https://de
 
 Requirements
 ------------
-**Software**: PHP v5.3.2+, MySQL  
+**Software**: PHP v5.5+, MySQL  
 **PHP Extensions**: PDO (MySQL), cURL, OpenSSL  
 **PHP Settings**: allow_url_fopen  
 

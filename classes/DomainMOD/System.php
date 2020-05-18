@@ -54,8 +54,8 @@ class System
         $req_html_long .= '<STRONG>Server Software</STRONG><BR>';
 
         // PHP
-        $software = 'PHP v5.3.2+';
-        $min_php_version = '5.3.2';
+        $software = 'PHP v5.5+';
+        $min_php_version = '5.5';
         $installed_php_version = phpversion();
 
         if ($installed_php_version >= $min_php_version) {
