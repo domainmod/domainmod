@@ -1254,6 +1254,53 @@ if ($current_db_version === '4.13.0') {
             ALTER TABLE `settings`
             ADD `email_signature` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `expiration_days`");
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.14.0 to 4.15.0
+if ($current_db_version === '4.14.0') {
+
+    $old_version = '4.14.0';
+    $new_version = '4.15.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("UPDATE registrars SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE registrar_accounts SET username = 'n/a' WHERE username = '' OR username IS NULL");
+        $pdo->query("UPDATE dns SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE dns SET dns1 = 'n/a' WHERE dns1 = '' OR dns1 IS NULL");
+        $pdo->query("UPDATE dns SET dns2 = 'n/a' WHERE dns2 = '' OR dns2 IS NULL");
+        $pdo->query("UPDATE hosting SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE ssl_providers SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE ssl_accounts SET username = 'n/a' WHERE username = '' OR username IS NULL");
+        $pdo->query("UPDATE ssl_cert_types SET type = 'n/a' WHERE type = '' OR type IS NULL");
+        $pdo->query("UPDATE owners SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE categories SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE ip_addresses SET name = 'n/a' WHERE name = '' OR name IS NULL");
+        $pdo->query("UPDATE ip_addresses SET ip = 'n/a' WHERE ip = '' OR ip IS NULL");
+
+        $pdo->query("
+            INSERT INTO `api_registrars`
+            (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
+             req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
+             ret_autorenewal_status, notes, insert_time)
+             VALUES
+            ('Gandi', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "')");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
