@@ -67,11 +67,6 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../migrating/">Migrating</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
@@ -102,6 +97,11 @@
             <li class="toctree-l1">
 		
     <a class="" href="../administration/">Administration</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../backup-restore/">Backup & Restore</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -186,7 +186,7 @@
 <p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
 <h2 id="supported-registrars">Supported Registrars</h2>
 <p>The following registrars are currently supported by the Domain Queue:</p>
-<p>Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, ResellerClub</p>
+<p>Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, ResellerClub</p>
 <h2 id="usage">Usage</h2>
 <div class="admonition warning">
 <p class="admonition-title">Requirement</p>
@@ -223,6 +223,9 @@
 <h4>Freenom</h4>
 
 <p>Freenom currently only gives API access to reseller accounts.</p>
+<h4>Gandi</h4>
+
+<p>Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.</p>
 <h4>GoDaddy</h4>
 
 <p>When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>

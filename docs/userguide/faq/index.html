@@ -67,11 +67,6 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../migrating/">Migrating</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
@@ -93,6 +88,11 @@
             <li class="toctree-l1">
 		
     <a class="" href="../administration/">Administration</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../backup-restore/">Backup & Restore</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -200,10 +200,10 @@
 <p>Currently only English is supported, but this is something that will be investigated for the future.</p>
 <h4>Which domain registrar APIs does DomainMOD currently support?</h4>
 
-<p>DomainMOD currently supports Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, and ResellerClub.</p>
+<p>DomainMOD currently supports Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, and ResellerClub.</p>
 <h2 id="usage"><BR>Usage</h2>
 <p><h4>How many domains can I manage with DomainMOD?</h4></p>
-<p>Theoretically there's no limit on the number of domains you can manage, it just depends on your server hardware and the settings chosen in DomainMOD. The default settings can handle thousands of domains, and over 10,000 depending on how much information you've chosen to display on the front page, but if things start slowing down you can enable <strong>large mode</strong> to speed things up. Large mode uses a different method for displaying the information on the main domain page, and although it doesn't offer as many of the advances features as the default settings, it allows you to manage a lot more domains.</p>
+<p>Theoretically there's no limit on the number of domains you can manage, it just depends on your server hardware and the settings chosen in DomainMOD. The default settings can handle thousands of domains, and over 10,000 depending on how much information you've chosen to display on the front page, but if things start slowing down you can enable <strong>large mode</strong> to speed things up. Large mode uses a different method for displaying the information on the main domain page, and although it doesn't offer as many of the advanced features as the default settings, it allows you to manage a lot more domains.</p>
 <h4>Can I use DomainMOD to sell domains?</h4>
 
 <p>The primary use for DomainMOD is to manage a large portfolio of domains, and it currently doesn't have any sales features, such as being able to host sales letter landing pages. This is something we're looking at implementing in a future version of DomainMOD.</p>
@@ -218,6 +218,10 @@
 
 <p>This is something we're still investigating, as we realize how helpful this feature would be for some people, however if it happens it's probably going to be a while still. Although on the surface it seems like it may be pretty easy to implement, there's actually quite a bit to it and it's going to take quite a bit of work.</p>
 <p>Also, since you can accomplish pretty much the same thing by exporting your domain list and sorting the exported data in something like excel (since it includes all of your custom fields), implementing this within the UI is not very high on the priority list.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of v4.13, you can now display your Custom Fields on the main domain page.</p>
+</div>
 <h4>Are the domain expiration dates updated automatically using the domain's WHOIS information?</h4>
 
 <p>No, expiration dates currently need to be updated manually when the domains are renewed. Expiration dates can be updated one-by-one or by using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
