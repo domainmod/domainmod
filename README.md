@@ -23,7 +23,7 @@ Requirements
 
 Downloading
 -----------
-There are currently three options for downloading DomainMOD.
+There are currently four options for downloading DomainMOD.
 
 **Option #1**  
 Visit the following URL to download DomainMOD in a .ZIP file: <https://domainmod.org/download/>
@@ -34,6 +34,12 @@ Use git from your web server to retrieve the DomainMOD source code. To do so, ch
     git clone https://github.com/domainmod/domainmod.git
 
 **Option #3**  
+Use Docker from your web server to retrieve and install DomainMOD. To do so, change to the directory where you want to store the Docker build files and DomainMOD database and run the following commands (this download/install option requires that you have git, Docker, and Docker Compose installed on your web server):
+
+    git clone https://github.com/domainmod/docker.git .
+    docker-compose up -d
+
+**Option #4**  
 Use Softaculous from your web server to download **and** install DomainMOD.  Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.
 
 To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.
@@ -42,7 +48,7 @@ More Information: <http://www.softaculous.com/softaculous/apps/others/DomainMOD/
 
 Installing
 ----------
-If you installed DomainMOD using Softaculous in the previous step you can ignore the rest of this *Installing* section, as you should already have DomainMOD up-and-running.
+If you installed DomainMOD using Docker or Softaculous in the previous step you can ignore the rest of this *Installing* section, as you should already have DomainMOD up-and-running.
 
 If you downloaded the .ZIP file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).
 
@@ -78,7 +84,7 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 3. Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, **use it at your own risk**. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.
 
-    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the [Domain Queue](domain-queue.md), however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.
+    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the Domain Queue, however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.
 
 4. Do not host DomainMOD on a public website or on an easy-to-guess URL.
 
