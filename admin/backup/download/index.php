@@ -33,6 +33,8 @@ $log = new DomainMOD\Log('/admin/backup/download/index.php');
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 
+$download_filename = 'domainmod-backup.sql';
+
 use Ifsnop\Mysqldump as IMysqldump;
 
 try {
@@ -41,14 +43,14 @@ try {
         'add-drop-table' => true
     );
 
-    if (file_exists(DIR_ROOT . '/temp/domainmod-backup.sql')) {
+    if (file_exists(DIR_TEMP . '/' . $download_filename)) {
 
-        unlink(DIR_ROOT . '/temp/domainmod-backup.sql');
+        unlink(DIR_TEMP . '/' . $download_filename);
 
     }
 
     $dump = new IMysqldump\Mysqldump('mysql:host=' . $dbhostname . ';dbname=' . $dbname, $dbusername, $dbpassword, $DumpSettings);
-    $dump->start(DIR_ROOT . '/temp/domainmod-backup.sql');
+    $dump->start(DIR_TEMP . '/' . $download_filename);
 
 } catch (Exception $e) {
 
@@ -60,5 +62,7 @@ try {
 
 }
 
-header("Location: ../../../temp/domainmod-backup.sql");
-exit;
+header('Content-Type: application/octet-stream');
+header("Content-disposition: attachment; filename=" . $download_filename);
+readfile(DIR_TEMP . '/' . $download_filename);
+exit();
