@@ -1,5 +1,20 @@
 DomainMOD CHANGELOG
 ===================
+v4.15.0    2020-05-17
+- Added Gandi API support
+- Added support for more than 100 domains with Namecheap API
+- Added some text validation to Asset pages
+- Added GitHub "Stale" App
+- Changed PHP requirement from 5.3.2 to 5.5
+- Fixed domain sanitization for IDN compatibility
+- Fixed Integrity constraint violation error
+- Fixed SSL keyword search
+- Fixed unbuffered query issue (again)
+- Sanitized SSL keyword search
+- Reverted some identical operators
+- Removed Scrutinizer-CI badges from README
+- Code cleanup
+
 v4.14.0    2020-05-10
 - Added Backup & Restore
 - Added the ability to change the email signature
