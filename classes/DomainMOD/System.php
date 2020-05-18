@@ -26,12 +26,14 @@ class System
     public $deeb;
     public $log;
     public $layout;
+    public $sanitize;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.system');
         $this->layout = new Layout();
+        $this->sanitize = new Sanitize();
     }
 
     public function getRequirements()
@@ -264,7 +266,7 @@ class System
     {
         if ($_SESSION['s_read_only'] == '1') {
             $_SESSION['s_message_danger'] .= "You are not authorized to perform that action<BR>";
-            header('Location: ' . $redirect_url);
+            header('Location: ' . $this->sanitize->text($redirect_url));
             exit;
         }
     }
