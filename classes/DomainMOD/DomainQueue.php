@@ -106,6 +106,12 @@ class DomainQueue
                     list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
+                } elseif ($row->api_registrar_name == 'Gandi') {
+
+                    $registrar = new Gandi();
+                    $api_key = $this->api->getKey($row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
+
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
@@ -245,6 +251,12 @@ class DomainQueue
                     $registrar = new Freenom();
                     list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'Gandi') {
+
+                    $registrar = new Gandi();
+                    $api_key = $this->api->getKey($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
