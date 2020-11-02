@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Dashboard";
-$breadcrumb = "Dashboard";
+$page_title = _('Dashboard');
+$breadcrumb = _('Dashboard');
 $software_section = "dashboard";
 $software_section_logo = "fa-dashboard";
 $slug = "dashboard-main";

@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= 'Owner ' . $new_owner . ' Added<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('Owner %s added'), $new_owner) . '<BR>';
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Enter the owner's name<BR>";
+        $_SESSION['s_message_danger'] .= _("Enter the Owner's name") . '<BR>';
 
     }
 
@@ -86,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_owner', 'Owner Name (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add Owner', '', '');
+echo $form->showInputText('new_owner', _('Owner Name') . ' (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add Owner'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

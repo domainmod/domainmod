@@ -156,7 +156,7 @@ class DomainQueue
 
                 } else {
 
-                    return "Invalid Domain Registrar";
+                    return _('Invalid Domain Registrar');
 
                 }
 
@@ -189,7 +189,7 @@ class DomainQueue
 
         $this->copyToHistoryList();
 
-        return 'Domain List Queue Processed<BR>';
+        return _('Domain List Queue Processed') . '<BR>';
     }
 
     public function processQueueDomain()
@@ -308,7 +308,7 @@ class DomainQueue
 
                 } else {
 
-                    return "Invalid Domain Registrar";
+                    return _('Invalid Domain Registrar');
 
                 }
 
@@ -335,7 +335,7 @@ class DomainQueue
 
                 } else {
 
-                    if ($domain_status == 'invalid') {
+                    if ($domain_status == strtolower(_('Invalid'))) {
 
                         $this->markInvalidDomain($row->id);
 
@@ -354,7 +354,7 @@ class DomainQueue
 
         $this->copyToHistoryDomain();
 
-        return 'Domain Queue Processed<BR>';
+        return _('Domain Queue Processed') . '<BR>';
     }
 
     public function getQueueList()
@@ -676,7 +676,7 @@ class DomainQueue
         $result = $pdo->query("
             SELECT id
             FROM categories
-            WHERE `name` = '[created by queue]'
+            WHERE `name` = '" . _('[created by queue]') . "'
             ORDER BY update_time DESC, insert_time DESC
             LIMIT 1")->fetchColumn();
 
@@ -688,7 +688,7 @@ class DomainQueue
                 INSERT INTO categories
                 (`name`, stakeholder, creation_type_id, created_by, insert_time)
                 VALUES
-                ('[created by queue]', '[created by queue]', :creation_type_id, :created_by, :insert_time)");
+                ('" . _('[created by queue]') . "', '" . _('[created by queue]') . "', :creation_type_id, :created_by, :insert_time)");
             $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
             $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
             $bind_timestamp = $this->time->stamp();
@@ -722,7 +722,7 @@ class DomainQueue
         $result = $pdo->query("
             SELECT id
             FROM hosting
-            WHERE `name` = '[created by queue]'
+            WHERE `name` = '" . _('[created by queue]') . "'
             ORDER BY update_time DESC, insert_time DESC
             LIMIT 1")->fetchColumn();
 
@@ -1264,7 +1264,7 @@ class DomainQueue
             SET processing = '0'
             WHERE processing = '1'");
 
-        return 'Queue Processing Cleared<BR>';
+        return _('Queue Processing Cleared') . '<BR>';
     }
 
     public function clearQueues()
@@ -1275,7 +1275,7 @@ class DomainQueue
 
         $pdo->query("DELETE FROM domain_queue");
 
-        return 'Queues Cleared<BR>';
+        return _('Queues Cleared') . '<BR>';
     }
     
     public function checkListQueue()

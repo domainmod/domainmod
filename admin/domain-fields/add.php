@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
     if ($result_main) {
 
-        $_SESSION['s_message_danger'] .= 'The Database Field Name you entered already exists<BR>';
+        $_SESSION['s_message_danger'] .= _('The Database Field Name you entered already exists') . '<BR>';
 
     } else {
 
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
             $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-            $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $new_field_name . ') added<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('Custom Domain Field %s (%s) added'), $new_name, $new_field_name) . '<BR>';
 
             header("Location: ../domain-fields/");
             exit;
@@ -148,8 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == '') $_SESSION['s_message_danger'] .= 'Enter the Display Name<BR>';
-        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['s_message_danger'] .= 'The Database Field Name format is incorrect<BR>';
+        if ($new_name == '') $_SESSION['s_message_danger'] .= _('Enter the Display Name') . '<BR>';
+        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['s_message_danger'] .= _('The Database Field Name format is incorrect') . '<BR>';
 
     }
 
@@ -165,8 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
-echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $unsanitize->text($new_field_name), '30', '', '1', '', '');
+echo $form->showInputText('new_name', _('Display Name') . ' (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
+echo $form->showInputText('new_field_name', _('Database Field Name') . ' (30)', _('The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).') . '<BR><strong>' . strtoupper(_('Warning')) . ':</strong> ' . _('The Database Field Name cannot be renamed.'), $unsanitize->text($new_field_name), '30', '', '1', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
@@ -175,7 +175,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '', '');
+    echo $form->showDropdownTop('new_field_type_id', _('Data Type'), '<strong>' . strtoupper(_('Warning')) . ':</strong> ' . _('The Data Type cannot be changed.'), '', '');
 
     foreach ($result as $row) {
 
@@ -187,9 +187,9 @@ if ($result) {
 
 }
 
-echo $form->showInputText('new_description', 'Description (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add Custom Field', '', '');
+echo $form->showInputText('new_description', _('Description') . ' (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add Custom Field'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>

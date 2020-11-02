@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add IP Address";
-$breadcrumb = "Add";
+$page_title = _('Add IP Address');
+$breadcrumb = _('Add');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-add-ip-address";

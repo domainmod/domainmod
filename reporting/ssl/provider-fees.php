@@ -83,11 +83,11 @@ if ($total_rows > 0) {
 
         if ($all == "1") {
 
-            $export_file = $export->openFile('ssl_provider_fee_report_all', strtotime($time->stamp()));
+            $export_file = $export->openFile(_('ssl_provider_fee_report_all'), strtotime($time->stamp()));
 
         } else {
 
-            $export_file = $export->openFile('ssl_provider_fee_report_active', strtotime($time->stamp()));
+            $export_file = $export->openFile(_('ssl_provider_fee_report_active'), strtotime($time->stamp()));
 
         }
 
@@ -98,11 +98,11 @@ if ($total_rows > 0) {
 
         if ($all == "1") {
 
-            $row_contents = array('All SSL Provider Fees');
+            $row_contents = array(_('All SSL Provider Fees'));
 
         } else {
 
-            $row_contents = array('Active SSL Provider Fees');
+            $row_contents = array(_('Active SSL Provider Fees'));
 
         }
         $export->writeRow($export_file, $row_contents);
@@ -110,15 +110,15 @@ if ($total_rows > 0) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'SSL Provider',
-            'Certificate Type',
-            'Initial Fee',
-            'Renewal Fee',
-            'Misc Fee',
-            'Currency',
-            'Certs',
-            'Inserted',
-            'Updated'
+            _('SSL Provider'),
+            _('Certificate Type'),
+            _('Initial Fee'),
+            _('Renewal Fee'),
+            _('Misc Fee'),
+            _('Currency'),
+            _('Certs'),
+            _('Inserted'),
+            _('Updated')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -184,9 +184,9 @@ if ($total_rows > 0) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="provider-fees.php?all=1"><?php echo $layout->showButton('button', 'View All'); ?></a>&nbsp;&nbsp;or&nbsp;<a href="provider-fees.php?all=0"><?php echo $layout->showButton('button', 'Active Only'); ?></a>
+<a href="provider-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;or&nbsp;<a href="provider-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a>
 <?php if ($total_rows > 0) { //@formatter:off ?>
-          <BR><BR><a href="provider-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a>
+          <BR><BR><a href="provider-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', _('Export')); ?></a>
 <?php } //@formatter:on ?>
 
 <?php if ($total_rows > 0) { ?>
@@ -195,14 +195,14 @@ if ($total_rows > 0) {
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Provider</th>
-            <th>Type</th>
-            <th>Initial</th>
-            <th>Renewal</th>
-            <th>Misc</th>
-            <th>Currency</th>
-            <th>Certs</th>
-            <th>Last Updated</th>
+            <th><?php echo _('Provider'); ?></th>
+            <th><?php echo _('Type'); ?></th>
+            <th><?php echo _('Initial'); ?></th>
+            <th><?php echo _('Renewal'); ?></th>
+            <th><?php echo _('Misc'); ?></th>
+            <th><?php echo _('Currency'); ?></th>
+            <th><?php echo _('Certs'); ?></th>
+            <th><?php echo _('Last Update'); ?></th>
         </tr>
         </thead>
         <tbody><?php

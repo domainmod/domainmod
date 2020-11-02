@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
     $_SESSION['s_display_inactive_assets'] = $new_display_inactive_assets;
     $_SESSION['s_display_dw_intro_page'] = $new_display_dw_intro_page;
 
-    $_SESSION['s_message_success'] .= "Display Settings updated<BR>";
+    $_SESSION['s_message_success'] .= _('Display Settings updated') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -214,8 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_number_of_domains === 0) $_SESSION['s_message_danger'] .= "Enter the default number of domains to display<BR>";
-        if ($new_number_of_ssl_certs === 0) $_SESSION['s_message_danger'] .= "Enter the default number of SSL certficates to display<BR>";
+        if ($new_number_of_domains === 0) $_SESSION['s_message_danger'] .= _('Enter the default number of domains to display') . '<BR>';
+        if ($new_number_of_ssl_certs === 0) $_SESSION['s_message_danger'] .= _('Enter the default number of SSL certificates to display') . '<BR>';
 
     } else {
 
@@ -276,29 +276,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
 <?php echo $form->showFormTop(''); ?>
 
-<h3>Main Domain Page</h3><?php
+<h3><?php echo _('Main Domain Page'); ?></h3><?php
 
 if ($new_number_of_domains !== 0) {
     $temp_number_of_domains = $new_number_of_domains;
 } else {
     $temp_number_of_domains = '';
 }
-echo $form->showInputText('new_number_of_domains', 'Number of domains per page', '', $temp_number_of_domains, '5', '', '1', '', '');
+echo $form->showInputText('new_number_of_domains', _('Number of domains per page'), '', $temp_number_of_domains, '5', '', '1', '', '');
 
-echo $form->showMultipleSelectTop('domain_column_options', 'Columns to Display', '');
-echo $form->showMultipleSelectOption('Expiry Date', 'expiry', $new_display_domain_expiry_date);
-echo $form->showMultipleSelectOption('Fee', 'fee', $new_display_domain_fee);
-echo $form->showMultipleSelectOption('TLD', 'tld', $new_display_domain_tld);
-echo $form->showMultipleSelectOption('Registrar', 'registrar', $new_display_domain_registrar);
-echo $form->showMultipleSelectOption('Account', 'account', $new_display_domain_account);
-echo $form->showMultipleSelectOption('DNS', 'dns', $new_display_domain_dns);
-echo $form->showMultipleSelectOption('IP Address', 'ip', $new_display_domain_ip);
-echo $form->showMultipleSelectOption('Web Host', 'host', $new_display_domain_host);
-echo $form->showMultipleSelectOption('Category', 'category', $new_display_domain_category);
-echo $form->showMultipleSelectOption('Owner', 'owner', $new_display_domain_owner);
+echo $form->showMultipleSelectTop('domain_column_options', _('Columns to Display'), '');
+echo $form->showMultipleSelectOption(_('Expiry Date'), 'expiry', $new_display_domain_expiry_date);
+echo $form->showMultipleSelectOption(_('Fee'), 'fee', $new_display_domain_fee);
+echo $form->showMultipleSelectOption(_('TLD'), 'tld', $new_display_domain_tld);
+echo $form->showMultipleSelectOption(_('Registrar'), 'registrar', $new_display_domain_registrar);
+echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_domain_account);
+echo $form->showMultipleSelectOption(_('DNS'), 'dns', $new_display_domain_dns);
+echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_domain_ip);
+echo $form->showMultipleSelectOption(_('Web Host'), 'host', $new_display_domain_host);
+echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_domain_category);
+echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_domain_owner);
 echo $form->showMultipleSelectBottom('');
 
-echo $form->showMultipleSelectTop('custom_domain_fields', 'Custom Domain Fields to Display', '');
+echo $form->showMultipleSelectTop('custom_domain_fields', _('Custom Domain Fields to Display'), '');
 
 foreach ($_SESSION['s_cdf_data'] as $field) {
 
@@ -313,28 +313,28 @@ foreach ($_SESSION['s_cdf_data'] as $field) {
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
-<h3>Main SSL Certificate Page</h3><?php
+<h3><?php echo _('Main SSL Certificate Page'); ?></h3><?php
 
 if ($new_number_of_ssl_certs !== 0) {
     $temp_number_of_ssl_certs = $new_number_of_ssl_certs;
 } else {
     $temp_number_of_ssl_certs = '';
 }
-echo $form->showInputText('new_number_of_ssl_certs', 'Number of SSL certificates per page', '', $temp_number_of_ssl_certs, '5', '', '1', '', '');
+echo $form->showInputText('new_number_of_ssl_certs', _('Number of SSL certificates per page'), '', $temp_number_of_ssl_certs, '5', '', '1', '', '');
 
-echo $form->showMultipleSelectTop('ssl_column_options', 'Columns to Display', '');
-echo $form->showMultipleSelectOption('Expiry Date', 'expiry', $new_display_ssl_expiry_date);
-echo $form->showMultipleSelectOption('Fee', 'fee', $new_display_ssl_fee);
-echo $form->showMultipleSelectOption('Domain', 'domain', $new_display_ssl_domain);
-echo $form->showMultipleSelectOption('SSL Provider', 'provider', $new_display_ssl_provider);
-echo $form->showMultipleSelectOption('Account', 'account', $new_display_ssl_account);
-echo $form->showMultipleSelectOption('SSL Type', 'type', $new_display_ssl_type);
-echo $form->showMultipleSelectOption('IP Address', 'ip', $new_display_ssl_ip);
-echo $form->showMultipleSelectOption('Category', 'category', $new_display_ssl_category);
-echo $form->showMultipleSelectOption('Owner', 'owner', $new_display_ssl_owner);
+echo $form->showMultipleSelectTop('ssl_column_options', _('Columns to Display'), '');
+echo $form->showMultipleSelectOption(_('Expiry Date'), 'expiry', $new_display_ssl_expiry_date);
+echo $form->showMultipleSelectOption(_('Fee'), 'fee', $new_display_ssl_fee);
+echo $form->showMultipleSelectOption(_('Domain'), 'domain', $new_display_ssl_domain);
+echo $form->showMultipleSelectOption(_('SSL Provider'), 'provider', $new_display_ssl_provider);
+echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_ssl_account);
+echo $form->showMultipleSelectOption(_('SSL Type'), 'type', $new_display_ssl_type);
+echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_ssl_ip);
+echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_ssl_category);
+echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_ssl_owner);
 echo $form->showMultipleSelectBottom('');
 
-echo $form->showMultipleSelectTop('custom_ssl_fields', 'Custom SSL Fields to Display', '');
+echo $form->showMultipleSelectTop('custom_ssl_fields', _('Custom SSL Fields to Display'), '');
 
 foreach ($_SESSION['s_csf_data'] as $field) {
 
@@ -349,13 +349,13 @@ foreach ($_SESSION['s_csf_data'] as $field) {
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
-<h3>Asset Management Pages</h3>
-<?php echo $form->showCheckbox('new_display_inactive_assets', '1', 'Display inactive Assets', '', $new_display_inactive_assets, '', '<BR>'); ?>
+<h3><?php echo _('Asset Management Pages'); ?></h3>
+<?php echo $form->showCheckbox('new_display_inactive_assets', '1', _('Display inactive Assets'), '', $new_display_inactive_assets, '', '<BR>'); ?>
 
-<h3>Data Warehouse</h3>
-<?php echo $form->showCheckbox('new_display_dw_intro_page', '1', 'Display intro page', '', $new_display_dw_intro_page, '', '<BR>'); ?>
+<h3><?php echo _('Data Warehouse'); ?></h3>
+<?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>
 
-<?php echo $form->showSubmitButton('Update Display Settings', '', ''); ?>
+<?php echo $form->showSubmitButton(_('Update Display Settings'), '', ''); ?>
 
 <?php echo $form->showFormBottom(''); ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>

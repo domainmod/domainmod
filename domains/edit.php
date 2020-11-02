@@ -246,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Domain " . $new_domain . " updated<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain);
 
             header('Location: edit.php?did=' . $did);
             exit;
@@ -268,36 +268,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Registrar Account') . '<BR>';
 
         }
 
         if ($new_dns_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the DNS Profile') . '<BR>';
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
 
         }
 
         if ($new_hosting_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Web Host') . '<BR>';
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
 
         }
 
@@ -354,7 +354,7 @@ if ($del === 1) {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_message_danger'] .= "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This Domain has SSL Certificates associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -380,7 +380,7 @@ if ($del === 1) {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Domain " . $new_domain . " deleted<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted', $new_domain)) . '<BR>';
 
             header("Location: ../domains/index.php");
             exit;
@@ -414,10 +414,10 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo '<strong>Domain</strong><BR>';
+echo '<strong>' . _('Domain') . '</strong><BR>';
 echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '<BR><BR>';
-echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
-echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $result = $pdo->query("
     SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
@@ -428,7 +428,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
+    echo $form->showDropdownTop('new_account_id', _('Registrar Account'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -447,7 +447,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
+    echo $form->showDropdownTop('new_dns_id', _('DNS Profile'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -466,7 +466,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+    echo $form->showDropdownTop('new_ip_id', _('IP Address'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -484,7 +484,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
+    echo $form->showDropdownTop('new_hosting_id', _('Web Hosting Provider'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -503,7 +503,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -515,32 +515,32 @@ if ($result) {
 
 }
 
-echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
-echo $form->showDropdownOption('1', 'Active', $new_active);
-echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
-echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
-echo $form->showDropdownOption('2', 'Pending (Transfer)', $new_active);
-echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
-echo $form->showDropdownOption('10', 'Sold', $new_active);
-echo $form->showDropdownOption('0', 'Expired', $new_active);
+echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('10', _('Sold'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop('Auto Renewal?', '', '');
-echo $form->showRadioOption('new_autorenew', '1', 'Yes', $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_autorenew', '0', 'No', $new_autorenew, '', '');
+echo $form->showRadioTop(_('Auto Renewal') . '?', '', '');
+echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showRadioTop('Privacy Enabled?', '', '');
-echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
+echo $form->showRadioTop(_('Privacy Enabled') . '?', '', '');
+echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">view full notes</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">' . strtolower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name
@@ -549,7 +549,7 @@ $result = $pdo->query("
 
 if ($result) { ?>
 
-    <h3>Custom Fields</h3><?php
+    <h3><?php echo _('Custom Fields'); ?></h3><?php
 
     $count = 0;
 
@@ -619,7 +619,7 @@ if ($result) { ?>
 echo $form->showInputHidden('did', $did);
 echo $form->showInputHidden('new_domain', $new_domain);
 echo $form->showInputHidden('new_tld', $new_tld);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
 $dwaccounts = new DomainMOD\DwAccounts();
@@ -630,13 +630,13 @@ $dw_has_zones = $dwzones->checkForZones($new_domain);
 
 if ($dw_has_accounts === 1 || $dw_has_zones === 1) { ?>
 
-    <BR><BR><h3>Data Warehouse Information for <?php echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'); ?></h3><?php
+    <BR><BR><h3><?php echo sprintf(_('Data Warehouse Information for %s'), htmlentities($new_domain, ENT_QUOTES, 'UTF-8')); ?></h3><?php
 
 }
 
 if ($dw_has_accounts === 1) { ?>
 
-    <h4>Accounts</h4><?php
+    <h4><?php echo _('Accounts'); ?></h4><?php
 
     $stmt = $pdo->prepare("
         SELECT s.id, s.name
@@ -682,7 +682,7 @@ if ($dw_has_accounts === 1) { ?>
 
 if ($dw_has_zones === 1) { ?>
 
-    <h4>DNS Zones & Records</h4><?php
+    <h4><?php echo _('DNS Zones & Records'); ?></h4><?php
 
     $stmt = $pdo->prepare("
         SELECT s.id AS dw_server_id, s.name
@@ -722,7 +722,7 @@ if ($dw_has_zones === 1) { ?>
     </table><?php
 }
 
-$layout->deleteButton('Domain', $new_domain, 'edit.php?did=' . $did . '&del=1');
+$layout->deleteButton(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

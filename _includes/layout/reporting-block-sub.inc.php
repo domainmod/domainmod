@@ -21,22 +21,22 @@
 ?>
 <?php if ($new_start_date != '' && $new_end_date != '') { ?>
 
-    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR>
+    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR>
 
 <?php } else { ?>
 
-    <strong>Date Range:</strong> ALL<BR>
+    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo strtoupper(_('All')); ?><BR>
 
 <?php } ?>
 
-<strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
+<strong><?php echo _('Total Cost'); ?>:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
 
 <?php if ($report_section == 'domains') { ?>
 
-    <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
+    <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo $number_of_domains_total; ?><BR>
 
 <?php } elseif ($report_section == 'ssl') { ?>
 
-    <strong>Number of SSL Certs:</strong> <?php echo $number_of_certs_total; ?><BR>
+    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo $number_of_certs_total; ?><BR>
 
 <?php }

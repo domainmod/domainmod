@@ -59,7 +59,7 @@ $result = $stmt->fetchAll();
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('ssl_provider_fee_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('ssl_provider_fee_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -67,14 +67,14 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'SSL Provider',
-        'Type',
-        'Initial Fee',
-        'Renewal Fee',
-        'Misc Fee',
-        'Currency',
-        'Inserted',
-        'Updated'
+        _('SSL Provider'),
+        _('Type'),
+        _('Initial Fee'),
+        _('Renewal Fee'),
+        _('Misc Fee'),
+        _('Currency'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -110,9 +110,9 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all the fees associated with <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.<BR><BR>
-<a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>
-<a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.<BR><BR>
+<a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', _('Add Fee')); ?></a>
+<a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 $stmt2 = $pdo->prepare("
     SELECT sslct.id, sslct.type
@@ -128,7 +128,7 @@ $result2 = $stmt2->fetchAll();
 
 if ($result2) { ?>
 
-    <h4>Missing SSL Type Fees</h4><?php
+    <h4><?php echo _('Missing SSL Type Fees'); ?></h4><?php
 
     $temp_all_missing_fees = '';
     $count = 0;
@@ -142,17 +142,18 @@ if ($result2) { ?>
 
     $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
     <strong><?php echo $all_missing_fees; ?></strong><BR>
-    <?php if ($count == 1) { ?>
-        You have SSL certificates with <?php echo $ssl_provider_name; ?> that use this SSL Type, however there are no fees associated with it yet. You should add this fee as soon as possible.<BR><BR><BR>
-    <?php } else { ?>
-        You have SSL certificates with <?php echo $ssl_provider_name; ?> that use these SSL Types, however there are no fees associated with them yet. You should add these fees as soon as possible.<BR><BR><BR>
-    <?php }
+    <?php
+    if ($count == 1) {
+        echo sprintf(_('You have SSL certificates with %s that use this SSL Type, however there are no fees associated with it yet. You should add this fee as soon as possible.'), $ssl_provider_name) . '<BR><BR><BR>';
+    } else {
+        echo sprintf(_('You have SSL certificates with %s that use these SSL Types, however there are no fees associated with them yet. You should add these fees as soon as possible.'), $ssl_provider_name) . '<BR><BR><BR>';
+    }
 
 }
 
 if (!$result) { ?>
 
-    <BR>You don't currently have any fees associated with this SSL provider. <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>">Click here to add one</a>.<?php
+    <BR><?php echo _("You don't currently have any fees associated with this SSL provider."); ?> <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo _('Click here to add one'); ?></a>.<?php
 
 } else { ?>
 
@@ -160,11 +161,11 @@ if (!$result) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Type</th>
-            <th>Initial Fee</th>
-            <th>Renewal Fee</th>
-            <th>Misc Fee</th>
-            <th>Currency</th>
+            <th><?php echo _('Type'); ?></th>
+            <th><?php echo _('Initial Fee'); ?></th>
+            <th><?php echo _('Renewal Fee'); ?></th>
+            <th><?php echo _('Misc Fee'); ?></th>
+            <th><?php echo _('Currency'); ?></th>
         </tr>
         </thead>
         <tbody><?php

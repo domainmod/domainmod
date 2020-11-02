@@ -49,23 +49,19 @@ $system->installCheck();
 </head>
 <body>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
-The first thing we need to do is check to see if your web server meets the software's requirements.<BR>
+<?php echo _("The first thing we need to do is check to see if your web server meets the software's requirements."); ?><BR>
 <BR>
-All of the below items should say "<?php echo $layout->highlightText('green', 'Pass'); ?>" or
-"<?php echo $layout->highlightText('green', 'Enabled'); ?>". If they don't, you still may be able
-to install <?php echo SOFTWARE_TITLE; ?>, but certain features might not work completely.<BR>
+<?php echo sprintf(_("All of the below items should say %s or %s. If they don't, you still may be able to install %s, but certain features might not work completely."), $layout->highlightText('green', 'Pass'), $layout->highlightText('green', 'Enabled'), SOFTWARE_TITLE); ?><BR>
 <BR>
-If any of the items say "<?php echo $layout->highlightText('red', 'Fail'); ?>" or "<?php
-echo $layout->highlightText('red', 'Disabled'); ?>", we recommend you install and/or update
-the appropriate software so that all of the requirements are met.<BR>
+<?php echo sprintf(_('If any of the items say %s or %s, we recommend you install and/or update the appropriate software so that all of the requirements are met.'), $layout->highlightText('red', 'Fail'), $layout->highlightText('red', 'Disabled')); ?><BR>
 <BR>
 <?php
 list($null, $null, $requirements) = $system->getRequirements();
 echo $requirements;
 echo "<BR>";
 ?>
-<a href="../"><?php echo $layout->showButton('button', 'Go Back'); ?></a>
-<a href="<?php echo WEB_ROOT; ?>/install/email-system/"><?php echo $layout->showButton('button', 'Next Step'); ?></a>
+<a href="../language/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
+<a href="<?php echo WEB_ROOT; ?>/install/currency/"><?php echo $layout->showButton('button', _('Next Step')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>
 </body>
 </html>

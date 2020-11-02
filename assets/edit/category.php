@@ -74,14 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-        $_SESSION['s_message_success'] .= "Category " . $new_category . " Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Category %s updated'), $new_category) . '<BR>';
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Enter the category name<BR>";
+        $_SESSION['s_message_danger'] .= _('Enter the Category name') . '<BR>';
 
     }
 
@@ -120,7 +120,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= "This Category has domains associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This Category has domains associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -130,7 +130,7 @@ if ($del === 1) {
         $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Category " . $new_category . " Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Category %s deleted'), $new_category) . '<BR>';
 
         header("Location: ../categories.php");
         exit;
@@ -149,14 +149,14 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_category', 'Category Name (150)', '', $unsanitize->text($new_category), '150', '', '1', '', '');
-echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $unsanitize->text($new_stakeholder), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_category', _('Category Name') . ' (150)', '', $unsanitize->text($new_category), '150', '', '1', '', '');
+echo $form->showInputText('new_stakeholder', _('Stakeholder') . ' (100)', '', $unsanitize->text($new_stakeholder), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_pcid', $pcid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Category', $new_category, 'category.php?pcid=' . $pcid . '&del=1');
+$layout->deleteButton(_('Category'), $new_category, 'category.php?pcid=' . $pcid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

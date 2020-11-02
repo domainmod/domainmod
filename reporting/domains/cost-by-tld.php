@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= 'The end date proceeds the start date<BR>';
+        $_SESSION['s_message_danger'] .= _('The end date proceeds the start date') . '<BR>';
         $submission_failed = '1';
 
     }
@@ -106,12 +106,12 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $export_file = $export->openFile('domain_cost_by_tld_report_all', strtotime($time->stamp()));
+            $export_file = $export->openFile(_('domain_cost_by_tld_report_all'), strtotime($time->stamp()));
 
         } else {
 
             $export_file = $export->openFile(
-                'domain_cost_by_tld_report',
+                _('domain_cost_by_tld_report'),
                 $new_start_date . '--' . $new_end_date
             );
 
@@ -124,24 +124,24 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $row_contents = array('Date Range:', 'ALL');
+            $row_contents = array(_('Date Range') . ':', strtoupper(_('All')));
 
         } else {
 
-            $row_contents = array('Date Range:', $new_start_date, $new_end_date);
+            $row_contents = array(_('Date Range') . ':', $new_start_date, $new_end_date);
 
         }
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Total Cost:',
+            _('Total Cost') . ':',
             $grand_total,
             $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Number of Domains:',
+            _('Number of Domains') . ':',
             $number_of_domains_total
         );
         $export->writeRow($export_file, $row_contents);
@@ -149,10 +149,10 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'TLD',
-            'Cost',
-            'Domains',
-            'Per Domain'
+            _('TLD'),
+            _('Cost'),
+            _('Domains'),
+            _('Per Domain')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -206,10 +206,10 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>TLD</th>
-            <th>Cost</th>
-            <th>Domains</th>
-            <th>Per Domain</th>
+            <th><?php echo _('TLD'); ?></th>
+            <th><?php echo _('Cost'); ?></th>
+            <th><?php echo _('Domains'); ?></th>
+            <th><?php echo _('Per Domain'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -237,7 +237,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
 } else {
 
-    echo 'No results.<BR><BR>';
+    echo _('No results.') . '<BR><BR>';
 
 }
 ?>

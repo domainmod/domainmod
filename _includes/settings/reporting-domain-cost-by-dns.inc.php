@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Cost by DNS Report";
-$breadcrumb = "Domain Cost by DNS";
+$page_title = _('Domain Cost by DNS Report');
+$breadcrumb = _('Domain Cost by DNS');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-dns";

@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/ssl/">SSL Certs</a></li>
+<li><a href="<?php echo $web_root; ?>/ssl/"><?php echo _('SSL Certs'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

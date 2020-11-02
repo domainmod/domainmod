@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_raid === 0) {
 
-            if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
+            if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
 
         } else {
 
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->commit();
 
-                $_SESSION['s_message_success'] .= "Registrar Account Added To Domain List Queue<BR>";
+                $_SESSION['s_message_success'] .= _('Registrar Account Added To Domain List Queue') . '<BR>';
 
                 header("Location: index.php");
                 exit;
@@ -203,12 +203,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($has_api_support != '1' && $new_raid !== 0) {
 
-                $_SESSION['s_message_danger'] .= "Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.<BR><BR>Please check the <a href='" . $web_root . "/assets/edit/registrar.php?rid=" . $temp_registrar_id . "'>registrar</a> and try again.";
+                $_SESSION['s_message_danger'] .= _("Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.") . '<BR><BR>' .
+                sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . $temp_registrar_id . '">', '</a>');
 
             } else {
 
-                if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
-                if ($raw_domain_list == '') $_SESSION['s_message_danger'] .= "Enter the list of domains to add to the queue<BR>";
+                if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
+                if ($raw_domain_list == '') $_SESSION['s_message_danger'] .= _('Enter the list of domains to add to the queue') . '<BR>';
 
             }
 
@@ -222,26 +223,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($invalid_count == 1) {
 
-                        $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                     } else {
 
-                        $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                         if (($invalid_count - $invalid_to_display) == 1) {
 
-                            $_SESSION['s_message_danger'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
+                            $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s other'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
 
                         } elseif (($invalid_count - $invalid_to_display) > 1) {
 
-                            $_SESSION['s_message_danger'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
+                            $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s others'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
                         }
 
                     }
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= "Enter the list of domains to add to the queue<BR>";
+                    $_SESSION['s_message_danger'] .= _('Enter the list of domains to add to the queue') . '<BR>';
 
                 }
                 $submission_failed = 1;
@@ -290,9 +291,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid === 0 || $has_existing_domains == '1' || $has_existing_domains_queue == '1') {
 
-                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
-                    if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered is already in the domain queue.<BR>";
-                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
+                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= sprintf(_('At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s).'), SOFTWARE_TITLE, '<BR><BR>') . '<BR>';
+                    if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= _('At least one of the domains you entered is already in the domain queue.') . '<BR>';
+                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
 
                     $submission_failed = 1;
 
@@ -348,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Domains Added To Queue<BR>";
+                        $_SESSION['s_message_success'] .= _('Domains Added To Queue') . 'BR>';
 
                         header('Location: index.php');
                         exit;
@@ -386,13 +387,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<strong>Domain Queue & API Prerequisites</strong><BR>
-Before you can add domains to DomainMOD using the Domain Queue you must first do the following:
+<strong><?php echo _('Domain Queue & API Prerequisites'); ?></strong><BR>
+<?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?>
 <ol>
-    <li>Ensure that the registrar has an API and that your account has been granted access to it</li>
-    <li>Enable API Support on the <a href="<?php echo $web_root; ?>/assets/registrars.php">registrar asset</a></li>
-    <li>Save the required API credentials with the <a href="<?php echo $web_root; ?>/assets/registrar-accounts.php">registrar
-            account asset</a></li>
+    <li><?php echo _('Ensure that the registrar has an API and that your account has been granted access to it'); ?></li>
+    <li><?php echo sprintf(_('Enable API Support on the %sregistrar asset%s'), '<a href="' . $web_root . '/assets/registrars.php">', '</a>'); ?></li>
+    <li><?php echo sprintf(_('Save the required API credentials with the %sregistrar account asset%s'), '<a href="' . $web_root . '/assets/registrar-accounts.php">', '</a>'); ?></li>
 </ol><?php
 
 echo $form->showFormTop('');
@@ -407,7 +407,7 @@ $result_account = $pdo->query("
       AND r.api_registrar_id != '0'
     ORDER BY r_name, o_name, ra.username")->fetchAll();
 
-echo $form->showDropdownOptionJump('add.php', '', 'Choose the Registrar Account to import', '');
+echo $form->showDropdownOptionJump('add.php', '', _('Choose the Registrar Account to import'), '');
 
 foreach ($result_account as $row_account) {
 
@@ -418,18 +418,16 @@ echo $form->showDropdownBottom('');
 
 if ($new_raid !== 0) { ?>
 
-    <strong>API Requirements</strong><BR>
-    <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the
-    <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo $new_raid; ?>">registrar
-        account asset</a>.
+    <strong><?php echo _('API Requirements'); ?></strong><BR>
+    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must to be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
 
     <ul><?php
 
-    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>missing - click here to enter</strong></span></a>)';
-    $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
+    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>' . strtolower(_('Missing')) . ' - ' . strtolower(_('Click Here to Enter')) . '</strong></span></a>)';
+    $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
 
     if ($req_account_username == '1') {
-        echo '<li>Registrar Account Username';
+        echo '<li>' . _('Registrar Account Username');
         if ($account_username == '') {
             echo $missing_text;
         } else {
@@ -438,7 +436,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_account_password == '1') {
-        echo '<li>Registrar Account Password';
+        echo '<li>' . _('Registrar Account Password');
         if ($account_password == '') {
             echo $missing_text;
         } else {
@@ -447,7 +445,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_reseller_id == '1') {
-        echo '<li>Reseller ID';
+        echo '<li>' . _('Reseller ID');
         if ($reseller_id == '' || $reseller_id == '0') {
             echo $missing_text;
         } else {
@@ -456,7 +454,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_api_app_name == '1') {
-        echo '<li>API Application Name';
+        echo '<li>' . _('API Application Name');
         if ($api_app_name == '') {
             echo $missing_text;
         } else {
@@ -465,7 +463,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_api_key == '1') {
-        echo '<li>API Key';
+        echo '<li>' . _('API Key');
         if ($api_key == '') {
             echo $missing_text;
         } else {
@@ -474,7 +472,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_api_secret == '1') {
-        echo '<li>API Secret';
+        echo '<li>' . _('API Secret');
         if ($api_secret == '') {
             echo $missing_text;
         } else {
@@ -483,7 +481,7 @@ if ($new_raid !== 0) { ?>
         echo '</li>';
     }
     if ($req_ip_address == '1') {
-        echo '<li>Connecting IP Address';
+        echo '<li>' . _('Connecting IP Address');
         if ($api_ip_id == '0') {
             echo $missing_text;
         } else {
@@ -497,7 +495,7 @@ if ($new_raid !== 0) { ?>
 
 if ($registrar_notes != '') {
 
-    echo '<strong>Registrar Notes</strong><BR>';
+    echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
     echo $registrar_notes . "<BR><BR>";
 
 }
@@ -506,20 +504,22 @@ if ($new_raid !== 0) {
 
     if ($lists_domains == '1') {
 
-        echo '<strong>Domain List</strong><BR>';
-        echo htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8') . '\'s API has a domain list feature, so you don\'t even have to supply a list of the domains you want to import, DomainMOD will retrieve them for you automatically. If for some reason you\'re having issues with the automatic import though, you can still manually paste a list of domains to import below.<BR><BR>';
-        echo $form->showInputTextarea('raw_domain_list', '[OPTIONAL] Domains to add (one per line)', '', $unsanitize->text($raw_domain_list), '', '', '');
+        echo '<strong>' . _('Domain List') . '</strong><BR>';
+
+        echo sprintf(_("The %s API has a domain list feature, so you don't even have to supply a list of the domains you want to import, %s will retrieve them for you automatically."), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), SOFTWARE_TITLE) . '<BR><BR>';
+
+        echo $form->showInputTextarea('raw_domain_list', '[' . strtoupper(_('Optional')) . ']' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
 
     } else {
 
-        echo $form->showInputTextarea('raw_domain_list', 'Domains to add (one per line)', '', $unsanitize->text($raw_domain_list), '1', '', '');
+        echo $form->showInputTextarea('raw_domain_list', _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '1', '', '');
     }
 
 }
 
 if ($new_raid !== 0) {
 
-    echo $form->showSubmitButton('Add Domains', '', '');
+    echo $form->showSubmitButton(_('Add Domains'), '', '');
 
 }
 

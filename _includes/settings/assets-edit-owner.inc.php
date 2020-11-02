@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit Owner";
-$breadcrumb = "Edit";
+$page_title = _('Edit Owner');
+$breadcrumb = _('Edit');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-edit-owner";

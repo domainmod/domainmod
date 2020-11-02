@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add DNS Profile";
-$breadcrumb = "Add";
+$page_title = _('Add DNS Profile');
+$breadcrumb = _('Add');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-add-dns";

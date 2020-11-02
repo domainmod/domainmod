@@ -76,7 +76,7 @@ class NameCom
 
         } else {
 
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
 
         }
     }

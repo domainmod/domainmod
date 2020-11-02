@@ -48,7 +48,7 @@ class NameBright
             $full_url = $base_url . "rest/account/domains/" . $domain . "/nameservers";
             $post_fields = '';
         } else {
-            return array('Unable to build API URL', '');
+            return array(_('Unable to build API URL'), '');
         }
 
         return array($full_url, $post_fields);

@@ -22,14 +22,14 @@
 <?php
 if ($_SESSION['s_dw_view_all'] == "1") {
 
-    $page_title = "Listing All Server Accounts";
+    $page_title = _('Listing All Server Accounts');
 
 } else {
 
-    $page_title = 'Listing Server Accounts on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
+    $page_title = sprintf(_('Listing Server Accounts on %s (%s)'), $_SESSION['s_dw_server_name'], $_SESSION['s_dw_server_host']);
 
 }
-$breadcrumb = "Accounts";
+$breadcrumb = _('Accounts');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-list-accounts";

@@ -148,13 +148,14 @@
                     <?php echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?><BR>
                     <?php echo $_SESSION['s_email_address']; ?><BR><BR>
                     <small>
-                        Currency: <?php echo $_SESSION['s_default_currency']; ?><BR>
-                        Time Zone: <?php echo $_SESSION['s_default_timezone']; ?><BR>
-                        Expiration Emails: <?php
+                        <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name']; ?><BR>
+                        <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency']; ?><BR>
+                        <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone']; ?><BR>
+                        <?php echo _('Expiration Emails'); ?>: <?php
                         if ($_SESSION['s_expiration_emails'] == '1') {
-                            echo "Yes";
+                            echo _('Yes');
                         } else {
-                            echo "No";
+                            echo _('No');
                         } ?>
                     </small>
                 </p>
@@ -179,10 +180,10 @@
 <?php */ ?>
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-default btn-flat">User Profile</a>&nbsp;&nbsp;
+                  <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-default btn-flat"><?php echo _('User Profile'); ?></a>&nbsp;&nbsp;
                 </div>
                 <div class="pull-right">
-                  <a href="<?php echo $web_root; ?>/logout.php" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="<?php echo $web_root; ?>/logout.php" class="btn btn-default btn-flat"><?php echo _('Sign out'); ?></a>
                 </div>
               </li>
             </ul>
@@ -220,7 +221,7 @@
       <!-- search form -->
       <form action="<?php echo $web_root; ?>/domains/index.php" method="get" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="search_for" class="form-control" placeholder="Domain Keyword Search"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
+          <input type="text" name="search_for" class="form-control" placeholder="<?php echo _('Domain Keyword Search'); ?>"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>

@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pdo->commit();
 
-        $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated'), $temp_type) . '<BR>';
 
         header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
         exit;
@@ -168,11 +168,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
+<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', _('Back to SSL Provider Fees')); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>
-<strong>SSL Provider</strong><BR>
+<strong><?php echo _('SSL Provider'); ?></strong><BR>
 <?php
 $temp_ssl_provider = $assets->getSslProvider($sslpid);
 echo $temp_ssl_provider;
@@ -184,9 +184,9 @@ $temp_type = $assets->getSslType($new_type_id);
 <strong>Type</strong><BR>
 <?php echo $temp_type; ?><BR><BR>
 <?php
-echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
+echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '10', '', '', '', '');
 
 $result = $pdo->query("
     SELECT id, currency, `name`, symbol
@@ -195,7 +195,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
+    echo $form->showDropdownTop('new_currency_id', _('Currency'), '', '', '');
 
     foreach ($result as $row) {
 
@@ -210,7 +210,7 @@ if ($result) {
 echo $form->showInputHidden('fee_id', $fee_id);
 echo $form->showInputHidden('sslpid', $sslpid);
 echo $form->showInputHidden('new_type_id', $new_type_id);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

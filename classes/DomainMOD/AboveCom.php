@@ -40,7 +40,7 @@ class AboveCom
         if ($command == 'domainlist') {
             return $base_url . '&query=my_domains&limit=1000';
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

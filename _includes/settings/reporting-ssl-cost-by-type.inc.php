@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Cost by Type Report";
-$breadcrumb = "SSL Cost by Type";
+$page_title = _('SSL Cost by Type Report');
+$breadcrumb = _('SSL Cost by Type');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-type";

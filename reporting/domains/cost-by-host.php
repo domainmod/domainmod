@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= 'The end date proceeds the start date<BR>';
+        $_SESSION['s_message_danger'] .= _('The end date proceeds the start date') . '<BR>';
         $submission_failed = '1';
 
     }
@@ -108,12 +108,12 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $export_file = $export->openFile('domain_cost_by_web_host_report_all', strtotime($time->stamp()));
+            $export_file = $export->openFile(_('domain_cost_by_web_host_report_all'), strtotime($time->stamp()));
 
         } else {
 
             $export_file = $export->openFile(
-                'domain_cost_by_web_host_report',
+                _('domain_cost_by_web_host_report'),
                 $new_start_date . '--' . $new_end_date
             );
 
@@ -126,24 +126,24 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $row_contents = array('Date Range:', 'ALL');
+            $row_contents = array(_('Date Range') . ':', strtoupper(_('All')));
 
         } else {
 
-            $row_contents = array('Date Range:', $daterange);
+            $row_contents = array(_('Date Range') . ':', $daterange);
 
         }
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Total Cost:',
+            _('Total Cost') . ':',
             $grand_total,
             $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Number of Domains:',
+            _('Number of Domains') . ':',
             $number_of_domains_total
         );
         $export->writeRow($export_file, $row_contents);
@@ -151,10 +151,10 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Web Hosting Provider',
-            'Domains',
-            'Cost',
-            'Per Domain'
+            _('Web Hosting Provider'),
+            _('Domains'),
+            _('Cost'),
+            _('Per Domain')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -208,10 +208,10 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Host</th>
-            <th>Domains</th>
-            <th>Cost</th>
-            <th>Per Domain</th>
+            <th><?php echo _('Host'); ?></th>
+            <th><?php echo _('Domains'); ?></th>
+            <th><?php echo _('Cost'); ?></th>
+            <th><?php echo _('Per Domain'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -239,7 +239,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
 } else {
 
-    echo 'No results.<BR><BR>';
+    echo _('No results.') . '<BR><BR>';
 
 }
 ?>

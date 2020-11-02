@@ -58,7 +58,7 @@ $result = $stmt->fetchAll();
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('registrar_fee_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('registrar_fee_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -66,16 +66,16 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Registrar',
-        'TLD',
-        'Initial Fee',
-        'Renewal Fee',
-        'Transfer Fee',
-        'Privacy Fee',
-        'Misc Fee',
-        'Currency',
-        'Inserted',
-        'Updated'
+        _('Registrar'),
+        _('TLD'),
+        _('Initial Fee'),
+        _('Renewal Fee'),
+        _('Transfer Fee'),
+        _('Privacy Fee'),
+        _('Misc Fee'),
+        _('Currency'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -113,9 +113,9 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all the fees associated with <a href="edit/registrar.php?rid=<?php echo urlencode($rid); ?>"><?php echo $registrar_name; ?></a>.<BR><BR>
-<a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>
-<a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/registrar.php?rid=<?php echo urlencode($rid); ?>"><?php echo $registrar_name; ?></a>.<BR><BR>
+<a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', _('Add Fee')); ?></a>
+<a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 $stmt2 = $pdo->prepare("
     SELECT tld
@@ -130,7 +130,7 @@ $result2 = $stmt2->fetchAll();
 
 if ($result2) { ?>
 
-    <h4>Missing TLD Fees</h4><?php
+    <h4><?php echo _('Missing TLD Fees'); ?></h4><?php
 
     $temp_all_missing_fees = '';
     $count = 0;
@@ -145,16 +145,16 @@ if ($result2) { ?>
     $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
     <strong><?php echo $all_missing_fees; ?></strong><BR>
     <?php if ($count == 1) { ?>
-        You have domains with <?php echo $registrar_name; ?> that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible.<BR><BR><BR>
+        <?php echo sprintf(_('You have domains with %s that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible.'), $registrar_name); ?><BR><BR><BR>
     <?php } else { ?>
-        You have domains with <?php echo $registrar_name; ?> that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible.<BR><BR><BR>
+       <?php echo sprintf(_('You have domains with %s that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible.'), $registrar_name); ?><BR><BR><BR>
     <?php }
 
 }
 
 if (!$result) { ?>
 
-    <BR>You don't currently have any fees associated with this domain registrar. <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>">Click here to add one</a>.<?php
+    <BR><?php echo _("You don't currently have any fees associated with this domain registrar."); ?> <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo _('Click here to add one'); ?></a>.<?php
 
 } else { ?>
 
@@ -162,13 +162,13 @@ if (!$result) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>TLD</th>
-            <th>Initial</th>
-            <th>Renewal</th>
-            <th>Transfer</th>
-            <th>Privacy</th>
-            <th>Misc</th>
-            <th>Currency</th>
+            <th><?php echo _('TLD'); ?></th>
+            <th><?php echo _('Initial'); ?></th>
+            <th><?php echo _('Renewal'); ?></th>
+            <th><?php echo _('Transfer'); ?></th>
+            <th><?php echo _('Privacy'); ?></th>
+            <th><?php echo _('Misc'); ?></th>
+            <th><?php echo _('Currency'); ?></th>
         </tr>
         </thead>
         <tbody><?php

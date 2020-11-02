@@ -50,7 +50,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('custom_ssl_field_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('custom_ssl_field_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -58,15 +58,15 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Display Name',
-        'DB Field',
-        'Data Type',
-        'Description',
-        'Notes',
-        'Creation Type',
-        'Created By',
-        'Inserted',
-        'Updated'
+        _('Display Name'),
+        _('DB Field'),
+        _('Data Type'),
+        _('Description'),
+        _('Notes'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -77,7 +77,7 @@ if ($export_data === 1) {
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -113,34 +113,31 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all the Custom SSL Fields that have been added to <?php echo SOFTWARE_TITLE; ?>.<BR>
+<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom SSL Fields'), SOFTWARE_TITLE); ?><BR>
 <BR>
-Custom SSL Fields help extend the functionality of <?php echo SOFTWARE_TITLE; ?> by allowing the user to create their
-own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who
-purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information
-for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom
-fields will automatically be included in the exported data.<BR>
+<?php echo sprintf(_('Custom SSL Fields help extend the functionality of %s by allowing the user to create their own data fields.'), SOFTWARE_TITLE); ?>
+<?php echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.'); ?><BR>
 <BR><?php
 
-if (!$result) { ?>
+if (!$result) {
 
-    It appears as though you haven't created any Custom SSL Fields yet. <a href="add.php">Click
-        here</a> to add one.<?php
+    echo _("It appears as though you haven't created any Custom SSL Fields yet.");
+    echo sprintf(_('%sClick here%s to add one.'), '<a href="add.php">', '</a>');
 
 } else { ?>
 
-    <a href="add.php"><?php echo $layout->showButton('button', 'Add Custom Field'); ?></a>
-    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
+    <a href="add.php"><?php echo $layout->showButton('button', _('Add Custom Field')); ?></a>
+    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Name</th>
-            <th>DB Field</th>
-            <th>Data Type</th>
-            <th>Inserted</th>
-            <th>Updated</th>
+            <th><?php echo _('Name'); ?></th>
+            <th><?php echo _('DB Field'); ?></th>
+            <th><?php echo _('Data Type'); ?></th>
+            <th><?php echo _('Inserted'); ?></th>
+            <th><?php echo _('Updated'); ?></th>
         </tr>
         </thead>
         <tbody><?php

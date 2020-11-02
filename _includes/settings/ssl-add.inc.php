@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add SSL Certificate";
-$breadcrumb = "Add";
+$page_title = _('Add SSL Certificate');
+$breadcrumb = _('Add');
 $software_section = "ssl";
 $software_section_logo = "fa-lock";
 $slug = "ssl-add";

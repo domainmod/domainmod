@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Display Settings";
-$breadcrumb = "Display Settings";
+$page_title = _('Display Settings');
+$breadcrumb = $page_title;
 $software_section = "settings";
 $software_section_logo = "fa-gears";
 $slug = "settings-display";

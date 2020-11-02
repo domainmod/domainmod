@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Installation";
+$page_title = _('Welcome') . '!';
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.main";

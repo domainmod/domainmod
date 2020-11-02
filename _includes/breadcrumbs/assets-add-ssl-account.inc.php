@@ -19,6 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/assets/">Assets</a></li>
-<li><a href="<?php echo $web_root; ?>/assets/ssl-accounts.php">SSL Accounts</a></li>
+<li><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Admin'); ?></a></li>
+<li><a href="<?php echo $web_root; ?>/assets/ssl-accounts.php"><?php echo _('SSL Accounts'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

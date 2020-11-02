@@ -27,7 +27,6 @@ require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $system = new DomainMOD\System();
-$layout = new DomainMOD\Layout();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -35,27 +34,5 @@ require_once DIR_INC . '/settings/install.main.inc.php';
 
 $system->loginCheck();
 
-unset($_SESSION['new_system_email']);
-unset($_SESSION['new_admin_email']);
-
-$system->installCheck();
-?>
-<?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
-<head>
-    <?php
-    if ($page_title != "") { ?>
-        <title><?php echo $layout->pageTitle($page_title); ?></title><?php
-    } else { ?>
-        <title><?php echo SOFTWARE_TITLE; ?></title><?php
-    } ?>
-    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-</head>
-<body>
-<?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
-You're just a few steps away from having <?php echo SOFTWARE_TITLE; ?> up-and-running!<BR>
-<BR>
-<a href="<?php echo WEB_ROOT; ?>/install/requirements/"><?php echo $layout->showButton('button', 'Let\'s Go!'); ?></a>
-<?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>
-</body>
-</html>
+header("Location: language/");
+exit;

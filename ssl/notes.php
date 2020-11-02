@@ -54,7 +54,7 @@ if ($result) {
 
 }
 
-$page_title = "SSL Certificate Notes (" . $new_name . ")";
+$page_title = sprintf(_('SSL Certificate Notes (%s)'), $new_name);
 $software_section = "ssl-certs";
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -67,7 +67,7 @@ $software_section = "ssl-certs";
 <?php
 $page_align = 'left';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<strong>Notes For <?php echo $new_name; ?></strong><BR>
+<strong><?php echo sprintf(_('Notes For %s'), $new_name); ?></strong><BR>
 <BR>
 <?php
 $format = new DomainMOD\Format();

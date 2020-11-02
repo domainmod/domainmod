@@ -38,7 +38,7 @@ $pdo = $deeb->cnxx;
 
 $pdo->query("TRUNCATE log");
 
-$_SESSION['s_message_success'] .= 'Debug Log Cleared';
+$_SESSION['s_message_success'] .= _('Debug Log Cleared');
 
 header("Location: index.php");
 exit;

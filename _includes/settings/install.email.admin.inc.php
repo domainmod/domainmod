@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Administrator Email Address";
+$page_title = _('Administrator Email Address');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.email.admin";

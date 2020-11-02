@@ -43,10 +43,10 @@ $system->authCheck();
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="display/">Display Settings</a><BR><BR>
-<a href="defaults/">User Defaults</a><BR><BR>
-<a href="profile/">User Profile</a><BR><BR>
-<a href="password/">Change Password</a><BR>
+<a href="display/"><?php echo _('Display Settings'); ?></a><BR><BR>
+<a href="defaults/"><?php echo _('User Defaults'); ?></a><BR><BR>
+<a href="profile/"><?php echo _('User Profile'); ?></a><BR><BR>
+<a href="password/"><?php echo _('Change Password'); ?></a><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

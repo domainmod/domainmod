@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit Domain";
-$breadcrumb = "Edit";
+$page_title = _('Edit Domain');
+$breadcrumb = _('Edit');
 $software_section = "domains";
 $software_section_logo = "fa-sitemap";
 $slug = "domains-edit";

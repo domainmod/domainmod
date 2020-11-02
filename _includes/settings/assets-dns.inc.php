@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "DNS Profiles";
-$breadcrumb = "DNS";
+$page_title = _('DNS Profiles');
+$breadcrumb = _('DNS');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-dns";

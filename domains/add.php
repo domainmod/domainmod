@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($result) {
 
-            $_SESSION['s_message_danger'] .= "This domain is already in " . SOFTWARE_TITLE . "<BR>";
+            $_SESSION['s_message_danger'] .= sprintf(_('This domain is already in %s'), SOFTWARE_TITLE . '<BR>');
 
         } else {
 
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->commit();
 
-                $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' added<BR>';
+                $_SESSION['s_message_success'] .= sprintf(_('Domain %s added'), $new_domain) . '<BR>';
 
             } catch (Exception $e) {
 
@@ -268,40 +268,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$domain->checkFormat($new_domain)) {
-            $_SESSION['s_message_danger'] .= "The domain format is incorrect<BR>";
+            $_SESSION['s_message_danger'] .= _('The domain format is incorrect') . '<BR>';
         }
 
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Registrar Account') . '<BR>';
 
         }
 
         if ($new_dns_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the DNS Profile') . '<BR>';
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
 
         }
 
         if ($new_hosting_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Web Host') . '<BR>';
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
 
         }
 
@@ -326,12 +326,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_domain', 'Domain (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '');
-echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
+echo $form->showInputText('new_domain', _('Domain') . ' (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '');
+echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -352,7 +352,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
+    echo $form->showDropdownTop('new_account_id', _('Registrar Account'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -381,7 +381,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
+    echo $form->showDropdownTop('new_dns_id', _('DNS Profile'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -410,7 +410,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+    echo $form->showDropdownTop('new_ip_id', _('IP Address'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -439,7 +439,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
+    echo $form->showDropdownTop('new_hosting_id', _('Web Hosting Provider'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -468,7 +468,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -479,27 +479,27 @@ if ($result) {
     echo $form->showDropdownBottom('');
 }
 
-echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
-echo $form->showDropdownOption('1', 'Active', $new_active);
-echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
-echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
-echo $form->showDropdownOption('2', 'Pending (Transfer)', $new_active);
-echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
-echo $form->showDropdownOption('10', 'Sold', $new_active);
-echo $form->showDropdownOption('0', 'Expired', $new_active);
+echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('10', _('Sold'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop('Auto Renewal?', '', '');
-echo $form->showRadioOption('new_autorenew', '1', 'Yes', $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_autorenew', '0', 'No', $new_autorenew, '', '');
+echo $form->showRadioTop(_('Auto Renewal') . '?', '', '');
+echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showRadioTop('Privacy Enabled?', '', '');
-echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
+echo $form->showRadioTop(_('Privacy Enabled') . '?', '', '');
+echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name
@@ -508,7 +508,7 @@ $result = $pdo->query("
 
 if ($result) { ?>
 
-    <h3>Custom Fields</h3><?php
+    <h3><?php echo _('Custom Fields'); ?></h3><?php
 
     $field_array = array();
 
@@ -563,7 +563,7 @@ if ($result) { ?>
 
 }
 
-echo $form->showSubmitButton('Add Domain', '', '');
+echo $form->showSubmitButton(_('Add Domain'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

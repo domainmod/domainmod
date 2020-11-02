@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$language = new DomainMOD\Language();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -53,6 +54,7 @@ $new_last_name = $sanitize->text($_POST['new_last_name']);
 $new_username = $sanitize->text($_POST['new_username']);
 $original_username = $sanitize->text($_POST['original_username']);
 $new_email_address = $sanitize->text($_POST['new_email_address']);
+$new_language = $_POST['new_language'];
 $new_currency = $_POST['new_currency'];
 $new_timezone = $_POST['new_timezone'];
 $new_expiration_emails = (int) $_POST['new_expiration_emails'];
@@ -75,7 +77,7 @@ if ($result) {
 
     if ($result == 'admin' && $_SESSION['s_username'] != 'admin') {
 
-        $_SESSION['s_message_danger'] .= "You don't have permissions to edit the primary administrator account<BR>";
+        $_SESSION['s_message_danger'] .= _("You don't have permissions to edit the primary administrator account") . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -184,11 +186,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $stmt = $pdo->prepare("
             UPDATE user_settings
-            SET default_currency = :new_currency,
+            SET default_language = :new_language,
+                default_currency = :new_currency,
                 default_timezone = :new_timezone,
                 expiration_emails = :new_expiration_emails,
                 update_time = :update_time
             WHERE user_id = :user_id");
+        $stmt->bindValue('new_language', $new_language, PDO::PARAM_STR);
         $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
         $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
         $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
@@ -211,6 +215,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $_SESSION['s_first_name'] = $new_first_name;
             $_SESSION['s_last_name'] = $new_last_name;
             $_SESSION['s_email_address'] = $new_email_address;
+            $_SESSION['s_default_language'] = $new_language;
+            $_SESSION['s_default_language_name'] = $language->getLangName($new_language);
             $_SESSION['s_default_currency'] = $new_currency;
             $_SESSION['s_default_timezone'] = $new_timezone;
             $_SESSION['s_expiration_emails'] = $new_expiration_emails;
@@ -223,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $pdo->commit();
 
-        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s) updated'), $new_first_name, $new_last_name, $new_username) . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -246,15 +252,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_first_name == '') $_SESSION['s_message_danger'] .= 'Enter the user\'s first name<BR>';
-        if ($new_last_name == '') $_SESSION['s_message_danger'] .= 'Enter the user\'s last name<BR>';
-        if ($invalid_username == '1' || $new_username == '') $_SESSION['s_message_danger'] .= 'You have entered an invalid username<BR>';
-        if ($invalid_email_address == '1' || $new_email_address == '') $_SESSION['s_message_danger'] .= 'You have entered an invalid email address<BR>';
+        if ($new_first_name == '') $_SESSION['s_message_danger'] .= _("Enter the user's first name") . '<BR>';
+        if ($new_last_name == '') $_SESSION['s_message_danger'] .= _("Enter the user's last name") . '<BR>';
+        if ($invalid_username == '1' || $new_username == '') $_SESSION['s_message_danger'] .= _('You have entered an invalid username') . '<BR>';
+        if ($invalid_email_address == '1' || $new_email_address == '') $_SESSION['s_message_danger'] .= _('You have entered an invalid email address') . '<BR>';
 
     } else {
 
         $stmt = $pdo->prepare("
-            SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
+            SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_language, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
             FROM users AS u, user_settings AS us
             WHERE u.id = us.user_id
               AND u.id = :user_id");
@@ -270,6 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $new_username = $result->username;
             $original_username = $result->username;
             $new_email_address = $result->email_address;
+            $new_language = $result->default_language;
             $new_currency = $result->default_currency;
             $new_timezone = $result->default_timezone;
             $new_expiration_emails = $result->expiration_emails;
@@ -291,8 +298,8 @@ if ($del === 1) {
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= 'The admin user cannot be deleted<BR>';
-        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= 'You can\'t delete yourself<BR>';
+        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= _('The admin user cannot be deleted') . '<BR>';
+        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= _("You can't delete yourself") . '<BR>';
 
     } else {
 
@@ -308,7 +315,7 @@ if ($del === 1) {
         $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s) deleted'), $new_first_name, $new_last_name, $new_username) . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -327,22 +334,40 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $unsanitize->text($new_last_name), '50', '', '1', '', '');
+echo $form->showInputText('new_first_name', _('First Name') . ' (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', _('Last Name') . ' (50)', '', $unsanitize->text($new_last_name), '50', '', '1', '', '');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Username</strong><BR><?php echo $new_username; ?><BR><BR><?php
+    <strong><?php echo _('Username'); ?></strong><BR><?php echo $new_username; ?><BR><BR><?php
 
 } else {
 
-    echo $form->showInputText('new_username', 'Username (30)', '', $unsanitize->text($new_username), '30', '', '1', '', '');
+    echo $form->showInputText('new_username', _('Username') . ' (30)', '', $unsanitize->text($new_username), '30', '', '1', '', '');
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '1', '', '');
 
-echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
+echo $form->showDropdownTop('new_language', _('Language'), '', '', '');
+
+$result = $pdo->query("
+    SELECT name, language
+    FROM languages
+    ORDER BY name")->fetchAll();
+
+if ($result) {
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->language, $row->name . ' [' . $row->language . ']', $new_language);
+
+    }
+
+}
+echo $form->showDropdownBottom('');
+
+echo $form->showDropdownTop('new_currency', _('Currency'), '', '', '');
 
 $result = $pdo->query("
     SELECT currency, `name`, symbol
@@ -360,7 +385,7 @@ if ($result) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
+echo $form->showDropdownTop('new_timezone', _('Time Zone'), '', '', '');
 
 $result = $pdo->query("
     SELECT timezone
@@ -378,46 +403,46 @@ if ($result) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop('Subscribe to Domain & SSL Certificate expiration emails?', '', '');
-echo $form->showRadioOption('new_expiration_emails', '1', 'Yes', $new_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_expiration_emails', '0', 'No', $new_expiration_emails, '', '');
+echo $form->showRadioTop(_('Subscribe to Domain & SSL Certificate expiration emails?'), '', '');
+echo $form->showRadioOption('new_expiration_emails', '1', _('Yes'), $new_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_expiration_emails', '0', _('No'), $new_expiration_emails, '', '');
 echo $form->showRadioBottom('');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Admin Privileges?</strong>&nbsp;&nbsp;Yes<BR><BR><?php
+    <strong><?php echo _('Admin Privileges') . '?'; ?></strong>&nbsp;&nbsp;<?php echo _('Yes'); ?><BR><BR><?php
 
 } else {
 
-    echo $form->showRadioTop('Admin Privileges?', '', '');
-    echo $form->showRadioOption('new_is_admin', '1', 'Yes', $new_is_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_is_admin', '0', 'No', $new_is_admin, '', '');
+    echo $form->showRadioTop(_('Admin Privileges') . '?', '', '');
+    echo $form->showRadioOption('new_is_admin', '1', _('Yes'), $new_is_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_is_admin', '0', _('No'), $new_is_admin, '', '');
     echo $form->showRadioBottom('');
 
 }
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Read Only?</strong>&nbsp;&nbsp;No<BR><BR><?php
+    <strong><?php echo _('Read-Only') . '?'; ?></strong>&nbsp;&nbsp;<?php echo _('No'); ?><BR><BR><?php
 
 } else {
 
-    echo $form->showRadioTop('Read-Only User?', '', '');
-    echo $form->showRadioOption('new_read_only', '1', 'Yes', $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_read_only', '0', 'No', $new_read_only, '', '');
+    echo $form->showRadioTop(_('Read-Only User') . '?', '', '');
+    echo $form->showRadioOption('new_read_only', '1', _('Yes'), $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_read_only', '0', _('No'), $new_read_only, '', '');
     echo $form->showRadioBottom('');
 
 }
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Active Account?</strong>&nbsp;&nbsp;Yes<BR><BR><?php
+    <strong><?php echo _('Active Account') . '?'; ?></strong>&nbsp;&nbsp;<?php echo _('Yes'); ?><BR><BR><?php
 
 } else {
 
-    echo $form->showRadioTop('Active Account?', '', '');
-    echo $form->showRadioOption('new_is_active', '1', 'Yes', $new_is_active, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_is_active', '0', 'No', $new_is_active, '', '');
+    echo $form->showRadioTop(_('Active Account') . '?', '', '');
+    echo $form->showRadioOption('new_is_active', '1', _('Yes'), $new_is_active, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_is_active', '0', _('No'), $new_is_active, '', '');
     echo $form->showRadioBottom('');
 
 }
@@ -433,17 +458,15 @@ if ($new_username == 'admin' || $new_username == 'administrator') {
 
 echo $form->showInputHidden('original_username', $original_username);
 echo $form->showInputHidden('new_uid', $uid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 
 echo $form->showFormBottom('');
 ?>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1">RESET AND DISPLAY
-    PASSWORD</a><BR>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>">RESET AND EMAIL NEW PASSWORD TO
-    USER</a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1"><?php echo strtoupper(_('Reset and Display Password')); ?></a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo strtoupper(_('Reset and Email New Password to User')); ?></a><BR>
 <BR>
 <?php
-$layout->deleteButton('User', $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1');
+$layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

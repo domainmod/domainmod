@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     if (!$result || $user_count > 1) {
 
-        $_SESSION['s_message_danger'] .= "Your password could not be updated<BR>";
-        $_SESSION['s_message_danger'] .= "If the problem persists please contact your administrator<BR>";
+        $_SESSION['s_message_danger'] .= _('Your password could not be updated') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('If the problem persists please contact your administrator') . '<BR>';
 
     } else {
 
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
         $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Password changed<BR>";
+        $_SESSION['s_message_success'] .= _('Password changed') . '<BR>';
 
         if ($_SESSION['s_running_login_checks'] == '1') {
 
@@ -115,11 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         if ($new_password == "" && $new_password_confirmation == "") {
 
-            $_SESSION['s_message_danger'] .= "Your passwords were left blank<BR>";
+            $_SESSION['s_message_danger'] .= _('Your passwords were left blank') . '<BR>';
 
         } else {
 
-            $_SESSION['s_message_danger'] .= "Your passwords didn't match<BR>";
+            $_SESSION['s_message_danger'] .= _("Your passwords didn't match") . '<BR>';
 
         }
 
@@ -137,9 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_password', 'New Password (72)', '', '', '72', '1', '1', '', '');
-echo $form->showInputText('new_password_confirmation', 'Confirm New Password (72)', '', '', '72', '1', '1', '', '');
-echo $form->showSubmitButton('Change Password', '', '');
+echo $form->showInputText('new_password', _('New Password') . ' (72)', '', '', '72', '1', '1', '', '');
+echo $form->showInputText('new_password_confirmation', _('Confirm New Password') . ' (72)', '', '', '72', '1', '1', '', '');
+echo $form->showSubmitButton(_('Change Password'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

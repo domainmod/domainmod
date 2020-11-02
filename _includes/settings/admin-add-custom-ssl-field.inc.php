@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add Custom SSL Field";
-$breadcrumb = "Add";
+$page_title = _('Add Custom SSL Field');
+$breadcrumb = _('Add');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-add-custom-ssl-field";

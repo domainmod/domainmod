@@ -38,12 +38,12 @@ $pdo = $deeb->cnxx;
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
 
-    $page_title = "Domains (Raw List)";
+    $page_title = _('Domains (Raw List)');
     $software_section = "domains";
 
 } elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
 
-    $page_title = "SSL Certificates (Raw List)";
+    $page_title = _('SSL Certificates (Raw List)');
     $software_section = "ssl-certs";
 
 }

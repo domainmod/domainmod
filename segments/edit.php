@@ -78,23 +78,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain
-                        on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid
-                        domains on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
 
-                        $_SESSION['s_message_danger'] .= "<BR>Plus " .
-                            number_format($invalid_count - $invalid_to_display) . " other<BR>";
+                        $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s other'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
 
                     } elseif (($invalid_count - $invalid_to_display) > 1) {
 
-                        $_SESSION['s_message_danger'] .= "<BR>Plus " .
-                            number_format($invalid_count - $invalid_to_display) . " others<BR>";
+                        $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s others'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
+
                     }
 
                 }
@@ -113,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($domain_array as $key => $new_domain) {
 
                     if (!$domain->checkFormat($new_domain)) {
-                        echo 'invalid domain ' . $key;
+                        echo _('invalid domain') . ' ' . $key;
                         exit;
                     }
 
@@ -195,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->commit();
 
-                $_SESSION['s_message_success'] .= "Segment " . $new_name . " Updated<BR>";
+                $_SESSION['s_message_success'] .= sprintf(_('Segment %s update'), $new_name) . '<BR>';
 
                 header("Location: ../segments/");
                 exit;
@@ -218,8 +215,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter the segment name<BR>";
-        if ($raw_domain_list == "") $_SESSION['s_message_danger'] .= "Enter the segment<BR>";
+        if ($new_name == "") $_SESSION['s_message_danger'] .= _('Enter the Segment name') . '<BR>';
+        if ($raw_domain_list == "") $_SESSION['s_message_danger'] .= _('Enter the Segment') . '<BR>';
 
     }
 
@@ -273,7 +270,7 @@ if ($del === 1) {
 
         $pdo->commit();
 
-        $_SESSION['s_message_success'] .= "Segment " . $temp_segment_name . " Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Segment %s deleted'), $temp_segment_name) . '<BR>';
 
         header("Location: ../segments/");
         exit;
@@ -304,15 +301,14 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Segment Name (35)', '', $unsanitize->text($new_name), '35', '', '1', '', '');
-echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $unsanitize->text($raw_domain_list), '1', '', '');
-echo $form->showInputTextarea('new_description', 'Description', '', $unsanitize->text($new_description), '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_name', _('Segment Name') . ' (35)', '', $unsanitize->text($new_name), '35', '', '1', '', '');
+echo $form->showInputTextarea('raw_domain_list', _('Segment Domains (one per line)'), '', $unsanitize->text($raw_domain_list), '1', '', '');
+echo $form->showInputTextarea('new_description', _('Description'), '', $unsanitize->text($new_description), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_segid', $segid);
-echo $form->showSubmitButton('Update Segment', '', '');
+echo $form->showSubmitButton(_('Update Segment'), '', '');
 echo $form->showFormBottom('');
-
-$layout->deleteButton('Segment', $new_name, 'edit.php?segid=' . $segid . '&del=1');
+$layout->deleteButton(_('Segment'), $new_name, 'edit.php?segid=' . $segid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Account Owners";
-$breadcrumb = "Owners";
+$page_title = _('Account Owners');
+$breadcrumb = _('Owners');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-owners";

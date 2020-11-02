@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Cost by Owner Report";
-$breadcrumb = "Domain Cost by Owner";
+$page_title = _('Domain Cost by Owner Report');
+$breadcrumb = _('Domain Cost by Owner');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-owner";

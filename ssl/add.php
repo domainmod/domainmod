@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= 'SSL Certificate ' . $new_name . ' added<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s added'), $new_name) . '<BR>';
 
         } catch (Exception $e) {
 
@@ -226,39 +226,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= "Enter a name for the SSL certificate<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter a name for the SSL certificate') . '<BR>';
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
         }
 
         if ($new_domain_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the domain<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the domain') . '<BR>';
 
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the SSL Provider Account<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider Account') . '<BR>';
 
         }
 
         if ($new_type_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the SSL Type') . '<BR>';
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
 
         }
 
@@ -283,11 +283,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_name', _('Host') . ' / ' . _('Label') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -298,7 +298,7 @@ $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
+echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '1', '');
 
 foreach ($result as $row) {
 
@@ -325,7 +325,7 @@ $result = $pdo->query("
       AND sslpa.ssl_provider_id = sslp.id
     ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC")->fetchAll();
 
-echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
+echo $form->showDropdownTop('new_account_id', _('SSL Provider Account'), '', '1', '');
 
 foreach ($result as $row) {
 
@@ -350,7 +350,7 @@ $result = $pdo->query("
     FROM ssl_cert_types
     ORDER BY type ASC")->fetchAll();
 
-echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
+echo $form->showDropdownTop('new_type_id', _('Certificate Type'), '', '1', '');
 
 foreach ($result as $row) {
 
@@ -375,7 +375,7 @@ $result = $pdo->query("
     FROM ip_addresses
     ORDER BY `name`, ip")->fetchAll();
 
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+echo $form->showDropdownTop('new_ip_id', _('IP Address'), '', '1', '');
 
 foreach ($result as $row) {
 
@@ -399,7 +399,7 @@ $result = $pdo->query("
     FROM categories
     ORDER BY `name`")->fetchAll();
 
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
 
 foreach ($result as $row) {
 
@@ -408,15 +408,15 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_active', 'Certificate Status', '', '', '');
-echo $form->showDropdownOption('1', 'Active', $new_active);
-echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
-echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
-echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
-echo $form->showDropdownOption('0', 'Expired', $new_active);
+echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name
@@ -482,7 +482,7 @@ if ($result) { ?>
 
 }
 
-echo $form->showSubmitButton('Add SSL Certificate', '', '');
+echo $form->showSubmitButton(_('Add SSL Certificate'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

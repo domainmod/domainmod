@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "IP Addresses";
-$breadcrumb = "IPs";
+$page_title = _('IP Addresses');
+$breadcrumb = _('IPs');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-ip-addresses";

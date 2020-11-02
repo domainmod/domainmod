@@ -77,7 +77,7 @@ class Conversion
 
             }
 
-            $result_message = 'Conversion Rates updated<BR>';
+            $result_message = _('Conversion Rates updated') . '<BR>';
 
         }
 

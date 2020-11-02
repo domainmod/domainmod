@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= 'SSL Provider ' . $new_ssl_provider . ' Added<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Provider %s added'), $new_ssl_provider) . '<BR>';
 
         if ($_SESSION['s_has_ssl_provider'] != '1') {
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_ssl_provider)) $_SESSION['s_message_danger'] .= "Enter the SSL provider's name<BR>";
+        if (!$validate->text($new_ssl_provider)) $_SESSION['s_message_danger'] .= _("Enter the SSL provider's name") . '<BR>';
 
     }
 
@@ -98,10 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $unsanitize->text($new_ssl_provider), '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $unsanitize->text($new_url), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add SSL Provider', '', '');
+echo $form->showInputText('new_ssl_provider', _('SSL Provider Name') . ' (100)', '', $unsanitize->text($new_ssl_provider), '100', '', '1', '', '');
+echo $form->showInputText('new_url', _("SSL Provider's URL"), '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add SSL Provider'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

@@ -54,7 +54,7 @@ $pdo = $deeb->cnxx;
 ?>
 <div class="row">
 
-    <h3 style="padding-left:20px;">System Totals</h3>
+    <h3 style="padding-left:20px;"><?php echo _("System Totals"); ?></h3>
 
     <?php
     //////////////////////////////////////////////////
@@ -65,7 +65,7 @@ $pdo = $deeb->cnxx;
         FROM domains
         WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-    echo $dashboard->displayPanel('Domains', $total_count, 'green', 'checkmark-circled', '/domains/index.php?is_active=LIVE');
+    echo $dashboard->displayPanel(_('Domains'), $total_count, 'green', 'checkmark-circled', '/domains/index.php?is_active=LIVE');
 
     //////////////////////////////////////////////////
     // Active SSL Certificates
@@ -75,7 +75,7 @@ $pdo = $deeb->cnxx;
         FROM ssl_certs
         WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-    echo $dashboard->displayPanel('SSL Certificates', $total_count, 'green', 'checkmark-circled', '/ssl/index.php?is_active=LIVE');
+    echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'green', 'checkmark-circled', '/ssl/index.php?is_active=LIVE');
 
     //////////////////////////////////////////////////
     // Sold Domains
@@ -87,7 +87,7 @@ $pdo = $deeb->cnxx;
 
     if ($total_count) {
 
-        echo $dashboard->displayPanel('Sold Domains', $total_count, 'aqua', 'android-cart', '/domains/index.php?is_active=10');
+        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'aqua', 'android-cart', '/domains/index.php?is_active=10');
 
     } ?>
 
@@ -122,7 +122,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;">Expiring in the next <?php echo $expiration_days; ?> days</h3>
+        <h3 style="padding-left:20px;"><?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -136,7 +136,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Domains', $total_count, 'red', 'close-circled', '/domains/index.php?daterange=' . urlencode($daterange));
+            echo $dashboard->displayPanel(_('Domains'), $total_count, 'red', 'close-circled', '/domains/index.php?daterange=' . urlencode($daterange));
 
         }
 
@@ -152,7 +152,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('SSL Certificates', $total_count, 'red', 'close-circled', '/ssl/index.php?daterange=' . urlencode($daterange));
+            echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'red', 'close-circled', '/ssl/index.php?daterange=' . urlencode($daterange));
 
         } ?>
 
@@ -184,7 +184,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     <div class="row">
 
-        <h3 style="padding-left:20px;">Domain Queue</h3>
+        <h3 style="padding-left:20px;"><?php echo _('Domain Queue'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -192,7 +192,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_pending) {
 
-            echo $dashboard->displayPanel('Pending', $total_count_pending, 'yellow', 'clock', '/queue/');
+            echo $dashboard->displayPanel(_('Pending'), $total_count_pending, 'yellow', 'clock', '/queue/');
 
         }
 
@@ -201,7 +201,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_processing) {
 
-            echo $dashboard->displayPanel('Processing', $total_count_processing, 'yellow', 'clock', '/queue/');
+            echo $dashboard->displayPanel(_('Processing'), $total_count_processing, 'yellow', 'clock', '/queue/');
 
         }
 
@@ -210,7 +210,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_finished) {
 
-            echo $dashboard->displayPanel('Finished', $total_count_finished, 'green', 'checkmark-circled', '/queue/');
+            echo $dashboard->displayPanel(_('Finished'), $total_count_finished, 'green', 'checkmark-circled', '/queue/');
 
         } ?>
 
@@ -229,7 +229,7 @@ if ($total_count) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;">Pending (Domains)</h3>
+        <h3 style="padding-left:20px;"><?php echo _('Pending (Domains)'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -242,7 +242,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending Renewals', $total_count, 'red', 'clock', '/domains/index.php?is_active=3');
+            echo $dashboard->displayPanel(_('Pending Renewals'), $total_count, 'red', 'clock', '/domains/index.php?is_active=3');
 
         } ?>
 
@@ -257,7 +257,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending Registrations', $total_count, 'yellow', 'clock', '/domains/index.php?is_active=5');
+            echo $dashboard->displayPanel(_('Pending Registrations'), $total_count, 'yellow', 'clock', '/domains/index.php?is_active=5');
 
         }
 
@@ -271,7 +271,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending Transfers', $total_count, 'aqua', 'clock', '/domains/index.php?is_active=2');
+            echo $dashboard->displayPanel(_('Pending Transfers'), $total_count, 'aqua', 'clock', '/domains/index.php?is_active=2');
 
         }
 
@@ -285,7 +285,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending (Other)', $total_count, 'green', 'clock', '/domains/index.php?is_active=4');
+            echo $dashboard->displayPanel(_('Pending (Other)'), $total_count, 'green', 'clock', '/domains/index.php?is_active=4');
 
         } ?>
 
@@ -305,7 +305,7 @@ if ($total_count) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;">Pending (SSL Certificates)</h3>
+        <h3 style="padding-left:20px;"><?php echo _('Pending (SSL Certificates)'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -318,7 +318,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending Renewals', $total_count, 'red', 'clock', '/ssl/index.php?is_active=3');
+            echo $dashboard->displayPanel(_('Pending Renewals'), $total_count, 'red', 'clock', '/ssl/index.php?is_active=3');
 
         }
 
@@ -332,7 +332,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending Registrations', $total_count, 'yellow', 'clock', '/ssl/index.php?is_active=5');
+            echo $dashboard->displayPanel(_('Pending Registrations'), $total_count, 'yellow', 'clock', '/ssl/index.php?is_active=5');
 
         }
 
@@ -346,7 +346,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel('Pending (Other)', $total_count, 'green', 'clock', '/ssl/index.php?is_active=4');
+            echo $dashboard->displayPanel(_('Pending (Other)'), $total_count, 'green', 'clock', '/ssl/index.php?is_active=4');
 
         } ?>
 

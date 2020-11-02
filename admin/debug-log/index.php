@@ -50,7 +50,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('debug_log', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('debug_log'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -58,14 +58,14 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'ID',
-        'User ID',
-        'Area',
-        'Level',
-        'Message',
-        'Extra',
-        'URL',
-        'Inserted'
+        _('ID'),
+        _('User ID'),
+        _('Area'),
+        _('Level'),
+        _('Message'),
+        _('Extra'),
+        _('URL'),
+        _('Inserted')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -110,31 +110,31 @@ require_once DIR_INC . '/layout/header.inc.php';
 
 if (!$result) {
 
-    echo "The Debug Log is empty";
+    echo _('The Debug Log is empty');
 
     if (DEBUG_MODE != '1') { ?>
 
-        <BR><BR>Debugging can be enabled in <a href="<?php echo WEB_ROOT; ?>/admin/settings/">Settings</a>.<?php
+        <BR><BR><?php echo sprintf(_('Debugging can be enabled in %sSettings%s.'), '<a href="' . WEB_ROOT . '/admin/settings/">', '</a>'); ?><?php
 
     }
 
 } else { ?>
 
-    <a href="../maintenance/clear-log.php"><?php echo $layout->showButton('button', 'Clear Debug Log'); ?></a>
-    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
+    <a href="../maintenance/clear-log.php"><?php echo $layout->showButton('button', _('Clear Debug Log')); ?></a>
+    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
             <th width="20px"></th>
-            <th class="all">ID</th>
-            <th class="none">User ID</th>
-            <th class="all">Area</th>
-            <th class="all">Level</th>
-            <th class="all">Message</th>
-            <th>Extra</th>
-            <th class="none">URL</th>
-            <th>Insert Time</th>
+            <th class="all"><?php echo _('ID'); ?></th>
+            <th class="none"><?php echo _('User ID'); ?></th>
+            <th class="all"><?php echo _('Area'); ?></th>
+            <th class="all"><?php echo _('Level'); ?></th>
+            <th class="all"><?php echo _('Message'); ?></th>
+            <th><?php echo _('Extra'); ?></th>
+            <th class="none"><?php echo _('URL'); ?></th>
+            <th><?php echo _('Insert Time'); ?></th>
         </tr>
         </thead>
         <tbody><?php

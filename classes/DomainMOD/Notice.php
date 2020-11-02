@@ -27,20 +27,17 @@ class Notice
     public function dbUpgrade()
     {
         $layout = new Layout();
-        $_SESSION['s_notice_page_title'] = 'Database Upgrade Available<BR><em>v' . $_SESSION['s_system_db_version'] . '
-        to v' . SOFTWARE_VERSION . '</em>';
+        $_SESSION['s_notice_page_title'] = _('Database Upgrade Available') . '<BR><em>v' . $_SESSION['s_system_db_version'] . ' ' . strtolower(_('To')) . ' v' . SOFTWARE_VERSION . '</em>';
 
-        $_SESSION['s_notice'] = "<BR>Your " . SOFTWARE_TITLE . " software was recently updated, so we now need to
-        upgrade your database.<BR><BR><strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> *****
-        CRITICAL WARNING -- PLEASE READ ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>WE
-        <span style='font-size: 175%;'>STRONGLY</span> RECOMMEND THAT YOU BACKUP YOUR DOMAINMOD INSTALLATION DIRECTORY
-        AND DATABASE BEFORE PROCEEDING WITH THE UPGRADE<BR>IF SOMETHING GOES WRONG DURING THE UPGRADE AND YOU HAVEN'T
-        CREATED A BACKUP, THERE MAY BE NO WAY TO RECOVER YOUR DATA<BR>YOU SHOULD ALSO MAKE A NOTE OF YOUR CURRENT
-        VERSION (" . $_SESSION['s_system_db_version'] . "), AS THIS MAY BE REQUIRED BY THE RECOVERY PROCESS<BR><BR><span
-        style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> *****
-        CRITICAL WARNING -- PLEASE READ ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>Please
-        be patient, this may take a moment. The older your current version is, the longer the upgrade will take.<BR><BR>
-        <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
+        $_SESSION['s_notice'] = "<BR>" . sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE) . "<BR><BR>
+            <strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>" .
+
+            strtoupper(sprintf(_('We %sstrongly%s recommend that you backup your %s installation directory and database before proceeding with the upgrade'), "<span style='font-size: 175%;'>", "</span", SOFTWARE_TITLE)) . "<BR>" .
+            strtoupper(_("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data")) . "<BR>" .
+            strtoupper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . "<BR>
+            <span style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>" .
+
+            _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
 
     }
 

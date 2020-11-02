@@ -65,7 +65,7 @@ $result = $stmt->fetchColumn();
 
 if (!$result) {
 
-    $_SESSION['s_message_danger'] .= "The Custom Domain Field you're trying to edit is invalid<BR>";
+    $_SESSION['s_message_danger'] .= _("The Custom Domain Field you're trying to edit is invalid") . '<BR>';
 
     header("Location: ../domain-fields/");
     exit;
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-        $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $result . ') updated<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('Custom Domain Field %s (%s) updated'), $new_name, $result) . '<BR>';
 
         header("Location: ../domain-fields/");
         exit;
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == '') $_SESSION['s_message_danger'] .= 'Enter the display name<BR>';
+        if ($new_name == '') $_SESSION['s_message_danger'] .= _('Enter the display name') . '<BR>';
 
     } else {
 
@@ -165,7 +165,7 @@ if ($del === 1) {
 
     if ($cdfid === 0) {
 
-        $_SESSION['s_message_danger'] .= 'The Custom Domain Field cannot be deleted<BR>';
+        $_SESSION['s_message_danger'] .= _('The Custom Domain Field cannot be deleted') . '<BR>';
 
     } else {
 
@@ -204,7 +204,7 @@ if ($del === 1) {
 
             $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-            $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $result->name . ' (' . $result->field_name . ') deleted<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('Custom Domain Field %s (%s) delete'), $result->name, $result->field_name) . '<BR>';
 
             header("Location: ../domain-fields/");
             exit;
@@ -237,18 +237,18 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
+echo $form->showInputText('new_name', _('Display Name') . ' (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
 ?>
-<strong>Database Field Name</strong><BR><?php echo $new_field_name; ?><BR><BR>
-<strong>Data Type</strong><BR><?php echo $new_field_type; ?><BR><BR>
+<strong><?php echo _('Database Field Name'); ?></strong><BR><?php echo $new_field_name; ?><BR><BR>
+<strong><?php echo _('Data Type'); ?></strong><BR><?php echo $new_field_type; ?><BR><BR>
 <?php
-echo $form->showInputText('new_description', 'Description (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_description', _('Description') . ' (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_cdfid', $cdfid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Custom Domain Field', $new_name, 'edit.php?cdfid=' . $cdfid . '&del=1');
+$layout->deleteButton(_('Custom Domain Field'), $new_name, 'edit.php?cdfid=' . $cdfid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>

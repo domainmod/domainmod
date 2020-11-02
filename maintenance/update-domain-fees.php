@@ -44,7 +44,7 @@ $queryB = new DomainMOD\QueryBuild();
 $sql = $queryB->missingFees('domains');
 $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-$_SESSION['s_message_success'] .= "Domain Fees updated<BR>";
+$_SESSION['s_message_success'] .= _('Domain Fees updated') . '<BR>';
 
 header("Location: index.php");
 exit;

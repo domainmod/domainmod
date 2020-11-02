@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Providers";
-$breadcrumb = "SSL Providers";
+$page_title = _('SSL Providers');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-ssl-providers";

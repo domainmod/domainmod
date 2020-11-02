@@ -19,6 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/assets/">Assets</a></li>
-<li><a href="<?php echo $web_root; ?>/assets/dns.php">DNS</a></li>
+<li><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
+<li><a href="<?php echo $web_root; ?>/assets/dns.php"><?php echo _('DNS'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

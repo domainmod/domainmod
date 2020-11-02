@@ -22,7 +22,7 @@
 <?php
 if ($_SESSION['s_missing_domain_fees'] == 1) {
 
-    $message = "Some of your Registrars/TLDs are missing domain fees. <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new TLDs, you should <a href=\"" . $web_root . "/maintenance/update-domain-fees.php\">update the domain fees system-wide</a> (this may take some time).";
+    $message = _('Some of your Registrars/TLDs are missing domain fees.') . " <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new TLDs, you should %supdate the domain fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-domain-fees.php'>", '</a>');
 
     echo $system->showMaintenanceTable($message);
 
@@ -30,7 +30,7 @@ if ($_SESSION['s_missing_domain_fees'] == 1) {
 
 if ($_SESSION['s_missing_ssl_fees'] == 1) {
 
-    $message = "Some of your SSL Certificate Types are missing fees. <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new SSL Types, you should <a href=\"" . $web_root . "/maintenance/update-ssl-fees.php\">update the SSL fees system-wide</a> (this may take some time).";
+    $message = _('Some of your SSL Certificate Types are missing fees.') . " <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new SSL Types, you should %supdate the SSL fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-ssl-fees.php'>", '</a>');
 
     echo $system->showMaintenanceTable($message);
 
@@ -38,15 +38,16 @@ if ($_SESSION['s_missing_ssl_fees'] == 1) {
 
 if (DEBUG_MODE == 1) {
 
-    $message = "Debugging mode is currently enabled. <a href='" . WEB_ROOT . "/admin/debug-log/'>View Debug Log</a><BR><BR>";
+    $message = _('Debugging mode is currently enabled.') . " <a href=\"" . $web_root . "/admin/debug-log/\">" . _('View Debug Log') . "</a><BR><BR>";
 
     if ($_SESSION['s_is_admin'] == 1) {
 
-        $message .= "You can disable debugging mode in <a href='" . $web_root . "/admin/settings/'>Settings</a>.";
+        $message .= sprintf(_('You can disable debugging mode in %sSettings%s.'), " <a href='" . $web_root . "/assets/ssl-provider-fees-missing.php'>", "</a");
+
 
     } else {
 
-        $message .= "Please contact your " . SOFTWARE_TITLE . " administrator to disable debugging.";
+        $message .= sprintf(_('Please contact your %s administrator to disable debugging'), SOFTWARE_TITLE);
 
     }
 

@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Bulk Updater";
-$breadcrumb = "Bulk Updater";
+$page_title = _('Bulk Updater');
+$breadcrumb = $page_title;
 $software_section = "bulk";
 $software_section_logo = "fa-copy";
 $slug = "bulk-main";

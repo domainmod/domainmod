@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Queue Information";
-$breadcrumb = "Information";
+$page_title = _('Domain Queue Information');
+$breadcrumb = _('Information');
 $software_section = "queue";
 $software_section_logo = "fa-hourglass-2";
 $slug = "queue-info";

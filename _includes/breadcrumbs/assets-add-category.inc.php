@@ -19,6 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/assets/">Assets</a></li>
-<li><a href="<?php echo $web_root; ?>/assets/categories.php">Categories</a></li>
+<li><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
+<li><a href="<?php echo $web_root; ?>/assets/categories.php"><?php echo _('Categories'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

@@ -88,7 +88,7 @@ class DwBuild
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
         $this->updateEmpty($has_empty);
 
-        $result_message = 'The Data Warehouse has been rebuilt.';
+        $result_message = _('The Data Warehouse has been rebuilt');
         return $result_message;
     }
 

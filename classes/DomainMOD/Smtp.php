@@ -56,28 +56,28 @@ class Smtp
         $mail->SMTPAuth = true;
         $mail->Username = $this->username;
         $mail->Password = $this->password;
-        $mail->setFrom($this->email_address, 'DomainMOD');
+        $mail->setFrom($this->email_address, SOFTWARE_TITLE);
         $mail->addAddress($to_address);
-        $mail->addReplyTo($reply_address, 'DomainMOD Admin');
+        $mail->addReplyTo($reply_address, SOFTWARE_TITLE . ' ' . _('Admin'));
         $mail->isHTML(true);  // Set email format to HTML
         $mail->Subject = $subject;
         $mail->Body = $message_html;
         $mail->AltBody = $message_text;
 
-        $log_extra = array('Method' => 'SMTP', 'To' => $to_address, 'From' => $this->email_address,
-            'Subject' => $subject, 'Server' => $this->server, 'Port' => $this->port, 'Protocol' => $this->protocol,
-            'Username' => $this->format->obfusc($this->username), 'Password' => $this->format->obfusc($this->password),
-            'CharSet' => EMAIL_ENCODING_TYPE);
+        $log_extra = array(_('Method') => _('SMTP'), _('To') => $to_address, _('From') => $this->email_address,
+            _('Subject') => $subject, _('Server') => $this->server, _('Port') => $this->port, _('Protocol') => $this->protocol,
+            _('Username') => $this->format->obfusc($this->username), _('Password') => $this->format->obfusc($this->password),
+            _('CharSet') => EMAIL_ENCODING_TYPE);
 
         if ($mail->send()) {
 
-            $log_message = $email_title . ' Email :: SEND SUCCEEDED';
+            $log_message = $email_title . ' ' . _('Email :: SEND SUCCEEDED');
             $this->log->info($log_message, $log_extra);
             return true;
 
         } else {
 
-            $log_message = $email_title . ' Email :: SEND FAILED';
+            $log_message = $email_title . ' ' . _('Email :: SEND FAILED');
             $this->log->error($log_message, $log_extra);
             return false;
 

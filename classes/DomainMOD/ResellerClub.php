@@ -40,7 +40,7 @@ class ResellerClub
         } elseif ($command == 'dns') {
             return $base_url . '&options=NsDetails';
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

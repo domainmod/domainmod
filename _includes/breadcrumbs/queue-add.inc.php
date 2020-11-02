@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/queue/">Queue</a></li>
+<li><a href="<?php echo $web_root; ?>/queue/"><?php echo _('Queue'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

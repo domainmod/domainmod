@@ -96,7 +96,7 @@ if ($result) {
 
 }
 
-$choose_text = "Click here to choose the new";
+$choose_text = _('Click here to choose the new');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($raw_domain_list == "") {
 
-        $_SESSION['s_message_danger'] .= "Enter the list of domains to apply the action to<BR>";
+        $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
 
     } else {
 
@@ -118,26 +118,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
 
-                        $_SESSION['s_message_danger'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
+                        $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s other'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
 
                     } elseif (($invalid_count - $invalid_to_display) > 1) {
 
-                        $_SESSION['s_message_danger'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
+                        $_SESSION['s_message_danger'] .= '<BR>' . sprintf(_('Plus %s others'), number_format($invalid_count - $invalid_to_display)) . '<BR>';
                     }
 
                 }
 
             } else {
 
-                $_SESSION['s_message_danger'] .= "Enter the list of domains to apply the action to<BR>";
+                $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
 
             }
             $submission_failed = 1;
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains Renewed') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -201,13 +201,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (!$date->checkDateFormat($new_expiry_date) || $new_pcid === 0 || $new_dnsid === 0 || $new_ipid === 0 || $new_whid === 0 || $new_raid === 0 || $has_existing_domains == '1') {
 
-                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
-                    if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_message_danger'] .= "You have entered an invalid expiry date<BR>";
-                    if ($new_pcid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
-                    if ($new_dnsid === 0) $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
-                    if ($new_ipid === 0) $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
-                    if ($new_whid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
-                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
+                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= sprintf(_('At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s).'), SOFTWARE_TITLE, '<BR><BR>') . '<BR>';
+                    if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_message_danger'] .= _('You have entered an invalid expiry date') . '<BR>';
+                    if ($new_pcid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Category')) . '<BR>';
+                    if ($new_dnsid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('DNS Profile')) . '<BR>';
+                    if ($new_ipid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('IP Address')) . '<BR>';
+                    if ($new_whid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Web Hosting Provider')) . '<BR>';
+                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Registrar Account')) . '<BR>';
 
                     $submission_failed = 1;
 
@@ -380,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Domains Added<BR>";
+                        $_SESSION['s_message_success'] .= _('Domains added') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -419,12 +419,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
 
                         if ($new_renewal_years === 1) {
-                            $renewal_years_string = $new_renewal_years . " Year";
+                            $renewal_years_string = $new_renewal_years . ' ' . _('Year');
                         } else {
-                            $renewal_years_string = $new_renewal_years . " Years";
+                            $renewal_years_string = $new_renewal_years . ' ' . _('Years');
                         }
 
-                        $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
+                        $new_notes_renewal = $timestamp_basic . ' - ' . sprintf(_('Domain Renewed For %s'), $renewal_years_string);
 
                         if ($new_notes != "") {
 
@@ -465,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains Fully Renewed') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -485,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_pcid === 0) {
 
-                    $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
+                    $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Category')) . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -534,7 +534,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Category Changed<BR>";
+                        $_SESSION['s_message_success'] .= _('Category Changed') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -556,7 +556,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_dnsid === 0) {
 
-                    $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
+                    $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('DNS Profile')) . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -605,7 +605,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "DNS Profile Changed<BR>";
+                        $_SESSION['s_message_success'] .= _('DNS Profile Changed') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -627,7 +627,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_ipid === 0) {
 
-                    $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
+                    $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('IP Address')) . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -676,7 +676,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "IP Address Changed<BR>";
+                        $_SESSION['s_message_success'] .= _('IP Address Changed') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -698,7 +698,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes == "") {
 
-                    $_SESSION['s_message_danger'] .= "Enter the new Note<BR>";
+                    $_SESSION['s_message_danger'] .= _('Enter the new Note') . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -724,7 +724,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Note Added<BR>";
+                        $_SESSION['s_message_success'] .= _('Note added') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -746,7 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid === 0) {
 
-                    $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
+                    $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Registrar Account')) . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -875,7 +875,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
+                        $_SESSION['s_message_success'] .= _('Registrar Account Changed') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -897,7 +897,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_whid === 0) {
 
-                    $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
+                    $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Web Hosting Provider')) . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -946,7 +946,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Web Hosting Provider Changed<BR>";
+                        $_SESSION['s_message_success'] .= _('Web Hosting Provider Changed') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -1037,7 +1037,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains (and associated data) Deleted') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1099,7 +1099,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as expired') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1161,7 +1161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as sold') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1223,7 +1223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as active') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1285,7 +1285,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Pending Transfer') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1347,7 +1347,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Pending Registration') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1409,7 +1409,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Pending Renewal') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1471,7 +1471,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Pending (Other)') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1533,7 +1533,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Auto Renewal') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1593,7 +1593,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Manual Renewal<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Manual Renewal') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1673,7 +1673,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Private WHOIS') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1751,7 +1751,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $pdo->commit();
 
-                    $_SESSION['s_message_success'] .= "Domains marked as Public WHOIS<BR>";
+                    $_SESSION['s_message_success'] .= _('Domains marked as Public WHOIS') . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1771,7 +1771,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (!$date->checkDateFormat($new_expiry_date)) {
 
-                    $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+                    $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
                     $submission_failed = 1;
 
                 } else {
@@ -1820,7 +1820,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= "Expiry Date Updated<BR>";
+                        $_SESSION['s_message_success'] .= _('Expiry Date Updated') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -1908,7 +1908,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-                    $_SESSION['s_message_success'] .= "Custom Field " . $name_array[0] . " Updated<BR>";
+                    $_SESSION['s_message_success'] .= sprintf(_('Custom Field %s updated'), $name_array[0]) . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -1952,51 +1952,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php //@formatter:off
 if ($action == "AD") {
-    $breadcrumb_text = 'Add Domains';
+    $breadcrumb_text = _('Add Domains');
 } elseif ($action == "RENEW") {
-    $breadcrumb_text = 'Renew Domains';
+    $breadcrumb_text = _('Renew Domains');
 } elseif ($action == "FR") {
-    $breadcrumb_text = 'Fully Renew Domains';
+    $breadcrumb_text = _('Fully Renew Domains');
 } elseif ($action == "E") {
-    $breadcrumb_text = 'Mark as Expired';
+    $breadcrumb_text = _('Mark as Expired');
 } elseif ($action == "S") {
-    $breadcrumb_text = 'Mark as Sold';
+    $breadcrumb_text = _('Mark as Sold');
 } elseif ($action == "A") {
-    $breadcrumb_text = 'Mark as Active';
+    $breadcrumb_text = _('Mark as Active');
 } elseif ($action == "T") {
-    $breadcrumb_text = 'Mark as Pending Transfer';
+    $breadcrumb_text = _('Mark as Pending Transfer');
 } elseif ($action == "PRg") {
-    $breadcrumb_text = 'Mark as Pending Registration';
+    $breadcrumb_text = _('Mark as Pending Registration');
 } elseif ($action == "PRn") {
-    $breadcrumb_text = 'Mark as Pending Renewal';
+    $breadcrumb_text = _('Mark as Pending Renewal');
 } elseif ($action == "PO") {
-    $breadcrumb_text = 'Mark as Pending (Other)';
+    $breadcrumb_text = _('Mark as Pending (Other)');
 } elseif ($action == "AURNE") {
-    $breadcrumb_text = 'Mark as Auto Renewal';
+    $breadcrumb_text = _('Mark as Auto Renewal');
 } elseif ($action == "AURND") {
-    $breadcrumb_text = 'Mark as Manual Renewal';
+    $breadcrumb_text = _('Mark as Manual Renewal');
 } elseif ($action == "PRVE") {
-    $breadcrumb_text = 'Mark as Private WHOIS';
+    $breadcrumb_text = _('Mark as Private WHOIS');
 } elseif ($action == "PRVD") {
-    $breadcrumb_text = 'Mark as Public WHOIS';
+    $breadcrumb_text = _('Mark as Public WHOIS');
 } elseif ($action == "CED") {
-    $breadcrumb_text = 'Change Expiry Date';
+    $breadcrumb_text = _('Change Expiry Date');
 } elseif ($action == "CPC") {
-    $breadcrumb_text = 'Change Category';
+    $breadcrumb_text = _('Change Category');
 } elseif ($action == "CDNS") {
-    $breadcrumb_text = 'Change DNS Profile';
+    $breadcrumb_text = _('Change DNS Profile');
 } elseif ($action == "CIP") {
-    $breadcrumb_text = 'Change IP Address';
+    $breadcrumb_text = _('Change IP Address');
 } elseif ($action == "CRA") {
-    $breadcrumb_text = 'Change Registrar Account';
+    $breadcrumb_text = _('Change Registrar Account');
 } elseif ($action == "CWH") {
-    $breadcrumb_text = 'Change Hosting Provider';
+    $breadcrumb_text = _('Change Hosting Provider');
 } elseif ($action == "DD") {
-    $breadcrumb_text = 'Delete Domains';
+    $breadcrumb_text = _('Delete Domains');
 } elseif ($action == "AN") {
-    $breadcrumb_text = 'Add A Note';
+    $breadcrumb_text = _('Add A Note');
 } elseif ($action == "UCF") {
-    $breadcrumb_text = 'Update Custom Domain Field';
+    $breadcrumb_text = _('Update Custom Domain Field');
 } else {
     $breadcrumb_text = '';
 }
@@ -2007,66 +2007,57 @@ if ($breadcrumb_text != '') {
 ?>
 
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple
-thousand, all with a few clicks.<BR>
+<?php echo _("The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks."); ?><BR>
 <?php if ($done == "1") { ?>
 
     <?php if ($submission_failed != "1") { ?>
 
         <?php if ($action == "AD") { ?>
-            <BR><strong>The following domains were added:</strong><BR>
+            <BR><strong><?php echo _('The following domains were added'); ?>:</strong><BR>
         <?php } elseif ($action == "RENEW") { ?>
-            <BR><strong>The following domains were renewed
-                for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
-                year<?php if ($new_renewal_years > 1) {
-                    echo "s";
-                } ?>:</strong><BR>
+            <BR><strong><?php echo sprintf(ngettext('The following domain was renewed for %s year', 'The following domains were renewed for %s years', htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?></strong><BR>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong>The following domains were fully renewed
-                for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
-                year<?php if ($new_renewal_years > 1) {
-                    echo "s";
-                } ?>:</strong><BR>
+            <BR><strong><?php echo sprintf(ngettext('The following domain was fully renewed for %s year', 'The following domains were fully renewed for %s years', htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?></strong><BR>
         <?php } elseif ($action == "E") { ?>
-            <BR><strong>The following domains were marked as expired:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as expired'); ?>:</strong><BR>
         <?php } elseif ($action == "S") { ?>
-            <BR><strong>The following domains were marked as sold:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as sold'); ?>:</strong><BR>
         <?php } elseif ($action == "A") { ?>
-            <BR><strong>The following domains were marked as active:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as active'); ?>:</strong><BR>
         <?php } elseif ($action == "T") { ?>
-            <BR><strong>The following domains were marked as Pending Transfer:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Pending Transfer'); ?>:</strong><BR>
         <?php } elseif ($action == "PRg") { ?>
-            <BR><strong>The following domains were marked as Pending Registration:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Pending Registration'); ?>:</strong><BR>
         <?php } elseif ($action == "PRn") { ?>
-            <BR><strong>The following domains were marked as Pending Renewal:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Pending Renewal'); ?>:</strong><BR>
         <?php } elseif ($action == "PO") { ?>
-            <BR><strong>The following domains were marked as Pending (Other):</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Pending (Other)'); ?>:</strong><BR>
         <?php } elseif ($action == "AURNE") { ?>
-            <BR><strong>The following domains were marked as Auto Renewal:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Auto Renewal'); ?>:</strong><BR>
         <?php } elseif ($action == "AURND") { ?>
-            <BR><strong>The following domains were marked as Manual Renewal:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Manual Renewal'); ?>:</strong><BR>
         <?php } elseif ($action == "PRVE") { ?>
-            <BR><strong>The following domains were marked as Private WHOIS:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Private WHOIS'); ?>:</strong><BR>
         <?php } elseif ($action == "PRVD") { ?>
-            <BR><strong>The following domains were marked as Public WHOIS:</strong><BR>
+            <BR><strong><?php echo _('The following domains were marked as Public WHOIS'); ?>:</strong><BR>
         <?php } elseif ($action == "CED") { ?>
-            <BR><strong>The expiry date was updated for the following domains:</strong><BR>
+            <BR><strong><?php echo _('The expiry date was updated for the following domains'); ?>:</strong><BR>
         <?php } elseif ($action == "CPC") { ?>
-            <BR><strong>The following domains had their Category changed:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their Category changed'); ?>:</strong><BR>
         <?php } elseif ($action == "CDNS") { ?>
-            <BR><strong>The following domains had their DNS Profile changed:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their DNS Profile changed'); ?>:</strong><BR>
         <?php } elseif ($action == "CIP") { ?>
-            <BR><strong>The following domains had their IP Address changed:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their IP Address changed'); ?>:</strong><BR>
         <?php } elseif ($action == "CRA") { ?>
-            <BR><strong>The following domains had their Registrar Account changed:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their Registrar Account changed'); ?>:</strong><BR>
         <?php } elseif ($action == "CWH") { ?>
-            <BR><strong>The following domains had their Web Hosting Provider changed:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their Web Hosting Provider changed'); ?>:</strong><BR>
         <?php } elseif ($action == "DD") { ?>
-            <BR><strong>The following domains (and associated SSL Certificates) were deleted:</strong><BR>
+            <BR><strong><?php echo _('The following domains (and associated SSL Certificates) were deleted'); ?>:</strong><BR>
         <?php } elseif ($action == "AN") { ?>
-            <BR><strong>The following domains had the Note appended:</strong><BR>
+            <BR><strong><?php echo _('The following domains had the Note appended'); ?>:</strong><BR>
         <?php } elseif ($action == "UCF") { ?>
-            <BR><strong>The following domains had their Custom Domain Field updated:</strong><BR>
+            <BR><strong><?php echo _('The following domains had their Custom Domain Field updated'); ?>:</strong><BR>
         <?php } ?>
 
         <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR>
@@ -2077,36 +2068,36 @@ thousand, all with a few clicks.<BR>
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump('index.php', '', 'Choose Action', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'AD', 'Add Domains', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'AN', 'Add A Note', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'FR', 'Renew Domains (Update Expiry Date, Mark Active, Add Note)', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'RENEW', 'Renew Domains (Update Expiry Date Only)', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'A', 'Mark as Active', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'T', 'Mark as Pending Transfer', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'PRg', 'Mark as Pending Registration', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'PRn', 'Mark as Pending Renewal', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'PO', 'Mark as Pending (Other)', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'E', 'Mark as Expired', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'S', 'Mark as Sold', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'AURNE', 'Mark as Auto Renewal', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'AURND', 'Mark as Manual Renewal', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'PRVE', 'Mark as Private WHOIS', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'PRVD', 'Mark as Public WHOIS', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CPC', 'Change Category', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CDNS', 'Change DNS Profile', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CED', 'Change Expiry Date', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CIP', 'Change IP Address', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CRA', 'Change Registrar Account', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'CWH', 'Change Web Hosting Provider', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'UCF', 'Update Custom Domain Field', $action);
-echo $form->showDropdownOptionJump('index.php?action=', 'DD', 'Delete Domains', $action);
+echo $form->showDropdownOptionJump('index.php', '', _('Choose Action'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'AD', _('Add Domains'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'AN', _('Add A Note'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'FR', _('Renew Domains (Update Expiry Date, Mark Active, Add Note)'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'RENEW', _('Renew Domains (Update Expiry Date Only)'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'A', _('Mark as Active'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'T', _('Mark as Pending Transfer'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'PRg', _('Mark as Pending Registration'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'PRn', _('Mark as Pending Renewal'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'PO', _('Mark as Pending (Other)'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'E', _('Mark as Expired'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'S', _('Mark as Sold'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'AURNE', _('Mark as Auto Renewal'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'AURND', _('Mark as Manual Renewal'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'PRVE', _('Mark as Private WHOIS'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'PRVD', _('Mark as Public WHOIS'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CPC', _('Change Category'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CDNS', _('Change DNS Profile'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CED', _('Change Expiry Date'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CIP', _('Change IP Address'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CRA', _('Change Registrar Account'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'CWH', _('Change Web Hosting Provider'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'UCF', _('Update Custom Domain Field'), $action);
+echo $form->showDropdownOptionJump('index.php?action=', 'DD', _('Delete Domains'), $action);
 echo $form->showDropdownBottom('');
 
 if ($action == "UCF") {
 
     echo $form->showDropdownTopJump('', '', '', '');
-    echo $form->showDropdownOptionJump('index.php?action=', 'UCF', 'Choose the Custom Field to Edit', $action);
+    echo $form->showDropdownOptionJump('index.php?action=', 'UCF', _('Choose the Custom Field to Edit'), $action);
 
     $result = $pdo->query("
         SELECT df.id, df.name, df.type_id, cft.name AS type
@@ -2128,16 +2119,16 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
 
     if ($action == "DD") {
 
-        echo "<strong>WARNING: In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted. If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.</strong><BR><BR>";
+        echo "<strong>" . _("WARNING: In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted.") . ' ' . _("If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.") . "</strong><BR><BR>";
     }
 
     if ($action == "AD") {
 
-        $text = 'Domains to add (one per line)';
+        $text = _('Domains to add (one per line)');
 
     } else {
 
-        $text = 'Domains to update (one per line)';
+        $text = _('Domains to update (one per line)');
 
     }
 
@@ -2149,7 +2140,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
 if ($action == "AD") { // Add Domains
 
     // Function
-    echo $form->showInputText('new_function', 'Function (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
+    echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 
     // Expiry Date
     if ($new_expiry_date != "") {
@@ -2157,10 +2148,10 @@ if ($action == "AD") { // Add Domains
     } else {
         $temp_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
     }
-    echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
+    echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
     // Registrar Account
-    echo $form->showDropdownTop('new_raid', 'Registrar Account', '', '1', '');
+    echo $form->showDropdownTop('new_raid', _('Registrar Account'), '', '1', '');
 
     $result_account = $pdo->query("
         SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
@@ -2183,7 +2174,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // DNS Profile
-    echo $form->showDropdownTop('new_dnsid', 'DNS Profile', '', '1', '');
+    echo $form->showDropdownTop('new_dnsid', _('DNS Profile'), '', '1', '');
 
     $result_dns = $pdo->query("
         SELECT id, `name`
@@ -2204,7 +2195,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // IP Address
-    echo $form->showDropdownTop('new_ipid', 'IP Address', '', '1', '');
+    echo $form->showDropdownTop('new_ipid', _('IP Address'), '', '1', '');
 
     $result_ip = $pdo->query("
         SELECT id, `name`, ip
@@ -2225,7 +2216,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Web Hosting Provider
-    echo $form->showDropdownTop('new_whid', 'Web Hosting Provider', '', '1', '');
+    echo $form->showDropdownTop('new_whid', _('Web Hosting Provider'), '', '1', '');
 
     $result_host = $pdo->query("
         SELECT id, `name`
@@ -2246,7 +2237,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Category
-    echo $form->showDropdownTop('new_pcid', 'Category', '', '1', '');
+    echo $form->showDropdownTop('new_pcid', _('Category'), '', '1', '');
 
     $result_cat = $pdo->query("
         SELECT id, `name`
@@ -2267,47 +2258,47 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Domain Status
-    echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
-    echo $form->showDropdownOption('1', 'Active', $new_active);
-    echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
-    echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
-    echo $form->showDropdownOption('2', 'Pending (Transfer)', $new_active);
-    echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
-    echo $form->showDropdownOption('0', 'Expired', $new_active);
-    echo $form->showDropdownOption('10', 'Sold', $new_active);
+    echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
+    echo $form->showDropdownOption('1', _('Active'), $new_active);
+    echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+    echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+    echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
+    echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+    echo $form->showDropdownOption('0', _('Expired'), $new_active);
+    echo $form->showDropdownOption('10', _('Sold'), $new_active);
     echo $form->showDropdownBottom('');
 
     // Auto Renewal
-    echo $form->showRadioTop('Auto Renewal?', '', '');
-    echo $form->showRadioOption('new_autorenew', '1', 'Yes', $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_autorenew', '0', 'No', $new_autorenew, '', '');
+    echo $form->showRadioTop(_('Auto Renewal') . '?', '', '');
+    echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
     echo $form->showRadioBottom('');
 
     // WHOIS Privacy Status
-    echo $form->showRadioTop('Privacy Enabled?', '', '');
-    echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
+    echo $form->showRadioTop(_('Privacy Enabled') . '?', '', '');
+    echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
     echo $form->showRadioBottom('');
 
 } elseif ($action == "RENEW" || $action == "FR") {
 
-    echo $form->showDropdownTop('new_renewal_years', 'Renew For', '', '', '');
-    echo $form->showDropdownOption('1', '1 Year', $new_renewal_years);
-    echo $form->showDropdownOption('2', '2 Years', $new_renewal_years);
-    echo $form->showDropdownOption('3', '3 Years', $new_renewal_years);
-    echo $form->showDropdownOption('4', '4 Years', $new_renewal_years);
-    echo $form->showDropdownOption('5', '5 Years', $new_renewal_years);
-    echo $form->showDropdownOption('6', '6 Years', $new_renewal_years);
-    echo $form->showDropdownOption('7', '7 Years', $new_renewal_years);
-    echo $form->showDropdownOption('8', '8 Years', $new_renewal_years);
-    echo $form->showDropdownOption('9', '9 Years', $new_renewal_years);
-    echo $form->showDropdownOption('10', '10 Years', $new_renewal_years);
+    echo $form->showDropdownTop('new_renewal_years', _('Renew For'), '', '', '');
+    echo $form->showDropdownOption('1', '1 ' . _('Year'), $new_renewal_years);
+    echo $form->showDropdownOption('2', '2 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('3', '3 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('4', '4 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('5', '5 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('6', '6 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('7', '7 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('8', '8 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('9', '9 ' . _('Years'), $new_renewal_years);
+    echo $form->showDropdownOption('10', '10 ' . _('Years'), $new_renewal_years);
     echo $form->showDropdownBottom('');
 
 } elseif ($action == "CPC") {
 
-    echo $form->showDropdownTop('new_pcid', 'New Category', '', '1', '');
-    echo $form->showDropdownOption('', $choose_text . ' Category', $new_pcid);
+    echo $form->showDropdownTop('new_pcid', _('New Category'), '', '1', '');
+    echo $form->showDropdownOption('', $choose_text . ' ' . _('Category'), $new_pcid);
 
     $result_cat = $pdo->query("
         SELECT id, `name`
@@ -2331,8 +2322,8 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CDNS") {
 
-    echo $form->showDropdownTop('new_dnsid', 'New DNS Profile', '', '1', '');
-    echo $form->showDropdownOption('', $choose_text . ' DNS Profile', $new_dnsid);
+    echo $form->showDropdownTop('new_dnsid', _('New DNS Profile'), '', '1', '');
+    echo $form->showDropdownOption('', $choose_text . ' ' . _('DNS Profile'), $new_dnsid);
 
     $result_dns = $pdo->query("
         SELECT id, `name`
@@ -2355,8 +2346,8 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CIP") {
 
-    echo $form->showDropdownTop('new_ipid', 'New IP Address', '', '1', '');
-    echo $form->showDropdownOption('', $choose_text . ' IP Address', $new_ipid);
+    echo $form->showDropdownTop('new_ipid', _('New IP Address'), '', '1', '');
+    echo $form->showDropdownOption('', $choose_text . ' ' . _('IP Address'), $new_ipid);
 
     $result_ip = $pdo->query("
         SELECT id, `name`, ip
@@ -2379,8 +2370,8 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CRA") {
 
-    echo $form->showDropdownTop('new_raid', 'New Registrar Account', '', '1', '');
-    echo $form->showDropdownOption('', $choose_text . ' Registrar Account', $new_raid);
+    echo $form->showDropdownTop('new_raid', _('New Registrar Account'), '', '1', '');
+    echo $form->showDropdownOption('', $choose_text . ' ' . _('Registrar Account'), $new_raid);
 
     $result_account = $pdo->query("
         SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
@@ -2406,8 +2397,8 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CWH") {
 
-    echo $form->showDropdownTop('new_whid', 'New Web Hosting Provider', '', '1', '');
-    echo $form->showDropdownOption('', $choose_text . ' Web Hosting Provider', $new_whid);
+    echo $form->showDropdownTop('new_whid', _('New Web Hosting Provider'), '', '1', '');
+    echo $form->showDropdownOption('', $choose_text . ' ' . _('Web Hosting Provider'), $new_whid);
 
     $result_host = $pdo->query("
         SELECT id, `name`
@@ -2435,7 +2426,7 @@ if ($action == "AD") { // Add Domains
     } else {
         $temp_expiry_date = $time->toUserTimezone($timestamp_basic, 'Y-m-d');
     }
-    echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
+    echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
 } elseif ($action == "UCF") {
 
@@ -2548,7 +2539,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
 
     if ($action == "AD") {
 
-        $notes_heading = 'Notes';
+        $notes_heading = _('Notes');
 
     } elseif ($action == "") {
 
@@ -2556,7 +2547,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
 
     } else {
 
-        $notes_heading = 'Notes (will be appended to current domain notes)';
+        $notes_heading = _('Notes (will be appended to current domain notes)');
 
     }
 
@@ -2662,99 +2653,99 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
 
     if ($action == "AD") {
 
-        echo $form->showSubmitButton('Add Domains', '<BR>', '');
+        echo $form->showSubmitButton(_('Add Domains'), '<BR>', '');
 
     } elseif ($action == "AN") {
 
-        echo $form->showSubmitButton('Add Notes', '', '');
+        echo $form->showSubmitButton(_('Add Notes'), '', '');
 
     } elseif ($action == "FR") {
 
-        echo $form->showSubmitButton('Mark As Renewed', '', '');
+        echo $form->showSubmitButton(_('Mark As Renewed'), '', '');
 
     } elseif ($action == "RENEW") {
 
-        echo $form->showSubmitButton('Mark As Renewed', '', '');
+        echo $form->showSubmitButton(_('Mark As Renewed'), '', '');
 
     } elseif ($action == "A") {
 
-        echo $form->showSubmitButton('Mark as Active', '', '');
+        echo $form->showSubmitButton(_('Mark as Active'), '', '');
 
     } elseif ($action == "T") {
 
-        echo $form->showSubmitButton('Mark as Pending Transfer', '', '');
+        echo $form->showSubmitButton(_('Mark as Pending Transfer'), '', '');
 
     } elseif ($action == "PRg") {
 
-        echo $form->showSubmitButton('Mark as Pending Registration', '', '');
+        echo $form->showSubmitButton(_('Mark as Pending Registration'), '', '');
 
     } elseif ($action == "PRn") {
 
-        echo $form->showSubmitButton('Mark as Pending Renewal', '', '');
+        echo $form->showSubmitButton(_('Mark as Pending Renewal'), '', '');
 
     } elseif ($action == "PO") {
 
-        echo $form->showSubmitButton('Mark as Pending (Other)', '', '');
+        echo $form->showSubmitButton(_('Mark as Pending (Other)'), '', '');
 
     } elseif ($action == "E") {
 
-        echo $form->showSubmitButton('Mark as Expired', '', '');
+        echo $form->showSubmitButton(_('Mark as Expired'), '', '');
 
     } elseif ($action == "S") {
 
-        echo $form->showSubmitButton('Mark as Sold', '', '');
+        echo $form->showSubmitButton(_('Mark as Sold'), '', '');
 
     } elseif ($action == "AURNE") {
 
-        echo $form->showSubmitButton('Mark as Auto Renewal', '', '');
+        echo $form->showSubmitButton(_('Mark as Auto Renewal'), '', '');
 
     } elseif ($action == "AURND") {
 
-        echo $form->showSubmitButton('Mark as Manual Renewal', '', '');
+        echo $form->showSubmitButton(_('Mark as Manual Renewal'), '', '');
 
     } elseif ($action == "PRVE") {
 
-        echo $form->showSubmitButton('Mark as Private WHOIS', '', '');
+        echo $form->showSubmitButton(_('Mark as Private WHOIS'), '', '');
 
     } elseif ($action == "PRVD") {
 
-        echo $form->showSubmitButton('Mark as Public WHOIS', '', '');
+        echo $form->showSubmitButton(_('Mark as Public WHOIS'), '', '');
 
     } elseif ($action == "CPC") {
 
-        echo $form->showSubmitButton('Change Category', '', '');
+        echo $form->showSubmitButton(_('Change Category'), '', '');
 
     } elseif ($action == "CDNS") {
 
-        echo $form->showSubmitButton('Change DNS Profile', '', '');
+        echo $form->showSubmitButton(_('Change DNS Profile'), '', '');
 
     } elseif ($action == "CED") {
 
-        echo $form->showSubmitButton('Change Expiry Date', '', '');
+        echo $form->showSubmitButton(_('Change Expiry Date'), '', '');
 
     } elseif ($action == "CIP") {
 
-        echo $form->showSubmitButton('Change IP Address', '', '');
+        echo $form->showSubmitButton(_('Change IP Address'), '', '');
 
     } elseif ($action == "CRA") {
 
-        echo $form->showSubmitButton('Change Registrar Account', '', '');
+        echo $form->showSubmitButton(_('Change Registrar Account'), '', '');
 
     } elseif ($action == "CWH") {
 
-        echo $form->showSubmitButton('Change Web Hosting Provider', '', '');
+        echo $form->showSubmitButton(_('Change Web Hosting Provider'), '', '');
 
     } elseif ($action == "UCF") {
 
-        echo $form->showSubmitButton('Update Custom Domain Field', '', '');
+        echo $form->showSubmitButton(_('Update Custom Domain Field'), '', '');
 
     } elseif ($action == "DD") {
 
-        echo $form->showSubmitButton('Delete Domains', '', '');
+        echo $form->showSubmitButton(_('Delete Domains'), '', '');
 
     } else {
 
-        echo $form->showSubmitButton('Perform Bulk Action', '', '');
+        echo $form->showSubmitButton(_('Perform Bulk Action'), '', '');
 
     }
 

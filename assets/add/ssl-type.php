@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('insert_time', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Added<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Type %s added'), '<strong>' . $new_type . '</strong>') . '<BR>';
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Enter the SSL Type<BR>";
+        $_SESSION['s_message_danger'] .= _('Enter the SSL Type') . '<BR>';
 
     }
 
@@ -86,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_type', 'Type (100)', '', $unsanitize->text($new_type), '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add SSL Type', '', '');
+echo $form->showInputText('new_type', _('Type') . ' (100)', '', $unsanitize->text($new_type), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add SSL Type'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

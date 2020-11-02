@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Certificates";
-$breadcrumb = "SSL Certs";
+$page_title = _('SSL Certificates');
+$breadcrumb = _('SSL Certs');
 $software_section = "ssl";
 $software_section_logo = "fa-lock";
 $slug = "ssl-main";

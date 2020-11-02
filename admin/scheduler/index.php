@@ -50,16 +50,15 @@ $pdo = $deeb->cnxx;
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-The Task Scheduler allows you to run various system jobs at specified times, which helps keep your <?php
-echo SOFTWARE_TITLE; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
-such as emailing you to let you know about upcoming Domain & SSL Certificate expirations. In order to use the Task
-Scheduler you must setup a cron/scheduled job on your web server to execute the file <strong>cron.php</strong>, which is
-located in the root folder of your <?php echo SOFTWARE_TITLE; ?> installation.
-This file should be executed <em>every 10 minutes</em>, and once it's setup the Task Scheduler will be live.<BR>
+<?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?>
+<?php echo sprintf(_('In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>
+
+
+<?php echo sprintf(_("This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."), '<em>', '</em>'); ?><BR>
 <BR>
-Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
+<?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?><BR>
 <BR>
-Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
+<?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
 <BR>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
 
@@ -82,9 +81,9 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
             <h4><?php echo $row->name; ?></h4><?php echo $row->description ?><BR><BR><BR>
         </td>
         <td style="padding: 15px 0px 18px 0px;">
-            <strong>Runs:</strong> <?php echo $row->interval; ?><BR>
+            <strong><?php echo _('Runs'); ?>:</strong> <?php echo $row->interval; ?><BR>
 
-            <strong>Status:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
+            <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
 
             if ($row->last_run != '1970-01-01 00:00:00') {
                 $last_run = $time->toUserTimezone($schedule->getDateOutput($row->last_run));
@@ -93,7 +92,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             } ?>
 
-            <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
+            <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
 
             if ($row->next_run != '1970-01-01 00:00:00') {
                 $next_run = $time->toUserTimezone($schedule->getDateOutput($row->next_run));
@@ -103,7 +102,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
 
             } ?>
 
-            <strong>Next Run:</strong> <?php echo $next_run; ?><BR><?php
+            <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
 
             if ($row->interval == 'Daily' && $row->active == '1') { ?>
 
@@ -114,7 +113,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
                     </select><BR><BR><?php
                     echo $form->showInputHidden('a', 'u');
                     echo $form->showInputHidden('id', $row->id);
-                    echo $form->showSubmitButton('Change Time', '', ''); ?>
+                    echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
                 </form><?php
 
             } ?>

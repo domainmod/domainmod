@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "DW Potential Problems Report";
-$breadcrumb = "DW Potential Problems";
+$page_title = _('DW Potential Problems Report');
+$breadcrumb = _('DW Potential Problems');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-dw-potential-problems";

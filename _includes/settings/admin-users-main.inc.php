@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "User Administration";
-$breadcrumb = "Users";
+$page_title = _('User Administration');
+$breadcrumb = _('Users');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-users-main";

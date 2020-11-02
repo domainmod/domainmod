@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Debugging";
-$breadcrumb = "Debug";
+$page_title = _('Debugging');
+$breadcrumb = _('Debug');
 $software_section = "system";
 $slug = "system-debug";

@@ -40,7 +40,7 @@ class Fabulous
         } elseif ($command == 'info') {
             return $base_url . 'domainInfo?username=' . $account_username . '&password=' . $account_password . '&domain=' . $domain;
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

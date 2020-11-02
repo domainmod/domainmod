@@ -21,17 +21,17 @@
 ?>
 <?php echo $form->showFormTop(''); ?>
 
-<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', 'View Full Report'); ?></a><BR><BR><strong>or Expiring Between</strong><BR>
+<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a><BR><BR><strong><?php echo _('or Expiring Between'); ?></strong><BR>
 
 <input type="text" name="daterange" size="26" value="<?php echo $daterange; ?>" />
 
-&nbsp;&nbsp;<?php echo $form->showSubmitButton('Generate Report', '', ''); ?><BR>
+&nbsp;&nbsp;<?php echo $form->showSubmitButton(_('Generate Report'), '', ''); ?><BR>
 
 <?php
 if ($total_rows > 0 && $total_rows != '') { //@formatter:off ?>
 
     <BR><a href="<?php echo $report_filename; ?>?export_data=1&daterange=<?php echo $daterange; ?>"><?php
-        echo $layout->showButton('button', 'Export'); ?></a>
+        echo $layout->showButton('button', _('Export')); ?></a>
 
 <?php } //@formatter:on ?>
 <?php

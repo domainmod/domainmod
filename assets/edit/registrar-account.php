@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('Registrar Account %s (%s, %s) updated'), $new_username, $temp_registrar, $temp_owner) . '<BR>';
 
             header("Location: ../registrar-accounts.php");
             exit;
@@ -144,18 +144,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Owner') . '<BR>';
 
         }
 
         if ($new_registrar_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Registrar<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Registrar') . '<BR>';
 
         }
 
         if (!$validate->text($new_username)) {
-            $_SESSION['s_message_danger'] .= "Enter the username<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
         }
 
     }
@@ -204,7 +204,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= "This Registrar Account has domains associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This Registrar Account has domains associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -241,7 +241,7 @@ if ($del === 1) {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('Registrar Account %s (%s, %s) deleted'), $temp_username, $temp_registrar_name, $temp_owner_name) . '<BR>';
 
             header("Location: ../registrar-accounts.php");
             exit;
@@ -316,7 +316,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
+    echo $form->showDropdownTop('new_registrar_id', _('Registrar'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -335,7 +335,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+    echo $form->showDropdownTop('new_owner_id', _('Account Owner'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -347,16 +347,16 @@ if ($result) {
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 
-echo $form->showRadioTop('Reseller Account?', '', '');
-echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
+echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
+echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_reseller', '0', _('No'), $new_reseller, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
+echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
 
 if ($has_api_support >= 1) { ?>
 
@@ -365,21 +365,21 @@ if ($has_api_support >= 1) { ?>
             <h3 class="box-title" style="padding-top: 3px;">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                 </button>
-                &nbsp;API Credentials
+                &nbsp;<?php echo _('API Credentials'); ?>
             </h3>
         </div>
         <div class="box-body">
 
-            <strong>API Requirements</strong><BR>
-            <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API.
+            <strong><?php echo _('API Requirements'); ?></strong><BR>
+            <?php echo sprintf(_('%s requires the following credentials in order to use their API.'), $api_registrar_name); ?>
 
             <ul><?php
 
-                $missing_text = ' (<span style="color: #a30000"><strong>missing</strong></span>)';
-                $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
+                $missing_text = ' (<span style="color: #a30000"><strong>' . strtolower(_('Missing')) . '</strong></span>)';
+                $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
 
                 if ($req_account_username == '1') {
-                    echo '<li>Registrar Account Username';
+                    echo '<li>' . _('Registrar Account Username');
                     if ($new_username == '') {
                         echo $missing_text;
                     } else {
@@ -388,7 +388,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_account_password == '1') {
-                    echo '<li>Registrar Account Password';
+                    echo '<li>' . _('Registrar Account Password');
                     if ($new_password == '') {
                         echo $missing_text;
                     } else {
@@ -397,7 +397,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_reseller_id == '1') {
-                    echo '<li>Reseller ID';
+                    echo '<li>' . _('Reseller ID');
                     if ($new_reseller_id === 0) {
                         echo $missing_text;
                     } else {
@@ -406,7 +406,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_api_app_name == '1') {
-                    echo '<li>API Application Name';
+                    echo '<li>' . _('API Application Name');
                     if ($new_api_app_name == '') {
                         echo $missing_text;
                     } else {
@@ -415,7 +415,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_api_key == '1') {
-                    echo '<li>API Key';
+                    echo '<li>' . _('API Key');
                     if ($new_api_key == '') {
                         echo $missing_text;
                     } else {
@@ -424,7 +424,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_api_secret == '1') {
-                    echo '<li>API Secret';
+                    echo '<li>' . _('API Secret');
                     if ($new_api_secret == '') {
                         echo $missing_text;
                     } else {
@@ -433,7 +433,7 @@ if ($has_api_support >= 1) { ?>
                     echo '</li>';
                 }
                 if ($req_ip_address == '1') {
-                    echo '<li>Connecting IP Address';
+                    echo '<li>' . _('Connecting IP Address');
                     if ($new_api_ip_id === 0) {
                         echo $missing_text;
                     } else {
@@ -445,14 +445,14 @@ if ($has_api_support >= 1) { ?>
 
             if ($api_registrar_notes != '') {
 
-                echo '<strong>Registrar Notes</strong><BR>';
+                echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
                 echo $api_registrar_notes . "<BR><BR>";
 
             }
 
-            echo $form->showInputText('new_api_app_name', 'API App Name', '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
-            echo $form->showInputText('new_api_key', 'API Key', '', $unsanitize->text($new_api_key), '255', '', '', '', '');
-            echo $form->showInputText('new_api_secret', 'API Secret', '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
+            echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
+            echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
+            echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
 
             $result = $pdo->query("
                 SELECT id, `name`, ip
@@ -461,7 +461,7 @@ if ($has_api_support >= 1) { ?>
 
             if ($result) {
 
-                echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access. <a href="' . $web_root . '/assets/add/ip-address.php">Click here</a> to add a new IP Address.', '', '');
+                echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.') . sprintf(_('%sClick here%s to add a new IP Address'), '<a href="' . $web_root . '/assets/add/ip-address.php">', '</a>'), '', '');
 
                 echo $form->showDropdownOption('0', 'n/a', '0');
 
@@ -480,12 +480,12 @@ if ($has_api_support >= 1) { ?>
 
 }
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_raid', $raid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Registrar Account', $new_username, 'registrar-account.php?raid=' . $raid . '&del=1');
+$layout->deleteButton(_('Registrar Account'), $new_username, 'registrar-account.php?raid=' . $raid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

@@ -59,7 +59,7 @@ if ($a == 'u') {
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $message = 'Task Updated<BR>';
+    $message = _('Task Updated') . '<BR>';
 
 } elseif ($a == 'e') {
 
@@ -83,7 +83,7 @@ if ($a == 'u') {
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $message = 'Task Enabled<BR>';
+    $message = _('Task Enabled') . '<BR>';
 
 } elseif ($a == 'd') {
 
@@ -95,7 +95,7 @@ if ($a == 'u') {
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $message = 'Task Disabled<BR>';
+    $message = _('Task Disabled') . '<BR>';
 
 }
 

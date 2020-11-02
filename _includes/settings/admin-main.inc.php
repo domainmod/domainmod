@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "System Administration";
-$breadcrumb = "Administration";
+$page_title = _('System Administration');
+$breadcrumb = _('Administration');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-main";

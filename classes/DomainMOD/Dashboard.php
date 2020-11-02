@@ -38,7 +38,7 @@ class Dashboard
                     <i class="ion ion-<?php echo $icon; ?>" style="padding-top:16px;"></i>
                 </div>
                 <?php if ($count != 0) { ?>
-                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer"><?php echo _('View'); ?> <i class="fa fa-arrow-circle-right"></i></a>
                 <?php } ?>
             </div>
         </div><?php

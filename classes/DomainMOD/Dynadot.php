@@ -40,7 +40,7 @@ class Dynadot
         } elseif ($command == 'info') {
             return $base_url . "command=domain_info&domain=" . $domain;
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

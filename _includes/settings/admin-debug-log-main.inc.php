@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Debug Log";
-$breadcrumb = "Debug";
+$page_title = _('Debug Log');
+$breadcrumb = _('Debug');
 $software_section = "admin";
 $software_section_logo = "fa-bug";
 $slug = "admin-debug-log-main";

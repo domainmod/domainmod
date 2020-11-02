@@ -40,33 +40,33 @@ class DwDisplay
             ob_start();  ?>
 
             <td align="left" valign="top">
-                <strong>Created:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
-                <strong>Contact:</strong> <?php echo $row->email; ?><BR>
-                <strong>IP Address:</strong> <?php echo $row->ip; ?><BR>
-                <strong>Hosting Plan:</strong> <?php echo $row->plan; ?><BR>
-                <strong>cPanel Theme:</strong> <?php echo $row->theme; ?><BR>
-                <strong>User, Owner:</strong> <?php echo $row->user; ?>, <?php echo $row->owner; ?>
+                <strong><?php echo _('Created'); ?>:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
+                <strong><?php echo _('Contact'); ?>:</strong> <?php echo $row->email; ?><BR>
+                <strong><?php echo _('IP Address'); ?>:</strong> <?php echo $row->ip; ?><BR>
+                <strong><?php echo _('Hosting Plan'); ?>:</strong> <?php echo $row->plan; ?><BR>
+                <strong><?php echo _('cPanel Theme'); ?>:</strong> <?php echo $row->theme; ?><BR>
+                <strong><?php echo _('User') . ', ' . _('Owner'); ?>:</strong> <?php echo $row->user; ?>, <?php echo $row->owner; ?>
             </td>
             <td align="left" valign="top">
-                <strong>Shell:</strong> <?php echo $row->shell; ?><BR>
-                <strong>Home:</strong> /<?php echo $row->partition; ?> /<?php echo $row->user; ?><BR>
-                <strong>HD Quota:</strong> <?php echo $row->disklimit; ?>
+                <strong><?php echo _('Shell'); ?>:</strong> <?php echo $row->shell; ?><BR>
+                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $row->partition; ?> /<?php echo $row->user; ?><BR>
+                <strong><?php echo _('HD Quota'); ?>:</strong> <?php echo $row->disklimit; ?>
                 <?php if ($row->disklimit != "unlimited") echo " MB"; ?><BR>
                 <strong>HD Used:</strong> <?php echo number_format($row->diskused); ?> MB
             </td>
             <td align="left" valign="top">
-                <strong>POP:</strong> <?php echo $row->maxpop; ?><BR>
-                <strong>Lists:</strong> <?php echo $row->maxlst; ?><BR>
-                <strong>Addons:</strong> <?php echo $row->maxaddons; ?><BR>
-                <strong>Subdomains:</strong> <?php echo $row->maxsub; ?><BR>
-                <strong>SQL:</strong> <?php echo $row->maxsql; ?><BR>
-                <strong>FTP:</strong> <?php echo $row->maxftp; ?><BR>
-                <strong>Parked:</strong> <?php echo $row->maxparked; ?><BR><BR>
+                <strong><?php echo _('POP'); ?>:</strong> <?php echo $row->maxpop; ?><BR>
+                <strong><?php echo _('Lists'); ?>:</strong> <?php echo $row->maxlst; ?><BR>
+                <strong><?php echo _('Addons'); ?>:</strong> <?php echo $row->maxaddons; ?><BR>
+                <strong><?php echo _('Subdomains'); ?>:</strong> <?php echo $row->maxsub; ?><BR>
+                <strong><?php echo _('SQL'); ?>:</strong> <?php echo $row->maxsql; ?><BR>
+                <strong><?php echo _('FTP'); ?>:</strong> <?php echo $row->maxftp; ?><BR>
+                <strong><?php echo _('Parked'); ?>:</strong> <?php echo $row->maxparked; ?><BR><BR>
             </td>
             <td align="left" valign="top">
-                <strong>Suspended?</strong> <?php echo $row->suspended; ?><BR>
-                <strong>When?</strong> <?php echo $row->suspendtime; ?><BR>
-                <strong>Why?</strong> <?php echo $row->suspendreason; ?>
+                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo $row->suspended; ?><BR>
+                <strong><?php echo _('When') . '?'; ?></strong> <?php echo $row->suspendtime; ?><BR>
+                <strong><?php echo _('Why') . '?'; ?></strong> <?php echo $row->suspendreason; ?>
             </td><?php
 
             $result = ob_get_clean();

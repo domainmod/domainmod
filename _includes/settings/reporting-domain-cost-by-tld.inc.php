@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Cost by TLD Report";
-$breadcrumb = "Domain Cost by TLD";
+$page_title = _('Domain Cost by TLD Report');
+$breadcrumb = _('Domain Cost by TLD');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-tld";

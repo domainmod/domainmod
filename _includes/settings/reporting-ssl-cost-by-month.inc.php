@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Cost by Month Report";
-$breadcrumb = "SSL Cost by Month";
+$page_title = _('SSL Cost by Month Report');
+$breadcrumb = _('SSL Cost by Month');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-month";

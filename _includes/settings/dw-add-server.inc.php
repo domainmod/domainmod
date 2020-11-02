@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add DW Server";
-$breadcrumb = "Add";
+$page_title = _('Add DW Server');
+$breadcrumb = _('Add');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-add-server";

@@ -48,49 +48,49 @@ echo $layout->jumpMenu();
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Before running any reports you should <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php">update the conversion rates</a>.
+<?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php">', '</a>'); ?>
 
-<h3>Domain Reports</h3>
+<h3><?php echo _('Domain Reports'); ?></h3>
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a Domain Report', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-category.php', '', 'Cost by Category', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-dns.php', '', 'Cost by DNS Profile', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-ip-address.php', '', 'Cost by IP Address', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-month.php', '', 'Cost by Month', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-owner.php', '', 'Cost by Owner', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-registrar.php', '', 'Cost by Registrar', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-tld.php', '', 'Cost by TLD', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-host.php', '', 'Cost by Web Host', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/registrar-fees.php?all=0', '', 'Registrar Fees', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select a Domain Report'), '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-category.php', '', _('Cost by Category'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-dns.php', '', _('Cost by DNS Profile'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-ip-address.php', '', _('Cost by IP Address'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-month.php', '', _('Cost by Month'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-owner.php', '', _('Cost by Owner'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-registrar.php', '', _('Cost by Registrar'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-tld.php', '', _('Cost by TLD'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-host.php', '', _('Cost by Web Host'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/registrar-fees.php?all=0', '', _('Registrar Fees'), 'null');
 echo $form->showDropdownBottom('');
 echo $form->showFormBottom('');
 ?>
 
-<h3>SSL Certificate Reports</h3>
+<h3><?php echo _('SSL Certificate Reports'); ?></h3>
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select an SSL Report', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-category.php', '', 'Cost by Category', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-domain.php', '', 'Cost by Domain', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-ip-address.php', '', 'Cost by IP Address', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-month.php', '', 'Cost by Month', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-owner.php', '', 'Cost by Owner', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-provider.php', '', 'Cost by Provider', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-type.php', '', 'Cost by Type', 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/provider-fees.php?all=0', '', 'Provider Fees', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select an SSL Report'), '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-category.php', '', _('Cost by Category'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-domain.php', '', _('Cost by Domain'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-ip-address.php', '', _('Cost by IP Address'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-month.php', '', _('Cost by Month'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-owner.php', '', _('Cost by Owner'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-provider.php', '', _('Cost by Provider'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-type.php', '', _('Cost by Type'), 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/provider-fees.php?all=0', '', _('Provider Fees'), 'null');
 echo $form->showDropdownBottom('');
 echo $form->showFormBottom('');
 ?>
 
-<h3>Data Warehouse Reports</h3>
+<h3><?php echo _('Data Warehouse Reports'); ?></h3>
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a DW Report', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/dw/potential-problems.php?generate=1', '', 'Potential Problems', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select a DW Report'), '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/dw/potential-problems.php?generate=1', '', _('Potential Problems'), 'null');
 echo $form->showDropdownBottom('');
 echo $form->showFormBottom('');
 ?>

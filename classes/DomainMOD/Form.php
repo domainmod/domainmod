@@ -49,7 +49,7 @@ class Form
             <div class="form-group">
                 <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
-                <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
+                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>">
             </div><?php
             echo $after;

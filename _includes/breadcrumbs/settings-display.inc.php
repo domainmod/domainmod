@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/settings/">Settings</a></li>
+<li><a href="<?php echo $web_root; ?>/settings/"><?php echo _('Settings'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

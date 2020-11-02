@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit Segment";
-$breadcrumb = "Edit";
+$page_title = _('Edit Segment');
+$breadcrumb = _('Edit');
 $software_section = "segments";
 $software_section_logo = "fa-filter";
 $slug = "segments-edit";

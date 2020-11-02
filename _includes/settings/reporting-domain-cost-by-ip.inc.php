@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Cost by IP Address Report";
-$breadcrumb = "Domain Cost by IP Address";
+$page_title = _('Domain Cost by IP Address Report');
+$breadcrumb = _('Domain Cost by IP Address');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-ip";

@@ -54,7 +54,7 @@ if ($result) {
 
 }
 
-$page_title = "Domain Notes (" . $new_domain . ")";
+$page_title = sprintf(_('Domain Notes (%s)'), $new_domain);
 $software_section = "domains";
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -67,7 +67,7 @@ $software_section = "domains";
 <?php
 $page_align = 'left';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<strong>Notes For <?php echo $new_domain; ?></strong><BR>
+<strong><?php echo sprintf(_('Notes For %s'), $new_domain); ?></strong><BR>
 <BR>
 <?php
 $format = new DomainMOD\Format();

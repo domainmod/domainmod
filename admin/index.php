@@ -44,16 +44,16 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="<?php echo $web_root; ?>/admin/settings/">System Settings</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/users/">Users</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/domain-fields/">Custom Domain Fields</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/maintenance/">Maintenance</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/backup/">Backup & Restore</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/debug-log/">Debug Log</a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR>
+<a href="<?php echo $web_root; ?>/admin/settings/"><?php echo _('System Settings'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/defaults/"><?php echo _('System Defaults'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/users/"><?php echo _('Users'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/domain-fields/"><?php echo _('Custom Domain Fields'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/scheduler/"><?php echo _('Task Scheduler'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/maintenance/"><?php echo _('Maintenance'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/backup/"><?php echo _('Backup & Restore'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/debug-log/"><?php echo _('Debug Log'); ?></a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/info/"><?php echo _('System Information'); ?></a><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

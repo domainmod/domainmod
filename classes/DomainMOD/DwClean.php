@@ -152,11 +152,11 @@ class DwClean
         $pdo->query("
             UPDATE dw_dns_records
             SET formatted_output = concat(`name`, ' | ', `mname`, ' | ', `rname`, ' | ', `ttl`, '<BR" . ">" . "',
-                '<strong" . ">" . "Serial:</strong" . ">" . " ', `serial`, ' |
-                <strong" . ">" . "Refresh:</strong" . ">" . " ', `refresh`, ' |
-                <strong" . ">" . "Retry:</strong" . ">" . " ', `retry`, ' |
-                <strong" . ">" . "Expire:</strong" . ">" . " ', `expire`, ' |
-                <strong" . ">" . "Minimum TTL:</strong" . ">" . " ', `minimum`)
+                '<strong" . ">" . _("Serial") . ":</strong" . ">" . " ', `serial`, ' |
+                <strong" . ">" . _("Refresh") . ":</strong" . ">" . " ', `refresh`, ' |
+                <strong" . ">" . _("Retry") . ":</strong" . ">" . " ', `retry`, ' |
+                <strong" . ">" . _("Expire") . ":</strong" . ">" . " ', `expire`, ' |
+                <strong" . ">" . _("Minimum TTL") . ":</strong" . ">" . " ', `minimum`)
             WHERE type = 'SOA'");
 
         $pdo->query("

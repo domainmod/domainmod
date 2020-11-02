@@ -44,11 +44,11 @@ $export_data = (int) $_GET['export_data'];
 $type = $_GET['type'];
 
 if ($type == "inactive") {
-    $page_title = "Segments - Inactive Domains";
+    $page_title = _('Segments') . ' - ' . _('Inactive Domains');
 } elseif ($type == "filtered") {
-    $page_title = "Segments - Filtered Domains";
+    $page_title = _('Segments') . ' - ' . _('Filtered Domains');
 } elseif ($type == "missing") {
-    $page_title = "Segments - Missing Domains";
+    $page_title = _('Segments') . ' - ' . _('Missing Domains');
 }
 
 $software_section = "segments";
@@ -119,15 +119,15 @@ if ($export_data === 1) {
 
     if ($type == "inactive") {
 
-        $base_filename = "segment_results_inactive";
+        $base_filename = _('segment_results_inactive');
 
     } elseif ($type == "filtered") {
 
-        $base_filename = "segment_results_filtered";
+        $base_filename = _('segment_results_filtered');
 
     } elseif ($type == "missing") {
 
-        $base_filename = "segment_results_missing";
+        $base_filename = _('segment_results_missing');
 
     }
 
@@ -138,11 +138,11 @@ if ($export_data === 1) {
 
         if ($type == "inactive") {
 
-            $row_contents = array('INACTIVE DOMAINS');
+            $row_contents = array(strtoupper(_('Inactive Domains')));
 
         } elseif ($type == "filtered") {
 
-            $row_contents = array('FILTERED DOMAINS');
+            $row_contents = array(strtoupper(_('Filtered Domains')));
 
         }
 
@@ -151,34 +151,34 @@ if ($export_data === 1) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Domain Status',
-            'Expiry Date',
-            'Initial Fee',
-            'Renewal Fee',
-            'Domain',
-            'TLD',
-            'Renewal Status',
-            'WHOIS Status',
-            'Registrar',
-            'Username',
-            'DNS Profile',
-            'IP Address Name',
-            'IP Address',
-            'IP Address rDNS',
-            'Web Host',
-            'Category',
-            'Category Stakeholder',
-            'Owner',
-            'Function',
-            'Notes',
-            'Inserted',
-            'Updated'
+            _('Domain Status'),
+            _('Expiry Date'),
+            _('Initial Fee'),
+            _('Renewal Fee'),
+            _('Domain'),
+            _('TLD'),
+            _('Renewal Status'),
+            _('WHOIS Status'),
+            _('Registrar'),
+            _('Username'),
+            _('DNS Profile'),
+            _('IP Address Name'),
+            _('IP Address'),
+            _('IP Address rDNS'),
+            _('Web Host'),
+            _('Category'),
+            _('Category Stakeholder'),
+            _('Owner'),
+            _('Function'),
+            _('Notes'),
+            _('Inserted'),
+            _('Updated')
         );
         $export->writeRow($export_file, $row_contents);
 
     } elseif ($type == "missing") {
 
-        $row_contents = array('MISSING DOMAINS');
+        $row_contents = array(strtoupper(_('Missing Domains')));
         $export->writeRow($export_file, $row_contents);
 
     }
@@ -194,40 +194,40 @@ if ($export_data === 1) {
             $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
             if ($row->active == "0") {
-                $domain_status = "EXPIRED";
+                $domain_status = strtoupper(_('Expired'));
             } elseif ($row->active == "1") {
-                $domain_status = "ACTIVE";
+                $domain_status = strtoupper(_('Active'));
             } elseif ($row->active == "2") {
-                $domain_status = "PENDING (TRANSFER)";
+                $domain_status = strtoupper(_('Pending (Transfer)'));
             } elseif ($row->active == "3") {
-                $domain_status = "PENDING (RENEWAL)";
+                $domain_status = strtoupper(_('Pending (Renewal)'));
             } elseif ($row->active == "4") {
-                $domain_status = "PENDING (OTHER)";
+                $domain_status = strtoupper(_('Pending (Other)'));
             } elseif ($row->active == "5") {
-                $domain_status = "PENDING (REGISTRATION)";
+                $domain_status = strtoupper(_('Pending (Registration)'));
             } elseif ($row->active == "10") {
-                $domain_status = "SOLD";
+                $domain_status = strtoupper(_('Sold'));
             } else {
-                $domain_status = "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP";
+                $domain_status = _('ERROR -- PROBLEM WITH CODE IN RESULTS.PHP');
             }
 
             if ($row->autorenew == "1") {
 
-                $autorenew_status = "Auto Renewal";
+                $autorenew_status = _('Auto Renewal');
 
             } elseif ($row->autorenew == "0") {
 
-                $autorenew_status = "Manual Renewal";
+                $autorenew_status = _('Manual Renewal');
 
             }
 
             if ($row->privacy == "1") {
 
-                $privacy_status = "Private";
+                $privacy_status = _('Private');
 
             } elseif ($row->privacy == "0") {
 
-                $privacy_status = "Public";
+                $privacy_status = _('Public');
 
             }
 
@@ -297,20 +297,20 @@ $segment = new DomainMOD\Segment();
 $segment_name = $segment->getName($segid);
 
 if ($type == "inactive") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . SOFTWARE_TITLE . " database, but they are currently marked as inactive.<BR><BR>";
+    echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they are currently marked as inactive.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
 } elseif ($type == "filtered") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . SOFTWARE_TITLE . " database, but they were filtered out based on your search criteria.<BR><BR>";
+    echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they were filtered out based on your search criteria.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
 } elseif ($type == "missing") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, but they are not in your " . SOFTWARE_TITLE . " database.<BR><BR>";
+    echo sprintf(_('The below domains are in the segment %s, and they are not in your %s database.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
 }
 ?>
 <?php
 if ($type == "inactive") {
-    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
 } elseif ($type == "missing") {
-    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
 }
 
 foreach ($result as $row) {

@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Categories";
-$breadcrumb = "Categories";
+$page_title = _('Categories');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-categories";

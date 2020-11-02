@@ -74,11 +74,11 @@ if (DEMO_INSTALLATION == false) {
 
         }
 
-        $log_extra = array('Task ID' => $id, 'Name' => $result->name, 'Slug' => $result->slug, 'Expression' => $result->expression, 'Active' => $result->active, 'Next Run' => $next_run);
+        $log_extra = array(_('Task ID') => $id, _('Name') => $result->name, _('Slug') => $result->slug, _('Expression') => $result->expression, _('Active') => $result->active, _('Next Run') => $next_run);
 
         if ($result->slug == 'cleanup') {
 
-            $log_message = '[START] Cleanup Tasks';
+            $log_message = sprintf('[%s]' . _('Cleanup Tasks'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
@@ -86,14 +86,14 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] Cleanup Tasks';
+            $log_message = sprintf('[%s]' . _('Cleanup Tasks'), strtoupper(_('End')));
             $log->notice($log_message);
 
-            $_SESSION['s_message_success'] .= "System Cleanup Performed";
+            $_SESSION['s_message_success'] .= _('System Cleanup Performed');
 
         } elseif ($result->slug == 'expiration-email') {
 
-            $log_message = '[START] Send Expiration Email';
+            $log_message = sprintf('[%s]' . _('Send Expiration Email'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $email = new DomainMOD\Email();
@@ -102,12 +102,12 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] Send Expiration Email';
+            $log_message = sprintf('[%s]' . _('Send Expiration Email'), strtoupper(_('End')));
             $log->notice($log_message);
 
         } elseif ($result->slug == 'update-conversion-rates') {
 
-            $log_message = '[START] Update Conversion Rates';
+            $log_message = sprintf('[%s]' . _('Update Conversion Rates'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
@@ -134,14 +134,14 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] Update Conversion Rates';
+            $log_message = sprintf('[%s]' . _('Update Conversion Rates'), strtoupper(_('End')));
             $log->notice($log_message);
 
-            $_SESSION['s_message_success'] .= "Conversion Rates Updated";
+            $_SESSION['s_message_success'] .= _('Conversion Rates Updated');
 
         } elseif ($result->slug == 'check-new-version') {
 
-            $log_message = '[START] New Version Check';
+            $log_message = sprintf('[%s]' . _('New Version Check'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $schedule->isRunning($id);
@@ -149,14 +149,14 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] New Version Check';
+            $log_message = sprintf('[%s]' . _('New Version Check'), strtoupper(_('End')));
             $log->notice($log_message);
 
-            $_SESSION['s_message_success'] .= "No Upgrade Available";
+            $_SESSION['s_message_success'] .= _('No Upgrade Available');
 
         } elseif ($result->slug == 'data-warehouse-build') {
 
-            $log_message = '[START] Build Data Warehouse';
+            $log_message = sprintf('[%s]' . _('Build Data Warehouse'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $dw = new DomainMOD\DwBuild();
@@ -165,14 +165,14 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] Build Data Warehouse';
+            $log_message = sprintf('[%s]' . _('Build Data Warehouse'), strtoupper(_('End')));
             $log->notice($log_message);
 
-            $_SESSION['s_message_success'] .= "Data Warehouse Rebuilt";
+            $_SESSION['s_message_success'] .= _('Data Warehouse Rebuilt');
 
         } elseif ($result->slug == 'domain-queue') {
 
-            $log_message = '[START] Process Domain Queue';
+            $log_message = sprintf('[%s]' . _('Process Domain Queue'), strtoupper(_('Start')));
             $log->notice($log_message, $log_extra);
 
             $queue = new DomainMOD\DomainQueue();
@@ -182,10 +182,10 @@ if (DEMO_INSTALLATION == false) {
             $schedule->updateTime($id, $time->stamp(), $next_run);
             $schedule->isFinished($id);
 
-            $log_message = '[END] Process Domain Queue';
+            $log_message = sprintf('[%s]' . _('Process Domain Queue'), strtoupper(_('End')));
             $log->notice($log_message);
 
-            $_SESSION['s_message_success'] .= "Domain Queue Processed";
+            $_SESSION['s_message_success'] .= _('Domain Queue Processed');
 
         }
 
@@ -195,11 +195,11 @@ if (DEMO_INSTALLATION == false) {
 
     if (DEMO_INSTALLATION == true) {
 
-        $_SESSION['s_message_danger'] .= "Tasks Disabled in Demo Mode";
+        $_SESSION['s_message_danger'] .= _('Tasks Disabled in Demo Mode');
 
     } else {
 
-        $_SESSION['s_message_success'] .= "Task Run";
+        $_SESSION['s_message_success'] .= _('Task Run');
 
     }
 

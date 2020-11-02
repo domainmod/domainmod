@@ -48,7 +48,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('account_owner_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('account_owner_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -56,19 +56,19 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Status',
-        'Owner',
-        'Registrar Accounts',
-        'Domains',
-        'SSL Provider Accounts',
-        'SSL Certs',
-        'Default Domain Owner?',
-        'Default SSL Owner?',
-        'Notes',
-        'Creation Type',
-        'Created By',
-        'Inserted',
-        'Updated'
+        _('Status'),
+        _('Owner'),
+        _('Registrar Accounts'),
+        _('Domains'),
+        _('SSL Provider Accounts'),
+        _('SSL Certs'),
+        _('Default Domain Owner') . '?',
+        _('Default SSL Owner') . '?',
+        _('Notes'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -120,18 +120,18 @@ if ($export_data === 1) {
 
             if ($total_domains >= 1 || $total_certs >= 1) {
 
-                $status = 'Active';
+                $status = _('Active');
 
             } else {
 
-                $status = 'Inactive';
+                $status = _('Inactive');
 
             }
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -172,9 +172,10 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all the Account Owners that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add/account-owner.php"><?php echo $layout->showButton('button', 'Add Owner'); ?></a>
-<a href="account-owners.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Account Owners'), SOFTWARE_TITLE); ?><BR>
+<BR>
+<a href="add/account-owner.php"><?php echo $layout->showButton('button', _('Add Owner')); ?></a>
+<a href="account-owners.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 if ($result) { ?>
 
@@ -182,11 +183,11 @@ if ($result) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Owners</th>
-            <th>Registrar Accounts</th>
-            <th>Domains</th>
-            <th>SSL Accounts</th>
-            <th>SSL Certs</th>
+            <th><?php echo _('Owners'); ?></th>
+            <th><?php echo _('Registrar Accounts'); ?></th>
+            <th><?php echo _('Domains'); ?></th>
+            <th><?php echo _('SSL Accounts'); ?></th>
+            <th><?php echo _('SSL Certs'); ?></th>
         </tr>
         </thead>
 
@@ -284,11 +285,11 @@ if ($result) { ?>
         </tbody>
     </table>
 
-    <strong>*</strong> = Default Domain Owner &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = Default SSL Owner (<a href="../settings/defaults/">set defaults</a>)<BR><BR><?php
+    <strong>*</strong> = <?php echo _('Default Domain Owner'); ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Default SSL Owner'); ?> (<a href="../settings/defaults/"><?php echo strtolower(_('Set Defaults')); ?></a>)<BR><BR><?php
 
 } else { ?>
 
-    <BR>You don't currently have any Owners. <a href="add/account-owner.php">Click here to add one</a>.<?php
+    <BR><?php echo _("You don't currently have any Owners."); ?> <a href="add/account-owner.php"><?php echo _('Click here to add one'); ?></a>.<?php
 
 } ?>
 <?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>

@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit SSL Provider Account";
-$breadcrumb = "Edit";
+$page_title = _('Edit SSL Provider Account');
+$breadcrumb = _('Edit');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-edit-ssl-account";

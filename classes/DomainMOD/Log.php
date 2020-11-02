@@ -76,7 +76,7 @@ class Log
     {
         $extra_info_formatted = '';
         $last_error = error_get_last();
-        $last_error_message = array('Last Error' => $last_error['message']);
+        $last_error_message = array(_('Last Error') => $last_error['message']);
         $merged_array = array_merge($last_error_message, $extra_info);
         foreach ($merged_array as $key => $value) {
             $extra_info_formatted .= '"' . $key . '":"' . $value . '", ';

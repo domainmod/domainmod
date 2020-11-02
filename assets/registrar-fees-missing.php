@@ -55,15 +55,13 @@ $result = $pdo->query("
     GROUP BY r.name
     ORDER BY r.name ASC")->fetchAll();
 ?>
-The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please
-update these fees as soon as possible.<BR>
-
+<?php echo _('The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees as soon as possible.'); ?><BR>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
         <th width="20px"></th>
-        <th>Registrar</th>
-        <th>Missing TLD Fees</th>
+        <th><?php echo _('Registrar'); ?></th>
+        <th><?php echo _('Missing TLD Fees'); ?></th>
     </tr>
     </thead>
     <tbody><?php

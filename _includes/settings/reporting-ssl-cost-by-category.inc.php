@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Cost by Category Report";
-$breadcrumb = "SSL Cost by Category";
+$page_title = _('SSL Cost by Category Report');
+$breadcrumb = _('SSL Cost by Category');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-category";

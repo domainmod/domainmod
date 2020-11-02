@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('IP Address %s (%s) added'), $new_name, $new_ip) . '<BR>';
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -75,10 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$validate->text($new_name)) {
-            $_SESSION['s_message_danger'] .= "Enter a name for the IP address<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter a name for the IP address') . '<BR>';
         }
         if ($validate->text($new_ip)) {
-            $_SESSION['s_message_danger'] .= "Enter the IP address<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the IP address') . '<BR>';
         }
 
     }
@@ -95,11 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'IP Address Name (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('new_ip', 'IP Address (100)', '', $unsanitize->text($new_ip), '100', '', '1', '', '');
-echo $form->showInputText('new_rdns', 'rDNS (100)', '', $unsanitize->text($new_rdns), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add IP Address', '', '');
+echo $form->showInputText('new_name', _('IP Address Name') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_ip', _('IP Address') . ' (100)', '', $unsanitize->text($new_ip), '100', '', '1', '', '');
+echo $form->showInputText('new_rdns', _('rDNS') . ' (100)', '', $unsanitize->text($new_rdns), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add IP Address'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

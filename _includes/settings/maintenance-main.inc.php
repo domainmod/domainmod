@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Maintenance";
-$breadcrumb = "Maintenance";
+$page_title = _('Maintenance');
+$breadcrumb = $page_title;
 $software_section = "maintenance";
 $software_section_logo = "fa-check";
 $slug = "maintenance-main";

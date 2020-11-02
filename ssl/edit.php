@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " updated<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s updated'), $new_name) . '<BR>';
 
             header('Location: edit.php?sslcid=' . $sslcid);
             exit;
@@ -249,39 +249,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= "Enter the SSL certificate name<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the SSL certificate name') . '<BR>';
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
         }
 
         if ($new_domain_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the domain<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the domain') . '<BR>';
 
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the SSL Provider Account<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider Account') . '<BR>';
 
         }
 
         if ($new_type_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the SSL Type') . '<BR>';
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
 
         }
 
@@ -342,7 +342,7 @@ if ($del === 1) {
 
         $pdo->commit();
 
-        $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " (" . $temp_type . ") deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s (%s) deleted'), $new_name, $temp_type) . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -374,8 +374,8 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('datepick', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $form->showInputText('new_name', _('Host') . ' / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -388,7 +388,7 @@ $result = $stmt->fetchAll();
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
+    echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -409,7 +409,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
+    echo $form->showDropdownTop('new_account_id', _('SSL Provider Account'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -428,7 +428,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
+    echo $form->showDropdownTop('new_type_id', _('Certificate Type'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -446,7 +446,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
+    echo $form->showDropdownTop('new_ip_id', _('IP Address'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -464,7 +464,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -476,20 +476,20 @@ if ($result) {
 
 }
 
-echo $form->showDropdownTop('new_active', 'Certificate Status', '', '', '');
-echo $form->showDropdownOption('1', 'Active', $new_active);
-echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
-echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
-echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
-echo $form->showDropdownOption('0', 'Expired', $new_active);
+echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">view full notes</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . strtolower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
 
 $result = $pdo->query("
     SELECT field_name
@@ -498,7 +498,7 @@ $result = $pdo->query("
 
 if ($result) { ?>
 
-    <h3>Custom Fields</h3><?php
+    <h3><?php echo _('Custom Fields'); ?></h3><?php
 
     $count = 0;
 
@@ -566,10 +566,10 @@ if ($result) { ?>
 }
 
 echo $form->showInputHidden('sslcid', $sslcid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('SSL Certificate', $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1');
+$layout->deleteButton(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

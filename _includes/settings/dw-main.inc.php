@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Data Warehouse";
-$breadcrumb = "DW";
+$page_title = _('Data Warehouse');
+$breadcrumb = _('DW');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-main";

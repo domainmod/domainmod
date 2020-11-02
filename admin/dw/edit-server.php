@@ -61,22 +61,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ) {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= "Enter a display name for the server<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter a display name for the server') . '<BR>';
         }
         if ($new_host == "") {
-            $_SESSION['s_message_danger'] .= "Enter the hostname<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the hostname') . '<BR>';
         }
         if ($new_protocol == "") {
-            $_SESSION['s_message_danger'] .= "Enter the protocol<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the protocol') . '<BR>';
         }
         if ($new_port === 0) {
-            $_SESSION['s_message_danger'] .= "Enter the port<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the port') . '<BR>';
         }
         if ($new_username == "") {
-            $_SESSION['s_message_danger'] .= "Enter the username<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
         }
         if ($new_api_token == "" && $new_hash == "") {
-            $_SESSION['s_message_danger'] .= "Enter either the API token or remote access key/hash<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter either the API token or remote access key/hash') . '<BR>';
         }
 
     } else {
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dwsid = $new_dwsid;
 
-        $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Server %s (%s) updated'), $new_name, $new_host) . '<BR>';
 
         header("Location: servers.php");
         exit;
@@ -185,7 +185,7 @@ if ($del === 1) {
     $dwstats = new DomainMOD\DwStats();
     $dwstats->updateDwTotalsTable();
 
-    $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Deleted<BR>";
+    $_SESSION['s_message_success'] .= sprintf(_('Server %s (%s) deleted'), $new_name, $new_host) . '<BR>';
 
     header("Location: servers.php");
     exit;
@@ -202,25 +202,25 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Name (100)', 'Enter the display name for this server', $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('new_host', 'Host Name (100)', 'Enter the host name of your WHM installation (ie. server1.example.com).', $unsanitize->text($new_host), '100', '', '1', '', '');
-echo $form->showDropdownTop('new_protocol', 'Protocol (5)', 'Enter the protocol you connect with.', '1', '');
-echo $form->showDropdownOption('https', 'Secured (https)', $new_protocol);
-echo $form->showDropdownOption('http', 'Unsecured (http)', $new_protocol);
+echo $form->showInputText('new_name', _('Name') . ' (100)', _('Enter the display name for this server'), $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the host name of your WHM installation (ie. server1.example.com).'), $unsanitize->text($new_host), '100', '', '1', '', '');
+echo $form->showDropdownTop('new_protocol', _('Protocol') . ' (5)', _('Enter the protocol you connect with.'), '1', '');
+echo $form->showDropdownOption('https', _('Secured (https)'), $new_protocol);
+echo $form->showDropdownOption('http', _('Unsecured (http)'), $new_protocol);
 echo $form->showDropdownBottom('');
-echo $form->showInputText('new_port', 'Port (5)', 'Enter the port that you connect to (usually 2086 or 2087).', $new_port, '5', '', '1', '', '');
-echo $form->showInputText('new_username', 'Username (100)', 'Enter the username for your WHM installation.', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_port', _('Port') . ' (5)', _('Enter the port that you connect to (usually 2086 or 2087).'), $new_port, '5', '', '1', '', '');
+echo $form->showInputText('new_username', _('Username') . ' (100)', _('Enter the username for your WHM installation.'), $unsanitize->text($new_username), '100', '', '1', '', '');
 ?>
-<div style="padding-top: 7px; padding-bottom: 17px;"><strong>Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use.</strong></div>
+<div style="padding-top: 7px; padding-bottom: 17px;"><strong><?php echo _("Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use."); ?></strong></div>
 <?php
-echo $form->showInputText('new_api_token', 'API Token (255)', 'Enter the API token.', $unsanitize->text($new_api_token), '255', '', '1', '', '');
-echo $form->showInputTextarea('new_hash', 'Remote Access Key/Hash', 'Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.', $unsanitize->text($new_hash), '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_api_token', _('API Token') . ' (255)', _('Enter the API token.'), $unsanitize->text($new_api_token), '255', '', '1', '', '');
+echo $form->showInputTextarea('new_hash', _('Remote Access Key/Hash'), _('Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.'), $unsanitize->text($new_hash), '1', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_dwsid', $dwsid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Server', $new_name, 'edit-server.php?dwsid=' . $dwsid . '&del=1');
+$layout->deleteButton(_('Server'), $new_name, 'edit-server.php?dwsid=' . $dwsid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

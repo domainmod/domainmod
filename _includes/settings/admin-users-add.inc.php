@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add User";
-$breadcrumb = "Add";
+$page_title = _('Add User');
+$breadcrumb = _('Add');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-users-add";

@@ -79,11 +79,11 @@ if ($export_data === 1) {
 
     if ($segid !== 0) {
 
-        $base_filename = "segment";
+        $base_filename = strtolower(_('Segment'));
 
     } else {
 
-        $base_filename = "segment_list";
+        $base_filename = _('segment_list');
 
     }
 
@@ -93,13 +93,13 @@ if ($export_data === 1) {
     if ($segid !== 0) {
 
         $row_contents = array(
-            'Segment:',
+            _('Segment') . ':',
             $segment_name
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Number of Domains in Segment:',
+            _('Number of Domains in Segment') . ':',
             $number_of_domains
         );
         $export->writeRow($export_file, $row_contents);
@@ -112,13 +112,13 @@ if ($export_data === 1) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Total Number of Segments:',
+            _('Total Number of Segments') . ':',
             number_format($number_of_segments)
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Total Number of Domains:',
+            _('Total Number of Domains') . ':',
             number_format($number_of_segment_domains)
         );
         $export->writeRow($export_file, $row_contents);
@@ -130,18 +130,18 @@ if ($export_data === 1) {
     unset($row_contents);
     $count = 0;
 
-    $row_contents[$count++] = "Segment";
-    $row_contents[$count++] = "Description";
-    $row_contents[$count++] = "Domain";
+    $row_contents[$count++] = _('Segment');
+    $row_contents[$count++] = _('Description');
+    $row_contents[$count++] = _('Domain');
     if ($segid === 0) {
 
-        $row_contents[$count++] = "Number of Domains in Segment";
+        $row_contents[$count++] = _('Number of Domains in Segment');
 
     }
-    $row_contents[$count++] = "Creation Type";
-    $row_contents[$count++] = "Created By";
-    $row_contents[$count++] = "Insert Time";
-    $row_contents[$count++] = "Update Time";
+    $row_contents[$count++] = _('Creation Type');
+    $row_contents[$count++] = _('Created By');
+    $row_contents[$count++] = _('Insert Time');
+    $row_contents[$count++] = _('Update Time');
     $export->writeRow($export_file, $row_contents);
 
     // The only difference between this SELECT statement and the primary one below is that it uses a GROUP BY clause
@@ -165,7 +165,7 @@ if ($export_data === 1) {
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -204,14 +204,13 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Segments are lists of domains that can be used to help filter and manage your <a href="<?php echo $web_root; ?>/domains/">domain
-    results</a>.<BR>
+<?php echo sprintf(_('Segments are lists of domains that can be used to help filter and manage your %sdomain results%s.'), '<a href="' . $web_root . '/domains/">', '</a>'); ?><BR>
 <BR>
-Segment filters will tell you which domains match with domains that are saved in <?php echo SOFTWARE_TITLE; ?>, as well
-as which domains don't match, and you can easily view and export the results.<BR>
+<?php echo sprintf(_("Segment filters will tell you which domains match with domains that are saved in %s, as well as which domains don't match, and you can easily view and export the results."), SOFTWARE_TITLE); ?>
 <BR>
-<a href="add.php"><?php echo $layout->showButton('button', 'Add Segment'); ?></a>
-<a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<BR>
+<a href="add.php"><?php echo $layout->showButton('button', _('Add Segment')); ?></a>
+<a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 $has_existing_segments = $pdo->query("
     SELECT id
@@ -220,7 +219,7 @@ $has_existing_segments = $pdo->query("
 
 if (!$has_existing_segments) { ?>
 
-    You don't currently have any Segments. <a href="add.php">Click here to add one</a>.<BR><BR><?php
+    <?php echo _("You don't currently have any Segments."); ?> <a href="add.php"><?php echo _('Click here to add one'); ?></a>.<BR><BR><?php
 
 } else { ?>
 
@@ -228,10 +227,10 @@ if (!$has_existing_segments) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Name</th>
-            <th>Domains</th>
-            <th>Count</th>
-            <th>Export</th>
+            <th><?php echo _('Name'); ?></th>
+            <th><?php echo _('Domains'); ?></th>
+            <th><?php echo _('Count'); ?></th>
+            <th><?php echo _('Export'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -262,7 +261,7 @@ if (!$has_existing_segments) { ?>
                     <?php echo number_format($row->number_of_domains); ?>
                 </td>
                 <td>
-                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>">EXPORT</a>
+                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>"><?php echo strtoupper(_('Export')); ?></a>
                 </td>
             </tr><?php
 

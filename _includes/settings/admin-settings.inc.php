@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "System Settings";
-$breadcrumb = "System Settings";
+$page_title = _('System Settings');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-settings";

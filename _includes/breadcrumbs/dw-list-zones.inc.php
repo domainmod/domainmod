@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/admin/dw/dw.php">DW</a></li>
+<li><a href="<?php echo $web_root; ?>/admin/dw/dw.php"><?php echo _('DW'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

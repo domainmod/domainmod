@@ -40,7 +40,7 @@ class GoDaddy
         } elseif ($command == 'info') {
             return $base_url . 'domains/' . $domain;
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 
@@ -125,7 +125,7 @@ class GoDaddy
 
         } elseif (isset($array_results['domain']) && !isset($array_results['expires']) && !isset($array_results['contactRegistrant']['nameFirst'])) {
 
-            $domain_status = 'invalid';
+            $domain_status = strtolower(_('Invalid'));
             $log_message = 'Invalid domain (not registered at GoDaddy)';
             $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->warning($log_message, $log_extra);

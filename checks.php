@@ -101,6 +101,8 @@ $_SESSION['s_system_local_php_log'] = $result->local_php_log;
 
 // Load User Settings
 $result = $login->getUserSettings($_SESSION['s_user_id']);
+$_SESSION['s_default_language'] = $result->default_language;
+$_SESSION['s_default_language_name'] = $result->language_name;
 $_SESSION['s_default_currency'] = $result->default_currency;
 $_SESSION['s_default_timezone'] = $result->default_timezone;
 $_SESSION['s_expiration_emails'] = $result->expiration_emails;
@@ -193,7 +195,7 @@ if ($_SESSION['s_version_error'] != '1') {
     // If it's a new password ask the user to change it
     if ($_SESSION['s_is_new_password'] == 1) {
 
-        $_SESSION['s_message_danger'] .= "Your password should be changed for security purposes<BR>";
+        $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes') . '<BR>';
         header("Location: settings/password/");
         exit;
 

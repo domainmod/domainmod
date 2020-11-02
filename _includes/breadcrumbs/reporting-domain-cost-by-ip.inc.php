@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/reporting/">Reporting</a></li>
+<li><a href="<?php echo $web_root; ?>/reporting/"><?php echo _('Reporting'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

@@ -50,7 +50,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dw_servers', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('dw_servers'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -58,22 +58,22 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Name',
-        'Host',
-        'Protocol',
-        'Port',
-        'Username',
-        'API Token',
-        'Hash',
-        'Notes',
-        'DW Accounts',
-        'DW DNS Zones',
-        'DW DNS Records',
-        'DW Last Built',
-        'Creation Type',
-        'Created By',
-        'Inserted',
-        'Updated'
+        _('Name'),
+        _('Host'),
+        _('Protocol'),
+        _('Port'),
+        _('Username'),
+        _('API Token'),
+        _('Hash'),
+        _('Notes'),
+        _('DW Accounts'),
+        _('DW DNS Zones'),
+        _('DW DNS Records'),
+        _('DW Last Built'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -84,7 +84,7 @@ if ($export_data === 1) {
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -126,22 +126,22 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="add-server.php"><?php echo $layout->showButton('button', 'Add Web Server'); ?></a>
+<a href="add-server.php"><?php echo $layout->showButton('button', _('Add Web Server')); ?></a>
 <?php
 if ($result) { ?>
 
-    <a href="servers.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
+    <a href="servers.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Name</th>
-            <th>Host</th>
-            <th>Port</th>
-            <th>Username</th>
-            <th>Inserted</th>
-            <th>Updated</th>
+            <th><?php echo _('Name'); ?></th>
+            <th><?php echo _('Host'); ?></th>
+            <th><?php echo _('Port'); ?></th>
+            <th><?php echo _('Username'); ?></th>
+            <th><?php echo _('Inserted'); ?></th>
+            <th><?php echo _('Updated'); ?></th>
         </tr>
         </thead>
     <tbody><?php

@@ -44,7 +44,7 @@ class DnSimple
         } elseif ($command == 'dns') {
             return $base_url . $account_id . '/registrar/domains/' . $domain . '/delegation';
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

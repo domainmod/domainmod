@@ -25,19 +25,19 @@ require_once __DIR__ . '/../../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 
-if (file_exists(DIR_ROOT . '/temp/domainmod-backup.sql')) {
+if (file_exists(DIR_TEMP . '/domainmod-backup.sql')) {
 
-    unlink(DIR_ROOT . '/temp/domainmod-backup.sql');
-
-}
-
-if (file_exists(DIR_ROOT . '/temp/domainmod-restore.sql')) {
-
-    unlink(DIR_ROOT . '/temp/domainmod-restore.sql');
+    unlink(DIR_TEMP . '/domainmod-backup.sql');
 
 }
 
-$_SESSION['s_message_success'] = "Backups were cleaned up";
+if (file_exists(DIR_TEMP . '/domainmod-restore.sql')) {
+
+    unlink(DIR_TEMP . '/domainmod-restore.sql');
+
+}
+
+$_SESSION['s_message_success'] = _('Backups were cleaned up');
 
 header("Location: ../");
 exit;

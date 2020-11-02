@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Invalid Page";
-$breadcrumb = "Invalid Page";
+$page_title = _('Invalid Page');
+$breadcrumb = $page_title;
 $software_section = "invalid-page";
 $slug = "invalid-page";

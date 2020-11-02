@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['s_system_default_ssl_type'] = $new_default_ssl_type;
     $_SESSION['s_system_default_ssl_provider'] = $new_default_ssl_provider;
 
-    $_SESSION['s_message_success'] .= "The System Defaults were updated<BR>";
+    $_SESSION['s_message_success'] .= _('The System Defaults were updated') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -119,11 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<h3>Domain Defaults</h3><?php
+<h3><?php echo _('Domain Defaults'); ?></h3><?php
 
 echo $form->showFormTop('');
 
-echo $form->showDropdownTop('new_default_registrar', 'Default Domain Registrar', '', '', '');
+echo $form->showDropdownTop('new_default_registrar', _('Default Domain Registrar'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM registrars
@@ -137,7 +137,7 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_registrar_account', 'Default Domain Registrar Account', '', '', '');
+echo $form->showDropdownTop('new_default_registrar_account', _('Default Domain Registrar Account'), '', '', '');
 $result = $pdo->query("
     SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
     FROM registrars AS r, registrar_accounts AS ra, owners AS o
@@ -152,7 +152,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_dns', 'Default DNS Profile', '', '', '');
+echo $form->showDropdownTop('new_default_dns', _('Default DNS Profile'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM dns
@@ -165,7 +165,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_host', 'Default Web Hosting Provider', '', '', '');
+echo $form->showDropdownTop('new_default_host', _('Default Web Hosting Provider'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM hosting
@@ -178,7 +178,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_ip_address_domains', 'Default IP Address', '', '', '');
+echo $form->showDropdownTop('new_default_ip_address_domains', _('Default IP Address'), '', '', '');
 $result = $pdo->query("
     SELECT id, ip, `name`
     FROM ip_addresses
@@ -191,7 +191,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_category_domains', 'Default Category', '', '', '');
+echo $form->showDropdownTop('new_default_category_domains', _('Default Category'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM categories
@@ -204,7 +204,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_owner_domains', 'Default Account Owner', '', '', '');
+echo $form->showDropdownTop('new_default_owner_domains', _('Default Account Owner'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM owners
@@ -220,7 +220,7 @@ echo $form->showDropdownBottom('<BR>'); ?>
 
 <h3>SSL Defaults</h3><?php
 
-echo $form->showDropdownTop('new_default_ssl_provider', 'Default SSL Provider', '', '', '');
+echo $form->showDropdownTop('new_default_ssl_provider', _('Default SSL Provider'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM ssl_providers
@@ -233,7 +233,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_ssl_provider_account', 'Default SSL Provider Account', '', '', '');
+echo $form->showDropdownTop('new_default_ssl_provider_account', _('Default SSL Provider Account'), '', '', '');
 $result = $pdo->query("
     SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
     FROM ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
@@ -248,7 +248,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_ssl_type', 'Default SSL Type', '', '', '');
+echo $form->showDropdownTop('new_default_ssl_type', _('Default SSL Type'), '', '', '');
 $result = $pdo->query("
     SELECT id, type
     FROM ssl_cert_types
@@ -261,7 +261,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_ip_address_ssl', 'Default IP Address', '', '', '');
+echo $form->showDropdownTop('new_default_ip_address_ssl', _('Default IP Address'), '', '', '');
 $result = $pdo->query("
     SELECT id, ip, `name`
     FROM ip_addresses
@@ -274,7 +274,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_category_ssl', 'Default Category', '', '', '');
+echo $form->showDropdownTop('new_default_category_ssl', _('Default Category'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM categories
@@ -287,7 +287,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_default_owner_ssl', 'Default Account Owner', '', '', '');
+echo $form->showDropdownTop('new_default_owner_ssl', _('Default Account Owner'), '', '', '');
 $result = $pdo->query("
     SELECT id, `name`
     FROM owners
@@ -300,7 +300,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showSubmitButton('Update System Defaults', '<BR>', '');
+echo $form->showSubmitButton(_('Update System Defaults'), '<BR>', '');
 
 echo $form->showFormBottom('');
 ?>

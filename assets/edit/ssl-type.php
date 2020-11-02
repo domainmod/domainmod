@@ -71,14 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ssltid = $new_ssltid;
 
-        $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Type %s updated'), $new_type) . '<BR>';
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Enter the Type name<BR>";
+        $_SESSION['s_message_danger'] .= _('Enter the Type name') . '<BR>';
 
     }
 
@@ -115,7 +115,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This Type has SSL Certificates associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -125,7 +125,7 @@ if ($del === 1) {
         $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Type %s deleted'), $new_type) . '<BR>';
 
         header("Location: ../ssl-types.php");
         exit;
@@ -144,13 +144,13 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_type', 'Type (100)', '', $unsanitize->text($new_type), '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_type', _('Type') . ' (100)', '', $unsanitize->text($new_type), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_ssltid', $ssltid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('SSL Type', $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1');
+$layout->deleteButton(_('SSL Type'), $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

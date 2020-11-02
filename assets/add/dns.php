@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= 'DNS Profile ' . $new_name . ' Added<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('DNS Profile %s added'), $new_name) . '<BR>';
 
         header("Location: ../dns.php");
         exit;
@@ -128,10 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$validate->text($new_name)) {
-            $_SESSION['s_message_danger'] .= 'Enter a name for the DNS profile<BR>';
+            $_SESSION['s_message_danger'] .= _('Enter a name for the DNS Profile') . '<BR>';
         }
         if (!$validate->text($new_dns1) || !$validate->text($new_dns2)) {
-            $_SESSION['s_message_danger'] .= 'Enter at least two DNS servers<BR>';
+            $_SESSION['s_message_danger'] .= _('Enter at least two DNS servers') . '<BR>';
         }
 
     }
@@ -148,124 +148,124 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Profile Name', '', $unsanitize->text($new_name), '255', '', '1', '', ''); ?>
+echo $form->showInputText('new_name', _('Profile Name'), '', $unsanitize->text($new_name), '255', '', '1', '', ''); ?>
 <table width="100%">
     <tbody>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns1', 'DNS Server 1', '', $unsanitize->text($new_dns1), '255', '', '1', '', ''); ?>
+            <?php echo $form->showInputText('new_dns1', _('DNS Server') . ' 1', '', $unsanitize->text($new_dns1), '255', '', '1', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip1', 'IP Address 1', '', $unsanitize->text($new_ip1), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip1', _('IP Address') . ' 1', '', $unsanitize->text($new_ip1), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns2', 'DNS Server 2', '', $unsanitize->text($new_dns2), '255', '', '1', '', ''); ?>
+            <?php echo $form->showInputText('new_dns2', _('DNS Server') . ' 2', '', $unsanitize->text($new_dns2), '255', '', '1', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip2', 'IP Address 2', '', $unsanitize->text($new_ip2), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip2', _('IP Address') . ' 2', '', $unsanitize->text($new_ip2), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns3', 'DNS Server 3', '', $unsanitize->text($new_dns3), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns3', _('DNS Server') . ' 3', '', $unsanitize->text($new_dns3), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip3', 'IP Address 3', '', $unsanitize->text($new_ip3), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip3', _('IP Address') . ' 3', '', $unsanitize->text($new_ip3), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns4', 'DNS Server 4', '', $unsanitize->text($new_dns4), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns4', _('DNS Server') . ' 4', '', $unsanitize->text($new_dns4), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip4', 'IP Address 4', '', $unsanitize->text($new_ip4), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip4', _('IP Address') . ' 4', '', $unsanitize->text($new_ip4), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns5', 'DNS Server 5', '', $unsanitize->text($new_dns5), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns5', _('DNS Server') . ' 5', '', $unsanitize->text($new_dns5), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip5', 'IP Address 5', '', $unsanitize->text($new_ip5), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip5', _('IP Address') . ' 5', '', $unsanitize->text($new_ip5), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns6', 'DNS Server 6', '', $unsanitize->text($new_dns6), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns6', _('DNS Server') . ' 6', '', $unsanitize->text($new_dns6), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip6', 'IP Address 6', '', $unsanitize->text($new_ip6), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip6', _('IP Address') . ' 6', '', $unsanitize->text($new_ip6), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns7', 'DNS Server 7', '', $unsanitize->text($new_dns7), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns7', _('DNS Server') . ' 7', '', $unsanitize->text($new_dns7), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip7', 'IP Address 7', '', $unsanitize->text($new_ip7), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip7', _('IP Address') . ' 7', '', $unsanitize->text($new_ip7), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns8', 'DNS Server 8', '', $unsanitize->text($new_dns8), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns8', _('DNS Server') . ' 8', '', $unsanitize->text($new_dns8), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip8', 'IP Address 8', '', $unsanitize->text($new_ip8), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip8', _('IP Address') . ' 8', '', $unsanitize->text($new_ip8), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns9', 'DNS Server 9', '', $unsanitize->text($new_dns9), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns9', _('DNS Server') . ' 9', '', $unsanitize->text($new_dns9), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip9', 'IP Address 9', '', $unsanitize->text($new_ip9), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip9', _('IP Address') . ' 9', '', $unsanitize->text($new_ip9), '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns10', 'DNS Server 10', '', $unsanitize->text($new_dns10), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns10', _('DNS Server') . ' 10', '', $unsanitize->text($new_dns10), '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip10', 'IP Address 10', '', $unsanitize->text($new_ip10), '255', '', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip10', _('IP Address') . ' 10', '', $unsanitize->text($new_ip10), '255', '', '', '', ''); ?>
         </td>
     </tr>
     </tbody>
 </table>
 <?php
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add DNS Profile', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add DNS Profile'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>

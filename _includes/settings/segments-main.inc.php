@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Segment Filters";
-$breadcrumb = "Segments";
+$page_title = _('Segment Filters');
+$breadcrumb = _('Segments');
 $software_section = "segments";
 $software_section_logo = "fa-filter";
 $slug = "segments-main";

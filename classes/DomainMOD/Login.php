@@ -73,18 +73,19 @@ class Login
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
-                default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
-                default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
-                default_ssl_type, default_ssl_provider, expiration_emails, number_of_domains,
-                number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account,
-                display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host,
-                display_domain_ip, display_domain_host, display_domain_tld, display_domain_fee,
-                display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain,
-                display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee,
-                display_inactive_assets, display_dw_intro_page
-            FROM user_settings
-            WHERE user_id = :user_id");
+            SELECT us.default_language, us.default_currency, us.default_timezone, us.default_category_domains, us.default_category_ssl,
+                us.default_dns, us.default_host, us.default_ip_address_domains, us.default_ip_address_ssl, us.default_owner_domains,
+                us.default_owner_ssl, us.default_registrar, us.default_registrar_account, us.default_ssl_provider_account,
+                us.default_ssl_type, us.default_ssl_provider, us.expiration_emails, us.number_of_domains,
+                us.number_of_ssl_certs, us.display_domain_owner, us.display_domain_registrar, us.display_domain_account,
+                us.display_domain_expiry_date, us.display_domain_category, us.display_domain_dns, us.display_domain_host,
+                us.display_domain_ip, us.display_domain_host, us.display_domain_tld, us.display_domain_fee,
+                us.display_ssl_owner, us.display_ssl_provider, us.display_ssl_account, us.display_ssl_domain,
+                us.display_ssl_type, us.display_ssl_ip, us.display_ssl_category, us.display_ssl_expiry_date, us.display_ssl_fee,
+                us.display_inactive_assets, us.display_dw_intro_page, lang.name AS language_name
+            FROM user_settings AS us, languages AS lang
+            WHERE us.default_language = lang.language
+              AND us.user_id = :user_id");
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();

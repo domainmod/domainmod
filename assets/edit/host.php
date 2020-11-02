@@ -73,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-        $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Web Host %s updated'), $new_host) . '<BR>';
 
         header("Location: ../hosting.php");
         exit;
 
     } else {
 
-        if (!$validate->text($new_host)) $_SESSION['s_message_danger'] .= "Enter the web host's name<BR>";
+        if (!$validate->text($new_host)) $_SESSION['s_message_danger'] .= _("Enter the Web Host's name") . '<BR>';
 
     }
 
@@ -118,7 +118,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= "This Web Host has domains associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This Web Host has domains associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -128,7 +128,7 @@ if ($del === 1) {
         $stmt->bindValue('whid', $whid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Web Host %s deleted'), $new_host) . '<BR>';
 
         header("Location: ../hosting.php");
         exit;
@@ -147,14 +147,14 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_host', 'Web Host Name (100)', '', $unsanitize->text($new_host), '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_host', _('Web Host Name') . ' (100)', '', $unsanitize->text($new_host), '100', '', '1', '', '');
+echo $form->showInputText('new_url', _("Web Host's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_whid', $whid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Web Host', $new_host, 'host.php?whid=' . $whid . '&del=1');
+$layout->deleteButton(_('Web Host'), $new_host, 'host.php?whid=' . $whid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

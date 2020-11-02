@@ -68,7 +68,7 @@ if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
 
-    $export_file = $export->openFile('dw_potential_problems_report', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('dw_potential_problems_report'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -83,10 +83,7 @@ if ($export_data === 1) {
 
         foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
-            $row_contents = array(
-                "Accounts without a DNS Zone (" . $temp_accounts_without_a_dns_zone . ")",
-                $row_accounts_without_a_dns_zone->domain
-            );
+            $row_contents = array(sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone), $row_accounts_without_a_dns_zone->domain);
             $export->writeRow($export_file, $row_contents);
 
         }
@@ -101,10 +98,7 @@ if ($export_data === 1) {
 
         foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
 
-            $row_contents = array(
-                "DNS Zones without an Account (" . $temp_dns_zones_without_an_account . ")",
-                $row_dns_zones_without_an_account->domain
-            );
+            $row_contents = array(sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account), $row_dns_zones_without_an_account->domain);
             $export->writeRow($export_file, $row_contents);
 
         }
@@ -119,10 +113,7 @@ if ($export_data === 1) {
 
         foreach ($result_suspended_accounts as $row_suspended_accounts) {
 
-            $row_contents = array(
-                "Suspended Accounts (" . $temp_suspended_accounts . ")",
-                $row_suspended_accounts->domain
-            );
+            $row_contents = array(sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts), $row_suspended_accounts->domain);
             $export->writeRow($export_file, $row_contents);
 
         }
@@ -146,7 +137,7 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
 
-    <BR><a href="<?php echo $report_filename; ?>?export_data=1<?php echo $layout->showButton('button', 'Export'); ?></a>
+    <BR><a href="<?php echo $report_filename; ?>?export_data=1<?php echo $layout->showButton('button', _('Export')); ?></a>
     <BR><BR><?php
 }
 
@@ -160,7 +151,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
         } else { ?>
 
-            <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
+            <strong><?php echo sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone); ?></strong><BR><?php
 
             foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
@@ -245,7 +236,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
 } else {
 
-    echo '<BR>No results.<BR><BR>';
+    echo '<BR>' . _('No results.') . '<BR><BR>';
 
 }
 ?>

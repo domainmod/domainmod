@@ -48,7 +48,7 @@ class Enom
         } elseif ($command == 'autorenewal') {
             return $base_url . 'GetRenew&uid=' . $account_username . '&pw=' . $account_password . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

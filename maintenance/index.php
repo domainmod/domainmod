@@ -43,9 +43,9 @@ $system->authCheck();
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="update-conversions.php">Update Conversion Rates</a><BR><BR>
-<a href="update-domain-fees.php">Update Domain Fees</a><BR><BR>
-<a href="update-ssl-fees.php">Update SSL Fees</a><BR>
+<a href="update-conversions.php"><?php echo _('Update Conversion Rates'); ?></a><BR><BR>
+<a href="update-domain-fees.php"><?php echo _('Update Domain Fees'); ?></a><BR><BR>
+<a href="update-ssl-fees.php"><?php echo _('Update SSL Fees'); ?></a><BR>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

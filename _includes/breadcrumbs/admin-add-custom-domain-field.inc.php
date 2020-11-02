@@ -19,6 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/admin/">Admin</a></li>
-<li><a href="<?php echo $web_root; ?>/admin/domain-fields/">Custom Domain Fields</a></li>
+<li><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
+<li><a href="<?php echo $web_root; ?>/admin/domain-fields/"><?php echo _('Custom Domain Fields'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

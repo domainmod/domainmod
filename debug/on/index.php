@@ -48,10 +48,12 @@ $deeb->cnxx->query("UPDATE settings SET debug_mode = '1'");
 <body class="hold-transition skin-red sidebar-mini">
 <?php
 $page_align = 'center';
-require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-Debugging Mode is <strong><?php echo $layout->highlightText('red', 'ON'); ?></strong>
+require_once DIR_INC . '/layout/header-bare.inc.php';
+
+echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', strtoupper(_('On'))));
+?>
 <BR><BR>
-<a href="../off/">Turn Debugging Mode OFF</a>
+<a href="../off/"><?php echo _('Turn Debugging Mode') . ' ' . strtoupper(_('Off')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

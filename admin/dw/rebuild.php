@@ -54,7 +54,7 @@ if (DEMO_INSTALLATION == false) {
 
 } else {
 
-    $result_message = "Data Warehouse Rebuilt.";
+    $result_message = _('Data Warehouse Rebuilt.');
 
 }
 
@@ -62,13 +62,13 @@ if ($result_message !== false) {
 
     echo $result_message;
     echo '<BR><BR>';
-    echo '<a href="dw.php">' . $layout->showButton('button', 'Go To Data Warehouse') . '</a>';
+    echo '<a href="dw.php">' . $layout->showButton('button', _('Go To Data Warehouse')) . '</a>';
 
 } else {
 
-    echo 'There was a problem rebuilding the Data Warehouse.';
+    echo _('There was a problem rebuilding the Data Warehouse.');
     echo '<BR><BR>';
-    echo '<a href="rebuild.php">' . $layout->showButton('button', 'Try again') . '</a>';
+    echo '<a href="rebuild.php">' . $layout->showButton('button', _('Try again')) . '</a>';
 
 }
 ?>

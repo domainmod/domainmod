@@ -76,15 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
-        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('IP Address %s (%s) updated'), $new_name, $new_ip) . '<BR>';
 
         header("Location: ../ip-addresses.php");
         exit;
 
     } else {
 
-        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= "Enter a name for the IP Address<BR>";
-        if (!$validate->text($new_ip)) $_SESSION['s_message_danger'] .= "Enter the IP Address<BR>";
+        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= _('Enter a name for the IP Address') . '<BR>';
+        if (!$validate->text($new_ip)) $_SESSION['s_message_danger'] .= _('Enter the IP Address') . '<BR>';
 
     }
 
@@ -123,7 +123,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= "This IP Address has domains associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This IP Address has domains associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -133,7 +133,7 @@ if ($del === 1) {
         $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('IP Address %s (%s) deleted'), $new_name, $new_ip) . '<BR>';
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -152,15 +152,15 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'IP Address Name (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('new_ip', 'IP Address (100)', '', $unsanitize->text($new_ip), '100', '', '1', '', '');
-echo $form->showInputText('new_rdns', 'rDNS (100)', '', $unsanitize->text($new_rdns), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_name', _('IP Address Name') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_ip', _('IP Address') . ' (100)', '', $unsanitize->text($new_ip), '100', '', '1', '', '');
+echo $form->showInputText('new_rdns', _('rDNS') . ' (100)', '', $unsanitize->text($new_rdns), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_ipid', $ipid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('IP Address', $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1');
+$layout->deleteButton(_('IP Address'), $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

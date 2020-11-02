@@ -24,6 +24,7 @@
 define('DIR_ROOT', dirname(dirname(__FILE__)));
 define('DIR_INC', DIR_ROOT . '/_includes');
 define('DIR_TEMP', DIR_ROOT . '/temp');
+define('DIR_LOCALES', DIR_ROOT . '/locales');
 define('WEBROOT_THEME', '_includes/theme');
 define('EMAIL_ENCODING_TYPE', 'UTF-8'); // UTF-8 or iso-8859-1
 
@@ -38,6 +39,33 @@ if ($_SESSION['s_system_local_php_log'] == '1') {
     @ini_set("error_log", DIR_ROOT . "/domainmod.log");
 
 }
+
+// Language Settings
+if (isset($_SESSION['s_installation_language'])) {
+
+    define('DEFAULT_LANGUAGE', $_SESSION['s_installation_language']);
+
+} elseif (isset($_SESSION['s_default_language'])) {
+
+    define('DEFAULT_LANGUAGE', $_SESSION['s_default_language']);
+
+} elseif (isset($_ENV['LANG'])) {
+
+    define('DEFAULT_LANGUAGE', $_ENV['LANG']);
+
+} else {
+
+    define('DEFAULT_LANGUAGE', 'en_US.UTF-8');
+
+}
+define('DEFAULT_ENCODING_TYPE', 'UTF-8');
+define('LOCALES_DOMAIN', 'main');
+putenv("LANG=DEFAULT_LANGUAGE");
+putenv("LC_ALL=DEFAULT_LANGUAGE");
+setlocale(LC_ALL, DEFAULT_LANGUAGE);
+bindtextdomain(LOCALES_DOMAIN, DIR_LOCALES);
+bind_textdomain_codeset(LOCALES_DOMAIN, DEFAULT_ENCODING_TYPE);
+textdomain(LOCALES_DOMAIN);
 
 // For Troubleshooting -- Include the helper file if it exists
 if (file_exists(DIR_ROOT . '/helper.php')) {

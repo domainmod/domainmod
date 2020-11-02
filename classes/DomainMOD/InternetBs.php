@@ -40,7 +40,7 @@ class InternetBs
         } elseif ($command == 'info') {
             return $base_url . 'domain/Info?apiKey=' . $api_key . '&password=' . $api_secret . '&ResponseFormat=JSON&Domain=' . $domain;
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

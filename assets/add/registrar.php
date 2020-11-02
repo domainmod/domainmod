@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Added<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Registrar %s added'), $new_registrar) . '<BR>';
 
         if ($_SESSION['s_has_registrar'] != '1') {
 
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= "Enter the registrar name<BR>";
+        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= _('Enter the registrar name') . '<BR>';
 
     }
 
@@ -99,15 +99,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputText('new_registrar', _("Registrar's Name") . ' (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
+echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
     FROM api_registrars
     ORDER BY `name` ASC")->fetchAll();
 
-echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
+echo $form->showDropdownTop('new_api_registrar_id', _('API Support'), _('If the registrar has an API please select it from the list below.'), '', '');
 echo $form->showDropdownOption('0', 'n/a', '0');
 
 foreach ($result as $row) {
@@ -117,8 +117,8 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add Domain Registrar', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add Domain Registrar'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

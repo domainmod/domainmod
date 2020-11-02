@@ -54,7 +54,7 @@ try {
 
 } catch (Exception $e) {
 
-    $log_message = 'Unable to backup DomainMOD data';
+    $log_message = sprintf('Unable to backup %s data', SOFTWARE_TITLE);
     $log_extra = array('Error' => $e);
     $log->critical($log_message, $log_extra);
 

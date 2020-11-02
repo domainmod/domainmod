@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Web Hosting Providers";
-$breadcrumb = "Hosting";
+$page_title = _('Web Hosting Providers');
+$breadcrumb = _('Hosting');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-hosting";

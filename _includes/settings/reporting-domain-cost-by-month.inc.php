@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domain Cost by Month Report";
-$breadcrumb = "Domain Cost by Month";
+$page_title = _('Domain Cost by Month Report');
+$breadcrumb = _('Domain Cost by Month');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-month";

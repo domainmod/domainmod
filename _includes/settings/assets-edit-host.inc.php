@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit Web Host";
-$breadcrumb = "Edit";
+$page_title = _('Edit Web Host');
+$breadcrumb = _('Edit');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-edit-host";

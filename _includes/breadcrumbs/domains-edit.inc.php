@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/domains/">Domains</a></li>
+<li><a href="<?php echo $web_root; ?>/domains/"><?php echo _('Domains'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

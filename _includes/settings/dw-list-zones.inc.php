@@ -22,14 +22,14 @@
 <?php
 if ($_SESSION['s_dw_view_all'] == "1") {
 
-    $page_title = "Listing All DNS Zones & Records";
+    $page_title = _('Listing All DNS Zones & Records');
 
 } else {
 
-    $page_title = 'Listing DNS Zones & Records on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
+    $page_title = sprintf(_('Listing DNS Zones & Records on %s (%s)'), $_SESSION['s_dw_server_name'], $_SESSION['s_dw_server_host']);
 
 }
-$breadcrumb = "Zones";
+$breadcrumb = _('Zones');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-list-zones";

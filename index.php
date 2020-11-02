@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
         $log->warning($log_message, $log_extra);
 
-        $_SESSION['s_message_danger'] .= "Login Failed<BR>";
+        $_SESSION['s_message_danger'] .= _('Login Failed') . '<BR>';
 
     }
 
@@ -130,12 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         if ($new_username == "" && $new_password == "") {
 
-            $_SESSION['s_message_danger'] .= "Enter your username & password<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter your username & password') . '<BR>';
 
         } elseif ($new_username == "" || $new_password == "") {
 
-            if ($new_username == "") $_SESSION['s_message_danger'] .= "Enter your username<BR>";
-            if ($new_password == "") $_SESSION['s_message_danger'] .= "Enter your password<BR>";
+            if ($new_username == "") $_SESSION['s_message_danger'] .= _('Enter your username') . '<BR>';
+            if ($new_password == "") $_SESSION['s_message_danger'] .= _('Enter your password') . '<BR>';
 
         }
 
@@ -170,18 +170,18 @@ if ($new_username == "") { ?>
 echo $form->showFormTop('');
 
 if (DEMO_INSTALLATION == true) { ?>
-    <strong>Demo Username:</strong> demo<BR>
-    <strong>Demo Password:</strong> demo<BR><BR><?php
+    <strong><?php echo _('Demo Username'); ?>:</strong> demo<BR>
+    <strong><?php echo _('Demo Password'); ?>:</strong> demo<BR><BR><?php
 }
 
-echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
-echo $form->showInputText('new_password', 'Password', '', '', '72', '1', '', '', '');
-echo $form->showSubmitButton('Login', '', '');
+echo $form->showInputText('new_username', _('Username'), '', $new_username, '20', '', '', '', '');
+echo $form->showInputText('new_password', _('Password'), '', '', '72', '1', '', '', '');
+echo $form->showSubmitButton(_('Login'), '', '');
 echo $form->showFormBottom('');
 
 if (DEMO_INSTALLATION == false) { ?>
 
-    <BR><a href="reset.php">Forgot your Password?</a><?php
+    <BR><a href="reset.php"><?php echo _('Forgot your Password') . '?'; ?></a><?php
 
 }
 ?>

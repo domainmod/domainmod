@@ -68,7 +68,7 @@ if ($new_username != '') {
 
     if (!$result || $user_count > 1) {
 
-        $_SESSION['s_message_danger'] .= 'The password could not be reset due to an invalid username.<BR>';
+        $_SESSION['s_message_danger'] .= _('The password could not be reset due to an invalid username.') . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -94,7 +94,7 @@ if ($new_username != '') {
 
         if ($display == '1') {
 
-            $_SESSION['s_message_success'] .= 'The new password for ' . $result->username . ' is ' . $new_password . '<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('The new password for %s is %s') . $result->username, $new_password) . '<BR>';
 
         } else {
 
@@ -103,7 +103,7 @@ if ($new_username != '') {
             $username = $result->username;
             $email_address = $result->email_address;
             require_once DIR_INC . '/email/send-new-password.inc.php';
-            $_SESSION['s_message_success'] .= 'The password has been reset and emailed to the account holder<BR>';
+            $_SESSION['s_message_success'] .= _('The password has been reset and emailed to the account holder') . '<BR>';
 
         }
 
@@ -116,7 +116,7 @@ if ($new_username != '') {
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        if ($new_username == '') $_SESSION['s_message_danger'] .= 'Enter the username<BR>';
+        if ($new_username == '') $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
 
         header("Location: index.php");
         exit;

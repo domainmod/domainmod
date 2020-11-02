@@ -49,7 +49,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dns_profile_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('dns_profile_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -57,36 +57,36 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Status',
-        'DNS Profile',
-        'DNS Servers',
-        'Domains',
-        'Default DNS Profile?',
-        'DNS Server 1',
-        'IP Address 1',
-        'DNS Server 2',
-        'IP Address 2',
-        'DNS Server 3',
-        'IP Address 3',
-        'DNS Server 4',
-        'IP Address 4',
-        'DNS Server 5',
-        'IP Address 5',
-        'DNS Server 6',
-        'IP Address 6',
-        'DNS Server 7',
-        'IP Address 7',
-        'DNS Server 8',
-        'IP Address 8',
-        'DNS Server 9',
-        'IP Address 9',
-        'DNS Server 10',
-        'IP Address 10',
-        'Notes',
-        'Creation Type',
-        'Created By',
-        'Inserted',
-        'Updated'
+        _('Status'),
+        _('DNS Profile'),
+        _('DNS Servers'),
+        _('Domains'),
+        _('Default DNS Profile') . '?',
+        _('DNS Server') . ' 1',
+        _('IP Address') . ' 1',
+        _('DNS Server') . ' 2',
+        _('IP Address') . ' 2',
+        _('DNS Server') . ' 3',
+        _('IP Address') . ' 3',
+        _('DNS Server') . ' 4',
+        _('IP Address') . ' 4',
+        _('DNS Server') . ' 5',
+        _('IP Address') . ' 5',
+        _('DNS Server') . ' 6',
+        _('IP Address') . ' 6',
+        _('DNS Server') . ' 7',
+        _('IP Address') . ' 7',
+        _('DNS Server') . ' 8',
+        _('IP Address') . ' 8',
+        _('DNS Server') . ' 9',
+        _('IP Address') . ' 9',
+        _('DNS Server') . ' 10',
+        _('IP Address') . ' 10',
+        _('Notes'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -112,18 +112,18 @@ if ($export_data === 1) {
 
             if ($total_domains >= 1) {
 
-                $status = 'Active';
+                $status = _('Active');
 
             } else {
 
-                $status = 'Inactive';
+                $status = _('Inactive');
 
             }
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -178,9 +178,10 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all the DNS Profiles that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add/dns.php"><?php echo $layout->showButton('button', 'Add DNS Profile'); ?></a>
-<a href="dns.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('DNS Profiles'), SOFTWARE_TITLE); ?><BR>
+<BR>
+<a href="add/dns.php"><?php echo $layout->showButton('button', _('Add DNS Profile')); ?></a>
+<a href="dns.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 if ($result) { ?>
 
@@ -188,9 +189,9 @@ if ($result) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Name</th>
-            <th>Servers</th>
-            <th>Domains</th>
+            <th><?php echo _('Name'); ?></th>
+            <th><?php echo _('Servers'); ?></th>
+            <th><?php echo _('Domains'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -235,11 +236,11 @@ if ($result) { ?>
         </tbody>
     </table>
 
-    <strong>*</strong> = Default (<a href="../settings/defaults/">set defaults</a>)<BR><BR><?php
+    <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo strtolower(_('Set Defaults')); ?></a>)<BR><BR><?php
 
 } else { ?>
 
-    <BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.<?php
+    <BR><?php echo _("You don't currently have any DNS Profiles."); ?> <a href="add/dns.php"><?php echo _('Click here to add one'); ?></a>.<?php
 
 } ?>
 <?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>

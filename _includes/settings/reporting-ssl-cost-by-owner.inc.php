@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "SSL Cost by Owner Report";
-$breadcrumb = "SSL Cost by Owner";
+$page_title = _('SSL Cost by Owner Report');
+$breadcrumb = _('SSL Cost by Owner');
 $software_section = "reporting";
 $software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-owner";

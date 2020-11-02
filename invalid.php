@@ -43,9 +43,9 @@ require_once DIR_INC . '/debug.inc.php';
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-The page you're trying to access is invalid.<BR>
+<?php echo _("The page you're trying to access is invalid."); ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/">Go home</a>
+<a href="<?php echo $web_root; ?>/"><?php echo _('Go home'); ?></a>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

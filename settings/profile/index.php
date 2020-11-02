@@ -36,6 +36,7 @@ $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $currency = new DomainMOD\Currency();
 $conversion = new DomainMOD\Conversion();
+$language = new DomainMOD\Language();
 
 $timestamp = $time->stamp();
 
@@ -49,6 +50,7 @@ $pdo = $deeb->cnxx;
 $new_first_name = $sanitize->text($_POST['new_first_name']);
 $new_last_name = $sanitize->text($_POST['new_last_name']);
 $new_email_address = $sanitize->text($_POST['new_email_address']);
+$new_language = $sanitize->text($_POST['new_language']);
 $new_currency = $sanitize->text($_POST['new_currency']);
 $new_timezone = $sanitize->text($_POST['new_timezone']);
 $new_expiration_emails = (int) $_POST['new_expiration_emails'];
@@ -67,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if (count($result) !== 1) { // If there isn't exactly one user result
 
-        $_SESSION['s_message_danger'] .= "Your profile could not be updated<BR>";
-        $_SESSION['s_message_danger'] .= "If the problem persists please contact your administrator<BR>";
+        $_SESSION['s_message_danger'] .= _('Your profile could not be updated') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('If the problem persists please contact your administrator') . '<BR>';
 
     } else {
 
@@ -93,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $stmt->execute();
 
             $stmt = $pdo->prepare("
-                SELECT default_currency, default_timezone
+                SELECT default_language, default_currency, default_timezone
                 FROM user_settings
                 WHERE user_id = :user_id");
             $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
@@ -103,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             if ($result) {
 
+                $saved_language = $result->default_language;
                 $saved_currency = $result->default_currency;
                 $saved_timezone = $result->default_timezone;
 
@@ -144,11 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             $stmt = $pdo->prepare("
                 UPDATE user_settings
-                SET default_currency = :new_currency,
+                SET default_language = :new_language,
+                    default_currency = :new_currency,
                     default_timezone = :new_timezone,
                     expiration_emails = :new_expiration_emails,
                     update_time = :timestamp
                 WHERE user_id = :user_id");
+            $stmt->bindValue('new_language', $new_language, PDO::PARAM_STR);
             $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
             $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
             $stmt->bindValue('new_expiration_emails', $new_expiration_emails, PDO::PARAM_INT);
@@ -159,6 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $_SESSION['s_first_name'] = $new_first_name;
             $_SESSION['s_last_name'] = $new_last_name;
             $_SESSION['s_email_address'] = $new_email_address;
+            $_SESSION['s_default_language'] = $new_language;
+            $_SESSION['s_default_language_name'] = $language->getLangName($new_language);
             $_SESSION['s_default_currency'] = $new_currency;
             $_SESSION['s_default_timezone'] = $new_timezone;
             $_SESSION['s_expiration_emails'] = $new_expiration_emails;
@@ -169,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Your profile was updated<BR>";
+            $_SESSION['s_message_success'] .= _('Your profile was updated') . '<BR>';
 
             header("Location: index.php");
             exit;
@@ -194,9 +201,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_email_address == "") $_SESSION['s_message_danger'] .= "Your email address could not be updated<BR>";
-        if ($new_first_name == "") $_SESSION['s_message_danger'] .= "Your first name could not be updated<BR>";
-        if ($new_last_name == "") $_SESSION['s_message_danger'] .= "Your last name could not be updated<BR>";
+        if ($new_email_address == "") $_SESSION['s_message_danger'] .= _('Your email address could not be updated') . '<BR>';
+        if ($new_first_name == "") $_SESSION['s_message_danger'] .= _('Your first name could not be updated') . '<BR>';
+        if ($new_last_name == "") $_SESSION['s_message_danger'] .= _('Your last name could not be updated') . '<BR>';
 
     }
 
@@ -219,23 +226,38 @@ if ($new_first_name != "") {
 } else {
     $temp_first_name = $_SESSION['s_first_name'];
 }
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($temp_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_first_name', _('First Name') . ' (50)', '', $unsanitize->text($temp_first_name), '50', '', '1', '', '');
 
 if ($new_last_name != "") {
     $temp_last_name = $new_last_name;
 } else {
     $temp_last_name = $_SESSION['s_last_name'];
 }
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $unsanitize->text($temp_last_name), '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', _('Last Name') . ' (50)', '', $unsanitize->text($temp_last_name), '50', '', '1', '', '');
 
 if ($new_email_address != "") {
     $temp_email_address = $new_email_address;
 } else {
     $temp_email_address = $_SESSION['s_email_address'];
 }
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($temp_email_address), '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($temp_email_address), '100', '', '1', '', '');
 
-echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
+echo $form->showDropdownTop('new_language', _('Language'), '', '', '');
+
+$result = $pdo->query("
+    SELECT name, language
+    FROM languages
+    ORDER BY name")->fetchAll();
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->language, $row->name . ' [' . $row->language . ']', $_SESSION['s_default_language']);
+
+}
+
+echo $form->showDropdownBottom('');
+
+echo $form->showDropdownTop('new_currency', _('Currency'), '', '', '');
 
 $result = $pdo->query("
     SELECT currency, `name`, symbol
@@ -250,7 +272,7 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
+echo $form->showDropdownTop('new_timezone', _('Time Zone'), '', '', '');
 
 $result = $pdo->query("
     SELECT timezone
@@ -270,12 +292,12 @@ if ($new_expiration_emails !== 0) {
 } else {
     $temp_expiration_emails = $_SESSION['s_expiration_emails'];
 }
-echo $form->showRadioTop('Subscribe to Domain & SSL Certificate expiration emails?', '', '');
-echo $form->showRadioOption('new_expiration_emails', '1', 'Yes', $temp_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_expiration_emails', '0', 'No', $temp_expiration_emails, '', '');
+echo $form->showRadioTop(_('Subscribe to Domain & SSL Certificate expiration emails?'), '', '');
+echo $form->showRadioOption('new_expiration_emails', '1', _('Yes'), $temp_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_expiration_emails', '0', _('No'), $temp_expiration_emails, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showSubmitButton('Update Profile', '', '');
+echo $form->showSubmitButton(_('Update Profile'), '', '');
 echo $form->showFormBottom('');
 ?>
 

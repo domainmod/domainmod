@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Custom Domain Fields";
-$breadcrumb = "Custom Domain Fields";
+$page_title = _('Custom Domain Fields');
+$breadcrumb = _('Custom Domain Fields');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-custom-domain-fields";

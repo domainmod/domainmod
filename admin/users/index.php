@@ -42,7 +42,7 @@ $pdo = $deeb->cnxx;
 $export_data = (int) $_GET['export_data'];
 
 $result = $pdo->query("
-    SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.read_only, u.active, u.number_of_logins, u.last_login, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+    SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.read_only, u.active, u.number_of_logins, u.last_login, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_language, us.default_currency, us.default_timezone
     FROM users AS u, user_settings AS us
     WHERE u.id = us.user_id
     ORDER BY u.first_name, u.last_name, u.username, u.email_address")->fetchAll();
@@ -50,7 +50,7 @@ $result = $pdo->query("
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('user_list', strtotime($time->stamp()));
+    $export_file = $export->openFile(_('user_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -58,21 +58,22 @@ if ($export_data === 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Status',
-        'First Name',
-        'Last Name',
-        'Username',
-        'Email Address',
-        'Admin?',
-        'Read-only?',
-        'Default Currency',
-        'Default Timezone',
-        'Number of Logins',
-        'Last Login',
-        'Creation Type',
-        'Created By',
-        'Inserted',
-        'Updated'
+        _('Status'),
+        _('First Name'),
+        _('Last Name'),
+        _('Username'),
+        _('Email Address'),
+        _('Admin') . '?',
+        _('Read-Only') . '?',
+        _('Default Language'),
+        _('Default Currency'),
+        _('Default Timezone'),
+        _('Number of Logins'),
+        _('Last Login'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -102,18 +103,18 @@ if ($export_data === 1) {
 
             if ($row->active == '1') {
 
-                $status = 'Active';
+                $status = _('Active');
 
             } else {
 
-                $status = 'Inactive';
+                $status = _('Inactive');
 
             }
 
             $creation_type = $system->getCreationType($row->creation_type_id);
 
             if ($row->created_by == '0') {
-                $created_by = 'Unknown';
+                $created_by = _('Unknown');
             } else {
                 $user = new DomainMOD\User();
                 $created_by = $user->getFullName($row->created_by);
@@ -127,6 +128,7 @@ if ($export_data === 1) {
                 $row->email_address,
                 $is_admin,
                 $is_read_only,
+                $row->default_language,
                 $row->default_currency,
                 $row->default_timezone,
                 $row->number_of_logins,
@@ -154,9 +156,10 @@ if ($export_data === 1) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-Below is a list of all users that have access to <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
-<a href="add.php"><?php echo $layout->showButton('button', 'Add User'); ?></a>
-<a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<?php echo sprintf(_('Below is a list of all users that have access to %s.'), SOFTWARE_TITLE); ?><BR>
+<BR>
+<a href="add.php"><?php echo $layout->showButton('button', _('Add User')); ?></a>
+<a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
 if ($result) { ?>
 
@@ -164,9 +167,9 @@ if ($result) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>User</th>
-            <th>Username</th>
-            <th>Email</th>
+            <th><?php echo _('User'); ?></th>
+            <th><?php echo _('Username'); ?></th>
+            <th><?php echo _('Email'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -178,7 +181,7 @@ if ($result) { ?>
             <td>
                 <a <?php if ($row->active != '1') { ?>style="text-decoration: line-through;"
                    <?php } ?>href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?>
-                    &nbsp;<?php echo $row->last_name; ?></a><?php if ($row->admin == '1') echo "&nbsp;&nbsp;<strong>A</strong>"; ?><?php if ($row->read_only == '1') echo "&nbsp;&nbsp;<strong>R</strong>"; ?>
+                    &nbsp;<?php echo $row->last_name; ?></a><?php if ($row->admin == '1') echo "&nbsp;&nbsp;<strong>" . _('A') . "</strong>"; ?><?php if ($row->read_only == '1') echo "&nbsp;&nbsp;<strong>" . _('R') . "</strong>"; ?>
             </td>
             <td>
                 <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
@@ -193,8 +196,8 @@ if ($result) { ?>
         </tbody>
     </table>
 
-    <strong>A</strong> = Admin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <strong>R</strong> = Read-Only&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="text-decoration: line-through;">STRIKE</span> = Inactive<?php
+    <strong><?php echo _('A'); ?></strong> = <?php echo _('Admin'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <strong><?php echo _('R'); ?></strong> = <?php echo _('Read-Only'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="text-decoration: line-through;"><?php echo strtoupper(_('Strike')); ?></span> = <?php echo _('Inactive'); ?><?php
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

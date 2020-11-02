@@ -71,14 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $oid = $new_oid;
 
-        $_SESSION['s_message_success'] .= "Owner " . $new_owner . " Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Owner %s updated'), $new_owner) . '<BR>';
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Enter the owner's name<BR>";
+        $_SESSION['s_message_danger'] .= _("Enter the owner's name") . '<BR>';
 
     }
 
@@ -169,21 +169,19 @@ if ($del === 1) {
     ) {
 
         if ($existing_registrar_accounts > 0) {
-            $_SESSION['s_message_danger'] .= "This Owner has registrar accounts associated with it and cannot be
-                deleted<BR>";
+            $_SESSION['s_message_danger'] .= _('This Owner has registrar accounts associated with it and cannot be deleted') . '<BR>';
         }
 
         if ($existing_domains > 0) {
-            $_SESSION['s_message_danger'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= _('This Owner has domains associated with it and cannot be deleted') . '<BR>';
         }
 
         if ($existing_ssl_accounts > 0) {
-            $_SESSION['s_message_danger'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= _('This Owner has SSL accounts associated with it and cannot be deleted') . '<BR>';
         }
 
         if ($existing_ssl_certs > 0) {
-            $_SESSION['s_message_danger'] .= "This Owner has SSL certificates associated with it and cannot be
-                deleted<BR>";
+            $_SESSION['s_message_danger'] .= _('This Owner has SSL certificates associated with it and cannot be deleted') . '<BR>';
         }
 
     } else {
@@ -194,7 +192,7 @@ if ($del === 1) {
         $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Owner " . $new_owner . " Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Owner %s deleted'), $new_owner) . '<BR>';
 
         header("Location: ../account-owners.php");
         exit;
@@ -213,13 +211,13 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_owner', 'Owner Name (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_owner', _('Owner Name') . ' (100)', '', $unsanitize->text($new_owner), '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_oid', $oid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Owner', $new_owner, 'account-owner.php?oid=' . $oid . '&del=1');
+$layout->deleteButton(_('Owner'), $new_owner, 'account-owner.php?oid=' . $oid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

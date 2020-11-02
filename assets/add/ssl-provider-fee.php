@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_type_id === 0) {
 
-        if ($new_type_id === 0) $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+        if ($new_type_id === 0) $_SESSION['s_message_danger'] .= _('Choose the SSL Type') . '<BR>';
 
     } else {
 
@@ -80,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($fee_id) {
 
-            $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists [<a href=\'' . WEB_ROOT .
+            $_SESSION['s_message_danger'] .= _('A fee for this SSL Type already exists') . ' [<a href=\'' . WEB_ROOT .
                 '/assets/edit/ssl-provider-fee.php?sslpid=' . $sslpid . '&fee_id=' . urlencode($fee_id) .
-                '\'>edit fee</a>]<BR>';
+                '\'>' . strtolower(_('Edit Fee')) . '</a>]<BR>';
 
         } else {
 
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->commit();
 
-                $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been added<BR>";
+                $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added'), $temp_type) . '<BR>';
 
                 header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
                 exit;
@@ -173,15 +173,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', 'Back to SSL Provider Fees'); ?></a><BR><BR>
+<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', _('Back to SSL Provider Fees')); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>
-<strong>SSL Provider</strong><BR>
+<strong><?php echo _('SSL Provider'); ?></strong><BR>
 <?php echo $assets->getSslProvider($sslpid); ?><BR><BR><?php
 
-echo $form->showDropdownTop('new_type_id', 'SSL Type', '', '1', '');
-echo $form->showDropdownOption('', 'Choose an SSL Type', '');
+echo $form->showDropdownTop('new_type_id', _('SSL Type'), '', '1', '');
+echo $form->showDropdownOption('', _('Choose an SSL Type'), '');
 $result = $pdo->query("
     SELECT id, type
     FROM ssl_cert_types
@@ -194,11 +194,11 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
+echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '10', '', '', '', '');
 
-echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
+echo $form->showDropdownTop('new_currency', _('Currency'), '', '', '');
 $result = $pdo->query("
     SELECT id, currency, `name`, symbol
     FROM currencies
@@ -213,7 +213,7 @@ foreach ($result as $row) {
 echo $form->showDropdownBottom('');
 
 
-echo $form->showSubmitButton('Add Fee', '', '');
+echo $form->showSubmitButton(_('Add Fee'), '', '');
 echo $form->showInputHidden('sslpid', $sslpid);
 echo $form->showFormBottom('');
 ?>

@@ -44,9 +44,9 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="clear-queue-processing.php">Clear Queue Processing</a><BR><BR>
-<a href="clear-queues.php">Clear Queues</a> (<strong>WARNING:</strong> This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.)<BR><BR>
-<a href="clear-log.php">Clear Debug Log</a><BR>
+<a href="clear-queue-processing.php"><?php echo _('Clear Queue Processing'); ?></a><BR><BR>
+<a href="clear-queues.php"><?php echo _('Clear Queues'); ?></a> (<strong><?php echo strtoupper(_('Warning')); ?>:</strong> <?php echo _('This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.'); ?><BR><BR>
+<a href="clear-log.php"><?php echo _('Clear Debug Log'); ?></a><BR>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

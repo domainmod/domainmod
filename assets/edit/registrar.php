@@ -74,14 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Updated<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Registrar %s updated'), $new_registrar) . '<BR>';
 
         header("Location: ../registrars.php");
         exit;
 
     } else {
 
-        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= "Enter the registrar name<BR>";
+        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= _('Enter the Registrar name') . '<BR>';
 
     }
 
@@ -141,8 +141,8 @@ if ($del === 1) {
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
-        if ($existing_registrar_accounts > 0) $_SESSION['s_message_danger'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted<BR>";
-        if ($existing_domains > 0) $_SESSION['s_message_danger'] .= "This Registrar has domains associated with it and cannot be deleted<BR>";
+        if ($existing_registrar_accounts > 0) $_SESSION['s_message_danger'] .= _('This Registrar has Registrar Accounts associated with it and cannot be deleted') . '<BR>';
+        if ($existing_domains > 0) $_SESSION['s_message_danger'] .= _('This Registrar has domains associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -172,7 +172,7 @@ if ($del === 1) {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('Registrar %s deleted'), $new_registrar) . '<BR>';
 
             header("Location: ../registrars.php");
             exit;
@@ -205,8 +205,8 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
-echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputText('new_registrar', _('Registrar Name') . ' (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
+echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
@@ -215,7 +215,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
+    echo $form->showDropdownTop('new_api_registrar_id', _('API Support'), _('If the registrar has an API please select it from the list below.'), '', '');
 
     echo $form->showDropdownOption('0', 'n/a', '0');
 
@@ -229,12 +229,12 @@ if ($result) {
 
 }
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('rid', $rid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('Registrar', $new_registrar, 'registrar.php?rid=' . $rid . '&del=1');
+$layout->deleteButton(_('Registrar'), $new_registrar, 'registrar.php?rid=' . $rid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

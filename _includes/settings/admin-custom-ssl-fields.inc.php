@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Custom SSL Fields";
-$breadcrumb = "Custom SSL Fields";
+$page_title = _('Custom SSL Fields');
+$breadcrumb = _('Custom SSL Fields');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-custom-ssl-fields";

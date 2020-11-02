@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Domains";
-$breadcrumb = "Domains";
+$page_title = _('Domains');
+$breadcrumb = _('Domains');
 $software_section = "domains";
 $software_section_logo = "fa-sitemap";
 $slug = "domains-main";

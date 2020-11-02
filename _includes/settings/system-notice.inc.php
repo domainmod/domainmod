@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Notice";
-$breadcrumb = "Notice";
+$page_title = _('Notice');
+$breadcrumb = $page_title;
 $software_section = "system";
 $slug = "system-notice";

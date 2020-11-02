@@ -87,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($existing_username === 1 || $existing_email_address === 1) {
 
-        if ($existing_username === 1) $_SESSION['s_message_danger'] .= 'A user with that username already exists<BR>';
-        if ($existing_email_address === 1) $_SESSION['s_message_danger'] .= 'A user with that email address already exists<BR>';
+        if ($existing_username === 1) $_SESSION['s_message_danger'] .= _('A user with that username already exists') . '<BR>';
+        if ($existing_email_address === 1) $_SESSION['s_message_danger'] .= _('A user with that email address already exists') . '<BR>';
 
     } else {
 
@@ -163,14 +163,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username .
-                " / " . $new_password . ') Added.<BR><BR>
-            
-            You can either manually email the above credentials to the user, or you can <a
-                href="reset-password.php?new_username=' . $new_username . '">click here</a> to have ' . SOFTWARE_TITLE .
-                ' email them for you.<BR><BR>
-                
-            Use the below form to customize the new user\'s account.<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s / %s) added.'), $new_first_name, $new_last_name, $new_username, $new_password) . '<BR><BR>';
+
+            $_SESSION['s_message_success'] .= sprintf(_('You can either manually email the above credentials to the user, or you can %sclick here%s to have %s email them for you.'), '<a href="reset-password.php?new_username=' . $new_username . '">', '</a>', SOFTWARE_TITLE) . '<BR><BR>';
+
+            $_SESSION['s_message_success'] .= _("Use the below form to customize the new user's account.") . '<BR>';
 
             header("Location: edit.php?uid=" . $temp_user_id);
             exit;
@@ -195,10 +192,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_first_name == '') $_SESSION['s_message_danger'] .= 'Enter the new user\'s first name<BR>';
-        if ($new_last_name == '') $_SESSION['s_message_danger'] .= 'Enter the new user\'s last name<BR>';
-        if ($new_username == '') $_SESSION['s_message_danger'] .= 'Enter the new user\'s username<BR>';
-        if ($new_email_address == '') $_SESSION['s_message_danger'] .= 'Enter the new user\'s email address<BR>';
+        if ($new_first_name == '') $_SESSION['s_message_danger'] .= _("Enter the new user's first name") . '<BR>';
+        if ($new_last_name == '') $_SESSION['s_message_danger'] .= _("Enter the new user's last name") . '<BR>';
+        if ($new_username == '') $_SESSION['s_message_danger'] .= _("Enter the new user's username") . '<BR>';
+        if ($new_email_address == '') $_SESSION['s_message_danger'] .= _("Enter the new user's email address") . '<BR>';
 
     }
 
@@ -214,11 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $sanitize->text($new_last_name), '50', '', '1', '', '');
-echo $form->showInputText('new_username', 'Username (30)', '', $sanitize->text($new_username), '30', '', '1', '', '');
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $sanitize->text($new_email_address), '100', '', '1', '', '');
-echo $form->showSubmitButton('Add User', '', '');
+echo $form->showInputText('new_first_name', _('First Name') . ' (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', _('Last Name') . ' (50)', '', $sanitize->text($new_last_name), '50', '', '1', '', '');
+echo $form->showInputText('new_username', _('Username') . ' (30)', '', $sanitize->text($new_username), '30', '', '1', '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $sanitize->text($new_email_address), '100', '', '1', '', '');
+echo $form->showSubmitButton(_('Add User'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

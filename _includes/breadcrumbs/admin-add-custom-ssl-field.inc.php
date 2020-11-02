@@ -19,6 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/admin/">Admin</a></li>
-<li><a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a></li>
+<li><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
+<li><a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

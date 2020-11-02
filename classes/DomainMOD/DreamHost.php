@@ -40,7 +40,7 @@ class DreamHost
         if ($command == 'domainlist') {
             return $base_url . '&cmd=domain-list_registrations&format=json';
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

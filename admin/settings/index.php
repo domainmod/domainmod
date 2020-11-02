@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     $_SESSION['s_system_currency_converter'] = $new_currency_converter;
     $_SESSION['s_system_local_php_log'] = $new_local_php_log;
 
-    $_SESSION['s_message_success'] .= "The System Settings were updated<BR>";
+    $_SESSION['s_message_success'] .= _('The System Settings were updated') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -114,9 +114,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_full_url == "") $_SESSION['s_message_danger'] .= "Enter the full URL of your " . SOFTWARE_TITLE . " installation<BR>";
-        if ($new_email_address == "") $_SESSION['s_message_danger'] .= "Enter the system email address<BR>";
-        if ($new_expiration_days == "") $_SESSION['s_message_danger'] .= "Enter the number of days to display in expiration emails<BR>";
+        if ($new_full_url == "") $_SESSION['s_message_danger'] .= sprintf(_('Enter the full URL of your %s installation'), SOFTWARE_TITLE) . '<BR>';
+        if ($new_email_address == "") $_SESSION['s_message_danger'] .= _('Enter the system email address') . '<BR>';
+        if ($new_expiration_days == "") $_SESSION['s_message_danger'] .= _('Enter the number of days to display in expiration emails') . '<BR>';
 
     } else {
 
@@ -162,10 +162,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_full_url', 'Full ' . SOFTWARE_TITLE . ' URL (100)', 'Enter the full URL of your ' . SOFTWARE_TITLE . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $unsanitize->text($new_full_url), '100', '', '1', '', '');
-echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is monitored by the ' . SOFTWARE_TITLE . ' System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by ' . SOFTWARE_TITLE . '.', $unsanitize->text($new_email_address), '100', '', '1', '', '');
-echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '1', '', '');
-echo $form->showDropdownTop('new_email_signature', 'Email Signature', 'Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user\'s full name and email address. Use the below menu to choose the user that you would like to appear in your system\'s email signature.', '1', '');
+echo $form->showInputText('new_full_url', sprintf(_('Full %s URL'), SOFTWARE_TITLE) . ' (100)', sprintf(_('Enter the full URL of your %s installation, excluding the trailing slash (Example: http://example.com/domainmod)'), SOFTWARE_TITLE), $unsanitize->text($new_full_url), '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', _('System Email Address') . ' (100)', sprintf(_('This should be a valid email address that is monitored by the %s System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by %s.'), SOFTWARE_TITLE, SOFTWARE_TITLE), $unsanitize->text($new_email_address), '100', '', '1', '', '');
+echo $form->showInputText('new_expiration_days', _('Expiration Days to Display'), _('This is the number of days in the future to display on the Dashboard and in expiration emails.'), $new_expiration_days, '3', '', '1', '', '');
+echo $form->showDropdownTop('new_email_signature', _('Email Signature'), _("Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user's full name and email address. Use the below menu to choose the user that you would like to appear in your system's email signature."), '1', '');
 $result = $pdo->query("
     SELECT id, `first_name`, `last_name`
     FROM users
@@ -177,47 +177,49 @@ foreach ($result as $row) {
 
 }
 echo $form->showDropdownBottom('');
-echo $form->showDropdownTop('new_currency_converter', 'Currency Converter', 'Although it doesn\'t happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren\'t working properly, try a different source.', '', '');
-echo $form->showDropdownOption('era', 'Exchange Rates API', $new_currency_converter);
+echo $form->showDropdownTop('new_currency_converter', _('Currency Converter'), _("Although it doesn't happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren't working properly, try a different source."), '', '');
+echo $form->showDropdownOption('era', _('Exchange Rates API'), $new_currency_converter);
 echo $form->showDropdownBottom('');
-echo $form->showRadioTop('Large Mode', 'If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.', '');
-echo $form->showRadioOption('new_large_mode', '1', 'Enabled', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_large_mode', '0', 'Disabled', $new_large_mode, '', '');
+echo $form->showRadioTop(_('Large Mode'), _('If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.'), '');
+echo $form->showRadioOption('new_large_mode', '1', _('Enabled'), $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_large_mode', '0', _('Disabled'), $new_large_mode, '', '');
 echo $form->showRadioBottom('');
-echo $form->showRadioTop('Debugging Mode', 'Unless you\'re having problems with ' . SOFTWARE_TITLE . ' and support has asked you to turn this on, you should leave it turned off.', '');
-echo $form->showRadioOption('new_debug_mode', '1', 'Enabled', $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_debug_mode', '0', 'Disabled', $new_debug_mode, '', '');
+echo $form->showRadioTop(_('Debugging Mode'), sprintf(_("Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."), SOFTWARE_TITLE), '');
+echo $form->showRadioOption('new_debug_mode', '1', _('Enabled'), $new_debug_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_debug_mode', '0', _('Disabled'), $new_debug_mode, '', '');
 echo $form->showRadioBottom('');
-echo $form->showRadioTop('Local PHP Log', 'This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.<BR>' .
-    $layout->highlightText('red', 'WARNING:') . ' Only enable this feature temporarily for troubleshooting, and if you\'re asked to by ' . SOFTWARE_TITLE . ' support. Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your ' . SOFTWARE_TITLE . ' installation, which could allow them to compromise your system.', '');
-echo $form->showRadioOption('new_local_php_log', '1', 'Enabled', $new_local_php_log, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioTop(_('Local PHP Log'),
+    _('This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.') . '<BR>' .
+    $layout->highlightText('red', strtoupper(_('Warning'))) . ': ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
+    sprintf(_('Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your %s installation, which could allow them to compromise your system.'), SOFTWARE_TITLE), '');
+$form->showRadioOption('new_local_php_log', '1', 'Enabled', $new_local_php_log, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_local_php_log', '0', 'Disabled', $new_local_php_log, '', '');
 echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">
     <div class="box-header with-border">
         <h3 class="box-title" style="padding-top: 3px;">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;SMTP Server Settings
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;<?php echo _('SMTP Server Settings'); ?>
         </h3>
     </div>
     <div class="box-body"><?php
-        echo $form->showRadioTop('Use SMTP Server?', "If the instance of PHP running on your " . SOFTWARE_TITLE . " server isn't configured to send mail, you can use an external SMTP server to send system emails.", '');
-        echo $form->showRadioOption('new_use_smtp', '1', 'Yes', $new_use_smtp, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_use_smtp', '0', 'No', $new_use_smtp, '', '');
+        echo $form->showRadioTop(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), '');
+        echo $form->showRadioOption('new_use_smtp', '1', _('Yes'), $new_use_smtp, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+        echo $form->showRadioOption('new_use_smtp', '0', _('No'), $new_use_smtp, '', '');
         echo $form->showRadioBottom('');
-        echo $form->showInputText('new_smtp_server', 'SMTP Server (255)', 'If you plan on using an external SMTP server, enter the server name here.', $unsanitize->text($new_smtp_server), '100', '', '', '', '');
-        echo $form->showRadioTop('SMTP Server Protocol', '', '');
-        echo $form->showRadioOption('new_smtp_protocol', 'tls', 'TLS', $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_smtp_protocol', 'ssl', 'SSL', $new_smtp_protocol, '', '');
+        echo $form->showInputText('new_smtp_server', _('SMTP Server') . ' (255)', _('If you plan on using an external SMTP server, enter the server name here.'), $unsanitize->text($new_smtp_server), '100', '', '', '', '');
+        echo $form->showRadioTop(_('SMTP Server Protocol'), '', '');
+        echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+        echo $form->showRadioOption('new_smtp_protocol', 'ssl', _('SSL'), $new_smtp_protocol, '', '');
         echo $form->showRadioBottom('');
-        echo $form->showInputText('new_smtp_port', 'SMTP Server Port (5)', '', $new_smtp_port, '5', '', '', '', '');
-        echo $form->showInputText('new_smtp_email_address', 'SMTP Email Address (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
-        echo $form->showInputText('new_smtp_username', 'SMTP Username (100)', 'This is usually the same as the SMTP Email Address.', $unsanitize->text($new_smtp_username), '100', '', '', '', '');
-        echo $form->showInputText('new_smtp_password', 'SMTP Password (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', ''); ?>
+        echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
+        echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
+        echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
+        echo $form->showInputText('new_smtp_password', _('SMTP Password') . ' (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', ''); ?>
     </div>
 </div><BR><?php
 
-echo $form->showSubmitButton('Update System Settings', '', '');
+echo $form->showSubmitButton(_('Update System Settings'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

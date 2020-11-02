@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Manage DW Servers";
-$breadcrumb = "Servers";
+$page_title = _('Manage DW Servers');
+$breadcrumb = _('Servers');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-servers";

@@ -40,7 +40,7 @@ require_once DIR_INC . '/debug.inc.php';
 $system->loginCheck();
 $pdo = $deeb->cnxx;
 
-$page_title = "Reset Password";
+$page_title = _('Reset Password');
 $software_section = "resetpassword";
 
 $user_identifier = $_REQUEST['user_identifier'];
@@ -60,7 +60,7 @@ if ($user_identifier != '') {
 
     if (!$result) {
 
-        $_SESSION['s_message_success'] .= "If there's a matching username or email address your new password will been emailed to you.<BR>";
+        $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
 
         header('Location: ' . $web_root . "/");
         exit;
@@ -90,7 +90,7 @@ if ($user_identifier != '') {
         $email_address = $result->email_address;
         require_once DIR_INC . '/email/send-new-password.inc.php';
 
-        $_SESSION['s_message_success'] .= "If there's a matching username or email address your new password will been emailed to you.<BR>";
+        $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
 
         header('Location: ' . $web_root . "/");
         exit;
@@ -102,7 +102,7 @@ if ($user_identifier != '') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($user_identifier == "") {
-            $_SESSION['s_message_danger'] .= "Enter your username or email address<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter your username or email address') . '<BR>';
         }
 
     }
@@ -119,11 +119,11 @@ if ($user_identifier != '') {
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 <?php
     echo $form->showFormTop('');
-    echo $form->showInputText('user_identifier', 'Username or Email Address', '', $user_identifier, '100', '', '', '', '');
-    echo $form->showSubmitButton('Reset Password', '', '');
+    echo $form->showInputText('user_identifier', _('Username or Email Address'), '', $user_identifier, '100', '', '', '', '');
+    echo $form->showSubmitButton(_('Reset Password'), '', '');
     echo $form->showFormBottom('');
 ?>
-<BR><a href="<?php echo $web_root; ?>/">Cancel Password Reset</a>
+<BR><a href="<?php echo $web_root; ?>/"><?php echo _('Cancel Password Reset'); ?></a>
 <?php require_once DIR_INC . '/layout/footer-login.inc.php'; ?>
 </body>
 </html>

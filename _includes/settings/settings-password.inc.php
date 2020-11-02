@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Change Password";
-$breadcrumb = "Change Password";
+$page_title = _('Change Password');
+$breadcrumb = $page_title;
 $software_section = "settings";
 $software_section_logo = "fa-gears";
 $slug = "settings-password";

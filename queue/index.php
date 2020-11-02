@@ -86,24 +86,24 @@ if ($export_data === 1) {
 
         // list queue
         $export = new DomainMOD\Export();
-        $export_file = $export->openFile('domain_list_queue', strtotime($time->stamp()));
+        $export_file = $export->openFile(_('domain_list_queue'), strtotime($time->stamp()));
 
-        $row_contents = array('Domain List Queue');
+        $row_contents = array(_('Domain List Queue'));
         $export->writeRow($export_file, $row_contents);
 
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Status',
-            'Registrar (API)',
-            'Registrar (Name)',
-            'Account Owner',
-            'Account Username',
-            'Domain Count',
-            'Ready To Import',
-            'Copied To History',
-            'Added By',
-            'Inserted'
+            _('Status'),
+            _('Registrar (API)'),
+            _('Registrar (Name)'),
+            _('Account Owner'),
+            _('Account Username'),
+            _('Domain Count'),
+            _('Ready To Import'),
+            _('Copied To History'),
+            _('Added By'),
+            _('Inserted')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -113,17 +113,17 @@ if ($export_data === 1) {
 
                 if ($row_lists->finished == '1') {
 
-                    $export_processing = 'Domains Added To Queue';
+                    $export_processing = _('Domains Added To Queue');
 
                 } else {
 
                     if ($row_lists->processing == '1') {
 
-                        $export_processing = 'Processing';
+                        $export_processing = _('Processing');
 
                     } else {
 
-                        $export_processing = 'Pending';
+                        $export_processing = _('Pending');
 
                     }
 
@@ -153,37 +153,37 @@ if ($export_data === 1) {
 
         // domain queue
         $export = new DomainMOD\Export();
-        $export_file = $export->openFile('domain_queue', strtotime($time->stamp()));
+        $export_file = $export->openFile(_('domain_queue'), strtotime($time->stamp()));
 
-        $row_contents = array('Domain Queue');
+        $row_contents = array(_('Domain Queue'));
         $export->writeRow($export_file, $row_contents);
 
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Status',
-            'Domain',
-            'Registrar (API)',
-            'Registrar (Name)',
-            'Account Owner',
-            'Account Username',
-            'TLD',
-            'Expiry Date',
-            'DNS Profile',
-            'IP Address (Name)',
-            'IP Address (IP)',
-            'Web Host',
-            'Category',
-            'Auto Renew',
-            'Privacy',
-            'Ready To Import',
-            'Already in Domains',
-            'Already in Queue',
-            'Invalid Domain',
-            'Copied To History',
-            'Added By',
-            'Inserted',
-            'Domain ID'
+            _('Status'),
+            _('Domain'),
+            _('Registrar (API)'),
+            _('Registrar (Name)'),
+            _('Account Owner'),
+            _('Account Username'),
+            _('TLD'),
+            _('Expiry Date'),
+            _('DNS Profile'),
+            _('IP Address (Name)'),
+            _('IP Address (IP)'),
+            _('Web Host'),
+            _('Category'),
+            _('Auto Renew'),
+            _('Privacy'),
+            _('Ready To Import'),
+            _('Already in Domains'),
+            _('Already in Queue'),
+            _('Invalid Domain'),
+            _('Copied To History'),
+            _('Added By'),
+            _('Inserted'),
+            _('Domain ID')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -196,21 +196,21 @@ if ($export_data === 1) {
 
                     if ($row_domains->already_in_domains == '1') {
 
-                        $export_processing = 'Already in DomainMOD';
+                        $export_processing = sprintf(_('Already in %s'), SOFTWARE_TITLE);
                         $already_exists = '1';
 
                     } elseif ($row_domains->already_in_queue == '1') {
 
-                        $export_processing = 'Already in Domain Queue';
+                        $export_processing = _('Already in Domain Queue');
                         $already_exists = '1';
 
                     } elseif ($row_domains->invalid_domain === 1) {
 
-                        $export_processing = 'Invalid Domain';
+                        $export_processing = _('Invalid Domain');
 
                     } else {
 
-                        $export_processing = 'Successfully Imported';
+                        $export_processing = _('Successfully Imported');
 
                     }
 
@@ -218,11 +218,11 @@ if ($export_data === 1) {
 
                     if ($row_domains->processing == '1') {
 
-                        $export_processing = 'Processing';
+                        $export_processing = _('Processing');
 
                     } else {
 
-                        $export_processing = 'Pending';
+                        $export_processing = _('Pending');
 
                     }
 
@@ -236,7 +236,7 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_expiry_date = "Pending";
+                        $export_expiry_date = _("Pending");
 
                     }
 
@@ -262,7 +262,7 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_dns = "Pending";
+                        $export_dns = _('Pending');
 
                     }
 
@@ -281,8 +281,8 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_ip_name = 'Pending';
-                        $export_ip_address = 'Pending';
+                        $export_ip_name = _('Pending');
+                        $export_ip_address = _('Pending');
 
                     }
 
@@ -300,7 +300,7 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_host = 'Pending';
+                        $export_host = _('Pending');
 
                     }
 
@@ -318,7 +318,7 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_category = 'Pending';
+                        $export_category = _('Pending');
 
                     }
 
@@ -330,7 +330,7 @@ if ($export_data === 1) {
 
                 if ($row_domains->autorenew == '1') {
 
-                    $export_autorenew = 'Yes';
+                    $export_autorenew = _('Yes');
 
                 } else {
 
@@ -342,13 +342,13 @@ if ($export_data === 1) {
 
                         } else {
 
-                            $export_autorenew = 'No';
+                            $export_autorenew = _('No');
 
                         }
 
                     } else {
 
-                        $export_autorenew = 'Pending';
+                        $export_autorenew = _('Pending');
 
                     }
 
@@ -356,7 +356,7 @@ if ($export_data === 1) {
 
                 if ($row_domains->privacy == '1') {
 
-                    $export_privacy = 'Yes';
+                    $export_privacy = _('Yes');
 
                 } else {
 
@@ -368,13 +368,13 @@ if ($export_data === 1) {
 
                         } else {
 
-                            $export_privacy = 'No';
+                            $export_privacy = _('No');
 
                         }
 
                     } else {
 
-                        $export_privacy = 'Pending';
+                        $export_privacy = _('Pending');
 
                     }
 
@@ -384,7 +384,7 @@ if ($export_data === 1) {
 
                 if ($row_domains->created_by == '0') {
 
-                    $full_name_export = '[unknown]';
+                    $full_name_export = '[' . strtolower(_('Unknown')) . ']';
 
                 } else {
 
@@ -431,7 +431,9 @@ if ($export_data === 1) {
 
 if ($clear === 1) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to clear completed items from the queue?<BR><BR>Before clearing the queue you should review the results to make sure that everything is correct.<BR><BR><a href=\"index.php?really_clear=1\">YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE</a><BR>";
+    $_SESSION['s_message_danger'] .= _('Are you sure you want to clear completed items from the queue?') . '<BR><BR>' .
+        _('Before clearing the queue you should review the results to make sure that everything is correct.') . '<BR><BR>' .
+        '<a href="index.php?really_clear=1">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
 
 }
 
@@ -439,7 +441,7 @@ if ($really_clear === 1) {
 
     $queue->clearFinished();
 
-    $_SESSION['s_message_success'] .= "Completed items cleared from the queue<BR>";
+    $_SESSION['s_message_success'] .= _('Completed items cleared from the queue') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -448,7 +450,8 @@ if ($really_clear === 1) {
 
 if ($dell === 1 && $list_id !== 0) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain List from the Queue?<BR><BR><a href=\"index.php?really_dell=1&list_id=" . $list_id . "\">YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE</a><BR>";
+    $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain List from the Queue?') . '<BR><BR>' .
+        '<a href="index.php?really_dell=1&list_id=' . $list_id . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
 
 }
 
@@ -460,7 +463,7 @@ if ($really_dell === 1 && $list_id !== 0) {
     $stmt->bindValue('list_id', $list_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $_SESSION['s_message_success'] .= "Domain List deleted from Queue<BR>";
+    $_SESSION['s_message_success'] .= _('Domain List deleted from Queue') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -469,7 +472,8 @@ if ($really_dell === 1 && $list_id !== 0) {
 
 if ($deld === 1 && $domain_id !== 0) {
 
-    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain from the Queue?<BR><BR><a href=\"index.php?really_deld=1&domain_id=" . $domain_id . "\">YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE</a><BR>";
+    $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain from the Queue?') . '<BR><BR>' .
+        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
 
 }
 
@@ -483,7 +487,7 @@ if ($really_deld === 1 && $domain_id !== 0) {
 
     $queue->checkDomainQueue();
 
-    $_SESSION['s_message_success'] .= "Domain deleted from Queue<BR>";
+    $_SESSION['s_message_success'] .= _('Domain deleted from Queue') . '<BR>';
 
     header("Location: index.php");
     exit;
@@ -504,22 +508,24 @@ $queue->checkProcessingDomains();
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
     <button type="button" class="btn btn-default btn-lrg">
-        <i class="fa fa-spin fa-refresh"></i>&nbsp;&nbsp;&nbsp;The Queue Is Currently Processing
+        <i class="fa fa-spin fa-refresh"></i>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
     </button><BR><BR><?php
 
 } ?>
-The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into <?php echo SOFTWARE_TITLE; ?>. For more information please see the <a href="intro.php">Domain Queue information page</a>.<BR>
+<?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE); ?>
+
+<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
+<a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
 <?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
-<a href="index.php?clear=1"><?php echo $layout->showButton('button', 'Clear Completed'); ?></a>
+<a href="index.php?clear=1"><?php echo $layout->showButton('button', _('Clear Completed')); ?></a>
 <?php } ?>
-<a href="intro.php"><?php echo $layout->showButton('button', 'More Info'); ?></a>
+<a href="intro.php"><?php echo $layout->showButton('button', _('More Info')); ?></a>
 <?php if ($_SESSION['s_domains_in_list_queue'] == '1') { ?>
-<a href="index.php?s=lists&export_data=1"><?php echo $layout->showButton('button', 'Export Lists'); ?></a>
+<a href="index.php?s=lists&export_data=1"><?php echo $layout->showButton('button', _('Export Lists')); ?></a>
 <?php } ?>
 <?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
-<a href="index.php?s=domains&export_data=1"><?php echo $layout->showButton('button', 'Export Domains'); ?></a>
+<a href="index.php?s=domains&export_data=1"><?php echo $layout->showButton('button', _('Export Domains')); ?></a>
 <?php } ?>
 <BR><BR>
 <?php
@@ -529,17 +535,17 @@ if (!$result_lists) {
 
 } else { ?>
 
-    <h3>Domain List Queue</h3>
+    <h3><?php echo _('Domain List Queue'); ?></h3>
     <table id="<?php echo $slug; ?>-lists" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Status</th>
-            <th>Registrar Account</th>
-            <th>Domain Count</th>
-            <th>Added By</th>
-            <th>Added</th>
-            <th>Delete</th>
+            <th><?php echo _('Status'); ?></th>
+            <th><?php echo _('Registrar Account'); ?></th>
+            <th><?php echo _('Domain Count'); ?></th>
+            <th><?php echo _('Added By'); ?></th>
+            <th><?php echo _('Added'); ?></th>
+            <th><?php echo _('Delete'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -552,17 +558,17 @@ if (!$result_lists) {
                 <?php
                 if ($row_lists->finished == '1') {
 
-                    echo 'Domains Added To Queue';
+                    echo _('Domains Added To Queue');
 
                 } else {
 
                     if ($row_lists->processing == '1') {
 
-                        echo 'Processing';
+                        echo _('Processing');
 
                     } else {
 
-                        echo 'Pending';
+                        echo _('Pending');
 
                     }
 
@@ -576,7 +582,7 @@ if (!$result_lists) {
                 <?php
                 if ($row_lists->domain_count == '0') {
 
-                    $to_display = 'Pending';
+                    $to_display = _('Pending');
 
                 } else {
 
@@ -588,7 +594,7 @@ if (!$result_lists) {
             <td><?php
                 if ($row_lists->created_by == '0') {
 
-                    $to_display = '[unknown]';
+                    $to_display = '[' . strtolower(_('Unknown')) . ']';
 
                 } else {
 
@@ -605,7 +611,7 @@ if (!$result_lists) {
 
                 } else {
 
-                    $to_display = '[unknown]';
+                    $to_display = '[' . strtolower(_('Unknown')) . ']';
 
                 }
                 echo $to_display; ?>
@@ -627,20 +633,20 @@ if (!$result_domains) {
 
 } else { ?>
 
-    <h3>Domain Queue</h3>
+    <h3><?php echo _('Domain Queue'); ?></h3>
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Status</th>
-            <th>Domain</th>
-            <th>Registrar Account</th>
-            <th>Expiry Date</th>
-            <th>DNS</th>
-            <th>IP</th>
-            <th>Added By</th>
-            <th>Added</th>
-            <th>Delete</th>
+            <th><?php echo _('Status'); ?></th>
+            <th><?php echo _('Domain'); ?></th>
+            <th><?php echo _('Registrar Account'); ?></th>
+            <th><?php echo _('Expiry Date'); ?></th>
+            <th><?php echo _('DNS'); ?></th>
+            <th><?php echo _('IP'); ?></th>
+            <th><?php echo _('Added By'); ?></th>
+            <th><?php echo _('Added'); ?></th>
+            <th><?php echo _('Delete'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -656,21 +662,21 @@ if (!$result_domains) {
 
                     if ($row_domains->already_in_domains == '1') {
 
-                        echo $layout->highlightText('red', 'Already in DomainMOD');
+                        echo $layout->highlightText('red', sprintf(_('Already in %s'), SOFTWARE_TITLE));
                         $already_exists = '1';
 
                     } elseif ($row_domains->already_in_queue == '1') {
 
-                        echo $layout->highlightText('red', 'Already in Domain Queue');
+                        echo $layout->highlightText('red', _('Already in Domain Queue'));
                         $already_exists = '1';
 
                     } elseif ($row_domains->invalid_domain === 1) {
 
-                        echo $layout->highlightText('red', 'Invalid Domain');
+                        echo $layout->highlightText('red', _('Invalid Domain'));
 
                     } else {
 
-                        echo $layout->highlightText('green', 'Successfully Imported');
+                        echo $layout->highlightText('green', _('Successfully Imported'));
 
                     }
 
@@ -678,11 +684,11 @@ if (!$result_domains) {
 
                     if ($row_domains->processing == '1') {
 
-                        echo 'Processing';
+                        echo _('Processing');
 
                     } else {
 
-                        echo 'Pending';
+                        echo _('Pending');
 
                     }
 
@@ -704,7 +710,7 @@ if (!$result_domains) {
 
                     } else {
 
-                        $to_display = "Pending";
+                        $to_display = _('Pending');
 
                     }
 
@@ -732,7 +738,7 @@ if (!$result_domains) {
 
                     } else {
 
-                        $to_display = "Pending";
+                        $to_display = _('Pending');
 
                     }
 
@@ -752,7 +758,7 @@ if (!$result_domains) {
 
                     } else {
 
-                        $to_display = "Pending";
+                        $to_display = _('Pending');
 
                     }
 
@@ -766,7 +772,7 @@ if (!$result_domains) {
             <td><?php
                 if ($row_domains->created_by == '0') {
 
-                    $to_display = '[unknown]';
+                    $to_display = '[' . strtolower(_('Unknown')) . ']';
 
                 } else {
 
@@ -782,7 +788,7 @@ if (!$result_domains) {
 
                 } else {
 
-                    $to_display = '[unknown]';
+                    $to_display = '[' . strtolower(_('Unknown')) . ']';
 
                 }
                 echo $to_display; ?>

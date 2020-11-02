@@ -43,21 +43,21 @@ $system->authCheck();
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<h3>Domains</h3>
-<a href="registrars.php">Domain Registrars</a><BR>
-<a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
-<a href="dns.php">DNS Profiles</a><BR>
-<a href="hosting.php">Web Hosting Providers</a>
+<h3><?php echo _('Domains'); ?></h3>
+<a href="registrars.php"><?php echo _('Domain Registrars'); ?></a><BR>
+<a href="registrar-accounts.php"><?php echo _('Domain Registrar Accounts'); ?></a><BR>
+<a href="dns.php"><?php echo _('DNS Profiles'); ?></a><BR>
+<a href="hosting.php"><?php echo _('Web Hosting Providers'); ?></a>
 
-<h3>SSL Certificates</h3>
-<a href="ssl-providers.php">SSL Providers</a><BR>
-<a href="ssl-accounts.php">SSL Provider Accounts</a><BR>
-<a href="ssl-types.php">SSL Certificate Types</a>
+<h3><?php echo _('SSL Certificates'); ?></h3>
+<a href="ssl-providers.php"><?php echo _('SSL Providers'); ?></a><BR>
+<a href="ssl-accounts.php"><?php echo _('SSL Provider Accounts'); ?></a><BR>
+<a href="ssl-types.php"><?php echo _('SSL Certificate Types'); ?></a>
 
-<h3>Shared</h3>
-<a href="account-owners.php">Account Owners</a><BR>
-<a href="categories.php">Categories</a><BR>
-<a href="ip-addresses.php">IP Addresses</a><BR><BR>
+<h3><?php echo _('Shared'); ?></h3>
+<a href="account-owners.php"><?php echo _('Account Owners'); ?></a><BR>
+<a href="categories.php"><?php echo _('Categories'); ?></a><BR>
+<a href="ip-addresses.php"><?php echo _('IP Addresses'); ?></a><BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

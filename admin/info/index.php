@@ -47,15 +47,15 @@ $pdo = $deeb->cnxx;
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<strong><?php echo SOFTWARE_TITLE; ?> Version:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
-<strong>Local IP Address:</strong> <?php echo $_SERVER['SERVER_ADDR']; ?><BR>
-<strong>Remote IP Address:</strong> <?php echo $system->getIpRemotely(); ?><BR>
-<strong>Web Server OS:</strong> <?php echo php_uname(); ?><BR>
-<strong>Web Server Software:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
-<strong>PHP Version:</strong> <?php echo phpversion(); ?><BR>
-<strong>PHP Error Log Location:</strong> <?php echo ini_get('error_log'); ?><BR>
-<strong>MySQL Version:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
-<strong>MySQL Mode:</strong> <?php echo $pdo->query('select @@sql_mode')->fetchColumn(); ?><BR>
+<strong><?php echo SOFTWARE_TITLE; ?> <?php echo _('Version'); ?>:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
+<strong><?php echo _('Local IP Address'); ?>:</strong> <?php echo $_SERVER['SERVER_ADDR']; ?><BR>
+<strong><?php echo _('Remote IP Address'); ?>:</strong> <?php echo $system->getIpRemotely(); ?><BR>
+<strong><?php echo _('Web Server OS'); ?>:</strong> <?php echo php_uname(); ?><BR>
+<strong><?php echo _('Web Server Software'); ?>:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
+<strong><?php echo _('PHP Version'); ?>:</strong> <?php echo phpversion(); ?><BR>
+<strong><?php echo _('PHP Error Log Location'); ?>:</strong> <?php echo ini_get('error_log'); ?><BR>
+<strong><?php echo _('MySQL Version'); ?>:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
+<strong><?php echo _('MySQL Mode'); ?>:</strong> <?php echo $pdo->query('select @@sql_mode')->fetchColumn(); ?><BR>
 <BR>
 <?php
 list($null, $requirements, $null) = $system->getRequirements();

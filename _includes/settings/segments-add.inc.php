@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add Segment";
-$breadcrumb = "Add";
+$page_title = _('Add Segment');
+$breadcrumb = _('Add');
 $software_section = "segments";
 $software_section_logo = "fa-filter";
 $slug = "segments-add";

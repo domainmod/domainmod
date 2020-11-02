@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") updated<BR>";
+            $_SESSION['s_message_success'] .= sprintf(_('SSL Account %s (%s, %s) updated'), $new_username, $temp_ssl_provider, $temp_owner) . '<BR>';
 
             header("Location: ../ssl-accounts.php");
             exit;
@@ -132,18 +132,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the Owner') . '<BR>';
 
         }
 
         if ($new_ssl_provider_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the SSL Provider<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider') . '<BR>';
 
         }
 
         if (!$validate->text($new_username)) {
-            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
+            $_SESSION['s_message_danger'] .= _('Enter a username') . '<BR>';
         }
 
     }
@@ -193,8 +193,7 @@ if ($del === 1) {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_message_danger'] .= "This SSL Account has SSL certificates associated with it and cannot be
-        deleted<BR>";
+        $_SESSION['s_message_danger'] .= _('This SSL Account has SSL certificates associated with it and cannot be deleted') . '<BR>';
 
     } else {
 
@@ -223,7 +222,7 @@ if ($del === 1) {
         $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Account %s (%s, %s) deleted'), $temp_username, $temp_ssl_provider_name, $temp_owner_name) . '<BR>';
 
         $system->checkExistingAssets();
 
@@ -252,7 +251,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '1', '');
+    echo $form->showDropdownTop('new_ssl_provider_id', _('SSL Provider'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -271,7 +270,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+    echo $form->showDropdownTop('new_owner_id', _('Account Owner'), '', '1', '');
 
     foreach ($result as $row) {
 
@@ -283,20 +282,20 @@ if ($result) {
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
-echo $form->showRadioTop('Reseller Account?', '', '');
-echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
+echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_reseller', '0', _('No'), $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_sslpaid', $sslpaid);
-echo $form->showSubmitButton('Save', '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton('SSL Provider Account', $new_username, 'ssl-provider-account.php?sslpaid=' . $sslpaid . '&del=1');
+$layout->deleteButton(_('SSL Provider Account'), $new_username, 'ssl-provider-account.php?sslpaid=' . $sslpaid . '&del=1');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

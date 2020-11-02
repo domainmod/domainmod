@@ -47,8 +47,7 @@ class Layout
 
     public function showButton($button_type, $button_text)
     {
-        ob_start(); ?>
-        <button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button>&nbsp;<?php
+        ob_start(); ?><button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button>&nbsp;<?php
         return ob_get_clean();
     }
 
@@ -136,8 +135,8 @@ class Layout
 
     public function deleteButton($item_type, $item_name, $url)
     {
-        echo $this->modalButton('DELETE THIS ' . strtoupper($item_type));
-        echo $this->modal('Delete ' . $item_type, $item_name, $url, 'CANCEL', 'YES, DELETE');
+        echo $this->modalButton(strtoupper(_('Delete This')) . ' ' . strtoupper($item_type));
+        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, strtoupper(_('Cancel')), strtoupper(_('Yes, Delete')));
     }
 
     public function modalButton($name)
@@ -163,7 +162,7 @@ class Layout
                     <h4 class="modal-title" id="myModalLabel"><?php echo $title; ?></h4>
                   </div>
                   <div class="modal-body">
-                      Are you sure you want to delete <strong><?php echo $item_name; ?></strong>?
+                      <?php echo sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?php echo $left_button; ?></button>

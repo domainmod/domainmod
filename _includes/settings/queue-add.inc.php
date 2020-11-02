@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add Domains To Queue";
-$breadcrumb = "Add";
+$page_title = _('Add Domains To Queue');
+$breadcrumb = _('Add');
 $software_section = "queue";
 $software_section_logo = "fa-hourglass-2";
 $slug = "queue-add";

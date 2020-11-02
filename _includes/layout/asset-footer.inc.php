@@ -21,10 +21,10 @@
 ?>
 <?php if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
 
-    <em>Inactive Assets are currently hidden. <a href="<?php echo $web_root; ?>/settings/toggles/inactive-assets.php">Click here to display them</a>.</em><BR><?php
+    <em><?php echo _('Inactive Assets are currently hidden.'); ?> <a href="<?php echo $web_root; ?>/settings/toggles/inactive-assets.php"><?php echo _('Click here to display them'); ?></a>.</em><BR><?php
 
 } else { ?>
 
-    <em>Inactive Assets are currently displayed. <a href="<?php echo $web_root; ?>/settings/toggles/inactive-assets.php">Click here to hide them</a>.</em><BR><?php
+    <em><?php echo _('Inactive Assets are currently displayed.'); ?> <a href="<?php echo $web_root; ?>/settings/toggles/inactive-assets.php"><?php echo _('Click here to hide them'); ?></a>.</em><BR><?php
 
 }

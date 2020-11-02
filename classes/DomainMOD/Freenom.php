@@ -40,7 +40,7 @@ class Freenom
         } elseif ($command == 'info') {
             return $base_url . 'domain/getinfo?domainname=' . $domain . '&email=' . $account_username . '&password=' . $account_password;
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 

@@ -137,8 +137,8 @@ if (!$result) {
 
 }
 ?>
-<a href="servers.php"><?php echo $layout->showButton('button', 'Manage Servers'); ?></a><?php
-if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', 'Rebuild DW'); ?></a><?php } ?>
+<a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a><?php
+if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
 $result = $pdo->query("
     SELECT count(*)
@@ -181,20 +181,20 @@ if ($result) {
 
 if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
 
-    <BR><BR><h3>View Data</h3>
+    <BR><BR><h3><?php echo _('View Data'); ?></h3>
     <?php
 
     echo $form->showFormTop('');
 
     if ($temp_total_accounts == 0) {
 
-        echo "No Accounts exist<BR>";
+        echo _('No Accounts exist') . '<BR>';
 
     } else {
 
         echo $form->showDropdownTopJump('', '', '', '');
-        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', 'Server Accounts', '');
-        echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&view_all=1', '', 'VIEW ALL', 'null');
+        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', _('Server Accounts'), '');
+        echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&view_all=1', '', strtoupper(_('View All')), 'null');
 
         $result = $pdo->query("
             SELECT id, `name`, dw_accounts
@@ -203,7 +203,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
         foreach ($result as $row) {
 
-            echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_accounts) . ' Accounts)', 'null');
+            echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_accounts) . ' ' . _('Accounts') . ')', 'null');
 
         }
 
@@ -213,13 +213,13 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
     if ($temp_total_dns_zones == 0) {
 
-        echo "No DNS Zones exist<BR>";
+        echo _('No DNS Zones exist') . '<BR>';
 
     } else {
 
         echo $form->showDropdownTopJump('', '', '', '');
-        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', 'DNS Zones & Records', '');
-        echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&view_all=1', '', 'VIEW ALL', 'null');
+        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', _('DNS Zones & Records'), '');
+        echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&view_all=1', '', strtoupper(_('View All')), 'null');
 
         $result = $pdo->query("
             SELECT id, name, dw_dns_zones, dw_dns_records
@@ -228,7 +228,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
         foreach ($result as $row) {
 
-            echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_dns_zones) . ' Zones, ' . number_format($row->dw_dns_records) . ' Records)', 'null');
+            echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_dns_zones) . ' ' . _('Zones') . ', ' . number_format($row->dw_dns_records) . ' ' . _('Records') . ')', 'null');
 
         }
 
@@ -265,21 +265,21 @@ if ($no_results_build_info !== 1) { ?>
 
     if ($result_count == 0) {
 
-        echo "<BR>You don't currently have any servers setup in your Data Warehouse. <a href=\"add-server.php\">Click here to add one</a>.";
+        echo "<BR>" . _("You don't currently have any servers setup in your Data Warehouse.") . " <a href=\"add-server.php\">" . _('Click here to add one') . "</a>.";
 
     } else {
 
         if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
             $result->build_end_time_overall != '1970-01-01 00:00:00') {
 
-            $temp_build_status_overall = "Successful";
+            $temp_build_status_overall = _('Successful');
 
         }
 
         if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
             $result->has_ever_been_built_overall == 0) {
 
-            $temp_build_status_overall = "Building...";
+            $temp_build_status_overall = _('Building') . '...';
 
         }
 
@@ -295,11 +295,11 @@ if ($no_results_build_info !== 1) { ?>
 
             if (!$result2) {
 
-                $temp_build_status_overall = "Cleanup...";
+                $temp_build_status_overall = _('Cleanup') . '...';
 
             } else {
 
-                $temp_build_status_overall = "Building...";
+                $temp_build_status_overall = _('Building') . '...';
 
             }
 
@@ -310,7 +310,7 @@ if ($no_results_build_info !== 1) { ?>
         if ($result->build_start_time_overall == '1970-01-01 00:00:00' &&
             $result->has_ever_been_built_overall == 0) {
 
-            $temp_build_status_overall = "Never Built";
+            $temp_build_status_overall = _('Never Built');
 
         }
 
@@ -354,18 +354,18 @@ if ($no_results_build_info !== 1) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Server</th>
-            <th>Build Start</th>
-            <th>Build End</th>
-            <th>Build Time</th>
-            <th>Build Status</th>
+            <th><?php echo _('Server'); ?></th>
+            <th><?php echo _('Build Start'); ?></th>
+            <th><?php echo _('Build End'); ?></th>
+            <th><?php echo _('Build Time'); ?></th>
+            <th><?php echo _('Build Status'); ?></th>
         </tr>
         </thead>
 
         <tbody>
         <tr>
             <td></td>
-            <td><em>Full Build</em></td>
+            <td><em><?php echo _('Full Build'); ?></em></td>
             <td><?php echo $temp_build_start_time_overall; ?></td>
             <td><?php echo $temp_build_end_time_overall; ?></td>
             <td><?php echo $temp_build_time_overall; ?></td>
@@ -391,14 +391,14 @@ if ($no_results_build_info !== 1) { ?>
 
             if ($row->build_start_time != '1970-01-01 00:00:00' && $row->build_end_time != '1970-01-01 00:00:00') {
 
-                $temp_build_status = "Successful";
+                $temp_build_status = _('Successful');
 
             }
 
             if ($row->build_start_time != '1970-01-01 00:00:00' && $row->build_end_time == '1970-01-01 00:00:00' &&
                 $row->build_status == 0) {
 
-                $temp_build_status = "Building...";
+                $temp_build_status = _('Building') . '...';
 
             }
 
@@ -406,11 +406,11 @@ if ($no_results_build_info !== 1) { ?>
 
                 if ($is_building == 1) {
 
-                    $temp_build_status = "Pending";
+                    $temp_build_status = _('Pending');
 
                 } else {
 
-                    $temp_build_status = "Never Built";
+                    $temp_build_status = _('Never Built');
 
                 }
 
@@ -418,13 +418,13 @@ if ($no_results_build_info !== 1) { ?>
 
             if ($row->build_start_time == '1970-01-01 00:00:00' && $row->has_ever_been_built == 1) {
 
-                $temp_build_status = "Pending";
+                $temp_build_status = _('Pending');
 
             }
 
             if ($row->build_start_time != '1970-01-01 00:00:00' && $row->has_ever_been_built == 0) {
 
-                $temp_build_status = "Building...";
+                $temp_build_status = _('Building') . '...';
 
             }
 
@@ -529,16 +529,16 @@ if ($result) {
         $temp_dw_dns_records != 0
     ) { ?>
 
-        <h3>Data Warehouse Totals</h3>
+        <h3><?php echo _('Data Warehouse Totals'); ?></h3>
 
         <table id="<?php echo $slug; ?>-totals" class="<?php echo $datatable_class; ?>">
             <thead>
             <tr>
                 <th width="20px"></th>
-                <th>Server</th>
-                <th>Accounts</th>
-                <th>DNS Zones</th>
-                <th>DNS Records</th>
+                <th><?php echo _('Server'); ?></th>
+                <th><?php echo _('Accounts'); ?></th>
+                <th><?php echo _('DNS Zones'); ?></th>
+                <th><?php echo _('DNS Records'); ?></th>
             </tr>
             </thead>
             <tbody><?php
@@ -557,7 +557,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <em>All Servers</em>
+                    <em><?php echo _('All Servers'); ?></em>
                 </td>
                 <td>
                     <?php echo number_format($result2->dw_accounts); ?>

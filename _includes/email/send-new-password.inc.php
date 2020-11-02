@@ -28,8 +28,8 @@ list($first_name_sig, $last_name_sig, $email_address_sig) = $email->getEmailSign
 $to_address = $email_address;
 $from_name = SOFTWARE_TITLE;
 
-$subject = 'Your ' . SOFTWARE_TITLE . ' Password has been Reset';
-$headline = 'Your ' . SOFTWARE_TITLE . ' Password has been Reset';
+$subject = sprintf(_('Your %s Password has been Reset'), SOFTWARE_TITLE);
+$headline = $subject;
 
 $message_html .= "
 <html>
@@ -47,18 +47,15 @@ $message_html .= "
                         sans-serif\">";
 $message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
     SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-$message_html .= "Your password has been reset and you can find it below. The next ";
-$message_html .= "time you login you should change your password to something that ";
-$message_html .= "will be easy for you to remember, but still hard for someone ";
-$message_html .= "else to guess.<BR>";
+$message_html .= _('Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . '<BR>';
 $message_html .= "<BR>";
-$message_html .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
+$message_html .= _('URL') . ": <a title=\"" . SOFTWARE_TITLE . "\" target=\"_blank\" href=\"" . $full_url . "/\">" .
     $full_url . "/</a><BR>";
 $message_html .= "<BR>";
-$message_html .= 'Your Username: ' . $username . '<BR>';
-$message_html .= 'Your New Password: ' . $new_password . '<BR>';
+$message_html .= _('Your Username') . ': ' . $username . '<BR>';
+$message_html .= _('Your New Password') . ': ' . $new_password . '<BR>';
 $message_html .= "<BR>";
-$message_html .= "Best Regards,<BR>";
+$message_html .= _('Best Regards') . ",<BR>";
 $message_html .= "<BR>";
 $message_html .= $first_name_sig . ' ' . $last_name_sig . "<BR>";
 $message_html .= "<a target=\"_blank\"
@@ -77,15 +74,10 @@ $message_html .= "</font>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
 $message_html .= "<hr width=\"100%\" size=\"2\" noshade>";
-$message_html .= "You've received this notification because someone requested a password reset for
-                            your ";
-$message_html .= SOFTWARE_TITLE . " account.<BR>";
+$message_html .= sprintf(_("You've received this notification because someone requested a password reset for your %s account."), SOFTWARE_TITLE) . '<BR>';
 $message_html .= "<BR>";
-$message_html .= "If you did not request this yourself, it sounds like somebody might be trying to
-                            gain access ";
-$message_html .= "to your account. This might be a good time to reset your password again just to be
-                            safe. ";
-$message_html .= "<a target=\"_blank\" href=\"" . $full_url . "/reset.php\">" . $full_url . "/reset.php</a>";
+$message_html .= _('If you did not request this yourself, it sounds like somebody might be trying to gain access to your account. This might be a good time to reset your password again just to be safe.');
+$message_html .= " <a target=\"_blank\" href=\"" . $full_url . "/reset.php\">" . $full_url . "/reset.php</a>";
 $message_html .= "<BR></font>
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;
@@ -100,19 +92,19 @@ $message_html .= "<BR></font>
 </html>";
 
 $message_text .= $headline . "\n\n";
-$message_text .= "Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone  else to guess.\n\n";
+$message_text .= _('Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . "\n\n";
 $message_text .= "URL: " . $full_url . "\n";
 $message_text .= "\n";
-$message_text .= "Your Username: " . $username . "\n";
-$message_text .= "Your New Password: " . $new_password . "\n";
+$message_text .= _('Your Username') . ": " . $username . "\n";
+$message_text .= _('Your New Password') . ": " . $new_password . "\n";
 $message_text .= "\n";
-$message_text .= "Best Regards,\n";
+$message_text .= _('Best Regards') . ",\n";
 $message_text .= "\n";
 $message_text .= $first_name_sig . ' ' . $last_name_sig . "\n";
 $message_text .= $email_address_sig . "\n";
 $message_text .= "\n---\n\n";
-$message_text .= "You've received this notification because someone requested a password reset for your " . SOFTWARE_TITLE . " account.\n";
+$message_text .= sprintf(_("You've received this notification because someone requested a password reset for your %s account."), SOFTWARE_TITLE) . "\n";
 $message_text .= "\n";
-$message_text .= "If you did not request this yourself, it sounds like somebody might be trying to gain access to your account. This might be a good time to reset your password again just to be safe. " . $full_url . "/reset.php";
+$message_text .= _('If you did not request this yourself, it sounds like somebody might be trying to gain access to your account. This might be a good time to reset your password again just to be safe.') .  ' ' . $full_url . "/reset.php";
 
-$email->send('Password Reset', $to_address, $subject, $message_html, $message_text);
+$email->send(_('Password Reset'), $to_address, $subject, $message_html, $message_text);

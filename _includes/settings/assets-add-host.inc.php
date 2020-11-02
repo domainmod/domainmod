@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Add Web Host";
-$breadcrumb = "Add";
+$page_title = _('Add Web Host');
+$breadcrumb = _('Add');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-add-host";

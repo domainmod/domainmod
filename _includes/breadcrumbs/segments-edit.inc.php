@@ -19,5 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/segments/">Segments</a></li>
+<li><a href="<?php echo $web_root; ?>/segments/"><?php echo _('Segments'); ?></a></li>
 <li class="active"><?php echo $breadcrumb; ?></li>

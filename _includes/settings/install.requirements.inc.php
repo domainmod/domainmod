@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = "Software Requirements";
+$page_title = _('Software Requirements');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.requirements";

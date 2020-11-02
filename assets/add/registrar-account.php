@@ -86,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
 
         $assets = new DomainMOD\Assets();
-        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" .
-            $assets->getRegistrar($new_registrar_id) . ", " . $assets->getOwner($new_owner_id) . ") Added<BR>";
+        $_SESSION['s_message_success'] .= sprintf(_('Registrar Account %s (%s, %s) added'),
+                $new_username, $assets->getRegistrar($new_registrar_id), $assets->getOwner($new_owner_id)) . '<BR>';
 
         if ($_SESSION['s_has_registrar_account'] != '1') {
 
@@ -106,17 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the owner<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the owner') . '<BR>';
 
         }
 
         if ($new_registrar_id === 0) {
 
-            $_SESSION['s_message_danger'] .= "Choose the registrar<BR>";
+            $_SESSION['s_message_danger'] .= _('Choose the registrar') . '<BR>';
 
         }
 
-        if (!$validate->text($new_username)) { $_SESSION['s_message_danger'] .= "Enter a username<BR>"; }
+        if (!$validate->text($new_username)) { $_SESSION['s_message_danger'] .= _('Enter a username') . '<BR>'; }
 
     }
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
+echo $form->showDropdownTop('new_registrar_id', _('Registrar'), '', '1', '');
 if ($new_registrar_id === 0) {
     $to_compare = $_SESSION['s_default_registrar'];
 } else {
@@ -148,7 +148,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+echo $form->showDropdownTop('new_owner_id', _('Account Owner'), '', '1', '');
 if ($new_owner_id === 0) {
     $to_compare = $_SESSION['s_default_owner_domains'];
 } else {
@@ -163,16 +163,16 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
+echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 
-echo $form->showRadioTop('Reseller Account?', '', '');
-echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
+echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
+echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_reseller', '0', _('No'), $new_reseller, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
+echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $new_reseller_id, '100', '', '', '', '');
 ?>
 
 <div class="box box-default collapsed-box box-solid">
@@ -183,11 +183,11 @@ echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_resel
     </div>
     <div class="box-body"><?php
 
-        echo $form->showInputText('new_api_app_name', 'API App Name', '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
-        echo $form->showInputText('new_api_key', 'API Key', '', $unsanitize->text($new_api_key), '255', '', '', '', '');
-        echo $form->showInputText('new_api_secret', 'API Secret', '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
+        echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
+        echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
+        echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
 
-        echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access.', '', '');
+        echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.'), '', '');
         echo $form->showDropdownOption('0', 'n/a', '0');
         $result = $pdo->query("
             SELECT id, `name`, ip
@@ -201,8 +201,8 @@ echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_resel
     </div>
 </div><BR><?php
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton('Add Registrar Account', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showSubmitButton(_('Add Registrar Account'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

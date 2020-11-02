@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "Edit Registrar Fee";
-$breadcrumb = "Edit";
+$page_title = _('Edit Registrar Fee');
+$breadcrumb = _('Edit');
 $software_section = "assets";
 $software_section_logo = "fa-cubes";
 $slug = "assets-edit-registrar-fee";

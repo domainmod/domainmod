@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= 'The end date proceeds the start date<BR>';
+        $_SESSION['s_message_danger'] .= _('The end date proceeds the start date') . '<BR>';
         $submission_failed = '1';
 
     }
@@ -108,12 +108,12 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $export_file = $export->openFile('ssl_cost_by_type_report_all', strtotime($time->stamp()));
+            $export_file = $export->openFile(_('ssl_cost_by_type_report_all'), strtotime($time->stamp()));
 
         } else {
 
             $export_file = $export->openFile(
-                'ssl_cost_by_type_report',
+                _('ssl_cost_by_type_report'),
                 $new_start_date . '--' . $new_end_date
             );
 
@@ -126,24 +126,24 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $row_contents = array('Date Range:', 'ALL');
+            $row_contents = array(_('Date Range') . ':', strtoupper(_('All')));
 
         } else {
 
-            $row_contents = array('Date Range:', $daterange);
+            $row_contents = array(_('Date Range') . ':', $daterange);
 
         }
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Total Cost:',
+            _('Total Cost') . ':',
             $grand_total,
             $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            'Number of SSL Certs:',
+            _('Number of SSL Certs') . ':',
             $number_of_certs_total
         );
         $export->writeRow($export_file, $row_contents);
@@ -151,10 +151,10 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
-            'Type',
-            'Cost',
-            'Certs',
-            'Per Cert'
+            _('Type'),
+            _('Cost'),
+            _('Certs'),
+            _('Per Cert')
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -208,10 +208,10 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         <thead>
         <tr>
             <th width="20px"></th>
-            <th>Type</th>
-            <th>Cost</th>
-            <th>Certs</th>
-            <th>Per Cert</th>
+            <th><?php echo _('Type'); ?></th>
+            <th><?php echo _('Cost'); ?></th>
+            <th><?php echo _('Certs'); ?></th>
+            <th><?php echo _('Pert Cert'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -239,7 +239,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
 } else {
 
-    echo 'No results.<BR><BR>';
+    echo _('No results.') . '<BR><BR>';
 
 }
 ?>

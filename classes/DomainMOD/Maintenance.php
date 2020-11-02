@@ -45,7 +45,7 @@ class Maintenance
         $this->deleteUnusedFees('ssl_fees', 'ssl_certs');
         $this->zeroInvalidIpIds();
 
-        $result_message = 'Maintenance Completed<BR>';
+        $result_message = _('Maintenance Completed') . '<BR>';
 
         return $result_message;
     }
