@@ -186,23 +186,27 @@
 
                 
                 <h2 id="installation">Installation</h2>
-<p><h4>Is the MySQL extension supported in PHP, or just the MySQLi extension?</h4></p>
+<h4>Is the MySQL extension supported in PHP, or just the MySQLi extension?</h4>
+
 <p>For security reasons DomainMOD only supports the MySQLi extension. If you're receiving messages that the MySQLi extension is unavailable in PHP you will need to install and enable it on your server before you can use DomainMOD.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>As of v4.07, DomainMOD uses the PDO extension instead of the MySQLi extension.</p>
 </div>
 <h2 id="configuration"><BR>Configuration</h2>
-<p><h4>Can I import my domains into DomainMOD using a CSV file?</h4></p>
+<h4>Can I import my domains into DomainMOD using a CSV file?</h4>
+
 <p>Not currently, but this is something that we're investigating for the future. If your domain registrar has an API, and it's <a href="../domain-queue/#supported-registrars">supported by DomainMOD</a>, you can use the <a href="../domain-queue/">Domain Queue</a> to automatically import your domains.</p>
 <h4>Does DomainMOD support multiple languages?</h4>
 
-<p>Currently only English is supported, but this is something that will be investigated for the future.</p>
+<p>Yes! As of v4.16.0 DomainMOD supports Dutch, English (Canada), English (United States), French, German, Italian, Polish, Portuguese, Russian, and Spanish. If you speak one of these languages, you will probably be horrified at the quality of the current translations. This is because an automated translation service was used for this, but I hope the quality of the translations will improve greatly over time.</p>
+<p>If you would like to help improve the translations, feel free to head over to our <a href="https://github.com/domainmod/translations">translations page on GitHub</a>.</p>
 <h4>Which domain registrar APIs does DomainMOD currently support?</h4>
 
 <p>DomainMOD currently supports Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, and ResellerClub.</p>
 <h2 id="usage"><BR>Usage</h2>
-<p><h4>How many domains can I manage with DomainMOD?</h4></p>
+<h4>How many domains can I manage with DomainMOD?</h4>
+
 <p>Theoretically there's no limit on the number of domains you can manage, it just depends on your server hardware and the settings chosen in DomainMOD. The default settings can handle thousands of domains, and over 10,000 depending on how much information you've chosen to display on the front page, but if things start slowing down you can enable <strong>large mode</strong> to speed things up. Large mode uses a different method for displaying the information on the main domain page, and although it doesn't offer as many of the advanced features as the default settings, it allows you to manage a lot more domains.</p>
 <h4>Can I use DomainMOD to sell domains?</h4>
 
