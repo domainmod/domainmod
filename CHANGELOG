@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.16.0    2020-11-02
+- Added multilingual support
+
 v4.15.0    2020-05-17
 - Added Gandi API support
 - Added support for more than 100 domains with Namecheap API
