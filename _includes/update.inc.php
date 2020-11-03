@@ -82,21 +82,20 @@ if ($current_db_version < SOFTWARE_VERSION) {
         UPDATE settings
         SET upgrade_available = '0'");
 
-    $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
-    $message_success_cli = "Your database has been upgraded\r\n\r\n";
+    $_SESSION['s_message_success'] .= _('Your database has been upgraded') . '<BR>';
+    $message_success_cli = _('Your database has been upgraded') . "\r\n\r\n";
 
 } elseif ($current_db_version > SOFTWARE_VERSION) {
 
-    $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
-    The software on your server is older than your database version. This should never happen.<BR><BR>Please logout and
-    log back in, and if the problem persists please contact your " . SOFTWARE_TITLE . " administrator.<BR>";
-    $message_danger_cli = "The upgrade process cannot be completed, as your versions are currently out-of-sync. The software on your server is older than your database version. This should never happen.\r\n\r\nPlease logout and log back in, and if the problem persists please contact your " . SOFTWARE_TITLE . " administrator.\r\n\r\n";
+    $_SESSION['s_message_danger'] .= _('The upgrade process cannot be completed, as your versions are currently out-of-sync.') .
+    _('The software on your server is older than your database version. This should never happen.') . "<BR><BR>" . sprintf(_('Please logout and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "<BR>";
+    $message_danger_cli = _('The upgrade process cannot be completed, as your versions are currently out-of-sync.') . ' ' . _('The software on your server is older than your database version. This should never happen.') . "\r\n\r\n"; sprintf(_('Please logout and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "\r\n\r\n";
 
     $_SESSION['s_version_error'] = '1';
 
 } else {
 
-    $_SESSION['s_message_success'] .= "Your Database is already up-to-date<BR>";
+    $_SESSION['s_message_success'] .= _('Your Database is already up-to-date') . '<BR>';
     $message_success_cli = "Your Database is already up-to-date\r\n\r\n";
 
 }

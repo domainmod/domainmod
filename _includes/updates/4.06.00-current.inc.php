@@ -1301,6 +1301,59 @@ if ($current_db_version === '4.14.0') {
              VALUES
             ('Gandi', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "')");
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.15.0 to 4.16.0
+if ($current_db_version === '4.15.0') {
+
+    $old_version = '4.15.0';
+    $new_version = '4.16.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+            CREATE TABLE IF NOT EXISTS `languages` (
+                `id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `language` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+                PRIMARY KEY  (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+        $pdo->query("
+            INSERT INTO `languages`
+            (`name`, language, insert_time)
+             VALUES
+            ('English (Canada)', 'en_CA.UTF-8', '" . $timestamp . "'),
+            ('English (United States)', 'en_US.UTF-8', '" . $timestamp . "'),
+            ('German', 'de_DE.UTF-8', '" . $timestamp . "'),
+            ('Spanish', 'es_ES.UTF-8', '" . $timestamp . "'),
+            ('French', 'fr_FR.UTF-8', '" . $timestamp . "'),
+            ('Italian', 'it_IT.UTF-8', '" . $timestamp . "'),
+            ('Dutch', 'nl_NL.UTF-8', '" . $timestamp . "'),
+            ('Polish', 'pl_PL.UTF-8', '" . $timestamp . "'),
+            ('Portuguese', 'pt_PT.UTF-8', '" . $timestamp . "'),
+            ('Russian', 'ru_RU.UTF-8', '" . $timestamp . "')");
+
+        $pdo->query("
+            ALTER TABLE `user_settings`
+            ADD `default_language` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'en_US.UTF-8' AFTER `user_id`");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */

@@ -39,6 +39,37 @@ $system->loginCheck();
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
+// Admin
+$temp_admin_first_name = _('Domain');
+$temp_admin_last_name = _('Administrator');
+
+// Assets
+$temp_default_category = _('[no category]');
+$temp_default_stakeholder = _('[no stakeholder]');
+$temp_default_hosting = _('[no hosting]');
+$temp_default_owner = _('[no owner]');
+$temp_default_dns = _('[no dns]');
+$temp_default_ip_address = _('[no ip address]');
+
+// SSL Cert Types
+$temp_default_ssl_type_one = _('Web Server SSL/TLS Certificate');
+$temp_default_ssl_type_two = _('S/MIME and Authentication Certificate');
+$temp_default_ssl_type_three = _('Object Code Signing Certificate');
+$temp_default_ssl_type_four = _('Digital ID');
+
+// Task Scheduler
+$temp_task_scheduler_one = _('Domain Queue Processing');
+$temp_task_scheduler_two = _('Send Expiration Email');
+$temp_task_scheduler_three = _('Update Conversion Rates');
+$temp_task_scheduler_four = _('System Cleanup');
+$temp_task_scheduler_five = _('Check For New Version');
+$temp_task_scheduler_six = _('Data Warehouse Build');
+
+// System Settings
+$installation_language = DEFAULT_LANGUAGE;
+$installation_timezone = $_SESSION['s_installation_timezone'];
+$installation_currency = $_SESSION['s_installation_currency'];
+
 $system->installCheck();
 
 try {
@@ -94,8 +125,10 @@ try {
         (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`,
          `insert_time`)
         VALUES
-        ('Domain', 'Administrator', 'admin', :new_admin_email, '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0',
+        (:new_first_name, :new_last_name, 'admin', :new_admin_email, '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0',
          :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('new_first_name', $temp_admin_first_name, PDO::PARAM_STR);
+    $stmt->bindValue('new_last_name', $temp_admin_last_name, PDO::PARAM_STR);
     $stmt->bindValue('new_admin_email', $_SESSION['new_admin_email'], PDO::PARAM_STR);
     $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
@@ -105,8 +138,9 @@ try {
         CREATE TABLE IF NOT EXISTS `user_settings` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `user_id` INT(10) UNSIGNED NOT NULL,
+            `default_language` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '" . $installation_language . "',
             `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `default_timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Canada/Pacific',
+            `default_timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '" . $installation_timezone . "',
             `default_category_domains` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_category_ssl` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_dns` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -154,11 +188,15 @@ try {
         FROM users
         WHERE username = 'admin'")->fetchColumn();
 
-    $pdo->query("
+   $stmt = $pdo->prepare("
         INSERT INTO user_settings
         (user_id, default_currency, expiration_emails, insert_time)
         VALUES
-        ('" . $temp_user_id . "', 'USD', '1', '" . $timestamp . "')");
+        (:temp_user_id, :installation_currency, '1', :timestamp)");
+    $stmt->bindValue('temp_user_id', $temp_user_id, PDO::PARAM_INT);
+    $stmt->bindValue('installation_currency', $installation_currency, PDO::PARAM_STR);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `categories` (
@@ -173,11 +211,16 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
+   $stmt = $pdo->prepare("
         INSERT INTO `categories`
         (`name`, `stakeholder`, `creation_type_id`, `insert_time`)
         VALUES
-        ('[no category]', '[no stakeholder]', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        (:temp_default_category, :temp_default_stakeholder, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_category', $temp_default_category, PDO::PARAM_STR);
+    $stmt->bindValue('temp_default_stakeholder', $temp_default_stakeholder, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `hosting` (
@@ -192,11 +235,15 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
+   $stmt = $pdo->prepare("
         INSERT INTO `hosting`
         (`name`, `creation_type_id`, `insert_time`)
         VALUES
-        ('[no hosting]', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        (:temp_default_hosting, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_hosting', $temp_default_hosting, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `owners` (
@@ -211,11 +258,39 @@ try {
             KEY `name` (`name`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
+   $stmt = $pdo->prepare("
         INSERT INTO `owners`
         (`name`, `creation_type_id`, `insert_time`)
         VALUES
-        ('[no owner]', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        (:temp_default_owner, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_owner', $temp_default_owner, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `languages` (
+            `id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `language` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        INSERT INTO `languages`
+        (`name`, language, insert_time)
+         VALUES
+        ('English (Canada)', 'en_CA.UTF-8', '" . $timestamp . "'),
+        ('English (United States)', 'en_US.UTF-8', '" . $timestamp . "'),
+        ('German', 'de_DE.UTF-8', '" . $timestamp . "'),
+        ('Spanish', 'es_ES.UTF-8', '" . $timestamp . "'),
+        ('French', 'fr_FR.UTF-8', '" . $timestamp . "'),
+        ('Italian', 'it_IT.UTF-8', '" . $timestamp . "'),
+        ('Dutch', 'nl_NL.UTF-8', '" . $timestamp . "'),
+        ('Polish', 'pl_PL.UTF-8', '" . $timestamp . "'),
+        ('Portuguese', 'pt_PT.UTF-8', '" . $timestamp . "'),
+        ('Russian', 'ru_RU.UTF-8', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `currencies` (
@@ -658,14 +733,45 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
+    $stmt = $pdo->prepare("
         INSERT INTO `ssl_cert_types`
         (`id`, `type`, `creation_type_id`, `insert_time`)
         VALUES
-        (1, 'Web Server SSL/TLS Certificate', '" . $creation_type_id_installation . "', '" . $timestamp . "'),
-        (2, 'S/MIME and Authentication Certificate', '" . $creation_type_id_installation . "', '" . $timestamp . "'),
-        (3, 'Object Code Signing Certificate', '" . $creation_type_id_installation . "', '" . $timestamp . "'),
-        (4, 'Digital ID', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        (1, :temp_default_ssl_type_one, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_ssl_type_one', $temp_default_ssl_type_one, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO `ssl_cert_types`
+        (`id`, `type`, `creation_type_id`, `insert_time`)
+        VALUES
+        (2, :temp_default_ssl_type_two, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_ssl_type_two', $temp_default_ssl_type_two, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO `ssl_cert_types`
+        (`id`, `type`, `creation_type_id`, `insert_time`)
+        VALUES
+        (3, :temp_default_ssl_type_three, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_ssl_type_three', $temp_default_ssl_type_three, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO `ssl_cert_types`
+        (`id`, `type`, `creation_type_id`, `insert_time`)
+        VALUES
+        (4, :temp_default_ssl_type_four, :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_ssl_type_four', $temp_default_ssl_type_four, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
@@ -728,7 +834,7 @@ try {
         INSERT INTO `dns`
         (`name`, `dns1`, `dns2`, `number_of_servers`, `creation_type_id`, `insert_time`)
         VALUES
-        ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        ('" . $temp_default_dns . "', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `registrars` (
@@ -843,11 +949,15 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
+   $stmt = $pdo->prepare("
         INSERT INTO `ip_addresses`
         (`id`, `name`, `ip`, `rdns`, `creation_type_id`, `insert_time`)
         VALUES
-        ('1', '[no ip address]', '-', '-', '" . $creation_type_id_installation . "', '" . $timestamp . "')");
+        ('1', :temp_default_ip_address, '-', '-', :creation_type_id_installation, :timestamp)");
+    $stmt->bindValue('temp_default_ip_address', $temp_default_ip_address, PDO::PARAM_STR);
+    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `timezones` (
@@ -913,16 +1023,53 @@ try {
             PRIMARY KEY  (`id`)
          ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $pdo->query("
-         INSERT INTO scheduler
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        ('Domain Queue Processing', 'Retrieves information for domains in the queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * * *', 'domain-queue', '10', '0', '1', '" . $timestamp . "'),
-        ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'Daily', '0 0 * * * *', 'expiration-email', '20', '0', '1', '" . $timestamp . "'),
-        ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'Daily', '0 0 * * * *', 'update-conversion-rates', '40', '0', '1', '" . $timestamp . "'),
-        ('System Cleanup', '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries in the database to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.', 'Daily', '0 0 * * * *', 'cleanup', '60', '0', '1', '" . $timestamp . "'),
-        ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * * *', 'check-new-version', '80', '0', '1', '" . $timestamp . "'),
-        ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * * *', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_one, 'Retrieves information for domains in the queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * * *', 'domain-queue', '10', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_one', $temp_task_scheduler_one, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_two, 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'Daily', '0 0 * * * *', 'expiration-email', '20', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_two', $temp_task_scheduler_two, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_three, 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'Daily', '0 0 * * * *', 'update-conversion-rates', '40', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_three', $temp_task_scheduler_three, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_four, '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries in the database to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.', 'Daily', '0 0 * * * *', 'cleanup', '60', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_four', $temp_task_scheduler_four, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_five, 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * * *', 'check-new-version', '80', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_five', $temp_task_scheduler_five, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_six, 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * * *', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_six', $temp_task_scheduler_six, PDO::PARAM_STR);
+    $stmt->execute();
 
     // Update tasks that run daily
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
@@ -1078,7 +1225,7 @@ try {
 
     $pdo->commit();
 
-    $_SESSION['s_message_success'] .= SOFTWARE_TITLE . " has been successfully installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\", and you'll be prompted to change the password after logging in<BR>";
+    $_SESSION['s_message_success'] .= sprintf(_('%s has been successfully installed and you should now delete the %s folder'), SOFTWARE_TITLE, '/install/') . "<BR><BR>" . sprintf(_("The default username and password are %s, and you'll be prompted to change the password after logging in"), '"admin"') . "<BR>";
 
     header("Location: ../");
     exit;
