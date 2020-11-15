@@ -508,7 +508,7 @@ if ($new_raid !== 0) {
 
         echo sprintf(_("The %s API has a domain list feature, so you don't even have to supply a list of the domains you want to import, %s will retrieve them for you automatically."), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), SOFTWARE_TITLE) . '<BR><BR>';
 
-        echo $form->showInputTextarea('raw_domain_list', '[' . strtoupper(_('Optional')) . ']' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
+        echo $form->showInputTextarea('raw_domain_list', '[' . strtoupper(_('Optional')) . '] ' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
 
     } else {
 
