@@ -1,4 +1,4 @@
-[![DomainMOD](https://cdn.domainmod.org/images/logo.png)](https://domainmod.org)
+[![DomainMOD](https://domainmod.org/images/logo.png)](https://domainmod.org)
 
 Project Home: <https://domainmod.org>  
 Project Demo: <https://demo.domainmod.org>  
