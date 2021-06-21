@@ -22,3 +22,11 @@
 <BR><BR>
 <div style="text-align: <?php echo $page_align; ?>;">
     <BR><a href="<?php echo $web_root . "/dashboard/\"><img border=\"0\" src=\"" . $web_root . "/images/logo-lg.png\"></a><BR><BR>";
+
+$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+
+if (file_exists($full_filename)) {
+
+    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+}

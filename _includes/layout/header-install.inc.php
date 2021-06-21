@@ -45,3 +45,11 @@ require_once DIR_INC . '/layout/table-maintenance.inc.php';
 ?>
   <div class="login-box-body">
     <h3><?php echo $page_title; ?></h3>
+<?php
+$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+
+if (file_exists($full_filename)) {
+
+    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+}

@@ -308,3 +308,11 @@
             <?php } ?>
         </div>
         <div class="box-body">
+<?php
+$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+
+if (file_exists($full_filename)) {
+
+    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+}

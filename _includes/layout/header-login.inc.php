@@ -43,3 +43,11 @@ if ($_SESSION['s_message_info'] != "") {
 require_once DIR_INC . '/layout/table-maintenance.inc.php';
 ?>
   <div class="login-box-body">
+<?php
+$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+
+if (file_exists($full_filename)) {
+
+    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+}
