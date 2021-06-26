@@ -4924,7 +4924,7 @@ msgstr "Advanced Filtering"
 #: domains/index.php:999 domains/index.php:2060 ssl/index.php:645
 #: ssl/index.php:1480
 msgid "Reset Filters"
-msgstr "Resett Filters"
+msgstr "Reset Filters"
 
 #: domains/index.php:1973
 msgid "Live Domains"
