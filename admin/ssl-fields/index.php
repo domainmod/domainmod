@@ -122,6 +122,7 @@ if ($export_data === 1) {
 if (!$result) {
 
     echo _("It appears as though you haven't created any Custom SSL Fields yet.");
+    echo '&nbsp;';
     echo sprintf(_('%sClick here%s to add one.'), '<a href="add.php">', '</a>');
 
 } else { ?>
