@@ -46,7 +46,7 @@ require_once DIR_INC . '/settings/segments-edit.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = $_GET['segid'];
+$segid = (int) $_GET['segid'];
 
 $del = (int) $_GET['del'];
 
