@@ -3,14 +3,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: POEditor.com\n"
 "Project-Id-Version: DomainMOD\n"
-"Language: en_US\n"
+"Language: en-us\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
 
 #: _includes/breadcrumbs/admin-add-custom-domain-field.inc.php:22
 #: _includes/breadcrumbs/admin-add-custom-ssl-field.inc.php:22
@@ -611,7 +607,7 @@ msgstr "Generate Report"
 #: segments/index.php:213 segments/index.php:233 segments/index.php:264
 #: ssl/index.php:1496
 msgid "Export"
-msgstr "Exportv"
+msgstr "Export"
 
 #: _includes/layout/table-maintenance.inc.php:25
 msgid "Some of your Registrars/TLDs are missing domain fees."
@@ -688,7 +684,7 @@ msgstr "Backup"
 #: _includes/settings/admin-debug-log-main.inc.php:24
 #: _includes/settings/system-debug.inc.php:24
 msgid "Debug"
-msgstr "Debugv"
+msgstr "Debug"
 
 #: _includes/settings/admin-edit-custom-domain-field.inc.php:23
 msgid "Edit Custom Domain Field"
@@ -5200,14 +5196,6 @@ msgstr "The default username and password are %s, and you'll be prompted to chan
 msgid "We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."
 msgstr "We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."
 
-#: install/language/index.php:66
-msgid "If your language is not yet supported, we recommend selecting %sEnglish (United States)%s."
-msgstr "If your language is not yet supported, we recommend selecting %sEnglish (United States)%s."
-
-#: install/language/index.php:66
-msgid "Multilingual support is very new, so please bear with us while we get new languages added."
-msgstr "Multilingual support is very new, so please bear with us while we get new languages added."
-
 #: install/requirements/index.php:52
 msgid "The first thing we need to do is check to see if your web server meets the software's requirements."
 msgstr "The first thing we need to do is check to see if your web server meets the software's requirements."
@@ -6273,3 +6261,7 @@ msgstr "Sign out"
 #: install/email-system/index.php:101
 msgid "Proceed With Installation"
 msgstr "Proceed With Installation"
+
+#: install/language/index.php:66
+msgid "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
+msgstr "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
