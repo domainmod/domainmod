@@ -37,14 +37,13 @@ require_once DIR_INC . '/settings/reporting-main.inc.php';
 $system->authCheck();
 
 $report = $_REQUEST['report'];
-
-echo $layout->jumpMenu();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
