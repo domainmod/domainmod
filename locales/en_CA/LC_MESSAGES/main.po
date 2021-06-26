@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 3.0\n"
 "Project-Id-Version: DomainMOD\n"
 "Language: en_CA\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4928,7 +4928,7 @@ msgstr "Advanced Filtering"
 #: domains/index.php:999 domains/index.php:2060 ssl/index.php:645
 #: ssl/index.php:1480
 msgid "Reset Filters"
-msgstr "Resett Filters"
+msgstr "Reset Filters"
 
 #: domains/index.php:1973
 msgid "Live Domains"
@@ -6273,3 +6273,7 @@ msgstr "Sign out"
 #: install/email-system/index.php:101
 msgid "Proceed With Installation"
 msgstr "Proceed With Installation"
+
+#: install/language/index.php:66
+msgid "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
+msgstr "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
