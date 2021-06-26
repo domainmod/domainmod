@@ -55,7 +55,7 @@ if ($type_id !== 0) {
 $new_initial_fee = (float) $_POST['new_initial_fee'];
 $new_renewal_fee = (float) $_POST['new_renewal_fee'];
 $new_misc_fee = (float) $_POST['new_misc_fee'];
-$new_currency = $_POST['new_currency'];
+$new_currency = $sanitize->text($_POST['new_currency']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

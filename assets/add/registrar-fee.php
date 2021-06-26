@@ -57,7 +57,7 @@ $new_renewal_fee = (float) $_POST['new_renewal_fee'];
 $new_transfer_fee = (float) $_POST['new_transfer_fee'];
 $new_privacy_fee = (float) $_POST['new_privacy_fee'];
 $new_misc_fee = (float) $_POST['new_misc_fee'];
-$new_currency = $_POST['new_currency'];
+$new_currency = $sanitize->text($_POST['new_currency']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

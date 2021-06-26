@@ -39,7 +39,7 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = $_GET['segid'];
+$segid = (int) $_GET['segid'];
 $export_data = (int) $_GET['export_data'];
 $type = $_GET['type'];
 

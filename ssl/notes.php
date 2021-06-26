@@ -36,7 +36,7 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslcid = $_GET['sslcid'];
+$sslcid = (int) $_GET['sslcid'];
 
 $stmt = $pdo->prepare("
     SELECT `name`, notes

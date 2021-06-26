@@ -42,7 +42,7 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$id = $_GET['id'];
+$id = (int) $_GET['id'];
 
 if (DEMO_INSTALLATION == false) {
 

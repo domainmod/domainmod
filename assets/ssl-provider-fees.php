@@ -40,7 +40,7 @@ require_once DIR_INC . '/settings/assets-ssl-provider-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslpid = $_GET['sslpid'];
+$sslpid = (int) $_GET['sslpid'];
 $export_data = (int) $_GET['export_data'];
 
 $ssl_provider_name = $assets->getSslProvider($sslpid);

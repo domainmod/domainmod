@@ -40,7 +40,7 @@ require_once DIR_INC . '/settings/assets-registrar-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$rid = $_GET['rid'];
+$rid = (int) $_GET['rid'];
 $export_data = (int) $_GET['export_data'];
 
 $registrar_name = $assets->getRegistrar($rid);

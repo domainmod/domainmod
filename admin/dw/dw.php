@@ -40,7 +40,7 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$id = $_GET['id'];
+$id = (int) $_GET['id'];
 $action = $_GET['action'];
 $view_all = $_GET['view_all'];
 
