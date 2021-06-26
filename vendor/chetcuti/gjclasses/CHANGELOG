@@ -1,5 +1,22 @@
 GJClasses CHANGELOG
 ===================
+v0.33.0    2021-06-11
+- Added support for Pushover priority
+
+v0.32.0    2021-06-11
+- Updated Notify example
+- Removed unnecessary pushover settings
+- Fixed incorrect push provider
+
+v0.31.0    2021-06-10
+- Added push notification support for Join
+
+v0.30.0    2021-05-27
+- Added support for ExchangeRate-API
+- Added support for Fixer.io
+- Added support for Interzoid
+- Added API Key support for Exchange Rates API
+
 v0.29.0    2020-05-09
 - Removed ext- composer dependencies
 

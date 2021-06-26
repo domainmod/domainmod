@@ -21,7 +21,7 @@ final class UploadTest extends TestCase
             $upload->path(__DIR__ . "/files");
             $upload->name("bar");
 
-            $this->assertEquals($upload->upload("copy"), true);
+            $this->assertEquals($upload->upload(true), true);
             $suffix = $i > 1 ? "_{$i}" : "";
             $this->assertEquals($upload->get_name(), "bar{$suffix}.jpg");
             $uploaded_files[] = $upload->get_path($upload->get_name());
@@ -41,7 +41,7 @@ final class UploadTest extends TestCase
         $upload->max_image_dimensions(210, 60);
         $upload->min_image_dimensions(210, 60);
         $upload->name("hello.jpg", false);
-        $this->assertEquals($upload->upload("copy"), true);
+        $this->assertEquals($upload->upload(true), true);
         $this->assertEquals($upload->get_name(), "hello.jpg");
         @unlink($upload->get_path("hello.jpg"));
     }

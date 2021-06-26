@@ -11,9 +11,14 @@ class Push
         $this->service = $service;
     }
 
-    public function push($api_key, $user_key, $subject, $content, $url)
+    public function push($api_key, $user_key, $subject, $content, $url, $priority = '0')
     {
-        if ($this->service == 'pushbullet') {
+        if ($this->service == 'join') {
+
+            $push = new Join();
+            $result_message = $push->push($api_key, $subject, $content, $url);
+
+        } elseif ($this->service == 'pushbullet') {
 
             $push = new Pushbullet();
             $result_message = $push->push($api_key, $subject, $content, $url);
@@ -21,7 +26,7 @@ class Push
         } elseif ($this->service == 'pushover') {
 
             $push = new Pushover();
-            $result_message = $push->push($api_key, $user_key, $subject, $content, $url);
+            $result_message = $push->push($api_key, $user_key, $subject, $content, $url, $priority);
 
         } else {
 

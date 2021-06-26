@@ -66,12 +66,15 @@ More examples in the "[examples](/examples)" directory.
 |---|---|---|
 | `upload()` | Upload the file and return output of the check() | boolean |
 | `check()` | Check the file can be uploaded | boolean |
-| `get_name()` | Get uploaded file name | string |
-| `get_path()` | Get the path name of the file | string |
+| `get_name()` | Get the uploaded file name | string |
+| `get_tmp_name()` | Get the temporary file path | string |
+| `get_data_url()` | Get the file as base64 encoded data URL | string |
+| `get_path()` | Get the path of the file | string |
 | `get_error()` | Get error message if an error occurred | string |
 
 ### Notes
-[`exif_imagetype()`](https://php.net/manual/en/function.exif-imagetype.php) and [`getimagesize()`](https://php.net/manual/en/function.getimagesize.php) must be allowed on the server.
+* `exif` and `fileinfo` extensions must be enabled.
+* [`exif_imagetype()`](https://php.net/manual/en/function.exif-imagetype.php) and [`getimagesize()`](https://php.net/manual/en/function.getimagesize.php) must be allowed.
 
 ### Contributes
 Please send pull request or open an issue if you have the feature you want.

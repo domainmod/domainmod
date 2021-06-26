@@ -12,7 +12,7 @@ if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "PUT") {
     // While uploading file from raw input data, you need to change upload function
     // to "copy", otherwise file can not be uploaded!
 
-    if (! $upload->upload("copy")) {
+    if (! $upload->upload(true)) {
         echo "Upload error: " . $upload->get_error() . PHP_EOL;
     } else {
         echo "Upload successful: " . $upload->get_name() . PHP_EOL;
