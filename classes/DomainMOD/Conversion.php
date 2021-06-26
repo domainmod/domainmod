@@ -174,7 +174,8 @@ class Conversion
 
         }
 
-        $currency = new \GJClasses\Currency($converter_source);
+        $api_key = '';
+        $currency = new \GJClasses\Currency($converter_source, $api_key);
         return $currency->getConvRate($from_currency, $to_currency);
     }
 

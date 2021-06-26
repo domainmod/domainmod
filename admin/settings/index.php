@@ -178,7 +178,7 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 echo $form->showDropdownTop('new_currency_converter', _('Currency Converter'), _("Although it doesn't happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren't working properly, try a different source."), '', '');
-echo $form->showDropdownOption('era', _('Exchange Rates API'), $new_currency_converter);
+echo $form->showDropdownOption('erh', _('Exchange Rates API'), $new_currency_converter);
 echo $form->showDropdownBottom('');
 echo $form->showRadioTop(_('Large Mode'), _('If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.'), '');
 echo $form->showRadioOption('new_large_mode', '1', _('Enabled'), $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
