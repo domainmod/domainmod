@@ -1,4 +1,5 @@
 /_includes/layout/footer.DEMO.inc.php
+/_includes/layout/head-tags.DEMO.inc.php
 /_includes/layout/header.DEMO.inc.php
 /_includes/config.inc.php
 .htaccess
