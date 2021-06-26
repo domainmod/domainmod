@@ -21,4 +21,5 @@
 ?>
 <?php
 session_name("domainmod_gc_ays");
+@ini_set('session.cookie_httponly', 1);
 session_start();
