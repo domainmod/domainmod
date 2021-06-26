@@ -58,9 +58,9 @@ if ($user_identifier != '') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    if (!$result) {
+    $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
 
-        $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
+    if (!$result) {
 
         header('Location: ' . $web_root . "/");
         exit;
@@ -89,8 +89,6 @@ if ($user_identifier != '') {
         $username = $result->username;
         $email_address = $result->email_address;
         require_once DIR_INC . '/email/send-new-password.inc.php';
-
-        $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
 
         header('Location: ' . $web_root . "/");
         exit;
