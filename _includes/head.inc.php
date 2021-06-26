@@ -21,3 +21,5 @@
 ?>
 <?php
 header('Content-Type: text/html; charset=utf-8');
+header('X-Frame-Options: DENY');
+header("Content-Security-Policy: frame-ancestors 'none';");
