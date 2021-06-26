@@ -116,8 +116,8 @@ if ($export_data === 1) {
 <?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom Domain Fields'), SOFTWARE_TITLE); ?><BR>
 <BR>
 <?php echo sprintf(_('Custom Domain Fields help extend the functionality of %s by allowing the user to create their own data fields.'), SOFTWARE_TITLE); ?>
-<?php echo _('For example, if you wanted to keep track of which domains are currently setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains.'); ?>
-<?php echo _("Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!"); ?><BR>
+<?php echo '&nbsp;'; echo _('For example, if you wanted to keep track of which domains are currently setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains.'); ?>
+<?php echo '&nbsp;'; echo _("Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!"); ?><BR>
 <BR>
 <?php echo _('And when you export your domain data, the information contained in your custom fields will automatically be included in the exported data.'); ?><BR>
 <BR><?php

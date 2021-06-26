@@ -116,14 +116,13 @@ if ($export_data === 1) {
 <?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom SSL Fields'), SOFTWARE_TITLE); ?><BR>
 <BR>
 <?php echo sprintf(_('Custom SSL Fields help extend the functionality of %s by allowing the user to create their own data fields.'), SOFTWARE_TITLE); ?>
-<?php echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.'); ?><BR>
+<?php echo '&nbsp;'; echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.'); ?><BR>
 <BR><?php
 
 if (!$result) {
 
     echo _("It appears as though you haven't created any Custom SSL Fields yet.");
-    echo '&nbsp;';
-    echo sprintf(_('%sClick here%s to add one.'), '<a href="add.php">', '</a>');
+    echo '&nbsp;'; echo sprintf(_('%sClick here%s to add one.'), '<a href="add.php">', '</a>');
 
 } else { ?>
 
