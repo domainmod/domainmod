@@ -1682,6 +1682,14 @@ if ($result) { ?>
 
                                 }
 
+                            } elseif ($field['type_id'] == 6) { // URL
+
+                                if ($row->{$field['field']} != '') {
+
+                                    echo "[<a target='_blank' href='" . $row->{$field['field']} . "'>open</a>]";
+
+                                }
+
                             } ?>
 
                         </td><?php

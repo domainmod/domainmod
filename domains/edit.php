@@ -608,6 +608,10 @@ if ($result) { ?>
 
                 echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '19', '', '', '', '');
 
+            } elseif ($row->type_id == "6") { // URL
+
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '', '');
+
             }
 
         }

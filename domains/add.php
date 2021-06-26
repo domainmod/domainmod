@@ -553,6 +553,10 @@ if ($result) { ?>
 
                     echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '19', '', '', '', '');
 
+                } elseif ($row->type_id == "6") { // URL
+
+                    echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '255', '', '', '', '');
+
                 }
 
             }

@@ -111,6 +111,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                 $sql = "ALTER TABLE `domain_field_data`
                         ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00'";
 
+            } elseif ($new_field_type_id === 6) { // URL
+
+                $sql = "ALTER TABLE `domain_field_data`
+                        ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+
             }
 
             $pdo->query($sql);

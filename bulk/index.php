@@ -2531,6 +2531,23 @@ if ($action == "AD") { // Add Domains
 
         }
 
+    } elseif ($type_id === 6) {
+
+        $stmt = $pdo->prepare("
+            SELECT df.name, df.field_name, df.description
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+              AND df.id = :field_id");
+        $stmt->bindValue('field_id', $field_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+
+        foreach ($result as $row) {
+
+            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+
+        }
+
     }
 
 }
@@ -2617,6 +2634,10 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id !== 0))
                         } elseif ($row->type_id === 5) { // Time Stamp
 
                             echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '');
+
+                        } elseif ($row->type_id === 6) { // URL
+
+                            echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
                         }
 
