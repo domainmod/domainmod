@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '66de6f0800d27a9c44c7e3f8aa8b5b2e64402816',
+        'reference' => 'ff5de754c5f24229ff4ae8e8d68021a680e44598',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '66de6f0800d27a9c44c7e3f8aa8b5b2e64402816',
+            'reference' => 'ff5de754c5f24229ff4ae8e8d68021a680e44598',
             'dev_requirement' => false,
         ),
         'auth0/auth0-php' => array(
@@ -26,12 +26,12 @@
             ),
         ),
         'chetcuti/gjclasses' => array(
-            'pretty_version' => 'v0.33.0',
-            'version' => '0.33.0.0',
+            'pretty_version' => 'v0.34.0',
+            'version' => '0.34.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../chetcuti/gjclasses',
             'aliases' => array(),
-            'reference' => '1755c0442253d750a744d3bf7e9d0820c9251773',
+            'reference' => 'f0405044f9aaf4756d7ffa714c2d46f675459aca',
             'dev_requirement' => false,
         ),
         'donatj/pushover' => array(

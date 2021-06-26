@@ -1,5 +1,8 @@
 GJClasses CHANGELOG
 ===================
+v0.34.0    2021-06-26
+- Added exchangerate.host currency conversion support
+
 v0.33.0    2021-06-11
 - Added support for Pushover priority
 

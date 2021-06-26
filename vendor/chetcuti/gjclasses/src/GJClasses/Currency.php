@@ -59,6 +59,15 @@ class Currency
             $json_result = json_decode($result, true);
             $conversion_rate = $json_result['Converted'];
 
+        } elseif ($this->source === 'erh') {
+
+            $full_url = 'https://api.exchangerate.host/convert?from=' . $from_currency . '&to=' . $to_currency;
+            $remote = new Remote();
+            $result = $remote->getFileContents($full_url);
+            if ($result === false) return false;
+            $json_result = json_decode($result, true);
+            $conversion_rate = $json_result['info']['rate'];
+
         }
 
         return $conversion_rate;
