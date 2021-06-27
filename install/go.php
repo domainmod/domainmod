@@ -671,7 +671,8 @@ try {
         (2, 'Text', '" . $timestamp . "'),
         (3, 'Text Area', '" . $timestamp . "'),
         (4, 'Date', '" . $timestamp . "'),
-        (5, 'Time Stamp', '" . $timestamp . "')");
+        (5, 'Time Stamp', '" . $timestamp . "'),
+        (6, 'URL', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `domain_fields` (
