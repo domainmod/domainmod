@@ -18,7 +18,7 @@
     // Current page data
     var mkdocs_page_name = "Backup & Restore";
     var mkdocs_page_input_path = "backup-restore.md";
-    var mkdocs_page_url = null;
+    var mkdocs_page_url = "/docs/userguide/backup-restore/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -193,7 +193,7 @@
 <p>The above path (/var/www/html/domainmod/temp) will need to be modified for your specific web server and DomainMOD installation location.</p>
 </div>
 <h2 id="backup">Backup</h2>
-<p>To Backup your DomainMOD database:</p>
+<p>To backup your DomainMOD database:</p>
 <ol>
 <li>
 <p>Login to DomainMOD as an administrator</p>
@@ -211,9 +211,9 @@
 <h2 id="restore">Restore</h2>
 <div class="admonition danger">
 <p class="admonition-title">Warning</p>
-<p>Before restoring a backup file you should backup your existing data using the above <strong>Backup</strong> feature. This is in case something goes wrong with restoring the new database and you need to restore the old one.</p>
+<p>Before restoring your DomainMOD database, ensure that you're restoring a database that is of the same version as the software that you're restoring it to. For example, if you were using DomainMOD v4.14 when you backed up your database, you must restore that database to an installation of DomainMOD v4.14.  </p>
 </div>
-<p>To Restore your DomainMOD database:</p>
+<p>To restore your DomainMOD database:</p>
 <ol>
 <li>
 <p>Login to DomainMOD as an administrator</p>
@@ -232,11 +232,11 @@
 </li>
 </ol>
 <h2 id="migrating">Migrating</h2>
-<p>The below steps walk you through how to migrate DomainMOD from one server to another.</p>
 <div class="admonition danger">
 <p class="admonition-title">Warning</p>
 <p>Before migrating it's <strong>strongly</strong> recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the migration process there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your data.</p>
 </div>
+<p>To migrate your DomainMOD installation from one server to another:</p>
 <ol>
 <li>
 <p>[Old Server] <a href="https://domainmod.org/docs/userguide/upgrading/">Upgrade to the newest version of DomainMOD</a></p>
@@ -286,7 +286,7 @@
   </div>
 
   <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2020 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+  Copyright (c) 2010-2021 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
 
 </footer>
       
