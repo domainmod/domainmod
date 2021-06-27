@@ -1,5 +1,20 @@
 DomainMOD CHANGELOG
 ===================
+v4.17.0    2021-06-26
+- Added URL Custom Field Type
+- Added exchangerate.host currency conversion support
+- Added numerous security measures
+  - Enabled X-Content-Type-Options nosniff for security
+  - Enabled X-XSS-Protection header to help prevent XSS
+  - Enabled session.cookie_httponly for security
+  - Cast some variables as integers for XSS protection
+  - Implemented anti-frame HTTP headers
+  - Updated $segid to be cast as integer for security
+  - Disabled autocomplete for password fields
+- Updated translations
+- Updated Composer packages
+- Code cleanup
+
 v4.16.0    2020-11-02
 - Added multilingual support
 
