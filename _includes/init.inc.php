@@ -31,12 +31,12 @@ define('EMAIL_ENCODING_TYPE', 'UTF-8'); // UTF-8 or iso-8859-1
 // PHP.ini overrides
 date_default_timezone_set('UTC');
 @error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
-@ini_set('display_errors', 0);
-@ini_set('log_errors', 1);
+@ini_set('display_errors', '0');
+@ini_set('log_errors', '1');
 
 if ($_SESSION['s_system_local_php_log'] == '1') {
 
-    @ini_set("error_log", DIR_ROOT . "/domainmod.log");
+    @ini_set('error_log', DIR_ROOT . '/domainmod.log');
 
 }
 
