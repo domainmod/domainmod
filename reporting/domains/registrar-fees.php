@@ -191,7 +191,7 @@ if ($total_rows > 0) {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="registrar-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;or&nbsp;<a href="registrar-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a>
+<a href="registrar-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;or&nbsp;&nbsp;<a href="registrar-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a>
 <?php if ($total_rows > 0) { //@formatter:off ?>
           <BR><BR><a href="registrar-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', _('Export')); ?></a>
 <?php } //@formatter:on ?>
