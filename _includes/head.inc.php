@@ -21,7 +21,12 @@
 ?>
 <?php
 header('Content-Type: text/html; charset=utf-8');
+header("Content-Security-Policy: default-src 'self';");
+header("Content-Security-Policy: form-action 'self';");
 header("Content-Security-Policy: frame-ancestors 'none';");
+header("Content-Security-Policy: img-src 'self';");
+header("Content-Security-Policy: object-src 'none';");
+header("Content-Security-Policy: style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com;");
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header("X-XSS-Protection: 1; mode=block");

@@ -25,12 +25,6 @@ $breadcrumb = $page_title;
 $software_section = "queue";
 $software_section_logo = "fa-hourglass-2";
 $slug = "queue-main";
-$datatable_css = '#' . $slug . '-lists thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-lists tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . '-lists tbody td { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-domains thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-domains tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . '-domains tbody td { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '-lists\').DataTable({

@@ -25,12 +25,6 @@ $breadcrumb = _('DW');
 $software_section = "dw";
 $software_section_logo = "fa-database";
 $slug = "dw-main";
-$datatable_css = '#' . $slug . '-build thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-build tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . '-build tbody td { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-totals thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . '-totals tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . '-totals tbody td { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '-build\').DataTable({

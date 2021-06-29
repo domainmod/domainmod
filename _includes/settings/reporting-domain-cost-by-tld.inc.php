@@ -27,9 +27,6 @@ $software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-tld";
 $report_section = 'domains';
 $report_filename = 'cost-by-tld.php';
-$datatable_css = '#' . $slug . ' thead th { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }
-                  #' . $slug . ' tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . ' tbody td { padding: 2px 0px 2px 6px; border: 0; white-space: nowrap; }';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '\').DataTable({

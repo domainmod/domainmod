@@ -25,9 +25,6 @@ $breadcrumb = _('Scheduler');
 $software_section = "admin";
 $software_section_logo = "fa-wrench";
 $slug = "admin-scheduler-main";
-$datatable_css = '#' . $slug . ' thead th { padding: 2px 0px 2px 2px; border: 0; }
-                  #' . $slug . ' tbody tr:hover { background-color: #dddddd; }
-                  #' . $slug . ' tbody td { padding: 2px 0px 2px 2px; border: 0; }';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '\').DataTable({
@@ -38,7 +35,6 @@ $datatable_options = 'var oldStart = 0;
                           "info": false,
                           "autoWidth": true,
                           "bAutoWidth": false,
-                          "responsive": true
                           "responsive": {
                                details: {
                                          type: "column"
