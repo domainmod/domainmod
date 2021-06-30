@@ -41,11 +41,11 @@ $datatable_options = 'var oldStart = 0;
                                         }
                                         },
                           "columnDefs": [ {
-                                           className: "control",
+                                           className: "dtr-control",
                                            orderable: false,
                                            targets:   0
                                            } ],
-                          "ordering": true,
+                          "ordering": false,
                           "order": [[ 1, "asc" ]],
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
