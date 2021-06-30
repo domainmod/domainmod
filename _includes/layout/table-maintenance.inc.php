@@ -42,7 +42,7 @@ if (DEBUG_MODE == 1) {
 
     if ($_SESSION['s_is_admin'] == 1) {
 
-        $message .= sprintf(_('You can disable debugging mode in %sSettings%s.'), " <a href='" . $web_root . "/assets/ssl-provider-fees-missing.php'>", "</a");
+        $message .= sprintf(_('You can disable debugging mode in %sSettings%s.'), " <a href='" . $web_root . "/admin/settings/'>", "</a>");
 
 
     } else {
