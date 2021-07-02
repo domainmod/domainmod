@@ -67,9 +67,6 @@ bindtextdomain(LOCALES_DOMAIN, DIR_LOCALES);
 bind_textdomain_codeset(LOCALES_DOMAIN, DEFAULT_ENCODING_TYPE);
 textdomain(LOCALES_DOMAIN);
 
-// For Troubleshooting -- Include the helper file if it exists
-if (file_exists(DIR_ROOT . '/helper.php')) {
-
-    require_once DIR_ROOT . '/helper.php';
-
-}
+// If the /helpers/init.php file exists, load it
+$full_filename = __DIR__ . '/../helpers/init.php';
+if (file_exists($full_filename)) require_once $full_filename;
