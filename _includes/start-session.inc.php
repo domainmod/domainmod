@@ -20,6 +20,18 @@
  */
 ?>
 <?php
-session_name("domainmod_gc_ays");
+if ($force_https === 1) {
+
+    session_name("__Secure-domainmod-gc-cookie");
+    @ini_set('session.cookie_secure', '1');
+
+} else {
+
+    session_name("domainmod-gc-cookie");
+    @ini_set('session.cookie_secure', '0');
+
+}
 @ini_set('session.cookie_httponly', '1');
+@ini_set('session.cookie_path', '/');
+@ini_set('session.cookie_samesite', 'Lax');
 session_start();
