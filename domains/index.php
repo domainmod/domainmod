@@ -888,7 +888,6 @@ if ($export_data == 1) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
-    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -995,7 +994,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
     <div class="box box-default <?php echo $box_type; ?>-box box-solid">
         <div class="box-header with-border">
-            <h3 class="box-title" style="padding-top: 3px;">
+            <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-<?php echo $box_icon; ?>"></i></button>&nbsp;<?php echo _('Advanced Filtering'); ?> [<a href="<?php echo $web_root; ?>/domains/"><?php echo strtolower(_('Reset Filters')); ?></a>]
             </h3>
         </div>
@@ -1009,11 +1008,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 FROM segments
                 ORDER BY `name` ASC")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Segment Filter') . ' - ' . strtoupper(_('Off')), 'null');
+            echo $form->showDropdownTop('segid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Segment Filter') . ' - ' . strtoupper(_('Off')), 'null');
             foreach ($result_segment as $row_segment) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&segid=' . $row_segment->id . '&tld=' . $tld . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_segment->id, $row_segment->name, $segid);
+                echo $form->showDropdownOption($row_segment->id, $row_segment->name, $segid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1119,11 +1118,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY r.name
                 ORDER BY r.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Registrar') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('rid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Registrar') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_registrar as $row_registrar) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $row_registrar->id . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_registrar->id, $row_registrar->name, $rid);
+                echo $form->showDropdownOption($row_registrar->id, $row_registrar->name, $rid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1226,11 +1225,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY r.name, o.name, ra.username
                 ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Registrar Account') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('raid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Registrar Account') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_account as $row_account) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $row_account->ra_id . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_account->ra_id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $raid);
+                echo $form->showDropdownOption($row_account->ra_id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $raid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1336,11 +1335,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY dns.name
                 ORDER BY dns.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('DNS Profile') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('dnsid', '', '', '', '');
+            echo $form->showDropdownOption('', _('DNS Profile') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_dns as $row_dns) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $row_dns->id . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_dns->id, $row_dns->name, $dnsid);
+                echo $form->showDropdownOption($row_dns->id, $row_dns->name, $dnsid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1446,11 +1445,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY ip.name
                 ORDER BY ip.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('ipid', '', '', '', '');
+            echo $form->showDropdownOption('', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_ip as $row_ip) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $row_ip->id . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $ipid);
+                echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $ipid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1556,11 +1555,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY h.name
                 ORDER BY h.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Web Hosting Provider') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('whid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_hosting as $row_hosting) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $row_hosting->id . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_hosting->id, $row_hosting->name, $whid);
+                echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $whid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1666,16 +1665,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY c.name
                 ORDER BY c.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Category') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('pcid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Category') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_category as $row_category) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $row_category->id . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_category->id, $row_category->name, $pcid);
+                echo $form->showDropdownOption($row_category->id, $row_category->name, $pcid);
 
             }
             echo $form->showDropdownBottom('');
 
 
+            // OWNER
             if ($is_active == "0") {
                 $is_active_string = " AND d.active = '0' ";
             } elseif ($is_active == "1") {
@@ -1775,11 +1775,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY o.name
                 ORDER BY o.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('oid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_owner as $row_owner) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $row_owner->id . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_owner->id, $row_owner->name, $oid);
+                echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1884,11 +1884,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY tld 
                 ORDER BY tld asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', _('TLD') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('tld', '', '', '', '');
+            echo $form->showDropdownOption('', _('TLD') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_tld as $row_tld) {
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $row_tld->tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $row_tld->tld, $row_tld->tld, $tld);
+                echo $form->showDropdownOption($row_tld->tld, $row_tld->tld, $tld);
 
             }
             echo $form->showDropdownBottom('');
@@ -1969,8 +1969,8 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY active
                 ORDER BY active asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . strtoupper(_('Live')) . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
+            echo $form->showDropdownTop('is_active', '', '', '', '');
+            echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
             foreach ($result_active as $row_active) {
 
                 if ($row_active->active == "0") {
@@ -2007,51 +2007,40 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                  * END
                  */
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $row_active->active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, $display_text, $row_active->active);
+                echo $form->showDropdownOption($row_active->active, $display_text, $is_active);
 
             }
-            echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . strtoupper(_('All')) . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, strtoupper(_('All')), strtoupper(_('All')));
+            echo $form->showDropdownOption(strtoupper(_('All')), strtoupper(_('All')), $is_active);
             echo $form->showDropdownBottom('');
 
             if ($_SESSION['s_system_large_mode'] == '1') {
 
                 // NUMBER OF DOMAINS TO DISPLAY
-                echo $form->showDropdownTopJump('', '', '', '');
+                echo $form->showDropdownTop('result_limit', '', '', '', '');
 
                 if ($_SESSION['s_number_of_domains'] != "10" && $_SESSION['s_number_of_domains'] != "50" && $_SESSION['s_number_of_domains'] != "100" && $_SESSION['s_number_of_domains'] != "500" && $_SESSION['s_number_of_domains'] != "1000" && $_SESSION['s_number_of_domains'] != "1000000") {
 
-                    echo $form->showDropdownOptionJump('index.php.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $_SESSION['s_number_of_domains'] . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, $_SESSION['s_number_of_domains'], $_SESSION['s_number_of_domains']);
+                    echo $form->showDropdownOption($result_limit, $_SESSION['s_number_of_domains'], $_SESSION['s_number_of_domains']);
 
                 }
 
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=10&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, '10', '10');
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=50&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, '50', '50');
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=100&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, '100', '100');
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=500&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, '500', '500');
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=1000&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, '1,000', '1000');
-                echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=1000000&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $result_limit, strtoupper(_('All')), '1000000');
+                echo $form->showDropdownOption($result_limit, '10', '10');
+                echo $form->showDropdownOption($result_limit, '50', '50');
+                echo $form->showDropdownOption($result_limit, '100', '100');
+                echo $form->showDropdownOption($result_limit, '500', '500');
+                echo $form->showDropdownOption($result_limit, '1,000', '1000');
+                echo $form->showDropdownOption($result_limit, strtoupper(_('All')), '1000000');
 
                 echo $form->showDropdownBottom('');
 
             } ?>
-
 
             <?php echo $form->showInputText('search_for', _('Domain Keyword Search'), '', $_SESSION['s_search_for'], '100', '', '', '', ''); ?>
 
             <?php
             echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
 
-            echo $form->showInputHidden('pcid', $pcid);
-            echo $form->showInputHidden('oid', $oid);
-            echo $form->showInputHidden('dnsid', $dnsid);
-            echo $form->showInputHidden('whid', $whid);
-            echo $form->showInputHidden('rid', $rid);
-            echo $form->showInputHidden('raid', $raid);
-            echo $form->showInputHidden('tld', $tld);
-            echo $form->showInputHidden('segid', $segid);
-            echo $form->showInputHidden('result_limit', $result_limit);
             echo $form->showInputHidden('sort_by', $sort_by);
-            echo $form->showInputHidden('is_active', $is_active);
             echo $form->showInputHidden('begin', '0');
             echo $form->showInputHidden('num', '1');
             echo $form->showInputHidden('numBegin', '1');
@@ -2166,13 +2155,13 @@ if ($result) { ?>
                             echo "dn_d";
                         } else {
                             echo "dn_a";
-                        } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Domain'); ?></a>
+                        } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Domain'); ?></a>
                     <?php } else { ?>
                             <?php echo _('Domain'); ?>
                     <?php } ?>
                 </th>
                 <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                             echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
@@ -2184,14 +2173,14 @@ if ($result) { ?>
                             } else {
                                 echo "ed_a";
                             }
-                            ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Expiry'); ?></a>
+                            ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Expiry'); ?></a>
                         <?php } else { ?>
                             <?php echo _('Expiry'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                             echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
@@ -2204,14 +2193,14 @@ if ($result) { ?>
                             } else {
                                 echo "df_a";
                             }
-                            ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Fee'); ?> (<?php echo $_SESSION['s_default_currency']; ?>)</a>
+                            ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Fee'); ?> (<?php echo $_SESSION['s_default_currency']; ?>)</a>
                         <?php } else { ?>
                                 <?php echo _('Fee'); ?> (<?php echo $_SESSION['s_default_currency']; ?>)
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                         <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2222,14 +2211,14 @@ if ($result) { ?>
                             echo "tld_d";
                         } else {
                             echo "tld_a";
-                        } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('TLD'); ?></a>
+                        } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('TLD'); ?></a>
                     <?php } else { ?>
                             <?php echo _('TLD'); ?>
                     <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2240,14 +2229,14 @@ if ($result) { ?>
                                 echo "r_d";
                             } else {
                                 echo "r_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Registrar'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Registrar'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('Registrar'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2258,14 +2247,14 @@ if ($result) { ?>
                                 echo "ra_d";
                             } else {
                                 echo "ra_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Account'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Account'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('Account'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2276,14 +2265,14 @@ if ($result) { ?>
                                 echo "dns_d";
                             } else {
                                 echo "dns_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('DNS'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('DNS'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('DNS'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2294,14 +2283,14 @@ if ($result) { ?>
                                 echo "ip_d";
                             } else {
                                 echo "ip_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('IP'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('IP'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('IP'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2312,14 +2301,14 @@ if ($result) { ?>
                                 echo "wh_d";
                             } else {
                                 echo "wh_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Host'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Host'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('Host'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2330,14 +2319,14 @@ if ($result) { ?>
                                 echo "pc_d";
                             } else {
                                 echo "pc_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Category'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Category'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('Category'); ?>
                         <?php } ?>
                     </th>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
                             <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                             ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2348,7 +2337,7 @@ if ($result) { ?>
                                 echo "o_d";
                             } else {
                                 echo "o_a";
-                            } ?>&from_dropdown=1" style="color:#000000;"><?php echo _('Owner'); ?></a>
+                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Owner'); ?></a>
                         <?php } else { ?>
                                 <?php echo _('Owner'); ?>
                         <?php } ?>
@@ -2360,11 +2349,11 @@ if ($result) { ?>
 
                         if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
 
-                            <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                            <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
 
                                 <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
 
-                                    <span style="color:#000000;"><?php echo $field['name']; ?></span>
+                                    <span class="domainmod-css-color-black"><?php echo $field['name']; ?></span>
 
                                 <?php } else { ?>
 
@@ -2409,12 +2398,12 @@ if ($result) { ?>
                         } ?>
                     </td>
                     <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="edit.php?did=<?php echo $row->id; ?>"><?php echo $row->expiry_date; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>">
                                 <?php
                                 $converted_total_cost = $row->total_cost * $row->conversion;
@@ -2427,45 +2416,45 @@ if ($result) { ?>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>">.<?php echo $row->tld; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>,
                             <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
                             (<a href="../assets/edit/registrar-account.php?raid=<?php echo $row->ra_id; ?>"><?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/dns.php?dnsid=<?php echo $row->dnsid; ?>"><?php echo $row->dns_name; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/ip-address.php?ipid=<?php echo $row->ipid; ?>"><?php echo $row->ip_name; ?>
                                 (<?php echo $row->ip; ?>)</a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/host.php?whid=<?php echo $row->whid; ?>"><?php echo $row->wh_name; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/category.php?pcid=<?php echo $row->pcid; ?>"><?php echo $row->category_name; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
+                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
                             <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
                         </td>
                     <?php } ?>
@@ -2476,7 +2465,7 @@ if ($result) { ?>
 
                             if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
 
-                            <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>><?php
+                            <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>><?php
 
                                 if ($field['type_id'] == '1') { // Check Box
 

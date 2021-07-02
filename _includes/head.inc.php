@@ -22,15 +22,25 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-// Add $disable_csp = 1; to /_includes/config.inc.php to disable the Content Security Policy headers
 if ($disable_csp !== 1) {
 
-    header("Content-Security-Policy: default-src 'self';");
-    header("Content-Security-Policy: form-action 'self';");
-    header("Content-Security-Policy: frame-ancestors 'none';");
-    header("Content-Security-Policy: img-src 'self';");
-    header("Content-Security-Policy: object-src 'none';");
-    header("Content-Security-Policy: style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com;");
+    define('CURRENT_NONCE', md5(uniqid(rand(), true)));
+
+    $csp_policy = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+
+    if ($force_https !== 0) {
+
+        $csp_policy .= ' upgrade-insecure-requests;';
+
+    }
+
+    header($csp_policy);
+
+}
+
+if ($force_https !== 0) {
+
+    header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
 
 }
 

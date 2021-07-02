@@ -71,6 +71,30 @@ class CustomField
             ORDER BY `name` ASC")->fetchAll();
     }
 
+    public function getTypeId($table_name, $field_id)
+    {
+        return $this->deeb->cnxx->query("
+            SELECT type_id
+            FROM " . $table_name . "
+            WHERE ID = " . $field_id)->fetchColumn();
+    }
+
+    public function getName($table_name, $field_id)
+    {
+        return $this->deeb->cnxx->query("
+            SELECT `name`
+            FROM " . $table_name . "
+            WHERE ID = " . $field_id)->fetchColumn();
+    }
+
+    public function getType($type_id)
+    {
+        return $this->deeb->cnxx->query("
+            SELECT `name`
+            FROM custom_field_types
+            WHERE ID = " . $type_id)->fetchColumn();
+    }
+
     public function getCustomFieldsSql($table_name, $column_prefix)
     {
         $result = $this->queryCustomFields($table_name);

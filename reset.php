@@ -113,7 +113,7 @@ if ($user_identifier != '') {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red" onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red">
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 <?php
     echo $form->showFormTop('');

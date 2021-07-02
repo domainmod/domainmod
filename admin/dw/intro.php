@@ -44,7 +44,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<BR><a href="dw.php"><?php echo $layout->showButton('button', _('Proceed to the Data Warehouse')); ?></a><BR><BR>
+<a href="dw.php"><?php echo $layout->showButton('button', _('Proceed to the Data Warehouse')); ?></a><BR><BR>
 
 <?php echo sprintf(_('%s has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.'), SOFTWARE_TITLE); ?><BR>
 <BR>

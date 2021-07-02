@@ -45,7 +45,7 @@ $pdo = $deeb->cnxx;
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini" onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ $pdo = $deeb->cnxx;
 ?>
 <div class="row">
 
-    <h3 style="padding-left:20px;"><?php echo _("System Totals"); ?></h3>
+    <h3 class="domainmod-css-padding-left"><?php echo _("System Totals"); ?></h3>
 
     <?php
     //////////////////////////////////////////////////
@@ -122,7 +122,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;"><?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h3>
+        <h3 class="domainmod-css-padding-left"><?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -184,7 +184,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     <div class="row">
 
-        <h3 style="padding-left:20px;"><?php echo _('Domain Queue'); ?></h3>
+        <h3 class="domainmod-css-padding-left"><?php echo _('Domain Queue'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -229,7 +229,7 @@ if ($total_count) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;"><?php echo _('Pending (Domains)'); ?></h3>
+        <h3 class="domainmod-css-padding-left"><?php echo _('Pending (Domains)'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////
@@ -305,7 +305,7 @@ if ($total_count) { ?>
 
     <div class="row">
 
-        <h3 style="padding-left:20px;"><?php echo _('Pending (SSL Certificates)'); ?></h3>
+        <h3 class="domainmod-css-padding-left"><?php echo _('Pending (SSL Certificates)'); ?></h3>
 
         <?php
         //////////////////////////////////////////////////

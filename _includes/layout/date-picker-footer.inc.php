@@ -21,7 +21,7 @@
 ?>
 <script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/moment.min.js"></script>
 <script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker.js"></script>
-<script>
+<script type="text/javascript" nonce="<?php echo CURRENT_NONCE; ?>">
     $('input[name="datepick"]').daterangepicker(
 {
     locale: {

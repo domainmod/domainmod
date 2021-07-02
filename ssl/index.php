@@ -588,7 +588,6 @@ if ($export_data == 1) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
-    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -641,7 +640,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
     <div class="box box-default <?php echo $box_type; ?>-box box-solid">
         <div class="box-header with-border">
-            <h3 class="box-title" style="padding-top: 3px;">
+            <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-<?php echo $box_icon; ?>"></i></button>&nbsp;<?php echo _('Advanced Filtering'); ?> [<a href="<?php echo $web_root; ?>/ssl/"><?php echo strtolower(_('Reset Filters')); ?></a>]
             </h3>
         </div>
@@ -736,11 +735,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY d.domain
                 ORDER BY d.domain asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('Domain') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('did', '', '', '', '');
+            echo $form->showDropdownOption('', _('Domain') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_domain as $row_domain) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $row_domain->id . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_domain->id, $row_domain->domain, $did);
+                echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $did);
 
             }
             echo $form->showDropdownBottom('');
@@ -833,11 +832,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslp.name
                 ORDER BY sslp.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('SSL Provider') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('sslpid', '', '', '', '');
+            echo $form->showDropdownOption('', _('SSL Provider') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_ssl_provider as $row_ssl_provider) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $row_ssl_provider->id . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_ssl_provider->id, $row_ssl_provider->name, $sslpid);
+                echo $form->showDropdownOption($row_ssl_provider->id, $row_ssl_provider->name, $sslpid);
 
             }
             echo $form->showDropdownBottom('');
@@ -932,11 +931,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslp.name, o.name, sslpa.username
                 ORDER BY sslp.name asc, o.name asc, sslpa.username asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('SSL Provider Account') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('sslpaid', '', '', '', '');
+            echo $form->showDropdownOption('', _('SSL Provider Account') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_account as $row_account) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $row_account->sslpa_id . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_account->sslpa_id, $row_account->sslp_name . ', ' . $row_account->owner_name . ' (' . $row_account->username . ')', $sslpaid);
+                echo $form->showDropdownOption($row_account->sslpa_id, $row_account->sslp_name . ', ' . $row_account->owner_name . ' (' . $row_account->username . ')', $sslpaid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1029,11 +1028,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslcf.type
                 ORDER BY sslcf.type asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('SSL Type') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('ssltid', '', '', '', '');
+            echo $form->showDropdownOption('', _('SSL Type') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_type as $row_type) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $row_type->type_id . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_type->type_id, $row_type->type, $ssltid);
+                echo $form->showDropdownOption($row_type->type_id, $row_type->type, $ssltid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1126,11 +1125,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY ip.name, ip.ip
                 ORDER BY ip.name, ip.ip")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('sslipid', '', '', '', '');
+            echo $form->showDropdownOption('', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_ip as $row_ip) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $row_ip->ip_id . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_ip->ip_id, $row_ip->ip_name . ' (' . $row_ip->ip . ')', $sslipid);
+                echo $form->showDropdownOption($row_ip->ip_id, $row_ip->ip_name . ' (' . $row_ip->ip . ')', $sslipid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1223,11 +1222,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                GROUP BY c.name
                ORDER BY c.name")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('Category') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('sslpcid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Category') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_cat as $row_cat) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $row_cat->cat_id . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_cat->cat_id, $row_cat->cat_name, $sslpcid);
+                echo $form->showDropdownOption($row_cat->cat_id, $row_cat->cat_name, $sslpcid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1320,11 +1319,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY o.name
                 ORDER BY o.name asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownTop('oid', '', '', '', '');
+            echo $form->showDropdownOption('', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
             foreach ($result_owner as $row_owner) {
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $row_owner->id . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1&null=', $row_owner->id, $row_owner->name, $oid);
+                echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
 
             }
             echo $form->showDropdownBottom('');
@@ -1421,8 +1420,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslc.active
                 ORDER BY sslc.active asc")->fetchAll();
 
-            echo $form->showDropdownTopJump('', '', '', '');
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . strtoupper(_('Live')) . '&from_dropdown=1&expand=1&null=', $is_active, _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
+            echo $form->showDropdownTop('is_active', '', '', '', '');
+            echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
             foreach ($result_active as $row_active) {
 
                 if ($row_active->active == "0") {
@@ -1455,10 +1454,10 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                  * END
                  */
 
-                echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $row_active->active . '&from_dropdown=1&expand=1&null=', $is_active, $display_text, $row_active->active);
+                echo $form->showDropdownOption($row_active->active, $display_text, $is_active);
 
             }
-            echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . strtoupper(_('All')) . '&from_dropdown=1&expand=1&null=', $is_active, strtoupper(_('All')), strtoupper(_('All')));
+            echo $form->showDropdownOption(strtoupper(_('All')), strtoupper(_('All')), $is_active);
             echo $form->showDropdownBottom('');
             ?>
 
@@ -1467,14 +1466,6 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             <?php
             echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
 
-            echo $form->showInputHidden('oid', $oid);
-            echo $form->showInputHidden('did', $did);
-            echo $form->showInputHidden('sslpid', $sslpid);
-            echo $form->showInputHidden('sslpaid', $sslpaid);
-            echo $form->showInputHidden('ssltid', $ssltid);
-            echo $form->showInputHidden('sslipid', $sslipid);
-            echo $form->showInputHidden('sslpcid', $sslpcid);
-            echo $form->showInputHidden('is_active', $is_active);
             echo $form->showSubmitButton(_('Apply Filters'), '', '');
             ?>
             <a href="<?php echo $web_root; ?>/ssl/"><?php echo $layout->showButton('button', _('Reset Filters')); ?></a><?php

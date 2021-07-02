@@ -43,57 +43,50 @@ $report = $_REQUEST['report'];
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php">', '</a>'); ?>
 
-<h3><?php echo _('Domain Reports'); ?></h3>
-<?php
-echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select a Domain Report'), '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-category.php', '', _('Cost by Category'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-dns.php', '', _('Cost by DNS Profile'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-ip-address.php', '', _('Cost by IP Address'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-month.php', '', _('Cost by Month'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-owner.php', '', _('Cost by Owner'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-registrar.php', '', _('Cost by Registrar'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-tld.php', '', _('Cost by TLD'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-host.php', '', _('Cost by Web Host'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/domains/registrar-fees.php?all=0', '', _('Registrar Fees'), 'null');
-echo $form->showDropdownBottom('');
-echo $form->showFormBottom('');
-?>
+<div class="row">
+    <div class="col-md-3">
+        <h3><?php echo _('Domain Reports'); ?></h3>
+        <ul>
+            <li><a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a></li>
+            <li><a href='domains/cost-by-dns.php'><?php echo _('Cost by DNS Profile'); ?></a></li>
+            <li><a href='domains/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a></li>
+            <li><a href='domains/cost-by-month.php'><?php echo _('Cost by Month'); ?></a></li>
+            <li><a href='domains/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a></li>
+            <li><a href='domains/cost-by-registrar.php'><?php echo _('Cost by Registrar'); ?></a></li>
+            <li><a href='domains/cost-by-tld.php'><?php echo _('Cost by TLD'); ?></a></li>
+            <li><a href='domains/cost-by-host.php'><?php echo _('Cost by Web Host'); ?></a></li>
+            <li><a href='domains/registrar-fees.php?all=0'><?php echo _('Registrar Fees'); ?></a></li>
+        </ul>
 
-<h3><?php echo _('SSL Certificate Reports'); ?></h3>
-<?php
-echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select an SSL Report'), '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-category.php', '', _('Cost by Category'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-domain.php', '', _('Cost by Domain'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-ip-address.php', '', _('Cost by IP Address'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-month.php', '', _('Cost by Month'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-owner.php', '', _('Cost by Owner'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-provider.php', '', _('Cost by Provider'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-type.php', '', _('Cost by Type'), 'null');
-echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/provider-fees.php?all=0', '', _('Provider Fees'), 'null');
-echo $form->showDropdownBottom('');
-echo $form->showFormBottom('');
-?>
-
-<h3><?php echo _('Data Warehouse Reports'); ?></h3>
-<?php
-echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '', '', '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/', '', _('Click to select a DW Report'), '');
-echo $form->showDropdownOptionJump($web_root . '/reporting/dw/potential-problems.php?generate=1', '', _('Potential Problems'), 'null');
-echo $form->showDropdownBottom('');
-echo $form->showFormBottom('');
-?>
-
+    </div>
+    <div class="col-md-3">
+        <h3><?php echo _('SSL Certificate Reports'); ?></h3>
+        <ul>
+            <li><a href='ssl/cost-by-category.php'><?php echo _('Cost by Category'); ?></a></li>
+            <li><a href='ssl/cost-by-domain.php'><?php echo _('Cost by Domain'); ?></a></li>
+            <li><a href='ssl/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a></li>
+            <li><a href='ssl/cost-by-month.php'><?php echo _('Cost by Month'); ?></a></li>
+            <li><a href='ssl/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a></li>
+            <li><a href='ssl/cost-by-provider.php'><?php echo _('Cost by Provider'); ?></a></li>
+            <li><a href='ssl/cost-by-type.php'><?php echo _('Cost by Type'); ?></a></li>
+            <li><a href='ssl/provider-fees.php?all=0'><?php echo _('Provider Fees'); ?></a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h3><?php echo _('Data Warehouse Reports'); ?></h3>
+        <ul>
+            <li><a href='dw/potential-problems.php?generate=1'><?php echo _('Potential Problems'); ?></a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        &nbsp;
+    </div>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

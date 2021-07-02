@@ -516,7 +516,7 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
 
 <?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
 <?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
 <a href="index.php?clear=1"><?php echo $layout->showButton('button', _('Clear Completed')); ?></a>
 <?php } ?>

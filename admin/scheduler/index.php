@@ -75,10 +75,10 @@ $pdo = $deeb->cnxx;
     foreach ($result as $row) { ?>
 
         <tr>
-        <td style="padding: 7px 5px 0px 10px;">
+        <td class="domainmod-css-scheduler-padding-left">
             <h4><?php echo $row->name; ?></h4><?php echo $row->description ?><BR><BR><BR>
         </td>
-        <td style="padding: 15px 0px 18px 0px;">
+        <td class="domainmod-css-scheduler-padding-right">
             <strong><?php echo _('Runs'); ?>:</strong> <?php echo $row->interval; ?><BR>
 
             <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php

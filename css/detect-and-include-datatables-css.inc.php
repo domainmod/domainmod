@@ -141,4 +141,3 @@ switch ($slug) {
 }
 
 if ($include_datatable_css === 1) { ?><link rel="stylesheet" href="<?php echo $web_root; ?>/css/datatables/<?php echo $slug; ?>.css"><?php } ?>
-

@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -40,15 +42,15 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin']);
 $pdo = $deeb->cnxx;
 
-$id = (int) $_GET['id'];
-$action = $_GET['action'];
-$view_all = $_GET['view_all'];
+$dropdown_selection = $sanitize->text($_REQUEST['dropdown_selection']);
 
-if ($action != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
 
-    if ($action == "dw_accounts") {
+    $action = explode('-', $dropdown_selection);
 
-        if ($view_all == '1') {
+    if ($action[0] == "accounts") {
+
+        if ($action[1] == 'ALL') {
 
             $_SESSION['s_dw_view_all'] = 1;
 
@@ -58,7 +60,7 @@ if ($action != "") {
                 SELECT `name`, `host`
                 FROM dw_servers
                 WHERE id = :id");
-            $stmt->bindValue('id', $id, PDO::PARAM_INT);
+            $stmt->bindValue('id', $action[1], PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
             $stmt->closeCursor();
@@ -66,7 +68,7 @@ if ($action != "") {
             if ($result) {
 
                 $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_id'] = $action[1];
                 $_SESSION['s_dw_server_name'] = $result->name;
                 $_SESSION['s_dw_server_host'] = $result->host;
 
@@ -77,9 +79,9 @@ if ($action != "") {
         header("Location: list-accounts.php");
         exit;
 
-    } elseif ($action == "dw_dns_zones") {
+    } elseif ($action[0] == "zones") {
 
-        if ($view_all == '1') {
+        if ($action[1] == 'ALL') {
 
             $_SESSION['s_dw_view_all'] = 1;
 
@@ -89,7 +91,7 @@ if ($action != "") {
                 SELECT `name`, `host`
                 FROM dw_servers
                 WHERE id = :id");
-            $stmt->bindValue('id', $id, PDO::PARAM_INT);
+            $stmt->bindValue('id', $action[1], PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch();
             $stmt->closeCursor();
@@ -97,7 +99,7 @@ if ($action != "") {
             if ($result) {
 
                 $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_id'] = $action[1];
                 $_SESSION['s_dw_server_name'] = $result->name;
                 $_SESSION['s_dw_server_host'] = $result->host;
 
@@ -110,6 +112,10 @@ if ($action != "") {
 
     }
 
+} elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection == "") {
+
+    $_SESSION['s_message_danger'] = _('Invalid selection, please try again');
+
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -117,7 +123,6 @@ if ($action != "") {
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -137,7 +142,7 @@ if (!$result) {
 
 }
 ?>
-<a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a><?php
+<a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a>&nbsp;&nbsp;<?php
 if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
 $result = $pdo->query("
@@ -179,60 +184,55 @@ if ($result) {
 
 }
 
-if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
+if ($is_the_build_finished == 1) {
 
-    <BR><BR><h3><?php echo _('View Data'); ?></h3>
-    <?php
+    if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
-    echo $form->showFormTop('');
+        <BR><BR><h3><?php echo _('View Data'); ?></h3>
+        <?php
 
-    if ($temp_total_accounts == 0) {
+        echo $form->showFormTop('');
+        echo $form->showDropdownTop('dropdown_selection', '', '', '', '');
 
-        echo _('No Accounts exist') . '<BR>';
+        if ($temp_total_accounts != 0) {
 
-    } else {
+            echo $form->showDropdownOption('', strtoupper(_('Server Accounts')), 'null');
+            echo $form->showDropdownOption('accounts-ALL', '&nbsp;&nbsp;' . _('View All'), 'null');
 
-        echo $form->showDropdownTopJump('', '', '', '');
-        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', _('Server Accounts'), '');
-        echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&view_all=1', '', strtoupper(_('View All')), 'null');
+            $result = $pdo->query("
+                SELECT id, `name`, dw_accounts
+                FROM dw_servers
+                ORDER BY name, `host`")->fetchAll();
 
-        $result = $pdo->query("
-            SELECT id, `name`, dw_accounts
-            FROM dw_servers
-            ORDER BY name, `host`")->fetchAll();
+            foreach ($result as $row) {
 
-        foreach ($result as $row) {
+                echo $form->showDropdownOption('accounts-' . $row->id, '&nbsp;&nbsp;' . $row->name . ' (' . number_format($row->dw_accounts) . ' ' . _('Accounts') . ')', 'null');
 
-            echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_accounts) . ' ' . _('Accounts') . ')', 'null');
+            }
+
+        }
+
+        if ($temp_total_dns_zones != 0) {
+
+            echo $form->showDropdownOption('', strtoupper(_('DNS Zones & Records')), 'null');
+            echo $form->showDropdownOption('zones-ALL', '&nbsp;&nbsp;' . _('View All'), 'null');
+
+            $result = $pdo->query("
+                SELECT id, name, dw_dns_zones, dw_dns_records
+                FROM dw_servers
+                ORDER BY name, host")->fetchAll();
+
+            foreach ($result as $row) {
+
+                echo $form->showDropdownOption('zones-' . $row->id, '&nbsp;&nbsp;' . $row->name . ' (' . number_format($row->dw_dns_zones) . ' ' . _('Zones') . ', ' . number_format($row->dw_dns_records) . ' ' . _('Records') . ')', 'null');
+
+            }
 
         }
 
         echo $form->showDropdownBottom('');
-
-    }
-
-    if ($temp_total_dns_zones == 0) {
-
-        echo _('No DNS Zones exist') . '<BR>';
-
-    } else {
-
-        echo $form->showDropdownTopJump('', '', '', '');
-        echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', _('DNS Zones & Records'), '');
-        echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&view_all=1', '', strtoupper(_('View All')), 'null');
-
-        $result = $pdo->query("
-            SELECT id, name, dw_dns_zones, dw_dns_records
-            FROM dw_servers
-            ORDER BY name, host")->fetchAll();
-
-        foreach ($result as $row) {
-
-            echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&id=' . $row->id, '', $row->name . ' (' . number_format($row->dw_dns_zones) . ' ' . _('Zones') . ', ' . number_format($row->dw_dns_records) . ' ' . _('Records') . ')', 'null');
-
-        }
-
-        echo $form->showDropdownBottom('');
+        echo $form->showSubmitButton(_('View Data'), '', '');
+        echo $form->showFormBottom('');
 
     }
 

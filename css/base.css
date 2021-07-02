@@ -1,3 +1,49 @@
 html {
     overflow-y: scroll;
 }
+.domainmod-css-button {
+    margin-top:5px
+}
+.domainmod-css-text-highlight-red {
+    color: #a30000;
+}
+.domainmod-css-text-highlight-green {
+    color: #009933;
+}
+.domainmod-css-padding-left {
+    padding-left:20px;
+}
+.domainmod-css-dashboard-icon-padding {
+    padding-top:16px;
+}
+.domainmod-css-h3-box-title-padding {
+    padding-top: 3px;
+}
+.domainmod-css-normal-font-weight {
+    font-weight: normal;
+}
+.domaimod-css-textarea-height {
+    height: 80px;
+}
+.domainmod-css-random-padding {
+    padding-top: 7px;
+    padding-bottom: 17px;
+}
+.domainmod-css-width-100-percent {
+    width: 100%;
+}
+.domainmod-css-line-through {
+    text-decoration: line-through;
+}
+.domainmod-css-scheduler-padding-left {
+    padding: 7px 5px 0px 10px;
+}
+.domainmod-css-scheduler-padding-right {
+    padding: 15px 0px 18px 0px;
+}
+.domainmod-css-color-black {
+    color: #000000;
+}
+.domainmod-css-clear-both {
+    clear: both;
+}

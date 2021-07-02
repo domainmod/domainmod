@@ -21,7 +21,7 @@
 ?>
 <link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>
 <link rel="stylesheet" href="<?php echo $web_root; ?>/css/base.css">
-<?php require_once DIR_ROOT . '/css/datatables/detect-and-include.inc.php'; ?>
+<?php require_once DIR_ROOT . '/css/detect-and-include-datatables-css.inc.php'; ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">

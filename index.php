@@ -155,16 +155,7 @@ $new_password = "";
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<?php
-if ($new_username == "") { ?>
-
-    <body class="hold-transition skin-red" onLoad="document.forms[0].elements[0].focus()"><?php
-
-} else { ?>
-
-    <body class="hold-transition skin-red" onLoad="document.forms[0].elements[1].focus()"><?php
-
-} ?>
+<body class="hold-transition skin-red">
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 <?php
 echo $form->showFormTop('');

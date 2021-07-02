@@ -29,36 +29,20 @@ class Layout
         return SOFTWARE_TITLE . ' :: ' . $page_title;
     }
 
-    public function jumpMenu()
-    {
-        ob_start(); ?>
-
-        <script type="text/javascript">
-            <!--
-            function MM_jumpMenu(targ, selObj, restore) { //v3.0
-                eval(targ + ".location='" + selObj.options[selObj.selectedIndex].value + "'");
-                if (restore) selObj.selectedIndex = 0;
-            }
-            //-->
-        </script><?php
-
-        return ob_get_clean();
-    }
-
     public function showButton($button_type, $button_text)
     {
-        ob_start(); ?><button style="margin-top:5px" type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button>&nbsp;<?php
+        ob_start(); ?><button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger domainmod-css-button"><?php echo $button_text; ?></button>&nbsp;<?php
         return ob_get_clean();
     }
 
     public function highlightText($colour, $text_to_display)
     {
         if ($colour == 'red') {
-            $text_colour = '#a30000';
+            $class = 'domainmod-css-text-highlight-red';
         } elseif ($colour == 'green') {
-            $text_colour = '#009933';
+            $class = 'domainmod-css-text-highlight-green';
         }
-        ob_start(); ?><strong><span style="color:<?php echo $text_colour; ?>"><?php echo $text_to_display; ?></span></strong><?php
+        ob_start(); ?><strong><span class="<?php echo $class; ?>"><?php echo $text_to_display; ?></span></strong><?php
         return ob_get_clean();
     }
 

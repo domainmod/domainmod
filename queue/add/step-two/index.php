@@ -1,6 +1,6 @@
 <?php
 /**
- * /queue/add.php
+ * /queue/add/step-two/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2021 Greg Chetcuti <greg@chetcuti.com>
@@ -20,15 +20,15 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/../_includes/start-session.inc.php';
-require_once __DIR__ . '/../_includes/init.inc.php';
+require_once __DIR__ . '/../../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
-$log = new DomainMOD\Log('/queue/add.php');
+$log = new DomainMOD\Log('/queue/add/step-two/index.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= _('Registrar Account Added To Domain List Queue') . '<BR>';
 
-                header("Location: index.php");
+                header("Location: ./");
                 exit;
 
             } catch (Exception $e) {
@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
     } else { // If the registrar's API DOES NOT have the ability to retrieve the list of domains, or if there's a
-        // problem with he automatic import, use the list supplied
+             // problem with he automatic import, use the list supplied
 
         // check to make sure that the registrar associated with the account has API support
         $stmt = $pdo->prepare("
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($has_api_support != '1' && $new_raid !== 0) {
 
                 $_SESSION['s_message_danger'] .= _("Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.") . '<BR><BR>' .
-                sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . $temp_registrar_id . '">', '</a>');
+                    sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . $temp_registrar_id . '">', '</a>');
 
             } else {
 
@@ -383,39 +383,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-    <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<strong><?php echo _('Domain Queue & API Prerequisites'); ?></strong><BR>
-<?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?>
-<ol>
-    <li><?php echo _('Ensure that the registrar has an API and that your account has been granted access to it'); ?></li>
-    <li><?php echo sprintf(_('Enable API Support on the %sregistrar asset%s'), '<a href="' . $web_root . '/assets/registrars.php">', '</a>'); ?></li>
-    <li><?php echo sprintf(_('Save the required API credentials with the %sregistrar account asset%s'), '<a href="' . $web_root . '/assets/registrar-accounts.php">', '</a>'); ?></li>
-</ol><?php
-
-echo $form->showFormTop('');
-
-echo $form->showDropdownTopJump('', '', '', '');
-
-$result_account = $pdo->query("
-    SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-    FROM registrar_accounts AS ra, owners AS o, registrars AS r
-    WHERE ra.owner_id = o.id
-      AND ra.registrar_id = r.id
-      AND r.api_registrar_id != '0'
-    ORDER BY r_name, o_name, ra.username")->fetchAll();
-
-echo $form->showDropdownOptionJump('add.php', '', _('Choose the Registrar Account to import'), '');
-
-foreach ($result_account as $row_account) {
-
-    echo $form->showDropdownOptionJump('add.php?new_raid=', $row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_raid);
-
-}
-echo $form->showDropdownBottom('');
-
+<?php
 if ($new_raid !== 0) { ?>
 
     <strong><?php echo _('API Requirements'); ?></strong><BR>
@@ -499,6 +470,7 @@ if ($registrar_notes != '') {
     echo $registrar_notes . "<BR><BR>";
 
 }
+echo $form->showFormTop('');
 
 if ($new_raid !== 0) {
 
@@ -515,15 +487,14 @@ if ($new_raid !== 0) {
         echo $form->showInputTextarea('raw_domain_list', _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '1', '', '');
     }
 
-}
-
+} ?>
+<a href='../step-one/'><?php echo $layout->showButton('button', _('Go Back')); ?></a>&nbsp;&nbsp;
+<?php
 if ($new_raid !== 0) {
 
     echo $form->showSubmitButton(_('Add Domains'), '', '');
 
 }
-
-echo $form->showInputHidden('new_raid', $new_raid);
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

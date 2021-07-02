@@ -198,7 +198,7 @@ echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">
     <div class="box-header with-border">
-        <h3 class="box-title" style="padding-top: 3px;">
+        <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;<?php echo _('SMTP Server Settings'); ?>
         </h3>
     </div>

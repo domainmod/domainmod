@@ -197,7 +197,7 @@ if ($result) { ?>
     </table>
 
     <strong><?php echo _('A'); ?></strong> = <?php echo _('Admin'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <strong><?php echo _('R'); ?></strong> = <?php echo _('Read-Only'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="text-decoration: line-through;"><?php echo strtoupper(_('Strike')); ?></span> = <?php echo _('Inactive'); ?><?php
+    <strong><?php echo _('R'); ?></strong> = <?php echo _('Read-Only'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="domainmod-css-line-through"><?php echo strtoupper(_('Strike')); ?></span> = <?php echo _('Inactive'); ?><?php
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

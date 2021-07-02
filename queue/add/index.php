@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/layout/pagination-large-mode.inc.php
+ * /queue/add/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2021 Greg Chetcuti <greg@chetcuti.com>
@@ -19,13 +19,6 @@
  *
  */
 ?>
-<div class="pagination_menu_block">
-    <div class="pagination_menu_block_inner">
-        <?php echo $navigate[2]; ?>&nbsp;
-        <?php if ($total_rows) {
-            echo sprintf(_('(Listing %s of %s)'), $navigate[1], number_format($total_rows));
-        } ?>
-    </div>
-</div>
-<div class="domainmod-css-clear-both"></div>
-<BR>
+<?php
+header("Location: step-one/");
+exit;

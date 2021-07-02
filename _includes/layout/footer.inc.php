@@ -275,22 +275,22 @@ if (file_exists($full_filename)) {
 <script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/dist/js/app.min.js"></script>
 <!-- iCheck 1.0.1 -->
 <script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/iCheck/icheck.min.js"></script>
-<script>
-  $(function () {
+<script nonce="<?php echo CURRENT_NONCE; ?>">
+    $(function () {
 
-    //Initialize Select2 Elements
-    $(".select2").select2();
+        //Initialize Select2 Elements
+        $(".select2").select2();
 
-    <?php echo $datatable_options; ?>
+        <?php echo $datatable_options; ?>
 
-    //Red color scheme for iCheck
-    $('input[type="checkbox"].square-red, input[type="radio"].square-red').iCheck({
-      checkboxClass: 'icheckbox_square-red',
-      radioClass: 'iradio_square-red'
+        //Red color scheme for iCheck
+        $('input[type="checkbox"].square-red, input[type="radio"].square-red').iCheck({
+            checkboxClass: 'icheckbox_square-red',
+            radioClass: 'iradio_square-red'
+        });
+
+        //Colorpicker
+        // $(".my-colorpicker1").colorpicker();
+
     });
-
-    //Colorpicker
-    // $(".my-colorpicker1").colorpicker();
-
-  });
 </script>
