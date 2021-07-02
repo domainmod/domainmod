@@ -40,7 +40,7 @@ if ($disable_csp === 0) {
 
 if ($force_https === 1) {
 
-    header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+    header("Strict-Transport-Security: max-age=31536000");
 
 }
 
