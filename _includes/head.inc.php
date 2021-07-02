@@ -22,13 +22,13 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-if ($disable_csp !== 1) {
+if ($disable_csp === 0) {
 
     define('CURRENT_NONCE', md5(uniqid(rand(), true)));
 
     $csp_policy = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
-    if ($force_https !== 0) {
+    if ($force_https === 1) {
 
         $csp_policy .= ' upgrade-insecure-requests;';
 
@@ -38,7 +38,7 @@ if ($disable_csp !== 1) {
 
 }
 
-if ($force_https !== 0) {
+if ($force_https === 1) {
 
     header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
 
