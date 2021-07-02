@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/start-session.inc.php
+ * /helpers/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2021 Greg Chetcuti <greg@chetcuti.com>
@@ -20,26 +20,5 @@
  */
 ?>
 <?php
-// If the /helpers/ssl.php file exists, load it
-$full_filename = __DIR__ . '/../helpers/ssl.php';
-if (file_exists($full_filename)) require_once $full_filename;
-
-// If the /helpders/ssl.php file does NOT exists, set variable defaults
-if (!isset($disable_csp)) $disable_csp = 0;
-if (!isset($force_https)) $force_https = 1;
-
-if ($force_https === 1) {
-
-    session_name("__Secure-domainmod-gc-cookie");
-    @ini_set('session.cookie_secure', '1');
-
-} else {
-
-    session_name("domainmod-gc-cookie");
-    @ini_set('session.cookie_secure', '0');
-
-}
-@ini_set('session.cookie_httponly', '1');
-@ini_set('session.cookie_path', '/');
-@ini_set('session.cookie_samesite', 'Lax');
-session_start();
+header("Location: ../invalid.php");
+exit;

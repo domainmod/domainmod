@@ -2,6 +2,7 @@
 /_includes/layout/head-tags.DEMO.inc.php
 /_includes/layout/header.DEMO.inc.php
 /_includes/config.inc.php
+/helpers/ssl.php
 .htaccess
 domainmod.log
 error_log
