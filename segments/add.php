@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->commit();
 
-                $_SESSION['s_message_success'] .= sprintf(_('Segment % added'), $new_name) . '<BR>';
+                $_SESSION['s_message_success'] .= sprintf(_('Segment %s added'), $new_name) . '<BR>';
 
                 header("Location: ../segments/");
                 exit;

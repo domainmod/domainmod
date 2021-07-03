@@ -254,7 +254,7 @@ if ($done != '1') {
 
     <?php if ($submission_failed != "1") { ?>
 
-        <BR><strong><?php echo _('The following domains had their <em>' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</em>'); ?> field updated:</strong><BR>
+        <BR><strong><?php echo _('The following domains had their') . ' <em>' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</em>'; ?> field updated:</strong><BR>
 
         <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR>
 
