@@ -26,15 +26,32 @@ if ($disable_csp === 0) {
 
     define('CURRENT_NONCE', md5(uniqid(rand(), true)));
 
-    $csp_policy = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+    $browser_detect = new \DomainMOD\Detect();
+    $browser_name = $browser_detect->getBrowser();
 
-    if ($force_https === 1) {
+    if ($browser_name === 'chrome' || $browser_name === 'chromium' || $browser_name === 'opera') {
 
-        $csp_policy .= ' upgrade-insecure-requests;';
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+
+    // For browsers that don't support script-src-elem and style-src-elem yet
+    } elseif ($browser_name === 'firefox' || $browser_name === 'safari' || $browser_name === 'seamonkey') {
+
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+
+    // If it's not a standard browser, apply the same strict policy that Chrome gets
+    } else {
+
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
     }
 
-    header($csp_policy);
+    if ($force_https === 1) {
+
+        $csp_header .= ' upgrade-insecure-requests;';
+
+    }
+
+    header($csp_header);
 
 }
 
