@@ -20,11 +20,11 @@
  */
 ?>
 <?php
-// If the /helpers/ssl.php file exists, load it
-$full_filename = __DIR__ . '/../helpers/ssl.php';
+// If the /helpers/top.php file exists, load it
+$full_filename = __DIR__ . '/../helpers/top.php';
 if (file_exists($full_filename)) require_once $full_filename;
 
-// If the /helpders/ssl.php file does NOT exists, set variable defaults
+// If the /helpers/top.php file does NOT exists, set variable defaults
 if (!isset($disable_csp)) $disable_csp = 0;
 if (!isset($force_https)) $force_https = 1;
 

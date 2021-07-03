@@ -3,7 +3,7 @@
 /_includes/layout/header.DEMO.inc.php
 /_includes/config.inc.php
 /helpers/init.php
-/helpers/ssl.php
+/helpers/top.php
 .htaccess
 domainmod.log
 error_log
