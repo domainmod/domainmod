@@ -155,7 +155,7 @@ $new_password = "";
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page text-sm">
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 
 <div class="card card-outline card-danger">

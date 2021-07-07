@@ -54,7 +54,7 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body>
+<body class="hold-transition text-sm">
 <?php
 $result = $pdo->query($_SESSION['s_raw_list_query'])->fetchAll();
 
