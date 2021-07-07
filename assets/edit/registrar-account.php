@@ -304,7 +304,7 @@ if ($result) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
@@ -358,125 +358,116 @@ echo $form->showRadioBottom('');
 
 echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
 
-if ($has_api_support >= 1) { ?>
+if ($has_api_support >= 1) {
 
-    <div class="box box-default collapsed-box box-solid">
-        <div class="box-header with-border">
-            <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                </button>
-                &nbsp;<?php echo _('API Credentials'); ?>
-            </h3>
-        </div>
-        <div class="box-body">
+    echo $layout->expandableBoxTop(_('API Credentials'), '', ''); ?>
 
-            <strong><?php echo _('API Requirements'); ?></strong><BR>
-            <?php echo sprintf(_('%s requires the following credentials in order to use their API.'), $api_registrar_name); ?>
+    <strong><?php echo _('API Requirements'); ?></strong><BR>
+    <?php echo sprintf(_('%s requires the following credentials in order to use their API.'), $api_registrar_name); ?>
 
-            <ul><?php
+    <ul><?php
 
-                $missing_text = ' (<span style="color: #a30000"><strong>' . strtolower(_('Missing')) . '</strong></span>)';
-                $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
+        $missing_text = ' (<span style="color: #a30000"><strong>' . strtolower(_('Missing')) . '</strong></span>)';
+        $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
 
-                if ($req_account_username == '1') {
-                    echo '<li>' . _('Registrar Account Username');
-                    if ($new_username == '') {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_account_password == '1') {
-                    echo '<li>' . _('Registrar Account Password');
-                    if ($new_password == '') {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_reseller_id == '1') {
-                    echo '<li>' . _('Reseller ID');
-                    if ($new_reseller_id === 0) {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_api_app_name == '1') {
-                    echo '<li>' . _('API Application Name');
-                    if ($new_api_app_name == '') {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_api_key == '1') {
-                    echo '<li>' . _('API Key');
-                    if ($new_api_key == '') {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_api_secret == '1') {
-                    echo '<li>' . _('API Secret');
-                    if ($new_api_secret == '') {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                }
-                if ($req_ip_address == '1') {
-                    echo '<li>' . _('Connecting IP Address');
-                    if ($new_api_ip_id === 0) {
-                        echo $missing_text;
-                    } else {
-                        echo $saved_text;
-                    }
-                    echo '</li>';
-                } ?>
-            </ul><?php
-
-            if ($api_registrar_notes != '') {
-
-                echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
-                echo $api_registrar_notes . "<BR><BR>";
-
+        if ($req_account_username == '1') {
+            echo '<li>' . _('Registrar Account Username');
+            if ($new_username == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
             }
+            echo '</li>';
+        }
+        if ($req_account_password == '1') {
+            echo '<li>' . _('Registrar Account Password');
+            if ($new_password == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_reseller_id == '1') {
+            echo '<li>' . _('Reseller ID');
+            if ($new_reseller_id === 0) {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_api_app_name == '1') {
+            echo '<li>' . _('API Application Name');
+            if ($new_api_app_name == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_api_key == '1') {
+            echo '<li>' . _('API Key');
+            if ($new_api_key == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_api_secret == '1') {
+            echo '<li>' . _('API Secret');
+            if ($new_api_secret == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_ip_address == '1') {
+            echo '<li>' . _('Connecting IP Address');
+            if ($new_api_ip_id === 0) {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        } ?>
+    </ul><?php
 
-            echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
-            echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
-            echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
+    if ($api_registrar_notes != '') {
 
-            $result = $pdo->query("
-                SELECT id, `name`, ip
-                FROM ip_addresses
-                ORDER BY `name` ASC")->fetchAll();
+        echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
+        echo $api_registrar_notes . "<BR><BR>";
 
-            if ($result) {
+    }
 
-                echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.') . sprintf(_('%sClick here%s to add a new IP Address'), '<a href="' . $web_root . '/assets/add/ip-address.php">', '</a>'), '', '');
+    echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
+    echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
+    echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
 
-                echo $form->showDropdownOption('0', 'n/a', '0');
+    $result = $pdo->query("
+        SELECT id, `name`, ip
+        FROM ip_addresses
+        ORDER BY `name` ASC")->fetchAll();
 
-                foreach ($result as $row) {
+    if ($result) {
 
-                    echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_api_ip_id);
+        echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.') . sprintf(_('%sClick here%s to add a new IP Address'), '<a href="' . $web_root . '/assets/add/ip-address.php">', '</a>'), '', '');
 
-                }
+        echo $form->showDropdownOption('0', 'n/a', '0');
 
-                echo $form->showDropdownBottom('');
+        foreach ($result as $row) {
 
-            } ?>
+            echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_api_ip_id);
 
-        </div>
-    </div><BR><?php
+        }
+
+        echo $form->showDropdownBottom('');
+
+    }
+
+    echo $layout->expandableBoxBottom();
 
 }
 

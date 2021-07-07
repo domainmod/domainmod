@@ -19,5 +19,6 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/domains/"><?php echo _('Domains'); ?></a></li>
-<li class="active"><?php echo $breadcrumb; ?></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/domains/"><?php echo _('Domains'); ?></a></li>
+    <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

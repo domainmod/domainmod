@@ -19,4 +19,4 @@
  *
  */
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker-bs3.css" />
+<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker.css">

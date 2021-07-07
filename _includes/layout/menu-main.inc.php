@@ -19,87 +19,268 @@
  *
  */
 ?>
-      <ul class="sidebar-menu">
-        <li class="header"><?php echo strtoupper(_('Navigation')); ?></li>
-        <li<?php if ($software_section == "dashboard") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/dashboard/"><i class="fa fa-dashboard"></i> <span><?php echo _('Dashboard'); ?></span></a></li>
 
-        <li<?php if ($software_section == "domains") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/domains/"><i class="fa fa-sitemap"></i> <span><?php echo _('Domains'); ?></span></a></li>
-
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-header">NAVIGATION</li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/" class="nav-link<?php if ($software_section == "dashboard") echo " active"; ?>">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    <?php echo _('Dashboard'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/domains/" class="nav-link<?php if ($software_section == "domains") echo " active"; ?>">
+                <i class="nav-icon fas fa-sitemap"></i>
+                <p>
+                    <?php echo _('Domains'); ?>
+                </p>
+            </a>
+        </li>
         <?php if ($_SESSION['s_domains_in_list_queue'] == '1' || $_SESSION['s_domains_in_queue'] == '1') { ?>
-        <li<?php if ($software_section == "queue") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/queue/"><i class="fa fa-hourglass-2"></i> <span><?php echo _('Queue'); ?></span></a></li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/queue/" class="nav-link<?php if ($software_section == "queue") echo " active"; ?>">
+                <i class="nav-icon fas fa-hourglass"></i>
+                <p>
+                    <?php echo _('Queue'); ?>
+                </p>
+            </a>
+        </li>
         <?php } ?>
-
-        <li<?php if ($software_section == "ssl") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/ssl/"><i class="fa fa-lock"></i> <span><?php echo _('SSL Certificates'); ?></span></a></li>
-        <li<?php if ($software_section == "assets") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/assets/"><i class="fa fa-cubes"></i> <span><?php echo _('Assets'); ?></span></a></li>
-        <li<?php if ($software_section == "segments") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/segments/"><i class="fa fa-filter"></i> <span><?php echo _('Segments'); ?></span></a></li>
-
-        <?php if ($_SESSION['s_read_only'] == '0') { ?>
-          
-          <li<?php if ($slug == "bulk-main") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/bulk/"><i class="fa fa-copy"></i> <span><?php echo _('Bulk Updater'); ?></span></a></li>
-        
-        <?php } ?>
-
-        <li<?php if ($software_section == "reporting") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/reporting/"><i class="fa fa-bar-chart"></i> <span><?php echo _('Reporting'); ?></span></a></li>
-
-        <?php if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
-          <li<?php if ($software_section == "dw") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/admin/dw/"><i class="fa fa-database"></i> <span><?php echo _('Data Warehouse'); ?></span></a></li>
-        <?php } ?>
-
-        <li class="treeview<?php if ($software_section == "settings") echo " active"; ?>">
-          <a href="#">
-            <i class="fa fa-gears"></i> <span><?php echo _('Settings'); ?></span>
-            <i class="fa fa-angle-left pull-right"></i>
-          </a>
-          <ul class="treeview-menu">
-              <li<?php if ($slug == "settings-display") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/settings/display/"><i class="fa"></i><?php echo _('Display Settings'); ?></a></li>
-              <li<?php if ($slug == "settings-defaults") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/settings/defaults/"><i class="fa"></i><?php echo _('User Defaults'); ?></a></li>
-              <li<?php if ($slug == "settings-profile") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/settings/profile/"><i class="fa"></i><?php echo _('User Profile'); ?></a></li>
-              <li<?php if ($slug == "settings-password") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/settings/password/"><i class="fa"></i><?php echo _('Change Password'); ?></a></li>
-          </ul>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/ssl/" class="nav-link<?php if ($software_section == "ssl") echo " active"; ?>">
+                <i class="nav-icon fas fa-lock"></i>
+                <p>
+                    <?php echo _('SSL Certificates'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/assets/" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>">
+                <i class="nav-icon fas fa-cubes"></i>
+                <p>
+                    <?php echo _('Assets'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/segments/" class="nav-link<?php if ($software_section == "segments") echo " active"; ?>">
+                <i class="nav-icon fas fa-filter"></i>
+                <p>
+                    <?php echo _('Segments'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/bulk/" class="nav-link<?php if ($software_section == "bulk") echo " active"; ?>">
+                <i class="nav-icon fas fa-copy"></i>
+                <p>
+                    <?php echo _('Bulk Updater'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting") echo " active"; ?>">
+                <i class="nav-icon fas fa-chart-bar"></i>
+                <p>
+                    <?php echo _('Reporting'); ?>
+                </p>
+            </a>
         </li>
 
-        <?php if ($_SESSION['s_read_only'] == '0') { ?>
-
-            <li class="treeview<?php if ($software_section == "maintenance") echo " active"; ?>">
-              <a href="#">
-                <i class="fa fa-check"></i> <span><?php echo _('Maintenance'); ?></span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                  <li><a href="<?php echo $web_root; ?>/maintenance/update-conversions.php"><i class="fa"></i><?php echo _('Update Conversion Rates'); ?></a></li>
-                  <li><a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php"><i class="fa"></i><?php echo _('Update Domain Fees'); ?></a></li>
-                  <li><a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php"><i class="fa"></i><?php echo _('Update SSL Fees'); ?></a></li>
-              </ul>
+        <?php if ($_SESSION['s_is_admin'] === 1) { ?>
+            <li class="nav-item">
+                <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>">
+                    <i class="nav-icon fas fa-database"></i>
+                    <p>
+                        <?php echo _('Data Warehouse'); ?>
+                    </p>
+                </a>
             </li>
-
         <?php } ?>
+        <li class="nav-item<?php if ($software_section == "settings") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "settings") echo " active"; ?>">
+                <i class="nav-icon fas fa-cogs"></i>
+                <p>
+                    Settings
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/display/" class="nav-link<?php if ($slug == "settings-display") echo " active"; ?>">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>Display Settings</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/defaults/" class="nav-link<?php if ($slug == "settings-defaults") echo " active"; ?>">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>User Defaults</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/profile/" class="nav-link<?php if ($slug == "settings-profile") echo " active"; ?>">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>User Profile</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/password/" class="nav-link<?php if ($slug == "settings-password") echo " active"; ?>">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>Change Password</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item<?php if ($software_section == "maintenance") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>">
+                <i class="nav-icon fas fa-check"></i>
+                <p>
+                    Maintenance
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php" class="nav-link">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>Update Conversion Rates</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php" class="nav-link">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>Update Domain Fees</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php" class="nav-link">
+                        <i class="far fa-circle-disabled nav-icon"></i>
+                        <p>Update SSL Fees</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
 
-        <?php if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
-
-            <li class="treeview<?php if ($software_section == "admin") echo " active"; ?>">
-              <a href="#">
-                <i class="fa fa-wrench"></i> <span><?php echo _('Administration'); ?></span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                  <li<?php if ($slug == "admin-settings") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/settings/"><i class="fa"></i><?php echo _('System Settings'); ?></a></li>
-                  <li<?php if ($slug == "admin-defaults") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/defaults/"><i class="fa"></i><?php echo _('System Defaults'); ?></a></li>
-                  <li<?php if ($slug == "admin-users-main" || $slug == "admin-users-add" || $slug == "admin-users-edit") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/users/"><i class="fa"></i><?php echo _('Users'); ?></a></li>
-                  <li<?php if ($slug == "admin-custom-domain-fields" || $slug == "admin-add-custom-domain-field" || $slug == "admin-edit-custom-domain-field") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/domain-fields/"><i class="fa"></i><?php echo _('Custom Domain Fields'); ?></a></li>
-                  <li<?php if ($slug == "admin-custom-ssl-fields" || $slug == "admin-add-custom-ssl-field" || $slug == "admin-edit-custom-ssl-field") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/ssl-fields/"><i class="fa"></i><?php echo _('Custom SSL Fields'); ?></a></li>
-                  <li<?php if ($slug == "admin-scheduler-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/scheduler/"><i class="fa"></i><?php echo _('Task Scheduler'); ?></a></li>
-                  <li<?php if ($slug == "admin-maintenance-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/maintenance/"><i class="fa"></i><?php echo _('Maintenance'); ?></a></li>
-                  <li<?php if ($slug == "admin-backup-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/backup/"><i class="fa"></i><?php echo _('Backup & Restore'); ?></a></li>
-                  <li<?php if ($slug == "admin-debug-log-main") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/debug-log/"><i class="fa"></i><?php echo _('Debug Log'); ?></a></li>
-                  <li<?php if ($slug == "admin-info") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/admin/info/"><i class="fa"></i><?php echo _('System Information'); ?></a></li>
-              </ul>
+        <?php if ($_SESSION['s_is_admin'] === 1) { ?>
+            <li class="nav-item<?php if ($software_section == "admin") echo " menu-open"; ?>">
+                <a href="#" class="nav-link<?php if ($software_section == "admin") echo " active"; ?>">
+                    <i class="nav-icon fas fa-wrench"></i>
+                    <p>
+                        Administration
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/settings/" class="nav-link<?php if ($slug == "admin-settings") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>System Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/defaults/" class="nav-link<?php if ($slug == "admin-defaults") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>System Defaults</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/users/" class="nav-link<?php if ($slug == "admin-users-main" || $slug == "admin-users-add" || $slug == 'admin-users-edit') echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/domain-fields/" class="nav-link<?php if ($slug == "admin-custom-domain-fields" || $slug == 'admin-add-custom-domain-field' || $slug == 'admin-edit-custom-domain-field') echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Custom Domain Fields</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/ssl-fields/" class="nav-link<?php if ($slug == "admin-custom-ssl-fields" || $slug == "admin-add-custom-ssl-field" || $slug == "admin-edit-custom-ssl-field") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Custom SSL Fields</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/scheduler/" class="nav-link<?php if ($slug == "admin-scheduler-main") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Task Scheduler</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/maintenance/" class="nav-link<?php if ($slug == "admin-maintenance-main") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Maintenance</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/backup/" class="nav-link<?php if ($slug == "admin-backup-main") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Backup & Restore</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/debug-log/" class="nav-link<?php if ($slug == "admin-debug-log-main") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>Debug Log</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/info/" class="nav-link<?php if ($slug == "admin-info") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p>System Information</p>
+                        </a>
+                    </li>
+                </ul>
             </li>
-
         <?php } ?>
-
-        <li class="header"><?php echo strtoupper(_('Help')); ?></li>
-        <li><a target="_blank" href="<?php echo $web_root; ?>/docs/"><i class="fa fa-book"></i> <span><?php echo _('Documentation'); ?></span></a></li>
-        <li><a target="_blank" href="https://domainmod.org/support/"><i class="fa fa-support"></i> <span><?php echo _('Support'); ?></span></a></li>
-        <li><a target="_blank" href="https://domainmod.org/news/"><i class="fa fa-newspaper-o"></i> <span><?php echo _('News'); ?></span></a></li>
-        <li><a target="_blank" href="https://domainmod.org/contribute/"><i class="fa fa-money"></i> <span><?php echo _('Contribute'); ?></span></a></li>
-      </ul>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/logout.php" class="nav-link">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>
+                    <?php echo _('Logout'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-header">HELP</li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/docs/userguide/" class="nav-link">
+                <i class="nav-icon fas fa-book"></i>
+                <p>
+                    <?php echo _('Documentation'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="https://domainmod.org/support/" class="nav-link">
+                <i class="nav-icon fas fa-life-ring"></i>
+                <p>
+                    <?php echo _('Support'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="https://domainmod.org/news/" class="nav-link">
+                <i class="nav-icon fas fa-newspaper"></i>
+                <p>
+                    <?php echo _('News'); ?>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="https://domainmod.org/contribute/" class="nav-link">
+                <i class="nav-icon fas fa-thumbs-up"></i>
+                <p>
+                    <?php echo _('Contribute'); ?>
+                </p>
+            </a>
+        </li>
+    </ul>
+</nav>
+<!-- /.sidebar-menu -->

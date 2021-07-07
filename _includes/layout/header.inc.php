@@ -22,297 +22,220 @@
 <!-- Site wrapper -->
 <div class="wrapper">
 
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="<?php echo $web_root; ?>" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini">
-          <img src="<?php echo $web_root; ?>/images/logo-mini.png">
-      </span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg" >
-          <img src="<?php echo $web_root; ?>/images/logo.png">
-      </span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top" role="navigation">
-      <!-- Sidebar toggle button-->
-      <span class="hidden-md hidden-lg">
-         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-             <span class="sr-only">Toggle navigation</span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-         </a>
-      </span>
+    <!-- Navbar -->
+    <!nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
 <?php /* ?>
-          <li class="dropdown messages-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
-                    <a href="#">
-                      <div class="pull-left">
-                        <!img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Support Team
-                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <!-- end message -->
-                </ul>
-              </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
-            </ul>
-          </li>
-          <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View all</a></li>
-            </ul>
-          </li>
-          <!-- Tasks: style can be found in dropdown.less -->
-          <li class="dropdown tasks-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-flag-o"></i>
-              <span class="label label-danger">9</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 9 tasks</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- Task item -->
-                    <a href="#">
-                      <h3>
-                        Design some buttons
-                        <small class="pull-right">20%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">20% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <!-- end task item -->
-                </ul>
-              </li>
-              <li class="footer">
-                <a href="#">View all tasks</a>
-              </li>
-            </ul>
-          </li>
-<?php */ ?>
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs"><?php echo $_SESSION['s_first_name'] . " "; ?><?php echo $_SESSION['s_last_name']; ?></span>&nbsp;
-              <i class="fa fa-user"></i>
-            </a>
-
-              <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <!img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
-                <p>
-                    <?php echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?><BR>
-                    <?php echo $_SESSION['s_email_address']; ?><BR><BR>
-                    <small>
-                        <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name']; ?><BR>
-                        <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency']; ?><BR>
-                        <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone']; ?><BR>
-                        <?php echo _('Expiration Emails'); ?>: <?php
-                        if ($_SESSION['s_expiration_emails'] == '1') {
-                            echo _('Yes');
-                        } else {
-                            echo _('No');
-                        } ?>
-                    </small>
-                </p>
-              </li>
-<?php /* ?>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
-                </div>
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-<?php */ ?>
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-default btn-flat"><?php echo _('User Profile'); ?></a>&nbsp;&nbsp;
-                </div>
-                <div class="pull-right">
-                  <a href="<?php echo $web_root; ?>/logout.php" class="btn btn-default btn-flat"><?php echo _('Sign out'); ?></a>
-                </div>
-              </li>
-            </ul>
-          </li>
-
-<?php /* ?>
-          <!-- Control Sidebar Toggle Button -->
-          <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-          </li>
+            <li class="nav-item d-sm-inline-block">
+                <a href="#" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-item d-sm-inline-block">
+                <a href="#" class="nav-link">Contact</a>
+            </li>
+            <li class="nav-item d-sm-inline-block">
+                <a href="#" class="nav-link">Contact</a>
+            </li>
 <?php */ ?>
         </ul>
-      </div>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+
+            <!-- Navbar Search -->
+            <li class="nav-item">
+                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                    <i class="fas fa-search"></i>
+                </a>
+                <div class="navbar-search-block">
+                    <form class="form-inline" action="<?php echo $web_root; ?>/domains/index.php">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" type="search" placeholder="<?php echo _('Domain Search'); ?>" aria-label="<?php echo _('Domain Search'); ?>" name="search_for"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+<?php /* ?>
+            <!-- Notifications Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-bell"></i>
+                    <span class="badge badge-warning navbar-badge">15</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-header">15 Notifications</span>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-envelope mr-2"></i> 4 new messages
+                        <span class="float-right text-muted text-sm">3 mins</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-users mr-2"></i> 8 friend requests
+                        <span class="float-right text-muted text-sm">12 hours</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-file mr-2"></i> 3 new reports
+                        <span class="float-right text-muted text-sm">2 days</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                </div>
+            </li>
+<?php */ ?>
+            <li class="nav-item dropdown user-menu">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                    <span class="d-none d-md-inline"><i class="fa fa-user"></i></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <!-- User image -->
+                    <li class="user-header bg-red">
+                        <p>
+                            <?php echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?><BR>
+                            <?php echo $_SESSION['s_email_address']; ?><BR>
+                            <small><BR>
+                                <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name']; ?><BR>
+                                <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency']; ?><BR>
+                                <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone']; ?><BR>
+                                <?php echo _('Expiration Emails'); ?>: <?php
+                                if ($_SESSION['s_expiration_emails'] == '1') {
+                                    echo _('Yes');
+                                } else {
+                                    echo _('No');
+                                } ?>
+                            </small>
+                        </p>
+                    </li>
+                    <!-- Menu Footer-->
+                    <li class="user-footer">
+                        <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-default btn-flat"><?php echo _('User Profile'); ?></a>
+                        <a href="<?php echo $web_root; ?>/settings/display/" class="btn btn-default btn-flat float-right"><?php echo _('Display Settings'); ?></a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo $web_root; ?>/logout.php" role="button">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </li>
+        </ul>
     </nav>
-  </header>
+    <!-- /.navbar -->
+    <!-- Main Sidebar Container -->
+    <!aside class="main-sidebar main-sidebar-custom sidebar-dark-red elevation-4">
+    <aside class="main-sidebar main-sidebar-custom sidebar-dark-red elevation-2">
+    <!aside class="main-sidebar main-sidebar-custom sidebar-light-red elevation-2">
 
-  <!-- =============================================== -->
+        <!-- Brand Logo -->
+        <a href="<?php echo $web_root; ?>" class="brand-link domainmod-css-logo-background-colour">
+            <img src="<?php echo $web_root; ?>/images/logo-mini.png" alt="AdminLTE Docs Logo Small" class="brand-image-xs logo-xs domainmod-css-padding-left2">
+            <img src="<?php echo $web_root; ?>/images/logo.png" alt="AdminLTE Docs Logo Large" class="brand-image-xs logo-xl domainmod-css-padding-left2">
+            <span>&nbsp;</span>
+        </a>
 
-  <!-- Left side column. contains the sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-<?php /* ?>
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Alexander Pierce</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
-<?php */ ?>
-      <!-- search form -->
-      <form action="<?php echo $web_root; ?>/domains/index.php" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="search_for" class="form-control" placeholder="<?php echo _('Domain Keyword Search'); ?>"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <?php require_once DIR_INC . '/layout/menu-main.inc.php'; ?>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
-
-  <!-- =============================================== -->
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-
-          <span class="visible-sm visible-md visible-lg">
-              <?php
-              $breadcrumb_position = 'left';
-              require_once DIR_INC . '/layout/breadcrumbs.inc.php';
-              ?>
-          </span>
-
-          <span class="visible-xs">
-              <?php
-              $breadcrumb_position = 'right';
-              require_once DIR_INC . '/layout/breadcrumbs.inc.php';
-              ?>
-          </span>
-          <BR>
+        <!-- Sidebar -->
+        <div class="sidebar">
 
 <?php /* ?>
-      <h1>
-        <?php echo $page_title; ?>
-      </h1>
+            <!-- Sidebar user panel (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block">Alexander Pierce</a>
+                </div>
+            </div>
 <?php */ ?>
+            <!-- SidebarSearch Form -->
+            <form class="form-inline" action="<?php echo $web_root; ?>/domains/index.php">
+                <div class="form-inline">
+                    <div class="input-group domainmod-css-sidebar-search-padding">
+                        <input class="form-control form-control-sidebar" type="search" placeholder="<?php echo _('Domain Search'); ?>" aria-label="<?php echo _('Domain Search');; ?>" name="search_for"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fas fa-search fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
-        <?php
-        if ($_SESSION['s_message_danger'] != "") {
-            echo $system->showMessageDanger($_SESSION['s_message_danger']);
-            unset($_SESSION['s_message_danger']);
-        }
+            <!-- Sidebar Menu -->
+            <?php require_once DIR_INC . '/layout/menu-main.inc.php'; ?>
 
-        if ($_SESSION['s_message_success'] != "") {
-            echo $system->showMessageSuccess($_SESSION['s_message_success']);
-            unset($_SESSION['s_message_success']);
-        }
-
-        if ($_SESSION['s_message_info'] != "") {
-            echo $system->showMessageInfo($_SESSION['s_message_info']);
-            unset($_SESSION['s_message_info']);
-        }
-
-        require_once DIR_INC . '/layout/table-maintenance.inc.php';
-        ?>
-
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-
-      <!-- Default box -->
-      <div class="box box-solid box-danger">
-<?php /* ?>
-        <div class="box-header with-border">
-          <h3 class="box-title">Title</h3>
-          <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-              <i class="fa fa-minus"></i></button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-              <i class="fa fa-times"></i></button>
-          </div>
         </div>
-<?php */ ?>
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo $page_title; ?></h3>
-            <?php if ($software_section_logo != '') { ?>
-                <span class="pull-right"><i class="fa <?php echo $software_section_logo; ?>"></i></span>
-            <?php } ?>
+        <!-- /.sidebar -->
+
+        <div class="sidebar-custom">
+            <a href="#" class="btn btn-link"><i class="fas fa-cogs"></i></a>
+            <a href="#" class="btn btn-secondary hide-on-collapse pos-right">Help</a>
         </div>
-        <div class="box-body">
-<?php
-$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+        <!-- /.sidebar-custom -->
+    </aside>
 
-if (file_exists($full_filename)) {
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
 
-    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0"><?php echo $page_title; ?></h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <?php  require_once DIR_INC . '/layout/breadcrumbs.inc.php'; ?>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
 
-}
+            </div><!-- /.container-fluid -->
+
+            <?php
+            if ($_SESSION['s_message_danger'] != "") {
+                echo $system->showMessageDanger($_SESSION['s_message_danger']);
+                unset($_SESSION['s_message_danger']);
+            }
+
+            if ($_SESSION['s_message_success'] != "") {
+                echo $system->showMessageSuccess($_SESSION['s_message_success']);
+                unset($_SESSION['s_message_success']);
+            }
+
+            if ($_SESSION['s_message_info'] != "") {
+                echo $system->showMessageInfo($_SESSION['s_message_info']);
+                unset($_SESSION['s_message_info']);
+            }
+
+            require_once DIR_INC . '/layout/table-maintenance.inc.php';
+            ?>
+
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid"><?php
+
+            $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+
+            if (file_exists($full_filename)) {
+
+                require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+            } ?>

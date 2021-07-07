@@ -43,6 +43,7 @@ $pdo = $deeb->cnxx;
 $new_number_of_domains = (int) $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = (int) $_POST['new_number_of_ssl_certs'];
 $domain_column_options = $_POST['domain_column_options'];
+
 $custom_domain_fields = $_POST['custom_domain_fields'];
 $custom_ssl_fields = $_POST['custom_ssl_fields'];
 $ssl_column_options = $_POST['ssl_column_options'];
@@ -271,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <?php echo $form->showFormTop(''); ?>

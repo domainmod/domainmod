@@ -18,21 +18,20 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php echo $form->showFormTop(''); ?>
+//@formatter:off ?>
 
-<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a><BR><BR><strong><?php echo _('or Expiring Between'); ?></strong><BR>
+    <a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a>&nbsp;&nbsp;<?php
 
-<input type="text" name="daterange" size="26" value="<?php echo $daterange; ?>" />
+    if ($total_rows > 0 && $total_rows != '') { ?>
+        <a href="<?php echo $report_filename; ?>?export_data=1&daterange=<?php echo $daterange; ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
+    } ?>
+    <BR><BR><strong><?php echo _('Filter By Date Range'); ?></strong><BR>
 
-&nbsp;&nbsp;<?php echo $form->showSubmitButton(_('Generate Report'), '', ''); ?><BR>
+    <?php echo $form->showFormTop(''); ?>
 
-<?php
-if ($total_rows > 0 && $total_rows != '') { //@formatter:off ?>
+    <input type="text" name="daterange" size="16" value="<?php echo $daterange; ?>" />
 
-    <BR><a href="<?php echo $report_filename; ?>?export_data=1&daterange=<?php echo $daterange; ?>"><?php
-        echo $layout->showButton('button', _('Export')); ?></a>
+    <BR><?php echo $form->showSubmitButton(_('Filter Report'), '', ''); ?><BR><BR>
 
-<?php } //@formatter:on ?>
-<?php
+<?php //@formatter:on
 echo $form->showFormBottom('');

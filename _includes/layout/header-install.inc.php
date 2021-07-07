@@ -19,37 +19,41 @@
  *
  */
 ?>
-<div class="install-box">
-  <!div class="login-logo">
-      <a href="<?php echo WEB_ROOT; ?>/install/"><img src="<?php echo $web_root; ?>/images/logo-lg.png"></a>
-  <!/div>
-  <!-- /.login-logo -->
-<BR>
-<?php
-if ($_SESSION['s_message_danger'] != "") {
-    echo $system->showMessageDanger($_SESSION['s_message_danger']);
-    unset($_SESSION['s_message_danger']);
-}
+<div class="row">
+    <div class="col-4">
+        &nbsp;
+    </div>
+    <div class="col-4">
+        <BR><BR><BR>
+        <div class="login-logo">
+            <a href="<?php echo WEB_ROOT; ?>/install/"><img src="<?php echo $web_root; ?>/images/logo-lg.png"></a>
+        </div>
+        <!-- /.login-logo -->
+        <BR>
+        <?php
+        if ($_SESSION['s_message_danger'] != "") {
+            echo $system->showMessageDanger($_SESSION['s_message_danger']);
+            unset($_SESSION['s_message_danger']);
+        }
 
-if ($_SESSION['s_message_success'] != "") {
-    echo $system->showMessageSuccess($_SESSION['s_message_success']);
-    unset($_SESSION['s_message_success']);
-}
+        if ($_SESSION['s_message_success'] != "") {
+            echo $system->showMessageSuccess($_SESSION['s_message_success']);
+            unset($_SESSION['s_message_success']);
+        }
 
-if ($_SESSION['s_message_info'] != "") {
-    echo $system->showMessageInfo($_SESSION['s_message_info']);
-    unset($_SESSION['s_message_info']);
-}
+        if ($_SESSION['s_message_info'] != "") {
+            echo $system->showMessageInfo($_SESSION['s_message_info']);
+            unset($_SESSION['s_message_info']);
+        }
 
-require_once DIR_INC . '/layout/table-maintenance.inc.php';
-?>
-  <div class="login-box-body">
-    <h3><?php echo $page_title; ?></h3>
-<?php
-$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+        require_once DIR_INC . '/layout/table-maintenance.inc.php';
+        ?>
+            <h3><?php echo $page_title; ?></h3>
+        <?php
+        $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
 
-if (file_exists($full_filename)) {
+        if (file_exists($full_filename)) {
 
-    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+            require_once DIR_INC . '/layout/header.DEMO.inc.php';
 
-}
+        }

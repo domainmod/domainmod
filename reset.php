@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config-demo.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->loginCheck();
@@ -113,15 +114,38 @@ if ($user_identifier != '') {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red">
+<body class="hold-transition login-page">
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
-<?php
-    echo $form->showFormTop('');
-    echo $form->showInputText('user_identifier', _('Username or Email Address'), '', $user_identifier, '100', '', '', '', '');
-    echo $form->showSubmitButton(_('Reset Password'), '', '');
-    echo $form->showFormBottom('');
-?>
-<BR><a href="<?php echo $web_root; ?>/"><?php echo _('Cancel Password Reset'); ?></a>
+
+<div class="login-box">
+    <div class="card card-outline card-danger">
+        <div class="card-body">
+            <p class="login-box-msg"><?php echo _('Username or Email Address'); ?></p>
+
+            <form method="post">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-danger btn-block"><?php echo _('Reset Password'); ?></button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+        </div>
+        <!-- /.login-card-body -->
+    </div>
+    <p class="mt-3 mb-1">
+        <a href="./"><?php echo _('Sign In'); ?></a>
+    </p>
+</div>
+<!-- /.login-box -->
 <?php require_once DIR_INC . '/layout/footer-login.inc.php'; ?>
 </body>
 </html>

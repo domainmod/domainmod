@@ -189,12 +189,13 @@ if ($total_rows > 0) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="registrar-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;or&nbsp;&nbsp;<a href="registrar-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a>
 <?php if ($total_rows > 0) { //@formatter:off ?>
-          <BR><BR><a href="registrar-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', _('Export')); ?></a>
+    <a href="registrar-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><BR><BR>
 <?php } //@formatter:on ?>
+
+<a href="registrar-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<a href="registrar-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a><BR><BR>
 
 <?php if ($total_rows > 0) { ?>
 

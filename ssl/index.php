@@ -589,7 +589,7 @@ if ($export_data == 1) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 // Double check to make sure there are still no SSL certs in the system
@@ -638,16 +638,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
 
 if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') { ?>
 
-    <div class="box box-default <?php echo $box_type; ?>-box box-solid">
-        <div class="box-header with-border">
-            <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-<?php echo $box_icon; ?>"></i></button>&nbsp;<?php echo _('Advanced Filtering'); ?> [<a href="<?php echo $web_root; ?>/ssl/"><?php echo strtolower(_('Reset Filters')); ?></a>]
-            </h3>
-        </div>
-        <div class="box-body">
-            <?php
-            echo $form->showFormTop('');
+<div class="box box-default box-solid"><?php
 
+    echo $layout->expandableBoxTop(_('Advanced Filtering'), './', 'reset');
+
+    echo $form->showFormTop(''); ?>
+
+    <div class="row">
+        <div class="col-6"><?php
             // DOMAIN
             if ($is_active == "0") {
                 $is_active_string = " AND sslc.active = '0' ";
@@ -1035,8 +1033,13 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 echo $form->showDropdownOption($row_type->type_id, $row_type->type, $ssltid);
 
             }
-            echo $form->showDropdownBottom('');
+            echo $form->showDropdownBottom(''); ?>
 
+            <?php echo $form->showInputText('search_for', _('Keyword Search'), '', $_SESSION['s_search_for_ssl'], '100', '', '', '', '');
+            echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
+            <a href="<?php echo $web_root; ?>/ssl/"><?php echo $layout->showButton('button', _('Reset Filters')); ?></a>
+        </div> <!-- col-6 -->
+        <div class="col-6"><?php
 
             // IP ADDRESS
             if ($is_active == "0") {
@@ -1459,24 +1462,16 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             }
             echo $form->showDropdownOption(strtoupper(_('All')), strtoupper(_('All')), $is_active);
             echo $form->showDropdownBottom('');
-            ?>
 
-            <?php echo $form->showInputText('search_for', _('SSL Keyword Search'), '', $_SESSION['s_search_for_ssl'], '100', '', '', '', ''); ?>
-
-            <?php
             echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
 
-            echo $form->showSubmitButton(_('Apply Filters'), '', '');
-            ?>
-            <a href="<?php echo $web_root; ?>/ssl/"><?php echo $layout->showButton('button', _('Reset Filters')); ?></a><?php
-
             echo $form->showFormBottom(''); ?>
+        </div> <!-- col-6 -->
+    </div> <!-- row --><?php
+    echo $layout->expandableBoxBottom(); ?>
 
-        </div>
-        <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-    <BR><?php
+</div>
+<!-- /.box --><?php
 
 }
 

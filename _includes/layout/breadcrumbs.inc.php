@@ -19,11 +19,10 @@
  *
  */
 ?>
-      <ol class="breadcrumb pull-<?php echo $breadcrumb_position; ?>">
-          <?php if ($software_section == 'dashboard') { ?>
-              <li><i class="fa fa-dashboard"></i></li>
-          <?php } else { ?>
-              <li><a href="<?php echo $web_root; ?>/dashboard/"><i class="fa fa-dashboard"></i></a></li>
-          <?php } ?>
-          <?php require_once DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'; ?>
-      </ol>
+<ol class="breadcrumb float-sm-right">
+    <?php if ($software_section == 'dashboard') { ?>
+        <li class="breadcrumb-item active">Dashboard</li>
+    <?php } else { ?>
+        <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/">Dashboard</a></li>
+    <?php } ?>
+    <?php require_once DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'; ?>

@@ -44,7 +44,8 @@ $pdo = $deeb->cnxx;
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<!body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <strong><?php echo SOFTWARE_TITLE; ?> <?php echo _('Version'); ?>:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
@@ -61,6 +62,9 @@ $pdo = $deeb->cnxx;
 list($null, $requirements, $null) = $system->getRequirements();
 echo $requirements;
 ?>
+
+
+
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

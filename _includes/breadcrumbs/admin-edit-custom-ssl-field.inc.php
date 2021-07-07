@@ -19,6 +19,7 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
-<li><a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a></li>
-<li class="active"><?php echo $breadcrumb; ?></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a></li>
+    <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

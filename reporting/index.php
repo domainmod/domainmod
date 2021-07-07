@@ -44,45 +44,48 @@ $report = $_REQUEST['report'];
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php">', '</a>'); ?>
 
+<BR><BR>
 <div class="row">
-    <div class="col-md-3">
-        <h3><?php echo _('Domain Reports'); ?></h3>
-        <ul>
-            <li><a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a></li>
-            <li><a href='domains/cost-by-dns.php'><?php echo _('Cost by DNS Profile'); ?></a></li>
-            <li><a href='domains/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a></li>
-            <li><a href='domains/cost-by-month.php'><?php echo _('Cost by Month'); ?></a></li>
-            <li><a href='domains/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a></li>
-            <li><a href='domains/cost-by-registrar.php'><?php echo _('Cost by Registrar'); ?></a></li>
-            <li><a href='domains/cost-by-tld.php'><?php echo _('Cost by TLD'); ?></a></li>
-            <li><a href='domains/cost-by-host.php'><?php echo _('Cost by Web Host'); ?></a></li>
-            <li><a href='domains/registrar-fees.php?all=0'><?php echo _('Registrar Fees'); ?></a></li>
-        </ul>
+    <?php echo $layout->contentBoxTop(_('Domain Reports'), '3'); ?>
+    <a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>
+    <a href='domains/cost-by-dns.php'><?php echo _('Cost by DNS Profile'); ?></a><BR>
+    <a href='domains/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a><BR>
+    <a href='domains/cost-by-month.php'><?php echo _('Cost by Month'); ?></a><BR>
+    <a href='domains/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a><BR>
+    <a href='domains/cost-by-registrar.php'><?php echo _('Cost by Registrar'); ?></a><BR>
+    <a href='domains/cost-by-tld.php'><?php echo _('Cost by TLD'); ?></a><BR>
+    <a href='domains/cost-by-host.php'><?php echo _('Cost by Web Host'); ?></a><BR>
+    <a href='domains/registrar-fees.php?all=0'><?php echo _('Registrar Fees'); ?></a>
+    <?php echo $layout->contentBoxBottom(); ?>
 
-    </div>
-    <div class="col-md-3">
-        <h3><?php echo _('SSL Certificate Reports'); ?></h3>
-        <ul>
-            <li><a href='ssl/cost-by-category.php'><?php echo _('Cost by Category'); ?></a></li>
-            <li><a href='ssl/cost-by-domain.php'><?php echo _('Cost by Domain'); ?></a></li>
-            <li><a href='ssl/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a></li>
-            <li><a href='ssl/cost-by-month.php'><?php echo _('Cost by Month'); ?></a></li>
-            <li><a href='ssl/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a></li>
-            <li><a href='ssl/cost-by-provider.php'><?php echo _('Cost by Provider'); ?></a></li>
-            <li><a href='ssl/cost-by-type.php'><?php echo _('Cost by Type'); ?></a></li>
-            <li><a href='ssl/provider-fees.php?all=0'><?php echo _('Provider Fees'); ?></a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h3><?php echo _('Data Warehouse Reports'); ?></h3>
-        <ul>
-            <li><a href='dw/potential-problems.php?generate=1'><?php echo _('Potential Problems'); ?></a></li>
-        </ul>
-    </div>
+    <?php echo $layout->contentBoxTop(_('SSL Certificate Reports'), '3'); ?>
+    <a href='ssl/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>
+    <a href='ssl/cost-by-domain.php'><?php echo _('Cost by Domain'); ?></a><BR>
+    <a href='ssl/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a><BR>
+    <a href='ssl/cost-by-month.php'><?php echo _('Cost by Month'); ?></a><BR>
+    <a href='ssl/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a><BR>
+    <a href='ssl/cost-by-provider.php'><?php echo _('Cost by Provider'); ?></a><BR>
+    <a href='ssl/cost-by-type.php'><?php echo _('Cost by Type'); ?></a><BR>
+    <a href='ssl/provider-fees.php?all=0'><?php echo _('Provider Fees'); ?></a><BR>
+    &nbsp;
+    <?php echo $layout->contentBoxBottom(); ?>
+
+    <?php echo $layout->contentBoxTop(_('Data Warehouse Reports'), '3'); ?>
+    <a href='dw/potential-problems.php?generate=1'><?php echo _('Potential Problems'); ?></a><BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
+    &nbsp;
+    <?php echo $layout->contentBoxBottom(); ?>
+
     <div class="col-md-3">
         &nbsp;
     </div>

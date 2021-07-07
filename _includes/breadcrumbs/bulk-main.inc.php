@@ -19,4 +19,5 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/bulk/"><?php echo $breadcrumb; ?></a></li>
+<li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

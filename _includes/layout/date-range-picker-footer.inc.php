@@ -19,26 +19,26 @@
  *
  */
 ?>
-<script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/moment/moment.min.js"></script>
 <script type="text/javascript" src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker.js"></script>
-<script type="text/javascript" nonce="<?php echo CURRENT_NONCE; ?>">
-$(function() {
+<script nonce="<?php echo CURRENT_NONCE; ?>">
+    $(function() {
 
-  $('input[name="daterange"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-          format: 'YYYY-MM-DD',
-          cancelLabel: 'Clear'
-      }
-  });
+        $('input[name="daterange"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                format: 'YYYY-MM-DD',
+                cancelLabel: 'Clear'
+            }
+        });
 
-  $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-      $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-  });
+        $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+        });
 
-  $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
-  });
+        $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
 
-});
+    });
 </script>

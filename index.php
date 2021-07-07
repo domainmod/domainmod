@@ -155,27 +155,62 @@ $new_password = "";
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red">
+<body class="hold-transition login-page">
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
-<?php
-echo $form->showFormTop('');
 
-if (DEMO_INSTALLATION == true) { ?>
-    <strong><?php echo _('Demo Username'); ?>:</strong> demo<BR>
-    <strong><?php echo _('Demo Password'); ?>:</strong> demo<BR><BR><?php
-}
+<div class="card card-outline card-danger">
+    <div class="card-body login-card-body">
+        <p class="login-box-msg"><?php echo _('Please enter your username and password to sign in'); ?></p><?php
 
-echo $form->showInputText('new_username', _('Username'), '', $new_username, '20', '', '', '', '');
-echo $form->showInputText('new_password', _('Password'), '', '', '72', '1', '', '', '');
-echo $form->showSubmitButton(_('Login'), '', '');
-echo $form->showFormBottom('');
+        if (DEMO_INSTALLATION == true) { ?>
+
+            <strong><?php echo _('Demo Username'); ?>:</strong> demo<BR>
+            <strong><?php echo _('Demo Password'); ?>:</strong> demo<BR><BR><?php
+
+        } ?>
+
+        <form action="" method="post">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Username" name="new_username" maxlength="20">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-user"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input type="password" class="form-control" placeholder="Password" name="new_password" maxlength="72">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    &nbsp;
+                </div>
+                <!-- /.col -->
+                <div class="col-4">
+                    <button type="submit" class="btn btn-danger btn-block">Sign In</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+    </div>
+    <!-- /.login-card-body -->
+</div><?php
 
 if (DEMO_INSTALLATION == false) { ?>
 
-    <BR><a href="reset.php"><?php echo _('Forgot your Password') . '?'; ?></a><?php
+    <BR>
+    <p class="mb-1">
+        <a href="reset.php"><?php echo _('Forgot your Password'); ?>?</a>
+    </p><?php
 
 }
 ?>
+
 <?php require_once DIR_INC . '/layout/footer-login.inc.php'; ?>
 </body>
 </html>

@@ -19,6 +19,7 @@
  *
  */
 ?>
-<li><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
-<li><a href="<?php echo $web_root; ?>/assets/registrar-accounts.php"><?php echo _('Registrar Accounts'); ?></a></li>
-<li class="active"><?php echo $breadcrumb; ?></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/registrar-accounts.php"><?php echo _('Registrar Accounts'); ?></a></li>
+    <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

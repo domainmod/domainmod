@@ -19,4 +19,4 @@
  *
  */
 ?>
-<li><?php echo $breadcrumb; ?></li>
+</ol>

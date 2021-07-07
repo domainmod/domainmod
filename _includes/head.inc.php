@@ -29,19 +29,18 @@ if ($disable_csp === 0) {
     $browser_detect = new \DomainMOD\Detect();
     $browser_name = $browser_detect->getBrowser();
 
-    if ($browser_name === 'chrome' || $browser_name === 'chromium' || $browser_name === 'opera') {
+    // SECONDARY CSP HEADER -- For browsers that don't support script-src-elem and style-src-elem yet
+    // This is created by copying the Primary CSP header and moving the data from the -elem fields into their base fields
+    // script-src-elem = script-src / stype-src-elem = style-src
+    if ($browser_name === 'firefox' || $browser_name === 'safari' || $browser_name === 'seamonkey') {
 
-        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self' code.ionicframework.com fonts.googleapis.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
-    // For browsers that don't support script-src-elem and style-src-elem yet
-    } elseif ($browser_name === 'firefox' || $browser_name === 'safari' || $browser_name === 'seamonkey') {
-
-        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
-
-    // If it's not a standard browser, apply the same strict policy that Chrome gets
+    // PRIMARY CSP HEADER
+    // chrome, chromium, opera, all other browers minus firefox, safary, and seamonkey
     } else {
 
-        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com maxcdn.bootstrapcdn.com; img-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com maxcdn.bootstrapcdn.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com; img-src 'self' data:; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
     }
 

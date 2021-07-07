@@ -21,33 +21,31 @@
 ?>
 <div class="login-box">
   <div class="login-logo">
-      <img src="<?php echo $web_root; ?>/images/logo-lg.png">
+      <a href='./'><img src="<?php echo $web_root; ?>/images/logo-lg.png"></a>
   </div>
   <!-- /.login-logo -->
-<?php
-if ($_SESSION['s_message_danger'] != "") {
-    echo $system->showMessageDanger($_SESSION['s_message_danger']);
-    unset($_SESSION['s_message_danger']);
-}
+    <?php
+    if ($_SESSION['s_message_danger'] != "") {
+        echo $system->showMessageDanger($_SESSION['s_message_danger']);
+        unset($_SESSION['s_message_danger']);
+    }
 
-if ($_SESSION['s_message_success'] != "") {
-    echo $system->showMessageSuccess($_SESSION['s_message_success']);
-    unset($_SESSION['s_message_success']);
-}
+    if ($_SESSION['s_message_success'] != "") {
+        echo $system->showMessageSuccess($_SESSION['s_message_success']);
+        unset($_SESSION['s_message_success']);
+    }
 
-if ($_SESSION['s_message_info'] != "") {
-    echo $system->showMessageInfo($_SESSION['s_message_info']);
-    unset($_SESSION['s_message_info']);
-}
+    if ($_SESSION['s_message_info'] != "") {
+        echo $system->showMessageInfo($_SESSION['s_message_info']);
+        unset($_SESSION['s_message_info']);
+    }
 
-require_once DIR_INC . '/layout/table-maintenance.inc.php';
-?>
-  <div class="login-box-body">
-<?php
-$full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
+    require_once DIR_INC . '/layout/table-maintenance.inc.php';
 
-if (file_exists($full_filename)) {
+    $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
 
-    require_once DIR_INC . '/layout/header.DEMO.inc.php';
+    if (file_exists($full_filename)) {
 
-}
+        require_once DIR_INC . '/layout/header.DEMO.inc.php';
+
+    }

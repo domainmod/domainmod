@@ -200,7 +200,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/reporting-block.inc.php'; ?>
 <?php
@@ -247,7 +247,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
 } else {
 
-    echo _('No results.') . '<BR><BR>';
+    echo _('No results.') . '<BR>';
 
 }
 ?>

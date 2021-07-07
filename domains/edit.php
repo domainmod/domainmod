@@ -410,7 +410,7 @@ if ($del === 1) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
@@ -525,12 +525,12 @@ echo $form->showDropdownOption('10', _('Sold'), $new_active);
 echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop(_('Auto Renewal') . '?', '', '');
+echo $form->showRadioTop(_('Auto Renewal') . '?', _('Auto Renewal'), '');
 echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showRadioTop(_('Privacy Enabled') . '?', '', '');
+echo $form->showRadioTop(_('Privacy Enabled') . '?', _('Privacy Enabled'), '');
 echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
 echo $form->showRadioBottom('');
@@ -657,7 +657,7 @@ if ($dw_has_accounts === 1) { ?>
 <table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"></th>
+        <th width="10px"></th>
         <th></th>
         <th></th>
         <th></th>

@@ -127,7 +127,7 @@ class Layout
     {
         ob_start(); ?>
 
-            <button type="button" class="btn btn-danger btn-md" data-toggle="modal" data-target="#myModal">
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
               <?php echo $name; ?>
             </button><?php
 
@@ -138,25 +138,98 @@ class Layout
     {
         ob_start(); ?>
 
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel"><?php echo $title; ?></h4>
-                  </div>
-                  <div class="modal-body">
-                      <?php echo sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?php echo $left_button; ?></button>
-                      <a href="<?php echo $url; ?>"><type="button" class="btn btn-danger"><?php echo $right_button; ?></button></a>
-                  </div>
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><?php echo $title; ?></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><?php echo sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $left_button; ?></button>
+                            <a href="<?php echo $url; ?>"><button type="button" class="btn btn-danger"><?php echo $right_button; ?></button></a>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
                 </div>
-              </div>
-            </div><?php
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal --><?php
 
         return ob_get_clean();
+    }
+
+    public function expandableBoxTop($title, $url, $url_text)
+    {
+        ob_start(); ?>
+
+        <div class="card card-outline card-danger collapsed-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                        </button>
+                        <?php echo $title; ?><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
+                    </div>
+                </h3>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body"><?php
+
+        return ob_get_clean();
+
+    }
+
+    public function expandableBoxBottom()
+    {
+        ob_start(); ?>
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card --><?php
+
+        return ob_get_clean();
+
+    }
+
+    public function contentBoxTop($title, $width)
+    {
+        ob_start(); ?>
+
+            <div class="col-md-<?php echo $width; ?>">
+                <div class="card card-outline card-danger">
+                    <?php if ($title != '') { ?>
+                        <div class="card-header">
+                            <h3 class="card-title"><?php echo $title; ?></h3>
+                        </div>
+                    <?php } ?>
+                    <div class="card-body"><?php
+
+        return ob_get_clean();
+
+    }
+
+    public function contentBoxBottom()
+    {
+        ob_start(); ?>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col --><?php
+
+        return ob_get_clean();
+
     }
 
 } //@formatter:on

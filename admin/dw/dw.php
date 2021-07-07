@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 $result = $pdo->query("
@@ -260,7 +260,7 @@ if (!$result) {
 
 if ($no_results_build_info !== 1) { ?>
 
-    <BR><h3>Build Information</h3>
+    <BR><BR><h3><?php echo _('Build Information'); ?></h3>
     <table id="<?php echo $slug; ?>-build" class="<?php echo $datatable_class; ?>"><?php
 
     if ($result_count == 0) {

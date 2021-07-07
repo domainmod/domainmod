@@ -41,11 +41,13 @@ $system->authCheck();
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
 <a href="update-conversions.php"><?php echo _('Update Conversion Rates'); ?></a><BR><BR>
 <a href="update-domain-fees.php"><?php echo _('Update Domain Fees'); ?></a><BR><BR>
 <a href="update-ssl-fees.php"><?php echo _('Update SSL Fees'); ?></a><BR>
+<?php echo $layout->contentBoxBottom(); ?>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

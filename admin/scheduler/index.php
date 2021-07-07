@@ -48,81 +48,85 @@ $pdo = $deeb->cnxx;
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?>
-<?php echo '&nbsp;'; echo sprintf(_('In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>
+<?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?>&nbsp;
+<?php echo sprintf(_('In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>&nbsp;
 <?php echo sprintf(_("This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."), '<em>', '</em>'); ?><BR>
 <BR>
 <?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?><BR>
 <BR>
 <?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
 <BR>
-<table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
-
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody><?php
-    $result = $pdo->query("
+<?php
+$result = $pdo->query("
         SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC")->fetchAll();
 
-    foreach ($result as $row) { ?>
 
-        <tr>
-        <td class="domainmod-css-scheduler-padding-left">
-            <h4><?php echo $row->name; ?></h4><?php echo $row->description ?><BR><BR><BR>
-        </td>
-        <td class="domainmod-css-scheduler-padding-right">
-            <strong><?php echo _('Runs'); ?>:</strong> <?php echo $row->interval; ?><BR>
+$count = 1;
 
-            <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
+foreach ($result as $box) {
 
-            if ($row->last_run != '1970-01-01 00:00:00') {
-                $last_run = $time->toUserTimezone($schedule->getDateOutput($row->last_run));
-            } else {
-                $last_run = '-';
+    if ($count == 1 || $count == 4) { ?>
 
-            } ?>
-
-            <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
-
-            if ($row->next_run != '1970-01-01 00:00:00') {
-                $next_run = $time->toUserTimezone($schedule->getDateOutput($row->next_run));
-                $hour = date('H', strtotime($next_run));
-            } else {
-                $next_run = '-';
-
-            } ?>
-
-            <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
-
-            if ($row->interval == 'Daily' && $row->active == '1') { ?>
-
-                <BR>
-                <form name="edit_task_form" method="post" action="update.php">
-                    <select name="new_hour" title="Task Time">
-                        <?php echo $schedule->hourSelect($hour); ?>
-                    </select><BR><BR><?php
-                    echo $form->showInputHidden('a', 'u');
-                    echo $form->showInputHidden('id', $row->id);
-                    echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
-                </form><?php
-
-            } ?>
-        </td>
-
-        </tr><?php
+        <div class="row"> <?php
 
     } ?>
 
-    </tbody>
-</table>
+    <?php echo $layout->contentBoxTop($box->name, '4'); ?>
+    <div>
+        <?php echo $box->description ?>
+    </div>
+    <div>
+        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR>
+
+        <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($box->active, $box->id); ?><BR><?php
+
+        if ($box->last_run != '1970-01-01 00:00:00') {
+            $last_run = $time->toUserTimezone($schedule->getDateOutput($box->last_run));
+        } else {
+            $last_run = '-';
+
+        } ?>
+
+        <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $box->last_duration; ?><BR><?php
+
+        if ($box->next_run != '1970-01-01 00:00:00') {
+            $next_run = $time->toUserTimezone($schedule->getDateOutput($box->next_run));
+            $hour = date('H', strtotime($next_run));
+        } else {
+            $next_run = '-';
+
+        } ?>
+
+        <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
+
+        if ($box->interval == 'Daily' && $box->active == '1') { ?>
+
+            <BR>
+            <form name="edit_task_form" method="post" action="update.php">
+                <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
+                    <?php echo $schedule->hourSelect($hour); ?>
+                </select><BR><BR><?php
+                echo $form->showInputHidden('a', 'u');
+                echo $form->showInputHidden('id', $box->id);
+                echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
+            </form><?php
+        } ?>
+
+    </div><?php
+    echo $layout->contentBoxBottom();
+
+    if ($count == 3 || $count == 6) { ?>
+
+            </div><?php // end the row div
+    }
+
+    $count++;
+
+} ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

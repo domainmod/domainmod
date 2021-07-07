@@ -45,16 +45,86 @@ $pdo = $deeb->cnxx;
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Expiration Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$expiration_days = $pdo->query("
+    SELECT expiration_days
+    FROM settings")->fetchColumn();
+
+$start_date = '2000-01-01';
+$end_date = $time->timeBasicPlusDays($expiration_days);
+$daterange = $start_date . ' - ' . $end_date;
+
+$total_count_domains = $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active NOT IN ('0', '10')
+      AND expiry_date <= '" . $end_date . "'")->fetchColumn();
+
+$total_count_ssl = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+    WHERE sslc.type_id = sslt.id
+      AND sslc.active NOT IN ('0')
+      AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
+
+if ($total_count_domains || $total_count_ssl) { ?>
+
+    <div class="row">
+        <h4>&nbsp;&nbsp;<?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h4>
+    </div>
+
+    <div class="row">
+
+    <?php
+    //////////////////////////////////////////////////
+    // Expiring Domains
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+                SELECT count(*)
+                FROM domains
+                WHERE active NOT IN ('0', '10')
+                  AND expiry_date <= '" . $end_date . "'")->fetchColumn();
+
+    if ($total_count) {
+
+        echo $dashboard->displayExpPanel(_('Domains'), $total_count, '/domains/index.php?daterange=' . urlencode($daterange));
+
+    }
+
+    //////////////////////////////////////////////////
+    // Expiring SSL Certificates
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+                SELECT count(*)
+                FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                WHERE sslc.type_id = sslt.id
+                  AND sslc.active NOT IN ('0')
+                  AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
+
+    if ($total_count) {
+
+        echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange));
+
+    } ?>
+
+    </div><?php
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // System Totals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ?>
 <div class="row">
+    <h4>&nbsp;&nbsp;<?php echo _('System Totals'); ?></h4>
+</div>
 
-    <h3 class="domainmod-css-padding-left"><?php echo _("System Totals"); ?></h3>
+<div class="row">
 
     <?php
     //////////////////////////////////////////////////
@@ -87,79 +157,12 @@ $pdo = $deeb->cnxx;
 
     if ($total_count) {
 
-        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'aqua', 'android-cart', '/domains/index.php?is_active=10');
+        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'info', 'android-cart', '/domains/index.php?is_active=10');
 
     } ?>
 
 </div>
-
 <?php
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Expiration Panels
-////////////////////////////////////////////////////////////////////////////////////////////////////
-$expiration_days = $pdo->query("
-    SELECT expiration_days
-    FROM settings")->fetchColumn();
-
-$start_date = '2000-01-01';
-$end_date = $time->timeBasicPlusDays($expiration_days);
-$daterange = $start_date . ' - ' . $end_date;
-
-$total_count_domains = $pdo->query("
-    SELECT count(*)
-    FROM domains
-    WHERE active NOT IN ('0', '10')
-      AND expiry_date <= '" . $end_date . "'")->fetchColumn();
-
-$total_count_ssl = $pdo->query("
-    SELECT count(*)
-    FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-    WHERE sslc.type_id = sslt.id
-      AND sslc.active NOT IN ('0')
-      AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
-
-if ($total_count_domains || $total_count_ssl) { ?>
-
-    <div class="row">
-
-        <h3 class="domainmod-css-padding-left"><?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h3>
-
-        <?php
-        //////////////////////////////////////////////////
-        // Expiring Domains
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-                SELECT count(*)
-                FROM domains
-                WHERE active NOT IN ('0', '10')
-                  AND expiry_date <= '" . $end_date . "'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Domains'), $total_count, 'red', 'close-circled', '/domains/index.php?daterange=' . urlencode($daterange));
-
-        }
-
-        //////////////////////////////////////////////////
-        // Expiring SSL Certificates
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-                SELECT count(*)
-                FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-                WHERE sslc.type_id = sslt.id
-                  AND sslc.active NOT IN ('0')
-                  AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'red', 'close-circled', '/ssl/index.php?daterange=' . urlencode($daterange));
-
-        } ?>
-
-    </div><?php
-
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Domain Queue
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,8 +186,10 @@ $total_count_finished = $pdo->query("
 if ($total_count_processing || $total_count_pending || $total_count_finished) { ?>
 
     <div class="row">
+        <h4><?php echo _('Domain Queue'); ?></h4>
+    </div>
 
-        <h3 class="domainmod-css-padding-left"><?php echo _('Domain Queue'); ?></h3>
+    <div class="row">
 
         <?php
         //////////////////////////////////////////////////
@@ -228,8 +233,10 @@ $total_count = $pdo->query("
 if ($total_count) { ?>
 
     <div class="row">
+        <h4>&nbsp;&nbsp;<?php echo _('Pending (Domains)'); ?></h4>
+    </div>
 
-        <h3 class="domainmod-css-padding-left"><?php echo _('Pending (Domains)'); ?></h3>
+    <div class="row">
 
         <?php
         //////////////////////////////////////////////////
@@ -271,7 +278,7 @@ if ($total_count) { ?>
 
         if ($total_count) {
 
-            echo $dashboard->displayPanel(_('Pending Transfers'), $total_count, 'aqua', 'clock', '/domains/index.php?is_active=2');
+            echo $dashboard->displayPanel(_('Pending Transfers'), $total_count, 'info', 'clock', '/domains/index.php?is_active=2');
 
         }
 
@@ -304,8 +311,10 @@ $total_count = $pdo->query("
 if ($total_count) { ?>
 
     <div class="row">
+        <h4>&nbsp;&nbsp;<?php echo _('Pending (SSL Certificates)'); ?></h4>
+    </div>
 
-        <h3 class="domainmod-css-padding-left"><?php echo _('Pending (SSL Certificates)'); ?></h3>
+    <div class="row">
 
         <?php
         //////////////////////////////////////////////////

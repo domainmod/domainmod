@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php //@formatter:off
 $breadcrumb_text = _('Update Custom Domain Field');
 $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';

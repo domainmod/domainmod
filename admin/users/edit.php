@@ -330,7 +330,7 @@ if ($del === 1) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
@@ -462,12 +462,9 @@ echo $form->showSubmitButton(_('Save'), '', '');
 
 echo $form->showFormBottom('');
 ?>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1"><?php echo strtoupper(_('Reset and Display Password')); ?></a><BR>
-<BR><a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo strtoupper(_('Reset and Email New Password to User')); ?></a><BR>
-<BR>
-<?php
-$layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1');
-?>
+<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1"><?php echo $layout->showButton('button', strtoupper(_('Reset and Display Password'))); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo $layout->showButton('button', strtoupper(_('Reset and Email New Password to User'))); ?></a><BR><BR><?php
+$layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1'); ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

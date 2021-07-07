@@ -19,4 +19,5 @@
  *
  */
 ?>
-<li class="active"><?php echo $breadcrumb; ?></li>
+    <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

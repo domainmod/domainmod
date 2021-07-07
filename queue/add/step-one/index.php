@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <strong><?php echo _('Domain Queue & API Prerequisites'); ?></strong><BR>
 <?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?>

@@ -110,8 +110,7 @@ class Form
             echo $before; ?>
             <div class="form-group">
                 <label><?php echo $text_to_display; ?></label>
-                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="form-control select2"
-                    multiple="multiple" data-placeholder="<?php echo $text_to_display; ?>" class="domainmod-css-width-100-percent"><?php
+                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="select2 domainmod-css-width-100-percent" multiple="multiple" data-placeholder="<?php echo $text_to_display; ?>"><?php
         return ob_get_clean();
     }
 
@@ -139,12 +138,13 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" class="form-control square-red" name="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
-                    <span class="domainmod-css-normal-font-weight"><?php echo "&nbsp;&nbsp;&nbsp;" . $text_to_display; ?><?php if ($subtext != '') echo '<BR><BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span>'; ?></span>
-                </label>
-            </div><?php
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                      <input name="<?php echo $name; ?>" class="custom-control-input custom-control-input-red" type="checkbox" id="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
+                      <label for="<?php echo $name; ?>" class="custom-control-label"><?php echo $text_to_display; ?></label>
+                        <?php if ($subtext != '') echo '<BR>' . $subtext; ?>
+                    </div>
+                </div><?php
             echo $after;
         return ob_get_clean();
     }
@@ -153,8 +153,7 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label><?php
+            <div class="form-group clearfix"><strong><?php echo $text_to_display; ?></strong><BR><?php echo $subtext; ?><?php
         return ob_get_clean();
     }
 
@@ -170,10 +169,10 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <label>
-                <input type="radio" class="form-control square-red" name="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
-                &nbsp;<span class="domainmod-css-normal-font-weight"><?php echo $text_to_display; ?></span>
-            </label><?php
+            <div class="icheck-primary d-inline icheck-red">
+                <input type="radio" id="<?php echo $name . $value; ?>" name="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
+                <label for="<?php echo $name . $value; ?>"><?php echo $text_to_display; ?></label>
+            </div><?php
             echo $after;
         return ob_get_clean();
     }

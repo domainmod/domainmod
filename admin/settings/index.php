@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
@@ -180,6 +180,7 @@ echo $form->showDropdownBottom('');
 echo $form->showDropdownTop('new_currency_converter', _('Currency Converter'), _("Although it doesn't happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren't working properly, try a different source."), '', '');
 echo $form->showDropdownOption('erh', _('Exchange Rates API'), $new_currency_converter);
 echo $form->showDropdownBottom('');
+
 echo $form->showRadioTop(_('Large Mode'), _('If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.'), '');
 echo $form->showRadioOption('new_large_mode', '1', _('Enabled'), $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_large_mode', '0', _('Disabled'), $new_large_mode, '', '');
@@ -192,32 +193,25 @@ echo $form->showRadioTop(_('Local PHP Log'),
     _('This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.') . '<BR>' .
     $layout->highlightText('red', strtoupper(_('Warning'))) . ': ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
     '&nbsp;' . sprintf(_('Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your %s installation, which could allow them to compromise your system.'), SOFTWARE_TITLE), '');
-$form->showRadioOption('new_local_php_log', '1', 'Enabled', $new_local_php_log, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_local_php_log', '1', 'Enabled', $new_local_php_log, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_local_php_log', '0', 'Disabled', $new_local_php_log, '', '');
 echo $form->showRadioBottom('');
-?>
-<div class="box box-default collapsed-box box-solid">
-    <div class="box-header with-border">
-        <h3 class="box-title" class="domainmod-css-h3-box-title-padding">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;<?php echo _('SMTP Server Settings'); ?>
-        </h3>
-    </div>
-    <div class="box-body"><?php
-        echo $form->showRadioTop(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), '');
-        echo $form->showRadioOption('new_use_smtp', '1', _('Yes'), $new_use_smtp, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_use_smtp', '0', _('No'), $new_use_smtp, '', '');
-        echo $form->showRadioBottom('');
-        echo $form->showInputText('new_smtp_server', _('SMTP Server') . ' (255)', _('If you plan on using an external SMTP server, enter the server name here.'), $unsanitize->text($new_smtp_server), '100', '', '', '', '');
-        echo $form->showRadioTop(_('SMTP Server Protocol'), '', '');
-        echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_smtp_protocol', 'ssl', _('SSL'), $new_smtp_protocol, '', '');
-        echo $form->showRadioBottom('');
-        echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
-        echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
-        echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
-        echo $form->showInputText('new_smtp_password', _('SMTP Password') . ' (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', ''); ?>
-    </div>
-</div><BR><?php
+
+echo $layout->expandableBoxTop(_('SMTP Server Settings'), '', '');
+echo $form->showRadioTop(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), '');
+echo $form->showRadioOption('new_use_smtp', '1', _('Yes'), $new_use_smtp, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_use_smtp', '0', _('No'), $new_use_smtp, '', '');
+echo $form->showRadioBottom('');
+echo $form->showInputText('new_smtp_server', _('SMTP Server') . ' (255)', _('If you plan on using an external SMTP server, enter the server name here.'), $unsanitize->text($new_smtp_server), '100', '', '', '', '');
+echo $form->showRadioTop(_('SMTP Server Protocol'), '', '');
+echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_smtp_protocol', 'ssl', _('SSL'), $new_smtp_protocol, '', '');
+echo $form->showRadioBottom('');
+echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
+echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
+echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
+echo $form->showInputText('new_smtp_password', _('SMTP Password') . ' (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', '');
+echo $layout->expandableBoxBottom();
 
 echo $form->showSubmitButton(_('Update System Settings'), '', '');
 echo $form->showFormBottom('');

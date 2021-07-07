@@ -73,7 +73,7 @@ $result = $pdo->query("
       AND sslc.cat_id = cat.id
       AND sslc.active NOT IN ('0')
       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
-      $range_string . "
+    $range_string . "
     GROUP BY cat.name
     ORDER BY cat.name")->fetchAll();
 
@@ -88,7 +88,7 @@ $result_grand_total = $pdo->query("
       AND sslc.cat_id = cat.id
       AND sslc.active NOT IN ('0')
       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
-      $range_string)->fetchAll();
+    $range_string)->fetchAll();
 
 foreach ($result_grand_total as $row_grand_total) {
 
@@ -196,7 +196,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-range-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/reporting-block.inc.php'; ?>
 <?php
@@ -204,42 +204,42 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
     <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 
-    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
-        <thead>
+<table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+    <thead>
+    <tr>
+        <th width="20px"></th>
+        <th><?php echo _('Category'); ?></th>
+        <th><?php echo _('Cost'); ?></th>
+        <th><?php echo _('SSL Certs'); ?></th>
+        <th><?php echo _('Per Cert'); ?></th>
+    </tr>
+    </thead>
+    <tbody><?php
+
+    foreach ($result as $row) {
+
+        $per_cert = $row->total_cost / $row->number_of_certs;
+
+        $per_cert = $currency->format($per_cert, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>
+
         <tr>
-            <th width="20px"></th>
-            <th><?php echo _('Category'); ?></th>
-            <th><?php echo _('Cost'); ?></th>
-            <th><?php echo _('SSL Certs'); ?></th>
-            <th><?php echo _('Per Cert'); ?></th>
-        </tr>
-        </thead>
-        <tbody><?php
+        <td></td>
+        <td><?php echo $row->name; ?></td>
+        <td><?php echo $row->total_cost; ?></td>
+        <td><a href="../../ssl/index.php?sslpcid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
+        <td><?php echo $per_cert; ?></td>
+        </tr><?php
 
-        foreach ($result as $row) {
+    } ?>
 
-            $per_cert = $row->total_cost / $row->number_of_certs;
-
-            $per_cert = $currency->format($per_cert, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-            $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>
-
-            <tr>
-                <td></td>
-                <td><?php echo $row->name; ?></td>
-                <td><?php echo $row->total_cost; ?></td>
-                <td><a href="../../ssl/index.php?sslpcid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
-                <td><?php echo $per_cert; ?></td>
-            </tr><?php
-
-        } ?>
-
-        </tbody>
+    </tbody>
     </table><?php
 
 } else {
 
-    echo _('No results.') . '<BR><BR>';
+    echo _('No results.') . '<BR>';
 
 }
 ?>

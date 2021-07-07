@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red">
+<body class="hold-transition text-sm">
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php
 echo $form->showFormTop('');

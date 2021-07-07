@@ -59,12 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition skin-red">
+<body class="hold-transition text-sm">
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php echo _("We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."); ?><BR>
 <BR>
 <?php echo sprintf(_("Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."), '<strong>', '</strong>'); ?><BR>
-<BR>
 <?php
 echo $form->showFormTop('');
 
