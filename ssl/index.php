@@ -1693,7 +1693,9 @@ if ($result) { ?>
 
     }
 
-} else {
+} else { ?>
+
+    <a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php
 
     if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
 

@@ -2526,7 +2526,9 @@ if ($result) { ?>
         require DIR_INC . '/layout/pagination-large-mode.inc.php';
     }
 
-} else {
+} else { ?>
+
+    <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php
 
     if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
