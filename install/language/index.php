@@ -66,19 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo sprintf(_("Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."), '<strong>', '</strong>'); ?><BR>
 <?php
 echo $form->showFormTop('');
-
 echo $form->showDropdownTop('new_language', '', '', '', '');
-echo $form->showDropdownOption('nl_NL.UTF-8', 'Dutch', $_ENV['LANG']);
+echo $form->showDropdownOption('de_DE.UTF-8', 'Deutsch', $_ENV['LANG']);
 echo $form->showDropdownOption('en_CA.UTF-8', 'English (Canada)', $_ENV['LANG']);
 echo $form->showDropdownOption('en_US.UTF-8', 'English (United States)', $_ENV['LANG']);
-echo $form->showDropdownOption('fr_FR.UTF-8', 'French', $_ENV['LANG']);
-echo $form->showDropdownOption('de_DE.UTF-8', 'German', $_ENV['LANG']);
-echo $form->showDropdownOption('it_IT.UTF-8', 'Italian', $_ENV['LANG']);
-echo $form->showDropdownOption('pl_PL.UTF-8', 'Polish', $_ENV['LANG']);
-echo $form->showDropdownOption('pt_PT.UTF-8', 'Portuguese', $_ENV['LANG']);
-echo $form->showDropdownOption('ru_RU.UTF-8', 'Russian', $_ENV['LANG']);
-echo $form->showDropdownOption('es_ES.UTF-8', 'Spanish', $_ENV['LANG']);
-
+echo $form->showDropdownOption('es_ES.UTF-8', 'Español', $_ENV['LANG']);
+echo $form->showDropdownOption('fr_FR.UTF-8', 'Français', $_ENV['LANG']);
+echo $form->showDropdownOption('it_IT.UTF-8', 'Italiano', $_ENV['LANG']);
+echo $form->showDropdownOption('nl_NL.UTF-8', 'Nederlands', $_ENV['LANG']);
+echo $form->showDropdownOption('pl_PL.UTF-8', 'Polski', $_ENV['LANG']);
+echo $form->showDropdownOption('pt_PT.UTF-8', 'Português', $_ENV['LANG']);
+echo $form->showDropdownOption('ru_RU.UTF-8', 'Русский язык', $_ENV['LANG']);
 echo $form->showDropdownBottom('');
 ?>
 <BR>
