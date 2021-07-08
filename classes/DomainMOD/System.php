@@ -306,7 +306,6 @@ class System
     public function showMessageSuccess($result_message)
     {
         ob_start(); ?>
-        <BR>
         <div class="alert alert-success alert-dismissible">
         <?php /* ?>
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -320,7 +319,6 @@ class System
     public function showMessageDanger($result_message)
     {
         ob_start(); ?>
-        <BR>
         <div class="alert alert-danger alert-dismissible">
             <h4><i class="icon fa fa-exclamation-circle"></i> <?php echo _('Alert'); ?>!</h4>
             <?php echo $result_message; ?>
@@ -331,7 +329,6 @@ class System
     public function showMessageInfo($result_message)
     {
         ob_start(); ?>
-        <BR>
         <div class="alert alert-info alert-dismissible">
         <?php /* ?>
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -345,7 +342,6 @@ class System
     public function showMaintenanceTable($result_message)
     {
         ob_start(); ?>
-        <BR>
         <div class="alert alert-warning alert-dismissible">
             <h4><i class="icon fa fa-exclamation-triangle"></i> <?php echo _('Attention Required'); ?>!</h4>
             <?php echo $result_message; ?>
@@ -356,7 +352,6 @@ class System
     public function showDebugTable($result_message)
     {
         ob_start(); ?>
-        <BR>
         <div class="alert alert-info alert-dismissible bg-aqua-active">
             <h4><i class="icon fa fa-info-circle"></i> <?php echo _('Info'); ?></h4>
             <?php echo $result_message; ?>

@@ -203,27 +203,26 @@
                         <?php  require_once DIR_INC . '/layout/breadcrumbs.inc.php'; ?>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
-
             </div><!-- /.container-fluid -->
 
-            <?php
-            if ($_SESSION['s_message_danger'] != "") {
-                echo $system->showMessageDanger($_SESSION['s_message_danger']);
-                unset($_SESSION['s_message_danger']);
-            }
+            <div class="container-fluid"><?php
+                if ($_SESSION['s_message_danger'] != "") {
+                    echo $system->showMessageDanger($_SESSION['s_message_danger']);
+                    unset($_SESSION['s_message_danger']);
+                }
 
-            if ($_SESSION['s_message_success'] != "") {
-                echo $system->showMessageSuccess($_SESSION['s_message_success']);
-                unset($_SESSION['s_message_success']);
-            }
+                if ($_SESSION['s_message_success'] != "") {
+                    echo $system->showMessageSuccess($_SESSION['s_message_success']);
+                    unset($_SESSION['s_message_success']);
+                }
 
-            if ($_SESSION['s_message_info'] != "") {
-                echo $system->showMessageInfo($_SESSION['s_message_info']);
-                unset($_SESSION['s_message_info']);
-            }
+                if ($_SESSION['s_message_info'] != "") {
+                    echo $system->showMessageInfo($_SESSION['s_message_info']);
+                    unset($_SESSION['s_message_info']);
+                }
 
-            require_once DIR_INC . '/layout/table-maintenance.inc.php';
-            ?>
+                require_once DIR_INC . '/layout/table-maintenance.inc.php'; ?>
+            </div>
 
         </div>
         <!-- /.content-header -->
