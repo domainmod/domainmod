@@ -32,10 +32,10 @@ class Notice
         $_SESSION['s_notice'] = "<BR>" . sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE) . "<BR><BR>
             <strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>" .
 
-            strtoupper(sprintf(_('We %sstrongly%s recommend that you backup your %s installation directory and database before proceeding with the upgrade'), "<span style='font-size: 175%;'>", "</span", SOFTWARE_TITLE)) . "<BR>" .
-            strtoupper(_("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data")) . "<BR>" .
-            strtoupper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . "<BR>
-            <span style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>" .
+            strtoupper(sprintf(_('We strongly recommend that you backup your %s installation directory and database before proceeding with the upgrade'), SOFTWARE_TITLE)) . ". " .
+            strtoupper(_("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data")) . ". " .
+            strtoupper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . ".<BR>
+            <BR><span style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>" .
 
             _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
 
