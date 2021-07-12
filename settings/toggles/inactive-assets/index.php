@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/toggles/inactive-assets.php
+ * /settings/toggles/inactive-assets/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2021 Greg Chetcuti <greg@chetcuti.com>
@@ -20,7 +20,17 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../../_includes/init.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$system = new DomainMOD\System();
+
+require_once DIR_INC . '/head.inc.php';
+
+$system->authCheck();
 
 if ($_SESSION['s_display_inactive_assets'] == '1') {
 
