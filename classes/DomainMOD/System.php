@@ -251,6 +251,21 @@ class System
             $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
             header('Location: ' . WEB_ROOT . '/');
             exit;
+        } else {
+            $pdo = $this->deeb->cnxx;
+            $stmt = $pdo->prepare("
+                SELECT `password`
+                FROM users
+                WHERE username = :new_username
+                  AND active = '1'");
+            $stmt->bindValue('new_username', $_SESSION['s_username'], \PDO::PARAM_STR);
+            $stmt->execute();
+            $stored_hash = $stmt->fetchColumn();
+            if ($_SESSION['s_stored_hash'] != $stored_hash) {
+                $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
+                header('Location: ' . WEB_ROOT . '/logout.php');
+                exit;
+            }
         }
     }
 

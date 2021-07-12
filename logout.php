@@ -30,8 +30,6 @@ $system = new DomainMOD\System();
 
 require_once DIR_INC . '/debug.inc.php';
 
-$system->authCheck();
-
 $_SESSION = array();
 
 if (ini_get("session.use_cookies")) {

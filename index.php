@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         $_SESSION['s_user_id'] = $user->getUserId($new_username);
         $_SESSION['s_username'] = $new_username;
+        $_SESSION['s_stored_hash'] = $stored_hash;
 
         $_SESSION['s_system_db_version'] = $system->getDbVersion();
 
