@@ -64,7 +64,7 @@ class Form
                 <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>" class="domaimod-css-textarea-height"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    echo $name; ?>"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div><?php
             echo $after;
         return ob_get_clean();

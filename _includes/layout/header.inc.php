@@ -152,8 +152,8 @@
 
         <a href="<?php echo $web_root; ?>" class="brand-link domainmod-css-logo-background-colour">
             <!a href="<?php echo $web_root; ?>" class="brand-link">
-            <img src="<?php echo $web_root; ?>/images/logo-mini.png" alt="AdminLTE Docs Logo Small" class="brand-image-xs logo-xs domainmod-css-padding-left2">
-            <img src="<?php echo $web_root; ?>/images/logo.png" alt="AdminLTE Docs Logo Large" class="brand-image-xs logo-xl domainmod-css-padding-left2">
+            <img src="<?php echo $web_root; ?>/images/logo-mini.png" alt="DomainMOD Logo Mini" class="brand-image-xs logo-xs domainmod-css-padding-left">
+            <img src="<?php echo $web_root; ?>/images/logo.png" alt="DomainMOD Logo" class="brand-image-xs logo-xl domainmod-css-padding-left">
             <span>&nbsp;</span>
         </a>
 
