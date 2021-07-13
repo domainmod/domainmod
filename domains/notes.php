@@ -63,7 +63,7 @@ $software_section = "domains";
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php
 $page_align = 'left';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>

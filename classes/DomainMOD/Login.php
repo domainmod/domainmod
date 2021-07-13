@@ -82,7 +82,7 @@ class Login
                 us.display_domain_ip, us.display_domain_host, us.display_domain_tld, us.display_domain_fee,
                 us.display_ssl_owner, us.display_ssl_provider, us.display_ssl_account, us.display_ssl_domain,
                 us.display_ssl_type, us.display_ssl_ip, us.display_ssl_category, us.display_ssl_expiry_date, us.display_ssl_fee,
-                us.display_inactive_assets, us.display_dw_intro_page, lang.name AS language_name
+                us.display_inactive_assets, us.display_dw_intro_page, us.dark_mode, lang.name AS language_name
             FROM user_settings AS us, languages AS lang
             WHERE us.default_language = lang.language
               AND us.user_id = :user_id");

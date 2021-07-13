@@ -24,10 +24,12 @@ namespace DomainMOD;
 class User
 {
     public $deeb;
+    public $time;
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
+        $this->time = new Time();
     }
 
     public function getAdminId()
@@ -71,6 +73,21 @@ class User
     public function generateHash($password)
     {
         return password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    public function setDarkMode()
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE user_settings
+            SET dark_mode = :dark_mode,
+                update_time = :update_time
+            WHERE user_id = :user_id");
+        $timestamp = $this->time->stamp();
+        $stmt->bindValue('dark_mode', $_SESSION['s_dark_mode'], \PDO::PARAM_INT);
+        $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], \PDO::PARAM_INT);
+        $stmt->execute();
+        return;
     }
 
 } //@formatter:on

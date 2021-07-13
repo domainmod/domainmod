@@ -1,6 +1,6 @@
 <?php
 /**
- * /invalid.php
+ * /settings/toggles/dark-mode/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2021 Greg Chetcuti <greg@chetcuti.com>
@@ -20,32 +20,35 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/_includes/start-session.inc.php';
-require_once __DIR__ . '/_includes/init.inc.php';
+require_once __DIR__ . '/../../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+$deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
-$layout = new DomainMOD\Layout();
+$user = new DomainMOD\User();
+$time = new DomainMOD\Time();
+
+$timestamp = $time->stamp();
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/settings/invalid-page.inc.php';
-require_once DIR_INC . '/debug.inc.php';
-?>
-<?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
-<head>
-    <title><?php echo $layout->pageTitle($page_title); ?></title>
-    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-</head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
-<?php
-$page_align = 'center';
-require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<?php echo _("The page you're trying to access is invalid."); ?><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/"><?php echo _('Go home'); ?></a>
-<?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
-</body>
-</html>
+
+$system->authCheck();
+$pdo = $deeb->cnxx;
+
+if ($_SESSION['s_dark_mode'] === 1) {
+
+    $_SESSION['s_dark_mode'] = 0;
+
+} elseif ($_SESSION['s_dark_mode'] === 0) {
+
+        $_SESSION['s_dark_mode'] = 1;
+
+}
+
+$user->setDarkMode();
+
+header('Location: ' . $_SESSION['s_redirect']);
+exit;

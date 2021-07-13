@@ -173,7 +173,7 @@ class Layout
                 <h3 class="card-title">
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                         </button>
                         <?php echo $title; ?><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
                     </div>
@@ -230,6 +230,17 @@ class Layout
 
         return ob_get_clean();
 
+    }
+    public function sidebarDarkMode()
+    {
+        if ($_SESSION['s_dark_mode'] === 1) return ' sidebar-dark-red';
+        return ' sidebar-light-red domainmod-css-logo-background-colour';
+    }
+
+    public function bodyDarkMode()
+    {
+        if ($_SESSION['s_dark_mode'] === 1) return ' dark-mode';
+        return '';
     }
 
 } //@formatter:on

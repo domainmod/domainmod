@@ -23,8 +23,8 @@
 <div class="wrapper">
 
     <!-- Navbar -->
-    <!nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+
         <!-- Left navbar links -->
 
         <ul class="navbar-nav">
@@ -97,9 +97,14 @@
                 </div>
             </li>
 <?php */ ?>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo $web_root; ?>/settings/toggles/dark-mode/" role="button">
+                    <i class="fas fa-adjust"></i>
+                </a>
+            </li>
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                    <span class="d-none d-md-inline"><i class="fa fa-user"></i></span>
+                    <span><i class="fa fa-user"></i></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <!-- User image -->
@@ -127,7 +132,6 @@
                     </li>
                 </ul>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link" href="<?php echo $web_root; ?>/logout.php" role="button">
                     <i class="fas fa-sign-out-alt"></i>
@@ -137,12 +141,17 @@
     </nav>
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
-    <!aside class="main-sidebar main-sidebar-custom sidebar-dark-red elevation-4">
+    <!aside class="main-sidebar main-sidebar-custom sidebar-dark-red elevation-2">
+    <aside class="main-sidebar main-sidebar-custom<?php echo $layout->sidebarDarkMode(); ?> elevation-2">
+        <?php /* ?>
     <aside class="main-sidebar main-sidebar-custom sidebar-dark-red elevation-2">
+<?php */ ?>
     <!aside class="main-sidebar main-sidebar-custom sidebar-light-red elevation-2">
 
         <!-- Brand Logo -->
+
         <a href="<?php echo $web_root; ?>" class="brand-link domainmod-css-logo-background-colour">
+            <!a href="<?php echo $web_root; ?>" class="brand-link">
             <img src="<?php echo $web_root; ?>/images/logo-mini.png" alt="AdminLTE Docs Logo Small" class="brand-image-xs logo-xs domainmod-css-padding-left2">
             <img src="<?php echo $web_root; ?>/images/logo.png" alt="AdminLTE Docs Logo Large" class="brand-image-xs logo-xl domainmod-css-padding-left2">
             <span>&nbsp;</span>

@@ -142,6 +142,7 @@ $_SESSION['s_display_ssl_expiry_date'] = $result->display_ssl_expiry_date;
 $_SESSION['s_display_ssl_fee'] = $result->display_ssl_fee;
 $_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
 $_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
+$_SESSION['s_dark_mode'] = (int) $result->dark_mode;
 
 // Load Custom Domain Field Data
 $_SESSION['s_cdf_data'] = $custom_field->getCDFData();

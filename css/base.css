@@ -51,7 +51,7 @@ html {
     clear: both;
 }
 .domainmod-css-logo-background-colour {
-    background-color: #F1F1F1;
+    background-color: #f1f1f1;
 }
 
 .domainmod-css-sidebar-search-padding {
@@ -60,4 +60,7 @@ html {
 }
 .domainmod-css-filter-button-padding {
     padding-bottom: 25px;
+}
+.dark-mode a {
+    color: #e3e3e3;
 }

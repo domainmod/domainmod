@@ -32,6 +32,7 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $custom_field = new DomainMOD\CustomField();
+$user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -49,6 +50,7 @@ $custom_ssl_fields = $_POST['custom_ssl_fields'];
 $ssl_column_options = $_POST['ssl_column_options'];
 $new_display_inactive_assets = (int) $_POST['new_display_inactive_assets'];
 $new_display_dw_intro_page = (int) $_POST['new_display_dw_intro_page'];
+$new_dark_mode = (int) $_POST['new_dark_mode'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -150,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
             display_ssl_fee = :new_display_ssl_fee,
             display_inactive_assets = :new_display_inactive_assets,
             display_dw_intro_page = :new_display_dw_intro_page,
+            dark_mode = :new_dark_mode,
             number_of_ssl_certs = :new_number_of_ssl_certs,
             update_time = :timestamp
         WHERE user_id = :user_id");
@@ -175,6 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
     $stmt->bindValue('new_display_ssl_fee', $new_display_ssl_fee, PDO::PARAM_INT);
     $stmt->bindValue('new_display_inactive_assets', $new_display_inactive_assets, PDO::PARAM_INT);
     $stmt->bindValue('new_display_dw_intro_page', $new_display_dw_intro_page, PDO::PARAM_INT);
+    $stmt->bindValue('new_dark_mode', $new_dark_mode, PDO::PARAM_INT);
     $stmt->bindValue('new_number_of_ssl_certs', $new_number_of_ssl_certs, PDO::PARAM_INT);
     $timestamp = $time->stamp();
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
@@ -205,6 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
     $_SESSION['s_display_ssl_fee'] = $new_display_ssl_fee;
     $_SESSION['s_display_inactive_assets'] = $new_display_inactive_assets;
     $_SESSION['s_display_dw_intro_page'] = $new_display_dw_intro_page;
+    $_SESSION['s_dark_mode'] = $new_dark_mode;
+
+    $user->setDarkMode();
 
     $_SESSION['s_message_success'] .= _('Display Settings updated') . '<BR>';
 
@@ -272,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <?php echo $form->showFormTop(''); ?>
@@ -356,6 +363,13 @@ echo $form->showMultipleSelectBottom('<BR>');
 <h3><?php echo _('Data Warehouse'); ?></h3>
 <?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>
 
+<h3><?php echo _('Miscellaneous'); ?></h3>
+<?php
+echo $form->showRadioTop(_('Enable Dark Mode?'), '', '');
+echo $form->showRadioOption('new_dark_mode', '1', _('Yes'), $_SESSION['s_dark_mode'], '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_dark_mode', '0', _('No'), $_SESSION['s_dark_mode'], '', '');
+echo $form->showRadioBottom('<BR>');
+?>
 <?php echo $form->showSubmitButton(_('Update Display Settings'), '', ''); ?>
 
 <?php echo $form->showFormBottom(''); ?>

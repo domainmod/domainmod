@@ -42,7 +42,7 @@ $system->checkAdminUser($_SESSION['s_is_admin']);
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red">
+<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <a href="<?php echo $web_root; ?>/admin/settings/"><?php echo _('System Settings'); ?></a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/defaults/"><?php echo _('System Defaults'); ?></a><BR><BR>
