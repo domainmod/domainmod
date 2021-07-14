@@ -31,10 +31,10 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
-<?php /* ?>
             <li class="nav-item d-sm-inline-block">
-                <a href="#" class="nav-link">Contact</a>
+                <a href="<?php echo $web_root; ?>/feedback/" class="nav-link">Feedback</a>
             </li>
+<?php /* ?>
             <li class="nav-item d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
             </li>
