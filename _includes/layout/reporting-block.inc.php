@@ -31,7 +31,7 @@
 
     <input type="text" name="daterange" size="16" value="<?php echo $daterange; ?>" />
 
-    <BR><?php echo $form->showSubmitButton(_('Filter Report'), '', ''); ?><BR><BR>
+    <?php echo $form->showSubmitButton(_('Filter Report'), '&nbsp;&nbsp;', '<BR><BR>'); ?>
 
 <?php //@formatter:on
 echo $form->showFormBottom('');
