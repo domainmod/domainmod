@@ -66,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $pdo->query("
                 UPDATE `user_settings`
                 SET " . $field['display_field'] . " = '1'
-                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'");
 
         } else {
 
             $pdo->query("
                 UPDATE `user_settings`
                 SET " . $field['display_field'] . " = '0'
-                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'");
 
         }
 
@@ -88,14 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $pdo->query("
                 UPDATE `user_settings`
                 SET " . $field['display_field'] . " = '1'
-                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'");
 
         } else {
 
             $pdo->query("
                 UPDATE `user_settings`
                 SET " . $field['display_field'] . " = '0'
-                WHERE id = '" . $_SESSION['s_user_id'] . "'");
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'");
 
         }
 
