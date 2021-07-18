@@ -94,7 +94,7 @@ if ($new_username != '') {
 
         if ($display == '1') {
 
-            $_SESSION['s_message_success'] .= sprintf(_('The new password for %s is %s') . $result->username, $new_password) . '<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('The new password for %s is %s'), $result->username, $new_password) . '<BR>';
 
         } else {
 
