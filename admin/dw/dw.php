@@ -529,7 +529,7 @@ if ($result) {
         $temp_dw_dns_records != 0
     ) { ?>
 
-        <h3><?php echo _('Data Warehouse Totals'); ?></h3>
+        <BR><h3><?php echo _('Data Warehouse Totals'); ?></h3>
 
         <table id="<?php echo $slug; ?>-totals" class="<?php echo $datatable_class; ?>">
             <thead>
