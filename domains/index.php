@@ -953,6 +953,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
           '<a href="add.php">', '</a>',
           '<a href="' . $web_root . '/queue/intro.php">', '</a>',
           '<a target="_blank" href="../docs/userguide/adding-domains/">', '</a>');
+    $ready_for_domains = 1;
 }
 
 if ($_SESSION['s_system_large_mode'] == '1') {
@@ -2526,9 +2527,13 @@ if ($result) { ?>
         require DIR_INC . '/layout/pagination-large-mode.inc.php';
     }
 
-} else { ?>
+} else {
 
-    <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php
+    if ($ready_for_domains === 1) { ?>
+
+        <BR><BR><a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php
+
+    }
 
     if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 

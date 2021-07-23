@@ -624,6 +624,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' &
 if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
     echo "<strong>0</strong> " . _('SSL Certificates found') . "<BR><BR>";
     echo "<a href=\"add.php\">" . _('Click here to add an SSL Certificate') . " &raquo;</a><BR>";
+    $ready_for_ssl_certs = 1;
 }
 
 $result = $pdo->query($sql)->fetchAll();
@@ -1693,9 +1694,13 @@ if ($result) { ?>
 
     }
 
-} else { ?>
+} else {
 
-    <a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php
+    if ($ready_for_ssl_certs === 1) { ?>
+
+        <BR><a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php
+
+    }
 
     if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
