@@ -1,0 +1,6 @@
+#dw-main-build thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#dw-main-build tbody tr:hover { background-color: #343a40; }
+#dw-main-build tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#dw-main-totals thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#dw-main-totals tbody tr:hover { background-color: #343a40; }
+#dw-main-totals tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }

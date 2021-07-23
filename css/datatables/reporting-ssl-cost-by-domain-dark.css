@@ -1,0 +1,3 @@
+#reporting-ssl-cost-by-domain thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#reporting-ssl-cost-by-domain tbody tr:hover { background-color: #343a40; }
+#reporting-ssl-cost-by-domain tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }

@@ -140,4 +140,16 @@ switch ($slug) {
         break;
 }
 
-if ($include_datatable_css === 1) { ?><link rel="stylesheet" href="<?php echo $web_root; ?>/css/datatables/<?php echo $slug; ?>.css"><?php } ?>
+if ($include_datatable_css === 1) {
+
+    if ($_SESSION['s_dark_mode'] === 1) { ?>
+
+        <link rel="stylesheet" href="<?php echo $web_root; ?>/css/datatables/<?php echo $slug; ?>-dark.css"><?php
+
+    } else { ?>
+
+        <link rel="stylesheet" href="<?php echo $web_root; ?>/css/datatables/<?php echo $slug; ?>.css"><?php
+
+    }
+
+}
