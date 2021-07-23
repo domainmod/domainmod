@@ -8,7 +8,7 @@
   
   <meta name="author" content="Greg Chetcuti">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Domain Queue - DomainMOD User Guide</title>
+  <title>Migrating - DomainMOD User Guide</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -16,9 +16,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Domain Queue";
-    var mkdocs_page_input_path = "domain-queue.md";
-    var mkdocs_page_url = "/docs/userguide/domain-queue/";
+    var mkdocs_page_name = "Migrating";
+    var mkdocs_page_input_path = "migrating.md";
+    var mkdocs_page_url = "/docs/userguide/migrating/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -65,9 +65,12 @@
     <a class="" href="../upgrading/">Upgrading</a>
 	    </li>
           
-            <li class="toctree-l1">
+            <li class="toctree-l1 current">
 		
-    <a class="" href="../migrating/">Migrating</a>
+    <a class="current" href="./">Migrating</a>
+    <ul class="subnav">
+            
+    </ul>
 	    </li>
           
             <li class="toctree-l1">
@@ -80,21 +83,9 @@
     <a class="" href="../adding-domains/">Adding Domains</a>
 	    </li>
           
-            <li class="toctree-l1 current">
+            <li class="toctree-l1">
 		
-    <a class="current" href="./">Domain Queue</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#supported-registrars">Supported Registrars</a></li>
-    
-
-    <li class="toctree-l2"><a href="#usage">Usage</a></li>
-    
-
-    <li class="toctree-l2"><a href="#api-notes">API Notes</a></li>
-    
-
-    </ul>
+    <a class="" href="../domain-queue/">Domain Queue</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -171,10 +162,10 @@
     
       
     
-    <li>Domain Queue</li>
+    <li>Migrating</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/domainmod/userguide/edit/master/docs/domain-queue.md"
+        <a href="https://github.com/domainmod/userguide/edit/master/docs/migrating.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -186,65 +177,42 @@
             <div class="section">
                 
                 
-                <h1>Domain Queue</h1>
+                <h1>Migrating</h1>
                 
 
                 
-                <p>The easiest option for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let DomainMOD take care of the rest (and in some cases you don't even need to supply the list of domains, it will be automatically retrieved from your registrar account).</p>
-<p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
-<h2 id="supported-registrars">Supported Registrars</h2>
-<p>The following registrars are currently supported by the Domain Queue:</p>
-<p>Above.com, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, ResellerClub</p>
-<h2 id="usage">Usage</h2>
-<div class="admonition warning">
-<p class="admonition-title">Requirement</p>
-<p>In order to use the Domain Queue you must first setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD.</p>
+                <div class="admonition danger">
+<p class="admonition-title">Warning</p>
+<p>Before migrating it's <strong>strongly</strong> recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the migration process there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your data. </p>
+<p>The Backup &amp; Restore instructions can be found <a href="../backup-restore/">here</a>.</p>
 </div>
+<p>To migrate your DomainMOD installation from one server to another:</p>
 <ol>
 <li>
-<p>Click on <strong>Domains</strong> on the main menu.</p>
+<p>[Old Server] <a href="https://domainmod.org/docs/userguide/upgrading/">Upgrade to the newest version of DomainMOD</a></p>
 </li>
 <li>
-<p>Click the <strong>Add Domains To Queue</strong> button on the Domains page.</p>
+<p>[Old Server] Export a copy of your DomainMOD database using the above <strong>Backup</strong> feature</p>
 </li>
 <li>
-<p>On the dropdown list, choose the registrar account that you would like to import using the Domain Queue.</p>
+<p>[New Server] <a href="https://domainmod.org/docs/userguide/getting-started/#downloading">Download and install the newest version of DomainMOD</a></p>
 </li>
 <li>
-<p>If requested, paste in a list of the domains you want to add to the Domain Queue. This is not always required, as some domain registrars will retrieve the list of domains from your account automatically.</p>
+<p>[New Server] Login to DomainMOD and navigate to <strong>Administration</strong> -&gt; <strong>Backup &amp; Restore</strong></p>
 </li>
 <li>
-<p>Click the <strong>Add Domains</strong> button.</p>
+<p>[New Server] In the <strong>Restore</strong> section, click the <strong>Choose File</strong> button and then select the domainmod-backup.sql file that you want to restore</p>
 </li>
 <li>
-<p>You will now be taken to the Domain Queue page, where you can see the status of your domain imports. You can also access the Domain Queue by clicking on <strong>Queue</strong> on the main menu (this menu option is only available when you have domains being processed in the queue).</p>
+<p>[New Server] Click the <strong>Restore Entire Database</strong> button</p>
 </li>
 <li>
-<p>Once all of your imports have completed you can click the <strong>Clear Completed</strong> button in order to clear the queue.</p>
+<p>[New Server] Once the restore is complete you will automatically be logged out of DomainMOD. You should now be able to login using the accounts that you just restored.</p>
+</li>
+<li>
+<p>That's it! DomainMOD has now been migrated to your new server.</p>
 </li>
 </ol>
-<h2 id="api-notes"><a name="apinotes"></a>API Notes</h2>
-<p>This section contains various notes and things to watch out for when using the domain registrar APIs.</p>
-<h4>DreamHost</h4>
-
-<p>DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a DreamHost account will have their WHOIS privacy status set to No by default.</p>
-<h4>Freenom</h4>
-
-<p>Freenom currently only gives API access to reseller accounts.</p>
-<h4>Gandi</h4>
-
-<p>Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.</p>
-<h4>GoDaddy</h4>
-
-<p>When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
-<h4>NameSilo</h4>
-
-<p>NameSilo's domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer</p>
-<p>When retrieving your list of domains via the API, <strong>Inactive</strong> domains are not returned.</p>
-<p>When retrieving the details of a specific domain via the API, <strong>Inactive</strong> and <strong>Expired (pending delete)</strong> domains will not return any data.</p>
-<h4>ResellerClub</h4>
-
-<p>ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.</p>
                 
             </div>
           </div>
@@ -252,10 +220,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../bulk-updater/" class="btn btn-neutral float-right" title="Bulk Updater">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../creating-assets/" class="btn btn-neutral float-right" title="Creating Assets">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../adding-domains/" class="btn btn-neutral" title="Adding Domains"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
+        <a href="../upgrading/" class="btn btn-neutral" title="Upgrading"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
       
     </div>
   
@@ -285,10 +253,10 @@
           <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../adding-domains/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../upgrading/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../bulk-updater/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../creating-assets/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

@@ -67,6 +67,11 @@
           
             <li class="toctree-l1">
 		
+    <a class="" href="../migrating/">Migrating</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
@@ -130,6 +135,9 @@
     
 
     <li class="toctree-l2"><a href="#debugging">Debugging</a></li>
+    
+
+    <li class="toctree-l2"><a href="#helper-programs">Helper Programs</a></li>
     
 
     </ul>
@@ -341,6 +349,21 @@ My fees are all showing up as zero
 <p>Once you have both your debugging log and PHP error log send an email to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;">&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;</a> and attach the log files. Please also include the URL to your support forum post or issue tracker ticket so that we can determine the issue you're contacting us about.</p>
 <p>We will review your logs and get back to you as soon as we can!</p>
 <p>Also, if you haven't already, make sure you disable Debugging Mode.</p>
+<h2 id="helper-programs"><BR>Helper Programs</h2>
+<p>If all else fails, DomainMOD has some "helper" programs that support can supply you with in order to help investigate or fix your issue. Helper programs are nothing more than simple scripts that can perform actions on your DomainMOD installation, whether it's performing an update on your database or setting a temporary variable.</p>
+<p>Although helpers are generally custom and specific to the user's issue, we wanted to include a generic helper publicly so that users could get a feel for what helpers are and what they do.</p>
+<p>In DomainMOD v4.18, we implemented strict <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">Content Security Policy</a> headers in order to help secure the application and reduce the risk of certain web-based attacks. We also enabled forced HTTPS, which ensures that your DomainMOD installation will <strong>only</strong> work if you've secured your web hosting with an SSL certificate.</p>
+<p>Although we highly recommend keeping the CSP headers enabled, as well as using an SSL certificate to secure your DomainMOD installation, we realize that some users may not always be able to have these features enabled. If you're one of those users, and you need to disable CSP and HTTPS, you could use the below helper to do so.</p>
+<p>You would simply create the file <em>/helpers/top.php</em> and paste the below contents into it. That's all there is to it! The next time your visit your DomainMOD installation CSP and HTTPS will both be disabled.</p>
+<div class="admonition danger">
+<p class="admonition-title">Warning</p>
+<p>If you're using a helper to investigate or fix something, and the helper is only intended to be used temporarily, don't forget to delete the helper file as soon as you're done using it!     </p>
+</div>
+<pre><code>&lt;?php
+// Contents of: /helpers/top.php
+$disable_csp = 1;
+$force_https = 0;
+</code></pre>
                 
             </div>
           </div>
