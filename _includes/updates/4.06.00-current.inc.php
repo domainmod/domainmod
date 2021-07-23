@@ -1385,6 +1385,35 @@ if ($current_db_version === '4.16.0') {
             VALUES
             (6, 'URL', '" . $timestamp . "')");
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.17.0 to 4.18.0
+if ($current_db_version === '4.17.0') {
+
+    $old_version = '4.17.0';
+    $new_version = '4.18.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+            ALTER TABLE `user_settings`
+            ADD `dark_mode` TINYINT(1) NOT NULL DEFAULT '0' AFTER `display_dw_intro_page`");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */

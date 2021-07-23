@@ -178,6 +178,7 @@ try {
             `display_ssl_fee` TINYINT(1) NOT NULL DEFAULT '0',
             `display_inactive_assets` TINYINT(1) NOT NULL DEFAULT '1',
             `display_dw_intro_page` TINYINT(1) NOT NULL DEFAULT '1',
+            `dark_mode` TINYINT(1) NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
