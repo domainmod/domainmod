@@ -108,7 +108,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
     if ($total_count) {
 
-        echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange));
+        echo $dashboard->displayExpPanel(_('SSL Certs'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange));
 
     } ?>
 
