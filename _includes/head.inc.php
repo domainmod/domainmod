@@ -37,7 +37,7 @@ if ($disable_csp === 0) {
         $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self' code.ionicframework.com fonts.googleapis.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
     // PRIMARY CSP HEADER
-    // chrome, chromium, opera, all other browers minus firefox, safary, and seamonkey
+    // chrome, chromium, opera, all other browers minus firefox, safari, and seamonkey
     } else {
 
         $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self' code.ionicframework.com fonts.gstatic.com; img-src 'self' data:; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self' code.ionicframework.com fonts.googleapis.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
