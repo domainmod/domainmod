@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.18.01    2021-07-25
+- Updated Force HTTPS to default to No
+
 v4.18.0    2021-07-22
 - Added Dark Mode
 - Added Feedback page
