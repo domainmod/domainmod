@@ -25,22 +25,23 @@ Downloading
 -----------
 There are currently four options for downloading DomainMOD.
 
-**Option #1**  
-Visit the following URL to download DomainMOD in a .ZIP file: <https://domainmod.org/download/>
+**Option #1 -- Using Docker**
 
-**Option #2**  
-Use git from your web server to download the DomainMOD source code. To do so, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have git installed on your web server):
+Please see our official DomainMOD container on Docker Hub for more information: https://hub.docker.com/r/domainmod/domainmod
+
+**Option #2 -- Downloading a .zip file**   
+
+Visit the following URL to download DomainMOD in a .zip file: <https://domainmod.org/download/>
+
+**Option #3 -- Using Git**  
+
+To download using Git, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have Git installed on your server):
 
     git clone https://github.com/domainmod/domainmod.git
 
-**Option #3**  
-Use Docker from your web server to download and install DomainMOD. To do so, change to the directory where you want to store the Docker build files and DomainMOD database and run the following commands (this download/install option requires that you have git, Docker, and Docker Compose installed on your web server):
+**Option #4 -- Installing via Softactulous**  
 
-    git clone https://github.com/domainmod/docker.git .
-    docker-compose up -d
-
-**Option #4**  
-Use Softaculous from your web server to download and install DomainMOD.  Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.
+Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.
 
 To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.
 
@@ -50,9 +51,9 @@ Installing
 ----------
 If you installed DomainMOD using Docker or Softaculous in the previous step you can ignore the rest of this *Installing* section, as you should already have DomainMOD up-and-running.
 
-If you downloaded the .ZIP file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).
+If you downloaded the .zip file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).
 
-If you used git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.
+If you used Git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.
 
 **Installation Steps**
 
@@ -68,7 +69,9 @@ Cron Job
 --------
 DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.
 
-The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run the Task Scheduler will be live.
+The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run, the Task Scheduler will be live.
+
+If you installed DomainMOD using Docker, the cron job will be setup and running automatically within the container, so there's nothing you need to setup manually.
 
 **NOTE:** This file should be executed every 10 minutes.
 
@@ -98,19 +101,22 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 Upgrading
 ---------
-**WARNING:** Before upgrading it's **strongly** recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your previous version.
+**WARNING:** Before upgrading it's **strongly** recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your previous version. The Backup & Restore documentation can be found here: <https://domainmod.org/docs/userguide/backup-restore/>
 
-**Option #1**  
-If you installed DomainMOD by downloading the .ZIP file, visit the following URL to download the most up-to-date version: <https://domainmod.org/download/>
+**Option #1 -- Docker Install**  
+If you installed DomainMOD using Docker, please see our official DomainMOD container on Docker Hub for upgrade information: <https://hub.docker.com/r/domainmod/domainmod>  
+
+**Option #2 -- .zip File Install**  
+If you installed DomainMOD by downloading the .zip file, visit the following URL to download the most up-to-date version: <https://domainmod.org/download/>
 
 Once the download completes, upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).
 
-**Option #2**  
-If you installed DomainMOD using git right from your web server, just run the following command from within your installation directory to upgrade:
+**Option #3 -- Git Install**  
+If you installed DomainMOD using Git right from your web server, just run the following command from within your installation directory to upgrade:
 
     git pull
     
-**Option #3**  
+**Option #4 -- Softaculous Install**  
 If you installed DomainMOD using Softaculous you're just a few clicks away from upgrading to the newest version. Please see the upgrade instructions on the Softaculous Wiki: <https://www.softaculous.com/docs/How_to_upgrade_installations>
 
 Data Warehouse
