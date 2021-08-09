@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         SELECT id
         FROM users
         WHERE username = :new_username
-          AND `password` = password(:new_password)
+          AND `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password)))))
           AND active = '1'");
     $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
     $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
