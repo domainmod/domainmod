@@ -273,6 +273,7 @@
                 </p>
             </a>
         </li>
+<?php /* ?>
         <li class="nav-item">
             <a href="https://domainmod.org/contribute/" class="nav-link">
                 <i class="nav-icon fas fa-thumbs-up"></i>
@@ -281,6 +282,7 @@
                 </p>
             </a>
         </li>
+<?php */ ?>
     </ul>
 </nav>
 <!-- /.sidebar-menu -->
