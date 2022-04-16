@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= _('Domains Added To Queue') . 'BR>';
+                        $_SESSION['s_message_success'] .= _('Domains Added To Queue') . '<BR>';
 
                         header('Location: index.php');
                         exit;
