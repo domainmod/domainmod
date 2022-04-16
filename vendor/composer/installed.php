@@ -1,131 +1,141 @@
-<?php return array(
-    'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'type' => 'library',
-        'install_path' => __DIR__ . '/../../',
-        'aliases' => array(),
-        'reference' => 'ff5de754c5f24229ff4ae8e8d68021a680e44598',
-        'name' => '__root__',
-        'dev' => true,
+<?php return array (
+  'root' => 
+  array (
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
+    'aliases' => 
+    array (
     ),
-    'versions' => array(
-        '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'reference' => 'ff5de754c5f24229ff4ae8e8d68021a680e44598',
-            'dev_requirement' => false,
-        ),
-        'auth0/auth0-php' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'chetcuti/gjclasses' => array(
-            'pretty_version' => 'v0.34.0',
-            'version' => '0.34.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../chetcuti/gjclasses',
-            'aliases' => array(),
-            'reference' => 'f0405044f9aaf4756d7ffa714c2d46f675459aca',
-            'dev_requirement' => false,
-        ),
-        'donatj/pushover' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'dragonmantank/cron-expression' => array(
-            'pretty_version' => 'v1.2.1',
-            'version' => '1.2.1.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../dragonmantank/cron-expression',
-            'aliases' => array(),
-            'reference' => '9504fa9ea681b586028adaaa0877db4aecf32bad',
-            'dev_requirement' => false,
-        ),
-        'firebase/php-jwt' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'guzzlehttp/guzzle' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'guzzlehttp/promises' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'guzzlehttp/psr7' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'iamdual/uploader' => array(
-            'pretty_version' => 'v0.1.10',
-            'version' => '0.1.10.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../iamdual/uploader',
-            'aliases' => array(),
-            'reference' => '2e414587b9d91a269ce13ae3747dd417196d657e',
-            'dev_requirement' => false,
-        ),
-        'ifsnop/mysqldump-php' => array(
-            'pretty_version' => 'v2.9',
-            'version' => '2.9.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../ifsnop/mysqldump-php',
-            'aliases' => array(),
-            'reference' => 'fc9c119fe5d70af9a685cad6a8ac612fd7589e25',
-            'dev_requirement' => false,
-        ),
-        'ivkos/pushbullet' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'phpmailer/phpmailer' => array(
-            'pretty_version' => 'v5.2.28',
-            'version' => '5.2.28.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
-            'aliases' => array(),
-            'reference' => 'acba50393dd03da69a50226c139722af8b153b11',
-            'dev_requirement' => false,
-        ),
-        'psr/http-message' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'ralouphie/getallheaders' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
-        'thamaraiselvam/mysql-import' => array(
-            'pretty_version' => '1.0.1',
-            'version' => '1.0.1.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../thamaraiselvam/mysql-import',
-            'aliases' => array(),
-            'reference' => 'a69f1c36d9bc3dd751235b1f0f193c749c8aa7fb',
-            'dev_requirement' => false,
-        ),
+    'reference' => '1f3efd5459065db7af653491e96a9512ceeb77c8',
+    'name' => '__root__',
+  ),
+  'versions' => 
+  array (
+    '__root__' => 
+    array (
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '1f3efd5459065db7af653491e96a9512ceeb77c8',
     ),
+    'auth0/auth0-php' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'chetcuti/gjclasses' => 
+    array (
+      'pretty_version' => 'v0.35.0',
+      'version' => '0.35.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '85143775ff728a8d4b7326aa290412cf5d716f26',
+    ),
+    'donatj/pushover' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'dragonmantank/cron-expression' => 
+    array (
+      'pretty_version' => 'v1.2.1',
+      'version' => '1.2.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9504fa9ea681b586028adaaa0877db4aecf32bad',
+    ),
+    'firebase/php-jwt' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'guzzlehttp/guzzle' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'guzzlehttp/promises' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'guzzlehttp/psr7' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'iamdual/uploader' => 
+    array (
+      'pretty_version' => 'v0.1.10',
+      'version' => '0.1.10.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '2e414587b9d91a269ce13ae3747dd417196d657e',
+    ),
+    'ifsnop/mysqldump-php' => 
+    array (
+      'pretty_version' => 'v2.9',
+      'version' => '2.9.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'fc9c119fe5d70af9a685cad6a8ac612fd7589e25',
+    ),
+    'ivkos/pushbullet' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'phpmailer/phpmailer' => 
+    array (
+      'pretty_version' => 'v5.2.28',
+      'version' => '5.2.28.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'acba50393dd03da69a50226c139722af8b153b11',
+    ),
+    'psr/http-message' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'ralouphie/getallheaders' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'thamaraiselvam/mysql-import' => 
+    array (
+      'pretty_version' => '1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'a69f1c36d9bc3dd751235b1f0f193c749c8aa7fb',
+    ),
+  ),
 );
