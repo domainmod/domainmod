@@ -203,6 +203,34 @@ class Api
         }
     }
 
+    public function getAccountId($account_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT account_id
+            FROM registrar_accounts
+            WHERE id = :account_id");
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Registrar Account ID';
+            $log_extra = array('Account ID' => $account_id, 'Registrar' => $this->assets->getRegistrarByAcc($account_id),
+                'Account Username' => $this->assets->getUsername($account_id));
+            $this->log->critical($log_message, $log_extra);
+            return array($log_message, $log_message);
+
+        } else {
+
+            return $result->account_id;
+
+        }
+    }
+
     public function getUserPass($account_id)
     {
         $pdo = $this->deeb->cnxx;

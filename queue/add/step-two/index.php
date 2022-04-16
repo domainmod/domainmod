@@ -50,11 +50,11 @@ $raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
 if ($new_raid !== 0) {
 
     $stmt = $pdo->prepare("
-        SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
-            apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
-            apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status,
-            apir.notes, ra.username, ra.password, ra.reseller_id, ra.api_app_name, ra.api_key, ra.api_secret,
-            ra.api_ip_id
+        SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_account_id,
+               apir.req_reseller_id, apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address,
+               apir.lists_domains, apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status,
+               apir.ret_autorenewal_status, apir.notes, ra.username, ra.password, ra.account_id, ra.reseller_id,
+               ra.api_app_name, ra.api_key, ra.api_secret, ra.api_ip_id
         FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
         WHERE ra.registrar_id = r.id
           AND r.api_registrar_id = apir.id
@@ -69,6 +69,7 @@ if ($new_raid !== 0) {
         $api_registrar_name = $result->name;
         $req_account_username = $result->req_account_username;
         $req_account_password = $result->req_account_password;
+        $req_account_id = $result->req_account_id;
         $req_reseller_id = $result->req_reseller_id;
         $req_api_app_name = $result->req_api_app_name;
         $req_api_key = $result->req_api_key;
@@ -82,6 +83,7 @@ if ($new_raid !== 0) {
         $registrar_notes = $result->notes;
         $account_username = $result->username;
         $account_password = $result->password;
+        $account_id = $result->account_id;
         $reseller_id = $result->reseller_id;
         $api_app_name = $result->api_app_name;
         $api_key = $result->api_key;
@@ -409,6 +411,15 @@ if ($new_raid !== 0) { ?>
     if ($req_account_password == '1') {
         echo '<li>' . _('Registrar Account Password');
         if ($account_password == '') {
+            echo $missing_text;
+        } else {
+            echo $saved_text;
+        }
+        echo '</li>';
+    }
+    if ($req_account_id == '1') {
+        echo '<li>' . _('Registrar Account ID');
+        if ($account_id == '') {
             echo $missing_text;
         } else {
             echo $saved_text;

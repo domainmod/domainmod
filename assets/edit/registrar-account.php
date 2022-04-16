@@ -52,6 +52,7 @@ $new_registrar_id = (int) $_POST['new_registrar_id'];
 $new_email_address = $sanitize->text($_POST['new_email_address']);
 $new_username = $sanitize->text($_POST['new_username']);
 $new_password = $sanitize->text($_POST['new_password']);
+$new_account_id = $sanitize->text($_POST['new_account_id']);
 $new_reseller = (int) $_POST['new_reseller'];
 $new_reseller_id = $sanitize->text($_POST['new_reseller_id']);
 $new_api_app_name = $sanitize->text($_POST['new_api_app_name']);
@@ -78,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     email_address = :new_email_address,
                     username = :new_username,
                     `password` = :new_password,
+                    account_id = :new_account_id,
                     reseller = :new_reseller,
                     reseller_id = :new_reseller_id,
                     api_app_name = :new_api_app_name,
@@ -92,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
             $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
             $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_STR);
             $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
             $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
             $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
@@ -163,8 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 
     $stmt = $pdo->prepare("
-        SELECT owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name, api_key,
-            api_secret, api_ip_id, notes
+        SELECT owner_id, registrar_id, email_address, username, `password`, account_id, reseller, reseller_id,
+               api_app_name, api_key, api_secret, api_ip_id, notes
         FROM registrar_accounts
         WHERE id = :raid");
     $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
@@ -179,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_email_address = $result->email_address;
         $new_username = $result->username;
         $new_password = $result->password;
+        $new_account_id = $result->account_id;
         $new_reseller = $result->reseller;
         $new_reseller_id = $result->reseller_id;
         $new_api_app_name = $result->api_app_name;
@@ -265,9 +269,9 @@ if ($del === 1) {
 }
 
 $stmt = $pdo->prepare("
-    SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id, apir.req_api_app_name,
-        apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains, apir.ret_expiry_date,
-        apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status, apir.notes
+    SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_account_id, apir.req_reseller_id,
+           apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
+           apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status, apir.notes
     FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
     WHERE ra.registrar_id = r.id
       AND r.api_registrar_id = apir.id
@@ -282,6 +286,7 @@ if ($result) {
     $api_registrar_name = $result->name;
     $req_account_username = $result->req_account_username;
     $req_account_password = $result->req_account_password;
+    $req_account_id = $result->req_account_id;
     $req_reseller_id = $result->req_reseller_id;
     $req_api_app_name = $result->req_api_app_name;
     $req_api_key = $result->req_api_key;
@@ -350,6 +355,7 @@ if ($result) {
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
 
 echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
 echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
@@ -382,6 +388,15 @@ if ($has_api_support >= 1) {
         if ($req_account_password == '1') {
             echo '<li>' . _('Registrar Account Password');
             if ($new_password == '') {
+                echo $missing_text;
+            } else {
+                echo $saved_text;
+            }
+            echo '</li>';
+        }
+        if ($req_account_id == '1') {
+            echo '<li>' . _('Registrar Account ID');
+            if ($new_account_id == '') {
                 echo $missing_text;
             } else {
                 echo $saved_text;

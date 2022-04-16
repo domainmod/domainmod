@@ -48,6 +48,7 @@ $new_registrar_id = (int) $_POST['new_registrar_id'];
 $new_email_address = $sanitize->text($_POST['new_email_address']);
 $new_username = $sanitize->text($_POST['new_username']);
 $new_password = $sanitize->text($_POST['new_password']);
+$new_account_id = $sanitize->text($_POST['new_account_id']);
 $new_api_app_name = $sanitize->text($_POST['new_api_app_name']);
 $new_api_key = $sanitize->text($_POST['new_api_key']);
 $new_api_secret = $sanitize->text($_POST['new_api_secret']);
@@ -62,17 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt = $pdo->prepare("
             INSERT INTO registrar_accounts
-            (owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name,
-             api_key, api_secret, api_ip_id, notes, created_by, insert_time)
+            (owner_id, registrar_id, email_address, username, `password`, account_id, reseller, reseller_id,
+             api_app_name, api_key, api_secret, api_ip_id, notes, created_by, insert_time)
             VALUES
-            (:new_owner_id, :new_registrar_id, :new_email_address, :new_username, :new_password, :new_reseller,
-             :new_reseller_id, :new_api_app_name, :new_api_key, :new_api_secret, :new_api_ip_id, :new_notes,
-             :created_by, :timestamp)");
+            (:new_owner_id, :new_registrar_id, :new_email_address, :new_username, :new_password, :new_account_id,
+             :new_reseller, :new_reseller_id, :new_api_app_name, :new_api_key, :new_api_secret, :new_api_ip_id,
+             :new_notes, :created_by, :timestamp)");
         $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
         $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
         $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
         $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
         $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_STR);
         $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
         $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
         $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
@@ -166,6 +168,7 @@ echo $form->showDropdownBottom('');
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
 
 echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
 echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
