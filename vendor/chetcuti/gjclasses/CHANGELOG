@@ -1,5 +1,8 @@
 GJClasses CHANGELOG
 ===================
+v0.35.0    2021-07-29
+- Added Detect class
+
 v0.34.0    2021-06-26
 - Added exchangerate.host currency conversion support
 
