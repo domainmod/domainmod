@@ -311,7 +311,7 @@ class DomainQueue
                 } elseif ($row->api_registrar_name == 'ResellerClub') {
 
                     $registrar = new ResellerClub();
-                    list($reseller_id, $api_key) = $this->api->getReselleridKey($row->account_id);
+                    list($reseller_id, $api_key) = $this->api->getResellerIdKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
 
                 } else {

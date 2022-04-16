@@ -175,7 +175,7 @@ class Api
         }
     }
 
-    public function getReselleridKey($account_id)
+    public function getResellerIdKey($account_id)
     {
         $pdo = $this->deeb->cnxx;
 
