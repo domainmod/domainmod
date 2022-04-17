@@ -69,6 +69,14 @@ class DomainQueue
                     $api_key = $this->api->getKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $row->account_id);
 
+                } elseif ($row->api_registrar_name == 'Cloudflare') {
+
+                    $registrar = new Cloudflare();
+                    $api_key = $this->api->getKey($row->account_id);
+                    $account_id = $this->api->getAccountId($row->account_id);
+                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_id, $api_key);
+
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();

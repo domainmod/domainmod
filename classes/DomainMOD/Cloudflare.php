@@ -36,9 +36,11 @@ class Cloudflare
 
     public function getApiUrl($account_id, $command, $domain)
     {
-        $base_url = 'https://api.cloudflare.com/client/v4/accounts/';
-        if ($command == 'info') {
-            $full_url = $base_url . $account_id . "/registrar/domains/" . $domain;
+        $base_url = 'https://api.cloudflare.com/client/v4/';
+        if ($command == 'domainlist') {
+            $full_url = $base_url . 'zones?status=active&account.id=' . $account_id;
+        } elseif ($command == 'info') {
+            $full_url = $base_url . 'accounts/' . $account_id . "/registrar/domains/" . $domain;
         } else {
             return array(_('Unable to build API URL'), '');
         }
@@ -62,31 +64,33 @@ class Cloudflare
         return $result;
     }
 
-    public function getAccountId($account_id)
+    public function getDomainList($account_username, $account_id, $api_key)
     {
-        $pdo = $this->deeb->cnxx;
+        $domain_list = array();
+        $domain_count = 0;
 
-        $stmt = $pdo->prepare("
-            SELECT api_app_name
-            FROM registrar_accounts
-            WHERE id = :account_id");
-        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
-        $stmt->execute();
+        $api_url = $this->getApiUrl($account_id, 'domainlist', '');
+        $api_results = $this->apiCall($api_url, $account_username, $api_key);
+        $array_results = $this->convertToArray($api_results);
 
-        $result = $stmt->fetchColumn();
+        if (isset($array_results['result'][0]['name'])) {
 
-        if (!$result) {
+            foreach ($array_results['result'] as $domain) {
 
-            $log_message = 'Unable to retrieve Registrar Account ID';
-            $log_extra = array('Account ID' => $account_id);
-            $this->log->critical($log_message, $log_extra);
-            return $log_message;
+                $domain_list[] = $domain['name'];
+                $domain_count++;
+
+            }
 
         } else {
 
-            return $result;
+            $log_message = 'Unable to get domain list';
+            $log_extra = array('Username' => $account_username, 'Account ID' => $this->format->obfusc($account_id), 'API Key' => $this->format->obfusc($api_key));
+            $this->log->error($log_message, $log_extra);
 
         }
+
+        return array($domain_count, $domain_list);
     }
 
     public function getFullInfo($account_username, $account_id, $api_key, $domain)
