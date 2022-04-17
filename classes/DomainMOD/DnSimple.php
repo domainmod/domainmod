@@ -62,15 +62,6 @@ class DnSimple
         return $result;
     }
 
-    public function getAccountId($api_key)
-    {
-        $api_url = $this->getApiUrl('', 'accountid', '');
-        $api_results = $this->apiCall($api_key, $api_url);
-        $array_results = $this->convertToArray($api_results);
-
-        return $array_results['data']['account']['id'];
-    }
-
     public function getDomainList($api_key, $account_id)
     {
         $domain_list = array();
