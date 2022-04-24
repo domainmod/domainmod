@@ -51,6 +51,19 @@ class User
         return $stmt->fetchColumn();
     }
 
+    public function getDefaultCurrency($user_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT default_currency
+            FROM user_settings
+            WHERE user_id = :user_id");
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+        return $result->default_currency;
+    }
+
     public function getFullName($user_id)
     {
         $stmt = $this->deeb->cnxx->prepare("
