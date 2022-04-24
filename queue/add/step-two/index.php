@@ -353,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $_SESSION['s_message_success'] .= _('Domains Added To Queue') . '<BR>';
 
-                        header('Location: index.php');
+                        header('Location: ../../../queue/');
                         exit;
 
                     } catch (Exception $e) {
