@@ -2157,16 +2157,10 @@ if ($done != "1") {
         echo $form->showDropdownBottom('');
 
         // Auto Renewal
-        echo $form->showRadioTop(_('Auto Renewal') . '?', '', '');
-        echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
-        echo $form->showRadioBottom('');
+        echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
 
         // WHOIS Privacy Status
-        echo $form->showRadioTop(_('Privacy Enabled') . '?', '', '');
-        echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
-        echo $form->showRadioBottom('');
+        echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
 
     } elseif ($action == "RENEW" || $action == "FR") {
 

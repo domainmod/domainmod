@@ -525,15 +525,9 @@ echo $form->showDropdownOption('10', _('Sold'), $new_active);
 echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop(_('Auto Renewal') . '?', _('Auto Renewal'), '');
-echo $form->showRadioOption('new_autorenew', '1', _('Yes'), $new_autorenew, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_autorenew', '0', _('No'), $new_autorenew, '', '');
-echo $form->showRadioBottom('');
+echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
 
-echo $form->showRadioTop(_('Privacy Enabled') . '?', _('Privacy Enabled'), '');
-echo $form->showRadioOption('new_privacy', '1', _('Yes'), $new_privacy, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_privacy', '0', _('No'), $new_privacy, '', '');
-echo $form->showRadioBottom('');
+echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
 
 if ($new_notes != '') {
     $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">' . strtolower(_('View Full Notes')) . '</a>]';

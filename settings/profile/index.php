@@ -292,10 +292,8 @@ if ($new_expiration_emails !== 0) {
 } else {
     $temp_expiration_emails = $_SESSION['s_expiration_emails'];
 }
-echo $form->showRadioTop(_('Subscribe to Domain & SSL Certificate expiration emails?'), '', '');
-echo $form->showRadioOption('new_expiration_emails', '1', _('Yes'), $temp_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_expiration_emails', '0', _('No'), $temp_expiration_emails, '', '');
-echo $form->showRadioBottom('');
+
+echo $form->showSwitch(_('Subscribe to Domain & SSL Certificate expiration emails?') . '?', '', 'new_expiration_emails', $temp_expiration_emails, '', '<BR><BR>');
 
 echo $form->showSubmitButton(_('Update Profile'), '', '');
 echo $form->showFormBottom('');

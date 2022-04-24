@@ -364,12 +364,9 @@ echo $form->showMultipleSelectBottom('<BR>');
 <?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>
 
 <h3><?php echo _('Miscellaneous'); ?></h3>
-<?php
-echo $form->showRadioTop(_('Enable Dark Mode?'), '', '');
-echo $form->showRadioOption('new_dark_mode', '1', _('Yes'), $_SESSION['s_dark_mode'], '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_dark_mode', '0', _('No'), $_SESSION['s_dark_mode'], '', '');
-echo $form->showRadioBottom('<BR>');
-?>
+
+<?php echo $form->showSwitch(_('Dark Mode') . '?', '', 'new_dark_mode', $_SESSION['s_dark_mode'], '', '<BR><BR>'); ?>
+
 <?php echo $form->showSubmitButton(_('Update Display Settings'), '', ''); ?>
 
 <?php echo $form->showFormBottom(''); ?>

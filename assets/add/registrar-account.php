@@ -170,10 +170,7 @@ echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanit
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
 
-echo $form->showRadioTop(_('Reseller Account') . '?', '', '');
-echo $form->showRadioOption('new_reseller', '1', _('Yes'), $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_reseller', '0', _('No'), $new_reseller, '', '');
-echo $form->showRadioBottom('');
+echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '', '<BR><BR>');
 
 echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $new_reseller_id, '100', '', '', '', '');
 

@@ -403,10 +403,7 @@ if ($result) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showRadioTop(_('Subscribe to Domain & SSL Certificate expiration emails?'), '', '');
-echo $form->showRadioOption('new_expiration_emails', '1', _('Yes'), $new_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-echo $form->showRadioOption('new_expiration_emails', '0', _('No'), $new_expiration_emails, '', '');
-echo $form->showRadioBottom('');
+echo $form->showSwitch(_('Subscribe to Domain & SSL Certificate expiration emails?') . '', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), 'new_expiration_emails', $new_expiration_emails, '', '<BR><BR>');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
@@ -414,10 +411,7 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
 } else {
 
-    echo $form->showRadioTop(_('Admin Privileges') . '?', '', '');
-    echo $form->showRadioOption('new_is_admin', '1', _('Yes'), $new_is_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_is_admin', '0', _('No'), $new_is_admin, '', '');
-    echo $form->showRadioBottom('');
+    echo $form->showSwitch(_('Admin Privileges') . '?', '', 'new_is_admin', $new_is_admin, '', '<BR><BR>');
 
 }
 
@@ -427,10 +421,7 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
 } else {
 
-    echo $form->showRadioTop(_('Read-Only User') . '?', '', '');
-    echo $form->showRadioOption('new_read_only', '1', _('Yes'), $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_read_only', '0', _('No'), $new_read_only, '', '');
-    echo $form->showRadioBottom('');
+    echo $form->showSwitch(_('Read-Only User') . '?', '', 'new_read_only', $new_read_only, '', '<BR><BR>');
 
 }
 
@@ -440,10 +431,7 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
 } else {
 
-    echo $form->showRadioTop(_('Active Account') . '?', '', '');
-    echo $form->showRadioOption('new_is_active', '1', _('Yes'), $new_is_active, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
-    echo $form->showRadioOption('new_is_active', '0', _('No'), $new_is_active, '', '');
-    echo $form->showRadioBottom('');
+    echo $form->showSwitch(_('Active Account') . '?', '', 'new_is_active', $new_is_active, '', '<BR><BR>');
 
 }
 
