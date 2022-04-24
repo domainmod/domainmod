@@ -110,8 +110,10 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 
 <BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
-    <input type="file" name="file"><BR>
-    <BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
+    <?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
+    <input type="file" name="file"><BR><BR>
+    <?php echo _('Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process.'); ?><BR>
+    <BR>
     <?php echo $layout->showButton('submit', _('Import CSV File')); ?>
 </form>
 <BR>
