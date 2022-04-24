@@ -1,6 +1,6 @@
 <?php
 /**
- * /domains/csv-import/index.php
+ * /domains/csv-importer/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
@@ -28,12 +28,12 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
-$log = new DomainMOD\Log('/domains/csv-import/index.php');
+$log = new DomainMOD\Log('/domains/csv-importer/index.php');
 $layout = new DomainMOD\Layout();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/csv-import-main.inc.php';
+require_once DIR_INC . '/settings/csv-importer-main.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;
@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo sprintf(_('This page allows you to import all of your domain data into %s using a CSV template.'), SOFTWARE_TITLE);
 echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
-<BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('Before you can use the CSV Import you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo strtolower(_('Folder')); ?> ("<em>chmod 777 <?php  echo DIR_TEMP; ?></em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?><BR>
-<BR><?php echo _('For more information on how to use the CSV Import feature, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-import/"><?php echo _('User Guide'); ?></a>.
+<BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('Before you can use the CSV Importer you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo strtolower(_('Folder')); ?> ("<em>chmod 777 <?php  echo DIR_TEMP; ?></em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?><BR>
+<BR><?php echo _('For more information on how to use the CSV Importer, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-importer/"><?php echo _('User Guide'); ?></a>.
 
 <BR><BR><h3><?php echo _('Download CSV Template'); ?></h3>
 <a href='../../import-template-sample.csv'><?php echo _('Click here'); ?></a> <?php echo _('to download the CSV Import Template.'); ?> <?php echo sprintf(_('You can import as little or as much domain information as you want.')); ?>&nbsp;<?php echo sprintf(_('Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It\'s ok though, even if you go this route it\'s pretty easy to update the information that %s creates for you.'), SOFTWARE_TITLE); ?>
@@ -119,7 +119,7 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 <BR>
 
 <h3><?php echo _('Cleanup'); ?></h3>
-<?php echo _('Click here to delete any and all past CSV import files that may be saved on your server.'); ?><BR>
+<?php echo _('Click here to delete any and all past CSV Import files that may be saved on your server.'); ?><BR>
 <a href="cleanup/"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
 <BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

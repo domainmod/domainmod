@@ -70,13 +70,13 @@ class DomainAdd
         $default_username = '';
         $todays_date = $this->time->timeBasic();
 
-        if ($creation_type == 'CSV Import') {
+        if ($creation_type == 'CSV Importer') {
 
             $default_dns_1 = 'ns1.domainmod-csvimport.ns1';
             $default_dns_2 = 'ns2.domainmod-csvimport.ns2';
-            $default_name = 'CSV Import';
-            $default_text = 'Created by CSV Import';
-            $default_username = 'csv-import';
+            $default_name = 'CSV Importer';
+            $default_text = 'Created by CSV Importer';
+            $default_username = 'csv-importer';
 
         }
 

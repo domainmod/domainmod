@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/breadcrumbs/csv-import-main.inc.php
+ * /_includes/settings/csv-importer-main.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
@@ -19,6 +19,9 @@
  *
  */
 ?>
-<li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/domains/"><?php echo _('Domains'); ?></a></li>
-<li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
-</ol>
+<?php
+$page_title = _('CSV Importer');
+$breadcrumb = _('CSV Importer');
+$software_section = "domains";
+$software_section_logo = "fa-upload";
+$slug = "csv-importer-main";

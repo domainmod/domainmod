@@ -57,7 +57,7 @@ class Csv
 
             if ($count !== 0) {
 
-                $creation_type = 'CSV Import';
+                $creation_type = 'CSV Importer';
 
                 $domain = $row[0];
                 $expiry = $row[1];

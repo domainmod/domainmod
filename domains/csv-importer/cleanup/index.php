@@ -1,6 +1,6 @@
 <?php
 /**
- * /domains/csv-import/cleanup/index.php
+ * /domains/csv-importer/cleanup/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
@@ -31,7 +31,7 @@ if (file_exists(DIR_TEMP . '/import.csv')) {
 
 }
 
-$_SESSION['s_message_success'] = _('CSV import files were cleaned up');
+$_SESSION['s_message_success'] = _('CSV Import files were cleaned up');
 
 header("Location: ../");
 exit;
