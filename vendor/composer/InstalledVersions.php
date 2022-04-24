@@ -30,7 +30,7 @@ class InstalledVersions
     'aliases' => 
     array (
     ),
-    'reference' => '1f3efd5459065db7af653491e96a9512ceeb77c8',
+    'reference' => 'df19448cef7cc20c7936263909ae3e90242f0c56',
     'name' => '__root__',
   ),
   'versions' => 
@@ -42,7 +42,7 @@ class InstalledVersions
       'aliases' => 
       array (
       ),
-      'reference' => '1f3efd5459065db7af653491e96a9512ceeb77c8',
+      'reference' => 'df19448cef7cc20c7936263909ae3e90242f0c56',
     ),
     'auth0/auth0-php' => 
     array (

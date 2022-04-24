@@ -166,7 +166,8 @@ class DomainAdd
         // Check to see if the domain already exists
         if ($this->domain->checkDomainExistence($domain) == true) {
 
-            return sprintf(_('This domain is already in %s'), SOFTWARE_TITLE . '<BR>');
+            // return sprintf(_('This domain is already in %s'), SOFTWARE_TITLE . '<BR>');
+            return false;
 
         }
 
