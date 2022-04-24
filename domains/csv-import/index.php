@@ -105,7 +105,7 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 <BR><?php echo _('For more information on how to use the CSV Import feature, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-import/"><?php echo _('User Guide'); ?></a>.
 
 <BR><BR><h3><?php echo _('Download CSV Template'); ?></h3>
-<a href='import-template-sample.csv'><?php echo _('Click here'); ?></a> <?php echo _('to download the CSV Import Template.'); ?> <?php echo sprintf(_('You can import as little or as much domain information as you want.')); ?>&nbsp;<?php echo sprintf(_('Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It\'s ok though, even if you go this route it\'s pretty easy to update the information that %s creates for you.'), SOFTWARE_TITLE); ?>
+<a href='../../import-template-sample.csv'><?php echo _('Click here'); ?></a> <?php echo _('to download the CSV Import Template.'); ?> <?php echo sprintf(_('You can import as little or as much domain information as you want.')); ?>&nbsp;<?php echo sprintf(_('Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It\'s ok though, even if you go this route it\'s pretty easy to update the information that %s creates for you.'), SOFTWARE_TITLE); ?>
 <BR><BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail.'); ?>
 
 <BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
