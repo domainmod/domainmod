@@ -94,13 +94,13 @@ class DomainAdd
         $status_upper = strtoupper($status);
         if ($status_upper == 'EXPIRED' || $status == '0') {
             $status = 0;
-        } elseif ($status_upper == 'PENDING (TRANSFER)' || $status_upper == 'PENDING TRANSFER' || $status_upper == 'TRANSFER PENDING' || $status == '2') {
+        } elseif ($status_upper == 'PENDING (TRANSFER)' || $status_upper == 'PENDING TRANSFER' || $status == '2') {
             $status = 2;
-        } elseif ($status_upper == 'PENDING (RENEWAL)' || $status_upper == 'PENDING RENEWAL' || $status_upper == 'RENEWAL PENDING' || $status == '3') {
+        } elseif ($status_upper == 'PENDING (RENEWAL)' || $status_upper == 'PENDING RENEWAL' || $status == '3') {
             $status = 3;
-        } elseif ($status_upper == 'PENDING (OTHER)' || $status_upper == 'PENDING OTHER' || $status_upper == 'OTHER PENDING' || $status == '4') {
+        } elseif ($status_upper == 'PENDING (OTHER)' || $status_upper == 'PENDING OTHER' || $status == '4') {
             $status = 4;
-        } elseif ($status_upper == 'PENDING (REGISTRATION)' || $status_upper == 'PENDING REGISTRATION' || $status_upper == 'REGISTRATION PENDING' || $status == '5') {
+        } elseif ($status_upper == 'PENDING (REGISTRATION)' || $status_upper == 'PENDING REGISTRATION' || $status == '5') {
             $status = 5;
         } elseif ($status_upper == 'SOLD' || $status == '10') {
             $status = 10;
