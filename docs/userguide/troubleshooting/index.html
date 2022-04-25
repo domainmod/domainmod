@@ -82,6 +82,11 @@
           
             <li class="toctree-l1">
 		
+    <a class="" href="../csv-importer/">CSV Importer</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
     <a class="" href="../domain-queue/">Domain Queue</a>
 	    </li>
           
@@ -354,16 +359,16 @@ My fees are all showing up as zero
 <p>Although helpers are generally custom and specific to the user's issue, we wanted to include a generic helper publicly so that users could get a feel for what helpers are and what they do.</p>
 <p>In DomainMOD v4.18, we implemented strict <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">Content Security Policy</a> headers in order to help secure the application and reduce the risk of certain web-based attacks. We also enabled forced HTTPS, which ensures that your DomainMOD installation will <strong>only</strong> work if you've secured your web hosting with an SSL certificate.</p>
 <p>Although we highly recommend keeping the CSP headers enabled, as well as using an SSL certificate to secure your DomainMOD installation, we realize that some users may not always be able to have these features enabled. If you're one of those users, and you need to disable CSP and HTTPS, you could use the below helper to do so.</p>
-<p>You would simply create the file <em>/helpers/top.php</em> and paste the below contents into it. That's all there is to it! The next time your visit your DomainMOD installation CSP and HTTPS will both be disabled.</p>
-<div class="admonition danger">
-<p class="admonition-title">Warning</p>
-<p>If you're using a helper to investigate or fix something, and the helper is only intended to be used temporarily, don't forget to delete the helper file as soon as you're done using it!     </p>
-</div>
+<p>You would simply create the file <em>/helpers/top.php</em> and paste the below contents into it. That's all there is to it! The next time your visit your DomainMOD installation CSP and forced HTTPS will both be disabled.</p>
 <pre><code>&lt;?php
 // Contents of: /helpers/top.php
 $disable_csp = 1;
 $force_https = 0;
 </code></pre>
+<div class="admonition danger">
+<p class="admonition-title">Warning</p>
+<p>If you're using a helper to investigate or fix something, and the helper is only intended to be used temporarily, don't forget to delete the helper file as soon as you're done using it!     </p>
+</div>
                 
             </div>
           </div>
@@ -387,7 +392,7 @@ $force_https = 0;
   </div>
 
   <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2021 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+  Copyright (c) 2010-2022 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
 
 </footer>
       

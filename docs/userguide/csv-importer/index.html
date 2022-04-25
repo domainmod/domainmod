@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Greg Chetcuti">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>CSV Importer - DomainMOD User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "CSV Importer";
+    var mkdocs_page_input_path = "csv-importer.md";
+    var mkdocs_page_url = "/docs/userguide/csv-importer/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search the User Guide" title="Search the User Guide" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../getting-started/">Getting Started</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../first-run/">First Run</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../upgrading/">Upgrading</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../migrating/">Migrating</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../creating-assets/">Creating Assets</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../adding-domains/">Adding Domains</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">CSV Importer</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#usage">Usage</a></li>
+    
+
+    <li class="toctree-l2"><a href="#csv-import-template">CSV Import Template</a></li>
+    
+
+    <li class="toctree-l2"><a href="#template-columns">Template Columns</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#domain-fields">Domain Fields</a></li>
+        
+            <li><a class="toctree-l3" href="#domain-category-fields">Domain Category Fields</a></li>
+        
+            <li><a class="toctree-l3" href="#web-hosting-provider-fields">Web Hosting Provider Fields</a></li>
+        
+            <li><a class="toctree-l3" href="#domain-registrar-fields">Domain Registrar Fields</a></li>
+        
+            <li><a class="toctree-l3" href="#domain-registrar-account-fields">Domain Registrar Account Fields</a></li>
+        
+            <li><a class="toctree-l3" href="#dns-fields">DNS Fields</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../domain-queue/">Domain Queue</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../bulk-updater/">Bulk Updater</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../administration/">Administration</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../backup-restore/">Backup & Restore</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../data-warehouse/">Data Warehouse</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../faq/">Frequently Asked Questions</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../conduct/">Code of Conduct</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../contributing/">Contributing</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../troubleshooting/">Troubleshooting</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../support/">Support</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <!--<a href="..">DomainMOD User Guide</a>-->
+        <a href="">User Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+
+        <span class="domainmod-logo">
+          <a href="https://domainmod.org"><img width="264" height="40" src="../img/logo.png"></a>
+        </span>
+
+        <div class="rst-content" style="padding-top: 23px;">
+
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">User Guide</a> &raquo;&nbsp;</li>
+    
+      
+    
+    <li>CSV Importer</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/domainmod/userguide/edit/master/docs/csv-importer.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+                
+                
+                <h1>CSV Importer</h1>
+                
+
+                
+                <p>The CSV Importer allows you to import all of your domain data into DomainMOD using a CSV template. This is a brand new feature as of DomainMOD v4.19, but all testing has gone very well, and I've personally imported quite a few test CSV files with 100% accuracy. Keep in mind that the CSV Importer only imports <strong>new</strong> domains, it does not update domains that are already in your DomainMOD database.</p>
+<p>You can import as little or as much domain information as you want. Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic Assets for you. It's ok though, even if you go this route it's pretty easy to update the information that DomainMOD creates for you.</p>
+<p>Regardless of how well testing has gone so far, we always recommended that you perform a full backup of your existing DomainMOD database before attempting a CSV Import, just in case something goes wrong and you need to recover.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Before you can use the CSV Importer you must update the permissions on the /var/www/html/domainmod/temp folder ("<strong><em>chmod 777 /var/www/html/domainmod/temp</em></strong>"). If you're unsure how to do this your web hosting provider should be able to assist you.</p>
+</div>
+<h1 id="usage">Usage</h1>
+<p>Once logged into DomainMOD, click <strong>Domains</strong> in the main menu and then click on the <strong>CSV Importer</strong> button. You will then be walked through how to import your domain data using our CSV Import Template.</p>
+<h1 id="csv-import-template">CSV Import Template</h1>
+<p><a href="https://domainmod.org/import-template-sample.csv">Click here</a> to download the sample CSV Import Template file.</p>
+<div class="admonition danger">
+<p class="admonition-title">Warning</p>
+<p>The columns in the CSV Import Template must remain as-is. If there are an incorrect number of columns, or the columns are not in the correct order, the CSV import will fail.</p>
+</div>
+<h1 id="template-columns">Template Columns</h1>
+<p>Below is a list of all the columns that appear in the CSV Import Template file, along with a description of what the column is for. The only <strong>required</strong> column is the <strong>domain</strong> column, but the more information you enter into the CSV file, the more complete your DomainMOD installation will be.</p>
+<h3 id="domain-fields">Domain Fields</h3>
+<p><strong>domain (<em>required</em>)</strong><br />
+The domain name.  </p>
+<p><strong>expiry_date</strong><br />
+The domain's expiry date.<br />
+<em>Format: YYYY-MM-DD</em></p>
+<p><strong>function</strong><br />
+The function/purpose of the domain.  </p>
+<p><strong>auto_renewal</strong><br />
+Is auto renew enabled?<br />
+<em>Options (Numeric): 0, 1</em><br />
+<em>Options (Text): NO, YES (text options are case-insensitive)</em></p>
+<p><strong>privacy</strong><br />
+Is WHOIS privacy enabled?<br />
+<em>Options (Numeric): 0, 1</em><br />
+<em>Options (Text): NO, YES (text options are case-insensitive)</em></p>
+<p><strong>status</strong><br />
+The domain's status.<br />
+<em>Options (Numeric): 0, 1, 2, 3, 4, 5, 10</em><br />
+<em>Options (Text): EXPIRED, ACTIVE, PENDING (TRANSFER), PENDING TRANSFER, PENDING (RENEWAL), PENDING RENEWAL, PENDING (OTHER), PENDING OTHER, PENDING (REGISTRATION),  PENDING REGISTRATION, SOLD  (text options are case-insensitive)</em></p>
+<p><strong>registration_fee</strong><br />
+The cost of the domain's initial registration.  </p>
+<p><strong>renewal_fee</strong><br />
+The cost of the yearly domain renewal.</p>
+<p><strong>transfer_fee</strong><br />
+The cost that the domain's current registrar charges to transfer this TLD in.</p>
+<p><strong>privacy_fee</strong><br />
+The cost of WHOIS privacy for the domain.  </p>
+<p><strong>miscellaneous_fee</strong><br />
+Any additional fees related to the domain.  </p>
+<p><strong>fee_currency</strong><br />
+The currency for the domain's fees.<br />
+<em>Example: USD</em></p>
+<p><strong>domain_ip_address_name</strong><br />
+The name you want to assign to the domain's IP address. </p>
+<p><strong>domain_ip_address</strong><br />
+The domain's IP address.</p>
+<p><strong>domain_ip_address_rdns</strong><br />
+The reverse DNS of the domain's IP address.</p>
+<p><strong>domain_ip_address_notes</strong><br />
+Any notes you have for the domain's IP address. </p>
+<p><strong>domain_notes</strong><br />
+Any notes you have for the domain.</p>
+<h3 id="domain-category-fields">Domain Category Fields</h3>
+<p><strong>category</strong><br />
+The name of the category that the domain belongs to.</p>
+<p><strong>category_stakeholder</strong><br />
+The individual or company responsible for the specific domain category.  </p>
+<p><strong>category_notes</strong><br />
+Any notes you have for the domain's category.  </p>
+<h3 id="web-hosting-provider-fields">Web Hosting Provider Fields</h3>
+<p><strong>hosting_provider</strong><br />
+The name of this domain's web hosting provider.</p>
+<p><strong>hosting_provider_url</strong><br />
+The URL of the domain's web hosting provider.  </p>
+<p><strong>hosting_provider_notes</strong><br />
+Any notes you have for this domain's web hosting provider.  </p>
+<h3 id="domain-registrar-fields">Domain Registrar Fields</h3>
+<p><strong>registrar_name</strong><br />
+The domain registrar's name.  </p>
+<p><strong>registrar_url</strong><br />
+The domain registrar's URL.</p>
+<p><strong>registrar_notes</strong><br />
+Any notes you have for this domain's domain registrar.  </p>
+<h3 id="domain-registrar-account-fields">Domain Registrar Account Fields</h3>
+<p><strong>registrar_account_owner</strong><br />
+The individual or company that technically owns the domain registrar account.   </p>
+<p><strong>registrar_account_owner_notes</strong><br />
+Any notes you have about the domain registrar account owner.  </p>
+<p><strong>registrar_account_email_address</strong><br />
+The email address for the domain registrar account.  </p>
+<p><strong>registrar_account_username</strong><br />
+The username for the domain registrar account.</p>
+<p><strong>registrar_account_password</strong><br />
+The password for the domain registrar account.  </p>
+<p><strong>registrar_account_account_id</strong><br />
+The account ID for the domain registrar account.  </p>
+<p><strong>registrar_account_reseller</strong><br />
+The reseller status for the domain registrar account.  <br />
+<em>Options (Numeric): 0, 1</em><br />
+<em>Options (Text): NO, YES (text options are case-insensitive)</em></p>
+<p><strong>registrar_account_reseller_id</strong><br />
+The reseller ID for the domain registrar account.  </p>
+<p><strong>registrar_account_notes</strong><br />
+Any notes you have for the domain registrar account.  </p>
+<p><strong>api_app_name</strong><br />
+Certain domain registrars require you to supply an API app name in order to use their API.</p>
+<p><strong>api_key</strong><br />
+Most domain registrars require you to supply an API key in order to use their API.</p>
+<p><strong>api_secret</strong><br />
+Most domain registrars require you to supply an API secret in order to use their API.  </p>
+<p><strong>api_ip_address_name</strong><br />
+Some registrars require you to restrict your API access to specific IP addresses. This is the name you want to assign to that IP address. </p>
+<p><strong>api_ip_address</strong><br />
+The API IP address.</p>
+<p><strong>api_ip_address_rdns</strong><br />
+The reverse DNS of the API IP address.</p>
+<p><strong>api_ip_address_notes</strong><br />
+Any notes you have for the API IP address.</p>
+<h3 id="dns-fields">DNS Fields</h3>
+<p><strong>dns_profile_name</strong><br />
+The name you want to assign to the grouping of DNS servers used by this domain.</p>
+<p><strong>dns_server_1 - dns_server_10</strong><br />
+The (2-10) DNS servers used by this domain.</p>
+<p><strong>dns_ip_1 - dns_ip_10</strong><br />
+The (2-10) IP addresses used by this domain's DNS servers.  </p>
+<p><strong>dns_notes</strong><br />
+Any notes you have for the set of DNS servers.</p>
+                
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../domain-queue/" class="btn btn-neutral float-right" title="Domain Queue">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../adding-domains/" class="btn btn-neutral" title="Adding Domains"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
+  Copyright (c) 2010-2022 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../adding-domains/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../domain-queue/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

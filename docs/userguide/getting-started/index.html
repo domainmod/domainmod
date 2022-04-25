@@ -61,9 +61,6 @@
     <li class="toctree-l2"><a href="#live-demo">Live Demo</a></li>
     
 
-    <li class="toctree-l2"><a href="#requirements">Requirements</a></li>
-    
-
     <li class="toctree-l2"><a href="#downloading">Downloading</a></li>
     
 
@@ -105,6 +102,11 @@
             <li class="toctree-l1">
 		
     <a class="" href="../adding-domains/">Adding Domains</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../csv-importer/">CSV Importer</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -214,31 +216,29 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <h2 id="live-demo">Live Demo</h2>
 <p>Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? We hate when that happens ourselves, which is why we've setup a live demo so you don't waste your time.</p>
 <p>So go ahead, take the live demo for a test drive before you install: <a href="https://demo.domainmod.org">https://demo.domainmod.org</a></p>
-<h2 id="requirements">Requirements</h2>
-<p><strong>Software</strong>: PHP v5.5+, MySQL<br />
+<p>Requirements
+------------cd 
+<strong>Software</strong>: PHP v5.5+, MySQL<br />
 <strong>PHP Extensions</strong>: PDO (MySQL), cURL, OpenSSL, gettext<br />
 <strong>PHP Settings</strong>: allow_url_fopen  </p>
 <h2 id="downloading">Downloading</h2>
 <p>There are currently four options for downloading DomainMOD.</p>
-<p><strong>Option #1</strong><br />
-Visit the following URL to download DomainMOD in a .ZIP file: <a href="https://domainmod.org/download/">https://domainmod.org/download/</a></p>
-<p><strong>Option #2</strong><br />
-Use git from your web server to download the DomainMOD source code. To do so, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have git installed on your web server):</p>
+<p><strong>Option #1 -- Using Docker</strong></p>
+<p>Please see our official DomainMOD container on Docker Hub for more information: <a href="https://hub.docker.com/r/domainmod/domainmod">https://hub.docker.com/r/domainmod/domainmod</a></p>
+<p><strong>Option #2 -- Downloading a .zip file</strong>  </p>
+<p>Visit the following URL to download DomainMOD in a .zip file: <a href="https://domainmod.org/download/">https://domainmod.org/download/</a></p>
+<p><strong>Option #3 -- Using Git</strong>  </p>
+<p>To download using Git, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have git installed on your server):</p>
 <pre><code>git clone https://github.com/domainmod/domainmod.git
 </code></pre>
-<p><strong>Option #3</strong><br />
-Use Docker from your web server to download and install DomainMOD. To do so, change to the directory where you want to store the Docker build files and DomainMOD database and run the following commands (this download/install option requires that you have git, Docker, and Docker Compose installed on your web server):</p>
-<pre><code>git clone https://github.com/domainmod/docker.git .
-docker-compose up -d
-</code></pre>
-<p><strong>Option #4</strong><br />
-Use Softaculous from your web server to download and install DomainMOD.  Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.</p>
+<p><strong>Option #4 -- Installing via Softaculous</strong>  </p>
+<p>Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.</p>
 <p>To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.</p>
 <p>More Information: <a href="http://www.softaculous.com/softaculous/apps/others/DomainMOD/">http://www.softaculous.com/softaculous/apps/others/DomainMOD/</a></p>
 <h2 id="installing">Installing</h2>
 <p>If you installed DomainMOD using Docker or Softaculous in the previous step you can ignore the rest of this <em>Installing</em> section, as you should already have DomainMOD up-and-running.</p>
-<p>If you downloaded the .ZIP file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).</p>
-<p>If you used git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.</p>
+<p>If you downloaded the .zip file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).</p>
+<p>If you used Git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.</p>
 <p><strong>Installation Steps</strong></p>
 <ol>
 <li>
@@ -256,7 +256,8 @@ Use Softaculous from your web server to download and install DomainMOD.  Softacu
 </ol>
 <h2 id="cron-job">Cron Job</h2>
 <p>DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain &amp; SSL Certificate expirations.</p>
-<p>The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run the Task Scheduler will be live.</p>
+<p>The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run, the Task Scheduler will be live.</p>
+<p>If you installed DomainMOD using Docker, the cron job will be setup and running automatically within the container, so there's nothing you need to setup manually.</p>
 <p>Filename: /cron.php</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -317,7 +318,7 @@ Use Softaculous from your web server to download and install DomainMOD.  Softacu
   </div>
 
   <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2021 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+  Copyright (c) 2010-2022 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
 
 </footer>
       

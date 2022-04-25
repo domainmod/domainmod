@@ -8,7 +8,7 @@
   
   <meta name="author" content="Greg Chetcuti">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Adding Domains - DomainMOD User Guide</title>
+  <title> csv importer shared - DomainMOD User Guide</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -16,9 +16,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Adding Domains";
-    var mkdocs_page_input_path = "adding-domains.md";
-    var mkdocs_page_url = "/docs/userguide/adding-domains/";
+    var mkdocs_page_name = " csv importer shared";
+    var mkdocs_page_input_path = "_csv-importer-shared.md";
+    var mkdocs_page_url = "/docs/userguide/_csv-importer-shared/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -75,24 +75,9 @@
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
-            <li class="toctree-l1 current">
+            <li class="toctree-l1">
 		
-    <a class="current" href="./">Adding Domains</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#csv-importer">CSV Importer</a></li>
-    
-
-    <li class="toctree-l2"><a href="#domain-queue">Domain Queue</a></li>
-    
-
-    <li class="toctree-l2"><a href="#bulk-updater">Bulk Updater</a></li>
-    
-
-    <li class="toctree-l2"><a href="#manually">Manually</a></li>
-    
-
-    </ul>
+    <a class="" href="../adding-domains/">Adding Domains</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -179,10 +164,10 @@
     
       
     
-    <li>Adding Domains</li>
+    <li> csv importer shared</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/domainmod/userguide/edit/master/docs/adding-domains.md"
+        <a href="https://github.com/domainmod/userguide/edit/master/docs/_csv-importer-shared.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -194,63 +179,15 @@
             <div class="section">
                 
                 
-                <h1>Adding Domains</h1>
+                <h1> csv importer shared</h1>
                 
 
                 
-                <p>DomainMOD gives you a few options for adding your domains, so you should read through the below sections to determine which will work best for you.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Before adding your domains to DomainMOD you must first create some Assets. If you've just finished installing you should visit the <a href="../first-run/">First Run</a> section, which will walk you through creating the Assets that are required to start using DomainMOD. Alternatively, you can use the <a href="../csv-importer/">CSV Importer</a> to import all of your domain data without having to create any Assets first.</p>
-</div>
-<h2 id="csv-importer">CSV Importer</h2>
-<p>The CSV Importer allows you to import all of your domain data into DomainMOD using a CSV template. This is a brand new feature as of DomainMOD v4.19, but all testing has gone very well, and I've personally imported quite a few test CSV files with 100% accuracy. Keep in mind that the CSV Importer only imports <strong>new</strong> domains, it does not update domains that are already in your DomainMOD database.</p>
-<p><a href="../csv-importer/">Add domains using the CSV Importer &raquo;</a></p>
-<h2 id="domain-queue">Domain Queue</h2>
-<p>One of the easiest options for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let DomainMOD take care of the rest (and in some cases you don't even need to supply the list of domains, it will be automatically retrieved from your registrar account).</p>
-<p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
-<p><a href="../domain-queue/">Add domains using the Domain Queue &raquo;</a></p>
-<h2 id="bulk-updater">Bulk Updater</h2>
-<p>The Bulk Updater also allows you to supply a list of domains to be added, however you need to manually choose the options for the domains you're adding, and all of the domains will have the same settings. The Bulk Updater generally works best if you're adding a list of newly registered domains, since they will have the same expiry date and will generally have the same settings.</p>
-<p><a href="../bulk-updater/">Add domains using the Bulk Updater &raquo;</a> </p>
-<h2 id="manually">Manually</h2>
-<p>Domains can also be added one-by-one, which allows you to choose custom settings for each domain.</p>
-<p><strong>Adding A Domain Manually</strong></p>
-<ol>
-<li>
-<p>Click on <strong>Domains</strong> on the main menu.</p>
-</li>
-<li>
-<p>Click the <strong>Add Domain</strong> button on the Domains page.</p>
-</li>
-<li>
-<p>Enter the Domain that you want to add.</p>
-</li>
-<li>
-<p>Fill in all of the relevant details for the domain, such as the expiry date, registrar account, DNS profile, and so on. </p>
-</li>
-<li>
-<p>Click the <strong>Add Domain</strong> button.</p>
-</li>
-</ol>
-<p>That's it, your domain has been added to DomainMOD!</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If this is the first time you've added a domain from this registrar with this TLD you will need to enter the fees associated with this registrar/TLD combination. After adding the domain you will be presented with a notice that will walk you through how to add the new fee.</p>
-</div>
+                <p>The CSV Importer allows you to import all of your domain data into DomainMOD using a CSV template. This is a brand new feature as of DomainMOD v4.19, but all testing has gone very well, and I've personally imported quite a few test CSV files with 100% accuracy. Keep in mind that the CSV Importer only imports <strong>new</strong> domains, it does not update domains that are already in your DomainMOD database.</p>
                 
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../csv-importer/" class="btn btn-neutral float-right" title="CSV Importer">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../creating-assets/" class="btn btn-neutral" title="Creating Assets"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -278,10 +215,6 @@
           <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../creating-assets/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../csv-importer/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

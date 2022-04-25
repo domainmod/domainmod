@@ -1,5 +1,5 @@
 /**
- * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.9
+ * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.8
  * Copyright (C) 2020 Oliver Nightingale
  * @license MIT
  */
@@ -54,7 +54,7 @@ var lunr = function (config) {
   return builder.build()
 }
 
-lunr.version = "2.3.9"
+lunr.version = "2.3.8"
 /*!
  * lunr.utils
  * Copyright (C) 2020 Oliver Nightingale
@@ -211,8 +211,8 @@ lunr.Set.complete = {
     return other
   },
 
-  union: function () {
-    return this
+  union: function (other) {
+    return other
   },
 
   contains: function () {
@@ -1994,7 +1994,7 @@ lunr.Index.prototype.query = function (fn) {
      */
     var clause = query.clauses[i],
         terms = null,
-        clauseMatches = lunr.Set.empty
+        clauseMatches = lunr.Set.complete
 
     if (clause.usePipeline) {
       terms = this.pipeline.runString(clause.term, {
