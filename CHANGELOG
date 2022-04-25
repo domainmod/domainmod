@@ -1,5 +1,16 @@
 DomainMOD CHANGELOG
 ===================
+v4.19.0     2022-04-24
+- Added CSV Import support
+- Added Cloudflare API support
+- Added support for Registrar Account ID
+- Added a security policy in repo root
+- Upgraded AdminLTE from v3.1.0 to v3.2.0
+- Changed currency converter to Exchangerate.host
+- Upgraded Composer
+- Upgraded GJClasses (0.34.0 -> 0.35.0)
+- Various fixes and copy updates
+
 v4.18.01    2021-07-25
 - Updated Force HTTPS to default to No
 
