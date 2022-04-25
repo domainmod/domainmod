@@ -1439,6 +1439,61 @@ if ($current_db_version === '4.18.0') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.18.01 to 4.19.0
+if ($current_db_version === '4.18.01') {
+
+    $old_version = '4.18.01';
+    $new_version = '4.19.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+            INSERT INTO creation_types
+            (`name`, insert_time)
+             VALUES
+            ('CSV Importer', '" . $timestamp . "')");
+
+        $pdo->query("
+            ALTER TABLE `registrar_accounts`
+            ADD `account_id` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `password`");
+
+        $pdo->query("
+            ALTER TABLE `api_registrars`
+            ADD `req_account_id` TINYINT(1) NOT NULL DEFAULT '0' AFTER `req_account_password`");
+
+        $pdo->query("
+            INSERT INTO `api_registrars`
+            (`name`, req_account_username, req_account_password, req_account_id, req_reseller_id, req_api_app_name,
+             req_api_key, req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers,
+             ret_privacy_status, ret_autorenewal_status, notes, insert_time)
+             VALUES
+            ('Cloudflare', '1', '0', '1', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "')");
+
+        $pdo->query("
+            ALTER TABLE `settings`
+            CHANGE `currency_converter` `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'erh'");
+
+        $pdo->query("
+            UPDATE `settings`
+            SET currency_converter = 'erh'");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
