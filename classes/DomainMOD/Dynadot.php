@@ -67,9 +67,9 @@ class Dynadot
         // confirm that the api call was successful
         if ($array_results[0]["ListDomainInfoHeader"]["Status"] == 'success') {
 
-            foreach ($array_results[0]['ListDomainInfoContent']['DomainInfoList']['DomainInfo'] as $domain) {
+            foreach ($array_results[0]['ListDomainInfoContent']['DomainInfoList']['DomainInfo']['Domain'] as $domain) {
 
-                $domain_list[] = $domain['Domain']['Name'];
+                $domain_list[] = $domain['Name'];
                 $domain_count++;
 
             }
@@ -97,14 +97,14 @@ class Dynadot
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if ($array_results[0]["DomainInfoResponseHeader"]["Status"] == 'success') {
+        if ($array_results[0]["DomainInfoHeader"]["Status"] == 'success') {
 
             // get expiration date
             $expiry_result = $array_results[0]["DomainInfoContent"]["Domain"]["Expiration"];
             $expiration_date = $this->processExpiry($expiry_result);
 
             // get dns servers
-            $dns_result = $array_results[0]["DomainInfoContent"]["Domain"]["NameServerSettings"]["NameServers"]["ServerName"];
+            $dns_result = $array_results[0]["DomainInfoContent"]["Domain"]["NameServerSettings"]["NameServers"]["NameServer"];
             $dns_servers = $this->processDns($dns_result);
 
             // get privacy status
@@ -141,9 +141,16 @@ class Dynadot
 
     public function processDns($dns_result)
     {
-        $dns_servers = array();
-        if (!empty($dns_result)) {
-            $dns_servers = array_filter($dns_result);
+        $servers = array();
+
+        foreach ($dns_result as $server) {
+
+            $servers[] = $server['ServerName'];
+
+        }
+
+        if (!empty($servers)) {
+            $dns_servers = array_filter($servers);
         } else {
             $dns_servers[0] = 'no.dns-servers.1';
             $dns_servers[1] = 'no.dns-servers.2';
