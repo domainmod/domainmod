@@ -1,44 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cron;
 
-use DateTime;
+use DateTimeInterface;
 
 /**
- * Month field.  Allows: * , / -
+ * Month field.  Allows: * , / -.
  */
 class MonthField extends AbstractField
 {
-    public function isSatisfiedBy(DateTime $date, $value)
-    {
-        // Convert text month values to integers
-        $value = str_ireplace(
-            array(
-                'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-                'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
-            ),
-            range(1, 12),
-            $value
-        );
+    /**
+     * {@inheritdoc}
+     */
+    protected $rangeStart = 1;
 
-        return $this->isSatisfied($date->format('m'), $value);
+    /**
+     * {@inheritdoc}
+     */
+    protected $rangeEnd = 12;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $literals = [1 => 'JAN', 2 => 'FEB', 3 => 'MAR', 4 => 'APR', 5 => 'MAY', 6 => 'JUN', 7 => 'JUL',
+        8 => 'AUG', 9 => 'SEP', 10 => 'OCT', 11 => 'NOV', 12 => 'DEC', ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSatisfiedBy(DateTimeInterface $date, $value, bool $invert): bool
+    {
+        if ($value === '?') {
+            return true;
+        }
+
+        $value = $this->convertLiterals($value);
+
+        return $this->isSatisfied((int) $date->format('m'), $value);
     }
 
-    public function increment(DateTime $date, $invert = false)
+    /**
+     * @inheritDoc
+     *
+     * @param \DateTime|\DateTimeImmutable $date
+     */
+    public function increment(DateTimeInterface &$date, $invert = false, $parts = null): FieldInterface
     {
-        if ($invert) {
-            $date->modify('last day of previous month');
-            $date->setTime(23, 59);
+        if (! $invert) {
+            $date = $date->modify('first day of next month');
+            $date = $date->setTime(0, 0);
         } else {
-            $date->modify('first day of next month');
-            $date->setTime(0, 0);
+            $date = $date->modify('last day of previous month');
+            $date = $date->setTime(23, 59);
         }
 
         return $this;
-    }
-
-    public function validate($value)
-    {
-        return (bool) preg_match('/^[\*,\/\-0-9A-Z]+$/', $value);
     }
 }

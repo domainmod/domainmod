@@ -10,7 +10,7 @@ final class ImageSizeTest extends TestCase
         $upload->max_size(1);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), $upload::ERR_LONG_SIZE);
+        $this->assertEquals($upload::ERR_LONG_SIZE, $upload->get_error(false));
     }
 
     public function testMaxSize2()
@@ -19,7 +19,7 @@ final class ImageSizeTest extends TestCase
         $upload->max_size(1);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 
     public function testMaxSize3()
@@ -28,7 +28,7 @@ final class ImageSizeTest extends TestCase
         $upload->max_size(10);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 
     public function testMinSize1()
@@ -37,7 +37,7 @@ final class ImageSizeTest extends TestCase
         $upload->min_size(4);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), $upload::ERR_SMALL_SIZE);
+        $this->assertEquals($upload::ERR_SMALL_SIZE, $upload->get_error(false));
     }
 
     public function testMinSize2()
@@ -46,7 +46,7 @@ final class ImageSizeTest extends TestCase
         $upload->min_size(2);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 
     public function testMinSize3()
@@ -55,6 +55,6 @@ final class ImageSizeTest extends TestCase
         $upload->min_size(5);
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 }

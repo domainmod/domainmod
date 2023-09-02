@@ -1,5 +1,50 @@
 GJClasses CHANGELOG
 ===================
+v0.50.0    2022-12-17
+- Changed title to subject in PersonalApi class
+
+v0.49.0    2022-12-17
+- Removed URL encoding in PersonalApi class
+
+v0.48.0    2022-12-17
+- Ensured PersonalApi has a default priority set
+
+v0.47.0    2022-12-17
+- Made PersonalApi a stand-alone class
+
+v0.46.0    2022-12-14
+- Fixed PersonalApi API call
+
+v0.45.0    2022-12-14
+- Updated PersonalApi API call
+
+v0.44.0    2022-12-13
+- Updated PersonalApi endpoint
+
+v0.43.0    2022-12-08
+- Updated PersonalApi to accept API Key
+
+v0.42.0    2022-11-28
+- Ensured whitespace is removed before submitting PersonalApi API call
+
+v0.41.0    2022-11-27
+- Added Personal API as a push option
+
+v0.40.0    2022-11-23
+- Fixed issue with MailSmtp class
+
+v0.39.0    2022-11-20
+- Composer Updates
+
+v0.38.0    2022-11-20
+- Finished adding support for Telegram
+
+v0.37.0    2022-11-20
+- Added support for Telegram
+
+v0.36.0    2022-10-16
+- Updated PHP and PHPMailer versions
+
 v0.35.0    2021-07-29
 - Added Detect class
 

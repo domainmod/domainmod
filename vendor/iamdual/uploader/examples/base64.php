@@ -7,7 +7,6 @@ if (isset($_POST["data"])) {
 
     $upload = new Uploader(Uploader::from_base64($_POST["data"]));
     $upload->allowed_extensions(array("png", "jpg", "jpeg", "gif"));
-    $upload->allowed_types(array("image/png", "image/jpeg"));
     $upload->max_size(5); // in MB
     $upload->path("upload/files");
     $upload->name("unicorn");

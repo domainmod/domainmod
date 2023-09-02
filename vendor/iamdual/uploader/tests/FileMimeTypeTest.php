@@ -10,7 +10,7 @@ final class FileMimeTypeTest extends TestCase
         $upload->allowed_types(array("image/jpeg", "image/png"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 
     public function testMimeType2()
@@ -19,7 +19,7 @@ final class FileMimeTypeTest extends TestCase
         $upload->allowed_types(array("image/jpeg", "image/png"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), $upload::ERR_INVALID_TYPE);
+        $this->assertEquals($upload::ERR_INVALID_TYPE, $upload->get_error(false));
     }
 
     public function testMimeType3()
@@ -28,6 +28,6 @@ final class FileMimeTypeTest extends TestCase
         $upload->disallowed_types(array("image/jpeg", "image/png"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 }

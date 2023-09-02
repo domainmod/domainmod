@@ -1,0 +1,52 @@
+{
+  "name": "irazasyed/telegram-bot-sdk",
+  "description": "The Unofficial Telegram Bot API PHP SDK",
+  "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
+  "type": "library",
+  "homepage": "https://github.com/irazasyed/telegram-bot-sdk",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Syed Irfaq R.",
+      "email": "syed+gh@lukonet.com",
+      "homepage": "https://github.com/irazasyed"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "guzzlehttp/guzzle": "~6.0",
+    "illuminate/support": "^5.0 || ^6.0"
+  },
+  "require-dev": {
+    "phpspec/prophecy": "^1.5",
+    "phpunit/phpunit": "^4.8 || ^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Telegram\\Bot\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Telegram\\Bot\\Tests\\": "tests/"
+    }
+  },
+  "suggest": {
+    "irazasyed/larasupport": "Allows you to use any Laravel Package in Lumen by adding support!",
+    "illuminate/container": "Hold dependencies to be injected in commands constructors"
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0-dev"
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

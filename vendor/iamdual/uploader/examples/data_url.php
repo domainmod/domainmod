@@ -7,15 +7,12 @@ if (isset($_FILES["file"])) {
 
     $upload = new Uploader($_FILES["file"]);
     $upload->allowed_extensions(array("png", "jpg", "jpeg", "gif"));
-    $upload->allowed_types(array("image/png", "image/jpeg"));
     $upload->max_size(5); // in MB
-    $upload->min_size(0); // in MB
-    $upload->path("upload/files");
 
     if (!$upload->check()) {
-        echo "Upload error: " . $upload->get_error();
+        echo "An error occurred: " . $upload->get_error();
     } else {
-        echo 'Base64 encoded data URL: <textarea>'.$upload->get_data_url().'</textarea>';
+        echo 'Base64 encoded data URL:<br /><textarea cols=80 rows=10>'.$upload->get_data_url().'</textarea>';
     }
 
 }

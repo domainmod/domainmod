@@ -14,7 +14,7 @@ final class CustomErrorsTest extends TestCase
         ));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(), "Inv4lid 3xt3nsi0n!");
+        $this->assertEquals("Inv4lid 3xt3nsi0n!", $upload->get_error());
     }
 
     public function testLongSize()
@@ -27,6 +27,6 @@ final class CustomErrorsTest extends TestCase
         ));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(), "Fil3 siz3 is t00 l0ng!");
+        $this->assertEquals("Fil3 siz3 is t00 l0ng!", $upload->get_error());
     }
 }

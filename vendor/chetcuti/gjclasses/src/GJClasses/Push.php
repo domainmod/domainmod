@@ -11,7 +11,7 @@ class Push
         $this->service = $service;
     }
 
-    public function push($api_key, $user_key, $subject, $content, $url, $priority = '0')
+    public function push($api_key, $user_key, $subject, $content, $url, $url_text, $priority = '0')
     {
         if ($this->service == 'join') {
 
@@ -27,6 +27,11 @@ class Push
 
             $push = new Pushover();
             $result_message = $push->push($api_key, $user_key, $subject, $content, $url, $priority);
+
+        } elseif ($this->service == 'telegram') {
+
+            $push = new Telegram();
+            $result_message = $push->push($api_key, $user_key, $subject, $content, $url, $url_text);
 
         } else {
 

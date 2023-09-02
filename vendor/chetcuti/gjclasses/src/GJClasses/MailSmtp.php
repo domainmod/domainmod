@@ -1,11 +1,13 @@
 <?php
 namespace GJClasses;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 class MailSmtp
 {
     public function send($from_name, $from_address, $reply_name, $reply_address, $recipients, $subject, $message_html, $message_text)
     {
-        $mail = new \PHPMailer();
+        $mail = new PHPMailer();
 
         // $mail->SMTPDebug = 3;
         $mail->isSMTP();

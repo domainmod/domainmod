@@ -10,7 +10,7 @@ final class FileExtensionTest extends TestCase
         $upload->allowed_extensions(array("png", "gif"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 
     public function testExtension2()
@@ -19,7 +19,7 @@ final class FileExtensionTest extends TestCase
         $upload->allowed_extensions(array("png", "gif"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), $upload::ERR_INVALID_EXT);
+        $this->assertEquals($upload::ERR_INVALID_EXT, $upload->get_error(false));
     }
 
     public function testExtension3()
@@ -28,6 +28,6 @@ final class FileExtensionTest extends TestCase
         $upload->disallowed_extensions(array("png", "gif"));
         $upload->check();
 
-        $this->assertEquals($upload->get_error(false), null);
+        $this->assertEquals(null, $upload->get_error(false));
     }
 }

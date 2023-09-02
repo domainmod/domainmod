@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cron;
 
 use DateTime;
+use DateTimeInterface;
 
 /**
- * Day of month field.  Allows: * , / - ? L W
+ * Day of month field.  Allows: * , / - ? L W.
  *
  * 'L' stands for "last" and specifies the last day of the month.
  *
@@ -25,18 +28,33 @@ use DateTime;
 class DayOfMonthField extends AbstractField
 {
     /**
-     * Get the nearest day of the week for a given day in a month
-     *
-     * @param int $currentYear  Current year
-     * @param int $currentMonth Current month
-     * @param int $targetDay    Target day of the month
-     *
-     * @return \DateTime Returns the nearest date
+     * {@inheritdoc}
      */
-    private static function getNearestWeekday($currentYear, $currentMonth, $targetDay)
+    protected $rangeStart = 1;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $rangeEnd = 31;
+
+    /**
+     * Get the nearest day of the week for a given day in a month.
+     *
+     * @param int $currentYear Current year
+     * @param int $currentMonth Current month
+     * @param int $targetDay Target day of the month
+     *
+     * @return \DateTime|null Returns the nearest date
+     */
+    private static function getNearestWeekday(int $currentYear, int $currentMonth, int $targetDay): ?DateTime
     {
-        $tday = str_pad($targetDay, 2, '0', STR_PAD_LEFT);
-        $target = DateTime::createFromFormat('Y-m-d', "$currentYear-$currentMonth-$tday");
+        $tday = str_pad((string) $targetDay, 2, '0', STR_PAD_LEFT);
+        $target = DateTime::createFromFormat('Y-m-d', "{$currentYear}-{$currentMonth}-{$tday}");
+
+        if ($target === false) {
+            return null;
+        }
+
         $currentWeekday = (int) $target->format('N');
 
         if ($currentWeekday < 6) {
@@ -44,130 +62,103 @@ class DayOfMonthField extends AbstractField
         }
 
         $lastDayOfMonth = $target->format('t');
-
-        foreach (array(-1, 1, -2, 2) as $i) {
+        foreach ([-1, 1, -2, 2] as $i) {
             $adjusted = $targetDay + $i;
             if ($adjusted > 0 && $adjusted <= $lastDayOfMonth) {
                 $target->setDate($currentYear, $currentMonth, $adjusted);
-                if ($target->format('N') < 6 && $target->format('m') == $currentMonth) {
+
+                if ((int) $target->format('N') < 6 && (int) $target->format('m') === $currentMonth) {
                     return $target;
                 }
             }
         }
+
+        return null;
     }
 
-    public function isSatisfiedBy(DateTime $date, $value)
+    /**
+     * {@inheritdoc}
+     */
+    public function isSatisfiedBy(DateTimeInterface $date, $value, bool $invert): bool
     {
         // ? states that the field value is to be skipped
-        if ($value == '?') {
+        if ('?' === $value) {
             return true;
         }
 
         $fieldValue = $date->format('d');
 
         // Check to see if this is the last day of the month
-        if ($value == 'L') {
-            return $fieldValue == $date->format('t');
+        if ('L' === $value) {
+            return $fieldValue === $date->format('t');
         }
 
         // Check to see if this is the nearest weekday to a particular value
-        if (strpos($value, 'W')) {
+        if ($wPosition = strpos($value, 'W')) {
             // Parse the target day
-            $targetDay = substr($value, 0, strpos($value, 'W'));
+            $targetDay = (int) substr($value, 0, $wPosition);
             // Find out if the current day is the nearest day of the week
-            return $date->format('j') == self::getNearestWeekday(
-                $date->format('Y'),
-                $date->format('m'),
+            $nearest = self::getNearestWeekday(
+                (int) $date->format('Y'),
+                (int) $date->format('m'),
                 $targetDay
-            )->format('j');
+            );
+            if ($nearest) {
+                return $date->format('j') === $nearest->format('j');
+            }
+
+            throw new \RuntimeException('Unable to return nearest weekday');
         }
 
-        return $this->isSatisfied($date->format('d'), $value);
+        return $this->isSatisfied((int) $date->format('d'), $value);
     }
 
-    public function increment(DateTime $date, $invert = false)
+    /**
+     * @inheritDoc
+     *
+     * @param \DateTime|\DateTimeImmutable $date
+     */
+    public function increment(DateTimeInterface &$date, $invert = false, $parts = null): FieldInterface
     {
-        if ($invert) {
-            $date->modify('previous day');
-            $date->setTime(23, 59);
+        if (! $invert) {
+            $date = $date->add(new \DateInterval('P1D'));
+            $date = $date->setTime(0, 0);
         } else {
-            $date->modify('next day');
-            $date->setTime(0, 0);
+            $date = $date->sub(new \DateInterval('P1D'));
+            $date = $date->setTime(23, 59);
         }
 
         return $this;
     }
 
     /**
-     * Validates that the value is valid for the Day of the Month field
-     * Days of the month can contain values of 1-31, *, L, or ? by default. This can be augmented with lists via a ',',
-     * ranges via a '-', or with a '[0-9]W' to specify the closest weekday.
-     *
-     * @param string $value
-     * @return bool
+     * {@inheritdoc}
      */
-    public function validate($value)
+    public function validate(string $value): bool
     {
-        // Allow wildcards and a single L
-        if ($value === '?' || $value === '*' || $value === 'L') {
-            return true;
+        $basicChecks = parent::validate($value);
+
+        // Validate that a list don't have W or L
+        if (false !== strpos($value, ',') && (false !== strpos($value, 'W') || false !== strpos($value, 'L'))) {
+            return false;
         }
 
-        // If you only contain numbers and are within 1-31
-        if ((bool) preg_match('/^\d{1,2}$/', $value) && ($value >= 1 && $value <= 31)) {
-            return true;
-        }
-
-        // If you have a -, we will deal with each of your chunks
-        if ((bool) preg_match('/-/', $value)) {
-            // We cannot have a range within a list or vice versa
-            if ((bool) preg_match('/,/', $value)) {
-                return false;
+        if (!$basicChecks) {
+            if ('?' === $value) {
+                return true;
             }
 
-            $chunks = explode('-', $value);
-            foreach ($chunks as $chunk) {
-                if (!$this->validate($chunk)) {
-                    return false;
-                }
+            if ('L' === $value) {
+                return true;
             }
 
-            return true;
-        }
-
-        // If you have a comma, we will deal with each value
-        if ((bool) preg_match('/,/', $value)) {
-            // We cannot have a range within a list or vice versa
-            if ((bool) preg_match('/-/', $value)) {
-                return false;
+            if (preg_match('/^(.*)W$/', $value, $matches)) {
+                return $this->validate($matches[1]);
             }
 
-            $chunks = explode(',', $value);
-            foreach ($chunks as $chunk) {
-                if (!$this->validate($chunk)) {
-                    return false;
-                }
-            }
-
-            return true;
+            return false;
         }
 
-        // If you contain a /, we'll deal with it
-        if ((bool) preg_match('/\//', $value)) {
-            $chunks = explode('/', $value);
-            foreach ($chunks as $chunk) {
-                if (!$this->validate($chunk)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // If you end in W, make sure that it has a numeric in front of it
-        if ((bool) preg_match('/^\d{1,2}W$/', $value)) {
-            return true;
-        }
-
-        return false;
+        return $basicChecks;
     }
 }
