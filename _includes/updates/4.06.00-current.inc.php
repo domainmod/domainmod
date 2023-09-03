@@ -1494,6 +1494,31 @@ if ($current_db_version === '4.18.01') {
             UPDATE `settings`
             SET currency_converter = 'erh'");
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.19.0 to 4.20.0
+if ($current_db_version === '4.19.0') {
+
+    $old_version = '4.19.0';
+    $new_version = '4.20.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
