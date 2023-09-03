@@ -3,7 +3,7 @@
  * /settings/defaults/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,19 +41,19 @@ require_once DIR_INC . '/settings/settings-defaults.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_default_category_domains = $_POST['new_default_category_domains'];
-$new_default_category_ssl = $_POST['new_default_category_ssl'];
-$new_default_dns = $_POST['new_default_dns'];
-$new_default_host = $_POST['new_default_host'];
-$new_default_ip_address_domains = $_POST['new_default_ip_address_domains'];
-$new_default_ip_address_ssl = $_POST['new_default_ip_address_ssl'];
-$new_default_owner_domains = $_POST['new_default_owner_domains'];
-$new_default_owner_ssl = $_POST['new_default_owner_ssl'];
-$new_default_registrar = $_POST['new_default_registrar'];
-$new_default_registrar_account = $_POST['new_default_registrar_account'];
-$new_default_ssl_provider_account = $_POST['new_default_ssl_provider_account'];
-$new_default_ssl_type = $_POST['new_default_ssl_type'];
-$new_default_ssl_provider = $_POST['new_default_ssl_provider'];
+$new_default_category_domains = $_POST['new_default_category_domains'] ?? 0;
+$new_default_category_ssl = $_POST['new_default_category_ssl'] ?? 0;
+$new_default_dns = $_POST['new_default_dns'] ?? 0;
+$new_default_host = $_POST['new_default_host'] ?? 0;
+$new_default_ip_address_domains = $_POST['new_default_ip_address_domains'] ?? 0;
+$new_default_ip_address_ssl = $_POST['new_default_ip_address_ssl'] ?? 0;
+$new_default_owner_domains = $_POST['new_default_owner_domains'] ?? 0;
+$new_default_owner_ssl = $_POST['new_default_owner_ssl'] ?? 0;
+$new_default_registrar = $_POST['new_default_registrar'] ?? 0;
+$new_default_registrar_account = $_POST['new_default_registrar_account'] ?? 0;
+$new_default_ssl_provider_account = $_POST['new_default_ssl_provider_account'] ?? 0;
+$new_default_ssl_type = $_POST['new_default_ssl_type'] ?? 0;
+$new_default_ssl_provider = $_POST['new_default_ssl_provider'] ?? 0;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

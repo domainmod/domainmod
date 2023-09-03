@@ -3,7 +3,7 @@
  * /admin/settings/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,24 +39,24 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-settings.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$new_full_url = $sanitize->text($_POST['new_full_url']);
-$new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_expiration_days = (int) $_POST['new_expiration_days'];
-$new_email_signature = (int) $_POST['new_email_signature'];
-$new_currency_converter = $sanitize->text($_POST['new_currency_converter']);
-$new_large_mode = (int) $_POST['new_large_mode'];
-$new_use_smtp = (int) $_POST['new_use_smtp'];
-$new_smtp_server = $sanitize->text($_POST['new_smtp_server']);
-$new_smtp_protocol = $_POST['new_smtp_protocol'];
-$new_smtp_port = (int) $_POST['new_smtp_port'];
-$new_smtp_email_address = $sanitize->text($_POST['new_smtp_email_address']);
-$new_smtp_username = $sanitize->text($_POST['new_smtp_username']);
-$new_smtp_password = $sanitize->text($_POST['new_smtp_password']);
-$new_debug_mode = (int) $_POST['new_debug_mode'];
-$new_local_php_log = (int) $_POST['new_local_php_log'];
+$new_full_url = isset($_POST['new_full_url']) ? $sanitize->text($_POST['new_full_url']) : '';
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
+$new_expiration_days = (int) ($_POST['new_expiration_days'] ?? 0);
+$new_email_signature = (int) ($_POST['new_email_signature'] ?? 0);
+$new_currency_converter = isset($_POST['new_currency_converter']) ? $sanitize->text($_POST['new_currency_converter']) : '';
+$new_large_mode = (int) ($_POST['new_large_mode'] ?? 0);
+$new_use_smtp = (int) ($_POST['new_use_smtp'] ?? 0);
+$new_smtp_server = isset($_POST['new_smtp_server']) ? $sanitize->text($_POST['new_smtp_server']) : '';
+$new_smtp_protocol = $_POST['new_smtp_protocol'] ?? '';
+$new_smtp_port = (int) ($_POST['new_smtp_port'] ?? 0);
+$new_smtp_email_address = isset($_POST['new_smtp_email_address']) ? $sanitize->text($_POST['new_smtp_email_address']) : '';
+$new_smtp_username = isset($_POST['new_smtp_username']) ? $sanitize->text($_POST['new_smtp_username']) : '';
+$new_smtp_password = isset($_POST['new_smtp_password']) ? $sanitize->text($_POST['new_smtp_password']) : '';
+$new_debug_mode = (int) ($_POST['new_debug_mode'] ?? 0);
+$new_local_php_log = (int) ($_POST['new_local_php_log'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0) {
 

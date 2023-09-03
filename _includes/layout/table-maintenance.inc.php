@@ -3,7 +3,7 @@
  * /_includes/layout/table-maintenance.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -20,7 +20,8 @@
  */
 ?>
 <?php
-if ($_SESSION['s_missing_domain_fees'] == 1) {
+$missing_domain_fees = $_SESSION['s_missing_domain_fees'] ?? '';
+if ($missing_domain_fees == 1) {
 
     $message = _('Some of your Registrars/TLDs are missing domain fees.') . " <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new TLDs, you should %supdate the domain fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-domain-fees.php'>", '</a>');
 
@@ -28,7 +29,8 @@ if ($_SESSION['s_missing_domain_fees'] == 1) {
 
 }
 
-if ($_SESSION['s_missing_ssl_fees'] == 1) {
+$missing_ssl_fees = $_SESSION['s_missing_ssl_fees'] ?? '';
+if ($missing_ssl_fees == 1) {
 
     $message = _('Some of your SSL Certificate Types are missing fees.') . " <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new SSL Types, you should %supdate the SSL fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-ssl-fees.php'>", '</a>');
 
@@ -40,6 +42,7 @@ if (DEBUG_MODE == 1) {
 
     $message = _('Debugging mode is currently enabled.') . " <a href=\"" . $web_root . "/admin/debug-log/\">" . _('View Debug Log') . "</a><BR><BR>";
 
+    $_SESSION['s_is_admin'] = $_SESSION['s_is_admin'] ?? 0;
     if ($_SESSION['s_is_admin'] == 1) {
 
         $message .= sprintf(_('You can disable debugging mode in %sSettings%s.'), " <a href='" . $web_root . "/admin/settings/'>", "</a>");

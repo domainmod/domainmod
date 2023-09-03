@@ -3,7 +3,7 @@
  * /assets/ip-addresses.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,7 +38,7 @@ require_once DIR_INC . '/settings/assets-ip-addresses.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $result = $pdo->query("
     SELECT id, `name`, ip, rdns, notes, creation_type_id, created_by, insert_time, update_time

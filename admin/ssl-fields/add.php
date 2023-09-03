@@ -3,7 +3,7 @@
  * /admin/ssl-fields/add.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,14 +41,14 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-add-custom-ssl-field.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_field_name = $sanitize->text($_POST['new_field_name']);
-$new_description = $sanitize->text($_POST['new_description']);
-$new_field_type_id = (int) $_POST['new_field_type_id'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_field_name = isset($_POST['new_field_name']) ? $sanitize->text($_POST['new_field_name']) : '';
+$new_description = isset($_POST['new_description']) ? $sanitize->text($_POST['new_description']) : '';
+$new_field_type_id = (int) ($_POST['new_field_type_id'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name)) {
 
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                 ALTER TABLE `user_settings`
                 ADD `dispcsf_" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'");
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to add custom SSL field';
             $log_extra = array('Error' => $e);

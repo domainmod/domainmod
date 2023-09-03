@@ -3,7 +3,7 @@
  * /admin/ssl-fields/edit.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,17 +41,17 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-edit-custom-ssl-field.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$csfid = (int) $_GET['csfid'];
+$csfid = (int) ($_GET['csfid'] ?? 0);
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_description = $sanitize->text($_POST['new_description']);
-$new_csfid = (int) $_POST['new_csfid'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_description = isset($_POST['new_description']) ? $sanitize->text($_POST['new_description']) : '';
+$new_csfid = (int) ($_POST['new_csfid'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($new_csfid === 0) $new_csfid = $csfid;
 
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         }
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         $log_message = 'Unable to edit custom SSL field';
         $log_extra = array('Error' => $e);
@@ -200,7 +200,7 @@ if ($del === 1) {
 
             }
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
@@ -211,7 +211,7 @@ if ($del === 1) {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to delete custom SSL field';
             $log_extra = array('Error' => $e);

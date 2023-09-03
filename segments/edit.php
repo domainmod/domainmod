@@ -3,7 +3,7 @@
  * /segments/edit.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -46,19 +46,19 @@ require_once DIR_INC . '/settings/segments-edit.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = (int) $_GET['segid'];
+$segid = (int) ($_GET['segid'] ?? 0);
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_description = $sanitize->text($_POST['new_description']);
-$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
-$new_notes = $sanitize->text($_POST['new_notes']);
-$new_segid = (int) $_POST['new_segid'];
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_description = isset($_POST['new_description']) ? $sanitize->text($_POST['new_description']) : '';
+$raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+$new_segid = (int) ($_POST['new_segid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     $format = new DomainMOD\Format();
     $domain_array = $format->cleanAndSplitDomains($raw_domain_list);
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $maint->updateSegments();
 
-                $pdo->commit();
+                if ($pdo->InTransaction()) $pdo->commit();
 
                 $_SESSION['s_message_success'] .= sprintf(_('Segment %s update'), $new_name) . '<BR>';
 
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } catch (Exception $e) {
 
-                $pdo->rollback();
+                if ($pdo->InTransaction()) $pdo->rollback();
 
                 $log_message = 'Unable to update segment';
                 $log_extra = array('Error' => $e);
@@ -268,7 +268,7 @@ if ($del === 1) {
         $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
         $stmt->execute();
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_message_success'] .= sprintf(_('Segment %s deleted'), $temp_segment_name) . '<BR>';
 
@@ -277,7 +277,7 @@ if ($del === 1) {
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         $log_message = 'Unable to delete segment';
         $log_extra = array('Error' => $e);

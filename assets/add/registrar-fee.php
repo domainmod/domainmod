@@ -3,7 +3,7 @@
  * /assets/add/registrar-fee.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,22 +42,22 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-registrar-fee.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$rid = (int) $_REQUEST['rid'];
-$tld = $sanitize->text($_GET['tld']);
+$rid = (int) ($_REQUEST['rid'] ?? 0);
+$tld = isset($_GET['tld']) ? $sanitize->text($_GET['tld']) : '';
 if ($tld != '') {
     $new_tld = $tld;
 } else {
     $new_tld = $sanitize->text($_POST['new_tld']);
 }
-$new_initial_fee = (float) $_POST['new_initial_fee'];
-$new_renewal_fee = (float) $_POST['new_renewal_fee'];
-$new_transfer_fee = (float) $_POST['new_transfer_fee'];
-$new_privacy_fee = (float) $_POST['new_privacy_fee'];
-$new_misc_fee = (float) $_POST['new_misc_fee'];
-$new_currency = $sanitize->text($_POST['new_currency']);
+$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
+$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
+$new_transfer_fee = (float) ($_POST['new_transfer_fee'] ?? 0.0);
+$new_privacy_fee = (float) ($_POST['new_privacy_fee'] ?? 0.0);
+$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-                $pdo->commit();
+                if ($pdo->InTransaction()) $pdo->commit();
 
                 $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added'), $new_tld) . '<BR>';
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } catch (Exception $e) {
 
-                $pdo->rollback();
+                if ($pdo->InTransaction()) $pdo->rollback();
 
                 $log_message = 'Unable to add registrar fee';
                 $log_extra = array('Error' => $e);
@@ -209,7 +209,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')',
-        isset($new_currency) ? $new_currency : $_SESSION['s_default_currency']);
+        $new_currency ?? $_SESSION['s_default_currency']);
 
 }
 echo $form->showDropdownBottom('');

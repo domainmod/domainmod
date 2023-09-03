@@ -3,7 +3,7 @@
  * /classes/DomainMOD/System.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -56,11 +56,11 @@ class System
         $req_html_long .= '<STRONG>' . _('Server Software') . '</STRONG><BR>';
 
         // PHP
-        $software = 'PHP v5.5+';
-        $min_php_version = '5.5';
+        $software = 'PHP 8.1-8.2.9';
+        $min_php_version = '8.1';
         $installed_php_version = phpversion();
 
-        if ($installed_php_version >= $min_php_version) {
+        if (floatval($installed_php_version) >= floatval($min_php_version)) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -74,9 +74,24 @@ class System
 
         }
 
-        // MySQL
-        $software = _('MySQL');
-        if (extension_loaded('pdo_mysql')) {
+        // DATABASE (MariaDB or MySQL)
+        $software = _('MariaDB (10.4-11.1.2) or MySQL (5.7-8.1.0)');
+
+        if ($this->deeb->getDbType() == 'MariaDB') {
+
+            $min_db_version = '10.4';
+
+        } elseif ($this->deeb->getDbType() == 'MySQL') {
+
+            $min_db_version = '5.7';
+
+        } else {
+
+            $min_db_version = '0';
+
+        }
+
+        if (floatval($this->deeb->getDbVersion()) >= floatval($min_db_version)) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -95,14 +110,14 @@ class System
         return array($req_text, $req_html_short, $req_html_long);
     }
 
-    public function getReqExtensions($req_text, $req_html_short, $req_html_long)
+    public function getReqExtensions($req_text, $req_html_short, $req_html_long):array
     {
         // PHP Extensions
         $req_text .= ' / PHP Extensions: ';
         $req_html_short .= '<BR><STRONG>' . _('PHP Extensions') . ':</STRONG> ';
         $req_html_long .= '<BR><STRONG>' . _('PHP Extensions') . '</STRONG><BR>';
 
-        $extensions = array('pdo_mysql' => 'PDO (MySQL)',
+        $extensions = array('pdo_mysql' => 'PDO',
                             'curl' => 'cURL',
                             'openssl' => 'OpenSSL',
                             'gettext' => 'gettext');
@@ -181,7 +196,7 @@ class System
         $pdo = $this->deeb->cnxx;
         $live_version = $this->getLiveVersion();
 
-        if ($current_version < $live_version && $live_version != '') {
+        if (floatval($current_version) < floatval($live_version) && $live_version != '') {
 
             $pdo->query("UPDATE settings SET upgrade_available = '1'");
             $_SESSION['s_system_upgrade_available'] = '1';
@@ -262,6 +277,7 @@ class System
             $stmt->execute();
             $stored_hash = $stmt->fetchColumn();
             if ($_SESSION['s_stored_hash'] != $stored_hash) {
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
                 header('Location: ' . WEB_ROOT . '/logout.php');
                 exit;
@@ -289,7 +305,8 @@ class System
 
     public function loginCheck()
     {
-        if ($_SESSION['s_is_logged_in'] == 1) {
+	    $logged_in = $_SESSION['s_is_logged_in'] ?? '';
+        if ($logged_in == 1) {
             header('Location: ' . WEB_ROOT . '/dashboard/');
             exit;
         }

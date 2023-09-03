@@ -3,7 +3,7 @@
  * /assets/edit/account-owner.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,17 +42,17 @@ require_once DIR_INC . '/settings/assets-edit-owner.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$oid = (int) $_GET['oid'];
+$oid = (int) ($_GET['oid'] ?? 0);
 
-$new_owner = $sanitize->text($_POST['new_owner']);
-$new_notes = $sanitize->text($_POST['new_notes']);
-$new_oid = (int) $_POST['new_oid'];
+$new_owner = isset($_POST['new_owner']) ? $sanitize->text($_POST['new_owner']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+$new_oid = (int) ($_POST['new_oid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_owner)) {
 

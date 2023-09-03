@@ -3,7 +3,7 @@
  * /assets/ssl-provider-fees.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -40,8 +40,8 @@ require_once DIR_INC . '/settings/assets-ssl-provider-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslpid = (int) $_GET['sslpid'];
-$export_data = (int) $_GET['export_data'];
+$sslpid = (int) ($_GET['sslpid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $ssl_provider_name = $assets->getSslProvider($sslpid);
 

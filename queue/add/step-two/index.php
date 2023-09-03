@@ -3,7 +3,7 @@
  * /queue/add/step-two/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,11 +41,11 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-add.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$new_raid = (int) $_REQUEST['new_raid'];
-$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
+$new_raid = (int) ($_REQUEST['new_raid'] ?? 0);
+$raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
 
 if ($new_raid !== 0) {
 
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_domains_in_list_queue'] = '1';
 
-                $pdo->commit();
+                if ($pdo->InTransaction()) $pdo->commit();
 
                 $_SESSION['s_message_success'] .= _('Registrar Account Added To Domain List Queue') . '<BR>';
 
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } catch (Exception $e) {
 
-                $pdo->rollback();
+                if ($pdo->InTransaction()) $pdo->rollback();
 
                 $log_message = 'Unable to add registrar account to domain list queue';
                 $log_extra = array('Error' => $e);
@@ -349,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $_SESSION['s_domains_in_queue'] = '1';
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains Added To Queue') . '<BR>';
 
@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to add domains to queue';
                         $log_extra = array('Error' => $e);
@@ -475,6 +475,7 @@ if ($new_raid !== 0) { ?>
 
 }
 
+$registrar_notes = $registrar_notes ?? '';
 if ($registrar_notes != '') {
 
     echo '<strong>' . _('Registrar Notes') . '</strong><BR>';

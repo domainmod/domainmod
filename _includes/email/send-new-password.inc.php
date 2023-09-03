@@ -3,7 +3,7 @@
  * /_includes/email/send-new-password.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -31,6 +31,7 @@ $from_name = SOFTWARE_TITLE;
 $subject = sprintf(_('Your %s Password has been Reset'), SOFTWARE_TITLE);
 $headline = $subject;
 
+$message_html = $message_html ?? '';
 $message_html .= "
 <html>
 <head><title>" . $headline . "</title></head>
@@ -91,6 +92,7 @@ $message_html .= "<BR></font>
 </body>
 </html>";
 
+$message_text = $message_text ?? '';
 $message_text .= $headline . "\n\n";
 $message_text .= _('Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . "\n\n";
 $message_text .= "URL: " . $full_url . "\n";

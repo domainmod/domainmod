@@ -3,7 +3,7 @@
  * /_includes/head.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -26,7 +26,7 @@ if ($disable_csp === 0) {
 
     define('CURRENT_NONCE', md5(uniqid(rand(), true)));
 
-    $browser_detect = new \DomainMOD\Detect();
+    $browser_detect = new DomainMOD\Detect();
     $browser_name = $browser_detect->getBrowser();
 
     // SECONDARY CSP HEADER -- For browsers that don't support script-src-elem and style-src-elem yet

@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Domain.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -323,7 +323,7 @@ class Domain
                             UPDATE domain_field_data
                             SET `" . $field . "` = :full_field
                             WHERE domain_id = :temp_domain_id");
-                $stmt->bindValue('full_field', ${$full_field}, \PDO::PARAM_STR);
+                $stmt->bindValue('full_field', ${$full_field} ?? '', \PDO::PARAM_STR);
                 $stmt->bindValue('temp_domain_id', $temp_domain_id, \PDO::PARAM_INT);
                 $stmt->execute();
 

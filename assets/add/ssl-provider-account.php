@@ -3,7 +3,7 @@
  * /assets/add/ssl-provider-account.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,17 +41,17 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-ssl-account.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$new_owner_id = (int) $_POST['new_owner_id'];
-$new_ssl_provider_id = (int) $_POST['new_ssl_provider_id'];
-$new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_username = $sanitize->text($_POST['new_username']);
-$new_password = $sanitize->text($_POST['new_password']);
-$new_reseller = (int) $_POST['new_reseller'];
-$new_reseller_id = $sanitize->text($_POST['new_reseller_id']);
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_owner_id = (int) ($_POST['new_owner_id'] ?? 0);
+$new_ssl_provider_id = (int) ($_POST['new_ssl_provider_id'] ?? 0);
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
+$new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
+$new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
+$new_reseller = (int) ($_POST['new_reseller'] ?? 0);
+$new_reseller_id = isset($_POST['new_reseller_id']) ? $sanitize->text($_POST['new_reseller_id']): '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']): '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

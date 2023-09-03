@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Database.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -25,18 +25,21 @@ class Database
 {
 
     public $cnxx;
+    public $db_details;
     private static $instance;
 
     private function __construct()
     {
         $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD,
-                               array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'));
+                               array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="NO_ENGINE_SUBSTITUTION"'));
 
         $this->cnxx->exec("SET NAMES utf8");
         $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $this->cnxx->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         $this->cnxx->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->cnxx->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+
+        $this->db_details = strtolower($this->cnxx->getAttribute(\PDO::ATTR_SERVER_VERSION));
     }
 
     public static function getInstance()
@@ -46,6 +49,35 @@ class Database
             self::$instance = new $object;
         }
         return self::$instance;
+    }
+
+    public function getDbType():string
+    {
+        if(str_contains($this->db_details, 'mariadb')) {
+
+            return 'MariaDB';
+
+        } else {
+
+            return 'MySQL';
+
+        }
+
+    }
+
+    public function getDbVersion():string
+    {
+        if ($this->getDbType() == "MariaDB") {
+
+            $return = substr($this->db_details, 0, strpos($this->db_details, "-"));
+
+        } else {
+
+            $return = $this->db_details;
+
+        }
+
+        return $return;
     }
 
 } //@formatter:on

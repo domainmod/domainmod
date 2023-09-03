@@ -3,7 +3,7 @@
  * /assets/edit/host.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,17 +42,17 @@ require_once DIR_INC . '/settings/assets-edit-host.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$whid = (int) $_GET['whid'];
-$new_host = $sanitize->text($_REQUEST['new_host']);
-$new_url = $sanitize->text($_POST['new_url']);
-$new_notes = $sanitize->text($_REQUEST['new_notes']);
-$new_whid = (int) $_REQUEST['new_whid'];
+$whid = (int) ($_GET['whid'] ?? 0);
+$new_host = isset($_REQUEST['new_host']) ? $sanitize->text($_REQUEST['new_host']) : '';
+$new_url = isset($_POST['new_url']) ? $sanitize->text($_POST['new_url']) : '';
+$new_notes = isset($_REQUEST['new_notes']) ? $sanitize->text($_REQUEST['new_notes']) : '';
+$new_whid = (int) ($_REQUEST['new_whid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_host)) {
 

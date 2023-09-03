@@ -3,7 +3,7 @@
  * /admin/dw/dw.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,10 +39,10 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dw-main.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$dropdown_selection = $sanitize->text($_REQUEST['dropdown_selection']);
+$dropdown_selection = isset($_REQUEST['dropdown_selection']) ? $sanitize->text($_REQUEST['dropdown_selection']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
 
@@ -183,7 +183,7 @@ if ($result) {
     $is_the_build_finished = $result;
 
 }
-
+$is_the_build_finished = $is_the_build_finished ?? 0;
 if ($is_the_build_finished == 1) {
 
     if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
@@ -258,6 +258,7 @@ if (!$result) {
 
 }
 
+$no_results_build_info = $no_results_build_info ?? 0;
 if ($no_results_build_info !== 1) { ?>
 
     <BR><BR><h3><?php echo _('Build Information'); ?></h3>
@@ -366,10 +367,10 @@ if ($no_results_build_info !== 1) { ?>
         <tr>
             <td></td>
             <td><em><?php echo _('Full Build'); ?></em></td>
-            <td><?php echo $temp_build_start_time_overall; ?></td>
-            <td><?php echo $temp_build_end_time_overall; ?></td>
-            <td><?php echo $temp_build_time_overall; ?></td>
-            <td><?php echo $temp_build_status_overall; ?></td>
+            <td><?php echo $temp_build_start_time_overall ?? ''; ?></td>
+            <td><?php echo $temp_build_end_time_overall ?? ''; ?></td>
+            <td><?php echo $temp_build_time_overall ?? ''; ?></td>
+            <td><?php echo $temp_build_status_overall ?? ''; ?></td>
         </tr><?php
 
     }
@@ -525,6 +526,7 @@ if ($result) {
 
     }
 
+    $is_building = $is_building ?? 0;
     if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 &&
         $temp_dw_dns_records != 0
     ) { ?>

@@ -3,7 +3,7 @@
  * /queue/add/step-one/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,11 +41,11 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/queue-add.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$new_raid = (int) $_REQUEST['new_raid'];
-$is_submitted = (int) $_REQUEST['is_submitted'];
+$new_raid = (int) ($_REQUEST['new_raid'] ?? 0);
+$is_submitted = (int) ($_REQUEST['is_submitted'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 

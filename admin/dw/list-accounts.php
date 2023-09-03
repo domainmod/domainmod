@@ -3,7 +3,7 @@
  * /admin/dw/list-accounts.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -36,11 +36,11 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dw-list-accounts.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$domain = $_GET['domain'];
-$export_data = (int) $_GET['export_data'];
+$domain = $_GET['domain'] ?? '';
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 if ($_SESSION['s_dw_view_all'] == "1") {
 

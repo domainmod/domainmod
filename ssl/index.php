@@ -3,7 +3,7 @@
  * /ssl/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -45,19 +45,19 @@ require_once DIR_INC . '/settings/ssl-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
-$oid = (int) $_REQUEST['oid'];
-$did = (int) $_REQUEST['did'];
-$sslpid = (int) $_REQUEST['sslpid'];
-$sslpaid = (int) $_REQUEST['sslpaid'];
-$ssltid = (int) $_REQUEST['ssltid'];
-$sslipid = (int) $_REQUEST['sslipid'];
-$sslpcid = (int) $_REQUEST['sslpcid'];
-$is_active = $_REQUEST['is_active'];
-$search_for = $sanitize->text($_REQUEST['search_for']);
-$from_dropdown = (int) $_REQUEST['from_dropdown'];
-$expand = (int) $_REQUEST['expand'];
-$daterange = $sanitize->text($_REQUEST['daterange']);
+$export_data = (int) ($_GET['export_data'] ?? 0);
+$oid = (int) ($_REQUEST['oid'] ?? 0);
+$did = (int) ($_REQUEST['did'] ?? 0);
+$sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
+$sslpaid = (int) ($_REQUEST['sslpaid'] ?? 0);
+$ssltid = (int) ($_REQUEST['ssltid'] ?? 0);
+$sslipid = (int) ($_REQUEST['sslipid'] ?? 0);
+$sslpcid = (int) ($_REQUEST['sslpcid'] ?? 0);
+$is_active = $_REQUEST['is_active'] ?? '';
+$search_for = isset($_REQUEST['search_for']) ? $sanitize->text($_REQUEST['search_for']) : '';
+$from_dropdown = (int) ($_REQUEST['from_dropdown'] ?? 0);
+$expand = (int) ($_REQUEST['expand'] ?? 0);
+$daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterange']) : '';
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
@@ -1696,6 +1696,7 @@ if ($result) { ?>
 
 } else {
 
+    $ready_for_ssl_certs = $ready_for_ssl_certs ?? 0;
     if ($ready_for_ssl_certs === 1) { ?>
 
         <BR><a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php

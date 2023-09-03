@@ -3,7 +3,7 @@
  * /assets/add/ip-address.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -40,12 +40,12 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-ip-address.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_ip = $sanitize->text($_POST['new_ip']);
-$new_rdns = $sanitize->text($_POST['new_rdns']);
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_ip = isset($_POST['new_ip']) ? $sanitize->text($_POST['new_ip']) : '';
+$new_rdns = isset($_POST['new_rdns']) ? $sanitize->text($_POST['new_rdns']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

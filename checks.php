@@ -3,7 +3,7 @@
  * /checks.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -45,14 +45,15 @@ $pdo = $deeb->cnxx;
 
 $_SESSION['s_running_login_checks'] = '1';
 
-$upgrade_approved = $_GET['u'];
+$upgrade_approved = $_GET['u'] ?? '';
 
 /*
  * If the database and software versions are different and the user hasn't already approved the upgrade, send them to
  * notice.php and ask the user to confirm the upgrade
  *
- * If If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
+ * If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
  */
+$_SESSION['s_system_db_version'] = $_SESSION['s_system_db_version'] ?? '';
 if ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved != '1') {
 
     header("Location: notice.php?a=u");
@@ -167,6 +168,7 @@ unset($_SESSION['s_installation_mode']);
 
 $login->setLastLogin($_SESSION['s_user_id']);
 
+$_SESSION['s_version_error'] = $_SESSION['s_version_error'] ?? 0;
 if ($_SESSION['s_version_error'] != '1') {
 
     // Log installation and upgrade activity

@@ -3,7 +3,7 @@
  * /queue/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -43,18 +43,18 @@ require_once DIR_INC . '/settings/queue-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$list_id = (int) $_GET['list_id'];
-$dell = (int) $_GET['dell'];
-$really_dell = (int) $_GET['really_dell'];
+$list_id = (int) ($_GET['list_id'] ?? 0);
+$dell = (int) ($_GET['dell'] ?? 0);
+$really_dell = (int) ($_GET['really_dell'] ?? 0);
 
-$domain_id = (int) $_GET['domain_id'];
-$deld = (int) $_GET['deld'];
-$really_deld = (int) $_GET['really_deld'];
+$domain_id = (int) ($_GET['domain_id'] ?? 0);
+$deld = (int) ($_GET['deld'] ?? 0);
+$really_deld = (int) ($_GET['really_deld'] ?? 0);
 
-$clear = (int) $_GET['clear'];
-$really_clear = (int) $_GET['really_clear'];
-$s = $sanitize->text($_GET['s']);
-$export_data = (int) $_GET['export_data'];
+$clear = (int) ($_GET['clear'] ?? 0);
+$really_clear = (int) ($_GET['really_clear'] ?? 0);
+$s = isset($_GET['s']) ? $sanitize->text($_GET['s']) : '';
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $result_lists = $pdo->query("
     SELECT dql.id, dql.api_registrar_id, dql.domain_count, dql.owner_id, dql.registrar_id, dql.account_id,
@@ -505,6 +505,10 @@ if ($really_deld === 1 && $domain_id !== 0) {
 <?php
 $queue->checkProcessingLists();
 $queue->checkProcessingDomains();
+
+$_SESSION['s_list_queue_processing'] = $_SESSION['s_list_queue_processing'] ?? 0;
+$_SESSION['s_domain_queue_processing'] = $_SESSION['s_domain_queue_processing'] ?? 0;
+
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
     <button type="button" class="btn btn-default btn-lrg">
@@ -517,14 +521,20 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
 <?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
-<?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
+<?php
+$_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
+if ($_SESSION['s_domains_in_queue'] == '1') { ?>
 <a href="index.php?clear=1"><?php echo $layout->showButton('button', _('Clear Completed')); ?></a>
 <?php } ?>
 <a href="intro.php"><?php echo $layout->showButton('button', _('More Info')); ?></a>
-<?php if ($_SESSION['s_domains_in_list_queue'] == '1') { ?>
+<?php
+$_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
+if ($_SESSION['s_domains_in_list_queue'] == '1') { ?>
 <a href="index.php?s=lists&export_data=1"><?php echo $layout->showButton('button', _('Export Lists')); ?></a>
 <?php } ?>
-<?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
+<?php
+$_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
+if ($_SESSION['s_domains_in_queue'] == '1') { ?>
 <a href="index.php?s=domains&export_data=1"><?php echo $layout->showButton('button', _('Export Domains')); ?></a>
 <?php } ?>
 <BR><BR>

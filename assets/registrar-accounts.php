@@ -3,7 +3,7 @@
  * /assets/registrar-accounts.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,10 +38,10 @@ require_once DIR_INC . '/settings/assets-registrar-accounts.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$rid = (int) $_GET['rid'];
-$raid = (int) $_GET['raid'];
-$oid = (int) $_GET['oid'];
-$export_data = (int) $_GET['export_data'];
+$rid = (int) ($_GET['rid'] ?? 0);
+$raid = (int) ($_GET['raid'] ?? 0);
+$oid = (int) ($_GET['oid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 if ($rid !== 0) { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else { $rid_string = ''; }
 if ($raid !== 0) { $raid_string = " AND ra.id = '" . $raid . "' "; } else { $raid_string = ''; }

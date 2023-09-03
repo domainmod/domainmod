@@ -3,7 +3,7 @@
  * /index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -54,8 +54,8 @@ if ($_SESSION['s_installation_mode'] === 1) {
 
 }
 
-$new_username = $_POST['new_username'];
-$new_password = $_POST['new_password'];
+$new_username = $_POST['new_username'] ?? '';
+$new_password = $_POST['new_password'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         SELECT id
         FROM users
         WHERE username = :new_username
-          AND `password` = password(:new_password)
+          AND `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password)))))
           AND active = '1'");
     $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
     $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             UPDATE `users`
             SET password = :new_hashed_password
             WHERE username = :new_username
-              AND `password` = password(:new_password)
+              AND `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password)))))
               AND active = '1'");
         $stmt->bindValue('new_hashed_password', $new_hashed_password, PDO::PARAM_STR);
         $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
@@ -121,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         $log_extra = array('Username' => $new_username, 'Password' => $format->obfusc($new_password));
         $log->warning($log_message, $log_extra);
 
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         $_SESSION['s_message_danger'] .= _('Login Failed') . '<BR>';
 
     }
@@ -128,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
 
         if ($new_username == "" && $new_password == "") {
 

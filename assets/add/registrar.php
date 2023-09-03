@@ -3,7 +3,7 @@
  * /assets/add/registrar.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -33,20 +33,20 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
-$validate = new \DomainMOD\Validate();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-registrar.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$new_registrar = $sanitize->text($_POST['new_registrar']);
-$new_url = $sanitize->text($_POST['new_url']);
-$new_api_registrar_id = (int) $_POST['new_api_registrar_id'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_registrar = isset($_POST['new_registrar']) ? $sanitize->text($_POST['new_registrar']) : '';
+$new_url = isset($_POST['new_url']) ? $sanitize->text($_POST['new_url']) : '';
+$new_api_registrar_id = (int) ($_POST['new_api_registrar_id'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

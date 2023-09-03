@@ -3,7 +3,7 @@
  * /queue/intro.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -55,6 +55,8 @@ $result = $pdo->query("
     SELECT `name`
     FROM api_registrars
     ORDER BY name ASC")->fetchAll();
+
+$supported_registrars = $supported_registrars ?? '';
 
 foreach ($result as $row) {
 

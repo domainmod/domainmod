@@ -3,7 +3,7 @@
  * /reset.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -44,7 +44,7 @@ $pdo = $deeb->cnxx;
 $page_title = _('Reset Password');
 $software_section = "resetpassword";
 
-$user_identifier = $_REQUEST['user_identifier'];
+$user_identifier = $_REQUEST['user_identifier'] ?? '';
 
 if ($user_identifier != '') {
 
@@ -59,7 +59,8 @@ if ($user_identifier != '') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    $_SESSION['s_message_success'] .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
+    $message_success = $_SESSION['s_message_success'] ?? '';
+    $message_success .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
 
     if (!$result) {
 
@@ -69,16 +70,15 @@ if ($user_identifier != '') {
     } else {
 
         $new_password = $user->generatePassword(30);
-        $new_hash = $user->generateHash($new_password);
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET `password` = :new_hash,
+            SET `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))),
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
         $bind_timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
@@ -99,6 +99,8 @@ if ($user_identifier != '') {
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
 
         if ($user_identifier == "") {
             $_SESSION['s_message_danger'] .= _('Enter your username or email address') . '<BR>';

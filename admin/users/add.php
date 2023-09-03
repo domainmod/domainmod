@@ -3,7 +3,7 @@
  * /admin/users/add.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,13 +42,13 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-users-add.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$new_first_name = $sanitize->text($_POST['new_first_name']);
-$new_last_name = $sanitize->text($_POST['new_last_name']);
-$new_username = $sanitize->text($_POST['new_username']);
-$new_email_address = $sanitize->text($_POST['new_email_address']);
+$new_first_name = isset($_POST['new_first_name']) ? $sanitize->text($_POST['new_first_name']) : '';
+$new_last_name = isset($_POST['new_last_name']) ? $sanitize->text($_POST['new_last_name']) : '';
+$new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
     && $new_email_address != ''
@@ -93,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     } else {
 
         $new_password = $user->generatePassword(30);
-        $new_hash = $user->generateHash($new_password);
 
         try {
 
@@ -103,12 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                 INSERT INTO users
                 (first_name, last_name, username, email_address, `password`, created_by, insert_time)
                 VALUES
-                (:first_name, :last_name, :username, :email_address, :new_hash, :created_by, :insert_time)");
+                (:first_name, :last_name, :username, :email_address, CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))), :created_by, :insert_time)");
             $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
             $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
             $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
             $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-            $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
+            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
             $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
             $bind_timestamp = $time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
@@ -161,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $conversion->updateRates('USD', $temp_user_id);
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s / %s) added.'), $new_first_name, $new_last_name, $new_username, $new_password) . '<BR><BR>';
 
@@ -174,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to add user';
             $log_extra = array('Error' => $e);

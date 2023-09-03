@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Smtp.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -20,6 +20,8 @@
  */
 //@formatter:off
 namespace DomainMOD;
+
+use PHPMailer\PHPMailer\PHPMailer;
 
 class Smtp
 {
@@ -45,8 +47,7 @@ class Smtp
     public function send($email_title, $to_address, $reply_address, $subject, $message_html, $message_text)
     {
         require_once DIR_ROOT . '/vendor/autoload.php';
-        $mail = new \PHPMailer();
-
+        $mail = new PHPMailer();
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
         $mail->CharSet = EMAIL_ENCODING_TYPE;

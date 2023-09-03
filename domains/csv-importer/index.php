@@ -3,7 +3,7 @@
  * /domains/csv-importer/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -56,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $upload->allowed_extensions(array("csv"));
             $upload->max_size(50); // in MB
             $upload->path(DIR_TEMP);
-            $upload->name("import.csv");
+            $upload->name("import");
 
             if (!$upload->upload()) {
 
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 $_SESSION['s_message_danger'] .= _('Please choose a CSV template file to import');
 
             } else {

@@ -3,7 +3,7 @@
  * /admin/ssl-fields/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -36,10 +36,10 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-custom-ssl-fields.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $result = $pdo->query("
     SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type

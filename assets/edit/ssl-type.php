@@ -3,7 +3,7 @@
  * /assets/edit/ssl-type.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,17 +42,17 @@ require_once DIR_INC . '/settings/assets-edit-ssl-type.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$ssltid = (int) $_GET['ssltid'];
+$ssltid = (int) ($_GET['ssltid'] ?? 0);
 
-$new_type = $sanitize->text($_REQUEST['new_type']);
-$new_notes = $sanitize->text($_REQUEST['new_notes']);
-$new_ssltid = (int) $_REQUEST['new_ssltid'];
+$new_type = isset($_REQUEST['new_type']) ? $sanitize->text($_REQUEST['new_type']) : '';
+$new_notes = isset($_REQUEST['new_notes']) ? $sanitize->text($_REQUEST['new_notes']) : '';
+$new_ssltid = (int) ($_REQUEST['new_ssltid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_type)) {
 

@@ -3,7 +3,7 @@
  * /assets/add/category.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -40,7 +40,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-category.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
 $new_category = $sanitize->text($_POST['new_category']);
 $new_stakeholder = $sanitize->text($_POST['new_stakeholder']);

@@ -3,7 +3,7 @@
  * /assets/add/ssl-provider-fee.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,20 +42,20 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-add-ssl-provider-fee.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$sslpid = (int) $_REQUEST['sslpid'];
-$type_id = (int) $_GET['type_id'];
+$sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
+$type_id = (int) ($_GET['type_id'] ?? 0);
 if ($type_id !== 0) {
     $new_type_id = $type_id;
 } else {
-    $new_type_id = (int) $_POST['new_type_id'];
+    $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
 }
-$new_initial_fee = (float) $_POST['new_initial_fee'];
-$new_renewal_fee = (float) $_POST['new_renewal_fee'];
-$new_misc_fee = (float) $_POST['new_misc_fee'];
-$new_currency = $sanitize->text($_POST['new_currency']);
+$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
+$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
+$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-                $pdo->commit();
+                if ($pdo->InTransaction()) $pdo->commit();
 
                 $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added'), $temp_type) . '<BR>';
 
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } catch (Exception $e) {
 
-                $pdo->rollback();
+                if ($pdo->InTransaction()) $pdo->rollback();
 
                 $log_message = 'Unable to add SSL provider fee';
                 $log_extra = array('Error' => $e);
@@ -189,7 +189,7 @@ $result = $pdo->query("
 
 foreach ($result as $row) {
 
-    echo $form->showDropdownOption($row->id, $row->type, isset($new_type_id) ? $new_type_id : $_SESSION['s_default_ssl_type']);
+    echo $form->showDropdownOption($row->id, $row->type, $new_type_id ?? $_SESSION['s_default_ssl_type']);
 
 }
 echo $form->showDropdownBottom('');
@@ -207,7 +207,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')',
-        isset($new_currency) ? $new_currency : $_SESSION['s_default_currency']);
+        $new_currency ?? $_SESSION['s_default_currency']);
 
 }
 echo $form->showDropdownBottom('');

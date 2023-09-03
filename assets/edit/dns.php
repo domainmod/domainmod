@@ -3,7 +3,7 @@
  * /assets/edit/dns.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,37 +42,37 @@ require_once DIR_INC . '/settings/assets-edit-dns.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$dnsid = (int) $_GET['dnsid'];
+$dnsid = (int) ($_GET['dnsid'] ?? 0);
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_dns1 = $sanitize->text($_POST['new_dns1']);
-$new_dns2 = $sanitize->text($_POST['new_dns2']);
-$new_dns3 = $sanitize->text($_POST['new_dns3']);
-$new_dns4 = $sanitize->text($_POST['new_dns4']);
-$new_dns5 = $sanitize->text($_POST['new_dns5']);
-$new_dns6 = $sanitize->text($_POST['new_dns6']);
-$new_dns7 = $sanitize->text($_POST['new_dns7']);
-$new_dns8 = $sanitize->text($_POST['new_dns8']);
-$new_dns9 = $sanitize->text($_POST['new_dns9']);
-$new_dns10 = $sanitize->text($_POST['new_dns10']);
-$new_ip1 = $sanitize->text($_POST['new_ip1']);
-$new_ip2 = $sanitize->text($_POST['new_ip2']);
-$new_ip3 = $sanitize->text($_POST['new_ip3']);
-$new_ip4 = $sanitize->text($_POST['new_ip4']);
-$new_ip5 = $sanitize->text($_POST['new_ip5']);
-$new_ip6 = $sanitize->text($_POST['new_ip6']);
-$new_ip7 = $sanitize->text($_POST['new_ip7']);
-$new_ip8 = $sanitize->text($_POST['new_ip8']);
-$new_ip9 = $sanitize->text($_POST['new_ip9']);
-$new_ip10 = $sanitize->text($_POST['new_ip10']);
-$new_dnsid = (int) $_POST['new_dnsid'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_dns1 = isset($_POST['new_dns1']) ? $sanitize->text($_POST['new_dns1']) : '';
+$new_dns2 = isset($_POST['new_dns2']) ? $sanitize->text($_POST['new_dns2']) : '';
+$new_dns3 = isset($_POST['new_dns3']) ? $sanitize->text($_POST['new_dns3']) : '';
+$new_dns4 = isset($_POST['new_dns4']) ? $sanitize->text($_POST['new_dns4']) : '';
+$new_dns5 = isset($_POST['new_dns5']) ? $sanitize->text($_POST['new_dns5']) : '';
+$new_dns6 = isset($_POST['new_dns6']) ? $sanitize->text($_POST['new_dns6']) : '';
+$new_dns7 = isset($_POST['new_dns7']) ? $sanitize->text($_POST['new_dns7']) : '';
+$new_dns8 = isset($_POST['new_dns8']) ? $sanitize->text($_POST['new_dns8']) : '';
+$new_dns9 = isset($_POST['new_dns9']) ? $sanitize->text($_POST['new_dns9']) : '';
+$new_dns10 = isset($_POST['new_dns10']) ? $sanitize->text($_POST['new_dns10']) : '';
+$new_ip1 = isset($_POST['new_ip1']) ? $sanitize->text($_POST['new_ip1']) : '';
+$new_ip2 = isset($_POST['new_ip2']) ? $sanitize->text($_POST['new_ip2']) : '';
+$new_ip3 = isset($_POST['new_ip3']) ? $sanitize->text($_POST['new_ip3']) : '';
+$new_ip4 = isset($_POST['new_ip4']) ? $sanitize->text($_POST['new_ip4']) : '';
+$new_ip5 = isset($_POST['new_ip5']) ? $sanitize->text($_POST['new_ip5']) : '';
+$new_ip6 = isset($_POST['new_ip6']) ? $sanitize->text($_POST['new_ip6']) : '';
+$new_ip7 = isset($_POST['new_ip7']) ? $sanitize->text($_POST['new_ip7']) : '';
+$new_ip8 = isset($_POST['new_ip8']) ? $sanitize->text($_POST['new_ip8']) : '';
+$new_ip9 = isset($_POST['new_ip9']) ? $sanitize->text($_POST['new_ip9']) : '';
+$new_ip10 = isset($_POST['new_ip10']) ? $sanitize->text($_POST['new_ip10']) : '';
+$new_dnsid = (int) ($_POST['new_dnsid'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_name) && $validate->text($new_dns1) && $validate->text($new_dns2)) {
 

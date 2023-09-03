@@ -3,7 +3,7 @@
  * /install/go/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -66,9 +66,9 @@ $temp_task_scheduler_five = _('Check For New Version');
 $temp_task_scheduler_six = _('Data Warehouse Build');
 
 // System Settings
-$installation_language = DEFAULT_LANGUAGE;
-$installation_timezone = $_SESSION['s_installation_timezone'];
-$installation_currency = $_SESSION['s_installation_currency'];
+$installation_language = DEFAULT_LANGUAGE ?? '';
+$installation_timezone = $_SESSION['s_installation_timezone'] ?? '';
+$installation_currency = $_SESSION['s_installation_currency'] ?? '';
 
 $system->installCheck();
 
@@ -126,8 +126,8 @@ try {
         (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`,
          `insert_time`)
         VALUES
-        (:new_first_name, :new_last_name, 'admin', :new_admin_email, '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0',
-         :creation_type_id_installation, :timestamp)");
+        (:new_first_name, :new_last_name, 'admin', :new_admin_email, CONCAT('*', UPPER(SHA1(UNHEX(SHA1('admin'))))),
+         '1', '0', :creation_type_id_installation, :timestamp)");
     $stmt->bindValue('new_first_name', $temp_admin_first_name, PDO::PARAM_STR);
     $stmt->bindValue('new_last_name', $temp_admin_last_name, PDO::PARAM_STR);
     $stmt->bindValue('new_admin_email', $_SESSION['new_admin_email'], PDO::PARAM_STR);
@@ -1015,7 +1015,7 @@ try {
             `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `interval` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
-            `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
+            `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * *',
             `last_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `next_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
@@ -1031,7 +1031,7 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_one, 'Retrieves information for domains in the queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * * *', 'domain-queue', '10', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_one, 'Retrieves information for domains in the queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * *', 'domain-queue', '10', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_one', $temp_task_scheduler_one, PDO::PARAM_STR);
     $stmt->execute();
 
@@ -1039,7 +1039,7 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_two, 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'Daily', '0 0 * * * *', 'expiration-email', '20', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_two, 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'Daily', '0 0 * * *', 'expiration-email', '20', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_two', $temp_task_scheduler_two, PDO::PARAM_STR);
     $stmt->execute();
 
@@ -1047,7 +1047,7 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_three, 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'Daily', '0 0 * * * *', 'update-conversion-rates', '40', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_three, 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'Daily', '0 0 * * *', 'update-conversion-rates', '40', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_three', $temp_task_scheduler_three, PDO::PARAM_STR);
     $stmt->execute();
 
@@ -1055,7 +1055,7 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_four, '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries in the database to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.', 'Daily', '0 0 * * * *', 'cleanup', '60', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_four, '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries in the database to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.', 'Daily', '0 0 * * *', 'cleanup', '60', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_four', $temp_task_scheduler_four, PDO::PARAM_STR);
     $stmt->execute();
 
@@ -1063,7 +1063,7 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_five, 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * * *', 'check-new-version', '80', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_five, 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * *', 'check-new-version', '80', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_five', $temp_task_scheduler_five, PDO::PARAM_STR);
     $stmt->execute();
 
@@ -1071,12 +1071,12 @@ try {
         INSERT INTO scheduler
         (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
          VALUES
-        (:temp_task_scheduler_six, 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * * *', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
+        (:temp_task_scheduler_six, 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * *', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
     $stmt->bindValue('temp_task_scheduler_six', $temp_task_scheduler_six, PDO::PARAM_STR);
     $stmt->execute();
 
     // Update tasks that run daily
-    $cron = \Cron\CronExpression::factory('0 7 * * * *');
+    $cron = new \Cron\CronExpression('0 7 * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("
@@ -1085,7 +1085,7 @@ try {
         WHERE `interval` = 'Daily'");
 
     // Update tasks that run every 5 minutes
-    $cron = \Cron\CronExpression::factory('*/5 * * * * *');
+    $cron = new \Cron\CronExpression('*/5 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("
@@ -1229,7 +1229,7 @@ try {
 
     $goal->installation();
 
-    $pdo->commit();
+    if ($pdo->InTransaction()) $pdo->commit();
 
     $_SESSION['s_message_success'] .= sprintf(_('%s has been successfully installed and you should now delete the %s folder'), SOFTWARE_TITLE, '/install/') . "<BR><BR>" . sprintf(_("The default username and password are %s, and you'll be prompted to change the password after logging in"), '"admin"') . "<BR>";
 
@@ -1238,7 +1238,7 @@ try {
 
 } catch (Exception $e) {
 
-    $pdo->rollback();
+    if ($pdo->InTransaction()) $pdo->rollback();
 
     $log_message = 'Installation failed';
     $log_extra = array('Error' => $e);

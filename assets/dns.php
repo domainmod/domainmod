@@ -3,7 +3,7 @@
  * /assets/dns.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,7 +38,7 @@ require_once DIR_INC . '/settings/assets-dns.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $result = $pdo->query("
     SELECT id, `name`, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3,

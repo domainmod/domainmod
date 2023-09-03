@@ -3,7 +3,7 @@
  * /bulk/main/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -47,24 +47,24 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$action = $sanitize->text($_REQUEST['action']);
-$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
-$new_expiry_date = $_POST['datepick'];
-$new_function = $sanitize->text($_POST['new_function']);
-$new_pcid = (int) $_POST['new_pcid'];
-$new_dnsid = (int) $_POST['new_dnsid'];
-$new_ipid = (int) $_POST['new_ipid'];
-$new_whid = (int) $_POST['new_whid'];
-$new_raid = (int) $_POST['new_raid'];
-$new_autorenew = (int) $_POST['new_autorenew'];
-$new_privacy = (int) $_POST['new_privacy'];
-$new_active = (int) $_POST['new_active'];
-$new_notes = $sanitize->text($_POST['new_notes']);
-$new_renewal_years = (int) $_POST['new_renewal_years'];
-$is_submitted = (int) $_POST['is_submitted'];
+$action = isset($_REQUEST['action']) ? $sanitize->text($_REQUEST['action']) : '';
+$raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
+$new_expiry_date = $_POST['datepick'] ?? '';
+$new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_function']) : '';
+$new_pcid = (int) ($_POST['new_pcid'] ?? 0);
+$new_dnsid = (int) ($_POST['new_dnsid'] ?? 0);
+$new_ipid = (int) ($_POST['new_ipid'] ?? 0);
+$new_whid = (int) ($_POST['new_whid'] ?? 0);
+$new_raid = (int) ($_POST['new_raid'] ?? 0);
+$new_autorenew = (int) ($_POST['new_autorenew'] ?? 0);
+$new_privacy = (int) ($_POST['new_privacy'] ?? 0);
+$new_active = (int) ($_POST['new_active'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+$new_renewal_years = (int) ($_POST['new_renewal_years'] ?? 0);
+$is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
 $choose_text = _('Click here to choose the new');
 
@@ -140,13 +140,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains Renewed') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to renew domains';
                         $log_extra = array('Error' => $e);
@@ -360,13 +360,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             $maint->updateTlds();
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Domains added') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to add domains';
                             $log_extra = array('Error' => $e);
@@ -445,13 +445,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains Fully Renewed') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to fully renew domains';
                         $log_extra = array('Error' => $e);
@@ -514,13 +514,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Category Changed') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to change category';
                             $log_extra = array('Error' => $e);
@@ -585,13 +585,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('DNS Profile Changed') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to change DNS profile';
                             $log_extra = array('Error' => $e);
@@ -656,13 +656,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('IP Address Changed') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to change IP address';
                             $log_extra = array('Error' => $e);
@@ -704,13 +704,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Note added') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to add note';
                             $log_extra = array('Error' => $e);
@@ -855,13 +855,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $sql = $queryB->missingFees('domains');
                             $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Registrar Account Changed') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to change registrar account';
                             $log_extra = array('Error' => $e);
@@ -926,13 +926,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Web Hosting Provider Changed') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to change web hosting provider';
                             $log_extra = array('Error' => $e);
@@ -1017,13 +1017,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains (and associated data) Deleted') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to delete domains';
                         $log_extra = array('Error' => $e);
@@ -1079,13 +1079,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as expired') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as expired';
                         $log_extra = array('Error' => $e);
@@ -1141,13 +1141,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as sold') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as sold';
                         $log_extra = array('Error' => $e);
@@ -1203,13 +1203,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as active') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as active';
                         $log_extra = array('Error' => $e);
@@ -1265,13 +1265,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Pending Transfer') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as pending transfer';
                         $log_extra = array('Error' => $e);
@@ -1327,13 +1327,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Pending Registration') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as pending registration';
                         $log_extra = array('Error' => $e);
@@ -1389,13 +1389,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Pending Renewal') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as pending renewal';
                         $log_extra = array('Error' => $e);
@@ -1451,13 +1451,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Pending (Other)') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as pending other';
                         $log_extra = array('Error' => $e);
@@ -1513,13 +1513,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Auto Renewal') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as auto renewal';
                         $log_extra = array('Error' => $e);
@@ -1573,13 +1573,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         }
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Manual Renewal') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as manual renewal';
                         $log_extra = array('Error' => $e);
@@ -1653,13 +1653,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Private WHOIS') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as private WHOIS';
                         $log_extra = array('Error' => $e);
@@ -1731,13 +1731,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         }
 
-                        $pdo->commit();
+                        if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Public WHOIS') . '<BR>';
 
                     } catch (Exception $e) {
 
-                        $pdo->rollback();
+                        if ($pdo->InTransaction()) $pdo->rollback();
 
                         $log_message = 'Unable to mark domains as public WHOIS';
                         $log_extra = array('Error' => $e);
@@ -1800,13 +1800,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
-                            $pdo->commit();
+                            if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Expiry Date Updated') . '<BR>';
 
                         } catch (Exception $e) {
 
-                            $pdo->rollback();
+                            if ($pdo->InTransaction()) $pdo->rollback();
 
                             $log_message = 'Unable to update expiry date';
                             $log_extra = array('Error' => $e);
@@ -1904,9 +1904,13 @@ if ($breadcrumb_text != '') {
 <?php
 echo _("The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
 ?>
-<?php if ($done == "1") { ?>
+<?php
+    $done = $done ?? '';
+    if ($done == "1") { ?>
 
-    <?php if ($submission_failed != "1") { ?>
+        <?php
+        $submission_failed = $submission_failed ?? 0;
+        if ($submission_failed != "1") { ?>
 
         <?php if ($action == "AD") { ?>
             <BR><strong><?php echo _('The following domains were added'); ?>:</strong><BR>

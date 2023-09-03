@@ -3,7 +3,7 @@
  * /reporting/dw/potential-problems.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,8 +39,8 @@ require_once DIR_INC . '/settings/reporting-dw-potential-problems.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$generate = $_GET['generate'];
-$export_data = (int) $_GET['export_data'];
+$generate = $_GET['generate'] ?? 0;
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $result_accounts_without_a_dns_zone = $pdo->query("
     SELECT domain

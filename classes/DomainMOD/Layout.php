@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Layout.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -233,13 +233,13 @@ class Layout
     }
     public function sidebarDarkMode()
     {
-        if ($_SESSION['s_dark_mode'] === 1) return ' sidebar-dark-red';
+        if (isset($_SESSION['s_dark_mode']) && $_SESSION['s_dark_mode'] === 1) return ' sidebar-dark-red';
         return ' sidebar-light-red domainmod-css-logo-background-colour';
     }
 
     public function bodyDarkMode()
     {
-        if ($_SESSION['s_dark_mode'] === 1) return ' dark-mode';
+        if (isset($_SESSION['s_dark_mode']) && $_SESSION['s_dark_mode'] === 1) return ' dark-mode';
         return '';
     }
 

@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Notice.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -24,14 +24,24 @@ namespace DomainMOD;
 class Notice
 {
 
+    public $system;
+
     public function dbUpgrade()
     {
+        $this->system = new System();
         $layout = new Layout();
+
+        list($null, $null, $requirements) = $this->system->getRequirements();
+
         $_SESSION['s_notice_page_title'] = _('Database Upgrade Available') . '<BR><em>v' . $_SESSION['s_system_db_version'] . ' ' . strtolower(_('To')) . ' v' . SOFTWARE_VERSION . '</em>';
 
-        $_SESSION['s_notice'] = "<BR>" . sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE) . "<BR><BR>
-            <strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>" .
+        $_SESSION['s_notice'] = "<BR>" . sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE) . "<BR><BR>" .
 
+            _('We recommend checking the') . ' <a target="_blank" href="https://domainmod.org/news/">' . _('News') . '</a> ' . _("section of our website to ensure that your server is ready for the new version. If your server has software incompatibilities, the upgrade may fail.") . "<BR><BR>" .
+
+            "<strong>v" . SOFTWARE_VERSION . _(' Software Requirements') . "</strong><BR><BR>" . $requirements . "<BR>" .
+
+            "<strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . strtoupper(_('Critical Warning')) . " -- " . strtoupper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>" .
             strtoupper(sprintf(_('We strongly recommend that you backup your %s installation directory and database before proceeding with the upgrade'), SOFTWARE_TITLE)) . ". " .
             strtoupper(_("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data")) . ". " .
             strtoupper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . ".<BR>

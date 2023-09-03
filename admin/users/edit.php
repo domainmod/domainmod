@@ -3,7 +3,7 @@
  * /admin/users/edit.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,26 +42,26 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-users-edit.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$uid = (int) $_GET['uid'];
+$uid = (int) ($_GET['uid'] ?? 0);
 
-$new_first_name = $sanitize->text($_POST['new_first_name']);
-$new_last_name = $sanitize->text($_POST['new_last_name']);
-$new_username = $sanitize->text($_POST['new_username']);
-$original_username = $sanitize->text($_POST['original_username']);
-$new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_language = $_POST['new_language'];
-$new_currency = $sanitize->text($_POST['new_currency']);
-$new_timezone = $sanitize->text($_POST['new_timezone']);
-$new_expiration_emails = (int) $_POST['new_expiration_emails'];
-$new_is_admin = (int) $_POST['new_is_admin'];
-$new_read_only = (int) $_POST['new_read_only'];
-$new_is_active = (int) $_POST['new_is_active'];
-$new_uid = (int) $_POST['new_uid'];
+$new_first_name = isset($_POST['new_first_name']) ? $sanitize->text($_POST['new_first_name']) : '';
+$new_last_name = isset($_POST['new_last_name']) ? $sanitize->text($_POST['new_last_name']) : '';
+$new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
+$original_username = isset($_POST['original_username']) ? $sanitize->text($_POST['original_username']) : '';
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
+$new_language = $_POST['new_language'] ?? '';
+$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
+$new_timezone = isset($_POST['new_timezone']) ? $sanitize->text($_POST['new_timezone']) : '';
+$new_expiration_emails = (int) ($_POST['new_expiration_emails'] ?? 0);
+$new_is_admin = (int) ($_POST['new_is_admin'] ?? 0);
+$new_read_only = (int) ($_POST['new_read_only'] ?? 0);
+$new_is_active = (int) ($_POST['new_is_active'] ?? 0);
+$new_uid = (int) ($_POST['new_uid'] ?? 0);
 
 if ($new_uid === 0) $new_uid = $uid;
 
@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         }
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s) updated'), $new_first_name, $new_last_name, $new_username) . '<BR>';
 
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         $log_message = 'Unable to update user';
         $log_extra = array('Error' => $e);

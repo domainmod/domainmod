@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Currency.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -34,6 +34,7 @@ class Currency
 
     public function format($amount, $symbol, $order, $space)
     {
+        $amount = $amount ?? 0.0;
         if ($order == "1" && $space == "1") {
             $formatted_output = number_format($amount, 2, '.', ',') . " " . $symbol;
         } elseif ($order == "1" && $space == "0") {

@@ -3,7 +3,7 @@
  * /settings/toggles/inactive-assets/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -32,6 +32,7 @@ require_once DIR_INC . '/head.inc.php';
 
 $system->authCheck();
 
+$_SESSION['s_display_inactive_assets'] = $_SESSION['s_display_inactive_assets'] ?? 0;
 if ($_SESSION['s_display_inactive_assets'] == '1') {
 
     $_SESSION['s_display_inactive_assets'] = '0';

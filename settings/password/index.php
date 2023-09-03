@@ -3,7 +3,7 @@
  * /settings/password/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,8 +42,8 @@ require_once DIR_INC . '/settings/settings-password.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_password = $sanitize->text($_POST['new_password']);
-$new_password_confirmation = $sanitize->text($_POST['new_password_confirmation']);
+$new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
+$new_password_confirmation = isset($_POST['new_password_confirmation']) ? $sanitize->text($_POST['new_password_confirmation']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
 
@@ -75,16 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
     } else {
 
         $temp_password = $unsanitize->text($new_password);
-        $temp_hash = $user->generateHash($temp_password);
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET `password` = :temp_hash,
+            SET `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:temp_password))))),
                 new_password = '0',
                 update_time = :timestamp
             WHERE id = :user_id
               AND email_address = :email_address");
-        $stmt->bindValue('temp_hash', $temp_hash, PDO::PARAM_STR);
+        $stmt->bindValue('temp_password', $temp_password, PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
@@ -110,6 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
 
         if ($new_password == "" && $new_password_confirmation == "") {
 

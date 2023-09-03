@@ -3,7 +3,7 @@
  * /admin/backup/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -36,7 +36,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-backup-main.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
 use iamdual\Uploader;
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $upload->allowed_extensions(array("sql"));
             $upload->max_size(50); // in MB
             $upload->path(DIR_TEMP);
-            $upload->name("domainmod-restore.sql");
+            $upload->name("domainmod-restore");
 
             if (!$upload->upload()) {
 
@@ -67,10 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 $filename = DIR_TEMP . '/domainmod-restore.sql';
-                $username = $dbusername;
-                $password = $dbpassword;
-                $database = $dbname;
-                $host = $dbhostname;
+                $username = $dbusername ?? '';
+                $password = $dbpassword ?? '';
+                $database = $dbname ?? '';
+                $host = $dbhostname ?? '';
                 new Import($filename, $username, $password, $database, $host);
 
                 header("Location: " . WEB_ROOT . "/logout.php");

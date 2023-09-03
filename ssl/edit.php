@@ -3,7 +3,7 @@
  * /ssl/edit.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -45,18 +45,18 @@ require_once DIR_INC . '/settings/ssl-edit.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$sslcid = (int) $_REQUEST['sslcid'];
-$new_domain_id = (int) $_POST['new_domain_id'];
-$new_name = $sanitize->text($_POST['new_name']);
-$new_type_id = (int) $_POST['new_type_id'];
-$new_ip_id = (int) $_POST['new_ip_id'];
-$new_cat_id = (int) $_POST['new_cat_id'];
-$new_expiry_date = $_POST['datepick'];
-$new_account_id = (int) $_POST['new_account_id'];
-$new_active = (int) $_POST['new_active'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$sslcid = (int) ($_REQUEST['sslcid'] ?? 0);
+$new_domain_id = (int) ($_POST['new_domain_id'] ?? 0);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_type_id = (int) ($_POST['new_type_id'] ?? 0);
+$new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
+$new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
+$new_expiry_date = $_POST['datepick'] ?? '';
+$new_account_id = (int) ($_POST['new_account_id'] ?? 0);
+$new_active = (int) ($_POST['new_active'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 // Custom Fields
 $result = $pdo->query("
@@ -78,7 +78,7 @@ if ($result) {
     foreach ($field_array as $field) {
 
         $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field];
+        ${'new_' . $field} = $_POST[$full_field] ?? '';
 
     }
 
@@ -86,7 +86,7 @@ if ($result) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     $date = new DomainMOD\Date();
 
@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = $queryB->missingFees('ssl_certs');
             $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s updated'), $new_name) . '<BR>';
 
@@ -234,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to update SSL certificate';
             $log_extra = array('Error' => $e);
@@ -340,8 +340,9 @@ if ($del === 1) {
 
         $system->checkExistingAssets();
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
 
+        $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
         $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s (%s) deleted'), $new_name, $temp_type) . '<BR>';
 
         header("Location: index.php");
@@ -349,7 +350,7 @@ if ($del === 1) {
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         $log_message = 'Unable to delete SSL certificate';
         $log_extra = array('Error' => $e);

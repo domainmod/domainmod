@@ -4,7 +4,7 @@
  * /_includes/layout/footer.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -76,7 +76,7 @@ if (file_exists($full_filename)) {
         //Initialize Select2 Elements
         $('.select2').select2()
 
-        <?php echo $datatable_options; ?>
+        <?php echo $datatable_options ?? ''; ?>
 
         $("input[data-bootstrap-switch]").each(function(){
             $(this).bootstrapSwitch('state', $(this).prop('checked'));

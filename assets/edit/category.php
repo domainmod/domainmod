@@ -3,7 +3,7 @@
  * /assets/edit/category.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,18 +42,18 @@ require_once DIR_INC . '/settings/assets-edit-category.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$pcid = (int) $_GET['pcid'];
+$pcid = (int) ($_GET['pcid'] ?? 0);
 
-$new_category = $sanitize->text($_REQUEST['new_category']);
-$new_stakeholder = $sanitize->text($_REQUEST['new_stakeholder']);
-$new_notes = $sanitize->text($_REQUEST['new_notes']);
-$new_pcid = (int) $_REQUEST['new_pcid'];
+$new_category = isset($_REQUEST['new_category']) ? $sanitize->text($_REQUEST['new_category']) : '';
+$new_stakeholder = isset($_REQUEST['new_stakeholder']) ? $sanitize->text($_REQUEST['new_stakeholder']) : '';
+$new_notes = isset($_REQUEST['new_notes']) ? $sanitize->text($_REQUEST['new_notes']) : '';
+$new_pcid = (int) ($_REQUEST['new_pcid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_category)) {
 

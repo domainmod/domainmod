@@ -3,7 +3,7 @@
  * /bulk/cf/step-one/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -37,11 +37,11 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$field_id = (int) $_REQUEST['field_id'];
-$is_submitted = (int) $_POST['is_submitted'];
+$field_id = (int) ($_REQUEST['field_id'] ?? 0);
+$is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 <?php
 echo $form->showFormTop('');
 
-if ($field_id == '') {
+if ($field_id == '0') {
 
     echo $form->showDropdownTop('field_id', '', '', '', '');
     echo $form->showDropdownOption('', _('Choose the Custom Field to Edit'), $action);

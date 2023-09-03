@@ -3,7 +3,7 @@
  * /_includes/init.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -22,17 +22,19 @@
 <?php
 // PHP named constants
 define('DIR_ROOT', dirname(dirname(__FILE__)));
-define('DIR_INC', DIR_ROOT . '/_includes');
-define('DIR_TEMP', DIR_ROOT . '/temp');
-define('DIR_LOCALES', DIR_ROOT . '/locales');
-define('WEBROOT_THEME', 'theme');
-define('EMAIL_ENCODING_TYPE', 'UTF-8'); // UTF-8 or iso-8859-1
+const DIR_INC = DIR_ROOT . '/_includes';
+const DIR_TEMP = DIR_ROOT . '/temp';
+const DIR_LOCALES = DIR_ROOT . '/locales';
+const WEBROOT_THEME = 'theme';
+const EMAIL_ENCODING_TYPE = 'UTF-8'; // UTF-8 or iso-8859-1
 
 // PHP.ini overrides
 date_default_timezone_set('UTC');
 @error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 @ini_set('display_errors', '0');
 @ini_set('log_errors', '1');
+
+$_SESSION['s_system_local_php_log'] = $_SESSION['s_system_local_php_log'] ?? '';
 
 if ($_SESSION['s_system_local_php_log'] == '1') {
 
@@ -58,8 +60,8 @@ if (isset($_SESSION['s_installation_language'])) {
     define('DEFAULT_LANGUAGE', 'en_US.UTF-8');
 
 }
-define('DEFAULT_ENCODING_TYPE', 'UTF-8');
-define('LOCALES_DOMAIN', 'main');
+const DEFAULT_ENCODING_TYPE = 'UTF-8';
+const LOCALES_DOMAIN = 'main';
 putenv("LANG=DEFAULT_LANGUAGE");
 putenv("LC_ALL=DEFAULT_LANGUAGE");
 setlocale(LC_ALL, DEFAULT_LANGUAGE);

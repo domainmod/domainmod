@@ -3,7 +3,7 @@
  * /_includes/updates/4.06.00-current.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -31,12 +31,12 @@ if ($current_db_version === '4.06.00') {
 
         $pdo->beginTransaction();
         $upgrade->database($new_version);
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -54,12 +54,12 @@ if ($current_db_version === '4.06.01') {
 
         $pdo->beginTransaction();
         $upgrade->database($new_version);
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -77,12 +77,12 @@ if ($current_db_version === '4.07.00') {
 
         $pdo->beginTransaction();
         $upgrade->database($new_version);
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -125,12 +125,12 @@ if ($current_db_version === '4.08.00') {
             WHERE name = 'ResellerClub'");
 
         $upgrade->database($new_version);
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -150,12 +150,12 @@ if ($current_db_version === '4.09.00') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -175,12 +175,12 @@ if ($current_db_version === '4.09.01') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -200,12 +200,12 @@ if ($current_db_version === '4.09.02') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -225,12 +225,12 @@ if ($current_db_version === '4.09.03') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -250,12 +250,12 @@ if ($current_db_version === '4.10.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -275,12 +275,12 @@ if ($current_db_version === '4.11.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -300,12 +300,12 @@ if ($current_db_version === '4.11.01') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1219,12 +1219,12 @@ if ($current_db_version === '4.12.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1256,12 +1256,12 @@ if ($current_db_version === '4.13.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1303,12 +1303,12 @@ if ($current_db_version === '4.14.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1356,12 +1356,12 @@ if ($current_db_version === '4.15.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1387,12 +1387,12 @@ if ($current_db_version === '4.16.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1416,12 +1416,12 @@ if ($current_db_version === '4.17.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1441,12 +1441,12 @@ if ($current_db_version === '4.18.0') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 
@@ -1501,12 +1501,12 @@ if ($current_db_version === '4.18.01') {
 
         $upgrade->database($new_version);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
         $upgrade->logFailedUpgrade($old_version, $new_version, $e);
         throw $e;
 

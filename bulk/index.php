@@ -3,7 +3,7 @@
  * /bulk/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,10 +38,14 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$http_referer = $_SERVER['HTTP_REFERER'] ?? '';
+$system->readOnlyCheck($http_referer);
 
-$action = $sanitize->text($_REQUEST['action']);
-$is_submitted = (int) $_POST['is_submitted'];
+$action = isset($_REQUEST['action']) ? $sanitize->text($_REQUEST['action']) : '';
+$is_submitted = (int) ($_POST['is_submitted'] ?? 0);
+
+echo $action . '<BR>';
+echo $is_submitted . '<BR>';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 

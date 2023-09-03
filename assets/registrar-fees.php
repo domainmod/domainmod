@@ -3,7 +3,7 @@
  * /assets/registrar-fees.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -40,8 +40,8 @@ require_once DIR_INC . '/settings/assets-registrar-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$rid = (int) $_GET['rid'];
-$export_data = (int) $_GET['export_data'];
+$rid = (int) ($_GET['rid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 $registrar_name = $assets->getRegistrar($rid);
 

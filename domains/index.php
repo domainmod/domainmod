@@ -3,7 +3,7 @@
  * /domains/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -47,21 +47,21 @@ require_once DIR_INC . '/settings/domains-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
-$pcid = (int) $_REQUEST['pcid'];
-$oid = (int) $_REQUEST['oid'];
-$dnsid = (int) $_REQUEST['dnsid'];
-$ipid = (int) $_REQUEST['ipid'];
-$whid = (int) $_REQUEST['whid'];
-$rid = (int) $_REQUEST['rid'];
-$raid = (int) $_REQUEST['raid'];
-$tld = $sanitize->text($_REQUEST['tld']);
-$segid = (int) $_REQUEST['segid'];
-$is_active = $_REQUEST['is_active'];
-$search_for = $sanitize->text($_REQUEST['search_for']);
-$from_dropdown = (int) $_REQUEST['from_dropdown'];
-$expand = (int) $_REQUEST['expand'];
-$daterange = $sanitize->text($_REQUEST['daterange']);
+$export_data = (int) ($_GET['export_data'] ?? 0);
+$pcid = (int) ($_REQUEST['pcid'] ?? 0);
+$oid = (int) ($_REQUEST['oid'] ?? 0);
+$dnsid = (int) ($_REQUEST['dnsid'] ?? 0);
+$ipid = (int) ($_REQUEST['ipid'] ?? 0);
+$whid = (int) ($_REQUEST['whid'] ?? 0);
+$rid = (int) ($_REQUEST['rid'] ?? 0);
+$raid = (int) ($_REQUEST['raid'] ?? 0);
+$tld = isset($_REQUEST['tld']) ? $sanitize->text($_REQUEST['tld']) : '';
+$segid = (int) ($_REQUEST['segid'] ?? 0);
+$is_active = $_REQUEST['is_active'] ?? '';
+$search_for = isset($_REQUEST['search_for']) ? $sanitize->text($_REQUEST['search_for']) : '';
+$from_dropdown = (int) ($_REQUEST['from_dropdown'] ?? 0);
+$expand = (int) ($_REQUEST['expand'] ?? 0);
+$daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterange']) : '';
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
@@ -90,6 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($export_data !== 1) {
+
+    $numBegin = $numBegin ?? '';
 
     if ($from_dropdown !== 1) {
 
@@ -961,9 +963,9 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $temp_numbegin = isset($_REQUEST['numBegin']) ? $_REQUEST['numBegin'] : 0;
-    $temp_begin = isset($_REQUEST['begin']) ? $_REQUEST['begin'] : 0;
-    $temp_num = isset($_REQUEST['num']) ? $_REQUEST['num'] : 0;
+    $temp_numbegin = $_REQUEST['numBegin'] ?? 0;
+    $temp_begin = $_REQUEST['begin'] ?? 0;
+    $temp_num = $_REQUEST['num'] ?? 0;
 
     $parameters = array($total_rows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $temp_numbegin, $temp_begin, $temp_num);
     $navigate = $layout->pageBrowser($parameters);
@@ -2533,6 +2535,7 @@ if ($result) { ?>
 
 } else {
 
+    $ready_for_domains = $ready_for_domains ?? 0;
     if ($ready_for_domains === 1) { ?>
 
         <BR><BR><a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php

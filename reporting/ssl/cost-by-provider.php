@@ -3,7 +3,7 @@
  * /reporting/ssl/cost-by-provider.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -44,8 +44,8 @@ require_once DIR_INC . '/settings/reporting-ssl-cost-by-provider.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$export_data = (int) $_GET['export_data'];
-$daterange = $sanitize->text($_REQUEST['daterange']);
+$export_data = (int) ($_GET['export_data'] ?? 0);
+$daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterange']) : '';
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
@@ -107,6 +107,7 @@ foreach ($result_grand_total as $row_grand_total) {
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
+$submission_failed = $submission_failed ?? 0;
 if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data === 1) {

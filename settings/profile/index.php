@@ -3,7 +3,7 @@
  * /settings/profile/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -47,13 +47,13 @@ require_once DIR_INC . '/settings/settings-profile.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_first_name = $sanitize->text($_POST['new_first_name']);
-$new_last_name = $sanitize->text($_POST['new_last_name']);
-$new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_language = $sanitize->text($_POST['new_language']);
-$new_currency = $sanitize->text($_POST['new_currency']);
-$new_timezone = $sanitize->text($_POST['new_timezone']);
-$new_expiration_emails = (int) $_POST['new_expiration_emails'];
+$new_first_name = isset($_POST['new_first_name']) ? $sanitize->text($_POST['new_first_name']) : '';
+$new_last_name = isset($_POST['new_last_name']) ? $sanitize->text($_POST['new_last_name']) : '';
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
+$new_language = isset($_POST['new_language']) ? $sanitize->text($_POST['new_language']) : '';
+$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
+$new_timezone = isset($_POST['new_timezone']) ? $sanitize->text($_POST['new_timezone']) : '';
+$new_expiration_emails = (int) ($_POST['new_expiration_emails'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_email_address != "") {
 
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space'])
                 = $currency->getCurrencyInfo($new_currency);
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= _('Your profile was updated') . '<BR>';
 
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to update profile';
             $log_extra = array('Error' => $e);

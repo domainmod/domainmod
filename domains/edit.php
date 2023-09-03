@@ -3,7 +3,7 @@
  * /domains/edit.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -45,23 +45,23 @@ require_once DIR_INC . '/settings/domains-edit.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$did = (int) $_REQUEST['did'];
+$did = (int) ($_REQUEST['did'] ?? 0);
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$new_domain = $sanitize->text($_POST['new_domain']);
-$new_tld = $_POST['new_tld'];
-$new_expiry_date = $_POST['datepick'];
-$new_function = $sanitize->text($_POST['new_function']);
-$new_cat_id = (int) $_POST['new_cat_id'];
-$new_dns_id = (int) $_POST['new_dns_id'];
-$new_ip_id = (int) $_POST['new_ip_id'];
-$new_hosting_id = (int) $_POST['new_hosting_id'];
-$new_account_id = (int) $_POST['new_account_id'];
-$new_autorenew = (int) $_POST['new_autorenew'];
-$new_privacy = (int) $_POST['new_privacy'];
-$new_active = (int) $_POST['new_active'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_domain = isset($_POST['new_domain']) ? $sanitize->text($_POST['new_domain']) : '';
+$new_tld = $_POST['new_tld'] ?? '';
+$new_expiry_date = $_POST['datepick'] ?? '';
+$new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_function']) : '';
+$new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
+$new_dns_id = (int) ($_POST['new_dns_id'] ?? 0);
+$new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
+$new_hosting_id = (int) ($_POST['new_hosting_id'] ?? 0);
+$new_account_id = (int) ($_POST['new_account_id'] ?? 0);
+$new_autorenew = (int) ($_POST['new_autorenew'] ?? 0);
+$new_privacy = (int) ($_POST['new_privacy'] ?? 0);
+$new_active = (int) ($_POST['new_active'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 // Custom Fields
 $result = $pdo->query("
@@ -83,7 +83,7 @@ if ($result) {
     foreach ($field_array as $field) {
 
         $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field];
+        ${'new_' . $field} = $_POST[$full_field] ?? '';
 
     }
 
@@ -91,7 +91,7 @@ if ($result) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     $date = new DomainMOD\Date();
 
@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = $queryB->missingFees('domains');
             $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain);
 
@@ -253,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to edit domain';
             $log_extra = array('Error' => $e);
@@ -352,6 +352,7 @@ if ($del === 1) {
 
     }
 
+    $existing_ssl_certs = $existing_ssl_certs ?? 0;
     if ($existing_ssl_certs > 0) {
 
         $_SESSION['s_message_danger'] .= _('This Domain has SSL Certificates associated with it and cannot be deleted') . '<BR>';
@@ -378,16 +379,17 @@ if ($del === 1) {
 
             $system->checkExistingAssets();
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
-            $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted', $new_domain)) . '<BR>';
+            $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
+            $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted'), $new_domain) . '<BR>';
 
             header("Location: ../domains/index.php");
             exit;
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to delete domain';
             $log_extra = array('Error' => $e);

@@ -3,7 +3,7 @@
  * /settings/display/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,16 +41,16 @@ require_once DIR_INC . '/settings/settings-display.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$new_number_of_domains = (int) $_POST['new_number_of_domains'];
-$new_number_of_ssl_certs = (int) $_POST['new_number_of_ssl_certs'];
-$domain_column_options = $_POST['domain_column_options'];
+$new_number_of_domains = (int) ($_POST['new_number_of_domains'] ?? 0);
+$new_number_of_ssl_certs = (int) ($_POST['new_number_of_ssl_certs'] ?? 0);
+$domain_column_options = $_POST['domain_column_options'] ?? '';
 
-$custom_domain_fields = $_POST['custom_domain_fields'];
-$custom_ssl_fields = $_POST['custom_ssl_fields'];
-$ssl_column_options = $_POST['ssl_column_options'];
-$new_display_inactive_assets = (int) $_POST['new_display_inactive_assets'];
-$new_display_dw_intro_page = (int) $_POST['new_display_dw_intro_page'];
-$new_dark_mode = (int) $_POST['new_dark_mode'];
+$custom_domain_fields = $_POST['custom_domain_fields'] ?? array('');
+$custom_ssl_fields = $_POST['custom_ssl_fields'] ?? '';
+$ssl_column_options = $_POST['ssl_column_options'] ?? '';
+$new_display_inactive_assets = (int) ($_POST['new_display_inactive_assets'] ?? 0);
+$new_display_dw_intro_page = (int) ($_POST['new_display_dw_intro_page'] ?? 0);
+$new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

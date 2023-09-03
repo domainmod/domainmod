@@ -3,7 +3,7 @@
  * /_includes/layout/menu-main.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -41,7 +41,10 @@
                 </p>
             </a>
         </li>
-        <?php if ($_SESSION['s_domains_in_list_queue'] == '1' || $_SESSION['s_domains_in_queue'] == '1') { ?>
+        <?php 
+	    $domains_in_list_queue = $_SESSION['s_domains_in_list_queue'] ?? '';
+	    $domains_in_queue = $_SESSION['s_domains_in_queue'] ?? '';
+	    if ($domains_in_list_queue == '1' || $domains_in_queue == '1') { ?>
         <li class="nav-item">
             <a href="<?php echo $web_root; ?>/queue/" class="nav-link<?php if ($software_section == "queue") echo " active"; ?>">
                 <i class="nav-icon fas fa-hourglass"></i>
@@ -92,7 +95,7 @@
             </a>
         </li>
 
-        <?php if ($_SESSION['s_is_admin'] === 1) { ?>
+        <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
             <li class="nav-item">
                 <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>">
                     <i class="nav-icon fas fa-database"></i>
@@ -167,7 +170,7 @@
             </ul>
         </li>
 
-        <?php if ($_SESSION['s_is_admin'] === 1) { ?>
+        <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
             <li class="nav-item<?php if ($software_section == "admin") echo " menu-open"; ?>">
                 <a href="#" class="nav-link<?php if ($software_section == "admin") echo " active"; ?>">
                     <i class="nav-icon fas fa-wrench"></i>

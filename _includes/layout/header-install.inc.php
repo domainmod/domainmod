@@ -3,7 +3,7 @@
  * /_includes/layout/header-install.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -31,16 +31,19 @@
         <!-- /.login-logo -->
         <BR>
         <?php
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         if ($_SESSION['s_message_danger'] != "") {
             echo $system->showMessageDanger($_SESSION['s_message_danger']);
             unset($_SESSION['s_message_danger']);
         }
 
+        $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
         if ($_SESSION['s_message_success'] != "") {
             echo $system->showMessageSuccess($_SESSION['s_message_success']);
             unset($_SESSION['s_message_success']);
         }
 
+        $_SESSION['s_message_info'] = $_SESSION['s_message_info'] ?? '';
         if ($_SESSION['s_message_info'] != "") {
             echo $system->showMessageInfo($_SESSION['s_message_info']);
             unset($_SESSION['s_message_info']);

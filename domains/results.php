@@ -3,7 +3,7 @@
  * /domains/results.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,9 +39,9 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = (int) $_GET['segid'];
-$export_data = (int) $_GET['export_data'];
-$type = $_GET['type'];
+$segid = (int) ($_GET['segid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
+$type = $_GET['type'] ?? '';
 
 if ($type == "inactive") {
     $page_title = _('Segments') . ' - ' . _('Inactive Domains');

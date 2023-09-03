@@ -3,7 +3,7 @@
  * /assets/edit/registrar-fee.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -45,19 +45,19 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
-$fee_id = (int) $_REQUEST['fee_id'];
-$rid = (int) $_REQUEST['rid'];
-$new_tld = $sanitize->text($_POST['new_tld']);
-$new_initial_fee = (float) $_POST['new_initial_fee'];
-$new_renewal_fee = (float) $_POST['new_renewal_fee'];
-$new_transfer_fee = (float) $_POST['new_transfer_fee'];
-$new_privacy_fee = (float) $_POST['new_privacy_fee'];
-$new_misc_fee = (float) $_POST['new_misc_fee'];
-$new_currency_id = (int) $_POST['new_currency_id'];
+$fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
+$rid = (int) ($_REQUEST['rid'] ?? 0);
+$new_tld = isset($_POST['new_tld']) ? $sanitize->text($_POST['new_tld']) : '';
+$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
+$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
+$new_transfer_fee = (float) ($_POST['new_transfer_fee'] ?? 0.0);
+$new_privacy_fee = (float) ($_POST['new_privacy_fee'] ?? 0.0);
+$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+$new_currency_id = (int) ($_POST['new_currency_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     try {
 
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-        $pdo->commit();
+        if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated'), $new_tld) . '<BR>';
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } catch (Exception $e) {
 
-        $pdo->rollback();
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         $log_message = 'Unable to update registrar fee';
         $log_extra = array('Error' => $e);

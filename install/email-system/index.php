@@ -3,7 +3,7 @@
  * /install/email-system/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,6 +39,8 @@ require_once DIR_INC . '/settings/install.email.system.inc.php';
 $system->loginCheck();
 $system->installCheck();
 
+$_SESSION['new_system_email'] = $_SESSION['new_system_email'] ?? '';
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_system_email']) {
 
     $new_system_email1 = $_SESSION['new_system_email'];
@@ -46,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_system_email']) {
 
 } else {
 
-    $new_system_email1 = $sanitize->text($_POST['new_system_email1']);
-    $new_system_email2 = $sanitize->text($_POST['new_system_email2']);
+    $new_system_email1 = isset($_POST['new_system_email1']) ? $sanitize->text($_POST['new_system_email1']) : '';
+    $new_system_email2 = isset($_POST['new_system_email2']) ? $sanitize->text($_POST['new_system_email2']) : '';
 
 }
 

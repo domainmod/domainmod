@@ -3,7 +3,7 @@
  * /assets/edit/registrar.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -34,7 +34,7 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
-$validate = new \DomainMOD\Validate();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -43,17 +43,17 @@ require_once DIR_INC . '/settings/assets-edit-registrar.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$rid = (int) $_REQUEST['rid'];
-$new_registrar = $sanitize->text($_POST['new_registrar']);
-$new_url = $sanitize->text($_POST['new_url']);
-$new_api_registrar_id = (int) $_POST['new_api_registrar_id'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$rid = (int) ($_REQUEST['rid'] ?? 0);
+$new_registrar = isset($_POST['new_registrar']) ? $sanitize->text($_POST['new_registrar']) : '';
+$new_url = isset($_POST['new_url']) ? $sanitize->text($_POST['new_url']) : '';
+$new_api_registrar_id = (int) ($_POST['new_api_registrar_id'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_registrar)) {
 
@@ -170,7 +170,7 @@ if ($del === 1) {
 
             $system->checkExistingAssets();
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('Registrar %s deleted'), $new_registrar) . '<BR>';
 
@@ -179,7 +179,7 @@ if ($del === 1) {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to delete registrar';
             $log_extra = array('Error' => $e);

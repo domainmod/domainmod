@@ -3,7 +3,7 @@
  * /bulk/cf/step-two/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -48,14 +48,14 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/bulk-main.inc.php';
 
 $system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$raw_domain_list = $sanitize->text($_POST['raw_domain_list']);
-$new_notes = $sanitize->text($_POST['new_notes']);
-$id = (int) $_REQUEST['id'];
+$raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+$id = (int) ($_REQUEST['id'] ?? 0);
 $type_id = $custom_field->getTypeId('domain_fields', $id);
-$is_submitted = (int) $_POST['is_submitted'];
+$is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
 // Custom Fields
 $result = $pdo->query("
@@ -77,7 +77,7 @@ if ($result) {
     foreach ($field_array as $field) {
 
         $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field];
+        ${'new_' . $field} = $_POST[$full_field] ?? '';
 
     }
 
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     }
 
-                    $pdo->commit();
+                    if ($pdo->InTransaction()) $pdo->commit();
 
                     $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 } catch (Exception $e) {
 
-                    $pdo->rollback();
+                    if ($pdo->InTransaction()) $pdo->rollback();
 
                     $log_message = 'Unable to update custom field';
                     $log_extra = array('Error' => $e);
@@ -244,9 +244,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 $breadcrumb_text = _('Update Custom Domain Field');
 $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
 ?>
-
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+$done = $done ?? '';
 if ($done != '1') {
     echo _("The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
 } ?>

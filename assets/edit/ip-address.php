@@ -3,7 +3,7 @@
  * /assets/edit/ip-address.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -42,18 +42,18 @@ require_once DIR_INC . '/settings/assets-edit-ip-address.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$ipid = (int) $_GET['ipid'];
-$new_name = $sanitize->text($_POST['new_name']);
-$new_ip = $sanitize->text($_POST['new_ip']);
-$new_rdns = $sanitize->text($_POST['new_rdns']);
-$new_ipid = (int) $_POST['new_ipid'];
-$new_notes = $sanitize->text($_POST['new_notes']);
+$ipid = (int) ($_GET['ipid'] ?? 0);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_ip = isset($_POST['new_ip']) ? $sanitize->text($_POST['new_ip']) : '';
+$new_rdns = isset($_POST['new_rdns']) ? $sanitize->text($_POST['new_rdns']) : '';
+$new_ipid = (int) ($_POST['new_ipid'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_name) && $validate->text($new_ip)) {
 

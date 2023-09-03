@@ -17,8 +17,8 @@ So go ahead, take the live demo for a test drive before you install: <https://de
 
 Requirements
 ------------
-**Software**: PHP v5.5+, MySQL  
-**PHP Extensions**: PDO (MySQL), cURL, OpenSSL, gettext  
+**Software**: PHP 8.1-8.2.9, MariaDB 10.4-11.1.2 or MySQL 5.7-8.1.0  
+**PHP Extensions**: PDO (MariaDB/MySQL), cURL, OpenSSL, gettext  
 **PHP Settings**: allow_url_fopen  
 
 Downloading
@@ -160,7 +160,7 @@ Please see the CHANGELOG file that came with DomainMOD, or view the Changelog on
 License
 -------
 DomainMOD is an open source domain and internet asset manager.  
-Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
 
 DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

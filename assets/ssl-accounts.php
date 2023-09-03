@@ -3,7 +3,7 @@
  * /assets/ssl-accounts.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,10 +38,10 @@ require_once DIR_INC . '/settings/assets-ssl-accounts.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslpid = (int) $_GET['sslpid'];
-$sslpaid = (int) $_GET['sslpaid'];
-$oid = (int) $_GET['oid'];
-$export_data = (int) $_GET['export_data'];
+$sslpid = (int) ($_GET['sslpid'] ?? 0);
+$sslpaid = (int) ($_GET['sslpaid'] ?? 0);
+$oid = (int) ($_GET['oid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 if ($sslpid !== 0) { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }
 if ($sslpaid !== 0) { $sslpaid_string = ' AND sa.id = ' . $sslpaid . ' '; } else { $sslpaid_string = ''; }

@@ -3,7 +3,7 @@
  * /admin/dw/add-server.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,17 +39,17 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dw-add-server.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
-$new_name = $sanitize->text($_POST['new_name']);
-$new_host = $sanitize->text($_POST['new_host']);
-$new_protocol = $_POST['new_protocol'];
-$new_port = (int) $_POST['new_port'];
-$new_username = $sanitize->text($_POST['new_username']);
-$new_api_token = $sanitize->text($_POST['new_api_token']);
-$new_hash = $sanitize->text($_POST['new_hash']);
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_host = isset($_POST['new_host']) ? $sanitize->text($_POST['new_host']) : '';
+$new_protocol = $_POST['new_protocol'] ?? '';
+$new_port = (int) ($_POST['new_port'] ?? 0);
+$new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']): '';
+$new_api_token = isset($_POST['new_api_token']) ? $sanitize->text($_POST['new_api_token']) : '';
+$new_hash = isset($_POST['new_hash']) ? $sanitize->text($_POST['new_hash']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

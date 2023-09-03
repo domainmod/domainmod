@@ -3,7 +3,7 @@
  * /admin/scheduler/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -39,7 +39,7 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/admin-scheduler-main.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>

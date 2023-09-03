@@ -3,7 +3,7 @@
  * /segments/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -38,8 +38,8 @@ require_once DIR_INC . '/settings/segments-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$segid = (int) $_GET['segid'];
-$export_data = (int) $_GET['export_data'];
+$segid = (int) ($_GET['segid'] ?? 0);
+$export_data = (int) ($_GET['export_data'] ?? 0);
 
 if ($export_data === 1) {
 

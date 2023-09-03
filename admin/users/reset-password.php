@@ -3,7 +3,7 @@
  * /admin/users/reset-password.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -35,14 +35,14 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin']);
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
 $page_title = 'Reset Password';
 $software_section = 'system';
 
-$new_username = $_GET['new_username'];
-$display = $_GET['display'];
+$new_username = $_GET['new_username'] ?? '';
+$display = $_GET['display'] ?? '';
 
 if ($new_username != '') {
 
@@ -76,16 +76,15 @@ if ($new_username != '') {
     } else {
 
         $new_password = $user->generatePassword(30);
-        $new_hash = $user->generateHash($new_password);
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET password = :new_hash,
+            SET password = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))),
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);

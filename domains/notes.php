@@ -3,7 +3,7 @@
  * /domains/notes.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -36,7 +36,7 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$did = (int) $_GET['did'];
+$did = (int) ($_GET['did'] ?? 0);
 
 $stmt = $pdo->prepare("
     SELECT domain, notes

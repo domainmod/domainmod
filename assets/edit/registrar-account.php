@@ -3,7 +3,7 @@
  * /assets/edit/registrar-account.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2022 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2023 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
@@ -35,7 +35,7 @@ $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
-$validate = new \DomainMOD\Validate();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -44,27 +44,27 @@ require_once DIR_INC . '/settings/assets-edit-registrar-account.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$del = (int) $_GET['del'];
+$del = (int) ($_GET['del'] ?? 0);
 
-$raid = (int) $_GET['raid'];
-$new_owner_id = (int) $_POST['new_owner_id'];
-$new_registrar_id = (int) $_POST['new_registrar_id'];
-$new_email_address = $sanitize->text($_POST['new_email_address']);
-$new_username = $sanitize->text($_POST['new_username']);
-$new_password = $sanitize->text($_POST['new_password']);
-$new_account_id = $sanitize->text($_POST['new_account_id']);
-$new_reseller = (int) $_POST['new_reseller'];
-$new_reseller_id = $sanitize->text($_POST['new_reseller_id']);
-$new_api_app_name = $sanitize->text($_POST['new_api_app_name']);
-$new_api_key = $sanitize->text($_POST['new_api_key']);
-$new_api_secret = $sanitize->text($_POST['new_api_secret']);
-$new_api_ip_id = (int) $_POST['new_api_ip_id'];
-$new_notes = $sanitize->text($_POST['new_notes']);
-$new_raid = (int) $_POST['new_raid'];
+$raid = (int) ($_GET['raid'] ?? 0);
+$new_owner_id = (int) ($_POST['new_owner_id'] ?? 0);
+$new_registrar_id = (int) ($_POST['new_registrar_id'] ?? 0);
+$new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
+$new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
+$new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
+$new_account_id = isset($_POST['new_account_id']) ? $sanitize->text($_POST['new_account_id']) : '';
+$new_reseller = (int) ($_POST['new_reseller'] ?? 0);
+$new_reseller_id = isset($_POST['new_reseller_id']) ? $sanitize->text($_POST['new_reseller_id']) : '';
+$new_api_app_name = isset($_POST['new_api_app_name']) ? $sanitize->text($_POST['new_api_app_name']) : '';
+$new_api_key = isset($_POST['new_api_key']) ? $sanitize->text($_POST['new_api_key']) : '';
+$new_api_secret = isset($_POST['new_api_secret']) ? $sanitize->text($_POST['new_api_secret']) : '';
+$new_api_ip_id = (int) ($_POST['new_api_ip_id'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+$new_raid = (int) ($_POST['new_raid'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     if ($validate->text($new_username) && $new_owner_id !== 0 && $new_registrar_id !== 0) {
 
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_registrar = $assets->getRegistrar($new_registrar_id);
             $temp_owner = $assets->getOwner($new_owner_id);
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('Registrar Account %s (%s, %s) updated'), $new_username, $temp_registrar, $temp_owner) . '<BR>';
 
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to update registrar account';
             $log_extra = array('Error' => $e);
@@ -243,7 +243,7 @@ if ($del === 1) {
 
             $system->checkExistingAssets();
 
-            $pdo->commit();
+            if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('Registrar Account %s (%s, %s) deleted'), $temp_username, $temp_registrar_name, $temp_owner_name) . '<BR>';
 
@@ -252,7 +252,7 @@ if ($del === 1) {
 
         } catch (Exception $e) {
 
-            $pdo->rollback();
+            if ($pdo->InTransaction()) $pdo->rollback();
 
             $log_message = 'Unable to delete registrar account';
             $log_extra = array('Error' => $e);
