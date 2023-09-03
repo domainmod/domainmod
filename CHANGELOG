@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.0     2023-09-03
+- PHP, MariaDB, and MySQL Compatibility Updates
+- Updated Composer Packages
+- Updated Dynadot's API return structure
+
 v4.19.0     2022-04-24
 - Added CSV Import support
 - Added Cloudflare API support
