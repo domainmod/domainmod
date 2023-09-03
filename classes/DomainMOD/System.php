@@ -75,7 +75,7 @@ class System
         }
 
         // DATABASE (MariaDB or MySQL)
-        $software = _('MariaDB (10.4-11.1.2) or MySQL (5.7-8.1.0)');
+        $software = 'MariaDB (10.4-11.1.2) or MySQL (5.7-8.1.0)';
 
         if ($this->deeb->getDbType() == 'MariaDB') {
 
