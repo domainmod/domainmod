@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.01    2023-09-03
+- Updated version checking to use version_compare
+
 v4.20.0     2023-09-03
 - PHP, MariaDB, and MySQL Compatibility Updates
 - Updated Composer Packages
