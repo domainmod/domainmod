@@ -44,7 +44,7 @@ if (isset($disable_csp) && $disable_csp === 0) {
 
     }
 
-    if ($force_https === 1) {
+    if (isset($force_https) && $force_https === 1) {
 
         $csp_header .= ' upgrade-insecure-requests;';
 
