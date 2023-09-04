@@ -60,7 +60,7 @@ class System
         $min_php_version = '8.1';
         $installed_php_version = phpversion();
 
-        if (floatval($installed_php_version) >= floatval($min_php_version)) {
+        if (version_compare($installed_php_version, $min_php_version, '>=')) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -91,7 +91,7 @@ class System
 
         }
 
-        if (floatval($this->deeb->getDbVersion()) >= floatval($min_db_version)) {
+        if (version_compare($this->deeb->getDbVersion(), $min_db_version, '>=')) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -196,7 +196,7 @@ class System
         $pdo = $this->deeb->cnxx;
         $live_version = $this->getLiveVersion();
 
-        if (floatval($current_version) < floatval($live_version) && $live_version != '') {
+        if (version_compare($current_version, $live_version, '<') && $live_version != '') {
 
             $pdo->query("UPDATE settings SET upgrade_available = '1'");
             $_SESSION['s_system_upgrade_available'] = '1';
