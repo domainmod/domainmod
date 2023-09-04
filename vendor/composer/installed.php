@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '25d16f89a369466fce7d9597278ea1ff1fa64ec9',
+        'reference' => '40d2ab93db98c989f5071c3de07ad17f76207061',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '25d16f89a369466fce7d9597278ea1ff1fa64ec9',
+            'reference' => '40d2ab93db98c989f5071c3de07ad17f76207061',
             'dev_requirement' => false,
         ),
         'auth0/auth0-php' => array(
