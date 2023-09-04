@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-if ($_SERVER['HTTP_HOST'] == 'demo.domainmod.org') {
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] == 'demo.domainmod.org') {
 
     define('DEMO_INSTALLATION', true);
 

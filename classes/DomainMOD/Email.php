@@ -226,7 +226,13 @@ class Email
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
             return array($domains_expiring, $ssl_expiring);
         } else {
-            $_SESSION['s_message_success'] .= _('No Upcoming Expirations') . '<BR>';
+
+            if (isset($_SESSION['s_message_success'])) {
+
+                $_SESSION['s_message_success'] .= _('No Upcoming Expirations') . '<BR>';
+
+            }
+
             if ($from_cron === true) exit;
             return false;
         }
