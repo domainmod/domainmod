@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ac45d57e94805297e4525f4d37d939c5db1a29e5',
+        'reference' => '25d16f89a369466fce7d9597278ea1ff1fa64ec9',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ac45d57e94805297e4525f4d37d939c5db1a29e5',
+            'reference' => '25d16f89a369466fce7d9597278ea1ff1fa64ec9',
             'dev_requirement' => false,
         ),
         'auth0/auth0-php' => array(
@@ -50,12 +50,12 @@
             ),
         ),
         'dragonmantank/cron-expression' => array(
-            'pretty_version' => 'v3.3.2',
-            'version' => '3.3.2.0',
+            'pretty_version' => 'v3.3.3',
+            'version' => '3.3.3.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../dragonmantank/cron-expression',
             'aliases' => array(),
-            'reference' => '782ca5968ab8b954773518e9e49a6f892a34b2a8',
+            'reference' => 'adfb1f505deb6384dc8b39804c5065dd3c8c8c0a',
             'dev_requirement' => false,
         ),
         'firebase/php-jwt' => array(
