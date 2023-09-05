@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.05    2023-09-05
+- Rolled back PHP dependencies to 4.19.0
+
 v4.20.04    2023-09-04
 - Added "optimize-autoloader: true" to composer.json
 
