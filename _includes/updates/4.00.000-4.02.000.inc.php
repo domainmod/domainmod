@@ -22,7 +22,7 @@
 <?php //@formatter:off
 
 // upgrade database from 4.00.000 to 4.00.001
-if ($current_db_version === '4.00.000') {
+if (isset($current_db_version) && $current_db_version === '4.00.000') {
 
     $pdo->query("
         ALTER TABLE `settings`

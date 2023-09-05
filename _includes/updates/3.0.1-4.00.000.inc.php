@@ -22,7 +22,7 @@
 <?php //@formatter:off
 
 // upgrade database from 3.0.1 to 3.0.2
-if ($current_db_version === '3.0.1') {
+if (isset($current_db_version) && $current_db_version === '3.0.1') {
 
     $pdo->query("
         ALTER TABLE `settings`
