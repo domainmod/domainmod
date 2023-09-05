@@ -65,7 +65,7 @@ if (DEMO_INSTALLATION == false) {
 
         if ($result->active == '1') {
 
-            $cron = \Cron\CronExpression::factory($result->expression);
+            $cron = new Cron\CronExpression($result->expression);
             $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
         } else {

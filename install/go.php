@@ -1076,7 +1076,7 @@ try {
     $stmt->execute();
 
     // Update tasks that run daily
-    $cron = new \Cron\CronExpression('0 7 * * *');
+    $cron = new Cron\CronExpression('0 7 * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("
@@ -1085,7 +1085,7 @@ try {
         WHERE `interval` = 'Daily'");
 
     // Update tasks that run every 5 minutes
-    $cron = new \Cron\CronExpression('*/5 * * * *');
+    $cron = new Cron\CronExpression('*/5 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("

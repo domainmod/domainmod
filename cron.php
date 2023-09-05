@@ -64,7 +64,7 @@ if (DEMO_INSTALLATION == false) {
 
         foreach ($result as $row) {
 
-            $cron = \Cron\CronExpression::factory($row->expression);
+            $cron = new Cron\CronExpression($row->expression);
             $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
             $log_extra = array('Task ID' => $row->id, 'Name' => $row->name, 'Slug' => $row->slug, 'Expression' => $row->expression, 'Active' => $row->active, 'Next Run' => $next_run);

@@ -71,7 +71,7 @@ if ($a == 'u') {
     $stmt->execute();
     $full_expression = $stmt->fetchColumn();
 
-    $cron = \Cron\CronExpression::factory($full_expression);
+    $cron = new Cron\CronExpression($full_expression);
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $stmt = $pdo->prepare("
