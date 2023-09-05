@@ -1,5 +1,9 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.02    2023-09-04
+- Updated CronExpression class calls
+- Updated Scheduler cron expressions
+
 v4.20.01    2023-09-03
 - Updated version checking to use version_compare
 
