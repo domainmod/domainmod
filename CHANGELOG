@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.03    2023-09-04
+-Added webmozart/assert to composer.json
+
 v4.20.02    2023-09-04
 - Updated CronExpression class calls
 - Updated Scheduler cron expressions
