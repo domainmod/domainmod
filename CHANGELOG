@@ -1,7 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.04    2023-09-04
+- Added "optimize-autoloader: true" to composer.json
+
 v4.20.03    2023-09-04
--Added webmozart/assert to composer.json
+- Added webmozart/assert to composer.json
 
 v4.20.02    2023-09-04
 - Updated CronExpression class calls
