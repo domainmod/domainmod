@@ -108,7 +108,7 @@ class Email
 
         }
 
-        $_SESSION['s_message_success'] .= _('Expiration Email Sent') . '<BR>';
+        if (isset($_SESSION['s_message_success'])) $_SESSION['s_message_success'] .= _('Expiration Email Sent') . '<BR>';
     }
 
     public function getSettings()
