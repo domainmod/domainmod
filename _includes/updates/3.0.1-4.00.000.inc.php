@@ -80,7 +80,7 @@ if ($current_db_version === '3.0.2') {
         ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $timestamp . "'),
         ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $timestamp . "')");
 
-    $cron = new Cron\CronExpression('0 7 * * * *');
+    $cron = new Cron\CronExpression('0 7 * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("
@@ -154,7 +154,7 @@ if ($current_db_version === '3.0.9') {
          VALUES
         ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')");
 
-    $cron = new Cron\CronExpression('0 7 * * * *');
+    $cron = new Cron\CronExpression('0 7 * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $pdo->query("
