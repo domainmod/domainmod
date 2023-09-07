@@ -1657,12 +1657,36 @@ if ($current_db_version === '4.20.03') {
 
 } //@formatter:on
 
-
 // upgrade database from 4.20.04 to 4.20.05
 if ($current_db_version === '4.20.04') {
 
     $old_version = '4.20.04';
     $new_version = '4.20.05';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.20.05 to 4.20.06
+if ($current_db_version === '4.20.05') {
+
+    $old_version = '4.20.05';
+    $new_version = '4.20.06';
 
     try {
 
