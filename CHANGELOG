@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.06    2023-09-06
+- Included Webmozart/Assert dependency
+
 v4.20.05    2023-09-05
 - Rolled back PHP dependencies to 4.19.0
 
