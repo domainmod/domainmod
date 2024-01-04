@@ -1692,6 +1692,36 @@ if ($current_db_version === '4.20.05') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.20.06 to 4.20.07
+if ($current_db_version === '4.20.06') {
+
+    $old_version = '4.20.06';
+    $new_version = '4.20.07';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+            UPDATE settings
+            SET currency_converter = 'fcra',
+                update_time = '" . $timestamp . "'");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */

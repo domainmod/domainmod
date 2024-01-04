@@ -1191,7 +1191,7 @@ try {
             `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `expiration_days` INT(3) NOT NULL DEFAULT '60',
             `email_signature` INT(10) UNSIGNED NOT NULL DEFAULT '1',
-            `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'erh',
+            `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'fcra',
             `use_smtp` TINYINT(1) NOT NULL DEFAULT '0',
             `smtp_server` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `smtp_protocol` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'tls',
