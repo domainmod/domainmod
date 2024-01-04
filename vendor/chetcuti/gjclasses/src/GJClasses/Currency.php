@@ -41,6 +41,18 @@ class Currency
             $json_result = json_decode($result, true);
             $conversion_rate = $json_result['conversion_rate'];
 
+        } elseif ($this->source === 'fcra') {
+
+            $from_currency = strtolower($from_currency);
+            $to_currency = strtolower($to_currency);
+
+            $full_url = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/' . $from_currency . '/' . $to_currency . '.json';
+            $remote = new Remote();
+            $result = $remote->getFileContents($full_url);
+            if ($result === false) return false;
+            $json_result = json_decode($result, true);
+            $conversion_rate = $json_result[$to_currency];
+
         } elseif ($this->source === 'fixer') {
 
             $full_url = 'http://data.fixer.io/api/convert?access_key=' . $this->api_key . '&from=' . $from_currency . '&to=' . $to_currency;

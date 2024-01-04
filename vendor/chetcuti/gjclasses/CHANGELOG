@@ -1,5 +1,8 @@
 GJClasses CHANGELOG
 ===================
+v0.51.0    2024-01-03
+- Added support for Free Currency Rates API
+
 v0.50.0    2022-12-17
 - Changed title to subject in PersonalApi class
 
