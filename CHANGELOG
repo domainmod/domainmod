@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.20.07    2024-01-03
+- Added support for Free Currency Rates API
+- Updated Composer
+- Upgraded GJClasses (0.50.0 -> 0.51.0)
+
 v4.20.06    2023-09-06
 - Included Webmozart/Assert dependency
 
