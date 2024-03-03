@@ -199,7 +199,7 @@
 <p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
 <h2 id="supported-registrars">Supported Registrars</h2>
 <p>The following registrars are currently supported by the Domain Queue:</p>
-<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, ResellerClub</strong></p>
+<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, Porkbun, ResellerClub</strong></p>
 <h2 id="usage">Usage</h2>
 <div class="admonition warning">
 <p class="admonition-title">Requirement</p>
@@ -247,6 +247,9 @@
 <p>NameSilo's domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer</p>
 <p>When retrieving your list of domains via the API, <strong>Inactive</strong> domains are not returned.</p>
 <p>When retrieving the details of a specific domain via the API, <strong>Inactive</strong> and <strong>Expired (pending delete)</strong> domains will not return any data.</p>
+<h4>Porkbun</h4>
+
+<p>When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
 <h4>ResellerClub</h4>
 
 <p>ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.</p>
@@ -273,7 +276,7 @@
   </div>
 
   <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2023 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+  Copyright (c) 2010-2024 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
 
 </footer>
       
