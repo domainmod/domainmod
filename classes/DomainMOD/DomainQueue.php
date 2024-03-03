@@ -162,6 +162,12 @@ class DomainQueue
                     list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
+                } elseif ($row->api_registrar_name == 'Porkbun') {
+
+                    $registrar = new Porkbun();
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
+
                 } else {
 
                     return _('Invalid Domain Registrar');
@@ -315,6 +321,12 @@ class DomainQueue
                     $registrar = new OpenSrs();
                     list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'Porkbun') {
+
+                    $registrar = new Porkbun();
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'ResellerClub') {
 
