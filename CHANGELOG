@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.21.0     2024-03-03
+- Added Porkbun API support
+
 v4.20.07    2024-01-03
 - Added support for Free Currency Rates API
 - Updated Composer
