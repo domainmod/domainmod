@@ -1722,6 +1722,39 @@ if ($current_db_version === '4.20.06') {
             SET currency_converter = 'fcra',
                 update_time = '" . $timestamp . "'");
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.20.07 to 4.21.0
+if ($current_db_version === '4.20.07') {
+
+    $old_version = '4.20.07';
+    $new_version = '4.21.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        $pdo->query("
+        INSERT INTO api_registrars
+        (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
+         req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
+         ret_autorenewal_status, notes, insert_time)
+         VALUES
+        ('Porkbun', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "')");
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
