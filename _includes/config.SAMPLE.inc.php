@@ -28,3 +28,7 @@ $dbhostname = 'localhost';
 $dbname = 'db_name';
 $dbusername = 'db_username';
 $dbpassword = 'dbPassword123';
+$dbsslca = '/etc/ssl/certs/self-signed-cert.pem';
+$dbsslcapath = '/etc/ssl/certs';
+// set to false when the server uses a self-signed cert
+$dbsslverifycert = true;
