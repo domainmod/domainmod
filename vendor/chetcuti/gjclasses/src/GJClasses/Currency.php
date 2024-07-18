@@ -46,12 +46,12 @@ class Currency
             $from_currency = strtolower($from_currency);
             $to_currency = strtolower($to_currency);
 
-            $full_url = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/' . $from_currency . '/' . $to_currency . '.json';
+            $full_url = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/' . $from_currency . '.json';
             $remote = new Remote();
             $result = $remote->getFileContents($full_url);
             if ($result === false) return false;
             $json_result = json_decode($result, true);
-            $conversion_rate = $json_result[$to_currency];
+            $conversion_rate = $json_result[$from_currency][$to_currency];
 
         } elseif ($this->source === 'fixer') {
 
