@@ -88,6 +88,10 @@ use RuntimeException;
  * @method static static minute($minutes = 1) Alias for minutes().
  * @method static static seconds($seconds = 1) Create instance specifying a number of seconds for date interval or replace the interval by the given a number of seconds if called on an instance.
  * @method static static second($seconds = 1) Alias for seconds().
+ * @method static static milliseconds($milliseconds = 1) Create instance specifying a number of milliseconds for date interval or replace the interval by the given a number of milliseconds if called on an instance.
+ * @method static static millisecond($milliseconds = 1) Alias for milliseconds().
+ * @method static static microseconds($microseconds = 1) Create instance specifying a number of microseconds for date interval or replace the interval by the given a number of microseconds if called on an instance.
+ * @method static static microsecond($microseconds = 1) Alias for microseconds().
  * @method $this roundYear(float $precision = 1, string $function = "round") Round the current instance year with given precision using the given function.
  * @method $this roundYears(float $precision = 1, string $function = "round") Round the current instance year with given precision using the given function.
  * @method $this floorYear(float $precision = 1) Truncate the current instance year with given precision.
@@ -233,6 +237,13 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
      * @var int
      */
     public const END_MAX_ATTEMPTS = 10000;
+
+    /**
+     * Default date class of iteration items.
+     *
+     * @var string
+     */
+    protected const DEFAULT_DATE_CLASS = Carbon::class;
 
     /**
      * The registered macros.
@@ -493,15 +504,16 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
         $interval = null;
         $start = null;
         $end = null;
+        $dateClass = static::DEFAULT_DATE_CLASS;
 
         foreach (explode('/', $iso) as $key => $part) {
             if ($key === 0 && preg_match('/^R(\d*|INF)$/', $part, $match)) {
                 $parsed = \strlen($match[1]) ? (($match[1] !== 'INF') ? (int) $match[1] : INF) : null;
             } elseif ($interval === null && $parsed = CarbonInterval::make($part)) {
                 $interval = $part;
-            } elseif ($start === null && $parsed = Carbon::make($part)) {
+            } elseif ($start === null && $parsed = $dateClass::make($part)) {
                 $start = $part;
-            } elseif ($end === null && $parsed = Carbon::make(static::addMissingParts($start ?? '', $part))) {
+            } elseif ($end === null && $parsed = $dateClass::make(static::addMissingParts($start ?? '', $part))) {
                 $end = $part;
             } else {
                 throw new InvalidPeriodParameterException("Invalid ISO 8601 specification: $iso.");
@@ -514,7 +526,7 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
     }
 
     /**
-     * Add missing parts of the target date from the soure date.
+     * Add missing parts of the target date from the source date.
      *
      * @param string $source
      * @param string $target
@@ -663,6 +675,8 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
             }
         }
 
+        $optionsSet = false;
+
         foreach ($arguments as $argument) {
             $parsedDate = null;
 
@@ -686,15 +700,17 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
                 $this->setEndDate($parsedDate);
             } elseif ($this->recurrences === null && $this->endDate === null && is_numeric($argument)) {
                 $this->setRecurrences($argument);
-            } elseif ($this->options === null && (\is_int($argument) || $argument === null)) {
-                $this->setOptions($argument);
+            } elseif (!$optionsSet && (\is_int($argument) || $argument === null)) {
+                $optionsSet = true;
+                $this->setOptions(((int) $this->options) | ((int) $argument));
             } else {
                 throw new InvalidPeriodParameterException('Invalid constructor parameters.');
             }
         }
 
         if ($this->startDate === null) {
-            $this->setStartDate(Carbon::now());
+            $dateClass = $this->dateClass;
+            $this->setStartDate($dateClass::now());
         }
 
         if ($this->dateInterval === null) {
@@ -1809,13 +1825,19 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
             case 'minute':
             case 'seconds':
             case 'second':
+            case 'milliseconds':
+            case 'millisecond':
+            case 'microseconds':
+            case 'microsecond':
                 return $this->setDateInterval((
                     // Override default P1D when instantiating via fluent setters.
                     [$this->isDefaultInterval ? new CarbonInterval('PT0S') : $this->dateInterval, $method]
                 )(...$parameters));
         }
 
-        if ($this->localStrictModeEnabled ?? Carbon::isStrictModeEnabled()) {
+        $dateClass = $this->dateClass;
+
+        if ($this->localStrictModeEnabled ?? $dateClass::isStrictModeEnabled()) {
             throw new UnknownMethodException($method);
         }
 
@@ -2012,7 +2034,7 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
 
     /**
      * Determines if the instance is equal to another.
-     * Warning: if options differ, instances wil never be equal.
+     * Warning: if options differ, instances will never be equal.
      *
      * @param mixed $period
      *
@@ -2027,7 +2049,7 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
 
     /**
      * Determines if the instance is equal to another.
-     * Warning: if options differ, instances wil never be equal.
+     * Warning: if options differ, instances will never be equal.
      *
      * @param mixed $period
      *
@@ -2050,7 +2072,7 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
 
     /**
      * Determines if the instance is not equal to another.
-     * Warning: if options differ, instances wil never be equal.
+     * Warning: if options differ, instances will never be equal.
      *
      * @param mixed $period
      *
@@ -2065,7 +2087,7 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
 
     /**
      * Determines if the instance is not equal to another.
-     * Warning: if options differ, instances wil never be equal.
+     * Warning: if options differ, instances will never be equal.
      *
      * @param mixed $period
      *
@@ -2674,7 +2696,9 @@ class CarbonPeriod implements Iterator, Countable, JsonSerializable
                 !preg_match('/^R\d/', $value) &&
                 preg_match('/[a-z\d]/i', $value)
             ) {
-                return Carbon::parse($value, $this->tzName);
+                $dateClass = $this->dateClass;
+
+                return $dateClass::parse($value, $this->tzName);
             }
         }
 
