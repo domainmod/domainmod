@@ -34,7 +34,7 @@ class Porkbun
 
     public function getApiUrl($domain, $command)
     {
-        $base_url = 'https://porkbun.com/api/json/v3';
+        $base_url = 'https://api.porkbun.com/api/json/v3';
 
         if ($command == 'domainlist') {
             return $base_url . '/domain/listAll';
