@@ -3,7 +3,7 @@
  * /_includes/layout/date-picker-head.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2024 Greg Chetcuti <greg@chetcuti.com>
+ * Copyright (c) 2010-2025 Greg Chetcuti <greg@greg.ca>
  *
  * Project: http://domainmod.org   Author: http://chetcuti.com
  *
