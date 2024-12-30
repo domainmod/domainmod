@@ -6,7 +6,7 @@
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2025 Greg Chetcuti <greg@greg.ca>
  *
- * Project: http://domainmod.org   Author: http://chetcuti.com
+ * Project: http://domainmod.org   Author: https://greg.ca
  *
  * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -34,7 +34,7 @@
     </div>
     <!-- Default to the left -->
     <?php echo sprintf(_('%s%s%s is open source software released under the %sGNU/GPL License%s.'), '<a href="http://domainmod.org">', SOFTWARE_TITLE, '</a>', '<a href="http://www.gnu.org/licenses/">', '</a>'); ?>
-    <?php echo _('Created by'); ?> <a href="http://chetcuti.com">Greg Chetcuti</a>.<BR>
+    <?php echo _('Created by'); ?> <a href="https://greg.ca">Greg Chetcuti</a>.<BR>
 </footer>
 </div>
 <?php $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"]; ?>
