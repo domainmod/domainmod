@@ -24,7 +24,7 @@
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
-        <li class="nav-header">NAVIGATION</li>
+        <li class="nav-header"><?php echo _('NAVIGATION') ?></li>
         <li class="nav-item">
             <a href="<?php echo $web_root; ?>/" class="nav-link<?php if ($software_section == "dashboard") echo " active"; ?>">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -109,7 +109,7 @@
             <a href="#" class="nav-link<?php if ($software_section == "settings") echo " active"; ?>">
                 <i class="nav-icon fas fa-cogs"></i>
                 <p>
-                    Settings
+                    <?php echo _('Settings') ?>
                     <i class="right fas fa-angle-left"></i>
                 </p>
             </a>
@@ -117,25 +117,25 @@
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/display/" class="nav-link<?php if ($slug == "settings-display") echo " active"; ?>">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>Display Settings</p>
+                        <p><?php echo _('Display Settings') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/defaults/" class="nav-link<?php if ($slug == "settings-defaults") echo " active"; ?>">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>User Defaults</p>
+                        <p><?php echo _('User Defaults') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/profile/" class="nav-link<?php if ($slug == "settings-profile") echo " active"; ?>">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>User Profile</p>
+                        <p><?php echo _('User Profile') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/password/" class="nav-link<?php if ($slug == "settings-password") echo " active"; ?>">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>Change Password</p>
+                        <p><?php echo _('Change Password') ?></p>
                     </a>
                 </li>
             </ul>
@@ -144,7 +144,7 @@
             <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>">
                 <i class="nav-icon fas fa-check"></i>
                 <p>
-                    Maintenance
+                    <?php echo _('Maintenance') ?>
                     <i class="right fas fa-angle-left"></i>
                 </p>
             </a>
@@ -152,19 +152,19 @@
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>Update Conversion Rates</p>
+                        <p><?php echo _('Update Conversion Rates') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>Update Domain Fees</p>
+                        <p><?php echo _('Update Domain Fees') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
-                        <p>Update SSL Fees</p>
+                        <p><?php echo _('Update SSL Fees') ?></p>
                     </a>
                 </li>
             </ul>
@@ -175,7 +175,7 @@
                 <a href="#" class="nav-link<?php if ($software_section == "admin") echo " active"; ?>">
                     <i class="nav-icon fas fa-wrench"></i>
                     <p>
-                        Administration
+                        <?php echo _('Administration') ?>
                         <i class="right fas fa-angle-left"></i>
                     </p>
                 </a>
@@ -183,61 +183,61 @@
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/settings/" class="nav-link<?php if ($slug == "admin-settings") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>System Settings</p>
+                            <p><?php echo _('System Settings') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/defaults/" class="nav-link<?php if ($slug == "admin-defaults") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>System Defaults</p>
+                            <p><?php echo _('System Defaults') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/users/" class="nav-link<?php if ($slug == "admin-users-main" || $slug == "admin-users-add" || $slug == 'admin-users-edit') echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Users</p>
+                            <p><?php echo _('Users') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/domain-fields/" class="nav-link<?php if ($slug == "admin-custom-domain-fields" || $slug == 'admin-add-custom-domain-field' || $slug == 'admin-edit-custom-domain-field') echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Custom Domain Fields</p>
+                            <p><?php echo _('Custom Domain Fields') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/ssl-fields/" class="nav-link<?php if ($slug == "admin-custom-ssl-fields" || $slug == "admin-add-custom-ssl-field" || $slug == "admin-edit-custom-ssl-field") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Custom SSL Fields</p>
+                            <p><?php echo _('Custom SSL Fields') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/scheduler/" class="nav-link<?php if ($slug == "admin-scheduler-main") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Task Scheduler</p>
+                            <p><?php echo _('Task Scheduler') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/maintenance/" class="nav-link<?php if ($slug == "admin-maintenance-main") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Maintenance</p>
+                            <p><?php echo _('Maintenance') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/backup/" class="nav-link<?php if ($slug == "admin-backup-main") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Backup & Restore</p>
+                            <p><?php echo _('Backup & Restore') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/debug-log/" class="nav-link<?php if ($slug == "admin-debug-log-main") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>Debug Log</p>
+                            <p><?php echo _('Debug Log') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/info/" class="nav-link<?php if ($slug == "admin-info") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
-                            <p>System Information</p>
+                            <p><?php echo _('System Information') ?></p>
                         </a>
                     </li>
                 </ul>
@@ -251,7 +251,7 @@
                 </p>
             </a>
         </li>
-        <li class="nav-header">HELP</li>
+        <li class="nav-header"><?php echo _('HELP') ?></li>
         <li class="nav-item">
             <a href="<?php echo $web_root; ?>/docs/userguide/" class="nav-link">
                 <i class="nav-icon fas fa-book"></i>
