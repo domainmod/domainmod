@@ -23,7 +23,9 @@
 $missing_domain_fees = $_SESSION['s_missing_domain_fees'] ?? '';
 if ($missing_domain_fees == 1) {
 
-    $message = _('Some of your Registrars/TLDs are missing domain fees.') . " <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new TLDs, you should %supdate the domain fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-domain-fees.php'>", '</a>');
+    $message = _('Some of your Domains are missing fees. Until you enter the fees, the Domains will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>";
+    $message .= _('If you don\'t care about tracking Domain fees, ') . " <a href=\"" . $web_root . "/assets/zero-out-domain-fees.php\">" . _('click here to set all missing fees to 0') . "</a>.<BR>";
+    $message .= sprintf(_("If you've already updated all new fees, you should %supdate the Domain fees system-wide%s. This may take some time."), "<a href='" . $web_root . "/maintenance/update-domain-fees.php'>", '</a>');
 
     echo $system->showMaintenanceTable($message);
 
@@ -32,7 +34,9 @@ if ($missing_domain_fees == 1) {
 $missing_ssl_fees = $_SESSION['s_missing_ssl_fees'] ?? '';
 if ($missing_ssl_fees == 1) {
 
-    $message = _('Some of your SSL Certificate Types are missing fees.') . " <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>" . sprintf(_("If you've already updated all new SSL Types, you should %supdate the SSL fees system-wide%s (this may take some time)"), "<a href='" . $web_root . "/maintenance/update-ssl-fees.php'>", '</a>');
+    $message = _('Some of your SSL Certificates are missing fees. Until you enter the fees, the SSL Certificates will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">" . _('Click here to fix this') . "</a>.<BR>";
+    $message .= _('If you don\'t care about tracking SSL Certificate fees, ') . " <a href=\"" . $web_root . "/assets/zero-out-ssl-fees.php\">" . _('click here to set all missing fees to 0') . "</a>.<BR>";
+    $message .= sprintf(_("If you've already updated all new fees, you should %supdate the SSL Certificate fees system-wide%s. This may take some time."), "<a href='" . $web_root . "/maintenance/update-ssl-fees.php'>", '</a>');
 
     echo $system->showMaintenanceTable($message);
 
