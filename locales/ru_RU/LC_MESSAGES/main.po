@@ -365,6 +365,8 @@ msgstr "%s%s%s - программное обеспечение с открыты
 msgid "Created by"
 msgstr "Созданный"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2274,23 +2276,19 @@ msgstr "Планировщик задач позволяет запускать 
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "Для того, чтобы использовать планировщик задач, вы должны установить cron/scheduled задание на вашем веб-сервере для выполнения файла %scron.php%s, который находится в корневой папке вашей установки %s."
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "Этот файл должен быть выполнен %severy 10 minutes%s, и после его установки планировщик задач будет работать."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "Использование планировщика задач является необязательным, но рекомендуется %shighly%."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "Текущая метка времени"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "Работает"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2300,15 +2298,15 @@ msgstr "Работает"
 msgid "Status"
 msgstr "Статус"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "Последний забег"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "Следующий забег"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "Время изменения"
 
@@ -5076,7 +5074,7 @@ msgstr "Подтвердить электронную почту"
 msgid "Go Back"
 msgstr "Возвращаться"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "Начать установку"
 
@@ -6230,10 +6228,6 @@ msgstr "Поиск домена"
 msgid "Build Information"
 msgstr "Информация о сборке"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "Пожалуйста, введите ваше имя пользователя и пароль для входа"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "Выйти"
@@ -6250,7 +6244,7 @@ msgstr "Активы - это строительные блоки DomainMOD."
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "Активы включают в себя такие вещи, как регистраторы доменов и учетные записи, которые вы используете, типы сертификатов SSL, которыми вы владеете, ваши DNS-серверы и IP-адреса, категории, которые вы хотите использовать для группировки похожих доменов, и так далее."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "Установить время работы"
 
@@ -6275,6 +6269,7 @@ msgstr "Отфильтровать отчет"
 msgid "Your Feedback Is Important to Us!"
 msgstr "Ваше мнение очень важно для нас!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "Обратная связь"
@@ -6489,4 +6484,24 @@ msgstr "Тестовое письмо отправлено!"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "Отсутствующие сборы установлены на 0"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "каждые 10 минут"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "Этот файл следует выполнить %s, и после его настройки планировщик задач будет запущен."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "Отправить тестовое письмо"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "Если вы хотите убедиться, что ваша установка может успешно отправлять электронную почту, щелкните эту ссылку, и на ваш адрес будет отправлено тестовое письмо."
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "Введите имя пользователя и пароль."
 

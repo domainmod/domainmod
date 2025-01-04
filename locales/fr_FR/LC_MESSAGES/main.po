@@ -365,6 +365,8 @@ msgstr "Le %s%s%s est un logiciel à source ouverte publié sous la licence %sGN
 msgid "Created by"
 msgstr "Créé par"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2275,24 +2277,19 @@ msgstr "Le planificateur de tâches vous permet d'exécuter diverses tâches sys
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "Afin d'utiliser le planificateur de tâches, vous devez configurer un cron/planifié sur votre serveur web pour exécuter le fichier %scron.php%s, qui se trouve dans le dossier racine de votre installation %s."
 
-#: admin/scheduler/index.php:55
-#, fuzzy
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "Ce fichier doit être exécuté %stoutes les 10 minutes%s, et une fois qu'il est configuré, le planificateur de tâches sera activé."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "L'utilisation du planificateur de tâches est facultative, mais il est recommandé d'utiliser le %shighly%s."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "Horodatage actuel"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "Fonctionne sur"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2302,15 +2299,15 @@ msgstr "Fonctionne sur"
 msgid "Status"
 msgstr "Statut"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "Dernière course"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "Prochaine course"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "Changement d'heure"
 
@@ -5089,7 +5086,7 @@ msgstr "Confirmer l'adresse électronique"
 msgid "Go Back"
 msgstr "Retour en arrière"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "Commencer l'installation"
 
@@ -6249,10 +6246,6 @@ msgstr "Recherche de domaine"
 msgid "Build Information"
 msgstr "Informations sur la construction"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "Veuillez entrer votre nom d'utilisateur et votre mot de passe pour vous connecter"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "Se déconnecter"
@@ -6269,7 +6262,7 @@ msgstr "Les actifs sont les éléments constitutifs de DomainMOD."
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "Les actifs incluent des éléments tels que les registraires de domaine et les comptes que vous utilisez, les types de certificats SSL que vous possédez, vos serveurs DNS et adresses IP, les catégories que vous souhaitez utiliser pour regrouper des domaines similaires, etc."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "Définir le temps d'exécution"
 
@@ -6294,6 +6287,7 @@ msgstr "Filtrer le rapport"
 msgid "Your Feedback Is Important to Us!"
 msgstr "Votre avis est important pour nous!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "Retour"
@@ -6508,4 +6502,24 @@ msgstr "E-mail de test envoyé !"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "Frais manquants fixés à 0"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "toutes les 10 minutes"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "Ce fichier doit être exécuté %s, et une fois configuré, le planificateur de tâches sera opérationnel."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "Envoyer un e-mail de test"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "Si vous souhaitez vous assurer que votre installation est capable d'envoyer des e-mails avec succès, cliquez sur ce lien et un e-mail de test sera envoyé à"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "Veuillez entrer votre nom d'utilisateur et votre mot de passe"
 

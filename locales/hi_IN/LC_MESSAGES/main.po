@@ -365,6 +365,8 @@ msgstr "%s%s%s एक खुला स्रोत सॉफ्टवेयर �
 msgid "Created by"
 msgstr "के द्वारा बनाई गई"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "कार्य शेड्यूलर आपको निर्दि
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "टास्क शेड्यूलर का उपयोग करने के लिए आपको अपने वेब सर्वर पर %scron.php%s फ़ाइल को निष्पादित करने के लिए एक क्रॉन/शेड्यूल जॉब सेटअप करना होगा, जो आपके %s इंस्टॉलेशन के रूट फ़ोल्डर में स्थित है।"
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "इस फ़ाइल को %se हर 10 मिनट में निष्पादित किया जाना चाहिए, और एक बार यह सेटअप हो जाने पर टास्क शेड्यूलर लाइव हो जाएगा।"
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "कार्य शेड्यूलर का उपयोग करना वैकल्पिक है, लेकिन %shighly%s अनुशंसित है।"
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "वर्तमान टाइमस्टैम्प"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "रन"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "रन"
 msgid "Status"
 msgstr "स्थिति"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "आखरी बार"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "अगला रन"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "समय परिवर्तन करें"
 
@@ -5060,7 +5058,7 @@ msgstr "ईमेल की पुष्टि करें"
 msgid "Go Back"
 msgstr "वापस जाएं"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "स्थापना शुरू करें"
 
@@ -6212,10 +6210,6 @@ msgstr "डोमेन खोज"
 msgid "Build Information"
 msgstr "निर्माण जानकारी"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "कृपया साइन इन करने के लिए अपना उपयोगकर्ता नाम और पासवर्ड दर्ज करें"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "लॉग आउट"
@@ -6232,7 +6226,7 @@ msgstr "परिसंपत्तियाँ डोमेनएमओडी �
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "परिसंपत्तियों में आपके द्वारा उपयोग किए जाने वाले डोमेन रजिस्ट्रार और खाते, आपके स्वामित्व वाले SSL प्रमाणपत्र प्रकार, आपके DNS सर्वर और IP पते, समान डोमेन को समूहीकृत करने के लिए आप जिन श्रेणियों का उपयोग करना चाहते हैं, आदि जैसी चीजें शामिल हैं।"
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "रन टाइम सेट करें"
 
@@ -6257,6 +6251,7 @@ msgstr "रिपोर्ट फ़िल्टर करें"
 msgid "Your Feedback Is Important to Us!"
 msgstr "आपकी प्रतिक्रिया हमारे लिए महत्वपूर्ण है!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "प्रतिक्रिया"
@@ -6471,4 +6466,24 @@ msgstr "परीक्षण ईमेल भेजा गया!"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "लुप्त शुल्क 0 पर सेट किया गया"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "हर 10 मिनट में"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "इस फ़ाइल को %s निष्पादित किया जाना चाहिए, और एक बार यह सेटअप हो जाने पर कार्य शेड्यूलर लाइव हो जाएगा।"
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "परीक्षण ईमेल भेजें"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "यदि आप यह सुनिश्चित करना चाहते हैं कि आपका इंस्टॉलेशन सफलतापूर्वक ईमेल भेजने में सक्षम है, तो इस लिंक पर क्लिक करें और एक परीक्षण ईमेल भेजा जाएगा"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "कृपया अपना उपयोगकर्तानाम और पासवर्ड दें"
 

@@ -365,6 +365,8 @@ msgstr "%s%s%s என்பது %sGNU/GPL உரிமம்%s இன் க�
 msgid "Created by"
 msgstr "உருவாக்கியது"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "Task Scheduler ஆனது, குறிப்பிட்ட நேர
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "Task Scheduler ஐப் பயன்படுத்த, உங்கள் %s இன் நிறுவலின் ரூட் கோப்புறையில் உள்ள %scron.php%s கோப்பை இயக்க, உங்கள் வலை சேவையகத்தில் கிரான்/திட்டமிடப்பட்ட வேலையை அமைக்க வேண்டும்."
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "இந்தக் கோப்பு %ஒவ்வொரு 10 நிமிடங்களுக்கும்%s இயக்கப்பட வேண்டும், மேலும் அதை அமைத்தவுடன் பணி அட்டவணை நேரலையில் இருக்கும்."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "பணி அட்டவணையைப் பயன்படுத்துவது விருப்பமானது, ஆனால் %shighly%s பரிந்துரைக்கப்படுகிறது."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "தற்போதைய நேர முத்திரை"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "ஓடுகிறது"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "ஓடுகிறது"
 msgid "Status"
 msgstr "நிலை"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "கடைசி ஓட்டம்"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "அடுத்து ரன்"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "நேரத்தை மாற்றவும்"
 
@@ -5060,7 +5058,7 @@ msgstr "மின்னஞ்சலை உறுதிப்படுத்த�
 msgid "Go Back"
 msgstr "திரும்பி செல்"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "நிறுவலைத் தொடங்கவும்"
 
@@ -6212,10 +6210,6 @@ msgstr "டொமைன் தேடல்"
 msgid "Build Information"
 msgstr "தகவலை உருவாக்கவும்"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "உள்நுழைய உங்கள் பயனர்பெயர் மற்றும் கடவுச்சொல்லை உள்ளிடவும்"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "வெளியேறு"
@@ -6232,7 +6226,7 @@ msgstr "சொத்துக்கள் டொமைன்எம்ஓடி�
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "நீங்கள் பயன்படுத்தும் டொமைன் பதிவாளர்கள் மற்றும் கணக்குகள், உங்களுக்குச் சொந்தமான SSL சான்றிதழ் வகைகள், உங்கள் DNS சேவையகங்கள் மற்றும் IP முகவரிகள், ஒத்த டொமைன்களைக் குழுவாக்க நீங்கள் பயன்படுத்த விரும்பும் வகைகள் மற்றும் பலவற்றைச் சொத்துக்களில் உள்ளடக்கும்."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "இயக்க நேரத்தை அமைக்கவும்"
 
@@ -6257,6 +6251,7 @@ msgstr "வடிகட்டி அறிக்கை"
 msgid "Your Feedback Is Important to Us!"
 msgstr "உங்கள் கருத்து எங்களுக்கு முக்கியமானது!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "பின்னூட்டம்"
@@ -6471,4 +6466,24 @@ msgstr "சோதனை மின்னஞ்சல் அனுப்பப்�
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "விடுபட்ட கட்டணம் 0 ஆக அமைக்கப்பட்டுள்ளது"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "ஒவ்வொரு 10 நிமிடங்களுக்கும்"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "இந்தக் கோப்பு %s இல் செயல்படுத்தப்பட வேண்டும், அதை அமைத்தவுடன், பணி அட்டவணை நேரலையில் இருக்கும்."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "சோதனை மின்னஞ்சலை அனுப்பவும்"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "உங்கள் நிறுவல் வெற்றிகரமாக மின்னஞ்சலை அனுப்புவதை உறுதிசெய்ய விரும்பினால், இந்த இணைப்பைக் கிளிக் செய்யவும், சோதனை மின்னஞ்சல் அனுப்பப்படும்"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "உங்கள் பயனர்பெயர் மற்றும் கடவுச்சொல்லை உள்ளிடவும்"
 

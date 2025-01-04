@@ -365,6 +365,8 @@ msgstr "%s%s%s adalah perangkat lunak sumber terbuka yang dirilis di bawah Lisen
 msgid "Created by"
 msgstr "Dibuat oleh"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "Penjadwal Tugas memungkinkan Anda menjalankan berbagai pekerjaan sistem 
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "Untuk menggunakan Penjadwal Tugas, Anda harus menyiapkan cron/pekerjaan terjadwal pada server web Anda untuk mengeksekusi file %scron.php%s, yang terletak di folder akar instalasi %s Anda."
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "Berkas ini harus dijalankan %setiap 10 menit%, dan setelah disiapkan, Penjadwal Tugas akan aktif."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "Menggunakan Penjadwal Tugas bersifat opsional, tetapi sangat disarankan."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "Cap Waktu Saat Ini"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "Berjalan"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "Berjalan"
 msgid "Status"
 msgstr "Status"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "Lari Terakhir"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "Lari Berikutnya"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "Ubah Waktu"
 
@@ -5057,7 +5055,7 @@ msgstr "Konfirmasi Email"
 msgid "Go Back"
 msgstr "Kembali"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "Mulai Instalasi"
 
@@ -6209,10 +6207,6 @@ msgstr "Pencarian Domain"
 msgid "Build Information"
 msgstr "Membangun Informasi"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "Silakan masukkan nama pengguna dan kata sandi Anda untuk masuk"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "Keluar"
@@ -6229,7 +6223,7 @@ msgstr "Aset merupakan komponen dasar DomainMOD."
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "Aset mencakup hal-hal seperti pendaftar domain dan akun yang Anda gunakan, jenis sertifikat SSL yang Anda miliki, Server DNS dan Alamat IP Anda, kategori yang ingin Anda gunakan untuk mengelompokkan domain serupa, dan seterusnya."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "Atur Waktu Berjalan"
 
@@ -6254,6 +6248,7 @@ msgstr "Laporan Filter"
 msgid "Your Feedback Is Important to Us!"
 msgstr "Masukan Anda Penting Bagi Kami!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "Masukan"
@@ -6468,4 +6463,24 @@ msgstr "Email Uji Terkirim!"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "Biaya yang hilang ditetapkan ke 0"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "setiap 10 menit"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "Berkas ini harus dijalankan %s, dan setelah disiapkan Penjadwal Tugas akan aktif."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "Kirim Email Uji Coba"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "Jika Anda ingin memastikan bahwa instalasi Anda dapat mengirim email dengan sukses, klik tautan ini dan email uji akan dikirim ke"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "Silakan masukkan nama pengguna dan kata sandi Anda"
 

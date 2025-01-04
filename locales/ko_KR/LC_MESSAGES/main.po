@@ -365,6 +365,8 @@ msgstr "%s%s%s은(는) %sGNU/GPL 라이선스%s에 따라 출시된 오픈 소�
 msgid "Created by"
 msgstr "만든 사람"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "작업 스케줄러를 사용하면 지정된 시간에 다양한 시스
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "작업 스케줄러를 사용하려면 웹 서버에서 cron/예약된 작업을 설정하여 %scron.php%s 파일을 실행해야 합니다. 이 파일은 %s 설치의 루트 폴더에 있습니다."
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "이 파일은 %10분마다%s 실행되어야 하며, 설정이 완료되면 작업 스케줄러가 활성화됩니다."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "작업 스케줄러 사용은 선택 사항이지만 %s강력히%s 권장됩니다."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "현재 타임스탬프"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "실행"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "실행"
 msgid "Status"
 msgstr "상태"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "마지막 실행"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "다음 실행"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "변경 시간"
 
@@ -5057,7 +5055,7 @@ msgstr "이메일 확인"
 msgid "Go Back"
 msgstr "뒤로가기"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "설치 시작"
 
@@ -6209,10 +6207,6 @@ msgstr "도메인 검색"
 msgid "Build Information"
 msgstr "빌드 정보"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "로그인하려면 사용자 이름과 비밀번호를 입력하세요."
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "로그아웃"
@@ -6229,7 +6223,7 @@ msgstr "자산은 DomainMOD의 구성 요소입니다."
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "자산에는 귀하가 사용하는 도메인 등록 기관 및 계정, 귀하가 소유한 SSL 인증서 유형, 귀하의 DNS 서버 및 IP 주소, 유사한 도메인을 그룹화하는 데 사용하려는 범주 등이 포함됩니다."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "실행 시간 설정"
 
@@ -6254,6 +6248,7 @@ msgstr "필터 보고서"
 msgid "Your Feedback Is Important to Us!"
 msgstr "귀하의 의견은 저희에게 중요합니다!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "피드백"
@@ -6468,4 +6463,24 @@ msgstr "테스트 이메일이 전송되었습니다!"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "누락된 수수료가 0으로 설정됨"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "10분마다"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "이 파일은 %s에서 실행되어야 하며, 설정이 완료되면 작업 스케줄러가 활성화됩니다."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "테스트 이메일 보내기"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "설치가 이메일을 성공적으로 보낼 수 있는지 확인하려면 이 링크를 클릭하면 테스트 이메일이 전송됩니다."
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "사용자 이름과 비밀번호를 입력하세요"
 

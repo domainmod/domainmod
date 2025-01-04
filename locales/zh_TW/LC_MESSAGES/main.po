@@ -365,6 +365,8 @@ msgstr "%s%s%s 是根據 %sGNU/GPL 授權%s 發布的開源軟體。"
 msgid "Created by"
 msgstr "創建者："
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "任務規劃程式可讓您在指定時間運行各種系統作業，這
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "為了使用任務排程程序，您必須在 Web 伺服器上設定 cron/排程作業來執行檔案 %scron.php%s，該檔案位於 %s 安裝的根資料夾中。"
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "該檔案應每 10 分鐘%s 執行一次，一旦設定完畢，任務規劃程式就會啟動。"
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "使用任務規劃程序是可選的，但%s強烈%s建議使用。"
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "當前時間戳"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "跑步"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "跑步"
 msgid "Status"
 msgstr "地位"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "最後一次運行"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "下次運行"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "變更時間"
 
@@ -5057,7 +5055,7 @@ msgstr "確認電子郵件"
 msgid "Go Back"
 msgstr "回去"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "開始安裝"
 
@@ -6209,10 +6207,6 @@ msgstr "域名搜尋"
 msgid "Build Information"
 msgstr "建構資訊"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "請輸入您的使用者名稱和密碼進行登入"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "退出"
@@ -6229,7 +6223,7 @@ msgstr "資產是 DomainMOD 的構建塊。"
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "資產包括您使用的網域名稱註冊商和帳戶、您擁有的 SSL 憑證類型、您的 DNS 伺服器和 IP 位址、您想要用於對類似網域進行分組的類別等。"
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "設定運行時間"
 
@@ -6254,6 +6248,7 @@ msgstr "過濾報告"
 msgid "Your Feedback Is Important to Us!"
 msgstr "您的回饋對我們很重要！"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "回饋"
@@ -6468,4 +6463,24 @@ msgstr "測試郵件已發送！"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "缺失費用設定為 0"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "每10分鐘一班"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "該文件應在 %s 執行，一旦設定完成，任務規劃程式就會啟動。"
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "發送測試電子郵件"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "如果您想確保您的安裝能夠成功發送電子郵件，請單擊此鏈接，測試電子郵件將發送至"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "請輸入您的使用者名稱和密碼"
 

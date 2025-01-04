@@ -365,6 +365,8 @@ msgstr "%s%s%s అనేది %sGNU/GPL లైసెన్స్%s క్రి
 msgid "Created by"
 msgstr "ద్వారా సృష్టించబడింది"
 
+#: _includes/layout/breadcrumbs.inc.php:24
+#: _includes/layout/breadcrumbs.inc.php:26
 #: _includes/layout/menu-main.inc.php:32
 #: _includes/settings/dashboard-main.inc.php:23
 #: _includes/settings/dashboard-main.inc.php:24
@@ -2273,23 +2275,19 @@ msgstr "టాస్క్ షెడ్యూలర్ నిర్దిష్�
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
 msgstr "టాస్క్ షెడ్యూలర్‌ను ఉపయోగించడానికి, మీరు మీ %s ఇన్‌స్టాలేషన్ యొక్క రూట్ ఫోల్డర్‌లో ఉన్న %scron.php%s ఫైల్‌ను అమలు చేయడానికి మీ వెబ్ సర్వర్‌లో క్రాన్/షెడ్యూల్డ్ జాబ్‌ని సెటప్ చేయాలి."
 
-#: admin/scheduler/index.php:55
-msgid "This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."
-msgstr "ఈ ఫైల్ %ప్రతి 10 నిమిషాలకు%s అమలు చేయబడాలి మరియు దీన్ని సెటప్ చేసిన తర్వాత టాస్క్ షెడ్యూలర్ ప్రత్యక్ష ప్రసారం చేయబడుతుంది."
-
-#: admin/scheduler/index.php:57
+#: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
 msgstr "టాస్క్ షెడ్యూలర్‌ని ఉపయోగించడం ఐచ్ఛికం, కానీ %shigly%s సిఫార్సు చేయబడింది."
 
-#: admin/scheduler/index.php:59
+#: admin/scheduler/index.php:63
 msgid "Current Timestamp"
 msgstr "ప్రస్తుత టైమ్‌స్టాంప్"
 
-#: admin/scheduler/index.php:83
+#: admin/scheduler/index.php:87
 msgid "Runs"
 msgstr "పరుగులు"
 
-#: admin/scheduler/index.php:85 admin/users/index.php:61
+#: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
 #: assets/hosting.php:59 assets/ip-addresses.php:59
 #: assets/registrar-accounts.php:74 assets/registrars.php:59
@@ -2299,15 +2297,15 @@ msgstr "పరుగులు"
 msgid "Status"
 msgstr "స్థితి"
 
-#: admin/scheduler/index.php:94
+#: admin/scheduler/index.php:98
 msgid "Last Run"
 msgstr "చివరి పరుగు"
 
-#: admin/scheduler/index.php:104 admin/scheduler/run.php:77
+#: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
 msgstr "తదుపరి రన్"
 
-#: admin/scheduler/index.php:115
+#: admin/scheduler/index.php:119
 msgid "Change Time"
 msgstr "సమయాన్ని మార్చండి"
 
@@ -5060,7 +5058,7 @@ msgstr "ఇమెయిల్ నిర్ధారించండి"
 msgid "Go Back"
 msgstr "వెనక్కి వెళ్ళు"
 
-#: install/language/index.php:86
+#: install/language/index.php:102
 msgid "Begin Installation"
 msgstr "సంస్థాపన ప్రారంభించండి"
 
@@ -6212,10 +6210,6 @@ msgstr "డొమైన్ శోధన"
 msgid "Build Information"
 msgstr "సమాచారాన్ని రూపొందించండి"
 
-#: index.php:167
-msgid "Please enter your username and password to sign in"
-msgstr "దయచేసి సైన్ ఇన్ చేయడానికి మీ వినియోగదారు పేరు మరియు పాస్‌వర్డ్‌ను నమోదు చేయండి"
-
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "లాగ్అవుట్"
@@ -6232,7 +6226,7 @@ msgstr "ఆస్తులు డొమైన్‌ఎమ్‌ఓడి బి�
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
 msgstr "ఆస్తులలో మీరు ఉపయోగించే డొమైన్ రిజిస్ట్రార్‌లు మరియు ఖాతాలు, మీకు స్వంతమైన SSL సర్టిఫికేట్ రకాలు, మీ DNS సర్వర్‌లు మరియు IP చిరునామాలు, సారూప్య డొమైన్‌లను సమూహపరచడానికి మీరు ఉపయోగించాలనుకుంటున్న వర్గాలు మొదలైన అంశాలు ఉంటాయి."
 
-#: admin/scheduler/index.php:110
+#: admin/scheduler/index.php:114
 msgid "Set Run Time"
 msgstr "రన్ టైమ్ సెట్ చేయండి"
 
@@ -6257,6 +6251,7 @@ msgstr "ఫిల్టర్ రిపోర్ట్"
 msgid "Your Feedback Is Important to Us!"
 msgstr "మీ అభిప్రాయం మాకు ముఖ్యం!"
 
+#: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
 msgstr "అభిప్రాయం"
@@ -6471,4 +6466,24 @@ msgstr "పరీక్ష ఇమెయిల్ పంపబడింది!"
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
 msgstr "లేని రుసుము 0కి సెట్ చేయబడింది"
+
+#: admin/scheduler/index.php:56
+msgid "every 10 minutes"
+msgstr "ప్రతి 10 నిమిషాలకు"
+
+#: admin/scheduler/index.php:57
+msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
+msgstr "ఈ ఫైల్ %sకి అమలు చేయబడాలి మరియు దీన్ని సెటప్ చేసిన తర్వాత టాస్క్ షెడ్యూలర్ ప్రత్యక్ష ప్రసారం చేయబడుతుంది."
+
+#: admin/tools/index.php:52
+msgid "Send Test Email"
+msgstr "పరీక్ష ఇమెయిల్ పంపండి"
+
+#: admin/tools/index.php:53
+msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
+msgstr "మీ ఇన్‌స్టాలేషన్ విజయవంతంగా ఇమెయిల్‌ను పంపగలదని మీరు నిర్ధారించుకోవాలనుకుంటే, ఈ లింక్‌ని క్లిక్ చేయండి మరియు పరీక్ష ఇమెయిల్‌కి పంపబడుతుంది"
+
+#: index.php:167
+msgid "Please enter your username and password"
+msgstr "దయచేసి మీ వినియోగదారు పేరు మరియు పాస్‌వర్డ్‌ను నమోదు చేయండి"
 
