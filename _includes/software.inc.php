@@ -27,3 +27,6 @@ define('DB_HOSTNAME', $dbhostname);
 define('DB_NAME', $dbname);
 define('DB_USERNAME', $dbusername);
 define('DB_PASSWORD', $dbpassword);
+define('DB_SSL_CA', $dbsslca);
+define('DB_SSL_CAPATH', $dbsslcapath);
+define('DB_SSL_VERIFY_CERT', $dbsslverifycert);
