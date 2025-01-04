@@ -49,7 +49,7 @@ $message_html .= "
 $message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
     SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
 $message_html .= sprintf(_("This is a test email to ensure that your %s installation is able to send email successfully. "), SOFTWARE_TITLE);
-$message_html .= sprintf(_("If you did not request this from your account, you should report it to your %s Administrator.<BR>"), SOFTWARE_TITLE);
+$message_html .= sprintf(_("If you did not request this from your account, you should report it to your %s Administrator."), SOFTWARE_TITLE) . "<BR>";
 $message_html .= "<BR>";
 $message_html .= "Installation URL: <a href=\"" . $full_url . "\">" . $full_url . "</a><BR>";
 $message_html .= "<BR>";
