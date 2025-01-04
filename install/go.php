@@ -283,16 +283,32 @@ try {
         INSERT INTO `languages`
         (`name`, language, insert_time)
          VALUES
-        ('English (Canada)', 'en_CA.UTF-8', '" . $timestamp . "'),
-        ('English (United States)', 'en_US.UTF-8', '" . $timestamp . "'),
-        ('German', 'de_DE.UTF-8', '" . $timestamp . "'),
-        ('Spanish', 'es_ES.UTF-8', '" . $timestamp . "'),
-        ('French', 'fr_FR.UTF-8', '" . $timestamp . "'),
-        ('Italian', 'it_IT.UTF-8', '" . $timestamp . "'),
+        ('English (CA)', 'en_CA.UTF-8', '" . $timestamp . "'),
+        ('English (US)', 'en_US.UTF-8', '" . $timestamp . "'),
+        ('Arabic', 'ar_SA.UTF-8', '" . $timestamp . "'),
+        ('Bengali', 'bn_BD.UTF-8', '" . $timestamp . "'),
+        ('Chinese (Simplified)', 'zh_CN.UTF-8', '" . $timestamp . "'),
+        ('Chinese (Traditional)', 'zh_TW.UTF-8', '" . $timestamp . "'),
         ('Dutch', 'nl_NL.UTF-8', '" . $timestamp . "'),
+        ('French', 'fr_FR.UTF-8', '" . $timestamp . "'),
+        ('German', 'de_DE.UTF-8', '" . $timestamp . "'),
+        ('Hindi', 'hi_IN.UTF-8', '" . $timestamp . "'),
+        ('Indonesian', 'id_ID.UTF-8', '" . $timestamp . "'),
+        ('Italian', 'it_IT.UTF-8', '" . $timestamp . "'),
+        ('Japanese', 'ja_JP.UTF-8', '" . $timestamp . "'),
+        ('Korean', 'ko_KR.UTF-8', '" . $timestamp . "'),
+        ('Marathi', 'mr_IN.UTF-8', '" . $timestamp . "'),
+        ('Persian', 'fa_IR.UTF-8', '" . $timestamp . "'),
         ('Polish', 'pl_PL.UTF-8', '" . $timestamp . "'),
         ('Portuguese', 'pt_PT.UTF-8', '" . $timestamp . "'),
-        ('Russian', 'ru_RU.UTF-8', '" . $timestamp . "')");
+        ('Portuguese (BR)', 'pt_BR.UTF-8', '" . $timestamp . "'),
+        ('Russian', 'ru_RU.UTF-8', '" . $timestamp . "'),
+        ('Spanish', 'es_ES.UTF-8', '" . $timestamp . "'),
+        ('Tamil', 'ta_IN.UTF-8', '" . $timestamp . "'),
+        ('Telugu', 'te_IN.UTF-8', '" . $timestamp . "'),
+        ('Turkish', 'tr_TR.UTF-8', '" . $timestamp . "'),
+        ('Urdu', 'ur_PK.UTF-8', '" . $timestamp . "'),
+        ('Vietnamese', 'vi_VN.UTF-8', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `currencies` (
