@@ -1755,11 +1755,6 @@ if ($current_db_version === '4.20.07') {
          VALUES
         ('Porkbun', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "')");
 
-        /*
-         * This needs to be MOVED from the last version to the newest version with every release
-         */
-        $goal->upgrade($previous_version);
-
         $upgrade->database($new_version);
 
         if ($pdo->InTransaction()) $pdo->commit();
@@ -1784,6 +1779,11 @@ if ($current_db_version === '4.21.0') {
     try {
 
         $pdo->beginTransaction();
+
+        /*
+         * This needs to be MOVED from the last version to the newest version with every release
+         */
+        $goal->upgrade($previous_version);
 
         $upgrade->database($new_version);
 
