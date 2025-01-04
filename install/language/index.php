@@ -69,16 +69,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTop('new_language', '', '', '', '');
+echo $form->showDropdownOption('ar_SA.UTF-8', 'عربي', $_ENV['LANG']);
+echo $form->showDropdownOption('bn_BD.UTF-8', 'বাংলা', $_ENV['LANG']);
+echo $form->showDropdownOption('zh_CN.UTF-8', '中文（简体）', $_ENV['LANG']);
+echo $form->showDropdownOption('zh_TW.UTF-8', '中文（繁體）)', $_ENV['LANG']);
 echo $form->showDropdownOption('de_DE.UTF-8', 'Deutsch', $_ENV['LANG']);
-echo $form->showDropdownOption('en_CA.UTF-8', 'English (Canada)', $_ENV['LANG']);
-echo $form->showDropdownOption('en_US.UTF-8', 'English (United States)', $_ENV['LANG']);
+echo $form->showDropdownOption('en_CA.UTF-8', 'English (CA)', $_ENV['LANG']);
+echo $form->showDropdownOption('en_US.UTF-8', 'English (US)', $_ENV['LANG']);
 echo $form->showDropdownOption('es_ES.UTF-8', 'Español', $_ENV['LANG']);
 echo $form->showDropdownOption('fr_FR.UTF-8', 'Français', $_ENV['LANG']);
+echo $form->showDropdownOption('hi_IN.UTF-8', 'हिंदी', $_ENV['LANG']);
+echo $form->showDropdownOption('id_ID.UTF-8', 'Indonesia', $_ENV['LANG']);
 echo $form->showDropdownOption('it_IT.UTF-8', 'Italiano', $_ENV['LANG']);
+echo $form->showDropdownOption('ja_JP.UTF-8', '日本語', $_ENV['LANG']);
+echo $form->showDropdownOption('ko_KR.UTF-8', '한국인', $_ENV['LANG']);
+echo $form->showDropdownOption('mr_IN.UTF-8', 'मराठी', $_ENV['LANG']);
 echo $form->showDropdownOption('nl_NL.UTF-8', 'Nederlands', $_ENV['LANG']);
+echo $form->showDropdownOption('fa_IR.UTF-8', 'فارسی', $_ENV['LANG']);
 echo $form->showDropdownOption('pl_PL.UTF-8', 'Polski', $_ENV['LANG']);
 echo $form->showDropdownOption('pt_PT.UTF-8', 'Português', $_ENV['LANG']);
+echo $form->showDropdownOption('pt_BR.UTF-8', 'Português (BR)', $_ENV['LANG']);
 echo $form->showDropdownOption('ru_RU.UTF-8', 'Русский язык', $_ENV['LANG']);
+echo $form->showDropdownOption('ta_IN.UTF-8', 'தமிழ்', $_ENV['LANG']);
+echo $form->showDropdownOption('te_IN.UTF-8', 'తెలుగు', $_ENV['LANG']);
+echo $form->showDropdownOption('tr_TR.UTF-8', 'Türkçe', $_ENV['LANG']);
+echo $form->showDropdownOption('ur_PK.UTF-8', 'اردو', $_ENV['LANG']);
+echo $form->showDropdownOption('vi_VN.UTF-8', 'Tiếng Việt', $_ENV['LANG']);
 echo $form->showDropdownBottom('');
 ?>
 <BR>
