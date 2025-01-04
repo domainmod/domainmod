@@ -52,7 +52,11 @@ $pdo = $deeb->cnxx;
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?>&nbsp;
 <?php echo sprintf(_('In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>&nbsp;
-<?php echo sprintf(_("This file should be executed %severy 10 minutes%s, and once it's setup the Task Scheduler will be live."), '<em>', '</em>'); ?><BR>
+<?php
+$emphasized_text = _("every 10 minutes");
+$full_text = sprintf(_("This file should be executed %s, and once it's setup the Task Scheduler will be live."), $emphasized_text);
+echo str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text);
+?>
 <BR>
 <?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?><BR>
 <BR>
