@@ -164,7 +164,7 @@ $new_password = "";
 
 <div class="card card-outline card-danger">
     <div class="card-body login-card-body">
-        <p class="login-box-msg"><?php echo _('Please enter your username and password to sign in'); ?></p><?php
+        <p class="login-box-msg"><?php echo _('Please enter your username and password'); ?></p><?php
 
         if (DEMO_INSTALLATION == true) { ?>
 

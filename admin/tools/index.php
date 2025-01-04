@@ -49,8 +49,8 @@ $pdo = $deeb->cnxx;
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <?php echo $layout->contentBoxTop(_('Tools'), '3'); ?>
-<a href="send-test-email.php">Send Test Email</a><BR>
-If you want to ensure that your <?php echo SOFTWARE_TITLE; ?> installation is able to send email successfully, click this link and a test email will be sent to <strong><?php echo $_SESSION['s_email_address']; ?></strong>.
+<a href="send-test-email.php"><?php echo _("Send Test Email"); ?></a><BR>
+<?php echo _("If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to") . " <strong>" . $_SESSION['s_email_address']; ?>.
 <?php echo $layout->contentBoxBottom(); ?>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

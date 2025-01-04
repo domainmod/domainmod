@@ -35,7 +35,7 @@ $search_for = $search_for ?? '';
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-sm-inline-block">
-                <a href="<?php echo $web_root; ?>/feedback/" class="nav-link">Feedback</a>
+                <a href="<?php echo $web_root; ?>/feedback/" class="nav-link"><?php echo _("Feedback"); ?></a>
             </li>
 <?php /* ?>
             <li class="nav-item d-sm-inline-block">

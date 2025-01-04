@@ -21,8 +21,8 @@
 ?>
 <ol class="breadcrumb float-sm-right">
     <?php if ($software_section == 'dashboard') { ?>
-        <li class="breadcrumb-item active">Dashboard</li>
+        <li class="breadcrumb-item active"><?php echo _("Dashboard"); ?></li>
     <?php } else { ?>
-        <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/"><?php echo _("Dashboard"); ?></a></li>
     <?php } ?>
     <?php require_once DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'; ?>
