@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.23.0     2025-01-04
+-Added 16 new languages
+-Added the ability to send a test email
+-Added the ability to quickly set missing fees to 0
+
 v4.22.0     2025-01-01
 - Updated Porkbun API URL
 - Updated Personal Links
