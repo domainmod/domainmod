@@ -25,6 +25,7 @@ msgstr ""
 #: _includes/breadcrumbs/admin-maintenance-main.inc.php:22
 #: _includes/breadcrumbs/admin-scheduler-main.inc.php:22
 #: _includes/breadcrumbs/admin-settings.inc.php:22
+#: _includes/breadcrumbs/admin-tools-main.inc.php:22
 #: _includes/breadcrumbs/admin-users-add.inc.php:22
 #: _includes/breadcrumbs/admin-users-edit.inc.php:22
 #: _includes/breadcrumbs/admin-users-main.inc.php:22 admin/users/index.php:66
@@ -320,7 +321,9 @@ msgstr "Su nueva contraseña"
 
 #: _includes/email/send-new-password.inc.php:59
 #: _includes/email/send-new-password.inc.php:103
-#: classes/DomainMOD/Email.php:382 classes/DomainMOD/Email.php:400
+#: _includes/email/send-test-email.inc.php:56
+#: _includes/email/send-test-email.inc.php:93 classes/DomainMOD/Email.php:382
+#: classes/DomainMOD/Email.php:400
 msgid "Best Regards"
 msgstr "Saludos cordiales"
 
@@ -447,30 +450,30 @@ msgstr "Los valores por defecto del sistema"
 msgid "Task Scheduler"
 msgstr "Programador de tareas"
 
-#: _includes/layout/menu-main.inc.php:228
-#: _includes/settings/admin-backup-main.inc.php:23 admin/index.php:54
+#: _includes/layout/menu-main.inc.php:234
+#: _includes/settings/admin-backup-main.inc.php:23 admin/index.php:55
 msgid "Backup & Restore"
 msgstr "Copia de seguridad y restauración"
 
-#: _includes/layout/menu-main.inc.php:234
-#: _includes/settings/admin-debug-log-main.inc.php:23 admin/index.php:55
+#: _includes/layout/menu-main.inc.php:240
+#: _includes/settings/admin-debug-log-main.inc.php:23 admin/index.php:56
 msgid "Debug Log"
 msgstr "Registro de depuración"
 
-#: _includes/layout/menu-main.inc.php:240
-#: _includes/settings/admin-info.inc.php:23 admin/index.php:56
+#: _includes/layout/menu-main.inc.php:246
+#: _includes/settings/admin-info.inc.php:23 admin/index.php:57
 msgid "System Information"
 msgstr "Información del sistema"
 
-#: _includes/layout/menu-main.inc.php:259
+#: _includes/layout/menu-main.inc.php:265
 msgid "Documentation"
 msgstr "Documentación"
 
-#: _includes/layout/menu-main.inc.php:267
+#: _includes/layout/menu-main.inc.php:273
 msgid "Support"
 msgstr "Apoyo"
 
-#: _includes/layout/menu-main.inc.php:275 classes/DomainMOD/Notice.php:40
+#: _includes/layout/menu-main.inc.php:281 classes/DomainMOD/Notice.php:40
 msgid "News"
 msgstr "Noticias"
 
@@ -588,39 +591,23 @@ msgid "Export"
 msgstr "Exportación"
 
 #: _includes/layout/table-maintenance.inc.php:26
-msgid "Some of your Registrars/TLDs are missing domain fees."
-msgstr "A algunos de sus Registrars/TLDs les faltan cuotas de dominio."
-
-#: _includes/layout/table-maintenance.inc.php:26
-#: _includes/layout/table-maintenance.inc.php:35
+#: _includes/layout/table-maintenance.inc.php:37
 msgid "Click here to fix this"
 msgstr "Haga clic aquí para arreglar esto"
 
-#: _includes/layout/table-maintenance.inc.php:26
-msgid "If you've already updated all new TLDs, you should %supdate the domain fees system-wide%s (this may take some time)"
-msgstr "Si ya has actualizado todos los nuevos TLDs, deberías %sactualizar las cuotas de los dominios a nivel de todo el sistema%s (esto puede llevar algún tiempo)"
-
-#: _includes/layout/table-maintenance.inc.php:35
-msgid "Some of your SSL Certificate Types are missing fees."
-msgstr "A algunos de sus tipos de certificados SSL les faltan tasas."
-
-#: _includes/layout/table-maintenance.inc.php:35
-msgid "If you've already updated all new SSL Types, you should %supdate the SSL fees system-wide%s (this may take some time)"
-msgstr "Si ya ha actualizado todos los nuevos tipos de SSL, debería %sactualizar las tasas de SSL en todo el sistema%s (esto puede llevar algún tiempo)"
-
-#: _includes/layout/table-maintenance.inc.php:43
+#: _includes/layout/table-maintenance.inc.php:47
 msgid "Debugging mode is currently enabled."
 msgstr "El modo de depuración está actualmente activado."
 
-#: _includes/layout/table-maintenance.inc.php:43
+#: _includes/layout/table-maintenance.inc.php:47
 msgid "View Debug Log"
 msgstr "Ver el registro de depuración"
 
-#: _includes/layout/table-maintenance.inc.php:48
+#: _includes/layout/table-maintenance.inc.php:52
 msgid "You can disable debugging mode in %sSettings%s."
 msgstr "Puede desactivar el modo de depuración en %sSettings%s."
 
-#: _includes/layout/table-maintenance.inc.php:53
+#: _includes/layout/table-maintenance.inc.php:57
 msgid "Please contact your %s administrator to disable debugging"
 msgstr "Por favor, contacta con tu %s administrador para desactivar la depuración"
 
@@ -5153,12 +5140,12 @@ msgstr "Compruebe si hay una nueva versión"
 msgid "Data Warehouse Build"
 msgstr "Construcción de un almacén de datos"
 
-#: install/go.php:1235
+#: install/go.php:1251
 #, fuzzy
 msgid "%s has been successfully installed and you should now delete the %s folder"
 msgstr "%s ha sido instalado con éxito y ahora deberías borrar la carpeta %s"
 
-#: install/go.php:1235
+#: install/go.php:1251
 msgid "The default username and password are %s, and you'll be prompted to change the password after logging in"
 msgstr "El nombre de usuario y la contraseña por defecto son %s, y se te pedirá que cambies la contraseña después de iniciar sesión"
 
@@ -6236,7 +6223,7 @@ msgstr "Construir información"
 msgid "Please enter your username and password to sign in"
 msgstr "Ingrese su nombre de usuario y contraseña para iniciar sesión"
 
-#: _includes/layout/menu-main.inc.php:250
+#: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
 msgstr "Cerrar sesión"
 
@@ -6414,11 +6401,81 @@ msgstr " Requisitos de Software"
 msgid "NAVIGATION"
 msgstr "NAVEGACIÓN"
 
-#: _includes/layout/menu-main.inc.php:254
+#: _includes/layout/menu-main.inc.php:260
 msgid "HELP"
 msgstr "AYUDA"
 
 #: admin/settings/index.php:181
 msgid "Free Currency Rates API"
 msgstr "API de tipos de cambio de divisas gratuitos"
+
+#: _includes/email/send-test-email.inc.php:31
+msgid "Test Email"
+msgstr "Correo electrónico de prueba"
+
+#: _includes/email/send-test-email.inc.php:51
+#: _includes/email/send-test-email.inc.php:90
+msgid "This is a test email to ensure that your %s installation is able to send email successfully. "
+msgstr "Este es un correo electrónico de prueba para garantizar que su instalación %s pueda enviar correos electrónicos correctamente. "
+
+#: _includes/email/send-test-email.inc.php:75
+#: _includes/email/send-test-email.inc.php:98
+msgid "You've received this notification because someone requested a test email be sent from your account."
+msgstr "Recibió esta notificación porque alguien solicitó que se enviara un correo electrónico de prueba desde su cuenta."
+
+#: _includes/email/send-test-email.inc.php:52
+#: _includes/email/send-test-email.inc.php:91
+msgid "If you did not request this from your account, you should report it to your %s Administrator."
+msgstr "Si no solicitó esto desde su cuenta, debe informarlo a su administrador de %s."
+
+#: _includes/email/send-test-email.inc.php:100
+msgid "DomainMOD Test Email"
+msgstr "Correo electrónico de prueba de DomainMOD"
+
+#: _includes/layout/menu-main.inc.php:228
+#: _includes/settings/admin-tools-main.inc.php:24 admin/index.php:54
+#: admin/tools/index.php:51
+msgid "Tools"
+msgstr "Herramientas"
+
+#: _includes/layout/table-maintenance.inc.php:26
+msgid "Some of your Domains are missing fees. Until you enter the fees, the Domains will not be visible in DomainMOD."
+msgstr "A algunos de tus dominios les faltan tarifas. Hasta que no ingreses las tarifas, los dominios no estarán visibles en DomainMOD."
+
+#: _includes/layout/table-maintenance.inc.php:27
+msgid "If you don't care about tracking Domain fees, "
+msgstr "Si no le importa el seguimiento de las tarifas de dominio, "
+
+#: _includes/layout/table-maintenance.inc.php:27
+#: _includes/layout/table-maintenance.inc.php:38
+msgid "click here to set all missing fees to 0"
+msgstr "Haga clic aquí para establecer todas las tarifas faltantes en 0"
+
+#: _includes/layout/table-maintenance.inc.php:28
+msgid "If you've already updated all new fees, you should %supdate the Domain fees system-wide%s. This may take some time."
+msgstr "Si ya ha actualizado todas las tarifas nuevas, debe actualizar el sistema de tarifas de dominios en todo el sistema. Esto puede llevar algún tiempo."
+
+#: _includes/layout/table-maintenance.inc.php:37
+msgid "Some of your SSL Certificates are missing fees. Until you enter the fees, the SSL Certificates will not be visible in DomainMOD."
+msgstr "A algunos de sus certificados SSL les faltan tarifas. Hasta que ingrese las tarifas, los certificados SSL no estarán visibles en DomainMOD."
+
+#: _includes/layout/table-maintenance.inc.php:38
+msgid "If you don't care about tracking SSL Certificate fees, "
+msgstr "Si no le importa el seguimiento de las tarifas del certificado SSL, "
+
+#: _includes/layout/table-maintenance.inc.php:39
+msgid "If you've already updated all new fees, you should %supdate the SSL Certificate fees system-wide%s. This may take some time."
+msgstr "Si ya ha actualizado todas las tarifas nuevas, debe actualizar las tarifas de certificados SSL en todo el sistema. Esto puede llevar algún tiempo."
+
+#: _includes/settings/admin-tools-main.inc.php:23
+msgid "Admin Tools"
+msgstr "Herramientas de administración"
+
+#: admin/tools/send-test-email.php:46
+msgid "Test Email Sent!"
+msgstr "¡Correo electrónico de prueba enviado!"
+
+#: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
+msgid "Missing fees set to 0"
+msgstr "Las tarifas faltantes se establecen en 0"
 
