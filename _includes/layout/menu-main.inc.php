@@ -223,6 +223,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/tools/" class="nav-link<?php if ($slug == "admin-tools-main") echo " active"; ?>">
+                            <i class="far fa-circle-disabled nav-icon"></i>
+                            <p><?php echo _('Tools') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/backup/" class="nav-link<?php if ($slug == "admin-backup-main") echo " active"; ?>">
                             <i class="far fa-circle-disabled nav-icon"></i>
                             <p><?php echo _('Backup & Restore') ?></p>

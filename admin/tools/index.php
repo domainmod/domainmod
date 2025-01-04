@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/index.php
+ * /admin/tools/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2025 Greg Chetcuti <greg@greg.ca>
@@ -20,21 +20,23 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/../_includes/start-session.inc.php';
-require_once __DIR__ . '/../_includes/init.inc.php';
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+$deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/admin-main.inc.php';
+require_once DIR_INC . '/settings/admin-tools-main.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$pdo = $deeb->cnxx;
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
@@ -42,19 +44,15 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
+<!body class="hold-transition skin-red sidebar-mini">
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="<?php echo $web_root; ?>/admin/settings/"><?php echo _('System Settings'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/defaults/"><?php echo _('System Defaults'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/users/"><?php echo _('Users'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/domain-fields/"><?php echo _('Custom Domain Fields'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/scheduler/"><?php echo _('Task Scheduler'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/maintenance/"><?php echo _('Maintenance'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/tools/"><?php echo _('Tools'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/backup/"><?php echo _('Backup & Restore'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/debug-log/"><?php echo _('Debug Log'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/info/"><?php echo _('System Information'); ?></a><BR>
+
+<?php echo $layout->contentBoxTop(_('Tools'), '3'); ?>
+<a href="send-test-email.php">Send Test Email</a><BR>
+If you want to ensure that your <?php echo SOFTWARE_TITLE; ?> installation is able to send email successfully, click this link and a test email will be sent to <strong><?php echo $_SESSION['s_email_address']; ?></strong>.
+<?php echo $layout->contentBoxBottom(); ?>
+
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
