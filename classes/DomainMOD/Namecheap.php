@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
+
 //@formatter:off
 namespace DomainMOD;
 
@@ -168,7 +169,7 @@ class Namecheap
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
-               
+
     public function convertToArray($api_result)
     {
         $xml = simplexml_load_string($api_result);
@@ -187,7 +188,7 @@ class Namecheap
         }
         return $dns_servers;
     }
-                    
+
     public function processPrivacy($privacy_result)
     {
         if ($privacy_result == 'True') {
@@ -197,7 +198,7 @@ class Namecheap
         }
         return $privacy_status;
     }
-                    
+
     public function processAutorenew($autorenewal_result)
     {
         if ($autorenewal_result == 'true') {
