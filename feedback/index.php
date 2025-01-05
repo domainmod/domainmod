@@ -44,13 +44,13 @@ $system->authCheck();
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!<BR>
+<?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?><BR>
 <BR>
-We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next.<BR>
+<?php echo _("We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."); ?><BR>
 <BR>
-On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of <?php echo SOFTWARE_TITLE; ?>.<BR>
+<?php echo _("On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of"); ?> <?php echo " " . SOFTWARE_TITLE; ?>.<BR>
 <BR>
-So what are you waiting for? Speak your mind or checkout the Roadmap below!<BR>
+<?php echo _("So what are you waiting for? Speak your mind or checkout the Roadmap below!"); ?><BR>
 <BR>
 <a target="_blank" href="https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new"><?php echo $layout->showButton('button', _('Submit Feedback')); ?></a>
 &nbsp;&nbsp;&nbsp;
