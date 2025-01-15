@@ -21,10 +21,10 @@
 ?>
 <?php
 // Path Settings
-$web_root = '/dm'; // don't include trailing slash (if you're installing in the root just leave this blank)
+$web_root = ''; // don't include trailing slash (if you're installing in the root just leave this blank)
 
 // Database Settings
-$dbhostname = 'localhost';
-$dbname = 'db_name';
-$dbusername = 'db_username';
-$dbpassword = 'dbPassword123';
+$dbhostname = 'dedi1343.your-server.de';
+$dbname = 'domainmanagement_db1';
+$dbusername = 'manager_1';
+$dbpassword = 'fT6mM9Z6vPF8DFLA';
