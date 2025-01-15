@@ -25,6 +25,6 @@ $web_root = ''; // don't include trailing slash (if you're installing in the roo
 
 // Database Settings
 $dbhostname = 'dedi1343.your-server.de';
-$dbname = 'domainmanagement_db1';
-$dbusername = 'manager_1';
-$dbpassword = 'fT6mM9Z6vPF8DFLA';
+$dbname = 'domainmod_db1';
+$dbusername = 'domainmod_1';
+$dbpassword = 'BwsRM7QtDKJRRPH3';
