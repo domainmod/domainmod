@@ -73,8 +73,7 @@ class DomainQueue
 
                     $registrar = new Cloudflare();
                     $api_token = $this->api->getKey($row->account_id);
-                    $account_id = $this->api->getAccountId($row->account_id);
-                    list($domain_count, $domain_list) = $registrar->getDomainList($api_token, $account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($api_token);
 
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
@@ -233,8 +232,7 @@ class DomainQueue
 
                     $registrar = new Cloudflare();
                     $api_token = $this->api->getKey($row->account_id);
-                    $account_id = $this->api->getAccountId($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_token, $account_id, $row->domain);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_token, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 

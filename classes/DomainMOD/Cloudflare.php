@@ -34,13 +34,13 @@ class Cloudflare
         $this->deeb = Database::getInstance();
     }
 
-    public function getApiUrl($account_id, $command, $domain)
+    public function getApiUrl($command, $domain)
     {
         $base_url = 'https://api.cloudflare.com/client/v4/';
         if ($command == 'domainlist') {
-            $full_url = $base_url . 'zones?status=active&account.id=' . $account_id;
+            $full_url = $base_url . 'zones?status=active';
         } elseif ($command == 'info') {
-            $full_url = $base_url . 'accounts/' . $account_id . "/registrar/domains/" . $domain;
+            $full_url = $base_url . 'registrar/domains/' . $domain;
         } else {
             return array(_('Unable to build API URL'), '');
         }
@@ -62,7 +62,7 @@ class Cloudflare
         return $result;
     }
 
-    public function getDomainList($api_token, $account_id)
+    public function getDomainList($api_token)
     {
         $domain_list = array();
         $domain_count = 0;
@@ -70,7 +70,7 @@ class Cloudflare
         $page = 1;
         $total_pages = 1;
         $max_retries = 5;
-        $base_url = 'https://api.cloudflare.com/client/v4/zones?status=active&account.id=' . $account_id;
+        $base_url = 'https://api.cloudflare.com/client/v4/zones?status=active';
 
         do {
             $url = $base_url . '&per_page=' . $per_page . '&page=' . $page;
@@ -105,7 +105,7 @@ class Cloudflare
                     $retries++;
                     if ($retries >= $max_retries) {
                         $log_message = 'Cloudflare API rate limit exceeded, max retries reached.';
-                        $log_extra = array('Account ID' => $this->format->obfusc($account_id), 'API Token' => $this->format->obfusc($api_token), 'URL' => $url);
+                        $log_extra = array('API Token' => $this->format->obfusc($api_token), 'URL' => $url);
                         $this->log->error($log_message, $log_extra);
                         break;
                     }
@@ -116,7 +116,7 @@ class Cloudflare
                     $retries++;
                     if ($retries >= $max_retries) {
                         $log_message = 'Cloudflare API server error, max retries reached.';
-                        $log_extra = array('Account ID' => $this->format->obfusc($account_id), 'API Token' => $this->format->obfusc($api_token), 'URL' => $url);
+                        $log_extra = array('API Token' => $this->format->obfusc($api_token), 'URL' => $url);
                         $this->log->error($log_message, $log_extra);
                         break;
                     }
@@ -134,7 +134,7 @@ class Cloudflare
                 }
             } else {
                 $log_message = 'Unable to get domain list';
-                $log_extra = array('Account ID' => $this->format->obfusc($account_id), 'API Token' => $this->format->obfusc($api_token), 'URL' => $url, 'Response' => $body);
+                $log_extra = array('API Token' => $this->format->obfusc($api_token), 'URL' => $url, 'Response' => $body);
                 $this->log->error($log_message, $log_extra);
                 break;
             }
@@ -155,14 +155,14 @@ class Cloudflare
         return array($domain_count, $domain_list);
     }
 
-    public function getFullInfo($api_token, $account_id, $domain)
+    public function getFullInfo($api_token, $domain)
     {
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';
         $autorenewal_status = '';
 
-        $api_url = $this->getApiUrl($account_id, 'info', $domain);
+        $api_url = $this->getApiUrl('info', $domain);
         $api_results = $this->apiCall($api_url, $api_token);
         $array_results = $this->convertToArray($api_results);
 
@@ -181,7 +181,7 @@ class Cloudflare
             $dns_servers = $this->processDns($dns_result);
         } else {
             $log_message = 'Unable to get domain details';
-            $log_extra = array('Domain' => $domain, 'Account ID' => $this->format->obfusc($account_id), 'API Token' => $this->format->obfusc($api_token));
+            $log_extra = array('Domain' => $domain, 'API Token' => $this->format->obfusc($api_token));
             $this->log->error($log_message, $log_extra);
         }
 
