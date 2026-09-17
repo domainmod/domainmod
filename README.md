@@ -29,6 +29,13 @@ There are currently four options for downloading DomainMOD.
 
 Please see our official DomainMOD container on Docker Hub for more information: https://hub.docker.com/r/domainmod/domainmod
 
+If you'd rather not manage Docker yourself, [Easypanel](https://easypanel.io) is a self-hosted deployment platform that has a one-click DomainMOD template:
+
+[![Deploy on Easypanel][easypanel-btn]][easypanel-deploy]
+
+[easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
+[easypanel-deploy]: https://easypanel.io/templates/domainmod
+
 **Option #2 -- Downloading a .zip file**   
 
 Visit the following URL to download DomainMOD in a .zip file: <https://domainmod.org/download/>
