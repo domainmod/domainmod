@@ -30,8 +30,19 @@ class Database
 
     private function __construct()
     {
-        $this->cnxx = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD,
-                               array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="NO_ENGINE_SUBSTITUTION"'));
+        // SSL cannot be enabled with PDO::setAttribute because the connection already exists
+        $options = array(
+            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="NO_ENGINE_SUBSTITUTION"',
+            \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => DB_SSL_VERIFY_CERT
+        );
+        if (DB_SSL_CA !== false) {
+            $options[\PDO::MYSQL_ATTR_SSL_CA] = DB_SSL_CA;
+        }
+        if (DB_SSL_CAPATH !== false) {
+            $options[\PDO::MYSQL_ATTR_SSL_CAPATH] = DB_SSL_CAPATH;
+        }
+        $dsn = "mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8";
+        $this->cnxx = new \PDO($dsn, DB_USERNAME, DB_PASSWORD, $options);
 
         $this->cnxx->exec("SET NAMES utf8");
         $this->cnxx->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
