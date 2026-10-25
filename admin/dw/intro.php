@@ -50,7 +50,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <BR>
 <?php echo sprintf(_("If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into %s, you can ignore this section."), SOFTWARE_TITLE); ?><BR>
 <BR>
-<strong><?php echo strtoupper(_('Note')); ?>:</strong> <?php echo sprintf(_('Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?><BR>
+<strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?><BR>
 
 <BR><h3><?php echo _('Automating Builds'); ?></h3>
 <?php echo sprintf(_("If you're going to use the Data Warehouse it's recommended that you setup the %ssystem cron/scheduled job%s in order to automate your builds."), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?>

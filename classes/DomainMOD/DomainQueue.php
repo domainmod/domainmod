@@ -363,7 +363,7 @@ class DomainQueue
 
                 } else {
 
-                    if ($domain_status == strtolower(_('Invalid'))) {
+                    if ($domain_status == Format::toLower(_('Invalid'))) {
 
                         $this->markInvalidDomain($row->id);
 

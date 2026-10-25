@@ -138,11 +138,11 @@ if ($export_data === 1) {
 
         if ($type == "inactive") {
 
-            $row_contents = array(strtoupper(_('Inactive Domains')));
+            $row_contents = array(DomainMOD\Format::toUpper(_('Inactive Domains')));
 
         } elseif ($type == "filtered") {
 
-            $row_contents = array(strtoupper(_('Filtered Domains')));
+            $row_contents = array(DomainMOD\Format::toUpper(_('Filtered Domains')));
 
         }
 
@@ -178,7 +178,7 @@ if ($export_data === 1) {
 
     } elseif ($type == "missing") {
 
-        $row_contents = array(strtoupper(_('Missing Domains')));
+        $row_contents = array(DomainMOD\Format::toUpper(_('Missing Domains')));
         $export->writeRow($export_file, $row_contents);
 
     }
@@ -194,19 +194,19 @@ if ($export_data === 1) {
             $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
             if ($row->active == "0") {
-                $domain_status = strtoupper(_('Expired'));
+                $domain_status = DomainMOD\Format::toUpper(_('Expired'));
             } elseif ($row->active == "1") {
-                $domain_status = strtoupper(_('Active'));
+                $domain_status = DomainMOD\Format::toUpper(_('Active'));
             } elseif ($row->active == "2") {
-                $domain_status = strtoupper(_('Pending (Transfer)'));
+                $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
             } elseif ($row->active == "3") {
-                $domain_status = strtoupper(_('Pending (Renewal)'));
+                $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
             } elseif ($row->active == "4") {
-                $domain_status = strtoupper(_('Pending (Other)'));
+                $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
             } elseif ($row->active == "5") {
-                $domain_status = strtoupper(_('Pending (Registration)'));
+                $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
             } elseif ($row->active == "10") {
-                $domain_status = strtoupper(_('Sold'));
+                $domain_status = DomainMOD\Format::toUpper(_('Sold'));
             } else {
                 $domain_status = _('ERROR -- PROBLEM WITH CODE IN RESULTS.PHP');
             }
@@ -306,11 +306,11 @@ if ($type == "inactive") {
 ?>
 <?php
 if ($type == "inactive") {
-    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
 } elseif ($type == "missing") {
-    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">" . strtoupper(_('Export Results')) . "</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
 }
 
 foreach ($result as $row) {

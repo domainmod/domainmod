@@ -102,16 +102,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo sprintf(_('This page allows you to import all of your domain data into %s using a CSV template.'), SOFTWARE_TITLE);
 echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
-<BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('Before you can use the CSV Importer you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo strtolower(_('Folder')); ?> ("<em>chmod 777 <?php  echo DIR_TEMP; ?></em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?><BR>
+<BR><?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo _('Before you can use the CSV Importer you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo DomainMOD\Format::toLower(_('Folder')); ?> ("<em>chmod 777 <?php  echo DIR_TEMP; ?></em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?><BR>
 <BR><?php echo _('For more information on how to use the CSV Importer, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-importer/"><?php echo _('User Guide'); ?></a>.
 
 <BR><BR><h3><?php echo _('Download CSV Template'); ?></h3>
 <a href='../../import-template-sample.csv'><?php echo _('Click here'); ?></a> <?php echo _('to download the CSV Import Template.'); ?> <?php echo sprintf(_('You can import as little or as much domain information as you want.')); ?>&nbsp;<?php echo sprintf(_('Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It\'s ok though, even if you go this route it\'s pretty easy to update the information that %s creates for you.'), SOFTWARE_TITLE); ?>
-<BR><BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail.'); ?>
+<BR><BR><?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo _('The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail.'); ?>
 
 <BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
-    <?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
+    <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
     <input type="file" name="file"><BR><BR>
     <?php echo _('Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process.'); ?><BR>
     <BR>
