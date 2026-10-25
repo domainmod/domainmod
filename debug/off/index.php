@@ -49,10 +49,10 @@ $deeb->cnxx->query("UPDATE settings SET debug_mode = '0'");
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php';
-echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', strtoupper(_('Off'))));
+echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', DomainMOD\Format::toUpper(_('Off'))));
 ?>
 <BR><BR>
-<a href="../on/"><?php echo _('Turn Debugging Mode') . ' ' . strtoupper(_('On')); ?></a>
+<a href="../on/"><?php echo _('Turn Debugging Mode') . ' ' . DomainMOD\Format::toUpper(_('On')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

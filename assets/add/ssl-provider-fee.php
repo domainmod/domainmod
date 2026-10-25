@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_danger'] .= _('A fee for this SSL Type already exists') . ' [<a href=\'' . WEB_ROOT .
                 '/assets/edit/ssl-provider-fee.php?sslpid=' . $sslpid . '&fee_id=' . urlencode($fee_id) .
-                '\'>' . strtolower(_('Edit Fee')) . '</a>]<BR>';
+                '\'>' . DomainMOD\Format::toLower(_('Edit Fee')) . '</a>]<BR>';
 
         } else {
 

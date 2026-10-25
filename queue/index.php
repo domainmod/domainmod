@@ -384,7 +384,7 @@ if ($export_data === 1) {
 
                 if ($row_domains->created_by == '0') {
 
-                    $full_name_export = '[' . strtolower(_('Unknown')) . ']';
+                    $full_name_export = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
 
                 } else {
 
@@ -604,7 +604,7 @@ if (!$result_lists) {
             <td><?php
                 if ($row_lists->created_by == '0') {
 
-                    $to_display = '[' . strtolower(_('Unknown')) . ']';
+                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
 
                 } else {
 
@@ -621,7 +621,7 @@ if (!$result_lists) {
 
                 } else {
 
-                    $to_display = '[' . strtolower(_('Unknown')) . ']';
+                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
 
                 }
                 echo $to_display; ?>
@@ -782,7 +782,7 @@ if (!$result_domains) {
             <td><?php
                 if ($row_domains->created_by == '0') {
 
-                    $to_display = '[' . strtolower(_('Unknown')) . ']';
+                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
 
                 } else {
 
@@ -798,7 +798,7 @@ if (!$result_domains) {
 
                 } else {
 
-                    $to_display = '[' . strtolower(_('Unknown')) . ']';
+                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
 
                 }
                 echo $to_display; ?>

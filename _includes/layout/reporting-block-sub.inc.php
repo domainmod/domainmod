@@ -25,7 +25,7 @@
 
 <?php } else { ?>
 
-    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo strtoupper(_('All')); ?><BR>
+    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo DomainMOD\Format::toUpper(_('All')); ?><BR>
 
 <?php } ?>
 

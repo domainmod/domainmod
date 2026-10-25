@@ -108,7 +108,7 @@ if ($export_data !== 1) {
 if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
 if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
 
-if ($is_active == "") $is_active = strtoupper(_('Live'));
+if ($is_active == "") $is_active = 'LIVE';
 
 if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' ";
 } elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' ";
@@ -121,8 +121,8 @@ if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' ";
 } elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' ";
 } elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' ";
 } elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' ";
-} elseif ($is_active == strtoupper(_('Live'))) { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-} elseif ($is_active == strtoupper(_('All'))) { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
+} elseif ($is_active == 'LIVE') { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
+} elseif ($is_active == 'ALL') { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
 }
 
 if ($oid !== 0) {
@@ -414,13 +414,13 @@ if ($export_data == 1) {
 
     $row_contents[$count++] = _('SSL Status') . ':';
 
-    if ($is_active == strtoupper(_('All'))) {
+    if ($is_active == 'ALL') {
 
-        $row_contents[$count++] = strtoupper(_('All'));
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
 
-    } elseif ($is_active == strtoupper(_('Live')) || $is_active == "") {
+    } elseif ($is_active == 'LIVE' || $is_active == "") {
 
-        $row_contents[$count++] = strtoupper(_('Live')) . ' (' . _('Active') . ' / ' . _('Pending') . ')';
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Pending') . ')';
 
     } elseif ($is_active == "0") {
 
@@ -472,7 +472,7 @@ if ($export_data == 1) {
     $row_contents[$count++] = _('Created By');
     $row_contents[$count++] = _('Inserted');
     $row_contents[$count++] = _('Updated');
-    $row_contents[$count++] = strtoupper(_('Custom Fields'));
+    $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
     $result_field = $pdo->query("
         SELECT `name`
@@ -499,15 +499,15 @@ if ($export_data == 1) {
         $temp_total_cost = $row->total_cost * $row->conversion;
 
         if ($row->active == "0") {
-            $ssl_status = strtoupper(_('Expired'));
+            $ssl_status = DomainMOD\Format::toUpper(_('Expired'));
         } elseif ($row->active == "1") {
-            $ssl_status = strtoupper(_('Active'));
+            $ssl_status = DomainMOD\Format::toUpper(_('Active'));
         } elseif ($row->active == "3") {
-            $ssl_status = strtoupper(_('Pending (Renewal)'));
+            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
         } elseif ($row->active == "4") {
-            $ssl_status = strtoupper(_('Pending (Other)'));
+            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
         } elseif ($row->active == "5") {
-            $ssl_status = strtoupper(_('Pending (Registration)'));
+            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
         } else {
             $ssl_status = _('ERROR -- PROBLEM WITH CODE IN SSL/INDEX.PHP');
         }
@@ -676,9 +676,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -741,7 +741,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY d.domain asc")->fetchAll();
 
             echo $form->showDropdownTop('did', '', '', '', '');
-            echo $form->showDropdownOption('', _('Domain') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('Domain') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_domain as $row_domain) {
 
                 echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $did);
@@ -773,9 +773,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -838,7 +838,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY sslp.name asc")->fetchAll();
 
             echo $form->showDropdownTop('sslpid', '', '', '', '');
-            echo $form->showDropdownOption('', _('SSL Provider') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('SSL Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_ssl_provider as $row_ssl_provider) {
 
                 echo $form->showDropdownOption($row_ssl_provider->id, $row_ssl_provider->name, $sslpid);
@@ -870,9 +870,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -937,7 +937,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY sslp.name asc, o.name asc, sslpa.username asc")->fetchAll();
 
             echo $form->showDropdownTop('sslpaid', '', '', '', '');
-            echo $form->showDropdownOption('', _('SSL Provider Account') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('SSL Provider Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_account as $row_account) {
 
                 echo $form->showDropdownOption($row_account->sslpa_id, $row_account->sslp_name . ', ' . $row_account->owner_name . ' (' . $row_account->username . ')', $sslpaid);
@@ -969,9 +969,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -1034,7 +1034,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY sslcf.type asc")->fetchAll();
 
             echo $form->showDropdownTop('ssltid', '', '', '', '');
-            echo $form->showDropdownOption('', _('SSL Type') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('SSL Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_type as $row_type) {
 
                 echo $form->showDropdownOption($row_type->type_id, $row_type->type, $ssltid);
@@ -1071,9 +1071,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -1136,7 +1136,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY ip.name, ip.ip")->fetchAll();
 
             echo $form->showDropdownTop('sslipid', '', '', '', '');
-            echo $form->showDropdownOption('', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_ip as $row_ip) {
 
                 echo $form->showDropdownOption($row_ip->ip_id, $row_ip->ip_name . ' (' . $row_ip->ip . ')', $sslipid);
@@ -1168,9 +1168,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -1233,7 +1233,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                ORDER BY c.name")->fetchAll();
 
             echo $form->showDropdownTop('sslpcid', '', '', '', '');
-            echo $form->showDropdownOption('', _('Category') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_cat as $row_cat) {
 
                 echo $form->showDropdownOption($row_cat->cat_id, $row_cat->cat_name, $sslpcid);
@@ -1265,9 +1265,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -1330,7 +1330,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY o.name asc")->fetchAll();
 
             echo $form->showDropdownTop('oid', '', '', '', '');
-            echo $form->showDropdownOption('', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
+            echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_owner as $row_owner) {
 
                 echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
@@ -1362,9 +1362,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active = '9' ";
             } elseif ($is_active == "10") {
                 $is_active_string = " AND sslc.active = '10' ";
-            } elseif ($is_active == strtoupper(_('Live'))) {
+            } elseif ($is_active == 'LIVE') {
                 $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-            } elseif ($is_active == strtoupper(_('All'))) {
+            } elseif ($is_active == 'ALL') {
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
@@ -1431,7 +1431,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 ORDER BY sslc.active asc")->fetchAll();
 
             echo $form->showDropdownTop('is_active', '', '', '', '');
-            echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
+            echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', 'LIVE');
             foreach ($result_active as $row_active) {
 
                 if ($row_active->active == "0") {
@@ -1467,7 +1467,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 echo $form->showDropdownOption($row_active->active, $display_text, $is_active);
 
             }
-            echo $form->showDropdownOption(strtoupper(_('All')), strtoupper(_('All')), $is_active);
+            echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
             echo $form->showDropdownBottom('');
 
             echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
