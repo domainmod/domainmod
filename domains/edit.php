@@ -532,7 +532,7 @@ echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autore
 echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">' . strtolower(_('View Full Notes')) . '</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">' . DomainMOD\Format::toLower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }

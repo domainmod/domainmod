@@ -234,7 +234,7 @@ if ($result) { ?>
         </tbody>
     </table>
 
-    <strong>*</strong> = <?php echo _('Default Domain Owner'); ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Default SSL Owner'); ?> (<a href="../settings/defaults/"><?php echo strtolower(_('Set Defaults')); ?></a>)<BR><BR><?php
+    <strong>*</strong> = <?php echo _('Default Domain Owner'); ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Default SSL Owner'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)<BR><BR><?php
 
 } else { ?>
 

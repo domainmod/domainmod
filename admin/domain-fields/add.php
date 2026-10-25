@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 <?php
 echo $form->showFormTop('');
 echo $form->showInputText('new_name', _('Display Name') . ' (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
-echo $form->showInputText('new_field_name', _('Database Field Name') . ' (30)', _('The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).') . '<BR><strong>' . strtoupper(_('Warning')) . ':</strong> ' . _('The Database Field Name cannot be renamed.'), $unsanitize->text($new_field_name), '30', '', '1', '', '');
+echo $form->showInputText('new_field_name', _('Database Field Name') . ' (30)', _('The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).') . '<BR><strong>' . DomainMOD\Format::toUpper(_('Warning')) . ':</strong> ' . _('The Database Field Name cannot be renamed.'), $unsanitize->text($new_field_name), '30', '', '1', '', '');
 
 $result = $pdo->query("
     SELECT id, `name`
@@ -180,7 +180,7 @@ $result = $pdo->query("
 
 if ($result) {
 
-    echo $form->showDropdownTop('new_field_type_id', _('Data Type'), '<strong>' . strtoupper(_('Warning')) . ':</strong> ' . _('The Data Type cannot be changed.'), '', '');
+    echo $form->showDropdownTop('new_field_type_id', _('Data Type'), '<strong>' . DomainMOD\Format::toUpper(_('Warning')) . ':</strong> ' . _('The Data Type cannot be changed.'), '', '');
 
     foreach ($result as $row) {
 

@@ -79,7 +79,7 @@ if ($export_data === 1) {
 
     if ($segid !== 0) {
 
-        $base_filename = strtolower(_('Segment'));
+        $base_filename = DomainMOD\Format::toLower(_('Segment'));
 
     } else {
 
@@ -261,7 +261,7 @@ if (!$has_existing_segments) { ?>
                     <?php echo number_format($row->number_of_domains); ?>
                 </td>
                 <td>
-                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>"><?php echo strtoupper(_('Export')); ?></a>
+                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>"><?php echo DomainMOD\Format::toUpper(_('Export')); ?></a>
                 </td>
             </tr><?php
 

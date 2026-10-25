@@ -125,7 +125,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $row_contents = array(_('Date Range') . ':', strtoupper(_('All')));
+            $row_contents = array(_('Date Range') . ':', DomainMOD\Format::toUpper(_('All')));
 
         } else {
 

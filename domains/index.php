@@ -139,7 +139,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 }
 
-if ($is_active == "") $is_active = strtoupper(_('Live'));
+if ($is_active == "") $is_active = 'LIVE';
 
 if ($tld && $tld != '') {
 
@@ -162,8 +162,8 @@ if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
 } elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' ";
 } elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' ";
 } elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' ";
-} elseif ($is_active == strtoupper(_('Live'))) { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-} elseif ($is_active == strtoupper(_('All'))) { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
+} elseif ($is_active == 'LIVE') { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
+} elseif ($is_active == 'ALL') { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
 } else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
 }
 
@@ -676,13 +676,13 @@ if ($export_data == 1) {
 
     $row_contents[$count++] = _('Domain Status') . ':';
 
-    if ($is_active == strtoupper(_('All'))) {
+    if ($is_active == 'ALL') {
 
-        $row_contents[$count++] = strtoupper(_('All'));
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
 
-    } elseif ($is_active == strtoupper(_('Live')) || $is_active == "") {
+    } elseif ($is_active == 'LIVE' || $is_active == "") {
 
-        $row_contents[$count++] = strtoupper(_('Live')) . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')';
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')';
 
     } elseif ($is_active == "0") {
 
@@ -749,7 +749,7 @@ if ($export_data == 1) {
     $row_contents[$count++] = _('Created By');
     $row_contents[$count++] = _('Inserted');
     $row_contents[$count++] = _('Updated');
-    $row_contents[$count++] = strtoupper(_('Custom Fields'));
+    $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
     $result_field = $pdo->query("
         SELECT `name`
@@ -778,19 +778,19 @@ if ($export_data == 1) {
         $temp_total_cost = $row->total_cost * $row->conversion;
 
         if ($row->active == "0") {
-            $domain_status = strtoupper(_('Expired'));
+            $domain_status = DomainMOD\Format::toUpper(_('Expired'));
         } elseif ($row->active == "1") {
-            $domain_status = strtoupper(_('Active'));
+            $domain_status = DomainMOD\Format::toUpper(_('Active'));
         } elseif ($row->active == "2") {
-            $domain_status = strtoupper(_('Pending (Transfer)'));
+            $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
         } elseif ($row->active == "3") {
-            $domain_status = strtoupper(_('Pending (Renewal)'));
+            $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
         } elseif ($row->active == "4") {
-            $domain_status = strtoupper(_('Pending (Other)'));
+            $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
         } elseif ($row->active == "5") {
-            $domain_status = strtoupper(_('Pending (Registration)'));
+            $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
         } elseif ($row->active == "10") {
-            $domain_status = strtoupper(_('Sold'));
+            $domain_status = DomainMOD\Format::toUpper(_('Sold'));
         }
 
         if ($row->autorenew == "1") {
@@ -918,9 +918,9 @@ if ($_SESSION['s_has_domain'] == '0') {
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
-    $go_text1 = ' [<a href="' . $web_root . '/queue/intro.php">' . strtolower(_('Go')) . '</a>]';
-    $go_text2 = ' [<a href="' . $web_root . '/bulk/">' . strtolower(_('Go')) . '</a>]';
-    $go_text3 = ' [<a href="' . $web_root . '/domains/add.php">' . strtolower(_('Go')) . '</a>]';
+    $go_text1 = ' [<a href="' . $web_root . '/queue/intro.php">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
+    $go_text2 = ' [<a href="' . $web_root . '/bulk/">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
+    $go_text3 = ' [<a href="' . $web_root . '/domains/add.php">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
 
 } else {
 
@@ -1019,7 +1019,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY `name` ASC")->fetchAll();
 
                 echo $form->showDropdownTop('segid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Segment Filter') . ' - ' . strtoupper(_('Off')), 'null');
+                echo $form->showDropdownOption('', _('Segment Filter') . ' - ' . DomainMOD\Format::toUpper(_('Off')), 'null');
                 foreach ($result_segment as $row_segment) {
 
                     echo $form->showDropdownOption($row_segment->id, $row_segment->name, $segid);
@@ -1051,9 +1051,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1129,7 +1129,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY r.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('rid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Registrar') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('Registrar') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_registrar as $row_registrar) {
 
                     echo $form->showDropdownOption($row_registrar->id, $row_registrar->name, $rid);
@@ -1161,9 +1161,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1236,7 +1236,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
 
                 echo $form->showDropdownTop('raid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Registrar Account') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('Registrar Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_account as $row_account) {
 
                     echo $form->showDropdownOption($row_account->ra_id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $raid);
@@ -1268,9 +1268,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1346,7 +1346,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY dns.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('dnsid', '', '', '', '');
-                echo $form->showDropdownOption('', _('DNS Profile') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('DNS Profile') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_dns as $row_dns) {
 
                     echo $form->showDropdownOption($row_dns->id, $row_dns->name, $dnsid);
@@ -1378,9 +1378,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1456,7 +1456,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY ip.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('ipid', '', '', '', '');
-                echo $form->showDropdownOption('', _('IP Address') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_ip as $row_ip) {
 
                     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $ipid);
@@ -1497,9 +1497,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1575,7 +1575,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY h.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('whid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_hosting as $row_hosting) {
 
                     echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $whid);
@@ -1607,9 +1607,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1685,7 +1685,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY c.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('pcid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Category') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_category as $row_category) {
 
                     echo $form->showDropdownOption($row_category->id, $row_category->name, $pcid);
@@ -1717,9 +1717,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " AND d.active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1795,7 +1795,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY o.name asc")->fetchAll();
 
                 echo $form->showDropdownTop('oid', '', '', '', '');
-                echo $form->showDropdownOption('', _('Owner') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_owner as $row_owner) {
 
                     echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
@@ -1827,9 +1827,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $is_active_string = " WHERE active = '9' ";
                 } elseif ($is_active == "10") {
                     $is_active_string = " WHERE active = '10' ";
-                } elseif ($is_active == strtoupper(_('Live'))) {
+                } elseif ($is_active == 'LIVE') {
                     $is_active_string = " WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == strtoupper(_('All'))) {
+                } elseif ($is_active == 'ALL') {
                     $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
                 } else {
                     $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
@@ -1904,7 +1904,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY tld asc")->fetchAll();
 
                 echo $form->showDropdownTop('tld', '', '', '', '');
-                echo $form->showDropdownOption('', _('TLD') . ' - ' . strtoupper(_('All')), 'null');
+                echo $form->showDropdownOption('', _('TLD') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_tld as $row_tld) {
 
                     echo $form->showDropdownOption($row_tld->tld, $row_tld->tld, $tld);
@@ -1989,7 +1989,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 ORDER BY active asc")->fetchAll();
 
                 echo $form->showDropdownTop('is_active', '', '', '', '');
-                echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', strtoupper(_('Live')));
+                echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
                 foreach ($result_active as $row_active) {
 
                     if ($row_active->active == "0") {
@@ -2029,7 +2029,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     echo $form->showDropdownOption($row_active->active, $display_text, $is_active);
 
                 }
-                echo $form->showDropdownOption(strtoupper(_('All')), strtoupper(_('All')), $is_active);
+                echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
                 echo $form->showDropdownBottom('');
 
                 if ($_SESSION['s_system_large_mode'] == '1') {
@@ -2048,7 +2048,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     echo $form->showDropdownOption($result_limit, '100', '100');
                     echo $form->showDropdownOption($result_limit, '500', '500');
                     echo $form->showDropdownOption($result_limit, '1,000', '1000');
-                    echo $form->showDropdownOption($result_limit, strtoupper(_('All')), '1000000');
+                    echo $form->showDropdownOption($result_limit, DomainMOD\Format::toUpper(_('All')), '1000000');
 
                     echo $form->showDropdownBottom('');
 
@@ -2106,15 +2106,15 @@ if ($segid !== 0) {
 
     <?php if ($totalrows_inactive > 0) { ?>
         <strong><?php echo _('Matching But Inactive Domains'); ?>:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
-            target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>"><?php echo strtolower(_('View')); ?></a>]<BR><BR>
+            target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_filtered > 0) { ?>
         <strong><?php echo _('Matching But Filtered Domains'); ?>:</strong> <?php echo number_format($totalrows_filtered); ?> [<a
-            target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>"><?php echo strtolower(_('View')); ?></a>]<BR><BR>
+            target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_missing > 0) { ?>
         <strong><?php echo _('Missing Domains'); ?>:</strong> <?php echo number_format($totalrows_missing); ?> [<a
-            target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>"><?php echo strtolower(_('View')); ?></a>]<BR><BR>
+            target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
     <?php }
 
 }

@@ -400,11 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
                             $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
 
-                            if ($new_renewal_years === 1) {
-                                $renewal_years_string = $new_renewal_years . ' ' . _('Year');
-                            } else {
-                                $renewal_years_string = $new_renewal_years . ' ' . _('Years');
-                            }
+                            $renewal_years_string = sprintf(ngettext('%s Year', '%s Years', $new_renewal_years), $new_renewal_years);
 
                             $new_notes_renewal = $timestamp_basic . ' - ' . sprintf(_('Domain Renewed For %s'), $renewal_years_string);
 
@@ -2169,16 +2165,9 @@ if ($done != "1") {
     } elseif ($action == "RENEW" || $action == "FR") {
 
         echo $form->showDropdownTop('new_renewal_years', _('Renew For'), '', '', '');
-        echo $form->showDropdownOption('1', '1 ' . _('Year'), $new_renewal_years);
-        echo $form->showDropdownOption('2', '2 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('3', '3 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('4', '4 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('5', '5 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('6', '6 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('7', '7 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('8', '8 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('9', '9 ' . _('Years'), $new_renewal_years);
-        echo $form->showDropdownOption('10', '10 ' . _('Years'), $new_renewal_years);
+        for ($years = 1; $years <= 10; $years++) {
+            echo $form->showDropdownOption((string) $years, sprintf(ngettext('%s Year', '%s Years', $years), $years), $new_renewal_years);
+        }
         echo $form->showDropdownBottom('');
 
     } elseif ($action == "CPC") {

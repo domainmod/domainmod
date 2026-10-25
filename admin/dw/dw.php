@@ -196,7 +196,7 @@ if ($is_the_build_finished == 1) {
 
         if ($temp_total_accounts != 0) {
 
-            echo $form->showDropdownOption('', strtoupper(_('Server Accounts')), 'null');
+            echo $form->showDropdownOption('', DomainMOD\Format::toUpper(_('Server Accounts')), 'null');
             echo $form->showDropdownOption('accounts-ALL', '&nbsp;&nbsp;' . _('View All'), 'null');
 
             $result = $pdo->query("
@@ -214,7 +214,7 @@ if ($is_the_build_finished == 1) {
 
         if ($temp_total_dns_zones != 0) {
 
-            echo $form->showDropdownOption('', strtoupper(_('DNS Zones & Records')), 'null');
+            echo $form->showDropdownOption('', DomainMOD\Format::toUpper(_('DNS Zones & Records')), 'null');
             echo $form->showDropdownOption('zones-ALL', '&nbsp;&nbsp;' . _('View All'), 'null');
 
             $result = $pdo->query("
