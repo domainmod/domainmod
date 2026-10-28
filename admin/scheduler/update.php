@@ -47,7 +47,7 @@ if ($a == 'u') {
     $new_time = date('Y-m-d H:i:s', mktime($new_hour, '00', '00', date("m"), date("d"), date("Y")));
     $new_time_utc = $time->toUtcTimezone($new_time);
     $hour = date("G", strtotime($new_time_utc));
-    $full_expression = '0 ' . $hour . ' * * * *';
+    $full_expression = '0 ' . $hour . ' * * *';
 
     $stmt = $pdo->prepare("
         UPDATE scheduler
