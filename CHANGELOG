@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.23.01    2026-11-07
+- Added AI Code Rating
+- Updated Feedback page to use gettext
+- Updated all translations
+- Updated Documentation (User Guide)
+- Fixed backups and imports being saved in the web-accessible temp folder
+
 v4.23.0     2025-01-04
 - Added 16 new languages
 - Added the ability to send a test email
