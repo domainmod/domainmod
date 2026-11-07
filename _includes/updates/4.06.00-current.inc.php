@@ -1826,6 +1826,31 @@ if ($current_db_version === '4.22.0') {
         ('Urdu', 'ur_PK.UTF-8', '" . $timestamp . "'),
         ('Vietnamese', 'vi_VN.UTF-8', '" . $timestamp . "')");
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.23.0 to 4.23.01
+if ($current_db_version === '4.23.0') {
+
+    $old_version = '4.23.0';
+    $new_version = '4.23.01';
+
+    try {
+
+        $pdo->beginTransaction();
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
