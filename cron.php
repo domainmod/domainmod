@@ -39,6 +39,8 @@ require_once DIR_INC . '/debug.inc.php';
 
 $pdo = $deeb->cnxx;
 
+$system->removeLegacyTempFiles();
+
 if (DEMO_INSTALLATION == false) {
 
     $pdo->query("UPDATE scheduler SET is_running = '0'");

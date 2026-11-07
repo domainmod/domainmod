@@ -43,6 +43,8 @@ require_once DIR_INC . '/debug.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
+$legacy_temp_files = $system->removeLegacyTempFiles();
+
 $_SESSION['s_running_login_checks'] = '1';
 
 $upgrade_approved = $_GET['u'] ?? '';
@@ -75,6 +77,14 @@ $_SESSION['s_is_new_password'] = $result->new_password;
 $_SESSION['s_number_of_logins'] = $result->number_of_logins;
 if ($result->admin == 1) $_SESSION['s_is_admin'] = 1;
 if ($result->read_only == '0') $_SESSION['s_read_only'] = '0';
+
+// Tell admins about any sensitive files from an older version that couldn't be deleted automatically
+if (!empty($legacy_temp_files) && ($_SESSION['s_is_admin'] ?? 0) === 1) {
+
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files);
+
+}
 
 // Load System Settings
 $result = $login->getSystemSettings();

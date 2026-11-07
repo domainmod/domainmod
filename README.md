@@ -1,6 +1,6 @@
 [![DomainMOD](https://domainmod.org/images/logo.png)](https://domainmod.org)
 
-[![ACR B0a](https://img.shields.io/badge/ACR-B0a-2140B5)](ACR.md)
+[![ACR B1b](https://img.shields.io/badge/ACR-B1b-2140B5)](ACR.md)
 
 Project Home: <https://domainmod.org>  
 Project Demo: <https://demo.domainmod.org>  

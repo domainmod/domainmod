@@ -24,6 +24,11 @@ require_once __DIR__ . '/../../../_includes/start-session.inc.php';
 require_once __DIR__ . '/../../../_includes/init.inc.php';
 require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$system = new DomainMOD\System();
+
+$system->authCheck();
 
 if (file_exists(DIR_TEMP . '/import.csv')) {
 

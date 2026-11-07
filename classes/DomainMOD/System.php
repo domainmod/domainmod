@@ -186,6 +186,84 @@ class System
         return $install_mode;
     }
 
+    public function removeLegacyTempFiles()
+    {
+        // Older versions left database backups, restore uploads, and CSV imports in the web-accessible temp folder
+        // Returns the files that couldn't be deleted, so admins can be told to delete them by hand
+        $legacy_files = array('domainmod-backup.sql', 'domainmod-restore.sql', 'import.csv');
+        $undeleted_files = array();
+
+        foreach ($legacy_files as $legacy_file) {
+
+            if (file_exists(DIR_TEMP . '/' . $legacy_file) && !@unlink(DIR_TEMP . '/' . $legacy_file)) {
+
+                $log_message = 'Unable to delete a sensitive file left in the temp folder by an older version';
+                $log_extra = array('File' => DIR_TEMP . '/' . $legacy_file);
+                $this->log->critical($log_message, $log_extra);
+
+                $undeleted_files[] = DIR_TEMP . '/' . $legacy_file;
+
+            }
+
+        }
+
+        return $undeleted_files;
+    }
+
+    public function getLegacyTempFilesWarning($undeleted_files)
+    {
+        $file_list = '';
+
+        foreach ($undeleted_files as $undeleted_file) {
+
+            $file_list .= '<strong>' . htmlspecialchars($undeleted_file, ENT_QUOTES, 'UTF-8') . '</strong><BR>';
+
+        }
+
+        return sprintf(_('These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:'), SOFTWARE_TITLE) . '<BR>' . $file_list;
+    }
+
+    public function isInsideWebRoot($path)
+    {
+        $real_path = realpath($path);
+
+        if ($real_path === false) {
+
+            return true;
+
+        }
+
+        // Check against both the DomainMOD folder and the web server's document root, which may be a parent of it. If
+        // the document root isn't known, assume the path could be web-accessible.
+        if (empty($_SERVER['DOCUMENT_ROOT'])) {
+
+            return true;
+
+        }
+
+        $roots = array(DIR_ROOT, $_SERVER['DOCUMENT_ROOT']);
+
+        foreach ($roots as $root) {
+
+            $real_root = realpath($root);
+
+            if ($real_root === false) {
+
+                return true;
+
+            }
+
+            if (strpos($real_path . DIRECTORY_SEPARATOR, rtrim($real_root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) === 0) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+    }
+
     public function checkForSettingsTable()
     {
         return $this->deeb->cnxx->query("SHOW TABLES LIKE 'settings'")->fetchColumn();

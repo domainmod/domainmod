@@ -39,6 +39,16 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
 
+// Remove any files left in the web-accessible temp folder by older versions, and warn about any that can't be deleted
+$legacy_temp_files = $system->removeLegacyTempFiles();
+
+if (!empty($legacy_temp_files)) {
+
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files);
+
+}
+
 use iamdual\Uploader;
 use Thamaraiselvam\MysqlImport\Import;
 
@@ -48,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (isset($_FILES["file"])) {
 
+            // Remove any restore file left in the web-accessible temp folder by older versions
             if (file_exists(DIR_TEMP . '/domainmod-restore.sql')) {
 
                 unlink(DIR_TEMP . '/domainmod-restore.sql');
@@ -57,16 +68,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("sql"));
             $upload->max_size(50); // in MB
-            $upload->path(DIR_TEMP);
-            $upload->name("domainmod-restore");
 
-            if (!$upload->upload()) {
+            // Import straight from PHP's upload file, which PHP deletes when the request ends, rather than moving it
+            // into the web-accessible temp folder
+            if ($upload->get_tmp_name() !== null && $upload->get_tmp_name() !== '' && $system->isInsideWebRoot(dirname($upload->get_tmp_name()))) {
 
+                // Don't process an upload that PHP stored somewhere web-accessible
+                $log_message = 'Upload refused because PHP\'s upload folder is web-accessible';
+                $log_extra = array('Upload folder' => dirname($upload->get_tmp_name()));
+                $log->critical($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again.');
+
+            } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
+
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 $_SESSION['s_message_danger'] .= _('Please choose a backup file to restore');
 
             } else {
 
-                $filename = DIR_TEMP . '/domainmod-restore.sql';
+                $filename = $upload->get_tmp_name();
                 $username = $dbusername ?? '';
                 $password = $dbpassword ?? '';
                 $database = $dbname ?? '';
@@ -107,8 +129,6 @@ echo '&nbsp;'; echo _('This allows you to export your entire system in a single 
 echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?><BR>
 <BR>
 <?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file.'); ?><BR>
-
-<BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('Before you can use Backup & Restore you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo strtolower(_('Folder')); ?> ("<em>chmod 777 /var/www/html/domainmod/temp</em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?>
 
 <h3><?php echo _('Backup'); ?></h3>
 <?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>

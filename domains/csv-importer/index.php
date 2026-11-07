@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (isset($_FILES["file"])) {
 
+            // Remove any import file left in the web-accessible temp folder by older versions
             if (file_exists(DIR_TEMP . '/import.csv')) {
 
                 unlink(DIR_TEMP . '/import.csv');
@@ -55,10 +56,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("csv"));
             $upload->max_size(50); // in MB
-            $upload->path(DIR_TEMP);
-            $upload->name("import");
 
-            if (!$upload->upload()) {
+            // Import straight from PHP's upload file, which PHP deletes when the request ends, rather than moving it
+            // into the web-accessible temp folder
+            if ($upload->get_tmp_name() !== null && $upload->get_tmp_name() !== '' && $system->isInsideWebRoot(dirname($upload->get_tmp_name()))) {
+
+                // Don't process an upload that PHP stored somewhere web-accessible
+                $log_message = 'Upload refused because PHP\'s upload folder is web-accessible';
+                $log_extra = array('Upload folder' => dirname($upload->get_tmp_name()));
+                $log->critical($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again.');
+
+            } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 $_SESSION['s_message_danger'] .= _('Please choose a CSV template file to import');
@@ -66,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 $csv = new DomainMOD\Csv();
-                $filename = DIR_TEMP . '/import.csv';
+                $filename = $upload->get_tmp_name();
                 $csv->parse($filename, $_SESSION['s_user_id']);
 
                 $_SESSION['s_message_success'] .= _('Your CSV Import has been completed');
@@ -102,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo sprintf(_('This page allows you to import all of your domain data into %s using a CSV template.'), SOFTWARE_TITLE);
 echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
-<BR><?php echo $layout->highlightText('red', strtoupper(_('Note')) . ': '); ?><?php echo _('Before you can use the CSV Importer you must update the permissions on the'); ?> <strong><?php echo DIR_TEMP; ?></strong> <?php echo strtolower(_('Folder')); ?> ("<em>chmod 777 <?php  echo DIR_TEMP; ?></em>"). <?php echo _("If you're unsure how to do this your web hosting provider should be able to assist you."); ?><BR>
 <BR><?php echo _('For more information on how to use the CSV Importer, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-importer/"><?php echo _('User Guide'); ?></a>.
 
 <BR><BR><h3><?php echo _('Download CSV Template'); ?></h3>
