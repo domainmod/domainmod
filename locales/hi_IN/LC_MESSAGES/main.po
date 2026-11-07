@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "रखरखाव"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "रूपांतरण दरें अपडेट करें"
@@ -644,7 +644,7 @@ msgstr "जोड़ना"
 msgid "Add Custom SSL Field"
 msgstr "कस्टम SSL फ़ील्ड जोड़ें"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "बैकअप"
 
@@ -1181,93 +1181,80 @@ msgstr "कृपया लॉगआउट करें और पुनः ल�
 msgid "Your Database is already up-to-date"
 msgstr "आपका डेटाबेस पहले से ही अद्यतित है"
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "बैकअप साफ़ कर दिए गए"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "कृपया पुनर्स्थापित करने के लिए एक बैकअप फ़ाइल चुनें"
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "यह पृष्ठ आपको अपने %s डेटाबेस का पूर्ण बैकअप और पुनर्स्थापना करने में सक्षम बनाता है।"
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "यह आपको अपने संपूर्ण सिस्टम को एक ही फाइल में निर्यात करने की अनुमति देता है ताकि उसका आसानी से बैकअप लिया जा सके और उसे पुनर्स्थापित किया जा सके।"
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "यह उपयोगी है यदि आप अपने डेटा का नियमित बैकअप लेना चाहते हैं, आपको %s को नए सर्वर पर ले जाना है, या यदि आप अपनी स्थापना विधि बदलना चाहते हैं।"
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "यह प्रक्रिया आपके डेटाबेस में सहेजे गए डेटा का बैकअप लेती है। यदि आप अपने डेटाबेस कनेक्शन की जानकारी भी सहेजना चाहते हैं, तो आपको अपनी /_includes/config.inc.php फ़ाइल का बैकअप लेना चाहिए।"
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "टिप्पणी"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "इससे पहले कि आप बैकअप और पुनर्स्थापना का उपयोग कर सकें, आपको अनुमतियों को अपडेट करना होगा"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "फ़ोल्डर"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "यदि आप इस बात से अनिश्चित हैं कि यह कैसे किया जाए तो आपका वेब होस्टिंग प्रदाता आपकी सहायता करने में सक्षम होगा।"
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "डेटाबेस बैकअप फ़ाइल"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "संपूर्ण डेटाबेस का बैकअप लें"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "पुनर्स्थापित करना"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "डेटाबेस पुनर्स्थापना फ़ाइल"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "चेतावनी"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "इससे आपके वर्तमान %s डेटाबेस का सारा डेटा पूरी तरह से नष्ट हो जाएगा।"
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "डेटाबेस को पुनर्स्थापित करने के बाद आप स्वचालित रूप से लॉग आउट हो जाएंगे, जिसके बाद आप पुनर्स्थापित किए गए डेटा में मौजूद खातों का उपयोग करके लॉग इन कर पाएंगे।"
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "संपूर्ण डेटाबेस पुनर्स्थापित करें"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "साफ - सफाई"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "आपके सर्वर पर सहेजे गए सभी पुराने बैकअप और रीस्टोर फ़ाइलों को हटाने के लिए यहां क्लिक करें।"
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "सफ़ाई करें"
 
@@ -2335,22 +2322,22 @@ msgstr "अभिव्यक्ति"
 msgid "Active"
 msgstr "सक्रिय"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "सफ़ाई कार्य"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "शुरू"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "अंत"
 
@@ -2358,8 +2345,8 @@ msgstr "अंत"
 msgid "System Cleanup Performed"
 msgstr "सिस्टम क्लीनअप किया गया"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "समाप्ति ईमेल भेजें"
 
@@ -2367,8 +2354,8 @@ msgstr "समाप्ति ईमेल भेजें"
 msgid "Conversion Rates Updated"
 msgstr "रूपांतरण दरें अपडेट की गईं"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "नया संस्करण जाँचें"
 
@@ -2376,8 +2363,8 @@ msgstr "नया संस्करण जाँचें"
 msgid "No Upgrade Available"
 msgstr "कोई अपग्रेड उपलब्ध नहीं"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "डेटा वेयरहाउस बनाएँ"
 
@@ -2385,8 +2372,8 @@ msgstr "डेटा वेयरहाउस बनाएँ"
 msgid "Data Warehouse Rebuilt"
 msgstr "डेटा वेयरहाउस का पुनर्निर्माण"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "प्रक्रिया डोमेन कतार"
 
@@ -4266,7 +4253,7 @@ msgstr "नवीनीकृत के रूप में चिह्नि�
 msgid "Perform Bulk Action"
 msgstr "बल्क कार्रवाई करें"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "सुरक्षा उद्देश्यों के लिए आपका पासवर्ड बदला जाना चाहिए"
 
@@ -4566,51 +4553,51 @@ msgstr "PHP एक्सटेंशन"
 msgid "PHP Settings"
 msgstr "PHP सेटिंग्स"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "लाइव संस्करण प्राप्त करें"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "%s का नया संस्करण डाउनलोड के लिए उपलब्ध है।"
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "अपग्रेड निर्देशों के लिए यहां क्लिक करें"
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "इस क्षेत्र तक पहुंचने के लिए आपको लॉग इन होना होगा"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s पहले से स्थापित है"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "आपको %s फ़ोल्डर हटा देना चाहिए"
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "आप उस कार्य को करने के लिए अधिकृत नहीं हैं"
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "सफलता"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "चेतावनी"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "जानकारी"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "ध्यान देने की आवश्यकता"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "बाहरी IP API कॉल"
 
@@ -6285,83 +6272,79 @@ msgstr "खाता आईडी"
 msgid "Registrar Account ID"
 msgstr "रजिस्ट्रार खाता आईडी"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "CSV आयात फ़ाइलें साफ़ कर दी गईं"
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "कृपया आयात करने के लिए एक CSV टेम्पलेट फ़ाइल चुनें"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "आपका CSV आयात पूरा हो गया है"
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "यह पृष्ठ आपको CSV टेम्पलेट का उपयोग करके अपने सभी डोमेन डेटा को %s में आयात करने की अनुमति देता है।"
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "यह एक बहुत ही नई सुविधा है (अर्थात प्रायोगिक), लेकिन अब तक सभी परीक्षण अविश्वसनीय रूप से अच्छे रहे हैं, और मैंने व्यक्तिगत रूप से कई परीक्षण CSV फ़ाइलों को 100% सटीकता के साथ आयात किया है।"
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "यह अनुशंसित है कि आप CSV आयात का प्रयास करने से पहले अपने मौजूदा %s डेटाबेस का पूर्ण बैकअप ले लें, ताकि यदि कुछ गलत हो जाए और आपको पुनर्प्राप्ति की आवश्यकता हो तो आप इसका उपयोग कर सकें।"
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "CSV आयातक का उपयोग करने से पहले आपको इसकी अनुमतियों को अद्यतन करना होगा."
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "CSV आयातक का उपयोग कैसे करें, इस बारे में अधिक जानकारी के लिए कृपया हमारा देखें"
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "उपयोगकर्ता गाइड"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "CSV टेम्पलेट डाउनलोड करें"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "यहाँ क्लिक करें"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "CSV आयात टेम्पलेट डाउनलोड करने के लिए."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "आप अपनी इच्छानुसार कम या अधिक डोमेन जानकारी आयात कर सकते हैं।"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "तकनीकी रूप से आप डोमेन की सूची के अलावा कुछ भी नहीं भर सकते हैं, और यह ठीक से आयात हो जाएगा, लेकिन DomainMOD को आपके लिए बहुत सारे सामान्य एसेट बनाने की आवश्यकता होगी। हालांकि यह ठीक है, भले ही आप इस मार्ग पर जाएं, %s द्वारा आपके लिए बनाई गई जानकारी को अपडेट करना बहुत आसान है।"
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "CSV आयात टेम्पलेट में कॉलम वैसे ही रहने चाहिए। यदि कॉलम की सही संख्या नहीं है, या कॉलम सही क्रम में नहीं हैं, तो आयात विफल हो जाएगा।"
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "CSV टेम्पलेट आयात करें"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "इससे आपके %s डेटाबेस में केवल <strong>नए</strong> डोमेन ही सम्मिलित होंगे, मौजूदा डोमेन छोड़ दिए जाएंगे।"
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "कृपया अपनी CSV फ़ाइल सबमिट करते समय धैर्य रखें। डेटा की मात्रा के आधार पर, इसे प्रोसेस होने में एक मिनट लग सकता है।"
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "CSV फ़ाइल आयात करें"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "आपके सर्वर पर सहेजी गई सभी पुरानी CSV आयात फ़ाइलों को हटाने के लिए यहां क्लिक करें।"
 
@@ -6486,4 +6469,28 @@ msgstr "यदि आप यह सुनिश्चित करना चा�
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "कृपया अपना उपयोगकर्तानाम और पासवर्ड दें"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "यह फ़ाइल प्रोसेस नहीं हो सकती क्योंकि PHP का अपलोड फ़ोल्डर (upload_tmp_dir) आपके वेब रूट के अंदर है। कृपया इसे अपने वेब रूट से बाहर ले जाकर दोबारा कोशिश करें।"
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "ये फाइलें %s के पुराने संस्करण द्वारा छोड़ी गई थीं। इनमें संवेदनशील डेटा है, ये सार्वजनिक रूप से सुलभ हो सकती हैं, और इन्हें स्वचालित रूप से हटाया नहीं जा सका। कृपया इन्हें अभी अपने सर्वर से हटा दें:"
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "चाहे आपके पास कोई टिप्पणी हो, कोई प्रश्न हो, किसी फ़ीचर के लिए अनुरोध हो या किसी बग की रिपोर्ट हो, हम आपसे सुनना चाहते हैं!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "हमने हाल ही में एक नया सपोर्ट पोर्टल लॉन्च किया है, जिससे हम अपने उपयोगकर्ताओं के साथ बेहतर संचार और पारदर्शिता बनाए रख सकेंगे। यह नया पोर्टल न केवल उपयोगकर्ताओं को प्रश्न और समस्याएं प्रस्तुत करने की अनुमति देता है, बल्कि वे उन मुद्दों पर वोट भी कर सकते हैं जो उनके लिए सबसे महत्वपूर्ण हैं, जिससे हमें यह तय करने में मदद मिलती है कि आगे किस पर काम करना चाहिए।"
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "तो आप किसका इंतजार कर रहे हैं? अपनी राय खुलकर बताएं या नीचे दिए गए रोडमैप को देखें!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "आगे क्या काम चल रहा है, इस विषय पर हमारे नए सपोर्ट पोर्टल में एक प्रोजेक्ट रोडमैप एकीकृत किया गया है। यह रोडमैप उपयोगकर्ताओं द्वारा सबमिट की गई समस्याओं और उनकी वर्तमान स्थिति (योजनाबद्ध, प्रगति पर, पूर्ण आदि) के आधार पर स्वचालित रूप से तैयार किया जाता है। यह रोडमैप उपयोगकर्ताओं को %s के विकास की प्रगति की सार्वजनिक जानकारी प्रदान करेगा।"
 

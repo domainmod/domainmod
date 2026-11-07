@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "Pemeliharaan"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "Perbarui Tingkat Konversi"
@@ -644,7 +644,7 @@ msgstr "Menambahkan"
 msgid "Add Custom SSL Field"
 msgstr "Tambahkan Bidang SSL Kustom"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "Cadangan"
 
@@ -1181,93 +1181,80 @@ msgstr "Harap keluar dan masuk kembali, dan jika masalah berlanjut, harap hubung
 msgid "Your Database is already up-to-date"
 msgstr "Database Anda sudah diperbarui"
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "Pencadangan telah dibersihkan"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "Silakan pilih file cadangan untuk dipulihkan"
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "Halaman ini memungkinkan Anda untuk melakukan pencadangan dan pemulihan lengkap pada basis data %s Anda."
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "Hal ini memungkinkan Anda mengekspor seluruh sistem dalam satu berkas sehingga dapat dengan mudah dicadangkan dan dipulihkan."
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "Ini berguna jika Anda ingin melakukan pencadangan data secara berkala, Anda perlu memindahkan %s ke server baru, atau jika Anda ingin mengubah metode instalasi Anda."
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "Proses ini mencadangkan data yang tersimpan dalam basis data Anda. Jika Anda juga ingin menyimpan informasi koneksi basis data, Anda harus mencadangkan berkas /_includes/config.inc.php."
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "Catatan"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "Sebelum Anda dapat menggunakan Backup & Restore, Anda harus memperbarui izin pada"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "Map"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "Jika Anda tidak yakin cara melakukannya, penyedia hosting web Anda seharusnya dapat membantu Anda."
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "File Cadangan Basis Data"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "Cadangkan Seluruh Basis Data"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "Memulihkan"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "File Pemulihan Basis Data"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "Peringatan"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "Ini akan menghapus sepenuhnya semua data pada basis data %s Anda saat ini."
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "Setelah memulihkan basis data, Anda akan otomatis keluar, dan pada saat itu Anda dapat masuk menggunakan akun pada data yang telah Anda pulihkan."
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "Pulihkan Seluruh Basis Data"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "Pembersihan"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "Klik di sini untuk menghapus semua file cadangan dan pemulihan sebelumnya yang mungkin disimpan di server Anda."
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "Lakukan Pembersihan"
 
@@ -2335,22 +2322,22 @@ msgstr "Ekspresi"
 msgid "Active"
 msgstr "Aktif"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "Tugas Pembersihan"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "Awal"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "Akhir"
 
@@ -2358,8 +2345,8 @@ msgstr "Akhir"
 msgid "System Cleanup Performed"
 msgstr "Pembersihan Sistem Dilakukan"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "Kirim Email Kedaluwarsa"
 
@@ -2367,8 +2354,8 @@ msgstr "Kirim Email Kedaluwarsa"
 msgid "Conversion Rates Updated"
 msgstr "Tingkat Konversi Diperbarui"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "Periksa Versi Baru"
 
@@ -2376,8 +2363,8 @@ msgstr "Periksa Versi Baru"
 msgid "No Upgrade Available"
 msgstr "Tidak Ada Peningkatan yang Tersedia"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "Membangun Gudang Data"
 
@@ -2385,8 +2372,8 @@ msgstr "Membangun Gudang Data"
 msgid "Data Warehouse Rebuilt"
 msgstr "Gudang Data Dibangun Kembali"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "Antrean Domain Proses"
 
@@ -4264,7 +4251,7 @@ msgstr "Tandai Sebagai Diperbarui"
 msgid "Perform Bulk Action"
 msgstr "Lakukan Tindakan Massal"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "Kata sandi Anda harus diubah untuk tujuan keamanan"
 
@@ -4564,51 +4551,51 @@ msgstr "Ekstensi PHP"
 msgid "PHP Settings"
 msgstr "Pengaturan PHP"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "Dapatkan Versi Langsung"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "Versi baru %s tersedia untuk diunduh."
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "Klik di sini untuk petunjuk peningkatan"
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "Anda harus login untuk mengakses area ini"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s sudah terpasang"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "Anda harus menghapus folder %s"
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "Anda tidak berwenang melakukan tindakan tersebut"
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "Kesuksesan"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "Peringatan"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "Informasi"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "Perhatian Diperlukan"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "Panggilan API IP Eksternal"
 
@@ -6282,83 +6269,79 @@ msgstr "ID Akun"
 msgid "Registrar Account ID"
 msgstr "ID Akun Pendaftar"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "File Impor CSV telah dibersihkan"
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "Silakan pilih file template CSV untuk diimpor"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "Impor CSV Anda telah selesai"
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "Halaman ini memungkinkan Anda mengimpor semua data domain Anda ke %s menggunakan templat CSV."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "Ini adalah fitur yang sangat baru (yaitu eksperimental), tetapi semua pengujian sejauh ini berjalan dengan sangat baik, dan saya pribadi telah mengimpor banyak file CSV uji dengan akurasi 100%."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "Sebaiknya Anda melakukan pencadangan penuh pada basis data %s yang ada sebelum mencoba Impor CSV, untuk berjaga-jaga jika terjadi kesalahan dan Anda perlu memulihkannya."
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "Sebelum Anda dapat menggunakan Importir CSV, Anda harus memperbarui izin pada"
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "Untuk informasi lebih lanjut tentang cara menggunakan Importir CSV, silakan lihat"
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "Panduan Pengguna"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "Unduh Template CSV"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "klik disini"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "untuk mengunduh Templat Impor CSV."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "Anda dapat mengimpor informasi domain sesedikit atau sebanyak yang Anda inginkan."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "Secara teknis Anda hanya dapat mengisi daftar domain, dan itu akan terimpor dengan baik, tetapi DomainMOD perlu membuat sejumlah aset generik untuk Anda. Namun, tidak apa-apa, bahkan jika Anda memilih cara ini, cukup mudah untuk memperbarui informasi yang dibuat %s untuk Anda."
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "Kolom-kolom dalam Templat Impor CSV harus tetap seperti apa adanya. Jika jumlah kolom tidak tepat, atau kolom-kolom tidak dalam urutan yang benar, impor akan gagal."
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "Impor Template CSV"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "Ini hanya akan memasukkan domain <strong>baru</strong> ke dalam basis data %s Anda, domain yang sudah ada akan dilewati."
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "Harap bersabar saat mengirimkan berkas CSV Anda. Bergantung pada jumlah data, proses ini mungkin memerlukan waktu satu menit."
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "Impor File CSV"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "Klik di sini untuk menghapus semua file Impor CSV sebelumnya yang mungkin disimpan di server Anda."
 
@@ -6483,4 +6466,28 @@ msgstr "Jika Anda ingin memastikan bahwa instalasi Anda dapat mengirim email den
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "Silakan masukkan nama pengguna dan kata sandi Anda"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "File ini tidak dapat diproses karena folder unggahan PHP (upload_tmp_dir) berada di dalam direktori root web Anda. Silakan pindahkan folder tersebut ke luar direktori root web Anda dan coba lagi."
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "File-file ini tertinggal dari versi lama %s. File-file ini berisi data sensitif, mungkin dapat diakses publik, dan tidak dapat dihapus secara otomatis. Harap hapus file-file ini dari server Anda sekarang:"
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "Baik itu komentar, pertanyaan, permintaan fitur, atau laporan bug, kami ingin mendengar dari Anda!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "Kami baru saja meluncurkan Portal Dukungan baru yang memungkinkan kami untuk berkomunikasi dan transparan dengan pengguna kami dengan lebih baik. Portal baru ini tidak hanya memungkinkan pengguna untuk mengirimkan pertanyaan dan masalah, tetapi pengguna juga dapat memberikan suara pada item yang paling penting bagi mereka, yang membantu kami memprioritaskan apa yang harus dikerjakan selanjutnya."
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "Jadi tunggu apa lagi? Sampaikan pendapat Anda atau lihat Peta Jalan di bawah ini!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "Mengenai apa yang sedang dikerjakan selanjutnya, terintegrasi dengan Portal Dukungan baru kami adalah Peta Jalan proyek. Peta Jalan ini dibuat secara otomatis berdasarkan masalah yang diajukan oleh pengguna dan statusnya saat ini (Direncanakan, Sedang Berprogress, Selesai, dll.). Peta Jalan ini akan memberikan pengguna gambaran publik tentang bagaimana perkembangan pengembangan %s."
 

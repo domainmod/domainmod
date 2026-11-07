@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "유지"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "전환율 업데이트"
@@ -644,7 +644,7 @@ msgstr "추가하다"
 msgid "Add Custom SSL Field"
 msgstr "사용자 정의 SSL 필드 추가"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "지원"
 
@@ -1181,93 +1181,80 @@ msgstr "로그아웃한 다음 다시 로그인하세요. 문제가 지속되면
 msgid "Your Database is already up-to-date"
 msgstr "귀하의 데이터베이스는 이미 최신 상태입니다."
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "백업이 정리되었습니다"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "복원할 백업 파일을 선택하세요."
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "이 페이지에서는 %s 데이터베이스의 전체 백업 및 복원을 수행할 수 있습니다."
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "이를 통해 전체 시스템을 하나의 파일로 내보내어 쉽게 백업하고 복원할 수 있습니다."
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "이 기능은 데이터를 정기적으로 백업하거나, %s를 새로운 서버로 옮겨야 하는 경우, 또는 설치 방법을 변경하려는 경우에 유용합니다."
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "이 프로세스는 데이터베이스에 저장된 데이터를 백업합니다. 데이터베이스 연결 정보도 저장하려면 /_includes/config.inc.php 파일을 백업해야 합니다."
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "메모"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "백업 및 복원을 사용하려면 먼저 권한을 업데이트해야 합니다."
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "접는 사람"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "이 작업을 수행하는 방법이 확실하지 않으면 웹 호스팅 제공업체에 문의하여 도움을 받으세요."
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "데이터베이스 백업 파일"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "전체 데이터베이스 백업"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "복원하다"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "데이터베이스 복원 파일"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "경고"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "이렇게 하면 현재 %s 데이터베이스에 있는 모든 데이터가 완전히 삭제됩니다."
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "데이터베이스를 복원한 후에는 자동으로 로그아웃되지만, 복원한 데이터의 계정을 사용하여 로그인할 수 있습니다."
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "전체 데이터베이스 복원"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "대청소"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "여기를 클릭하면 서버에 저장된 과거 백업 및 복원 파일을 모두 삭제합니다."
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "정리를 수행하다"
 
@@ -2335,22 +2322,22 @@ msgstr "표현"
 msgid "Active"
 msgstr "활동적인"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "정리 작업"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "시작"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "끝"
 
@@ -2358,8 +2345,8 @@ msgstr "끝"
 msgid "System Cleanup Performed"
 msgstr "시스템 정리가 수행되었습니다"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "만료 이메일 보내기"
 
@@ -2367,8 +2354,8 @@ msgstr "만료 이메일 보내기"
 msgid "Conversion Rates Updated"
 msgstr "전환율 업데이트됨"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "새로운 버전 확인"
 
@@ -2376,8 +2363,8 @@ msgstr "새로운 버전 확인"
 msgid "No Upgrade Available"
 msgstr "업그레이드가 불가능합니다"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "데이터웨어하우스 구축"
 
@@ -2385,8 +2372,8 @@ msgstr "데이터웨어하우스 구축"
 msgid "Data Warehouse Rebuilt"
 msgstr "데이터웨어하우스 재구축"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "프로세스 도메인 대기열"
 
@@ -4264,7 +4251,7 @@ msgstr "갱신됨으로 표시"
 msgid "Perform Bulk Action"
 msgstr "대량 작업 수행"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "보안을 위해 비밀번호를 변경해야 합니다."
 
@@ -4564,51 +4551,51 @@ msgstr "PHP 확장"
 msgid "PHP Settings"
 msgstr "PHP 설정"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "라이브 버전 받기"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "%s의 새 버전을 다운로드할 수 있습니다."
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "업그레이드 지침을 보려면 여기를 클릭하세요."
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "이 영역에 접근하려면 로그인해야 합니다."
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s가 이미 설치되어 있습니다"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "%s 폴더를 삭제해야 합니다."
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "해당 작업을 수행할 권한이 없습니다."
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "성공"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "알리다"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "정보"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "주의가 필요합니다"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "외부 IP API 호출"
 
@@ -6282,83 +6269,79 @@ msgstr "계정 ID"
 msgid "Registrar Account ID"
 msgstr "등록자 계정 ID"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "CSV 가져오기 파일이 정리되었습니다."
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "가져올 CSV 템플릿 파일을 선택하세요"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "CSV 가져오기가 완료되었습니다."
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "이 페이지에서는 CSV 템플릿을 사용하여 모든 도메인 데이터를 %s로 가져올 수 있습니다."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "이건 아주 새로운 기능(즉, 실험적 기능)이지만, 지금까지의 모든 테스트는 놀라울 정도로 잘 진행되었고, 저는 개인적으로 100%의 정확도로 많은 테스트용 CSV 파일을 가져왔습니다."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "CSV 가져오기를 시도하기 전에 기존 %s 데이터베이스의 전체 백업을 수행하는 것이 좋습니다. 이는 문제가 발생하여 복구가 필요한 경우를 대비하기 위한 것입니다."
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "CSV 가져오기 도구를 사용하려면 먼저 해당 권한을 업데이트해야 합니다."
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "CSV 가져오기 사용 방법에 대한 자세한 내용은 다음을 참조하세요."
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "사용자 가이드"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "CSV 템플릿 다운로드"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "여기를 클릭하세요"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "CSV 가져오기 템플릿을 다운로드하세요."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "원하는 만큼의 도메인 정보를 가져올 수 있습니다."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "기술적으로 도메인 목록만 채우면 되고, 잘 가져올 수 있지만 DomainMOD는 여러 가지 일반 자산을 생성해야 합니다. 하지만 이 경로를 선택하더라도 %s가 생성하는 정보를 업데이트하는 것은 꽤 쉽습니다."
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "CSV 가져오기 템플릿의 열은 그대로 유지되어야 합니다. 열의 정확한 수가 없거나 열이 올바른 순서가 아니면 가져오기가 실패합니다."
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "CSV 템플릿 가져오기"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "이렇게 하면 %s 데이터베이스에 <strong>새로운</strong> 도메인만 삽입되고, 기존 도메인은 건너뜁니다."
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "CSV 파일을 제출할 때는 인내심을 가져주세요. 데이터 양에 따라 처리하는 데 1분이 걸릴 수 있습니다."
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "CSV 파일 가져오기"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "여기를 클릭하면 서버에 저장되어 있는 과거 CSV 가져오기 파일을 모두 삭제합니다."
 
@@ -6483,4 +6466,28 @@ msgstr "설치가 이메일을 성공적으로 보낼 수 있는지 확인하려
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "사용자 이름과 비밀번호를 입력하세요"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "PHP의 업로드 폴더(upload_tmp_dir)가 웹 루트 디렉토리 안에 있어서 이 파일을 처리할 수 없습니다. 해당 폴더를 웹 루트 디렉토리 밖으로 이동한 후 다시 시도해 주세요."
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "이 파일들은 %s의 이전 버전에서 남겨진 파일입니다. 민감한 데이터가 포함되어 있으며, 공개적으로 접근 가능할 수 있고, 자동으로 삭제되지 않습니다. 지금 바로 서버에서 삭제해 주십시오."
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "의견, 질문, 기능 요청 또는 버그 신고 등 무엇이든 말씀해 주세요!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "최근 저희는 사용자들과 더욱 원활한 소통과 투명성을 확보하기 위해 새로운 지원 포털을 출시했습니다. 이 새로운 포털을 통해 사용자들은 질문과 문제를 제출할 수 있을 뿐만 아니라, 가장 중요하다고 생각하는 항목에 투표할 수도 있습니다. 이를 통해 저희는 어떤 문제를 우선적으로 해결해야 할지 결정할 수 있습니다."
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "자, 그럼 뭘 기다리세요? 여러분의 생각을 자유롭게 표현하거나 아래 로드맵을 확인해 보세요!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "향후 개발 계획에 대해 말씀드리자면, 새로운 지원 포털에 프로젝트 로드맵이 통합되었습니다. 이 로드맵은 사용자가 제출한 문제와 현재 상태(계획 중, 진행 중, 완료 등)를 기반으로 자동으로 생성됩니다. 이 로드맵을 통해 사용자는 %s 개발 진행 상황을 공개적으로 확인할 수 있습니다."
 

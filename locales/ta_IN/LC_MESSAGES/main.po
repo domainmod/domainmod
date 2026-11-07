@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "பராமரிப்பு"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "மாற்று விகிதங்களைப் புதுப்பிக்கவும்"
@@ -644,7 +644,7 @@ msgstr "சேர்"
 msgid "Add Custom SSL Field"
 msgstr "தனிப்பயன் SSL புலத்தைச் சேர்க்கவும்"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "காப்புப்பிரதி"
 
@@ -1181,93 +1181,80 @@ msgstr "வெளியேறி மீண்டும் உள்நுழை�
 msgid "Your Database is already up-to-date"
 msgstr "உங்கள் தரவுத்தளம் ஏற்கனவே புதுப்பித்த நிலையில் உள்ளது"
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "காப்புப்பிரதிகள் சுத்தம் செய்யப்பட்டன"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "மீட்டமைக்க, காப்புப் பிரதி கோப்பைத் தேர்ந்தெடுக்கவும்"
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "இந்தப் பக்கம் உங்கள் %s தரவுத்தளத்தின் முழுமையான காப்புப் பிரதிகள் மற்றும் மீட்டமைப்பைச் செய்ய உதவுகிறது."
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "இது உங்கள் முழு கணினியையும் ஒரே கோப்பில் ஏற்றுமதி செய்ய அனுமதிக்கிறது, இதனால் எளிதாக காப்புப் பிரதி எடுக்கப்பட்டு மீட்டமைக்கப்படும்."
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "உங்கள் தரவின் வழக்கமான காப்புப்பிரதிகளை நீங்கள் செய்ய விரும்பினால், நீங்கள் %s ஐ புதிய சேவையகத்திற்கு நகர்த்த வேண்டும் அல்லது உங்கள் நிறுவல் முறையை மாற்ற விரும்பினால் இது உதவியாக இருக்கும்."
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "இந்த செயல்முறை உங்கள் தரவுத்தளத்தில் சேமிக்கப்பட்ட தரவை காப்புப் பிரதி எடுக்கிறது. உங்கள் தரவுத்தள இணைப்புத் தகவலையும் நீங்கள் சேமிக்க விரும்பினால், உங்கள் /_includes/config.inc.php கோப்பை காப்புப் பிரதி எடுக்க வேண்டும்."
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "குறிப்பு"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "காப்புப் பிரதி & மீட்டமைப்பைப் பயன்படுத்துவதற்கு முன், நீங்கள் அனுமதிகளைப் புதுப்பிக்க வேண்டும்"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "கோப்புறை"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "இதை எப்படி செய்வது என்று உங்களுக்குத் தெரியாவிட்டால், உங்கள் வலை ஹோஸ்டிங் வழங்குநர் உங்களுக்கு உதவ முடியும்."
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "தரவுத்தள காப்பு கோப்பு"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "முழு தரவுத்தளத்தையும் காப்புப் பிரதி எடுக்கவும்"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "மீட்டமை"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "தரவுத்தள மீட்டமை கோப்பு"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "எச்சரிக்கை"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "இது உங்கள் தற்போதைய %s தரவுத்தளத்தில் உள்ள அனைத்து தரவையும் முற்றிலும் நீக்கிவிடும்."
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "தரவுத்தளத்தை மீட்டெடுத்த பிறகு, நீங்கள் தானாகவே வெளியேறிவிடுவீர்கள், அந்த நேரத்தில் நீங்கள் மீட்டெடுத்த தரவுகளில் உள்ள கணக்குகளைப் பயன்படுத்தி உள்நுழைய முடியும்."
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "முழு தரவுத்தளத்தையும் மீட்டமைக்கவும்"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "சுத்தம்"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "உங்கள் சர்வரில் சேமிக்கப்பட்ட அனைத்து கடந்த காப்புப்பிரதிகளையும் மற்றும் கோப்புகளை மீட்டமைக்க இங்கே கிளிக் செய்யவும்."
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "சுத்தம் செய்யவும்"
 
@@ -2335,22 +2322,22 @@ msgstr "வெளிப்பாடு"
 msgid "Active"
 msgstr "செயலில்"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "துப்புரவு பணிகள்"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "தொடங்கு"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "முடிவு"
 
@@ -2358,8 +2345,8 @@ msgstr "முடிவு"
 msgid "System Cleanup Performed"
 msgstr "கணினி சுத்தம் செய்யப்பட்டது"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "காலாவதி மின்னஞ்சல் அனுப்பவும்"
 
@@ -2367,8 +2354,8 @@ msgstr "காலாவதி மின்னஞ்சல் அனுப்ப�
 msgid "Conversion Rates Updated"
 msgstr "மாற்று விகிதங்கள் புதுப்பிக்கப்பட்டன"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "புதிய பதிப்பு சோதனை"
 
@@ -2376,8 +2363,8 @@ msgstr "புதிய பதிப்பு சோதனை"
 msgid "No Upgrade Available"
 msgstr "மேம்படுத்தல் இல்லை"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "தரவுக் கிடங்கை உருவாக்குங்கள்"
 
@@ -2385,8 +2372,8 @@ msgstr "தரவுக் கிடங்கை உருவாக்குங�
 msgid "Data Warehouse Rebuilt"
 msgstr "தரவுக் கிடங்கு மீண்டும் கட்டப்பட்டது"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "செயலாக்க டொமைன் வரிசை"
 
@@ -4266,7 +4253,7 @@ msgstr "புதுப்பிக்கப்பட்டதாகக் க�
 msgid "Perform Bulk Action"
 msgstr "மொத்த செயலைச் செய்யவும்"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "பாதுகாப்பு நோக்கங்களுக்காக உங்கள் கடவுச்சொல் மாற்றப்பட வேண்டும்"
 
@@ -4566,51 +4553,51 @@ msgstr "PHP நீட்டிப்புகள்"
 msgid "PHP Settings"
 msgstr "PHP அமைப்புகள்"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "நேரடி பதிப்பைப் பெறுங்கள்"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "%s இன் புதிய பதிப்பு பதிவிறக்கம் செய்யக் கிடைக்கிறது."
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "மேம்படுத்தல் வழிமுறைகளுக்கு இங்கே கிளிக் செய்யவும்"
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "இந்தப் பகுதியை அணுக நீங்கள் உள்நுழைந்திருக்க வேண்டும்"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s ஏற்கனவே நிறுவப்பட்டுள்ளது"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "நீங்கள் %s கோப்புறையை நீக்க வேண்டும்"
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "அந்த செயலைச் செய்ய உங்களுக்கு அதிகாரம் இல்லை"
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "வெற்றி"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "எச்சரிக்கை"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "தகவல்"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "கவனம் தேவை"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "வெளிப்புற IP API அழைப்பு"
 
@@ -6285,83 +6272,79 @@ msgstr "கணக்கு ஐடி"
 msgid "Registrar Account ID"
 msgstr "பதிவாளர் கணக்கு ஐடி"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "CSV இறக்குமதி கோப்புகள் சுத்தம் செய்யப்பட்டன"
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "இறக்குமதி செய்ய CSV டெம்ப்ளேட் கோப்பைத் தேர்ந்தெடுக்கவும்"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "உங்கள் CSV இறக்குமதி முடிந்தது"
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "CSV டெம்ப்ளேட்டைப் பயன்படுத்தி உங்கள் டொமைன் தரவு அனைத்தையும் %s இல் இறக்குமதி செய்ய இந்தப் பக்கம் உங்களை அனுமதிக்கிறது."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "இது மிகவும் புதிய அம்சம் (அதாவது. பரிசோதனை), ஆனால் இதுவரை அனைத்து சோதனைகளும் நம்பமுடியாத அளவிற்கு சிறப்பாக நடந்துள்ளது, மேலும் நான் தனிப்பட்ட முறையில் பல சோதனை CSV கோப்புகளை 100% துல்லியத்துடன் இறக்குமதி செய்துள்ளேன்."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "CSV இறக்குமதியை முயற்சிக்கும் முன், உங்கள் தற்போதைய %s தரவுத்தளத்தை முழுவதுமாக காப்புப் பிரதி எடுக்க பரிந்துரைக்கப்படுகிறது, ஏதேனும் தவறு நடந்தால், நீங்கள் மீட்டெடுக்க வேண்டும்."
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "நீங்கள் CSV இறக்குமதியாளரைப் பயன்படுத்துவதற்கு முன், நீங்கள் அனுமதிகளைப் புதுப்பிக்க வேண்டும்"
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "CSV இறக்குமதியாளரை எவ்வாறு பயன்படுத்துவது என்பது பற்றிய கூடுதல் தகவலுக்கு, தயவுசெய்து பார்க்கவும்"
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "பயனர் வழிகாட்டி"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "CSV டெம்ப்ளேட்டைப் பதிவிறக்கவும்"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "இங்கே கிளிக் செய்யவும்"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "CSV இறக்குமதி டெம்ப்ளேட்டைப் பதிவிறக்க."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "நீங்கள் விரும்பும் அளவுக்கு சிறிய அல்லது அதிக டொமைன் தகவலை நீங்கள் இறக்குமதி செய்யலாம்."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "தொழில்நுட்ப ரீதியாக நீங்கள் டொமைன்களின் பட்டியலைத் தவிர வேறு எதையும் நிரப்ப முடியாது, மேலும் அது நன்றாக இறக்குமதி செய்யும், ஆனால் DomainMOD உங்களுக்காக பொதுவான சொத்துக்களை உருவாக்க வேண்டும். பரவாயில்லை, நீங்கள் இந்த வழியில் சென்றாலும், உங்களுக்காக %s உருவாக்கும் தகவலைப் புதுப்பிப்பது மிகவும் எளிதானது."
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "CSV இறக்குமதி டெம்ப்ளேட்டில் உள்ள நெடுவரிசைகள் அப்படியே இருக்க வேண்டும். நெடுவரிசைகளின் சரியான எண்ணிக்கை இல்லாவிட்டால், அல்லது நெடுவரிசைகள் சரியான வரிசையில் இல்லை என்றால், இறக்குமதி தோல்வியடையும்."
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "CSV டெம்ப்ளேட்டை இறக்குமதி செய்யவும்"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "இது உங்கள் %s தரவுத்தளத்தில் <strong>புதிய</strong> டொமைன்களை மட்டுமே செருகும், ஏற்கனவே உள்ள டொமைன்கள் தவிர்க்கப்படும்."
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "உங்கள் CSV கோப்பைச் சமர்ப்பிக்கும் போது பொறுமையாக இருங்கள். தரவின் அளவைப் பொறுத்து, செயலாக்க ஒரு நிமிடம் ஆகலாம்."
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "CSV கோப்பை இறக்குமதி செய்யவும்"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "உங்கள் சர்வரில் சேமிக்கப்பட்ட அனைத்து CSV இறக்குமதி கோப்புகளையும் நீக்க இங்கே கிளிக் செய்யவும்."
 
@@ -6486,4 +6469,28 @@ msgstr "உங்கள் நிறுவல் வெற்றிகரமா�
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "உங்கள் பயனர்பெயர் மற்றும் கடவுச்சொல்லை உள்ளிடவும்"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "PHP-யின் பதிவேற்றக் கோப்புறை (upload_tmp_dir) உங்கள் வலை மூலக் கோப்பகத்தில் (web root) இருப்பதால், இந்தக் கோப்பைச் செயலாக்க முடியாது. தயவுசெய்து அதை உங்கள் வலை மூலக் கோப்பகத்திற்கு வெளியே நகர்த்திவிட்டு மீண்டும் முயற்சிக்கவும்."
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "இந்தக் கோப்புகள் %s-இன் பழைய பதிப்பினால் விட்டுச் செல்லப்பட்டவை. இவற்றில் முக்கியமான தரவுகள் உள்ளன, இவை பொதுவில் அணுகக்கூடியதாக இருக்கலாம், மேலும் இவற்றைத் தானாக நீக்க முடியவில்லை. தயவுசெய்து இவற்றை உங்கள் சேவையகத்திலிருந்து இப்போதே நீக்கவும்:"
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "உங்களிடம் ஒரு கருத்து, கேள்வி, புதிய அம்சக் கோரிக்கை அல்லது பிழை அறிக்கை என எது இருந்தாலும், நாங்கள் உங்களிடமிருந்து கேட்க விரும்புகிறோம்!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "எங்கள் பயனர்களுடன் சிறந்த தகவல் தொடர்பையும் வெளிப்படைத்தன்மையையும் பேணுவதற்காக, நாங்கள் சமீபத்தில் ஒரு புதிய ஆதரவு வலைதளத்தை அறிமுகப்படுத்தியுள்ளோம். இந்தப் புதிய வலைதளம், பயனர்கள் தங்கள் கேள்விகளையும் சிக்கல்களையும் சமர்ப்பிக்க அனுமதிப்பது மட்டுமல்லாமல், தங்களுக்கு மிகவும் முக்கியமான அம்சங்களுக்கு வாக்களிக்கவும் வழிவகுக்கிறது. இது, அடுத்து எதில் கவனம் செலுத்த வேண்டும் என்பதை முன்னுரிமைப்படுத்த எங்களுக்கு உதவுகிறது."
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "இன்னும் எதற்காகக் காத்திருக்கிறீர்கள்? உங்கள் கருத்தைத் தெரிவியுங்கள் அல்லது கீழே உள்ள செயல் திட்டத்தைப் பாருங்கள்!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "அடுத்து என்ன பணிகள் நடைபெறுகின்றன என்பதைப் பொறுத்தவரை, எங்களின் புதிய ஆதரவு வலைதளத்துடன் ஒரு திட்ட வரைவு ஒருங்கிணைக்கப்பட்டுள்ளது. பயனர்கள் சமர்ப்பிக்கும் சிக்கல்கள் மற்றும் அவற்றின் தற்போதைய நிலை (திட்டமிடப்பட்டது, செயல்பாட்டில் உள்ளது, நிறைவடைந்தது போன்றவை) ஆகியவற்றின் அடிப்படையில் இந்த வரைவு தானாகவே உருவாக்கப்படுகிறது. இந்த வரைவு, %s-இன் மேம்பாட்டுப் பணிகள் எவ்வாறு முன்னேறி வருகின்றன என்பதைப் பயனர்களுக்கு வெளிப்படையாகக் காட்டும்."
 

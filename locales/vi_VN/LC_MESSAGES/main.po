@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "BẢO TRÌ"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "Cập nhật tỷ lệ chuyển đổi"
@@ -644,7 +644,7 @@ msgstr "Thêm vào"
 msgid "Add Custom SSL Field"
 msgstr "Thêm trường SSL tùy chỉnh"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "Hỗ trợ"
 
@@ -1181,93 +1181,80 @@ msgstr "Vui lòng đăng xuất và đăng nhập lại, nếu sự cố vẫn t
 msgid "Your Database is already up-to-date"
 msgstr "Cơ sở dữ liệu của bạn đã được cập nhật"
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "Các bản sao lưu đã được dọn dẹp"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "Vui lòng chọn một tập tin sao lưu để khôi phục"
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "Trang này cho phép bạn thực hiện sao lưu và khôi phục toàn bộ cơ sở dữ liệu %s của mình."
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "Tính năng này cho phép bạn xuất toàn bộ hệ thống vào một tệp duy nhất để có thể dễ dàng sao lưu và khôi phục."
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "Điều này hữu ích nếu bạn muốn sao lưu dữ liệu thường xuyên, bạn cần di chuyển %s sang máy chủ mới hoặc nếu bạn muốn thay đổi phương pháp cài đặt."
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "Quá trình này sao lưu dữ liệu được lưu trong cơ sở dữ liệu của bạn. Nếu bạn cũng muốn lưu thông tin kết nối cơ sở dữ liệu của mình, bạn nên sao lưu tệp /_includes/config.inc.php."
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "Ghi chú"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "Trước khi bạn có thể sử dụng Sao lưu & Khôi phục, bạn phải cập nhật quyền trên"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "Thư mục"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "Nếu bạn không chắc chắn cách thực hiện, nhà cung cấp dịch vụ lưu trữ web có thể hỗ trợ bạn."
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "Tệp sao lưu cơ sở dữ liệu"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "Sao lưu toàn bộ cơ sở dữ liệu"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "Khôi phục"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "Tệp khôi phục cơ sở dữ liệu"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "Cảnh báo"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "Thao tác này sẽ xóa hoàn toàn toàn bộ dữ liệu trong cơ sở dữ liệu %s hiện tại của bạn."
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "Sau khi khôi phục cơ sở dữ liệu, bạn sẽ tự động được đăng xuất, lúc đó bạn có thể đăng nhập bằng các tài khoản trong dữ liệu bạn đã khôi phục."
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "Khôi phục toàn bộ cơ sở dữ liệu"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "Dọn dẹp"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "Nhấp vào đây để xóa mọi tệp sao lưu và khôi phục trước đây có thể được lưu trên máy chủ của bạn."
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "Thực hiện dọn dẹp"
 
@@ -2335,22 +2322,22 @@ msgstr "Sự biểu lộ"
 msgid "Active"
 msgstr "Tích cực"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "Nhiệm vụ dọn dẹp"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "Bắt đầu"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "Kết thúc"
 
@@ -2358,8 +2345,8 @@ msgstr "Kết thúc"
 msgid "System Cleanup Performed"
 msgstr "Đã thực hiện dọn dẹp hệ thống"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "Gửi Email Hết Hạn"
 
@@ -2367,8 +2354,8 @@ msgstr "Gửi Email Hết Hạn"
 msgid "Conversion Rates Updated"
 msgstr "Tỷ lệ chuyển đổi được cập nhật"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "Kiểm tra phiên bản mới"
 
@@ -2376,8 +2363,8 @@ msgstr "Kiểm tra phiên bản mới"
 msgid "No Upgrade Available"
 msgstr "Không có bản nâng cấp nào khả dụng"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "Xây dựng kho dữ liệu"
 
@@ -2385,8 +2372,8 @@ msgstr "Xây dựng kho dữ liệu"
 msgid "Data Warehouse Rebuilt"
 msgstr "Xây dựng lại kho dữ liệu"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "Hàng đợi miền xử lý"
 
@@ -4264,7 +4251,7 @@ msgstr "Đánh dấu là đã gia hạn"
 msgid "Perform Bulk Action"
 msgstr "Thực hiện hành động hàng loạt"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "Mật khẩu của bạn nên được thay đổi vì mục đích bảo mật"
 
@@ -4564,51 +4551,51 @@ msgstr "Phần mở rộng PHP"
 msgid "PHP Settings"
 msgstr "Cài đặt PHP"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "Nhận phiên bản trực tiếp"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "Phiên bản mới của %s hiện đã có thể tải xuống."
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "Nhấp vào đây để biết hướng dẫn nâng cấp"
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "Bạn phải đăng nhập để truy cập vào khu vực này"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s đã được cài đặt"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "Bạn nên xóa thư mục %s"
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "Bạn không được phép thực hiện hành động đó"
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "Thành công"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "Báo động"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "Thông tin"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "Cần chú ý"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "Cuộc gọi API IP bên ngoài"
 
@@ -6282,83 +6269,79 @@ msgstr "ID tài khoản"
 msgid "Registrar Account ID"
 msgstr "ID tài khoản đăng ký"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "Các tập tin nhập CSV đã được dọn dẹp"
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "Vui lòng chọn tệp mẫu CSV để nhập"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "Nhập CSV của bạn đã hoàn tất"
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "Trang này cho phép bạn nhập toàn bộ dữ liệu miền của mình vào %s bằng mẫu CSV."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "Đây là một tính năng rất mới (tức là đang thử nghiệm), nhưng mọi thử nghiệm cho đến nay đều diễn ra rất tốt và cá nhân tôi đã nhập nhiều tệp CSV thử nghiệm với độ chính xác 100%."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "Bạn nên sao lưu toàn bộ cơ sở dữ liệu %s hiện tại của mình trước khi thử Nhập CSV, đề phòng trường hợp có sự cố xảy ra và bạn cần khôi phục."
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "Trước khi bạn có thể sử dụng CSV Importer, bạn phải cập nhật quyền trên"
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "Để biết thêm thông tin về cách sử dụng CSV Importer, vui lòng xem"
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "Hướng dẫn sử dụng"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "Tải xuống mẫu CSV"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "Nhấp vào đây"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "để tải xuống Mẫu nhập CSV."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "Bạn có thể nhập ít hoặc nhiều thông tin tên miền tùy ý."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "Về mặt kỹ thuật, bạn chỉ có thể điền vào một danh sách tên miền và nó sẽ nhập tốt, nhưng DomainMOD sẽ cần tạo một loạt các tài sản chung cho bạn. Tuy nhiên, không sao cả, ngay cả khi bạn đi theo hướng này, việc cập nhật thông tin mà %s tạo cho bạn cũng khá dễ dàng."
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "Các cột trong Mẫu nhập CSV phải giữ nguyên. Nếu không có số lượng cột chính xác hoặc các cột không theo đúng thứ tự, quá trình nhập sẽ không thành công."
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "Nhập mẫu CSV"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "Thao tác này sẽ chỉ chèn tên miền <strong>mới</strong> vào cơ sở dữ liệu %s của bạn, các tên miền hiện có sẽ bị bỏ qua."
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "Vui lòng kiên nhẫn khi gửi tệp CSV của bạn. Tùy thuộc vào lượng dữ liệu, có thể mất một phút để xử lý."
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "Nhập tệp CSV"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "Nhấp vào đây để xóa bất kỳ và toàn bộ các tệp CSV Import trước đây có thể được lưu trên máy chủ của bạn."
 
@@ -6483,4 +6466,28 @@ msgstr "Nếu bạn muốn đảm bảo rằng cài đặt của bạn có thể
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "Vui lòng nhập tên người dùng và mật khẩu của bạn"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "Tệp này không thể được xử lý vì thư mục tải lên của PHP (upload_tmp_dir) nằm trong thư mục gốc của trang web. Vui lòng di chuyển nó ra ngoài thư mục gốc của trang web và thử lại."
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "Các tập tin này là tàn dư của phiên bản cũ hơn của %s. Chúng chứa dữ liệu nhạy cảm, có thể truy cập công khai và không thể tự động xóa. Vui lòng xóa chúng khỏi máy chủ của bạn ngay bây giờ:"
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "Dù bạn có nhận xét, câu hỏi, yêu cầu tính năng hay báo cáo lỗi, chúng tôi đều muốn lắng nghe ý kiến ​​của bạn!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "Gần đây, chúng tôi đã ra mắt Cổng hỗ trợ mới, cho phép chúng tôi giao tiếp tốt hơn và minh bạch hơn với người dùng. Cổng thông tin mới không chỉ cho phép người dùng gửi câu hỏi và vấn đề, mà còn cho phép người dùng bình chọn những mục quan trọng nhất đối với họ, giúp chúng tôi ưu tiên những việc cần xử lý tiếp theo."
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "Vậy bạn còn chờ gì nữa? Hãy nói lên suy nghĩ của mình hoặc xem Lộ trình bên dưới!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "Về những việc đang được thực hiện tiếp theo, tích hợp với Cổng hỗ trợ mới của chúng tôi là Lộ trình dự án. Lộ trình này được tạo tự động dựa trên các vấn đề do người dùng báo cáo và trạng thái hiện tại của chúng (Đã lên kế hoạch, Đang tiến hành, Đã hoàn thành, v.v.). Lộ trình này sẽ cho phép người dùng xem công khai tiến độ phát triển của %s."
 

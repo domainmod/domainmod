@@ -419,7 +419,7 @@ msgid "Maintenance"
 msgstr "Manutenzione"
 
 #: _includes/layout/menu-main.inc.php:155 admin/scheduler/run.php:110
-#: admin/scheduler/run.php:137 cron.php:101 cron.php:128 install/go.php:63
+#: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
 msgstr "Aggiornare i tassi di conversione"
@@ -644,7 +644,7 @@ msgstr "Aggiungi"
 msgid "Add Custom SSL Field"
 msgstr "Aggiungi un campo SSL personalizzato"
 
-#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:113
+#: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:133
 msgid "Backup"
 msgstr "Backup"
 
@@ -1181,93 +1181,80 @@ msgstr "Si prega di effettuare il logout e di effettuare nuovamente il login, e 
 msgid "Your Database is already up-to-date"
 msgstr "Il vostro database è già aggiornato"
 
-#: admin/backup/cleanup/index.php:40
+#: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
 msgstr "I backup sono stati ripuliti"
 
-#: admin/backup/index.php:65
+#: admin/backup/index.php:87
 msgid "Please choose a backup file to restore"
 msgstr "Scegliere un file di backup da ripristinare"
 
-#: admin/backup/index.php:105
+#: admin/backup/index.php:127
 msgid "This page enables you to perform complete backups and restores of your %s database."
 msgstr "Questa pagina consente di eseguire backup completi e ripristini della vostra banca dati %s."
 
-#: admin/backup/index.php:106
+#: admin/backup/index.php:128
 msgid "This allows you to export your entire system in a single file so that it can easily be backed up and restored."
 msgstr "Ciò consente di esportare l'intero sistema in un unico file in modo da poterne facilmente eseguire il backup e il ripristino."
 
-#: admin/backup/index.php:107
+#: admin/backup/index.php:129
 msgid "This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method."
 msgstr "Questo è utile se si desidera eseguire backup regolari dei propri dati, se è necessario spostare %s su un nuovo server o se si vuole cambiare il metodo di installazione."
 
-#: admin/backup/index.php:109
+#: admin/backup/index.php:131
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
 msgstr "Questo processo esegue il backup dei dati salvati nella vostra banca dati. Se si desidera salvare anche le informazioni di connessione alla banca dati, è necessario eseguire il backup del file /_includes/config.inc.php."
 
-#: admin/backup/index.php:111 admin/dw/intro.php:53
-#: domains/csv-importer/index.php:105 domains/csv-importer/index.php:110
-#: domains/csv-importer/index.php:114 queue/intro.php:71
+#: admin/dw/intro.php:53 domains/csv-importer/index.php:120
+#: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
 msgstr "Nota"
 
-#: admin/backup/index.php:111
-msgid "Before you can use Backup & Restore you must update the permissions on the"
-msgstr "Prima di poter utilizzare Backup & Restore è necessario aggiornare i permessi sul modulo"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "Folder"
-msgstr "Cartella"
-
-#: admin/backup/index.php:111 domains/csv-importer/index.php:105
-msgid "If you're unsure how to do this your web hosting provider should be able to assist you."
-msgstr "Se non siete sicuri di come fare questo il vostro fornitore di web hosting dovrebbe essere in grado di aiutarvi."
-
-#: admin/backup/index.php:114
+#: admin/backup/index.php:134
 msgid "Database Backup File"
 msgstr "File di backup del database"
 
-#: admin/backup/index.php:115
+#: admin/backup/index.php:135
 msgid "Backup Entire Database"
 msgstr "Backup dell'intero database"
 
-#: admin/backup/index.php:117
+#: admin/backup/index.php:137
 msgid "Restore"
 msgstr "Ripristina"
 
-#: admin/backup/index.php:119
+#: admin/backup/index.php:139
 msgid "Database Restore File"
 msgstr "File di ripristino del database"
 
-#: admin/backup/index.php:120 admin/domain-fields/add.php:174
+#: admin/backup/index.php:140 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
 #: admin/settings/index.php:190 admin/ssl-fields/add.php:174
 #: admin/ssl-fields/add.php:183
 msgid "Warning"
 msgstr "Attenzione"
 
-#: admin/backup/index.php:121
+#: admin/backup/index.php:141
 msgid "This will completely delete all of the data in your current %s database."
 msgstr "In questo modo si cancellano completamente tutti i dati della vostra attuale banca dati %s."
 
-#: admin/backup/index.php:123
+#: admin/backup/index.php:143
 msgid "After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."
 msgstr "Dopo il ripristino di una banca dati sarete automaticamente disconnessi, a quel punto sarete in grado di effettuare il login utilizzando i conti nei dati che avete ripristinato."
 
-#: admin/backup/index.php:124
+#: admin/backup/index.php:144
 msgid "Restore Entire Database"
 msgstr "Ripristinare l'intero database"
 
-#: admin/backup/index.php:128 admin/dw/dw.php:299
-#: domains/csv-importer/index.php:122
+#: admin/backup/index.php:148 admin/dw/dw.php:299
+#: domains/csv-importer/index.php:132
 msgid "Cleanup"
 msgstr "Pulizia"
 
-#: admin/backup/index.php:129
+#: admin/backup/index.php:149
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
 msgstr "Cliccare qui per cancellare tutti i file di backup e ripristino passati che possono essere salvati sul vostro server."
 
-#: admin/backup/index.php:130 domains/csv-importer/index.php:124
+#: admin/backup/index.php:150 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
 msgstr "Eseguire la pulizia"
 
@@ -2338,22 +2325,22 @@ msgstr "Espressione"
 msgid "Active"
 msgstr "Attivo"
 
-#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:74
-#: cron.php:82
+#: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
+#: cron.php:84
 msgid "Cleanup Tasks"
 msgstr "Compiti di pulizia"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:74
-#: cron.php:87 cron.php:101 cron.php:133 cron.php:146 cron.php:160
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:175 cron.php:76
+#: cron.php:89 cron.php:103 cron.php:135 cron.php:148 cron.php:162
 msgid "Start"
 msgstr "Iniziare"
 
 #: admin/scheduler/run.php:89 admin/scheduler/run.php:105
 #: admin/scheduler/run.php:137 admin/scheduler/run.php:152
-#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:82
-#: cron.php:96 cron.php:128 cron.php:141 cron.php:155 cron.php:170
+#: admin/scheduler/run.php:168 admin/scheduler/run.php:185 cron.php:84
+#: cron.php:98 cron.php:130 cron.php:143 cron.php:157 cron.php:172
 msgid "End"
 msgstr "Fine"
 
@@ -2361,8 +2348,8 @@ msgstr "Fine"
 msgid "System Cleanup Performed"
 msgstr "Pulizia del sistema eseguita"
 
-#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:87
-#: cron.php:96 install/go.php:62
+#: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
+#: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
 msgstr "Invia e-mail di scadenza"
 
@@ -2370,8 +2357,8 @@ msgstr "Invia e-mail di scadenza"
 msgid "Conversion Rates Updated"
 msgstr "Tassi di conversione aggiornati"
 
-#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:133
-#: cron.php:141
+#: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
+#: cron.php:143
 msgid "New Version Check"
 msgstr "Controllo della nuova versione"
 
@@ -2379,8 +2366,8 @@ msgstr "Controllo della nuova versione"
 msgid "No Upgrade Available"
 msgstr "Nessun aggiornamento disponibile"
 
-#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:146
-#: cron.php:155
+#: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
+#: cron.php:157
 msgid "Build Data Warehouse"
 msgstr "Costruire il magazzino dati"
 
@@ -2388,8 +2375,8 @@ msgstr "Costruire il magazzino dati"
 msgid "Data Warehouse Rebuilt"
 msgstr "Ricostruito il Data Warehouse"
 
-#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:160
-#: cron.php:170
+#: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
+#: cron.php:172
 msgid "Process Domain Queue"
 msgstr "Elaborare la coda di dominio"
 
@@ -4271,7 +4258,7 @@ msgstr "Segna come rinnovato"
 msgid "Perform Bulk Action"
 msgstr "Eseguire un'azione in serie"
 
-#: checks.php:201
+#: checks.php:211
 msgid "Your password should be changed for security purposes"
 msgstr "La password deve essere cambiata per motivi di sicurezza"
 
@@ -4571,51 +4558,51 @@ msgstr "Estensioni PHP"
 msgid "PHP Settings"
 msgstr "Impostazioni PHP"
 
-#: classes/DomainMOD/System.php:218
+#: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
 msgstr "Ottieni la versione live"
 
-#: classes/DomainMOD/System.php:230
+#: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
 msgstr "Una nuova versione di %s è disponibile per il download."
 
-#: classes/DomainMOD/System.php:231
+#: classes/DomainMOD/System.php:309
 msgid "Click here for upgrade instructions"
 msgstr "Clicca qui per istruzioni sull'aggiornamento"
 
-#: classes/DomainMOD/System.php:266 classes/DomainMOD/System.php:281
+#: classes/DomainMOD/System.php:344 classes/DomainMOD/System.php:359
 msgid "You must be logged in to access this area"
 msgstr "Per accedere a quest'area è necessario effettuare il login"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "%s is already installed"
 msgstr "%s è già installato"
 
-#: classes/DomainMOD/System.php:291
+#: classes/DomainMOD/System.php:369
 msgid "You should delete the %s folder"
 msgstr "Si dovrebbe cancellare la cartella %s"
 
-#: classes/DomainMOD/System.php:300
+#: classes/DomainMOD/System.php:378
 msgid "You are not authorized to perform that action"
 msgstr "Non sei autorizzato a compiere tale azione"
 
-#: classes/DomainMOD/System.php:345
+#: classes/DomainMOD/System.php:423
 msgid "Success"
 msgstr "Successo"
 
-#: classes/DomainMOD/System.php:355
+#: classes/DomainMOD/System.php:433
 msgid "Alert"
 msgstr "Allarme"
 
-#: classes/DomainMOD/System.php:368 classes/DomainMOD/System.php:388
+#: classes/DomainMOD/System.php:446 classes/DomainMOD/System.php:466
 msgid "Info"
 msgstr "Info"
 
-#: classes/DomainMOD/System.php:378
+#: classes/DomainMOD/System.php:456
 msgid "Attention Required"
 msgstr "Attenzione"
 
-#: classes/DomainMOD/System.php:488
+#: classes/DomainMOD/System.php:566
 msgid "External IP API Call"
 msgstr "Chiamata IP API esterna"
 
@@ -6295,83 +6282,79 @@ msgstr "Account ID"
 msgid "Registrar Account ID"
 msgstr "ID account registrante"
 
-#: domains/csv-importer/cleanup/index.php:34
+#: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
 msgstr "I file di importazione CSV sono stati ripuliti"
 
-#: domains/csv-importer/index.php:64
+#: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
 msgstr "Scegli un file modello CSV da importare"
 
-#: domains/csv-importer/index.php:72
+#: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
 msgstr "La tua importazione CSV è stata completata"
 
-#: domains/csv-importer/index.php:103
+#: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
 msgstr "Questa pagina ti consente di importare tutti i dati del tuo dominio in %s utilizzando un modello CSV."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
 msgstr "Questa è una funzionalità molto nuova (es. sperimentale), ma tutti i test finora sono andati incredibilmente bene e ho personalmente importato molti file CSV di test con una precisione del 100%."
 
-#: domains/csv-importer/index.php:104
+#: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
 msgstr "Si consiglia di eseguire un backup completo del database %s esistente prima di tentare un'importazione CSV, nel caso qualcosa vada storto e sia necessario ripristinarlo."
 
-#: domains/csv-importer/index.php:105
-msgid "Before you can use the CSV Importer you must update the permissions on the"
-msgstr "Prima di poter utilizzare CSV Importer è necessario aggiornare le autorizzazioni sul file"
-
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
 msgstr "Per ulteriori informazioni su come utilizzare CSV Importer, consultare il nostro"
 
-#: domains/csv-importer/index.php:106
+#: domains/csv-importer/index.php:116
 msgid "User Guide"
 msgstr "Guida utente"
 
-#: domains/csv-importer/index.php:108
+#: domains/csv-importer/index.php:118
 msgid "Download CSV Template"
 msgstr "Scarica il modello CSV"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Click here"
 msgstr "Clicca qui"
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "to download the CSV Import Template."
 msgstr "per scaricare il modello di importazione CSV."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
 msgstr "Puoi importare tutte le informazioni sul dominio che desideri."
 
-#: domains/csv-importer/index.php:109
+#: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
 msgstr "Tecnicamente non puoi compilare nient'altro che un elenco di domini e verrà importato bene, ma DomainMOD dovrà creare un mucchio di risorse generiche per te. Va bene comunque, anche se segui questa strada è abbastanza facile aggiornare le informazioni che %s crea per te."
 
-#: domains/csv-importer/index.php:110
+#: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
 msgstr "Le colonne nel modello di importazione CSV devono rimanere così come sono. Se non è presente il numero esatto di colonne o se le colonne non sono nell'ordine corretto, l'importazione avrà esito negativo."
 
-#: domains/csv-importer/index.php:112
+#: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
 msgstr "Importa modello CSV"
 
-#: domains/csv-importer/index.php:114
+#: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
 msgstr "Questo inserirà solo <strong>nuovi</strong> domini nel tuo database %s, i domini esistenti verranno ignorati."
 
-#: domains/csv-importer/index.php:116
+#: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
 msgstr "Sii paziente quando invii il tuo file CSV. A seconda della quantità di dati, l'elaborazione potrebbe richiedere un minuto."
 
-#: domains/csv-importer/index.php:118
+#: domains/csv-importer/index.php:128
 msgid "Import CSV File"
 msgstr "Importa file CSV"
 
-#: domains/csv-importer/index.php:123
+#: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
 msgstr "Fare clic qui per eliminare tutti i file di importazione CSV precedenti che potrebbero essere salvati sul server."
 
@@ -6496,4 +6479,28 @@ msgstr "Se vuoi assicurarti che la tua installazione sia in grado di inviare e-m
 #: index.php:167
 msgid "Please enter your username and password"
 msgstr "Inserisci il tuo nome utente e la tua password"
+
+#: admin/backup/index.php:82 domains/csv-importer/index.php:70
+msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
+msgstr "Questo file non può essere elaborato perché la cartella di caricamento di PHP (upload_tmp_dir) si trova nella directory principale del tuo sito web. Spostala al di fuori della directory principale e riprova."
+
+#: classes/DomainMOD/System.php:223
+msgid "These files were left behind by an older version of %s. They contain sensitive data, may be publicly accessible, and could not be deleted automatically. Please delete them from your server now:"
+msgstr "Questi file sono stati lasciati da una versione precedente di %s. Contengono dati sensibili, potrebbero essere accessibili pubblicamente e non è stato possibile eliminarli automaticamente. Si prega di eliminarli immediatamente dal server:"
+
+#: feedback/index.php:47
+msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
+msgstr "Che abbiate un commento, una domanda, una richiesta di funzionalità o una segnalazione di bug, non esitate a contattarci!"
+
+#: feedback/index.php:49
+msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
+msgstr "Abbiamo recentemente lanciato un nuovo portale di supporto che ci permetterà di comunicare e di essere più trasparenti con i nostri utenti. Il nuovo portale non solo consente agli utenti di inviare domande e segnalare problemi, ma permette anche di votare gli elementi per loro più importanti, aiutandoci così a stabilire le priorità."
+
+#: feedback/index.php:53
+msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
+msgstr "Allora, cosa aspetti? Esprimi la tua opinione o dai un'occhiata alla roadmap qui sotto!"
+
+#: feedback/index.php:51
+msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
+msgstr "A proposito di cosa stiamo sviluppando in futuro, il nostro nuovo Portale di Supporto include una Roadmap di progetto integrata. La Roadmap viene creata automaticamente in base ai problemi segnalati dagli utenti e al loro stato attuale (Pianificato, In corso, Completato, ecc.). Questa Roadmap offrirà agli utenti una panoramica pubblica sull'andamento dello sviluppo di %s."
 
