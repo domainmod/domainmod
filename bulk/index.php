@@ -44,9 +44,6 @@ $system->readOnlyCheck($http_referer);
 $action = isset($_REQUEST['action']) ? $sanitize->text($_REQUEST['action']) : '';
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
-echo $action . '<BR>';
-echo $is_submitted . '<BR>';
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
     if ($action == 'UCF') {
