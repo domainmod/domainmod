@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions, problems, and feature requests
+    url: https://support.domainmod.org
+    about: Ask questions, get help with problems, and suggest or vote on features in the DomainMOD Support Portal.
+  - name: Report a security vulnerability
+    url: https://github.com/domainmod/domainmod/security/advisories/new
+    about: Please report security issues privately, not in a public issue.
