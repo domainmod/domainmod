@@ -106,22 +106,25 @@ class InternetBs
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['status'] == 'SUCCESS') {
+        if (($array_results['status'] ?? '') == 'SUCCESS') {
+
+            // Internet.bs leaves out fields that don't apply to a domain (e.g. privatewhois for a TLD without private
+            // WHOIS), so read each one with a default rather than warning
 
             // get expiration date
-            $expiry_result = $array_results['expirationdate'];
+            $expiry_result = $array_results['expirationdate'] ?? '';
             $expiration_date = $this->processExpiry($expiry_result);
 
             // get dns servers
-            $dns_result = $array_results['nameserver'];
+            $dns_result = $array_results['nameserver'] ?? array();
             $dns_servers = $this->processDns($dns_result);
 
             // get privacy status
-            $privacy_result = $array_results['privatewhois'];
+            $privacy_result = $array_results['privatewhois'] ?? '';
             $privacy_status = $this->processPrivacy($privacy_result);
 
             // get auto renewal status
-            $autorenewal_result = $array_results['autorenew'];
+            $autorenewal_result = $array_results['autorenew'] ?? '';
             $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
         } else {
