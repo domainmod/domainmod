@@ -1223,7 +1223,7 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
+    $full_url = substr($_SERVER["HTTP_REFERER"] ?? '', 0, -1);
 
     $stmt = $pdo->prepare("
         INSERT INTO `settings`
@@ -1248,6 +1248,7 @@ try {
 
     if ($pdo->InTransaction()) $pdo->commit();
 
+    $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
     $_SESSION['s_message_success'] .= sprintf(_('%s has been successfully installed and you should now delete the %s folder'), SOFTWARE_TITLE, '/install/') . "<BR><BR>" . sprintf(_("The default username and password are %s, and you'll be prompted to change the password after logging in"), '"admin"') . "<BR>";
 
     header("Location: ../");
@@ -1261,6 +1262,7 @@ try {
     $log_extra = array('Error' => $e);
     $log->emergency($log_message, $log_extra);
 
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
     $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
     throw $e;

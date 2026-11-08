@@ -38,8 +38,8 @@ class Goal
 
         $act_software_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
-        $act_agent = $_SERVER['HTTP_USER_AGENT'];
-        $act_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $act_agent = $this->getAgent();
+        $act_language = $this->getLanguage();
 
         $stmt = $pdo->prepare("
             INSERT INTO goal_activity
@@ -61,8 +61,8 @@ class Goal
 
         $act_new_version = SOFTWARE_VERSION;
         $act_ip_address = $this->getIp();
-        $act_agent = $_SERVER['HTTP_USER_AGENT'];
-        $act_language = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : 'en';
+        $act_agent = $this->getAgent();
+        $act_language = $this->getLanguage();
 
         $stmt = $pdo->prepare("
             INSERT INTO goal_activity
@@ -128,11 +128,33 @@ class Goal
 
     public function getIp()
     {
-        if ($_SERVER['SERVER_ADDR'] == '127.0.0.1' || $_SERVER['SERVER_ADDR'] == '::1') {
-            return $_SERVER['REMOTE_ADDR'];
+        $server_addr = $_SERVER['SERVER_ADDR'] ?? '';
+
+        if ($server_addr == '' || $server_addr == '127.0.0.1' || $server_addr == '::1') {
+            return $_SERVER['REMOTE_ADDR'] ?? '';
         } else {
-            return $_SERVER['SERVER_ADDR'];
+            return $server_addr;
         }
+    }
+
+    public function getAgent()
+    {
+        return $this->cleanHeader($_SERVER['HTTP_USER_AGENT'] ?? '');
+    }
+
+    public function getLanguage()
+    {
+        $language = $this->cleanHeader($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
+        if ($language == '') $language = 'en';
+
+        // goal_activity.language is VARCHAR(100)
+        return substr($language, 0, 100);
+    }
+
+    public function cleanHeader($value)
+    {
+        // Keep printable ASCII only, so a header the utf8 columns can't store doesn't make the insert fail
+        return preg_replace('/[^\x20-\x7E]/', '', (string) $value);
     }
 
     public function triggerGoal($goal_url)

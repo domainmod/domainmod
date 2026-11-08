@@ -113,14 +113,14 @@ $search_for = $search_for ?? '';
                     <!-- User image -->
                     <li class="user-header bg-red">
                         <p>
-                            <?php echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?><BR>
-                            <?php echo $_SESSION['s_email_address']; ?><BR>
+                            <?php echo ($_SESSION['s_first_name'] ?? '') . " "; ?> <?php echo $_SESSION['s_last_name'] ?? ''; ?><BR>
+                            <?php echo $_SESSION['s_email_address'] ?? ''; ?><BR>
                             <small><BR>
-                                <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name']; ?><BR>
-                                <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency']; ?><BR>
-                                <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone']; ?><BR>
+                                <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name'] ?? ''; ?><BR>
+                                <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency'] ?? ''; ?><BR>
+                                <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone'] ?? ''; ?><BR>
                                 <?php echo _('Expiration Emails'); ?>: <?php
-                                if ($_SESSION['s_expiration_emails'] == '1') {
+                                if (($_SESSION['s_expiration_emails'] ?? '') == '1') {
                                     echo _('Yes');
                                 } else {
                                     echo _('No');
