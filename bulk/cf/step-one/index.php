@@ -74,7 +74,7 @@ echo $form->showFormTop('');
 if ($field_id == '0') {
 
     echo $form->showDropdownTop('field_id', '', '', '', '');
-    echo $form->showDropdownOption('', _('Choose the Custom Field to Edit'), $action);
+    echo $form->showDropdownOption('', _('Choose the Custom Field to Edit'), '');
 
     $result = $pdo->query("
             SELECT df.id, df.name, df.type_id, cft.name AS type

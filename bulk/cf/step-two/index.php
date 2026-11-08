@@ -55,6 +55,14 @@ $raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['ra
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 $id = (int) ($_REQUEST['id'] ?? 0);
 $type_id = $custom_field->getTypeId('domain_fields', $id);
+
+// Opened without choosing a field (or with one that doesn't exist), so go back to step one
+if ($id < 1 || $type_id === false) {
+
+    header('Location: ../step-one/');
+    exit;
+
+}
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
 // Custom Fields
