@@ -163,7 +163,7 @@ if ($current_db_version === '1.8') {
     $pdo->query("
         UPDATE settings
         SET db_version = '1.9',
-            email_address = 'greg@greg.ca',
+            email_address = 'greg@chetcuti.com',
             update_time = '" . $timestamp . "'");
 
     $current_db_version = '1.9';
