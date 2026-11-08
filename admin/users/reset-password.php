@@ -75,6 +75,15 @@ if ($new_username != '') {
         header("Location: index.php");
         exit;
 
+    } elseif ((int) $result->id === (int) ($_SESSION['s_user_id'] ?? 0)) {
+
+        // Resetting your own password here would log you out (a password change ends your other sessions, this one
+        // included) before the new password could be shown, leaving the account locked out
+        $_SESSION['s_message_danger'] .= _('To change your own password, use Change Password under Settings.') . '<BR>';
+
+        header('Location: ' . WEB_ROOT . '/settings/password/');
+        exit;
+
     } else {
 
         $new_password = $user->generatePassword(30);

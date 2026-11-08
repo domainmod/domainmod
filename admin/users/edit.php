@@ -450,8 +450,13 @@ echo $form->showSubmitButton(_('Save'), '', '');
 
 echo $form->showFormBottom('');
 ?>
+<?php if ($uid == ($_SESSION['s_user_id'] ?? 0)) { // resetting your own password here would log you out ?>
+<?php echo sprintf(_('To change your own password, use %sChange Password%s under Settings.'), '<a href="' . WEB_ROOT . '/settings/password/">', '</a>'); ?><BR><BR>
+<?php } else { ?>
 <a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Display Password'))); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR><?php
+<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR>
+<?php } ?>
+<?php
 $layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1'); ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
