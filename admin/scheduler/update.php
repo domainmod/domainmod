@@ -44,10 +44,22 @@ $new_hour = $_REQUEST['new_hour'] ?? 0;
 
 if ($a == 'u') {
 
-    $new_time = date('Y-m-d H:i:s', mktime($new_hour, '00', '00', date("m"), date("d"), date("Y")));
+    // The form only sends a whole hour from 0 to 23, so ignore anything else rather than saving a wrong time
+    if (!is_string($new_hour) || !ctype_digit($new_hour) || (int) $new_hour > 23) {
+        header("Location: index.php");
+        exit;
+    }
+
+    $new_time = date('Y-m-d H:i:s', mktime((int) $new_hour, 0, 0, date("m"), date("d"), date("Y")));
     $new_time_utc = $time->toUtcTimezone($new_time);
+    // Keep the minutes too, for time zones with a half-hour or 45-minute offset
     $hour = date("G", strtotime($new_time_utc));
-    $full_expression = '0 ' . $hour . ' * * * *';
+    $minute = (int) date("i", strtotime($new_time_utc));
+    $full_expression = $minute . ' ' . $hour . ' * * *';
+
+    // The next time it's due, so a time earlier in the day doesn't make the task run straight away
+    $cron = new Cron\CronExpression($full_expression);
+    $new_time_utc = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $stmt = $pdo->prepare("
         UPDATE scheduler
