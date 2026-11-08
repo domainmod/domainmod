@@ -36,6 +36,84 @@ class Conversion
         $this->time = new Time();
     }
 
+    /*
+     * Make sure a user has a conversion rate for every currency in use. The domain and SSL lists and the cost reports
+     * join on the logged-in user's rates, so a currency without one hides every domain or certificate that uses it.
+     * A user only gets rates for the currencies in use when they're added, edit fees, or the conversion task runs, so
+     * a user added before any domains existed, or a currency someone else started using, left them with none.
+     * Only missing rates are added (existing ones are left alone), and a currency whose rate can't be fetched is
+     * skipped, so it's tried again on the next page load rather than saved as a wrong rate
+     */
+    public function ensureRates($user_id, $default_currency)
+    {
+        if ((int) $user_id === 0 || (string) $default_currency === '') return;
+
+        $pdo = $this->deeb->cnxx;
+        $missing = $this->missingRates($user_id);
+        if (!$missing) return;
+
+        // Two page loads at once could both insert the same missing rate (the table has no unique key on user and
+        // currency yet), which would count those assets twice in the reports. Take a per-user lock and check again
+        $lock_name = 'domainmod_conversions_' . (int) $user_id;
+        $lock = $pdo->prepare('SELECT GET_LOCK(:lock_name, 10)');
+        $lock->bindValue('lock_name', $lock_name, \PDO::PARAM_STR);
+        $lock->execute();
+        if ((int) $lock->fetchColumn() !== 1) return; // try again on the next page load
+
+        try {
+
+            foreach ($this->missingRates($user_id) as $row) {
+
+                $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency);
+
+                if (!is_numeric($conversion_rate) || (float) $conversion_rate <= 0) {
+
+                    $log_message = 'Unable to get a conversion rate for a missing user currency';
+                    $log_extra = array('User ID' => $user_id, 'Currency' => $row->currency, 'Default Currency' => $default_currency);
+                    $this->log->warning($log_message, $log_extra);
+                    continue;
+
+                }
+
+                $this->updateConversionRate($conversion_rate, '0', $row->id, $user_id);
+
+            }
+
+        } finally {
+
+            $release = $pdo->prepare('SELECT RELEASE_LOCK(:lock_name)');
+            $release->bindValue('lock_name', $lock_name, \PDO::PARAM_STR);
+            $release->execute();
+
+        }
+    }
+
+    // The currencies in use (by domain or SSL fees) that a user has no conversion rate for
+    public function missingRates($user_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT c.id, c.currency
+            FROM currencies AS c
+            WHERE c.id IN
+            (  SELECT f.currency_id
+               FROM fees AS f, domains AS d
+               WHERE f.id = d.fee_id
+               UNION
+               SELECT f.currency_id
+               FROM ssl_fees AS f, ssl_certs AS sslc
+               WHERE f.id = sslc.fee_id
+            )
+              AND NOT EXISTS (
+                SELECT 1
+                FROM currency_conversions AS cc
+                WHERE cc.currency_id = c.id
+                  AND cc.user_id = :user_id)");
+        $stmt->bindValue('user_id', (int) $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function updateRates($default_currency, $user_id, $from_cron = false)
     {
         $result_message = '';

@@ -42,6 +42,8 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/reporting-domain-cost-by-month.inc.php';
 
 $system->authCheck();
+// Rates for every currency in use, or the lists and reports below would leave out what uses a missing one
+(new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
 $export_data = (int) ($_GET['export_data'] ?? 0);

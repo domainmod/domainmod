@@ -34,6 +34,8 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
+// Rates for every currency in use, or the saved list query below would leave out what uses a missing one
+(new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
 $_SESSION['s_raw_list_type'] = $_SESSION['s_raw_list_type'] ?? '';
