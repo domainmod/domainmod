@@ -1223,7 +1223,25 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
-    $full_url = substr($_SERVER["HTTP_REFERER"] ?? '', 0, -1);
+    // The browser arrives here from the last install step, so cut the Referer back to the installation's root
+    $referer = $_SERVER["HTTP_REFERER"] ?? '';
+    $install_pos = strrpos($referer, '/install/');
+    if ($install_pos !== false) {
+        $full_url = substr($referer, 0, $install_pos);
+    } else {
+        // No Referer, so build it from the request, using a reverse proxy's forwarded scheme and host if it sent them
+        $forwarded_proto = strtolower(trim(explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')[0]));
+        $forwarded_host = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_HOST'] ?? '')[0]);
+        if ($forwarded_proto == 'https' || $forwarded_proto == 'http') {
+            $scheme = $forwarded_proto;
+        } else {
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        }
+        $host = $forwarded_host != '' ? $forwarded_host : ($_SERVER['HTTP_HOST'] ?? 'localhost');
+        $full_url = $scheme . '://' . $host . $web_root;
+    }
+    // settings.full_url is VARCHAR(100)
+    $full_url = substr($full_url, 0, 100);
 
     $stmt = $pdo->prepare("
         INSERT INTO `settings`
