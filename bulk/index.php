@@ -76,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-    <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
@@ -123,6 +122,5 @@ if ($action == '') {
 }
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
-<?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 </body>
 </html>
