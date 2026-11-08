@@ -370,8 +370,8 @@ if ($has_api_support >= 1) {
 
     <ul><?php
 
-        $missing_text = ' (<span style="color: #a30000"><strong>' . strtolower(_('Missing')) . '</strong></span>)';
-        $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
+        $missing_text = ' (<span style="color: #a30000"><strong>' . DomainMOD\Format::toLower(_('Missing')) . '</strong></span>)';
+        $saved_text = ' (<span style="color: darkgreen"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
 
         if ($req_account_username == '1') {
             echo '<li>' . _('Registrar Account Username');

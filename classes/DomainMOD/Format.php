@@ -71,4 +71,26 @@ class Format
     {
         return str_repeat("*", strlen($input));
     }
+
+    /*
+     * Multibyte-safe versions of strtoupper() and strtolower() for translated text. As of PHP 8.2, strtoupper() and
+     * strtolower() only convert ASCII characters, which mangles non-ASCII translations (eg. Polish "Ostrzeżenie" would
+     * become "OSTRZEżENIE"). The mbstring extension isn't a requirement, so fall back to the standard functions if it's
+     * not available.
+     */
+    public static function toUpper($input)
+    {
+        if (function_exists('mb_strtoupper')) {
+            return mb_strtoupper($input, 'UTF-8');
+        }
+        return strtoupper($input);
+    }
+
+    public static function toLower($input)
+    {
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($input, 'UTF-8');
+        }
+        return strtolower($input);
+    }
 } //@formatter:on

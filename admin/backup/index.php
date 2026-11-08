@@ -137,7 +137,7 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
 <BR><BR><h3><?php echo _('Restore'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
     <?php echo _('Database Restore File'); ?>: domainmod-backup.sql <input type="file" name="file"><BR>
-    <?php echo $layout->highlightText('red', strtoupper(_('Warning')) . ': '); ?>
+    <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
     <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
     <?php echo ("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?><BR>
     <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."); ?><BR>

@@ -73,7 +73,7 @@ if (DEMO_INSTALLATION == false) {
 
             if ($row->slug == 'cleanup') {
 
-                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $schedule->isRunning($row->id);
@@ -81,12 +81,12 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } elseif ($row->slug == 'expiration-email') {
 
-                $log_message = sprintf('[%s]' . _('Send Expiration Email'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $email = new DomainMOD\Email();
@@ -95,12 +95,12 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('Send Expiration Email'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } elseif ($row->slug == 'update-conversion-rates') {
 
-                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $schedule->isRunning($row->id);
@@ -127,12 +127,12 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } elseif ($row->slug == 'check-new-version') {
 
-                $log_message = sprintf('[%s]' . _('New Version Check'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $schedule->isRunning($row->id);
@@ -140,12 +140,12 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('New Version Check'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } elseif ($row->slug == 'data-warehouse-build') {
 
-                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $dw = new DomainMOD\DwBuild();
@@ -154,12 +154,12 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } elseif ($row->slug == 'domain-queue') {
 
-                $log_message = sprintf('[%s]' . _('Process Domain Queue'), strtoupper(_('Start')));
+                $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('Start')));
                 $log->notice($log_message, $log_extra);
 
                 $queue = new DomainMOD\DomainQueue();
@@ -169,7 +169,7 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->updateTime($row->id, $time->stamp(), $next_run);
                 $schedule->isFinished($row->id);
 
-                $log_message = sprintf('[%s]' . _('Process Domain Queue'), strtoupper(_('End')));
+                $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
             } else {

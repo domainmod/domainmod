@@ -187,7 +187,7 @@ echo $form->showSwitch(_('Debugging Mode') . '', sprintf(_("Unless you're having
 
 echo $form->showSwitch(_('Local PHP Log') . '',
     _('This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.') . '<BR>' .
-    $layout->highlightText('red', strtoupper(_('Warning'))) . ': ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
+    $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning'))) . ': ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
     '&nbsp;' . sprintf(_('Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your %s installation, which could allow them to compromise your system.'), SOFTWARE_TITLE), 'new_local_php_log', $new_local_php_log, '', '<BR><BR>');
 
 echo $layout->expandableBoxTop(_('SMTP Server Settings'), '', '');

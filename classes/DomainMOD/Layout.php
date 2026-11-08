@@ -119,8 +119,8 @@ class Layout
 
     public function deleteButton($item_type, $item_name, $url)
     {
-        echo $this->modalButton(strtoupper(_('Delete This')) . ' ' . strtoupper($item_type));
-        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, strtoupper(_('Cancel')), strtoupper(_('Yes, Delete')));
+        echo $this->modalButton(Format::toUpper(_('Delete This')) . ' ' . Format::toUpper($item_type));
+        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }
 
     public function modalButton($name)

@@ -50,10 +50,10 @@ $deeb->cnxx->query("UPDATE settings SET debug_mode = '1'");
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php';
 
-echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', strtoupper(_('On'))));
+echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', DomainMOD\Format::toUpper(_('On'))));
 ?>
 <BR><BR>
-<a href="../off/"><?php echo _('Turn Debugging Mode') . ' ' . strtoupper(_('Off')); ?></a>
+<a href="../off/"><?php echo _('Turn Debugging Mode') . ' ' . DomainMOD\Format::toUpper(_('Off')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

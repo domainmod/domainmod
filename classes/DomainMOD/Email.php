@@ -309,7 +309,7 @@ class Email
                     <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
                         href="<?php echo $this->full_url; ?>/domains/edit.php?did=<?php echo $row_domains->id;
                         ?>"><?php echo $row_domains->domain; ?></a>&nbsp;&nbsp;<font
-                        color="#CC0000">*<?php echo strtoupper(_('Expired')); ?>*</font><BR><?php
+                        color="#CC0000">*<?php echo Format::toUpper(_('Expired')); ?>*</font><BR><?php
                 } else { ?>
 
                     <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $this->full_url;
@@ -325,10 +325,10 @@ class Email
     {
         $message = '';
         if ($result_domains) {
-            $message .= "[" . strtoupper(_('Domains')) . "]\n";
+            $message .= "[" . Format::toUpper(_('Domains')) . "]\n";
             foreach ($result_domains as $row_domains) {
                 if ($row_domains->expiry_date < $timestamp_basic) {
-                    $message .= $row_domains->expiry_date . " - " . $row_domains->domain . " *" . strtoupper(_('Expired')) . "*\n";
+                    $message .= $row_domains->expiry_date . " - " . $row_domains->domain . " *" . Format::toUpper(_('Expired')) . "*\n";
                 } else {
                     $message .= $row_domains->expiry_date . " - " . $row_domains->domain . "\n";
                 }
@@ -348,7 +348,7 @@ class Email
                     <font color="#CC0000"><?php echo $row_ssl->expiry_date; ?></font>&nbsp;&nbsp;<a
                         href="<?php echo $this->full_url; ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id;
                         ?>"><?php echo $row_ssl->name; ?> (<?php echo $row_ssl->type; ?>)</a>&nbsp;&nbsp;<font
-                        color="#CC0000">*<?php echo strtoupper(_('Expired')); ?>*</font><BR><?php
+                        color="#CC0000">*<?php echo Format::toUpper(_('Expired')); ?>*</font><BR><?php
                 } else { ?>
                     <?php echo $row_ssl->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $this->full_url;
                     ?>/ssl/edit.php?sslcid=<?php echo $row_ssl->id; ?>"><?php echo $row_ssl->name; ?>
@@ -366,7 +366,7 @@ class Email
             $message .= "[" . _('SSL Certificates') . "]\n";
             foreach ($result_ssl as $row_ssl) {
                 if ($row_ssl->expiry_date < $timestamp_basic) {
-                    $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ") *" . strtoupper(_('Expired')) . "*\n";
+                    $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ") *" . Format::toUpper(_('Expired')) . "*\n";
                 } else {
                     $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ")\n";
                 }

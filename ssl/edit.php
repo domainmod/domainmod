@@ -486,7 +486,7 @@ echo $form->showDropdownOption('0', _('Expired'), $new_active);
 echo $form->showDropdownBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . strtolower(_('View Full Notes')) . '</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . DomainMOD\Format::toLower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }

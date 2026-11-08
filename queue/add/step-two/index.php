@@ -396,8 +396,8 @@ if ($new_raid !== 0) { ?>
 
     <ul><?php
 
-    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>' . strtolower(_('Missing')) . ' - ' . strtolower(_('Click Here to Enter')) . '</strong></span></a>)';
-    $saved_text = ' (<span style="color: darkgreen"><strong>' . strtolower(_('Saved')) . '</strong></span>)';
+    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>' . DomainMOD\Format::toLower(_('Missing')) . ' - ' . DomainMOD\Format::toLower(_('Click Here to Enter')) . '</strong></span></a>)';
+    $saved_text = ' (<span style="color: darkgreen"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
 
     if ($req_account_username == '1') {
         echo '<li>' . _('Registrar Account Username');
@@ -492,7 +492,7 @@ if ($new_raid !== 0) {
 
         echo sprintf(_("The %s API has a domain list feature, so you don't even have to supply a list of the domains you want to import, %s will retrieve them for you automatically."), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), SOFTWARE_TITLE) . '<BR><BR>';
 
-        echo $form->showInputTextarea('raw_domain_list', '[' . strtoupper(_('Optional')) . '] ' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
+        echo $form->showInputTextarea('raw_domain_list', '[' . DomainMOD\Format::toUpper(_('Optional')) . '] ' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
 
     } else {
 
