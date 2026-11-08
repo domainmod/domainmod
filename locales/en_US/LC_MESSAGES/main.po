@@ -6050,7 +6050,7 @@ msgstr "Your last name could not be updated"
 
 #: settings/profile/index.php:298
 msgid "Update Profile"
-msgstr "User Profile"
+msgstr "Update Profile"
 
 #: ssl/add.php:210
 msgid "SSL Certificate %s added"
