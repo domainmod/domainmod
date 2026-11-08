@@ -39,3 +39,21 @@ html {
 .dark-mode a {
     color: #e3e3e3;
 }
+/* Links in the page content stand out from the text, as they do in light mode (the menus keep the colour above).
+   :where() keeps these rules low in specificity, so the exceptions below can restore other colours */
+.dark-mode .content-wrapper a:where(:not(.btn, .nav-link, .page-link, .dropdown-item)) {
+    color: #8cc4ff;
+}
+.dark-mode .content-wrapper a:where(:not(.btn, .nav-link, .page-link, .dropdown-item)):hover {
+    color: #b8daff;
+}
+/* Exceptions: alert links stay as the theme draws them on the alert's colour, and DomainMOD's own page numbers keep
+   the menu colour */
+.dark-mode .content-wrapper .alert a:where(:not(.btn)),
+.dark-mode .content-wrapper .alert a:where(:not(.btn)):hover {
+    color: #fff;
+}
+.dark-mode .content-wrapper .pagination_menu_block a,
+.dark-mode .content-wrapper .pagination_menu_block a:hover {
+    color: #e3e3e3;
+}
