@@ -1915,9 +1915,9 @@ echo _("The Bulk Updater allows you add or modify multiple domains at the same t
         <?php if ($action == "AD") { ?>
             <BR><strong><?php echo _('The following domains were added'); ?>:</strong><BR>
         <?php } elseif ($action == "RENEW") { ?>
-            <BR><strong><?php echo sprintf(ngettext('The following domain was renewed for %s year', 'The following domains were renewed for %s years', htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
+            <BR><strong><?php echo sprintf(ngettext('The following domains were renewed for %s year', 'The following domains were renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong><?php echo sprintf(ngettext('The following domain was fully renewed for %s year', 'The following domains were fully renewed for %s years', htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
+            <BR><strong><?php echo sprintf(ngettext('The following domains were fully renewed for %s year', 'The following domains were fully renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
         <?php } elseif ($action == "E") { ?>
             <BR><strong><?php echo _('The following domains were marked as expired'); ?>:</strong><BR>
         <?php } elseif ($action == "S") { ?>
