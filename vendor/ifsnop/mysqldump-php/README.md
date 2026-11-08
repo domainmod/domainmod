@@ -33,6 +33,7 @@ MySQLDump-PHP is the only library that supports:
 * does insert-ignore, like a REPLACE but ignoring errors if a duplicate key exists.
 * modifying data from database on-the-fly when dumping, using hooks.
 * can save directly to google cloud storage over a compressed stream wrapper (GZIPSTREAM).
+* can restore a dump from a file, when no mysql executable is available.
 
 ## Important
 
@@ -172,6 +173,7 @@ $dumpSettingsDefault = array(
     'compress' => Mysqldump::NONE,
     'init_commands' => array(),
     'no-data' => array(),
+    'if-not-exists' => false,
     'reset-auto-increment' => false,
     'add-drop-database' => false,
     'add-drop-table' => false,
@@ -187,6 +189,7 @@ $dumpSettingsDefault = array(
     'insert-ignore' => false,
     'net_buffer_length' => self::MAXLINESIZE,
     'no-autocommit' => true,
+    'no-create-db' => false,
     'no-create-info' => false,
     'lock-tables' => true,
     'routines' => false,
@@ -220,6 +223,8 @@ $this->_dumpSettings = self::array_replace_recursive($dumpSettingsDefault, $dump
   - Exclude these tables (array of table names), include all if empty, supports regexps.
 - **include-views**
   - Only include these views (array of view names), include all if empty. By default, all views named as the include-tables array are included.
+- **if-not-exists**
+  - Only create a new table when a table of the same name does not already exist. No error message is thrown if the table already exists.
 - **compress**
   - Gzip, Bzip2, None.
   - Could be specified using the declared consts: IMysqldump\Mysqldump::GZIP, IMysqldump\Mysqldump::BZIP2 or IMysqldump\Mysqldump::NONE
@@ -260,6 +265,9 @@ $this->_dumpSettings = self::array_replace_recursive($dumpSettingsDefault, $dump
 - **no-autocommit**
   - Option to disable autocommit (faster inserts, no problems with index keys)
   - https://dev.mysql.com/doc/refman/4.1/en/commit.html
+- **no-create-db**
+  - Option to disable the dump of create database statements.
+  - https://dev.mysql.com/doc/refman/5.1/en/mysqldump.html#option_mysqldump_no-create-db
 - **no-create-info**
   - https://dev.mysql.com/doc/refman/5.1/en/mysqldump.html#option_mysqldump_no-create-info
 - **no-data**
