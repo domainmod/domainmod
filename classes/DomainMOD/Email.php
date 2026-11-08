@@ -386,7 +386,7 @@ class Email
         </table>
         <table width="575" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF"><tr>
         <td width="100%"><font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
-        <BR><hr width="100%" size="2" noshade><?php echo sprintf(_("You've received this email because you're currently subscribed to receive expiration notifications from the %s installation located at"), SOFTWARE_TITLE) . ':'; ?><a target="_blank" href="<?php echo $this->full_url; ?>/"><?php echo $this->full_url; ?>/</a><BR><BR><?php echo _('To unsubscribe from these notifications please visit') . ':'; ?><BR><a target="_blank" href="<?php echo $this->full_url; ?>/settings/profile/"><?php echo $this->full_url; ?>/settings/profile/</a><BR><BR></font>
+        <BR><hr width="100%" size="2" noshade><?php echo sprintf(_("You've received this email because you're currently subscribed to receive expiration notifications from the %s installation located at"), SOFTWARE_TITLE) . ': '; ?><a target="_blank" href="<?php echo $this->full_url; ?>/"><?php echo $this->full_url; ?>/</a><BR><BR><?php echo _('To unsubscribe from these notifications please visit') . ':'; ?><BR><a target="_blank" href="<?php echo $this->full_url; ?>/settings/profile/"><?php echo $this->full_url; ?>/settings/profile/</a><BR><BR></font>
         </td></tr>
         </table>
         </body>
@@ -403,7 +403,7 @@ class Email
         $message .= $this->email_address . "\n\n";
         $message .= "---\n\n";
         $message .= sprintf(_("You've received this email because you're currently subscribed to receive expiration notifications from the %s installation located at"), SOFTWARE_TITLE) . ': ' . $this->full_url . "\n\n";
-        $message .= _('To unsubscribe from these notifications please visit') . ':'  . $this->full_url . "/settings/profile/";
+        $message .= _('To unsubscribe from these notifications please visit') . ': ' . $this->full_url . "/settings/profile/";
         return $message;
     }
 
