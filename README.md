@@ -19,7 +19,7 @@ So go ahead, take the live demo for a test drive before you install: <https://de
 
 Requirements
 ------------
-**Software**: PHP 8.1-8.2.9, MariaDB 10.4-11.1.2 or MySQL 5.7-8.1.0  
+**Software**: PHP 8.2-8.5, MariaDB 10.4-11.8 or MySQL 5.7-8.1.0  
 **PHP Extensions**: PDO (MariaDB/MySQL), cURL, OpenSSL, gettext  
 **PHP Settings**: allow_url_fopen  
 

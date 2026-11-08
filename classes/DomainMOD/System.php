@@ -56,8 +56,8 @@ class System
         $req_html_long .= '<STRONG>' . _('Server Software') . '</STRONG><BR>';
 
         // PHP
-        $software = 'PHP 8.1-8.2.9';
-        $min_php_version = '8.1';
+        $software = 'PHP 8.2-8.5';
+        $min_php_version = '8.2';
         $installed_php_version = phpversion();
 
         if (version_compare($installed_php_version, $min_php_version, '>=')) {
@@ -75,7 +75,7 @@ class System
         }
 
         // DATABASE (MariaDB or MySQL)
-        $software = 'MariaDB (10.4-11.1.2) or MySQL (5.7-8.1.0)';
+        $software = 'MariaDB (10.4-11.8) or MySQL (5.7-8.1.0)';
 
         if ($this->deeb->getDbType() == 'MariaDB') {
 
