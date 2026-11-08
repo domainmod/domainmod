@@ -38,7 +38,6 @@ class Join
         curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         curl_exec($handle);
-        curl_close($handle);
         return 'Note Sent';
     }
 
@@ -50,7 +49,6 @@ class Join
         curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         curl_exec($handle);
-        curl_close($handle);
         return 'URL Sent';
     }
 }

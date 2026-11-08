@@ -1,5 +1,10 @@
 GJClasses CHANGELOG
 ===================
+v0.56.0    2026-11-08
+- Removed the curl_close() calls from Join, PersonalApi, and Remote.
+  PHP 8.5 deprecates curl_close(), which has done nothing since PHP
+  8.0, so each call only logged a deprecation notice
+
 v0.55.0    2026-10-18
 - Added .github/dependabot.yml so Dependabot opens one grouped Composer
   update PR a month, with a 7-day cooldown, and turned on vulnerability

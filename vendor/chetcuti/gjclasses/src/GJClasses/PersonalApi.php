@@ -33,7 +33,6 @@ class PersonalApi
         ));
         curl_setopt($handle, CURLOPT_POSTFIELDS, $payload);
         curl_exec($handle);
-        curl_close($handle);
 
         return 'Notification Sent';
     }

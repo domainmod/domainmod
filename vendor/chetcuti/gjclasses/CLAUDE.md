@@ -34,13 +34,16 @@ The examples need `_includes/config.inc.php` to exist. It's local and git-exclud
 
 ## Local-Only Files
 
-`.git/info/exclude` keeps these out of git: `.data/` (notes, including `SETUP.txt`, which lists the projects that use each class), `.dev/` (scratch test script), `.idea/`, `vendor/`, `_includes/config.inc.php`, `_includes/config.SAMPLE.inc.php`, `TODO.md`, `DONE.md`, and the three `email_templates/TemplateName.*` files (`.html`, `.txt`, and `.subject`). Any other file added under `email_templates/` isn't excluded.
+`.git/info/exclude` keeps these out of git: `.data/` (notes, including `SETUP.txt`, which lists the projects that use each class), `.dev/` (scratch test script), `.idea/`, `vendor/`, `_includes/config.inc.php`, `_includes/config.SAMPLE.inc.php`, `*.local.md` (private notes such as `CLAUDE.local.md`, `TODO.local.md`, and `DONE.local.md`), and the three `email_templates/TemplateName.*` files (`.html`, `.txt`, and `.subject`). Any other file added under `email_templates/` isn't excluded. The exclude file isn't part of the repository, so a fresh clone has to add these lines to its own `.git/info/exclude` before creating any of these files.
+
+Markdown file names follow one convention: a private file is named `.local.md` (and is never tracked, since this repo is public), and a plain `.md` file, such as `README.md` or this file, is public.
 
 Per `.data/SETUP.txt`, `Remote.php` has a copy in another project that is kept in sync by hand. Mention it to Greg when `Remote.php` changes, but don't edit the other project from here.
 
 ## Releases and Changelog
 
 - The changelog is `CHANGELOG` (plain text, no `.md`), newest first, in the form `v0.53.0    2024-08-05` followed by `- ` bullets in past tense. Changes that aren't released yet go under an `Unreleased` heading at the top, which becomes the `v0.N.0    YYYY-MM-DD` heading at the next release.
-- `CHANGELOG` is for people using the library, so it leaves out changes to Claude's own files (`CLAUDE.md`, `CLAUDE.local.md`, `TODO.md`, `DONE.md`, `ARCHIVE.md`, and `.claude/`). Their commit messages describe them instead (Greg's choice, 2026-10-18).
+- `CHANGELOG` is for people using the library, so it leaves out changes to Claude's own files (`CLAUDE.md`, `CLAUDE.local.md`, `TODO.local.md`, `DONE.local.md`, `DROPPED.local.md`, and `.claude/`). Their commit messages describe them instead (Greg's choice, 2026-10-18).
 - Each release bumps the minor version (`v0.N.0`). Usually the code change is one commit, then a separate `Add v0.N.0 to CHANGELOG` commit, with a matching `v0.N.0` git tag (Packagist reads the tags). Tags are GPG-signed annotated tags (`git tag -s -u 87C607E479D40432 -m v0.N.0 v0.N.0`), so GitHub shows them as Verified; commits stay unsigned.
+- Dependabot (`.github/dependabot.yml`) opens one grouped Composer update PR a month against `main`. Consumers ignore this library's `composer.lock`, so a PR that only changes the lock needs no release; one that changes a constraint in `composer.json` reaches consumers only with a new `v0.N.0` tag.
 - Work happens on `dev`; `main` is the main branch. The only remote is `public` (`git@github.com:gregdotca/gjclasses.git`), with both `main` and `dev`.
