@@ -149,7 +149,18 @@ class Cloudflare
 
         }
 
+        // The expiry must start with a real date (YYYY-MM-DD), or the lookup is retried
         $expiration_date = substr($registration['expires_at'], 0, 10);
+        $date_parts = explode('-', $expiration_date);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiration_date)
+            || !checkdate((int) $date_parts[1], (int) $date_parts[2], (int) $date_parts[0])) {
+
+            $this->logFailure('Unable to get domain details (unexpected expiry date)', $array_results, $account_username,
+                $account_id, $api_key, $domain);
+            return $failed;
+
+        }
+
         $privacy_status = $this->processPrivacy(($registration['privacy_mode'] ?? '') === 'redaction' ? '1' : '0');
         $autorenewal_status = $this->processAutorenew(!empty($registration['auto_renew']) ? '1' : '0');
 
