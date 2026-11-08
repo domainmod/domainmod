@@ -188,7 +188,6 @@ class DwBuild
         if ($api_results === false) {
             error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
         }
-        curl_close($curl);
 
         return $api_results;
     }

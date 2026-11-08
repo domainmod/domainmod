@@ -59,7 +59,6 @@ class Porkbun
         curl_setopt($handle, CURLOPT_POST, 1);
         curl_setopt($handle, CURLOPT_POSTFIELDS, $post_data);
         $result = curl_exec($handle);
-        curl_close($handle);
         return $result;
     }
 

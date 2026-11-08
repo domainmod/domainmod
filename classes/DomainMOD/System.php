@@ -562,7 +562,6 @@ class System
         curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($handle, CURLOPT_URL, $filename);
         $result = curl_exec($handle);
-        curl_close($handle);
         return $result;
     }
 

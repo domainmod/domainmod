@@ -56,7 +56,6 @@ class Gandi
                 'authorization: Apikey ' . $api_key));
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
             $result = curl_exec($handle);
-            curl_close($handle);
 
         return $result;
     }
