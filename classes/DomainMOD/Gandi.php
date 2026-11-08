@@ -44,20 +44,37 @@ class Gandi
         }
     }
 
+    /*
+     * Gandi's personal access tokens use "Authorization: Bearer"; its older API keys, now deprecated, use
+     * "Authorization: Apikey". The saved key could be either, so try it as a token first, and only if Gandi refuses it
+     * (401 or 403) try it as an API key
+     */
     public function apiCall($full_url, $api_key)
     {
-            $handle = curl_init($full_url);
-            curl_setopt($handle, CURLOPT_ENCODING, '');
-            curl_setopt($handle, CURLOPT_MAXREDIRS, 10);
-            curl_setopt($handle, CURLOPT_TIMEOUT, 30);
-            curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'GET');
-            curl_setopt($handle, CURLOPT_HTTPHEADER, array(
-                'authorization: Apikey ' . $api_key));
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($handle);
+        list($status, $result) = $this->request($full_url, 'Bearer ' . $api_key);
+
+        if ($status === 401 || $status === 403) {
+            list($status, $result) = $this->request($full_url, 'Apikey ' . $api_key);
+        }
 
         return $result;
+    }
+
+    // One GET request: array(HTTP status, body or false)
+    public function request($full_url, $authorization)
+    {
+        $handle = curl_init($full_url);
+        curl_setopt($handle, CURLOPT_ENCODING, '');
+        curl_setopt($handle, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($handle, CURLOPT_TIMEOUT, 30);
+        curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($handle, CURLOPT_HTTPHEADER, array('authorization: ' . $authorization));
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($handle);
+        $status = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+
+        return array($status, $result);
     }
 
     public function getDomainList($api_key)
