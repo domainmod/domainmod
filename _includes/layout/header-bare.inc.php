@@ -31,16 +31,19 @@
     <!-- /.login-logo -->
     <BR>
     <?php
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
     if ($_SESSION['s_message_danger'] != "") {
         echo $system->showMessageDanger($_SESSION['s_message_danger']);
         unset($_SESSION['s_message_danger']);
     }
 
+    $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
     if ($_SESSION['s_message_success'] != "") {
         echo $system->showMessageSuccess($_SESSION['s_message_success']);
         unset($_SESSION['s_message_success']);
     }
 
+    $_SESSION['s_message_info'] = $_SESSION['s_message_info'] ?? '';
     if ($_SESSION['s_message_info'] != "") {
         echo $system->showMessageInfo($_SESSION['s_message_info']);
         unset($_SESSION['s_message_info']);
