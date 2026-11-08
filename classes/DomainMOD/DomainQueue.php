@@ -225,6 +225,10 @@ class DomainQueue
 
             foreach ($result as $row) {
 
+                // Only some registrars report a domain status, so start each domain without one, or an "invalid" status
+                // from the previous domain would carry over to this one
+                $domain_status = '';
+
                 if ($row->api_registrar_name == 'Above.com') {
 
                     $registrar = new AboveCom();
