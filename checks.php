@@ -189,6 +189,7 @@ if ($_SESSION['s_version_error'] != '1') {
 
         if ($_SESSION['s_is_admin'] === 1) {
 
+            $_SESSION['s_message_info'] = $_SESSION['s_message_info'] ?? '';
             $_SESSION['s_message_info'] .= $system->getUpgradeMessage();
 
         }
@@ -208,6 +209,7 @@ if ($_SESSION['s_version_error'] != '1') {
     // If it's a new password ask the user to change it
     if ($_SESSION['s_is_new_password'] == 1) {
 
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes') . '<BR>';
         header("Location: settings/password/");
         exit;

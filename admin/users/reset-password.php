@@ -43,6 +43,8 @@ $software_section = 'system';
 
 $new_username = $_GET['new_username'] ?? '';
 $display = $_GET['display'] ?? '';
+$_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
+$_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
 
 if ($new_username != '') {
 
