@@ -57,6 +57,22 @@ $pdo = $deeb->cnxx;
 <strong><?php echo _('PHP Error Log Location'); ?>:</strong> <?php echo ini_get('error_log'); ?><BR>
 <strong><?php echo _('MySQL Version'); ?>:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
 <strong><?php echo _('MySQL Mode'); ?>:</strong> <?php echo $pdo->query('select @@sql_mode')->fetchColumn(); ?><BR>
+<?php
+$connection_status = $deeb->getConnectionStatus();
+if ($connection_status === 'encrypted (certificate checked)') {
+    $connection_text = _('Encrypted (certificate checked)');
+} elseif ($connection_status === 'encrypted (certificate not checked)') {
+    $connection_text = _('Encrypted (certificate not checked)');
+} else {
+    $connection_text = _('Not encrypted');
+}
+// A connection to the same machine doesn't cross the network, so it doesn't need the advice
+$connection_is_local = in_array(strtolower(DB_HOSTNAME), array('localhost', '127.0.0.1', '::1'), true);
+?>
+<strong><?php echo _('Database Connection'); ?>:</strong> <?php echo $connection_text; ?><BR>
+<?php if ($connection_status !== 'encrypted (certificate checked)' && !$connection_is_local) { ?>
+<em><?php echo sprintf(_('This connection isn\'t protected from an attacker on the network. If your database is on a different server, add %s to config.inc.php to encrypt the connection and check the server\'s certificate.'), '<code>$dbsslmode = \'verify\';</code>'); ?></em><BR>
+<?php } ?>
 <BR>
 <?php
 list($null, $requirements, $null) = $system->getRequirements();

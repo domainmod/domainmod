@@ -27,3 +27,7 @@ define('DB_HOSTNAME', $dbhostname);
 define('DB_NAME', $dbname);
 define('DB_USERNAME', $dbusername);
 define('DB_PASSWORD', $dbpassword);
+// Optional database TLS settings (see config.SAMPLE.inc.php); older config files don't have them. A missing mode means
+// 'auto'; any other unrecognised value is refused when connecting, rather than quietly weakening what was asked for
+define('DB_SSL_MODE', isset($dbsslmode) ? strtolower(trim((string) $dbsslmode)) : 'auto');
+define('DB_SSL_CA', $dbsslca ?? '');

@@ -28,3 +28,11 @@ $dbhostname = 'localhost';
 $dbname = 'db_name';
 $dbusername = 'db_username';
 $dbpassword = 'dbPassword123';
+
+// Encrypted Database Connections (optional)
+// By default DomainMOD connects as before, and only uses an encrypted connection if the database server requires
+// one. That encrypted connection doesn't check the server's certificate, so it doesn't protect you from an attacker
+// on the network. If your database is on a different server, set $dbsslmode to 'verify' to always encrypt the
+// connection and check the server's certificate. 'off' never encrypts the connection.
+// $dbsslmode = 'auto'; // auto, verify, or off
+// $dbsslca = '/path/to/ca.pem'; // for 'verify': the CA that signed the server's certificate (default: the system's trusted CAs)

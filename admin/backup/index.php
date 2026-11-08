@@ -50,7 +50,6 @@ if (!empty($legacy_temp_files)) {
 }
 
 use iamdual\Uploader;
-use Thamaraiselvam\MysqlImport\Import;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -93,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $password = $dbpassword ?? '';
                 $database = $dbname ?? '';
                 $host = $dbhostname ?? '';
-                new Import($filename, $username, $password, $database, $host);
+                new DomainMOD\RestoreImport($filename, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
 
                 header("Location: " . WEB_ROOT . "/logout.php");
                 exit;

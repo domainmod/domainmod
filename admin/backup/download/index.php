@@ -82,7 +82,9 @@ try {
         'add-drop-table' => true
     );
 
-    $dump = new IMysqldump\Mysqldump('mysql:host=' . $dbhostname . ';dbname=' . $dbname, $dbusername, $dbpassword, $DumpSettings);
+    $dump = new IMysqldump\Mysqldump('mysql:host=' . $dbhostname . ';dbname=' . $dbname, $dbusername, $dbpassword, $DumpSettings,
+        // Not persistent: PHP's persistent connection cache ignores TLS options, so it could reuse an older connection
+        array(PDO::ATTR_PERSISTENT => false) + $deeb->connection_options);
     $dump->start($backup_file);
 
 } catch (Exception $e) {
