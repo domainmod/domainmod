@@ -1590,8 +1590,6 @@ if ($current_db_version === '4.20.01') {
 
         }
 
-        $goal->upgrade($previous_version);
-
         $upgrade->database($new_version);
 
         if ($pdo->InTransaction()) $pdo->commit();
