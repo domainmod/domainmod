@@ -324,7 +324,6 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Enom' => __DIR__ . '/../..' . '/classes/DomainMOD/Enom.php',
         'DomainMOD\\Export' => __DIR__ . '/../..' . '/classes/DomainMOD/Export.php',
         'DomainMOD\\Fabulous' => __DIR__ . '/../..' . '/classes/DomainMOD/Fabulous.php',
-        'DomainMOD\\File' => __DIR__ . '/../..' . '/classes/DomainMOD/File.php',
         'DomainMOD\\Form' => __DIR__ . '/../..' . '/classes/DomainMOD/Form.php',
         'DomainMOD\\Format' => __DIR__ . '/../..' . '/classes/DomainMOD/Format.php',
         'DomainMOD\\Freenom' => __DIR__ . '/../..' . '/classes/DomainMOD/Freenom.php',

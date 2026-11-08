@@ -172,7 +172,6 @@ return array(
     'DomainMOD\\Enom' => $baseDir . '/classes/DomainMOD/Enom.php',
     'DomainMOD\\Export' => $baseDir . '/classes/DomainMOD/Export.php',
     'DomainMOD\\Fabulous' => $baseDir . '/classes/DomainMOD/Fabulous.php',
-    'DomainMOD\\File' => $baseDir . '/classes/DomainMOD/File.php',
     'DomainMOD\\Form' => $baseDir . '/classes/DomainMOD/Form.php',
     'DomainMOD\\Format' => $baseDir . '/classes/DomainMOD/Format.php',
     'DomainMOD\\Freenom' => $baseDir . '/classes/DomainMOD/Freenom.php',
