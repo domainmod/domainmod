@@ -34,28 +34,42 @@ class NameCom
 
     public function getDomainList($account_username, $api_key)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl('domainlist', '');
         $api_results = $this->apiCall($api_url, $account_username, $api_key);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseJson($api_results);
 
-        // confirm that the api call was successful
-        if ($array_results['domains']) {
-
-            foreach ($array_results['domains'] as $domain) {
-
-                $domain_list[] = $domain['domainName'];
-                $domain_count++;
-
-            }
-
-        } else {
+        // confirm that the api call was successful: a JSON object holding only the list response's fields (Name.com
+        // leaves out empty fields, so an account with no domains may return {}), with the domains as a list
+        $known_fields = array('domains', 'nextPage', 'lastPage', 'totalCount');
+        if (!(is_array($array_results) && str_starts_with(ltrim((string) $api_results), '{')
+              && array_diff(array_keys($array_results), $known_fields) === array()
+              && (!array_key_exists('domains', $array_results) || RegistrarResponse::isJsonListAt($api_results, 'domains')))) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'domains')) as $item) {
+
+            $domain = RegistrarResponse::text(RegistrarResponse::get($item, 'domainName'));
+            if ($domain === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                return array('', '');
+
+            }
+            $domain_list[] = $domain;
+            $domain_count++;
 
         }
 

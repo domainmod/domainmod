@@ -57,28 +57,38 @@ class InternetBs
 
     public function getDomainList($api_key, $api_secret)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl($api_key, $api_secret, 'domainlist', '');
         $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseJson($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['status'] == 'SUCCESS') {
-
-            foreach ($array_results['domain'] as $domain) {
-
-                $domain_list[] = $domain;
-                $domain_count++;
-
-            }
-
-        } else {
+        if (!(RegistrarResponse::get($array_results, 'status') === 'SUCCESS' && RegistrarResponse::isJsonListAt($api_results, 'domain'))) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'domain')) as $item) {
+
+            $domain = RegistrarResponse::text($item);
+            if ($domain === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                return array('', '');
+
+            }
+            $domain_list[] = $domain;
+            $domain_count++;
 
         }
 

@@ -59,8 +59,9 @@ class NameBright
         if ($command == 'accesstoken') {
 
             $handle = curl_init($full_url);
-            curl_setopt($handle, CURLOPT_HEADER, true);
-            curl_setopt($handle, CURLOPT_HEADER, 'Content-Type: application/x-www-form-urlencoded');
+            // the body only: response headers before the JSON would stop the access token being read
+            curl_setopt($handle, CURLOPT_HEADER, false);
+            curl_setopt($handle, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($handle, CURLOPT_POST, true);
             curl_setopt($handle, CURLOPT_POSTFIELDS, $post_fields);
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
@@ -87,33 +88,52 @@ class NameBright
 
     public function getDomainList($account_username, $api_app_name, $api_secret)
     {
-        $domain_list = array();
-        $domain_count = 0;
+        $log_extra = array('Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $this->format->obfusc($api_secret));
 
         // get an access token
         list($api_url, $post_fields) = $this->getApiUrl($account_username, $api_app_name, $api_secret, 'accesstoken', '');
         $api_results = $this->apiCall($api_url, $post_fields, '', 'accesstoken');
-        $array_results = $this->convertToArray($api_results);
-        $access_token = $array_results['access_token'];
+        $access_token = RegistrarResponse::text(RegistrarResponse::get(RegistrarResponse::parseJson($api_results), 'access_token'));
+
+        if ($access_token === '') {
+
+            $log_message = 'Unable to get an access token for the domain list';
+            $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
 
         list($api_url, $post_fields) = $this->getApiUrl($account_username, $api_app_name, $api_secret, 'domainlist', '');
         $api_results = $this->apiCall($api_url, '', $access_token, 'domainlist');
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseJson($api_results);
 
-        if (isset($array_results['Domains'])) {
-
-            foreach ($array_results['Domains'] as $domain) {
-
-                $domain_list[] = $domain['DomainName'];
-                $domain_count++;
-
-            }
-
-        } else {
+        if (!RegistrarResponse::isJsonListAt($api_results, 'Domains')) {
 
             $log_message = 'Unable to get domain list';
-            $log_extra = array('Username' => $account_username, 'API App Name' => $api_app_name, 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
+
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'Domains')) as $domain) {
+
+            $name = RegistrarResponse::text(RegistrarResponse::get($domain, 'DomainName'));
+            if ($name === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                return array('', '');
+
+            }
+            $domain_list[] = $name;
+            $domain_count++;
 
         }
 

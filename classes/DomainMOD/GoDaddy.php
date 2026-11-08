@@ -60,28 +60,38 @@ class GoDaddy
 
     public function getDomainList($api_key, $api_secret)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl('', 'domainlist');
         $api_results = $this->apiCall($api_key, $api_secret, $api_url);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseJson($api_results);
 
         // confirm that the api call was successful
-        if (isset($array_results[0]['domain'])) {
-
-            foreach ($array_results as $domain) {
-
-                $domain_list[] = $domain['domain'];
-                $domain_count++;
-
-            }
-
-        } else {
+        if (!(RegistrarResponse::isJsonList($api_results))) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('API Key' => $this->format->obfusc($api_key), 'API Secret' => $this->format->obfusc($api_secret));
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (RegistrarResponse::toList($array_results) as $item) {
+
+            $domain = RegistrarResponse::text(RegistrarResponse::get($item, 'domain'));
+            if ($domain === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                return array('', '');
+
+            }
+            $domain_list[] = $domain;
+            $domain_count++;
 
         }
 

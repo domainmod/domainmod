@@ -59,65 +59,67 @@ class DreamHost
     {
         $pdo = $this->deeb->cnxx;
 
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl($api_key, 'domainlist');
         $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseJson($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['result'] == 'success') {
-
-            $stmt = $pdo->prepare("
-                INSERT INTO domain_queue_temp
-                (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
-                VALUES
-                (:account_id, :domain, :expiry_date, :ns1, :ns2, :ns3, :ns4, :ns5, :ns6, :ns7, :ns8, :ns9, :ns10, :autorenew, :privacy)");
-            $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
-
-            foreach ($array_results['data'] as $value) {
-
-                $domain_list[] = $value['domain'];
-                $expiry_date = $this->processExpiry($value['expires']);
-                if ($value['ns1'] != '' && $value['ns1'] != 'unknown') $ns1 = $value['ns1'];
-                if ($value['ns2'] != '' && $value['ns2'] != 'unknown') $ns2 = $value['ns2'];
-                if ($value['ns3'] != '' && $value['ns3'] != 'unknown') $ns3 = $value['ns3'];
-                if ($value['ns4'] != '' && $value['ns4'] != 'unknown') $ns4 = $value['ns4'];
-                if ($value['ns5'] != '' && $value['ns5'] != 'unknown') $ns5 = $value['ns5'];
-                if ($value['ns6'] != '' && $value['ns6'] != 'unknown') $ns6 = $value['ns6'];
-                if ($value['ns7'] != '' && $value['ns7'] != 'unknown') $ns7 = $value['ns7'];
-                if ($value['ns8'] != '' && $value['ns8'] != 'unknown') $ns8 = $value['ns8'];
-                if ($value['ns9'] != '' && $value['ns9'] != 'unknown') $ns9 = $value['ns9'];
-                if ($value['ns10'] != '' && $value['ns10'] != 'unknown') $ns10 = $value['ns10'];
-                $autorenew = $this->processAutorenew($value['autorenew']);
-                $privacy = '0';
-
-                $stmt->bindValue('domain', $domain_list[$domain_count], \PDO::PARAM_STR);
-                $stmt->bindValue('expiry_date', $expiry_date, \PDO::PARAM_STR);
-                $stmt->bindValue('ns1', $ns1, \PDO::PARAM_STR);
-                $stmt->bindValue('ns2', $ns2, \PDO::PARAM_STR);
-                $stmt->bindValue('ns3', $ns3, \PDO::PARAM_STR);
-                $stmt->bindValue('ns4', $ns4, \PDO::PARAM_STR);
-                $stmt->bindValue('ns5', $ns5, \PDO::PARAM_STR);
-                $stmt->bindValue('ns6', $ns6, \PDO::PARAM_STR);
-                $stmt->bindValue('ns7', $ns7, \PDO::PARAM_STR);
-                $stmt->bindValue('ns8', $ns8, \PDO::PARAM_STR);
-                $stmt->bindValue('ns9', $ns9, \PDO::PARAM_STR);
-                $stmt->bindValue('ns10', $ns10, \PDO::PARAM_STR);
-                $stmt->bindValue('autorenew', $autorenew, \PDO::PARAM_INT);
-                $stmt->bindValue('privacy', $privacy, \PDO::PARAM_INT);
-                $stmt->execute();
-
-                $domain_count++;
-
-            }
-
-        } else {
+        if (RegistrarResponse::get($array_results, 'result') !== 'success' || !RegistrarResponse::isJsonListAt($api_results, 'data')) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('API Key' => $this->format->obfusc($api_key), 'Account ID' => $account_id);
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        // read every record first, so an unreadable one fails the whole list before anything is saved
+        $records = RegistrarResponse::toList(RegistrarResponse::get($array_results, 'data'));
+        foreach ($records as $value) {
+
+            if (RegistrarResponse::text(RegistrarResponse::get($value, 'domain')) === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // retried on the next run, rather than finishing with domains missing
+                return array('', '');
+
+            }
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        $stmt = $pdo->prepare("
+            INSERT INTO domain_queue_temp
+            (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
+            VALUES
+            (:account_id, :domain, :expiry_date, :ns1, :ns2, :ns3, :ns4, :ns5, :ns6, :ns7, :ns8, :ns9, :ns10, :autorenew, :privacy)");
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+
+        foreach ($records as $value) {
+
+            $domain = RegistrarResponse::text(RegistrarResponse::get($value, 'domain'));
+            $domain_list[] = $domain;
+            $expiry_date = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($value, 'expires')));
+            $autorenew = $this->processAutorenew(RegistrarResponse::text(RegistrarResponse::get($value, 'autorenew')));
+            $privacy = '0';
+
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->bindValue('expiry_date', $expiry_date, \PDO::PARAM_STR);
+            // each domain's own name servers (an empty or 'unknown' one is saved as empty, not carried over)
+            for ($i = 1; $i <= 10; $i++) {
+                $ns = RegistrarResponse::text(RegistrarResponse::get($value, 'ns' . $i));
+                $stmt->bindValue('ns' . $i, $ns === 'unknown' ? '' : $ns, \PDO::PARAM_STR);
+            }
+            $stmt->bindValue('autorenew', $autorenew, \PDO::PARAM_INT);
+            $stmt->bindValue('privacy', $privacy, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $domain_count++;
 
         }
 

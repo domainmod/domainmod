@@ -60,45 +60,52 @@ class Namecheap
 
     public function getDomainList($account_username, $api_key, $api_ip_address)
     {
+        $page_size = 100; // matches PageSize in getApiUrl()
         $domain_list = array();
         $domain_count = 0;
         $page_count = 1;
-        $error = 0;
 
-        while ($error == 0) {
+        while (true) {
 
             $api_url = $this->getApiUrl($api_key, 'domainlist', '', $account_username, $api_ip_address, $page_count);
             $api_results = $this->apiCall($api_url);
+            $array_results = RegistrarResponse::parseXml($api_results);
 
-            if (strlen($api_results) > 600) {
+            // confirm that the api call was successful (a failure on any page fails the whole list, so the Domain
+            // Queue retries it rather than finishing with only the pages read so far)
+            if (RegistrarResponse::get($array_results, 0, '@attributes', 'Status') !== 'OK'
+                || !is_array(RegistrarResponse::get($array_results, 0, 'CommandResponse', 'DomainGetListResult'))) {
 
-                $array_results = $this->convertToArray($api_results);
+                $log_message = 'Unable to get domain list';
+                $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address, 'Page' => $page_count);
+                $this->log->error($log_message, $log_extra);
 
-                // confirm that the api call was successful
-                if ($array_results[0]['@attributes']['Status'] == "OK") {
-
-                    foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
-
-                        $domain_list[] = $domain['@attributes']['Name'];
-                        $domain_count++;
-
-                    }
-
-                } else {
-
-                    $log_message = 'Unable to get domain list';
-                    $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key), 'IP Address' => $api_ip_address);
-                    $this->log->error($log_message, $log_extra);
-
-                }
-
-                $page_count++;
-
-            } else {
-
-                $error = 1;
+                return array('', '');
 
             }
+
+            $page = RegistrarResponse::toXmlList(RegistrarResponse::get($array_results, 0, 'CommandResponse', 'DomainGetListResult', 'Domain'));
+
+            foreach ($page as $domain) {
+
+                $name = RegistrarResponse::text(RegistrarResponse::get($domain, '@attributes', 'Name'));
+                if ($name === '') {
+
+                    $this->log->error('Unable to read a domain in the domain list');
+
+                    // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                    return array('', '');
+
+                }
+                $domain_list[] = $name;
+                $domain_count++;
+
+            }
+
+            // a short (or empty) page is the last one
+            if (count($page) < $page_size) break;
+
+            $page_count++;
 
         }
 

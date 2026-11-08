@@ -57,28 +57,46 @@ class Dynadot
 
     public function getDomainList($api_key)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl($api_key, 'domainlist', '');
         $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseXml($api_results);
 
         // confirm that the api call was successful
-        if ($array_results[0]["ListDomainInfoHeader"]["Status"] == 'success') {
-
-            foreach ($array_results[0]['ListDomainInfoContent']['DomainInfoList']['DomainInfo']['Domain'] as $domain) {
-
-                $domain_list[] = $domain['Name'];
-                $domain_count++;
-
-            }
-
-        } else {
+        if (!(RegistrarResponse::get($array_results, 0, 'ListDomainInfoHeader', 'Status') === 'success'
+              && RegistrarResponse::isXmlContainer($array_results, 0, 'ListDomainInfoContent', 'DomainInfoList'))) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        // DomainInfo may hold every Domain, or there may be one DomainInfo per Domain, so read both
+        foreach (RegistrarResponse::toXmlList(RegistrarResponse::get($array_results, 0, 'ListDomainInfoContent', 'DomainInfoList', 'DomainInfo')) as $info) {
+
+            // a DomainInfo without a Domain is an unreadable record (the check below fails the list)
+            $domains = RegistrarResponse::get($info, 'Domain');
+            foreach ($domains === null ? array(array()) : RegistrarResponse::toXmlList($domains) as $item) {
+
+                $domain = RegistrarResponse::text(RegistrarResponse::get($item, 'Name'));
+                if ($domain === '') {
+
+                    $this->log->error('Unable to read a domain in the domain list');
+
+                    // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                    return array('', '');
+
+                }
+                $domain_list[] = $domain;
+                $domain_count++;
+
+            }
 
         }
 

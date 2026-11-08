@@ -143,31 +143,40 @@ EOD;
 
     public function getDomainList($account_username, $api_key)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_xml = $this->domainList();
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $api_call_status = $this->apiStatus($api_results);
 
-        if ($api_call_status == '1') {
+        // a success code alone isn't enough: the response must be complete XML holding the list (exp_domains as an
+        // array), or, only when there's no exp_domains at all, a zero total
+        $has_exp_domains = is_string($api_results) && preg_match('/<item\s+key="exp_domains"/', $api_results); // incl. <item .../>
+        $has_list = RegistrarResponse::parseXml($api_results) !== null
+                    && ($has_exp_domains ? (bool) preg_match('/<item\s+key="exp_domains"\s*>\s*<dt_array>/', $api_results)
+                                         : (bool) preg_match('/<item key="total">0<\/item>/', $api_results));
 
-            foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
-
-                if (preg_match('/<item key="name">(.*)<\/item>/', $xml_line, $match)) {
-                    $domain_list[] = $match[1];
-                    $domain_count++;
-                }
-
-            }
-
-        } else {
+        if ($api_call_status !== '1' || !$has_list) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('Username' => $account_username, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
         }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+
+            if (preg_match('/<item key="name">(.*)<\/item>/', $xml_line, $match)) {
+                $domain_list[] = $match[1];
+                $domain_count++;
+            }
+
+        }
+
         return array($domain_count, $domain_list);
     }
 

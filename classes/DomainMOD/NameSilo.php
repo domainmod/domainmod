@@ -57,31 +57,39 @@ class NameSilo
 
     public function getDomainList($api_key)
     {
-        $domain_list = array();
-        $domain_count = 0;
-
         $api_url = $this->getApiUrl($api_key, '', 'domainlist');
         $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $array_results = RegistrarResponse::parseXml($api_results);
 
         // confirm that the api call was successful
-        if ($array_results[0]['reply']['detail'] == 'success') {
-
-            $domain_list = array();
-            $domain_count = 0;
-
-            foreach ($array_results[0]['reply']['domains']['domain'] as $domain) {
-
-                $domain_list[] = $domain;
-                $domain_count++;
-
-            }
-
-        } else {
+        if (!(RegistrarResponse::get($array_results, 0, 'reply', 'detail') === 'success'
+              && RegistrarResponse::isXmlContainer($array_results, 0, 'reply', 'domains'))) {
 
             $log_message = 'Unable to get domain list';
             $log_extra = array('API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
+
+            // a failed call isn't an account with no domains, so the Domain Queue retries the list
+            return array('', '');
+
+        }
+
+        $domain_list = array();
+        $domain_count = 0;
+
+        foreach (RegistrarResponse::toXmlList(RegistrarResponse::get($array_results, 0, 'reply', 'domains', 'domain')) as $item) {
+
+            $domain = RegistrarResponse::text($item);
+            if ($domain === '') {
+
+                $this->log->error('Unable to read a domain in the domain list');
+
+                // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                return array('', '');
+
+            }
+            $domain_list[] = $domain;
+            $domain_count++;
 
         }
 
