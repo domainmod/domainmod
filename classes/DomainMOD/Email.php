@@ -87,14 +87,17 @@ class Email
         $send_to = $this->getExpEmRecip();
         $subject = _('Upcoming Expirations') . ' - ' . $timestamp_long;
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($from_cron);
+        // Nothing expiring: no email (checkExpiring() has already set the message for the page)
+        $expiring = $this->checkExpiring($from_cron);
+        if ($expiring === false) return;
+        list($result_domains, $result_ssl) = $expiring;
+
         $message_html = '';
         $message_html .= $this->messageTopHtml($subject);
         $message_html .= $this->showDomainsHtml($result_domains, $timestamp_basic);
         $message_html .= $this->showSslHtml($result_ssl, $timestamp_basic);
         $message_html .= $this->messageBottomHtml();
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($from_cron);
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText();
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
@@ -233,7 +236,7 @@ class Email
 
             }
 
-            if ($from_cron === true) exit;
+            // Return rather than exit, so cron.php goes on to its other tasks
             return false;
         }
     }
