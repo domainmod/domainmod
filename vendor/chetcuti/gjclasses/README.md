@@ -1,7 +1,5 @@
 GJClasses
 =========
-[![Build Status](https://scrutinizer-ci.com/g/chetcuti/gjclasses/badges/build.png?b=master)](https://scrutinizer-ci.com/g/chetcuti/gjclasses/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/chetcuti/gjclasses/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/chetcuti/gjclasses/?branch=master)
-  
 An ever-expanding collection of classes for personal development projects.
 
 Installing
@@ -27,7 +25,7 @@ Please see the CHANGELOG file.
 
 License
 -------
-Copyright (c) 2018 Greg Chetcuti <greg@chetcuti.com>
+Copyright (c) 2018-2026 Greg Chetcuti <greg@chetcuti.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

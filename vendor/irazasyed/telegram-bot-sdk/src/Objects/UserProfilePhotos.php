@@ -5,19 +5,22 @@ namespace Telegram\Bot\Objects;
 /**
  * Class UserProfilePhotos.
  *
+ * @link https://core.telegram.org/bots/api#userprofilephotos
  *
- * @method int          getTotalCount()     Total number of profile pictures the target user has.
- * @method PhotoSize[]  getPhotos()         Requested profile pictures (in up to 4 sizes each).
+ * @property int $totalCount Total number of profile pictures the target user has.
+ * @property PhotoSize[] $photos Array of Array of PhotoSize. Requested profile pictures (in up to 4 sizes each).
  */
 class UserProfilePhotos extends BaseObject
 {
     /**
      * {@inheritdoc}
+     *
+     * @return array{photos: string[]}
      */
-    public function relations()
+    public function relations(): array
     {
         return [
-            'photos' => PhotoSize::class,
+            'photos' => [PhotoSize::class],
         ];
     }
 }

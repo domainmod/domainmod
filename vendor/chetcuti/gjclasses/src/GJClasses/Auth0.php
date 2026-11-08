@@ -2,6 +2,9 @@
 namespace GJClasses;
 
 use Auth0\SDK\Auth0 as Auth0SDK;
+use Auth0\SDK\Exception\InvalidTokenException;
+use Auth0\SDK\Exception\NetworkException;
+use Auth0\SDK\Exception\StateException;
 
 class Auth0
 {
@@ -11,20 +14,36 @@ class Auth0
     {
         $this->auth0 = new Auth0SDK([
             'domain' => GJC_AUTH0_DOMAIN,
-            'client_id' => GJC_AUTH0_CLIENT_ID,
-            'client_secret' => GJC_AUTH0_CLIENT_SECRET,
-            'redirect_uri' => GJC_AUTH0_CALLBACK_URL,
-            'audience' => GJC_AUTH0_AUDIENCE,
-            'scope' => GJC_AUTH0_SCOPE,
-            'persist_id_token' => GJC_AUTH0_PER_ID_TOKEN,
-            'persist_access_token' => GJC_AUTH0_PER_ACCESS_TOKEN,
-            'persist_refresh_token' => GJC_AUTH0_PER_REFRESH_TOKEN,
+            'clientId' => GJC_AUTH0_CLIENT_ID,
+            'clientSecret' => GJC_AUTH0_CLIENT_SECRET,
+            'cookieSecret' => GJC_AUTH0_COOKIE_SECRET,
+            'redirectUri' => GJC_AUTH0_CALLBACK_URL,
+            'audience' => [GJC_AUTH0_AUDIENCE],
+            'scope' => explode(' ', GJC_AUTH0_SCOPE),
+            'persistIdToken' => GJC_AUTH0_PER_ID_TOKEN,
+            'persistAccessToken' => GJC_AUTH0_PER_ACCESS_TOKEN,
+            'persistRefreshToken' => GJC_AUTH0_PER_REFRESH_TOKEN,
+            'queryUserInfo' => true,
+            'cookieSecure' => str_starts_with(GJC_AUTH0_CALLBACK_URL, 'https://'),
         ]);
     }
 
     public function check()
     {
         $user_info = $this->auth0->getUser();
+
+        // On the callback page, exchange the code Auth0 sent back for the user's session
+        if (!$user_info && isset($_GET['code'], $_GET['state'])) {
+
+            // A stale, replayed, or failed callback falls through to the login redirect below
+            try {
+                $this->auth0->exchange(GJC_AUTH0_CALLBACK_URL);
+                $user_info = $this->auth0->getUser();
+            } catch (StateException | NetworkException | InvalidTokenException | \JsonException $e) {
+                $user_info = null;
+            }
+
+        }
 
         if (!$user_info) {
 
@@ -50,7 +69,8 @@ class Auth0
 
     public function login()
     {
-        $this->auth0->login();
+        header('Location: ' . $this->auth0->login());
+        exit;
     }
 
     public function getUser()
@@ -60,9 +80,7 @@ class Auth0
 
     public function logout()
     {
-        $this->auth0->logout();
-        $logout_url = sprintf('http://%s/v2/logout?client_id=%s&returnTo=%s', GJC_AUTH0_DOMAIN, GJC_AUTH0_CLIENT_ID, GJC_AUTH0_LOGIN_URL);
-        header('Location: ' . $logout_url);
+        header('Location: ' . $this->auth0->logout(GJC_AUTH0_LOGIN_URL));
         exit;
     }
 

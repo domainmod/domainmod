@@ -3,68 +3,55 @@
 namespace Telegram\Bot\HttpClients;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Promise;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Telegram\Bot\Exceptions\TelegramSDKException;
+use Throwable;
 
 /**
  * Class GuzzleHttpClient.
  */
 class GuzzleHttpClient implements HttpClientInterface
 {
-    /**
-     * HTTP client.
-     *
-     * @var Client
-     */
-    protected $client;
+    /** @var PromiseInterface[] Holds promises. */
+    protected static array $promises = [];
+
+    /** @var Client|ClientInterface HTTP client. */
+    protected ClientInterface|Client $client;
+
+    /** @var int Timeout of the request in seconds. */
+    protected int $timeOut = 30;
+
+    /** @var int Connection timeout of the request in seconds. */
+    protected int $connectTimeOut = 10;
 
     /**
-     * @var PromiseInterface[]
+     * GuzzleHttpClient constructor.
      */
-    private static $promises = [];
-
-    /**
-     * Timeout of the request in seconds.
-     *
-     * @var int
-     */
-    protected $timeOut = 30;
-
-    /**
-     * Connection timeout of the request in seconds.
-     *
-     * @var int
-     */
-    protected $connectTimeOut = 10;
-
-    /**
-     * @param Client|null $client
-     */
-    public function __construct(Client $client = null)
+    public function __construct(?ClientInterface $client = null)
     {
-        $this->client = $client ?: new Client();
+        $this->client = $client ?? new Client;
     }
 
     /**
      * Unwrap Promises.
+     *
+     * @throws Throwable
      */
     public function __destruct()
     {
-        Promise\unwrap(self::$promises);
+        Utils::unwrap(self::$promises);
     }
 
     /**
      * Sets HTTP client.
-     *
-     * @param Client $client
-     *
-     * @return GuzzleHttpClient
      */
-    public function setClient(Client $client)
+    public function setClient(ClientInterface $client): self
     {
         $this->client = $client;
 
@@ -72,46 +59,36 @@ class GuzzleHttpClient implements HttpClientInterface
     }
 
     /**
-     * Gets HTTP client for internal class use.
-     *
-     * @return Client
-     */
-    private function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
      * {@inheritdoc}
+     *
+     * @throws TelegramSDKException
      */
     public function send(
-        $url,
-        $method,
+        string $url,
+        string $method,
         array $headers = [],
         array $options = [],
-        $timeOut = 30,
-        $isAsyncRequest = false,
-        $connectTimeOut = 10
-    ) {
-        $this->timeOut = $timeOut;
-        $this->connectTimeOut = $connectTimeOut;
-
-        $body = isset($options['body']) ? $options['body'] : null;
-        $options = $this->getOptions($headers, $body, $options, $timeOut, $isAsyncRequest, $connectTimeOut);
+        bool $isAsyncRequest = false
+    ): ResponseInterface|PromiseInterface|null {
+        $body = $options['body'] ?? null;
+        $options = $this->getOptions($headers, $body, $options, $isAsyncRequest);
 
         try {
-            $response = $this->getClient()->requestAsync($method, $url, $options);
+            $response = $this->client->requestAsync($method, $url, $options);
 
             if ($isAsyncRequest) {
                 self::$promises[] = $response;
             } else {
                 $response = $response->wait();
             }
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
+        } catch (GuzzleException $guzzleException) {
+            $response = null;
+            if ($guzzleException instanceof RequestExceptionInterface) {
+                $response = $guzzleException->getResponse();
+            }
 
-            if (!$response instanceof ResponseInterface) {
-                throw new TelegramSDKException($e->getMessage(), $e->getCode());
+            if (! $response instanceof ResponseInterface) {
+                throw new TelegramSDKException($guzzleException->getMessage(), $guzzleException->getCode(), $guzzleException);
             }
         }
 
@@ -120,42 +97,57 @@ class GuzzleHttpClient implements HttpClientInterface
 
     /**
      * Prepares and returns request options.
-     *
-     * @param array $headers
-     * @param       $body
-     * @param       $options
-     * @param       $timeOut
-     * @param       $isAsyncRequest
-     * @param int   $connectTimeOut
-     *
-     * @return array
      */
-    private function getOptions(array $headers, $body, $options, $timeOut, $isAsyncRequest = false, $connectTimeOut = 10)
-    {
+    private function getOptions(
+        array $headers,
+        mixed $body,
+        array $options,
+        bool $isAsyncRequest = false
+    ): array {
         $default_options = [
-            RequestOptions::HEADERS         => $headers,
-            RequestOptions::BODY            => $body,
-            RequestOptions::TIMEOUT         => $timeOut,
-            RequestOptions::CONNECT_TIMEOUT => $connectTimeOut,
-            RequestOptions::SYNCHRONOUS     => !$isAsyncRequest,
+            RequestOptions::HEADERS => $headers,
+            RequestOptions::BODY => $body,
+            RequestOptions::TIMEOUT => $this->timeOut,
+            RequestOptions::CONNECT_TIMEOUT => $this->connectTimeOut,
+            RequestOptions::SYNCHRONOUS => ! $isAsyncRequest,
         ];
 
         return array_merge($default_options, $options);
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getTimeOut()
+    public function getTimeOut(): int
     {
         return $this->timeOut;
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getConnectTimeOut()
+    public function setTimeOut(int $timeOut): static
+    {
+        $this->timeOut = $timeOut;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConnectTimeOut(): int
     {
         return $this->connectTimeOut;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConnectTimeOut(int $connectTimeOut): static
+    {
+        $this->connectTimeOut = $connectTimeOut;
+
+        return $this;
     }
 }

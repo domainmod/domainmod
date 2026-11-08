@@ -15,6 +15,17 @@ interface Dispatcher
     /**
      * Dispatch a command to its appropriate handler in the current process.
      *
+     * Queueable jobs will be dispatched to the "sync" queue.
+     *
+     * @param  mixed  $command
+     * @param  mixed  $handler
+     * @return mixed
+     */
+    public function dispatchSync($command, $handler = null);
+
+    /**
+     * Dispatch a command to its appropriate handler in the current process.
+     *
      * @param  mixed  $command
      * @param  mixed  $handler
      * @return mixed
@@ -33,7 +44,7 @@ interface Dispatcher
      * Retrieve the handler for a command.
      *
      * @param  mixed  $command
-     * @return bool|mixed
+     * @return mixed
      */
     public function getCommandHandler($command);
 

@@ -12,6 +12,14 @@ interface Session
     public function getName();
 
     /**
+     * Set the name of the session.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    public function setName($name);
+
+    /**
      * Get the current session ID.
      *
      * @return string
@@ -73,6 +81,15 @@ interface Session
     public function get($key, $default = null);
 
     /**
+     * Get the value of a given key and then forget it.
+     *
+     * @param  string  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function pull($key, $default = null);
+
+    /**
      * Put a key / value pair or array of key / value pairs in the session.
      *
      * @param  string|array  $key
@@ -82,11 +99,27 @@ interface Session
     public function put($key, $value = null);
 
     /**
+     * Flash a key / value pair to the session.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function flash(string $key, $value = true);
+
+    /**
      * Get the CSRF token value.
      *
      * @return string
      */
     public function token();
+
+    /**
+     * Regenerate the CSRF token value.
+     *
+     * @return void
+     */
+    public function regenerateToken();
 
     /**
      * Remove an item from the session, returning its value.
@@ -110,6 +143,21 @@ interface Session
      * @return void
      */
     public function flush();
+
+    /**
+     * Flush the session data and regenerate the ID.
+     *
+     * @return bool
+     */
+    public function invalidate();
+
+    /**
+     * Generate a new session identifier.
+     *
+     * @param  bool  $destroy
+     * @return bool
+     */
+    public function regenerate($destroy = false);
 
     /**
      * Generate a new session ID for the session.

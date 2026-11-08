@@ -1,5 +1,44 @@
 GJClasses CHANGELOG
 ===================
+v0.55.0    2026-10-18
+- Added .github/dependabot.yml so Dependabot opens one grouped Composer
+  update PR a month, with a 7-day cooldown, and turned on vulnerability
+  alerts and automatic security fix PRs on GitHub. Consumers ignore
+  this library's composer.lock, so a PR that only bumps the lock needs
+  no release; one that changes a constraint in composer.json reaches
+  them only with a new v0.N.0 tag
+- Upgraded the dependencies that were pinned to old major versions,
+  which forced every consumer onto Guzzle 6, firebase/php-jwt 4, and
+  other releases with known vulnerabilities (19 Dependabot alerts,
+  including one critical). The new constraints are auth0/auth0-php
+  ^8.17, irazasyed/telegram-bot-sdk ^3.16, donatj/pushover ^3.2, and
+  phpmailer/phpmailer ^6.0 || ^7.0, and the lock file now has no
+  known advisories
+- Raised the minimum PHP version to 8.2, which auth0/auth0-php 8.17
+  and later require
+- Rewrote the Auth0 class for auth0-php 8: the config uses its
+  camelCase keys, scope and audience are passed as arrays, and a new
+  GJC_AUTH0_COOKIE_SECRET constant is required. queryUserInfo is on,
+  so the user profile still comes from /userinfo as it did with
+  auth0-php 5, not only from the ID token. login() and logout()
+  now do the redirect themselves, since the SDK only returns the URL,
+  and logout() uses the SDK's https logout link instead of building
+  an http one. check() now exchanges the code on the callback page,
+  which auth0-php 8 no longer does inside getUser(), so callback pages
+  that call check() keep working. A stale, replayed, or failed
+  callback now redirects to the login page instead of throwing, and
+  the session cookies are marked Secure when the callback URL is https
+- Kept Pushover's "Message Failed" behaviour: donatj/pushover 3 throws
+  a ResponseException on failure instead of returning false, so the
+  class now catches it
+- Added GJC_AUTH0_COOKIE_SECRET to examples/auth0.php
+
+v0.54.0    2026-10-17
+- Updated the copyright notices in LICENSE and README.md to 2018-2026
+- Updated the composer.json homepage to the gregdotca/gjclasses GitHub repo and the author homepage to greg.ca
+- Removed the outdated Scrutinizer badges from README.md
+- Added CLAUDE.md with guidance for working on the library
+
 v0.53.0    2024-08-05
 - Fixed git tags (maybe?)
 

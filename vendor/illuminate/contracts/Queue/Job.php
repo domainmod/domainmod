@@ -5,6 +5,13 @@ namespace Illuminate\Contracts\Queue;
 interface Job
 {
     /**
+     * Get the UUID of the job.
+     *
+     * @return string|null
+     */
+    public function uuid();
+
+    /**
      * Get the job identifier.
      *
      * @return string
@@ -26,9 +33,7 @@ interface Job
     public function fire();
 
     /**
-     * Release the job back into the queue.
-     *
-     * Accepts a delay specified in seconds.
+     * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
      * @return void
@@ -100,6 +105,13 @@ interface Job
     public function maxTries();
 
     /**
+     * Get the maximum number of exceptions allowed, regardless of attempts.
+     *
+     * @return int|null
+     */
+    public function maxExceptions();
+
+    /**
      * Get the number of seconds the job can run.
      *
      * @return int|null
@@ -111,7 +123,7 @@ interface Job
      *
      * @return int|null
      */
-    public function timeoutAt();
+    public function retryUntil();
 
     /**
      * Get the name of the queued job class.
@@ -121,13 +133,22 @@ interface Job
     public function getName();
 
     /**
-     * Get the resolved name of the queued job class.
+     * Get the display name of the queued job class.
      *
      * Resolves the name of "wrapped" jobs such as class-based handlers.
      *
      * @return string
      */
     public function resolveName();
+
+    /**
+     * Get the class of the queued job.
+     *
+     * Resolves the class of "wrapped" jobs such as class-based handlers.
+     *
+     * @return string
+     */
+    public function resolveQueuedJobClass();
 
     /**
      * Get the name of the connection the job belongs to.

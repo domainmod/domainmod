@@ -39,7 +39,9 @@ you want to create an inflector for to the ``createForLanguage()`` method:
 The supported languages are as follows:
 
 - ``Language::ENGLISH``
+- ``Language::ESPERANTO``
 - ``Language::FRENCH``
+- ``Language::ITALIAN``
 - ``Language::NORWEGIAN_BOKMAL``
 - ``Language::PORTUGUESE``
 - ``Language::SPANISH``
@@ -49,6 +51,7 @@ If you want to manually construct the inflector instead of using a factory, you 
 
 .. code-block:: php
 
+    use Doctrine\Inflector\Inflector;
     use Doctrine\Inflector\CachedWordInflector;
     use Doctrine\Inflector\RulesetInflector;
     use Doctrine\Inflector\Rules\English;

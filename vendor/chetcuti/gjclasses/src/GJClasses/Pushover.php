@@ -1,6 +1,7 @@
 <?php
 namespace GJClasses;
 
+use donatj\Pushover\Exceptions\ResponseException;
 use donatj\Pushover\Options;
 // use donatj\Pushover\Priority;
 // use donatj\Pushover\Pushover;
@@ -33,21 +34,29 @@ class Pushover
     public function pushNote($api_key, $user_key, $subject, $content, $priority)
     {
         $push = new \donatj\Pushover\Pushover($api_key, $user_key);
-        $push->send($content, array(
-            Options::TITLE => $subject,
-            Options::PRIORITY => $priority,
-        )) or die('Message Failed');
+        try {
+            $push->send($content, array(
+                Options::TITLE => $subject,
+                Options::PRIORITY => $priority,
+            ));
+        } catch (ResponseException $e) {
+            die('Message Failed');
+        }
         return 'Note Sent';
     }
 
     public function pushUrl($api_key, $user_key, $subject, $content, $url, $priority)
     {
         $push = new \donatj\Pushover\Pushover($api_key, $user_key);
-        $push->send($content, array(
-            Options::TITLE => $subject,
-            Options::URL => $url,
-            Options::PRIORITY => $priority,
-        )) or die('Message Failed');
+        try {
+            $push->send($content, array(
+                Options::TITLE => $subject,
+                Options::URL => $url,
+                Options::PRIORITY => $priority,
+            ));
+        } catch (ResponseException $e) {
+            die('Message Failed');
+        }
         return 'URL Sent';
     }
 }
