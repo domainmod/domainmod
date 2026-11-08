@@ -79,8 +79,22 @@ class User
 
     public function generatePassword($password_length = 72)
     {
-        $character_pool = 'abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        return substr(str_shuffle($character_pool), 0, $password_length);
+        $character_pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $max_index = strlen($character_pool) - 1;
+        $password = '';
+        for ($i = 0; $i < $password_length; $i++) {
+            $password .= $character_pool[random_int(0, $max_index)];
+        }
+        return $password;
+    }
+
+    /*
+     * The token for a password reset link. It's keyed with the user's stored password hash, so it stops working as
+     * soon as the password changes, which makes each link single-use.
+     */
+    public function getResetToken($user_id, $expires, $stored_hash)
+    {
+        return hash_hmac('sha256', 'password-reset|' . $user_id . '|' . $expires, $stored_hash);
     }
 
     public function generateHash($password)

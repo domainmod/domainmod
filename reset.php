@@ -44,12 +44,95 @@ $pdo = $deeb->cnxx;
 $page_title = _('Reset Password');
 $software_section = "resetpassword";
 
-$user_identifier = $_REQUEST['user_identifier'] ?? '';
+// How long a password reset link stays valid, in seconds
+$reset_link_lifetime = 3600;
 
-if ($user_identifier != '') {
+$user_identifier = $_POST['user_identifier'] ?? '';
+$reset_id = (int) ($_REQUEST['id'] ?? 0);
+$reset_expires = (int) ($_REQUEST['expires'] ?? 0);
+$reset_token = (string) ($_REQUEST['token'] ?? '');
+$show_confirm = false;
+
+if ($reset_id > 0 || $reset_token !== '') {
+
+    // A reset link: check it, then (on the confirmation POST) reset the password
+    $result = false;
+
+    if ($reset_id > 0 && $reset_expires >= time() && $reset_token !== '') {
+
+        $stmt = $pdo->prepare("
+            SELECT id, first_name, last_name, username, email_address, `password`
+            FROM users
+            WHERE id = :user_id
+              AND active = '1'");
+        $stmt->bindValue('user_id', $reset_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result && !hash_equals($user->getResetToken($result->id, $reset_expires, $result->password), $reset_token)) {
+            $result = false;
+        }
+
+    }
+
+    if (!$result) {
+
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+        $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired') . '<BR>';
+        header('Location: ' . $web_root . "/reset.php");
+        exit;
+
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $new_password = $user->generatePassword(30);
+
+        // Matching on the old hash means only one request can use the link
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET `password` = :new_hash,
+                new_password = '1',
+                update_time = :timestamp
+            WHERE id = :user_id
+              AND `password` = :old_hash");
+        $stmt->bindValue('new_hash', $user->generateHash($new_password), PDO::PARAM_STR);
+        $bind_timestamp = $time->stamp();
+        $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
+        $stmt->bindValue('user_id', $result->id, PDO::PARAM_INT);
+        $stmt->bindValue('old_hash', $result->password, PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ($stmt->rowCount() !== 1) {
+
+            $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+            $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired') . '<BR>';
+            header('Location: ' . $web_root . "/reset.php");
+            exit;
+
+        }
+
+        $first_name = $result->first_name;
+        $last_name = $result->last_name;
+        $username = $result->username;
+        $email_address = $result->email_address;
+        require_once DIR_INC . '/email/send-new-password.inc.php';
+
+        $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
+        $_SESSION['s_message_success'] .= _('Your new password has been emailed to you') . '<BR>';
+        header('Location: ' . $web_root . "/");
+        exit;
+
+    }
+
+    // A GET only shows the confirmation button, so a mail scanner following the link doesn't reset the password
+    $show_confirm = true;
+
+} elseif ($user_identifier != '') {
 
     $stmt = $pdo->prepare("
-        SELECT first_name, last_name, username, email_address
+        SELECT id, first_name, last_name, username, email_address, `password`
         FROM users
         WHERE (username = :username OR email_address = :email_address)
           AND active = '1'");
@@ -59,52 +142,50 @@ if ($user_identifier != '') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    $message_success = $_SESSION['s_message_success'] ?? '';
-    $message_success .= _("If there's a matching username or email address your new password will been emailed to you.") . '<BR>';
+    // The same message either way, so the page doesn't reveal which accounts exist
+    $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
+    $_SESSION['s_message_success'] .= _("If there's a matching username or email address, a link to reset your password has been emailed to it") . '<BR>';
 
-    if (!$result) {
+    /*
+     * Finish the response before sending any email, so the response time doesn't reveal whether the account exists
+     * (sending can take a while, especially over SMTP)
+     */
+    session_write_close();
+    ignore_user_abort(true);
+    header('Location: ' . $web_root . "/");
+    header('Connection: close');
+    header('Content-Length: 0');
+    while (ob_get_level() > 0) {
+        ob_end_flush();
+    }
+    flush();
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
 
-        header('Location: ' . $web_root . "/");
-        exit;
+    // Nothing changes yet: the user gets a link, and the password is only reset once the link is used
+    if ($result) {
 
-    } else {
-
-        $new_password = $user->generatePassword(30);
-
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))),
-                new_password = '1',
-                update_time = :timestamp
-            WHERE username = :username
-              AND email_address = :email_address");
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
-        $bind_timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
-        $stmt->bindValue('email_address', $result->email_address, PDO::PARAM_STR);
-        $stmt->execute();
+        $expires = time() + $reset_link_lifetime;
+        $reset_query = 'id=' . $result->id . '&expires=' . $expires . '&token=' .
+            $user->getResetToken($result->id, $expires, $result->password);
 
         $first_name = $result->first_name;
         $last_name = $result->last_name;
         $username = $result->username;
         $email_address = $result->email_address;
-        require_once DIR_INC . '/email/send-new-password.inc.php';
-
-        header('Location: ' . $web_root . "/");
-        exit;
+        require_once DIR_INC . '/email/send-reset-link.inc.php';
 
     }
+
+    exit;
 
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-
-        if ($user_identifier == "") {
-            $_SESSION['s_message_danger'] .= _('Enter your username or email address') . '<BR>';
-        }
+        $_SESSION['s_message_danger'] .= _('Enter your username or email address') . '<BR>';
 
     }
 
@@ -121,7 +202,25 @@ if ($user_identifier != '') {
 
 <div class="login-box">
     <div class="card card-outline card-danger">
-        <div class="card-body">
+        <div class="card-body"><?php
+
+            if ($show_confirm) { ?>
+
+            <p class="login-box-msg"><?php echo _('Click the button below to reset your password. Your new password will be emailed to you.'); ?></p>
+
+            <form method="post">
+                <input type="hidden" name="id" value="<?php echo $reset_id; ?>">
+                <input type="hidden" name="expires" value="<?php echo $reset_expires; ?>">
+                <input type="hidden" name="token" value="<?php echo htmlspecialchars($reset_token, ENT_QUOTES); ?>">
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-danger btn-block"><?php echo _('Reset Password'); ?></button>
+                    </div>
+                </div>
+            </form><?php
+
+            } else { ?>
+
             <p class="login-box-msg"><?php echo _('Username or Email Address'); ?></p>
 
             <form method="post">
@@ -139,7 +238,9 @@ if ($user_identifier != '') {
                     </div>
                     <!-- /.col -->
                 </div>
-            </form>
+            </form><?php
+
+            } ?>
         </div>
         <!-- /.login-card-body -->
     </div>
