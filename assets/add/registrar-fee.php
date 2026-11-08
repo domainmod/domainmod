@@ -50,7 +50,7 @@ $tld = isset($_GET['tld']) ? $sanitize->text($_GET['tld']) : '';
 if ($tld != '') {
     $new_tld = $tld;
 } else {
-    $new_tld = $sanitize->text($_POST['new_tld']);
+    $new_tld = $sanitize->text($_POST['new_tld'] ?? '');
 }
 $new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
 $new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
@@ -209,7 +209,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')',
-        $new_currency ?? $_SESSION['s_default_currency']);
+        $new_currency !== '' ? $new_currency : ($_SESSION['s_default_currency'] ?? '')); // '' until the form is posted
 
 }
 echo $form->showDropdownBottom('');

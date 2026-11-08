@@ -207,7 +207,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')',
-        $new_currency ?? $_SESSION['s_default_currency']);
+        $new_currency !== '' ? $new_currency : ($_SESSION['s_default_currency'] ?? '')); // '' until the form is posted
 
 }
 echo $form->showDropdownBottom('');
