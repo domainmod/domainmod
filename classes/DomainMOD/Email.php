@@ -3,7 +3,7 @@
  * /classes/DomainMOD/Email.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
- * Copyright (c) 2010-2025 Greg Chetcuti <greg@greg.ca>
+ * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
  *
  * Project: http://domainmod.org   Author: https://greg.ca
  *
