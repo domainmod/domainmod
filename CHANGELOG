@@ -1,5 +1,45 @@
 DomainMOD CHANGELOG
 ===================
+v4.24.0     2026-11-08
+- Added Hostinger API support
+- Added support for database servers that require encrypted connections (Administration > System Information shows the connection's status)
+- Added Gandi personal access token support
+- Added an AI Code Rating requirement for pull requests
+- Updated Cloudflare to its current Registrar API (API tokens, and more than 20 domains)
+- Updated password resets to email a single-use reset link
+- Updated the supported PHP and MariaDB versions (PHP 8.2 or later is now required)
+- Updated all translations
+- Updated Documentation (User Guide)
+- Fixed domains and SSL certificates being left out of lists and cost reports for users missing a currency conversion rate
+- Fixed duplicate currency conversion rates counting assets twice in lists and cost reports
+- Fixed failed Domain Queue lists being marked as finished
+- Fixed a Domain Queue error leaving a partial import and blocking the other lists
+- Fixed importing accounts with a single domain, and Dynadot domain lists
+- Fixed missing and carried-over name servers in Above.com and DreamHost imports
+- Fixed NameBright API authentication
+- Fixed the Domain Queue carrying a domain's status over to the next domain
+- Fixed invalid Cloudflare expiry dates being accepted
+- Fixed the Internet.bs privatewhois warning
+- Fixed the Task Scheduler saving invalid 6-field schedules, losing the minutes in half-hour time zones, and running a changed task straight away
+- Fixed the expiration email ending the cron run early
+- Fixed translated text casing in non-ASCII languages
+- Fixed the Live and All status filters and dashboard links in translated languages
+- Fixed admins being logged out and locked out when resetting their own password
+- Fixed the Bulk Updater's blank "UCF 1" page
+- Fixed the fatal error on the Bulk Updater page
+- Fixed bulk custom field updates without a field selected
+- Fixed the bulk renew message's domain wording
+- Fixed new fees defaulting to the first currency instead of the user's own
+- Fixed dark mode links not being highlighted
+- Fixed the site URL saved by the installer
+- Fixed the installer failing on missing headers
+- Fixed PHP warnings on login, admin password resets, the bare header, command-line upgrades, and error logging
+- Fixed missing spaces in expiration email footers
+- Fixed the doubled question mark on the Profile page
+- Fixed the English Update Profile button text
+- Removed curl_close() calls deprecated in PHP 8.5
+- Updated Composer packages
+
 v4.23.01    2026-11-07
 - Added AI Code Rating
 - Updated Feedback page to use gettext
