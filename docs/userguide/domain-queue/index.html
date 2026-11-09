@@ -72,6 +72,11 @@
           
             <li class="toctree-l1">
 		
+    <a class="" href="../database-encryption/">Encrypted Database Connections</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
@@ -202,7 +207,7 @@
 <p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
 <h2 id="supported-registrars">Supported Registrars</h2>
 <p>The following registrars are currently supported by the Domain Queue:</p>
-<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, Porkbun, ResellerClub</strong></p>
+<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Hostinger, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, Porkbun, ResellerClub</strong></p>
 <h2 id="usage">Usage</h2>
 <div class="admonition warning">
 <p class="admonition-title">Requirement</p>
@@ -233,6 +238,12 @@
 </ol>
 <h2 id="api-notes"><a name="apinotes"></a>API Notes</h2>
 <p>This section contains various notes and things to watch out for when using the domain registrar APIs.</p>
+<h4>Cloudflare</h4>
+
+<p>A Cloudflare registrar account uses the following fields:</p>
+<p><strong>Username</strong>: your Cloudflare account email address. This is required if you use a Global API Key. If you use an API Token it can be any name for the account.<br />
+<strong>Account ID</strong>: shown on your Cloudflare dashboard.<br />
+<strong>API Key</strong>: either an API Token (recommended) or your Global API Key. An API Token needs read access to Registrar domains, plus Zone Read access so that DomainMOD can retrieve the domains' name servers.</p>
 <h4>DreamHost</h4>
 
 <p>DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a DreamHost account will have their WHOIS privacy status set to No by default.</p>
@@ -241,10 +252,16 @@
 <p>Freenom currently only gives API access to reseller accounts.</p>
 <h4>Gandi</h4>
 
+<p>For the API Key, create a personal access token in your Gandi account with read access to your domains. Older Gandi API keys still work.</p>
 <p>Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.</p>
 <h4>GoDaddy</h4>
 
 <p>When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
+<p>GoDaddy only gives API access to accounts it considers eligible, and has at times limited it to accounts with at least 10 domains or a Discount Domain Club membership. If GoDaddy refuses your account's API requests, domains added to the Domain Queue from it will stay at "Pending".</p>
+<h4>Hostinger</h4>
+
+<p>For the API Key, create an API token in your Hostinger dashboard (<strong>Dev tools</strong> -&gt; <strong>API</strong> -&gt; <strong>API tokens</strong>). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date.</p>
+<p>Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.</p>
 <h4>NameSilo</h4>
 
 <p>NameSilo's domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer</p>

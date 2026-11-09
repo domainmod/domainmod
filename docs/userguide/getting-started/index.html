@@ -99,6 +99,11 @@
           
             <li class="toctree-l1">
 		
+    <a class="" href="../database-encryption/">Encrypted Database Connections</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
     <a class="" href="../creating-assets/">Creating Assets</a>
 	    </li>
           
@@ -220,7 +225,7 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <p>Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? We hate when that happens ourselves, which is why we've setup a live demo so you don't waste your time.</p>
 <p>So go ahead, take the live demo for a test drive before you install: <a href="https://demo.domainmod.org">https://demo.domainmod.org</a></p>
 <h2 id="requirements">Requirements</h2>
-<p><strong>Software</strong>: PHP 8.1-8.2.9, MariaDB 10.4-11.1.2 or MySQL 5.7-8.1.0<br />
+<p><strong>Software</strong>: PHP 8.2-8.5, MariaDB 10.4-11.8 or MySQL 5.7-8.1.0<br />
 <strong>PHP Extensions</strong>: PDO (MariaDB/MySQL), cURL, OpenSSL, gettext<br />
 <strong>PHP Settings</strong>: allow_url_fopen  </p>
 <h2 id="downloading">Downloading</h2>
@@ -270,6 +275,9 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <ol>
 <li>
 <p>Secure your installation with an SSL Certificate.</p>
+</li>
+<li>
+<p>If your database is on a different server than DomainMOD, encrypt the connection and check the server's certificate by adding <code>$dbsslmode = 'verify';</code> to config.inc.php. See <a href="../database-encryption/">Encrypted Database Connections</a> for details.</p>
 </li>
 <li>
 <p>Do not use easy-to-guess passwords. <strong>Ever</strong>.</p>
