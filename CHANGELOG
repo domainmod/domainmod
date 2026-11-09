@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.24.01    2026-11-08
+- Fixed read-only users being able to delete and change data (security fix)
+
 v4.24.0     2026-11-08
 - Added Hostinger API support
 - Added support for database servers that require encrypted connections (Administration > System Information shows the connection's status)
