@@ -1968,6 +1968,48 @@ if ($current_db_version === '4.24.0') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.24.01 to 4.24.02 (SiteHost registrar)
+if ($current_db_version === '4.24.01') {
+
+    $old_version = '4.24.01';
+    $new_version = '4.24.02';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        // SiteHost, added to the Domain Queue in this version (new installs get it from install/go.php)
+        $sitehost_count = (int) $pdo->query("SELECT COUNT(*) FROM api_registrars WHERE `name` = 'SiteHost'")->fetchColumn();
+        if ($sitehost_count === 0) {
+
+            $stmt = $pdo->prepare("
+                INSERT INTO `api_registrars`
+                (`name`, req_account_username, req_account_password, req_account_id, req_reseller_id, req_api_app_name,
+                 req_api_key, req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers,
+                 ret_privacy_status, ret_autorenewal_status, notes, insert_time)
+                 VALUES
+                ('SiteHost', '0', '0', '1', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', :notes, :insert_time)");
+            $stmt->bindValue('notes', 'API Key + Client ID (Account ID): create a key in the SiteHost Control Panel with Domain (SRS) access, ideally IP-allowlisted. SiteHost prices are in NZD — enter DomainMOD registrar fees in NZD. Domain Queue imports expiry (billed-until), nameservers, WHOIS privacy, and auto-renew. Purchase, renew, and transfer exist in the SiteHost API but are not used by DomainMOD; manage those in the SiteHost panel.', PDO::PARAM_STR);
+            $stmt->bindValue('insert_time', $timestamp, PDO::PARAM_STR);
+            $stmt->execute();
+
+        }
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */

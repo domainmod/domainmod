@@ -213,6 +213,7 @@ return array(
     'DomainMOD\\GoDaddy' => $baseDir . '/classes/DomainMOD/GoDaddy.php',
     'DomainMOD\\Goal' => $baseDir . '/classes/DomainMOD/Goal.php',
     'DomainMOD\\Hostinger' => $baseDir . '/classes/DomainMOD/Hostinger.php',
+    'DomainMOD\\SiteHost' => $baseDir . '/classes/DomainMOD/SiteHost.php',
     'DomainMOD\\InternetBs' => $baseDir . '/classes/DomainMOD/InternetBs.php',
     'DomainMOD\\Language' => $baseDir . '/classes/DomainMOD/Language.php',
     'DomainMOD\\Layout' => $baseDir . '/classes/DomainMOD/Layout.php',

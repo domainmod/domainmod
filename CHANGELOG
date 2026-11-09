@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.24.02    TBD
+- Added SiteHost API support (Domain Queue). Prices are in NZD.
+
 v4.24.01    2026-11-08
 - Fixed read-only users being able to delete and change data (security fix)
 

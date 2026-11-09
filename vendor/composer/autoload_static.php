@@ -409,6 +409,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\GoDaddy' => __DIR__ . '/../..' . '/classes/DomainMOD/GoDaddy.php',
         'DomainMOD\\Goal' => __DIR__ . '/../..' . '/classes/DomainMOD/Goal.php',
         'DomainMOD\\Hostinger' => __DIR__ . '/../..' . '/classes/DomainMOD/Hostinger.php',
+        'DomainMOD\\SiteHost' => __DIR__ . '/../..' . '/classes/DomainMOD/SiteHost.php',
         'DomainMOD\\InternetBs' => __DIR__ . '/../..' . '/classes/DomainMOD/InternetBs.php',
         'DomainMOD\\Language' => __DIR__ . '/../..' . '/classes/DomainMOD/Language.php',
         'DomainMOD\\Layout' => __DIR__ . '/../..' . '/classes/DomainMOD/Layout.php',

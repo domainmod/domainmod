@@ -267,6 +267,13 @@ class DomainQueue
             $api_key = $this->api->getKey($row->account_id);
             list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
+        } elseif ($row->api_registrar_name == 'SiteHost') {
+
+            $registrar = new SiteHost();
+            $api_key = $this->api->getKey($row->account_id);
+            $client_id = $this->api->getAccountId($row->account_id);
+            list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $client_id);
+
         } else {
 
             return null;
@@ -413,6 +420,13 @@ class DomainQueue
                     $registrar = new Hostinger();
                     $api_key = $this->api->getKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'SiteHost') {
+
+                    $registrar = new SiteHost();
+                    $api_key = $this->api->getKey($row->account_id);
+                    $client_id = $this->api->getAccountId($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $client_id, $row->domain);
 
                 } else {
 
