@@ -1874,11 +1874,6 @@ if ($current_db_version === '4.23.01') {
 
         $pdo->beginTransaction();
 
-        /*
-         * This needs to be MOVED from the last version to the newest version with every release
-         */
-        $goal->upgrade($previous_version);
-
         // Hostinger, added to the Domain Queue in this version (new installs get it from install/go.php)
         $hostinger_count = (int) $pdo->query("SELECT COUNT(*) FROM api_registrars WHERE `name` = 'Hostinger'")->fetchColumn();
         if ($hostinger_count === 0) {
@@ -1947,6 +1942,36 @@ if ($current_db_version === '4.23.01') {
         if (!$has_key) {
             $pdo->query("ALTER TABLE currency_conversions ADD UNIQUE KEY `user_currency` (`user_id`, `currency_id`)");
         }
+
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.24.0 to 4.24.01
+if ($current_db_version === '4.24.0') {
+
+    $old_version = '4.24.0';
+    $new_version = '4.24.01';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        /*
+         * This needs to be MOVED from the last version to the newest version with every release
+         */
+        $goal->upgrade($previous_version);
 
         $upgrade->database($new_version);
 
