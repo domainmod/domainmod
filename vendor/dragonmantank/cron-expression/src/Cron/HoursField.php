@@ -23,7 +23,7 @@ class HoursField extends AbstractField
     protected $rangeEnd = 23;
 
     /**
-     * @var array|null Transitions returned by DateTimeZone::getTransitions()
+     * @var list<array<string, bool|int|string>>|null Transitions returned by DateTimeZone::getTransitions()
      */
     protected $transitions = [];
 
@@ -73,6 +73,9 @@ class HoursField extends AbstractField
         return $retval;
     }
 
+    /**
+     * @return non-empty-array<string, bool|int|string>|null
+     */
     public function getPastTransition(DateTimeInterface $date): ?array
     {
         $currentTimestamp = (int) $date->format('U');
@@ -160,6 +163,7 @@ class HoursField extends AbstractField
 
         $target = (int) $hours[$position];
         $originalHour = (int)$date->format('H');
+        $originalDst = (int)$date->format('I');
 
         $originalDay = (int)$date->format('d');
         $previousOffset = $date->getOffset();
@@ -200,11 +204,22 @@ class HoursField extends AbstractField
             $date = $this->timezoneSafeModify($date, "-{$distance} hours");
         }
 
+        $actualDst = (int)$date->format('I');
+        if ($originalDst < $actualDst) {
+            $date = $this->timezoneSafeModify($date, "-1 hours");
+        }
+
         $date = $this->setTimeHour($date, $invert, $originalTimestamp);
 
         $actualHour = (int)$date->format('H');
         if ($invert && ($actualHour === ($target - 1) || (($actualHour === 23) && ($target === 0)))) {
             $date = $this->timezoneSafeModify($date, "+1 hour");
+
+            // Offset changes shorter than an hour (e.g. Australia/Lord_Howe) make the
+            // step above overshoot the target hour, so pull back to its last minute
+            if ((int)$date->format('H') !== $target) {
+                $date = $date->setTime($target, 59);
+            }
         }
 
         return $this;

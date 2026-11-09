@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'voku\\' => array($vendorDir . '/voku/portable-ascii/src/voku'),
     'iamdual\\' => array($vendorDir . '/iamdual/uploader/src'),
-    'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Thamaraiselvam\\MysqlImport\\' => array($vendorDir . '/thamaraiselvam/mysql-import'),
     'Tests\\Thamaraiselvam\\MysqlImport\\' => array($vendorDir . '/thamaraiselvam/mysql-import/tests'),
     'Telegram\\Bot\\' => array($vendorDir . '/irazasyed/telegram-bot-sdk/src'),

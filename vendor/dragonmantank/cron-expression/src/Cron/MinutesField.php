@@ -49,6 +49,7 @@ class MinutesField extends AbstractField
         $current_minute = (int) $date->format('i');
 
         $parts = false !== strpos($parts, ',') ? explode(',', $parts) : [$parts];
+        sort($parts);
         $minutes = [];
         foreach ($parts as $part) {
             $minutes = array_merge($minutes, $this->getRangeForExpression($part, 59));
@@ -75,6 +76,13 @@ class MinutesField extends AbstractField
                 $date = $this->timezoneSafeModify($date, "+{$distance} minutes");
 
                 $originalMinute = (int) $date->format("i");
+
+                // Offset changes shorter than an hour (e.g. Australia/Lord_Howe) can skip
+                // past the target, so stop at the first minute of the next hour instead
+                // of going back in time
+                if ($originalMinute > $target) {
+                    return $this;
+                }
             }
 
             $distance = $target - $originalMinute;

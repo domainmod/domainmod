@@ -551,6 +551,7 @@ return array(
     'League\\Event\\UnableToSubscribeListener' => $vendorDir . '/league/event/src/UnableToSubscribeListener.php',
     'NoDiscard' => $vendorDir . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
     'Override' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/Override.php',
+    'PHPMailer\\PHPMailer\\DSNConfigurator' => $vendorDir . '/phpmailer/phpmailer/src/DSNConfigurator.php',
     'PHPMailer\\PHPMailer\\Exception' => $vendorDir . '/phpmailer/phpmailer/src/Exception.php',
     'PHPMailer\\PHPMailer\\OAuth' => $vendorDir . '/phpmailer/phpmailer/src/OAuth.php',
     'PHPMailer\\PHPMailer\\OAuthTokenProvider' => $vendorDir . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
@@ -872,9 +873,6 @@ return array(
     'Thamaraiselvam\\MysqlImport\\Import' => $vendorDir . '/thamaraiselvam/mysql-import/Import.php',
     'Time\\Duration' => $vendorDir . '/symfony/polyfill-time/Resources/stubs/Time/Duration.php',
     'Time\\TimeException' => $vendorDir . '/symfony/polyfill-time/Resources/stubs/Time/TimeException.php',
-    'Webmozart\\Assert\\Assert' => $vendorDir . '/webmozart/assert/src/Assert.php',
-    'Webmozart\\Assert\\InvalidArgumentException' => $vendorDir . '/webmozart/assert/src/InvalidArgumentException.php',
-    'Webmozart\\Assert\\Mixin' => $vendorDir . '/webmozart/assert/src/Mixin.php',
     'iamdual\\Uploader' => $vendorDir . '/iamdual/uploader/src/Uploader.php',
     'voku\\helper\\ASCII' => $vendorDir . '/voku/portable-ascii/src/voku/helper/ASCII.php',
 );

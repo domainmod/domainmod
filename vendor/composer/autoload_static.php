@@ -30,10 +30,6 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         array (
             'iamdual\\' => 8,
         ),
-        'W' =>
-        array (
-            'Webmozart\\Assert\\' => 17,
-        ),
         'T' =>
         array (
             'Thamaraiselvam\\MysqlImport\\' => 27,
@@ -94,10 +90,6 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'iamdual\\' =>
         array (
             0 => __DIR__ . '/..' . '/iamdual/uploader/src',
-        ),
-        'Webmozart\\Assert\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
         'Thamaraiselvam\\MysqlImport\\' =>
         array (
@@ -755,6 +747,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'League\\Event\\UnableToSubscribeListener' => __DIR__ . '/..' . '/league/event/src/UnableToSubscribeListener.php',
         'NoDiscard' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
+        'PHPMailer\\PHPMailer\\DSNConfigurator' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/DSNConfigurator.php',
         'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
         'PHPMailer\\PHPMailer\\OAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuth.php',
         'PHPMailer\\PHPMailer\\OAuthTokenProvider' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
@@ -1076,9 +1069,6 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'Thamaraiselvam\\MysqlImport\\Import' => __DIR__ . '/..' . '/thamaraiselvam/mysql-import/Import.php',
         'Time\\Duration' => __DIR__ . '/..' . '/symfony/polyfill-time/Resources/stubs/Time/Duration.php',
         'Time\\TimeException' => __DIR__ . '/..' . '/symfony/polyfill-time/Resources/stubs/Time/TimeException.php',
-        'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
-        'Webmozart\\Assert\\InvalidArgumentException' => __DIR__ . '/..' . '/webmozart/assert/src/InvalidArgumentException.php',
-        'Webmozart\\Assert\\Mixin' => __DIR__ . '/..' . '/webmozart/assert/src/Mixin.php',
         'iamdual\\Uploader' => __DIR__ . '/..' . '/iamdual/uploader/src/Uploader.php',
         'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
     );
