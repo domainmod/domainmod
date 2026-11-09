@@ -7,6 +7,8 @@
  *
  * Project: http://domainmod.org   Author: https://greg.ca
  *
+ * SiteHost Domain Queue connector contributed by David McNeill <david@rackteck.co.nz>.
+ *
  * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
  * version.
