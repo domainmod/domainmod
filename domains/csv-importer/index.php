@@ -42,6 +42,8 @@ use iamdual\Uploader;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+
     try {
 
         if (isset($_FILES["file"])) {

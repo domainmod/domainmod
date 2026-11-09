@@ -439,6 +439,8 @@ if ($clear === 1) {
 
 if ($really_clear === 1) {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+
     $queue->clearFinished();
 
     $_SESSION['s_message_success'] .= _('Completed items cleared from the queue') . '<BR>';
@@ -456,6 +458,8 @@ if ($dell === 1 && $list_id !== 0) {
 }
 
 if ($really_dell === 1 && $list_id !== 0) {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
         DELETE FROM domain_queue_list
@@ -478,6 +482,8 @@ if ($deld === 1 && $domain_id !== 0) {
 }
 
 if ($really_deld === 1 && $domain_id !== 0) {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
         DELETE FROM domain_queue

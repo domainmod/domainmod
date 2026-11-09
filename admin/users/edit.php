@@ -43,6 +43,7 @@ require_once DIR_INC . '/settings/admin-users-edit.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 $del = (int) ($_GET['del'] ?? 0);
@@ -290,6 +291,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 }
 
 if ($del === 1) {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $temp_uid = $pdo->query("
         SELECT id

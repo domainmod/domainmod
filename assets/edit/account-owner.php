@@ -100,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+
     $stmt = $pdo->prepare("
         SELECT owner_id
         FROM registrar_accounts

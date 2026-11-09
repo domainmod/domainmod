@@ -42,6 +42,7 @@ require_once DIR_INC . '/settings/admin-edit-custom-ssl-field.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 $del = (int) ($_GET['del'] ?? 0);
@@ -162,6 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 }
 
 if ($del === 1) {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     if ($csfid === 0) {
 

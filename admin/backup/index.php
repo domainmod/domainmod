@@ -37,6 +37,7 @@ require_once DIR_INC . '/settings/admin-backup-main.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 // Remove any files left in the web-accessible temp folder by older versions, and warn about any that can't be deleted

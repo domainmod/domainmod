@@ -38,6 +38,7 @@ require_once DIR_INC . '/settings/dw-rebuild.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>

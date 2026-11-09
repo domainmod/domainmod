@@ -40,6 +40,7 @@ require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 $id = (int) $_GET['id'] ?? 0;

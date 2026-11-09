@@ -40,6 +40,7 @@ require_once DIR_INC . '/settings/dw-edit-server.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 $del = (int) ($_GET['del'] ?? 0);
@@ -141,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 if ($del === 1) {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
         SELECT `name`, `host`

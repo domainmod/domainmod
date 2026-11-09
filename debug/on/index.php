@@ -36,6 +36,7 @@ require_once DIR_INC . '/settings/system-debug.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
 $deeb->cnxx->query("UPDATE settings SET debug_mode = '1'");
 ?>

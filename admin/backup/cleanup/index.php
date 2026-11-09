@@ -30,6 +30,7 @@ $system = new DomainMOD\System();
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
 if (file_exists(DIR_TEMP . '/domainmod-backup.sql')) {
 
