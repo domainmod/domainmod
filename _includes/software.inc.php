@@ -21,7 +21,7 @@
 ?>
 <?php
 const SOFTWARE_TITLE = 'DomainMOD';
-const SOFTWARE_VERSION = '4.23.01';
+const SOFTWARE_VERSION = '4.24.0';
 define('WEB_ROOT', $web_root);
 define('DB_HOSTNAME', $dbhostname);
 define('DB_NAME', $dbname);

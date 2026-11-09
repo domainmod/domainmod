@@ -1849,10 +1849,104 @@ if ($current_db_version === '4.23.0') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.23.01 to 4.24.0
+if ($current_db_version === '4.23.01') {
+
+    $old_version = '4.23.01';
+    $new_version = '4.24.0';
+
+    try {
+
+        $pdo->beginTransaction();
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
         $goal->upgrade($previous_version);
+
+        // Hostinger, added to the Domain Queue in this version (new installs get it from install/go.php)
+        $hostinger_count = (int) $pdo->query("SELECT COUNT(*) FROM api_registrars WHERE `name` = 'Hostinger'")->fetchColumn();
+        if ($hostinger_count === 0) {
+            $stmt = $pdo->prepare("
+                INSERT INTO api_registrars
+                (`name`, req_account_username, req_account_password, req_account_id, req_reseller_id, req_api_app_name,
+                 req_api_key, req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers,
+                 ret_privacy_status, ret_autorenewal_status, notes, insert_time)
+                VALUES
+                ('Hostinger', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '0', :notes, :insert_time)");
+            $stmt->bindValue('notes', 'API Key: an API token from hPanel (Dev tools, API, API tokens). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.', PDO::PARAM_STR);
+            $stmt->bindValue('insert_time', $time->stamp(), PDO::PARAM_STR);
+            $stmt->execute();
+        }
+
+        // Registrar notes, matching install/go.php: Cloudflare's current fields, GoDaddy's API eligibility, and Hostinger's
+        // token location (for an install that already had the Hostinger row)
+        $stmt = $pdo->prepare("
+            UPDATE api_registrars
+            SET notes = :notes,
+                update_time = :update_time
+            WHERE `name` = :name");
+        foreach (array('Cloudflare' => 'Username: your Cloudflare account email address (required with a Global API Key; with an API Token it can be any name for this account). Account ID: shown on your Cloudflare dashboard. API Key: an API Token with read access to Registrar domains and Zone Read access (for name servers), or your Global API Key.',
+                       'Hostinger' => 'API Key: an API token from hPanel (Dev tools, API, API tokens). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.',
+                       'GoDaddy' => 'When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue. GoDaddy limits API access to accounts it considers eligible (at times only accounts with at least 10 domains or a Discount Domain Club membership), and if it refuses the requests, domains added to the Domain Queue stay at Pending.') as $registrar_name => $registrar_notes) {
+            $stmt->bindValue('notes', $registrar_notes, PDO::PARAM_STR);
+            $stmt->bindValue('update_time', $time->stamp(), PDO::PARAM_STR);
+            $stmt->bindValue('name', $registrar_name, PDO::PARAM_STR);
+            $stmt->execute();
+        }
+
+        // Before 4.24.0, changing a task's run time saved a 6-field expression (such as '0 17 * * * *'), which the
+        // cron library rejects, so cron.php stopped running every scheduled task. Drop the trailing ' *'
+        $result = $pdo->query("SELECT id, expression FROM scheduler")->fetchAll();
+        $stmt = $pdo->prepare("UPDATE scheduler SET expression = :expression WHERE id = :id");
+        foreach ($result as $row) {
+            $fields = preg_split('/\s+/', trim($row->expression));
+            if (count($fields) === 6 && end($fields) === '*') {
+                $stmt->bindValue('expression', implode(' ', array_slice($fields, 0, 5)), PDO::PARAM_STR);
+                $stmt->bindValue('id', $row->id, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+        }
+
+        // Installs since 4.09.00 saved the site URL as '<site>/install/email-system'; remove only that trailing part
+        $pdo->query("
+            UPDATE settings
+            SET full_url = LEFT(full_url, CHAR_LENGTH(full_url) - CHAR_LENGTH('/install/email-system/'))
+            WHERE full_url LIKE '%/install/email-system/'");
+        $pdo->query("
+            UPDATE settings
+            SET full_url = LEFT(full_url, CHAR_LENGTH(full_url) - CHAR_LENGTH('/install/email-system'))
+            WHERE full_url LIKE '%/install/email-system'");
+
+        // One conversion rate per user and currency: remove any duplicates (keeping the oldest row), then make it a
+        // unique key, so a duplicate can't count assets twice in the reports. The ALTER commits the transaction
+        $pdo->query("
+            DELETE FROM currency_conversions
+            WHERE id NOT IN (
+                SELECT keep_id FROM (
+                    SELECT MIN(id) AS keep_id
+                    FROM currency_conversions
+                    GROUP BY user_id, currency_id
+                ) AS oldest)");
+        $has_key = $pdo->query("SHOW INDEX FROM currency_conversions WHERE Key_name = 'user_currency'")->fetchAll();
+        if (!$has_key) {
+            $pdo->query("ALTER TABLE currency_conversions ADD UNIQUE KEY `user_currency` (`user_id`, `currency_id`)");
+        }
 
         $upgrade->database($new_version);
 

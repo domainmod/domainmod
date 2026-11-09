@@ -503,7 +503,8 @@ try {
             `conversion` DECIMAL(12,4) NOT NULL,
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
-            PRIMARY KEY  (`id`)
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `user_currency` (`user_id`, `currency_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
@@ -1146,7 +1147,7 @@ try {
         ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Freenom', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $timestamp . "'),
         ('Gandi', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "'),
-        ('GoDaddy', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "'),
+        ('GoDaddy', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue. GoDaddy limits API access to accounts it considers eligible (at times only accounts with at least 10 domains or a Discount Domain Club membership), and if it refuses the requests, domains added to the Domain Queue stay at Pending.', '" . $timestamp . "'),
         ('Internet.bs', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Name.com', '1', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('NameBright', '1', '0', '0', '0', '1', '0', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
@@ -1156,7 +1157,7 @@ try {
         ('Porkbun', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "'),
         ('ResellerClub', '0', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "'),
         ('Cloudflare', '1', '0', '1', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'Username: your Cloudflare account email address (required with a Global API Key; with an API Token it can be any name for this account). Account ID: shown on your Cloudflare dashboard. API Key: an API Token with read access to Registrar domains and Zone Read access (for name servers), or your Global API Key.', '" . $timestamp . "'),
-        ('Hostinger', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '0', 'API Key: an API token from hPanel (Profile, API). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "')");
+        ('Hostinger', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '0', 'API Key: an API token from hPanel (Dev tools, API, API tokens). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `goal_activity` (
