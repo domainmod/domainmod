@@ -1968,6 +1968,49 @@ if ($current_db_version === '4.24.0') {
 
         $pdo->beginTransaction();
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+} //@formatter:on
+
+// upgrade database from 4.24.01 to 4.24.02
+if ($current_db_version === '4.24.01') {
+
+    $old_version = '4.24.01';
+    $new_version = '4.24.02';
+
+    try {
+
+        $pdo->beginTransaction();
+
+        // ALTER TABLE commits straight away, so skip it if an earlier attempt that failed later already added the column
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'dw_servers'
+              AND `COLUMN_NAME` = 'verify_ssl'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ((int) $stmt->fetchColumn() === 0) {
+
+            $pdo->query("
+                ALTER TABLE `dw_servers`
+                ADD `verify_ssl` TINYINT(1) NOT NULL DEFAULT '1' AFTER `hash`");
+
+        }
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
