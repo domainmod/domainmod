@@ -235,6 +235,10 @@ TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data
 <p>Enter your web server's details and then click the <strong>Add Server</strong> button.</p>
 </li>
 </ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>Verify SSL Certificate?</strong> setting is on by default, and was switched on for existing servers when you upgraded to v4.24.02. Leave it on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered. If your server's certificate can't be verified, see <a href="../troubleshooting/#sslverify">Troubleshooting</a> before switching it off.</p>
+</div>
 <p><strong>Retrieving Your Remote Access Key/Hash</strong></p>
 <p>If your WHM server supports it, you should be using an API Token instead of the Remote Access Key/Hash. Skip to the next section to retrieve your API Token.</p>
 <ol>
