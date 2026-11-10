@@ -6542,3 +6542,11 @@ msgstr "Als er een overeenkomende gebruikersnaam of e-mailadres is gevonden, is 
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Klik op de onderstaande knop om je wachtwoord opnieuw in te stellen. Je nieuwe wachtwoord wordt je per e-mail toegestuurd."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL-certificaat controleren"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Laat deze optie ingeschakeld, tenzij je server een zelfondertekend certificaat gebruikt en je verbinding maakt via een netwerk dat je vertrouwt. Als deze optie is ingeschakeld, moet het SSL-certificaat van de server geldig zijn voor de hostnaam die je hebt ingevoerd."
+

@@ -6542,3 +6542,11 @@ msgstr "If there's a matching username or email address, a link to reset your pa
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Click the button below to reset your password. Your new password will be emailed to you."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "Verify SSL Certificate"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+

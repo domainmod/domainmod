@@ -6538,3 +6538,11 @@ msgstr "一致するユーザー名またはメールアドレスがある場合
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "パスワードをリセットするには、下のボタンをクリックしてください。新しいパスワードがメールで送信されます。"
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL証明書の確認"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "サーバーが自己署名証明書を使用しており、かつ信頼できるネットワーク経由で接続する場合を除き、この設定は有効のままにしておいてください。この設定が有効になっている場合、サーバーのSSL証明書は、入力したホスト名に対して有効である必要があります。"
+

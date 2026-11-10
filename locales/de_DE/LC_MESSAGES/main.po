@@ -6542,3 +6542,11 @@ msgstr "Falls ein passender Benutzername oder eine passende E-Mail-Adresse gefun
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Klicken Sie auf die Schaltfläche unten, um Ihr Passwort zurückzusetzen. Ihr neues Passwort wird Ihnen per E-Mail zugeschickt."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL-Zertifikat überprüfen"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Lassen Sie diese Option aktiviert, es sei denn, Ihr Server verwendet ein selbstsigniertes Zertifikat und Sie stellen die Verbindung über ein Netzwerk her, dem Sie vertrauen. Wenn diese Option aktiviert ist, muss das SSL-Zertifikat des Servers für den von Ihnen eingegebenen Hostnamen gültig sein."
+

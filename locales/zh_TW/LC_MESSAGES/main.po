@@ -40,7 +40,7 @@ msgstr "行政"
 #: _includes/settings/admin-custom-domain-fields.inc.php:24
 #: admin/domain-fields/index.php:116 admin/index.php:50
 msgid "Custom Domain Fields"
-msgstr "自訂域字段"
+msgstr "自訂域欄位"
 
 #: _includes/breadcrumbs/admin-add-custom-ssl-field.inc.php:23
 #: _includes/breadcrumbs/admin-edit-custom-ssl-field.inc.php:23
@@ -49,7 +49,7 @@ msgstr "自訂域字段"
 #: _includes/settings/admin-custom-ssl-fields.inc.php:24 admin/index.php:51
 #: admin/ssl-fields/index.php:116
 msgid "Custom SSL Fields"
-msgstr "自訂 SSL 字段"
+msgstr "自訂 SSL 欄位"
 
 #: _includes/breadcrumbs/admin-users-add.inc.php:23
 #: _includes/breadcrumbs/admin-users-edit.inc.php:23
@@ -296,12 +296,12 @@ msgstr "SSL 憑證"
 
 #: _includes/email/send-new-password.inc.php:31
 msgid "Your %s Password has been Reset"
-msgstr "您的 %s 密碼已重置"
+msgstr "您的 %s 密碼已重設"
 
 #: _includes/email/send-new-password.inc.php:51
 #: _includes/email/send-new-password.inc.php:97
 msgid "Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess."
-msgstr "您的密碼已重置，您可以在下面找到它。下次登入時，您應該將密碼變更為您容易記住但其他人仍難以猜測的密碼。"
+msgstr "您的密碼已重設，您可以在下面找到它。下次登入時，您應該將密碼變更為您容易記住但其他人仍難以猜測的密碼。"
 
 #: _includes/email/send-new-password.inc.php:53 admin/debug-log/index.php:67
 #: admin/debug-log/index.php:136 assets/hosting.php:63 assets/registrars.php:64
@@ -341,7 +341,7 @@ msgstr "您收到此通知是因為有人要求重設您的 %s 帳戶的密碼�
 #: _includes/email/send-new-password.inc.php:80
 #: _includes/email/send-new-password.inc.php:110
 msgid "If you did not request this yourself, it sounds like somebody might be trying to gain access to your account. This might be a good time to reset your password again just to be safe."
-msgstr "如果您自己沒有提出請求，那麼聽起來可能有人試圖存取您的帳戶。為了安全起見，這可能是再次重置密碼的好時機。"
+msgstr "如果您自己沒有提出請求，那麼聽起來可能有人試圖存取您的帳戶。為了安全起見，這可能是再次重設密碼的好時機。"
 
 #: _includes/email/send-new-password.inc.php:112
 #: _includes/email/send-reset-link.inc.php:109
@@ -354,7 +354,7 @@ msgstr "不活動的資產目前處於隱藏狀態。"
 
 #: _includes/layout/asset-footer.inc.php:24
 msgid "Click here to display them"
-msgstr "點擊此處顯示它們"
+msgstr "點選此處顯示它們"
 
 #: _includes/layout/asset-footer.inc.php:28
 msgid "Inactive Assets are currently displayed."
@@ -362,7 +362,7 @@ msgstr "目前顯示非活動資產。"
 
 #: _includes/layout/asset-footer.inc.php:28
 msgid "Click here to hide them"
-msgstr "點擊此處隱藏它們"
+msgstr "點選此處隱藏它們"
 
 #: _includes/layout/footer.inc.php:36
 msgid "%s%s%s is open source software released under the %sGNU/GPL License%s."
@@ -370,7 +370,7 @@ msgstr "%s%s%s 是根據 %sGNU/GPL 授權%s 發布的開源軟體。"
 
 #: _includes/layout/footer.inc.php:37
 msgid "Created by"
-msgstr "創建者："
+msgstr "建立者："
 
 #: _includes/layout/breadcrumbs.inc.php:24
 #: _includes/layout/breadcrumbs.inc.php:26
@@ -389,7 +389,7 @@ msgstr "SSL 憑證"
 #: _includes/layout/menu-main.inc.php:85
 #: _includes/settings/bulk-main.inc.php:23
 msgid "Bulk Updater"
-msgstr "批量更新程式"
+msgstr "批次更新程式"
 
 #: _includes/layout/menu-main.inc.php:103
 #: _includes/settings/dw-intro.inc.php:23 _includes/settings/dw-main.inc.php:23
@@ -457,7 +457,7 @@ msgstr "系統預設值"
 #: _includes/layout/menu-main.inc.php:216
 #: _includes/settings/admin-scheduler-main.inc.php:23 admin/index.php:52
 msgid "Task Scheduler"
-msgstr "任務調度程序"
+msgstr "任務排程器"
 
 #: _includes/layout/menu-main.inc.php:234
 #: _includes/settings/admin-backup-main.inc.php:23 admin/index.php:55
@@ -484,7 +484,7 @@ msgstr "支援"
 
 #: _includes/layout/menu-main.inc.php:281 classes/DomainMOD/Notice.php:40
 msgid "News"
-msgstr "訊息"
+msgstr "新聞"
 
 #: _includes/layout/pagination-large-mode.inc.php:26
 msgid "(Listing %s of %s)"
@@ -576,7 +576,7 @@ msgstr "SSL 憑證數量"
 
 #: _includes/layout/reporting-block.inc.php:23
 msgid "View Full Report"
-msgstr "查看完整報告"
+msgstr "檢視完整報告"
 
 #: admin/debug-log/index.php:124 admin/domain-fields/index.php:132
 #: admin/dw/list-accounts.php:203 admin/dw/list-zones.php:234
@@ -599,11 +599,11 @@ msgstr "按一下此處修復此問題"
 
 #: _includes/layout/table-maintenance.inc.php:47
 msgid "Debugging mode is currently enabled."
-msgstr "目前已啟用調試模式。"
+msgstr "目前已啟用除錯模式。"
 
 #: _includes/layout/table-maintenance.inc.php:47
 msgid "View Debug Log"
-msgstr "查看調試日誌"
+msgstr "檢視除錯日誌"
 
 #: _includes/layout/table-maintenance.inc.php:52
 msgid "You can disable debugging mode in %sSettings%s."
@@ -615,7 +615,7 @@ msgstr "請聯絡您的 %s 管理員以停用偵錯"
 
 #: _includes/settings/admin-add-custom-domain-field.inc.php:23
 msgid "Add Custom Domain Field"
-msgstr "新增自訂域字段"
+msgstr "新增自訂域欄位"
 
 #: _includes/settings/admin-add-custom-domain-field.inc.php:24
 #: _includes/settings/admin-add-custom-ssl-field.inc.php:24
@@ -638,11 +638,11 @@ msgstr "新增自訂域字段"
 #: _includes/settings/segments-add.inc.php:24
 #: _includes/settings/ssl-add.inc.php:24
 msgid "Add"
-msgstr "添加"
+msgstr "新增"
 
 #: _includes/settings/admin-add-custom-ssl-field.inc.php:23
 msgid "Add Custom SSL Field"
-msgstr "新增自訂 SSL 字段"
+msgstr "新增自訂 SSL 欄位"
 
 #: _includes/settings/admin-backup-main.inc.php:24 admin/backup/index.php:132
 msgid "Backup"
@@ -655,7 +655,7 @@ msgstr "偵錯"
 
 #: _includes/settings/admin-edit-custom-domain-field.inc.php:23
 msgid "Edit Custom Domain Field"
-msgstr "編輯自訂域字段"
+msgstr "編輯自訂域欄位"
 
 #: _includes/settings/admin-edit-custom-domain-field.inc.php:24
 #: _includes/settings/admin-edit-custom-ssl-field.inc.php:24
@@ -681,7 +681,7 @@ msgstr "編輯"
 
 #: _includes/settings/admin-edit-custom-ssl-field.inc.php:23
 msgid "Edit Custom SSL Field"
-msgstr "編輯自訂 SSL 字段"
+msgstr "編輯自訂 SSL 欄位"
 
 #: _includes/settings/admin-main.inc.php:23
 msgid "System Administration"
@@ -693,12 +693,12 @@ msgstr "管理員維護"
 
 #: _includes/settings/admin-scheduler-main.inc.php:24
 msgid "Scheduler"
-msgstr "調度程式"
+msgstr "排程器"
 
 #: _includes/settings/admin-users-add.inc.php:23 admin/users/add.php:217
 #: admin/users/index.php:161
 msgid "Add User"
-msgstr "新增用戶"
+msgstr "新增使用者"
 
 #: _includes/settings/admin-users-edit.inc.php:23
 msgid "Edit User"
@@ -725,12 +725,12 @@ msgstr "新增虛擬主機"
 #: _includes/settings/assets-add-ip-address.inc.php:23
 #: assets/add/ip-address.php:102 assets/ip-addresses.php:165
 msgid "Add IP Address"
-msgstr "新增IP位址"
+msgstr "新增 IP 位址"
 
 #: _includes/settings/assets-add-owner.inc.php:23 assets/account-owners.php:177
 #: assets/add/account-owner.php:91
 msgid "Add Owner"
-msgstr "添加所有者"
+msgstr "新增所有者"
 
 #: _includes/settings/assets-add-registrar-account.inc.php:23
 #: assets/add/registrar-account.php:197 assets/registrar-accounts.php:211
@@ -830,7 +830,7 @@ msgstr "託管"
 #: _includes/settings/assets-ip-addresses.inc.php:23 assets/index.php:68
 #: assets/ip-addresses.php:163
 msgid "IP Addresses"
-msgstr "IP位址"
+msgstr "IP 位址"
 
 #: _includes/settings/assets-main.inc.php:23
 msgid "Asset Management"
@@ -848,13 +848,13 @@ msgstr "網域註冊商帳戶"
 
 #: _includes/settings/assets-registrar-fees-missing.inc.php:23
 msgid "Domain Registrar Fees Missing"
-msgstr "網域註冊商費用缺失"
+msgstr "網域註冊商費用未設定"
 
 #: _includes/settings/assets-registrar-fees-missing.inc.php:24
 #: _includes/settings/assets-ssl-provider-fees-missing.inc.php:24
 #: assets/ssl-provider-fees-missing.php:66
 msgid "Missing Fees"
-msgstr "缺失費用"
+msgstr "未設定的費用"
 
 #: _includes/settings/assets-registrar-fees.inc.php:23
 #: _includes/settings/reporting-domain-fees.inc.php:23
@@ -873,7 +873,7 @@ msgstr "SSL 提供者帳戶"
 
 #: _includes/settings/assets-ssl-provider-fees-missing.inc.php:23
 msgid "SSL Provider Fees Missing"
-msgstr "SSL 提供者費用缺失"
+msgstr "SSL 提供者費用未設定"
 
 #: _includes/settings/assets-ssl-provider-fees.inc.php:23
 #: _includes/settings/reporting-ssl-fees.inc.php:23
@@ -896,7 +896,7 @@ msgstr "編輯域"
 
 #: _includes/settings/dw-add-server.inc.php:23
 msgid "Add DW Server"
-msgstr "新增DW伺服器"
+msgstr "新增 DW 伺服器"
 
 #: _includes/settings/dw-edit-server.inc.php:23
 msgid "Edit DW Server"
@@ -943,7 +943,7 @@ msgstr "重建"
 
 #: _includes/settings/dw-servers.inc.php:23
 msgid "Manage DW Servers"
-msgstr "管理DW伺服器"
+msgstr "管理 DW 伺服器"
 
 #: _includes/settings/install.currency.inc.php:23
 msgid "Select Your Currency"
@@ -985,7 +985,7 @@ msgstr "將網域新增至佇列"
 
 #: _includes/settings/queue-info.inc.php:23
 msgid "Domain Queue Information"
-msgstr "域隊列資訊"
+msgstr "域佇列資訊"
 
 #: _includes/settings/queue-info.inc.php:24
 msgid "Information"
@@ -994,7 +994,7 @@ msgstr "資訊"
 #: _includes/settings/queue-main.inc.php:23 dashboard/index.php:189
 #: queue/index.php:158 queue/index.php:646
 msgid "Domain Queue"
-msgstr "域隊列"
+msgstr "域佇列"
 
 #: _includes/settings/reporting-domain-cost-by-category.inc.php:23
 msgid "Domain Cost by Category Report"
@@ -1135,7 +1135,7 @@ msgstr "SSL 費用"
 #: _includes/settings/segments-add.inc.php:23 segments/add.php:198
 #: segments/index.php:212
 msgid "Add Segment"
-msgstr "添加段"
+msgstr "新增段"
 
 #: _includes/settings/segments-edit.inc.php:23
 msgid "Edit Segment"
@@ -1175,7 +1175,7 @@ msgstr "您伺服器上的軟體比您的資料庫版本舊。這絕對不應該
 
 #: _includes/update.inc.php:91 _includes/update.inc.php:92
 msgid "Please logout and log back in, and if the problem persists please contact your %s administrator."
-msgstr "請登出並重新登錄，如果問題仍然存在，請聯絡您的 %s 管理員。"
+msgstr "請登出並重新登入，如果問題仍然存在，請聯絡您的 %s 管理員。"
 
 #: _includes/update.inc.php:98
 msgid "Your Database is already up-to-date"
@@ -1203,7 +1203,7 @@ msgstr "如果您想要定期備份資料、需要將 %s 移至新伺服器或�
 
 #: admin/backup/index.php:130
 msgid "This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file."
-msgstr "此過程會備份資料庫中儲存的資料。如果您還想保存資料庫連接訊息，則應該備份 /_includes/config.inc.php 檔案。"
+msgstr "此過程會備份資料庫中儲存的資料。如果您還想儲存資料庫連接資訊，則應該備份 /_includes/config.inc.php 檔案。"
 
 #: admin/dw/intro.php:53 domains/csv-importer/index.php:120
 #: domains/csv-importer/index.php:124 queue/intro.php:71
@@ -1252,7 +1252,7 @@ msgstr "清理"
 
 #: admin/backup/index.php:148
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
-msgstr "按一下此處刪除可能保存在您的伺服器上的所有過去的備份和還原檔案。"
+msgstr "按一下此處刪除可能儲存在您的伺服器上的所有過去的備份和還原檔案。"
 
 #: admin/backup/index.php:149 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
@@ -1304,7 +1304,7 @@ msgstr "已插入"
 
 #: admin/debug-log/index.php:113
 msgid "The Debug Log is empty"
-msgstr "調試日誌為空"
+msgstr "除錯日誌為空"
 
 #: admin/debug-log/index.php:117
 msgid "Debugging can be enabled in %sSettings%s."
@@ -1312,7 +1312,7 @@ msgstr "可以在 %sSettings%s 中啟用偵錯。"
 
 #: admin/debug-log/index.php:123 admin/maintenance/index.php:50
 msgid "Clear Debug Log"
-msgstr "清除調試日誌"
+msgstr "清除除錯日誌"
 
 #: admin/debug-log/index.php:137 segments/index.php:143
 msgid "Insert Time"
@@ -1346,7 +1346,7 @@ msgstr "預設虛擬主機提供者"
 #: admin/defaults/index.php:181 admin/defaults/index.php:264
 #: settings/defaults/index.php:229 settings/defaults/index.php:294
 msgid "Default IP Address"
-msgstr "預設IP位址"
+msgstr "預設 IP 位址"
 
 #: admin/defaults/index.php:194 admin/defaults/index.php:277
 #: settings/defaults/index.php:239 settings/defaults/index.php:304
@@ -1405,7 +1405,7 @@ msgstr "資料庫欄位名稱"
 
 #: admin/domain-fields/add.php:174 admin/ssl-fields/add.php:174
 msgid "The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField)."
-msgstr "資料庫欄位名稱只能包含字母和底線（即sample_field 或SampleField）。"
+msgstr "資料庫欄位名稱只能包含字母和底線（即 sample_field 或 SampleField）。"
 
 #: admin/domain-fields/add.php:174 admin/ssl-fields/add.php:174
 msgid "The Database Field Name cannot be renamed."
@@ -1457,7 +1457,7 @@ msgstr "筆記"
 #: admin/domain-fields/add.php:197 admin/domain-fields/index.php:131
 #: admin/ssl-fields/add.php:197 admin/ssl-fields/index.php:129
 msgid "Add Custom Field"
-msgstr "新增自訂字段"
+msgstr "新增自訂欄位"
 
 #: admin/domain-fields/edit.php:68
 msgid "The Custom Domain Field you're trying to edit is invalid"
@@ -1493,16 +1493,16 @@ msgstr "節省"
 
 #: admin/domain-fields/edit.php:251
 msgid "Custom Domain Field"
-msgstr "自訂域字段"
+msgstr "自訂域欄位"
 
 #: admin/domain-fields/index.php:53
 msgid "custom_domain_field_list"
-msgstr "自訂域字段列表"
+msgstr "自訂域欄位列表"
 
 #: admin/domain-fields/index.php:62 admin/ssl-fields/index.php:62
 #: admin/ssl-fields/index.php:137
 msgid "DB Field"
-msgstr "資料庫字段"
+msgstr "資料庫欄位"
 
 #: admin/domain-fields/index.php:66 admin/dw/servers.php:73
 #: admin/ssl-fields/index.php:66 admin/users/index.php:73
@@ -1524,7 +1524,7 @@ msgstr "創作類型"
 #: assets/ssl-types.php:65 domains/index.php:753 segments/index.php:142
 #: ssl/index.php:476
 msgid "Created By"
-msgstr "創建者"
+msgstr "建立者"
 
 #: admin/domain-fields/index.php:69 admin/domain-fields/index.php:142
 #: admin/dw/servers.php:76 admin/dw/servers.php:144
@@ -1563,11 +1563,11 @@ msgstr "以下是已新增至 %s 的所有 %s 的清單。"
 
 #: admin/domain-fields/index.php:118
 msgid "Custom Domain Fields help extend the functionality of %s by allowing the user to create their own data fields."
-msgstr "自訂網域字段允許使用者建立自己的資料字段，從而幫助擴展 %s 的功能。"
+msgstr "自訂網域欄位允許使用者建立自己的資料欄位，從而幫助擴展 %s 的功能。"
 
 #: admin/domain-fields/index.php:119
 msgid "For example, if you wanted to keep track of which domains are currently setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains."
-msgstr "例如，如果您想追蹤目前在 Google Analytics 中設定的網域，您可以建立一個新的 Google Analytics 複選框欄位並開始追蹤每個網域的此資訊。"
+msgstr "例如，如果您想追蹤目前在 Google Analytics 中設定的網域，您可以建立一個新的 Google Analytics 核取方塊欄位並開始追蹤每個網域的此資訊。"
 
 #: admin/domain-fields/index.php:120
 msgid "Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!"
@@ -1593,11 +1593,11 @@ msgstr "姓名"
 
 #: admin/domain-fields/index.php:139
 msgid "DB Fields"
-msgstr "資料庫字段"
+msgstr "資料庫欄位"
 
 #: admin/dw/add-server.php:77
 msgid "Server %s (%s) added"
-msgstr "伺服器 %s (%s) 已添加"
+msgstr "伺服器 %s (%s) 已新增"
 
 #: admin/dw/add-server.php:84 admin/dw/edit-server.php:64
 msgid "Enter a display name for the server"
@@ -1622,7 +1622,7 @@ msgstr "輸入使用者名稱"
 
 #: admin/dw/add-server.php:89 admin/dw/edit-server.php:79
 msgid "Enter either the API token or remote access key/hash"
-msgstr "輸入 API 令牌或遠端存取金鑰/哈希"
+msgstr "輸入 API 令牌或遠端存取金鑰/雜湊"
 
 #: admin/dw/add-server.php:105 admin/dw/edit-server.php:205
 msgid "Enter the display name for this server"
@@ -1681,12 +1681,12 @@ msgstr "輸入 WHM 安裝的使用者名稱。"
 
 #: admin/dw/add-server.php:114 admin/dw/edit-server.php:214
 msgid "Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use."
-msgstr "僅需要以下項目之一：API 令牌或遠端存取金鑰/哈希。不過，遠端存取金鑰/雜湊將從版本 68 中的 WHM 中刪除，因此如果您的 WHM 已經支援 API 令牌，那麼您應該使用它。"
+msgstr "僅需要以下項目之一：API 令牌或遠端存取金鑰/雜湊。不過，遠端存取金鑰/雜湊將從版本 68 中的 WHM 中刪除，因此如果您的 WHM 已經支援 API 令牌，那麼您應該使用它。"
 
 #: admin/dw/add-server.php:116 admin/dw/edit-server.php:216
 #: admin/dw/servers.php:66
 msgid "API Token"
-msgstr "API令牌"
+msgstr "API 令牌"
 
 #: admin/dw/add-server.php:116 admin/dw/edit-server.php:216
 msgid "Enter the API token."
@@ -1694,11 +1694,11 @@ msgstr "輸入 API 令牌。"
 
 #: admin/dw/add-server.php:117 admin/dw/edit-server.php:217
 msgid "Remote Access Key/Hash"
-msgstr "遠端存取密鑰/哈希"
+msgstr "遠端存取金鑰/雜湊"
 
 #: admin/dw/add-server.php:117 admin/dw/edit-server.php:217
 msgid "Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for \"Remote Access\". Click on the \"Setup Remote Access Key\" option on the left, and your hash will be displayed on the right-hand side of the screen."
-msgstr "輸入 WHM 安裝的遠端存取金鑰/雜湊值。您可以透過登入並蒐索「遠端存取」從 WHM 檢索此資訊。點擊左側的「設定遠端存取金鑰」選項，您的雜湊值將顯示在螢幕右側。"
+msgstr "輸入 WHM 安裝的遠端存取金鑰/雜湊值。您可以透過登入並蒐索「遠端存取」從 WHM 檢索此資訊。點選左側的「設定遠端存取金鑰」選項，您的雜湊值將顯示在螢幕右側。"
 
 #: admin/dw/add-server.php:119
 msgid "Add Server"
@@ -1714,7 +1714,7 @@ msgstr "重建資料倉儲"
 
 #: admin/dw/dw.php:191 admin/dw/dw.php:234
 msgid "View Data"
-msgstr "查看數據"
+msgstr "檢視資料"
 
 #: admin/dw/dw.php:199
 msgid "Server Accounts"
@@ -1744,7 +1744,7 @@ msgstr "您的資料倉儲中目前沒有設定任何伺服器。"
 #: assets/ssl-provider-fees.php:156 assets/ssl-providers.php:230
 #: assets/ssl-types.php:197 segments/index.php:222
 msgid "Click here to add one"
-msgstr "點擊此處新增一個"
+msgstr "點選此處新增一個"
 
 #: admin/dw/dw.php:276 admin/dw/dw.php:395
 msgid "Successful"
@@ -1833,7 +1833,7 @@ msgstr "如果您的 Web 伺服器不執行 WHM/cPanel，或者您不想將 Web 
 
 #: admin/dw/intro.php:53
 msgid "Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server."
-msgstr "將您的 Web 伺服器匯入資料倉儲將%s不會%s修改您的任何其他 %s 數據，也不會修改您的 Web 伺服器上的任何資料。"
+msgstr "將您的 Web 伺服器匯入資料倉儲將%s不會%s修改您的任何其他 %s 資料，也不會修改您的 Web 伺服器上的任何資料。"
 
 #: admin/dw/intro.php:55
 msgid "Automating Builds"
@@ -1845,15 +1845,15 @@ msgstr "如果您要使用資料倉儲，建議您設定 %ssystem cron/scheduled
 
 #: admin/dw/intro.php:58
 msgid "There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."
-msgstr "建置期間會在後台完成大量工作，如果您嘗試透過軟體而不是使用 cron 作業進行構建，Web 瀏覽器通常會超時，從而導致資料倉儲中的資訊不完整和遺失。"
+msgstr "建置期間會在後台完成大量工作，如果您嘗試透過軟體而不是使用 cron 作業進行建構，Web 瀏覽器通常會超時，從而導致資料倉儲中的資訊不完整和遺失。"
 
 #: admin/dw/intro.php:60
 msgid "After you've setup the cron job you will be able to manage the Data Warehouse scheduling through %s's Task Scheduler"
-msgstr "設定 cron 作業後，您將能夠透過 %s 的任務計劃程序管理資料倉儲計劃"
+msgstr "設定 cron 作業後，您將能夠透過 %s 的任務計劃程式管理資料倉儲計劃"
 
 #: admin/dw/intro.php:63
 msgid "Supported Data"
-msgstr "支援的數據"
+msgstr "支援的資料"
 
 #: admin/dw/intro.php:64
 msgid "The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse."
@@ -1861,15 +1861,15 @@ msgstr "目前支援以下 WHM 部分，但我們的最終目標是擁有可透�
 
 #: admin/dw/intro.php:68
 msgid "Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer"
-msgstr "網域、IP 位址、擁有者、使用者、聯絡人電子郵件、方案、主題、Shell、分割區、磁碟限制、磁碟使用情況、最大外掛數、最大FTP 帳戶數、最大電子郵件清單數、最大停放網域數、最大POP 帳戶數、最大SQL 帳戶數、最大數量子網域、建立日期、掛起狀態、掛起原因、掛起時間、每小時最大電子郵件數、延遲前失敗電子郵件百分比、延遲前最小失敗電子郵件數量"
+msgstr "網域、IP 位址、擁有者、使用者、聯絡人電子郵件、方案、主題、Shell、分割區、磁碟限制、磁碟使用情況、最大附加網域數、最大 FTP 帳戶數、最大電子郵件清單數、最大停放網域數、最大 POP 帳戶數、最大 SQL 帳戶數、最大數量子網域、建立日期、掛起狀態、掛起原因、掛起時間、每小時最大電子郵件數、延遲前失敗電子郵件百分比、延遲前最小失敗電子郵件數量"
 
 #: admin/dw/intro.php:71
 msgid "Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server"
-msgstr "區域檔案名稱、區域資料的原始/主要來源、管理電子郵件、序號、刷新、重試、到期、最小 TTL、權威名稱伺服器"
+msgstr "區域檔案名稱、區域資料的原始/主要來源、管理電子郵件、序號、重新整理、重試、到期、最小 TTL、權威名稱伺服器"
 
 #: admin/dw/intro.php:74
 msgid "TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data"
-msgstr "TTL、類別、類型、IP 位址、CNAME、郵件伺服器、郵件伺服器優先權、TXT 資料、區域行數、行數、原始數據"
+msgstr "TTL、類別、類型、IP 位址、CNAME、郵件伺服器、郵件伺服器優先權、TXT 資料、區域檔案行號、行數、原始資料"
 
 #: admin/dw/list-accounts.php:84
 msgid "dw_account_list"
@@ -1926,7 +1926,7 @@ msgstr "領域"
 #: settings/display/index.php:340 ssl/add.php:378 ssl/edit.php:450
 #: ssl/index.php:470 ssl/index.php:1143 ssl/index.php:1539
 msgid "IP Address"
-msgstr "IP位址"
+msgstr "IP 位址"
 
 #: admin/dw/list-accounts.php:115 assets/account-owners.php:60
 #: assets/edit/account-owner.php:220 assets/registrar-accounts.php:86
@@ -1977,11 +1977,11 @@ msgstr "已用磁碟 (MB)"
 
 #: admin/dw/list-accounts.php:124
 msgid "Max Addons"
-msgstr "最大插件"
+msgstr "最大附加網域數"
 
 #: admin/dw/list-accounts.php:125
 msgid "Max FTP"
-msgstr "最大FTP"
+msgstr "最大 FTP"
 
 #: admin/dw/list-accounts.php:126
 msgid "Max Email Lists"
@@ -2053,7 +2053,7 @@ msgstr "帳戶"
 
 #: admin/dw/list-accounts.php:212 admin/dw/list-zones.php:243
 msgid "Data"
-msgstr "數據"
+msgstr "資料"
 
 #: admin/dw/list-zones.php:85
 msgid "dw_dns_zones"
@@ -2092,7 +2092,7 @@ msgstr "序列"
 
 #: admin/dw/list-zones.php:146
 msgid "Zone Refresh TTL"
-msgstr "區域刷新 TTL"
+msgstr "區域重新整理 TTL"
 
 #: admin/dw/list-zones.php:147
 msgid "Retry Interval"
@@ -2112,7 +2112,7 @@ msgstr "權威名稱伺服器"
 
 #: admin/dw/list-zones.php:151
 msgid "DNS Record"
-msgstr "DNS記錄"
+msgstr "DNS 記錄"
 
 #: admin/dw/list-zones.php:152
 msgid "Record TTL"
@@ -2140,7 +2140,7 @@ msgstr "郵件伺服器優先權"
 
 #: admin/dw/list-zones.php:159
 msgid "Text Record Data"
-msgstr "文字記錄數據"
+msgstr "文字記錄資料"
 
 #: admin/dw/list-zones.php:160
 msgid "Zone Line #"
@@ -2180,7 +2180,7 @@ msgstr "dw_伺服器"
 
 #: admin/dw/servers.php:67
 msgid "Hash"
-msgstr "哈希值"
+msgstr "雜湊值"
 
 #: admin/dw/servers.php:69
 msgid "DW Accounts"
@@ -2208,11 +2208,11 @@ msgstr "版本"
 
 #: admin/info/index.php:52
 msgid "Local IP Address"
-msgstr "本地IP位址"
+msgstr "本機 IP 位址"
 
 #: admin/info/index.php:53
 msgid "Remote IP Address"
-msgstr "遠端IP位址"
+msgstr "遠端 IP 位址"
 
 #: admin/info/index.php:54
 msgid "Web Server OS"
@@ -2224,7 +2224,7 @@ msgstr "網路伺服器軟體"
 
 #: admin/info/index.php:56
 msgid "PHP Version"
-msgstr "PHP版本"
+msgstr "PHP 版本"
 
 #: admin/info/index.php:57
 msgid "PHP Error Log Location"
@@ -2232,15 +2232,15 @@ msgstr "PHP 錯誤日誌位置"
 
 #: admin/info/index.php:58
 msgid "MySQL Version"
-msgstr "MySQL版本"
+msgstr "MySQL 版本"
 
 #: admin/info/index.php:59
 msgid "MySQL Mode"
-msgstr "MySQL模式"
+msgstr "MySQL 模式"
 
 #: admin/maintenance/clear-log.php:41
 msgid "Debug Log Cleared"
-msgstr "調試日誌已清除"
+msgstr "除錯日誌已清除"
 
 #: admin/maintenance/index.php:48
 msgid "Clear Queue Processing"
@@ -2256,19 +2256,19 @@ msgstr "這將完全刪除所有佇列清單和網域，無論其狀態為何。
 
 #: admin/scheduler/index.php:53
 msgid "The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations."
-msgstr "任務規劃程式可讓您在指定時間運行各種系統作業，這有助於使您的 %s 安裝保持最新並順利運行，並通知您重要訊息，例如透過電子郵件向您發送有關即將推出的網域的信息& SSL 憑證過期。"
+msgstr "任務規劃程式可讓您在指定時間執行各種系統作業，這有助於使您的 %s 安裝保持最新並順利執行，並通知您重要訊息，例如透過電子郵件提醒您即將到期的網域與 SSL 憑證。"
 
 #: admin/scheduler/index.php:54
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
-msgstr "為了使用任務排程程序，您必須在 Web 伺服器上設定 cron/排程作業來執行檔案 %scron.php%s，該檔案位於 %s 安裝的根資料夾中。"
+msgstr "為了使用任務排程器，您必須在 Web 伺服器上設定 cron/排程作業來執行檔案 %scron.php%s，該檔案位於 %s 安裝的根資料夾中。"
 
 #: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
-msgstr "使用任務規劃程序是可選的，但%s強烈%s建議使用。"
+msgstr "使用任務規劃程式是可選的，但%s強烈%s建議使用。"
 
 #: admin/scheduler/index.php:63
 msgid "Current Timestamp"
-msgstr "當前時間戳"
+msgstr "目前時間戳"
 
 #: admin/scheduler/index.php:87
 msgid "Runs"
@@ -2286,11 +2286,11 @@ msgstr "地位"
 
 #: admin/scheduler/index.php:98
 msgid "Last Run"
-msgstr "最後一次運行"
+msgstr "最後一次執行"
 
 #: admin/scheduler/index.php:108 admin/scheduler/run.php:77
 msgid "Next Run"
-msgstr "下次運行"
+msgstr "下次執行"
 
 #: admin/scheduler/index.php:119
 msgid "Change Time"
@@ -2348,7 +2348,7 @@ msgstr "已執行系統清理"
 #: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
 #: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
-msgstr "發送到期電子郵件"
+msgstr "傳送到期電子郵件"
 
 #: admin/scheduler/run.php:140
 msgid "Conversion Rates Updated"
@@ -2375,11 +2375,11 @@ msgstr "資料倉儲重建"
 #: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
 #: cron.php:172
 msgid "Process Domain Queue"
-msgstr "進程域佇列"
+msgstr "程序域佇列"
 
 #: admin/scheduler/run.php:188 classes/DomainMOD/DomainQueue.php:465
 msgid "Domain Queue Processed"
-msgstr "域隊列已處理"
+msgstr "域佇列已處理"
 
 #: admin/scheduler/run.php:198
 msgid "Tasks Disabled in Demo Mode"
@@ -2387,7 +2387,7 @@ msgstr "演示模式下已停用的任務"
 
 #: admin/scheduler/run.php:202
 msgid "Task Run"
-msgstr "任務運行"
+msgstr "任務執行"
 
 #: admin/scheduler/update.php:74
 msgid "Task Updated"
@@ -2427,7 +2427,7 @@ msgstr "輸入 %s 安裝的完整 URL，不包括尾部斜線（範例：http://
 
 #: admin/settings/index.php:166
 msgid "This should be a valid email address that is monitored by the %s System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by %s."
-msgstr "這應該是由 %s 系統管理員監控的有效電子郵件地址。它將用於各種系統位置，例如 %s 發送的電子郵件的 REPLY-TO 位址。"
+msgstr "這應該是由 %s 系統管理員監控的有效電子郵件地址。它將用於各種系統位置，例如 %s 傳送的電子郵件的 REPLY-TO 位址。"
 
 #: admin/settings/index.php:167
 msgid "Expiration Days to Display"
@@ -2443,7 +2443,7 @@ msgstr "電子郵件簽名"
 
 #: admin/settings/index.php:168
 msgid "Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user's full name and email address. Use the below menu to choose the user that you would like to appear in your system's email signature."
-msgstr "系統發送的每封電子郵件（新帳戶通知、到期電子郵件等）都包含電子郵件簽名，其中包括使用者的全名和電子郵件地址。使用下面的選單選擇您希望在系統電子郵件簽名中顯示的使用者。"
+msgstr "系統傳送的每封電子郵件（新帳戶通知、到期電子郵件等）都包含電子郵件簽名，其中包括使用者的全名和電子郵件地址。使用下面的選單選擇您希望在系統電子郵件簽名中顯示的使用者。"
 
 #: admin/settings/index.php:180
 msgid "Currency Converter"
@@ -2459,7 +2459,7 @@ msgstr "大模式"
 
 #: admin/settings/index.php:184
 msgid "If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality."
-msgstr "如果您有一個非常大的資料庫，並且您的主網域頁面加載緩慢，啟用大模式應該可以解決問題，但代價是失去一些高級過濾和移動功能。"
+msgstr "如果您有一個非常大的資料庫，並且您的主網域頁面載入緩慢，啟用大模式應該可以解決問題，但代價是失去一些高階過濾和移動功能。"
 
 #: classes/DomainMOD/System.php:129 classes/DomainMOD/System.php:130
 #: classes/DomainMOD/System.php:131 classes/DomainMOD/System.php:162
@@ -2481,11 +2481,11 @@ msgstr "偵錯模式"
 
 #: admin/settings/index.php:186
 msgid "Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."
-msgstr "除非您在使用 %s 時遇到問題並且支援人員要求您將其打開，否則您應該將其保持關閉。"
+msgstr "除非您在使用 %s 時遇到問題並且支援人員要求您將其開啟，否則您應該將其保持關閉。"
 
 #: admin/settings/index.php:188
 msgid "Local PHP Log"
-msgstr "本地PHP日誌"
+msgstr "本機 PHP 日誌"
 
 #: admin/settings/index.php:189
 msgid "This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log."
@@ -2523,7 +2523,7 @@ msgstr "不"
 
 #: admin/settings/index.php:197
 msgid "SMTP Server"
-msgstr "SMTP伺服器"
+msgstr "SMTP 伺服器"
 
 #: admin/settings/index.php:197
 msgid "If you plan on using an external SMTP server, enter the server name here."
@@ -2539,7 +2539,7 @@ msgstr "傳輸層安全協定"
 
 #: admin/settings/index.php:200
 msgid "SSL"
-msgstr "SSL協議"
+msgstr "SSL 協議"
 
 #: admin/settings/index.php:202
 msgid "SMTP Server Port"
@@ -2559,7 +2559,7 @@ msgstr "這通常與 SMTP 電子郵件地址相同。"
 
 #: admin/settings/index.php:205
 msgid "SMTP Password"
-msgstr "郵件發送密碼"
+msgstr "郵件傳送密碼"
 
 #: admin/settings/index.php:208
 msgid "Update System Settings"
@@ -2587,7 +2587,7 @@ msgstr "自訂 SSL 欄位 %s (%s) 已刪除"
 
 #: admin/ssl-fields/edit.php:251
 msgid "Custom SSL Field"
-msgstr "自訂 SSL 字段"
+msgstr "自訂 SSL 欄位"
 
 #: admin/ssl-fields/index.php:53
 msgid "custom_ssl_field_list"
@@ -2595,7 +2595,7 @@ msgstr "自訂 ssl 欄位列表"
 
 #: admin/ssl-fields/index.php:118
 msgid "Custom SSL Fields help extend the functionality of %s by allowing the user to create their own data fields."
-msgstr "自訂 SSL 字段允許使用者建立自己的資料字段，從而幫助擴展 %s 的功能。"
+msgstr "自訂 SSL 欄位允許使用者建立自己的資料欄位，從而幫助擴展 %s 的功能。"
 
 #: admin/ssl-fields/index.php:119
 msgid "For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data."
@@ -2611,7 +2611,7 @@ msgstr "%s按一下此處%s 新增一項。"
 
 #: admin/users/add.php:90
 msgid "A user with that username already exists"
-msgstr "使用該用戶名的用戶已存在"
+msgstr "使用該使用者名稱的使用者已存在"
 
 #: admin/users/add.php:91
 msgid "A user with that email address already exists"
@@ -2619,11 +2619,11 @@ msgstr "使用該電子郵件地址的使用者已存在"
 
 #: admin/users/add.php:165
 msgid "User %s %s (%s / %s) added."
-msgstr "新增了用戶 %s %s (%s / %s)。"
+msgstr "新增了使用者 %s %s (%s / %s)。"
 
 #: admin/users/add.php:167
 msgid "You can either manually email the above credentials to the user, or you can %sclick here%s to have %s email them for you."
-msgstr "您可以手動將上述憑證透過電子郵件發送給用戶，也可以%s點擊此處%s 讓 %s 透過電子郵件將其發送給您。"
+msgstr "您可以手動將上述憑證透過電子郵件傳送給使用者，也可以%s點選此處%s，讓 %s 代您透過電子郵件傳送給該使用者。"
 
 #: admin/users/add.php:169
 msgid "Use the below form to customize the new user's account."
@@ -2631,7 +2631,7 @@ msgstr "使用下面的表格來自訂新使用者的帳戶。"
 
 #: admin/users/add.php:194
 msgid "Enter the new user's first name"
-msgstr "輸入新用戶的名字"
+msgstr "輸入新使用者的名字"
 
 #: admin/users/add.php:195
 msgid "Enter the new user's last name"
@@ -2639,7 +2639,7 @@ msgstr "輸入新使用者的姓氏"
 
 #: admin/users/add.php:196
 msgid "Enter the new user's username"
-msgstr "輸入新用戶的用戶名"
+msgstr "輸入新使用者的使用者名稱"
 
 #: admin/users/add.php:197
 msgid "Enter the new user's email address"
@@ -2669,7 +2669,7 @@ msgstr "您無權編輯主管理員帳戶"
 
 #: admin/users/edit.php:232
 msgid "User %s %s (%s) updated"
-msgstr "用戶 %s %s (%s) 已更新"
+msgstr "使用者 %s %s (%s) 已更新"
 
 #: admin/users/edit.php:255
 msgid "Enter the user's first name"
@@ -2689,7 +2689,7 @@ msgstr "您輸入的電子郵件地址無效"
 
 #: admin/users/edit.php:301
 msgid "The admin user cannot be deleted"
-msgstr "管理員用戶無法刪除"
+msgstr "管理員使用者無法刪除"
 
 #: admin/users/edit.php:302
 msgid "You can't delete yourself"
@@ -2697,7 +2697,7 @@ msgstr "你無法刪除自己"
 
 #: admin/users/edit.php:318
 msgid "User %s %s (%s) deleted"
-msgstr "用戶 %s %s (%s) 已刪除"
+msgstr "使用者 %s %s (%s) 已刪除"
 
 #: _includes/layout/header.inc.php:119 admin/users/edit.php:352
 #: settings/profile/index.php:245
@@ -2734,7 +2734,7 @@ msgstr "只讀"
 
 #: admin/users/edit.php:424
 msgid "Read-Only User"
-msgstr "只讀用戶"
+msgstr "只讀使用者"
 
 #: admin/users/edit.php:430 admin/users/edit.php:434
 msgid "Active Account"
@@ -2746,7 +2746,7 @@ msgstr "重設和顯示密碼"
 
 #: admin/users/edit.php:457
 msgid "Reset and Email New Password to User"
-msgstr "重置新密碼並將新密碼透過電子郵件發送給用戶"
+msgstr "重設新密碼並將新密碼透過電子郵件傳送給使用者"
 
 #: admin/users/index.php:53
 msgid "user_list"
@@ -2799,7 +2799,7 @@ msgstr "罷工"
 
 #: admin/users/reset-password.php:73
 msgid "The password could not be reset due to an invalid username."
-msgstr "由於使用者名稱無效，無法重置密碼。"
+msgstr "由於使用者名稱無效，無法重設密碼。"
 
 #: admin/users/reset-password.php:107
 msgid "The new password for %s is %s"
@@ -2807,7 +2807,7 @@ msgstr "%s 的新密碼是 %s"
 
 #: admin/users/reset-password.php:116
 msgid "The password has been reset and emailed to the account holder"
-msgstr "密碼已重設並透過電子郵件發送給帳戶持有人"
+msgstr "密碼已重設並透過電子郵件傳送給帳戶持有人"
 
 #: assets/account-owners.php:51
 msgid "account_owner_list"
@@ -2891,7 +2891,7 @@ msgstr "個人資料名稱"
 #: assets/edit/dns.php:316 assets/edit/dns.php:327 assets/edit/dns.php:338
 #: assets/edit/dns.php:349
 msgid "DNS Server"
-msgstr "DNS伺服器"
+msgstr "DNS 伺服器"
 
 #: assets/add/host.php:68
 msgid "Web Host %s added"
@@ -2919,7 +2919,7 @@ msgstr "輸入 IP 位址的名稱"
 
 #: assets/add/ip-address.php:81
 msgid "Enter the IP address"
-msgstr "輸入IP位址"
+msgstr "輸入 IP 位址"
 
 #: assets/add/ip-address.php:98 assets/edit/ip-address.php:155
 #: assets/ip-addresses.php:60 domains/index.php:744 domains/results.php:167
@@ -2998,23 +2998,23 @@ msgstr "經銷商 ID"
 #: assets/add/registrar-account.php:179 assets/edit/registrar-account.php:457
 #: assets/registrar-accounts.php:81
 msgid "API App Name"
-msgstr "API應用程式名稱"
+msgstr "API 應用程式名稱"
 
 #: assets/add/registrar-account.php:180 assets/edit/registrar-account.php:422
 #: assets/edit/registrar-account.php:458 assets/registrar-accounts.php:82
 #: queue/add/step-two/index.php:448
 msgid "API Key"
-msgstr "API金鑰"
+msgstr "API 金鑰"
 
 #: assets/add/registrar-account.php:181 assets/edit/registrar-account.php:431
 #: assets/edit/registrar-account.php:459 assets/registrar-accounts.php:83
 #: queue/add/step-two/index.php:457
 msgid "API Secret"
-msgstr "API機密"
+msgstr "API 機密"
 
 #: assets/add/registrar-account.php:183 assets/edit/registrar-account.php:468
 msgid "API IP Address"
-msgstr "API IP位址"
+msgstr "API IP 位址"
 
 #: assets/add/registrar-account.php:183 assets/edit/registrar-account.php:468
 msgid "The IP Address that you whitelisted with the domain registrar for API access."
@@ -3034,7 +3034,7 @@ msgstr "編輯費"
 
 #: assets/add/registrar-fee.php:156 assets/add/ssl-provider-fee.php:143
 msgid "The fee for %s has been added"
-msgstr "%s 的費用已添加"
+msgstr "%s 的費用已新增"
 
 #: assets/add/registrar-fee.php:189 assets/edit/registrar-fee.php:177
 msgid "Back to Registrar Fees"
@@ -3117,7 +3117,7 @@ msgstr "註冊商網址"
 
 #: assets/add/registrar.php:110 assets/edit/registrar.php:218
 msgid "API Support"
-msgstr "API支援"
+msgstr "API 支援"
 
 #: assets/add/registrar.php:110 assets/edit/registrar.php:218
 msgid "If the registrar has an API please select it from the list below."
@@ -3346,7 +3346,7 @@ msgstr "輸入 IP 位址的名稱"
 
 #: assets/edit/ip-address.php:87
 msgid "Enter the IP Address"
-msgstr "輸入IP位址"
+msgstr "輸入 IP 位址"
 
 #: assets/edit/ip-address.php:126
 msgid "This IP Address has domains associated with it and cannot be deleted"
@@ -3399,7 +3399,7 @@ msgstr "已儲存"
 
 #: assets/edit/registrar-account.php:377 queue/add/step-two/index.php:403
 msgid "Registrar Account Username"
-msgstr "註冊商帳戶用戶名"
+msgstr "註冊商帳戶使用者名稱"
 
 #: assets/edit/registrar-account.php:386 queue/add/step-two/index.php:412
 msgid "Registrar Account Password"
@@ -3407,11 +3407,11 @@ msgstr "註冊商帳號密碼"
 
 #: assets/edit/registrar-account.php:413 queue/add/step-two/index.php:439
 msgid "API Application Name"
-msgstr "API應用程式名稱"
+msgstr "API 應用程式名稱"
 
 #: assets/edit/registrar-account.php:440 queue/add/step-two/index.php:466
 msgid "Connecting IP Address"
-msgstr "連接IP位址"
+msgstr "連接 IP 位址"
 
 #: assets/edit/registrar-account.php:452 queue/add/step-two/index.php:481
 msgid "Registrar Notes"
@@ -3537,7 +3537,7 @@ msgstr "IP 位址列表"
 
 #: assets/ip-addresses.php:65
 msgid "Default Domain IP Address"
-msgstr "預設域IP位址"
+msgstr "預設域 IP 位址"
 
 #: assets/ip-addresses.php:66
 msgid "Default SSL IP Address"
@@ -3557,7 +3557,7 @@ msgstr "API IP（名稱）"
 
 #: assets/registrar-accounts.php:85
 msgid "API IP (IP)"
-msgstr "API IP（IP）"
+msgstr "API IP (IP)"
 
 #: assets/registrar-accounts.php:88 assets/ssl-accounts.php:82
 msgid "Default Account"
@@ -3573,7 +3573,7 @@ msgstr "在新增註冊商帳戶之前，您必須新增至少一個註冊商。
 
 #: assets/registrar-accounts.php:285
 msgid "Click here to add a Registrar"
-msgstr "點擊此處新增註冊商"
+msgstr "點選此處新增註冊商"
 
 #: assets/registrar-accounts.php:289
 msgid "You don't currently have any Registrar Accounts."
@@ -3597,11 +3597,11 @@ msgstr "以下是與以下相關的所有費用的列表"
 
 #: assets/registrar-fees.php:148
 msgid "You have domains with %s that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible."
-msgstr "您有使用此 TLD 且帶有 %s 的網域，但尚無與之相關的費用。您應該盡快添加此費用。"
+msgstr "您有使用此 TLD 且帶有 %s 的網域，但尚無與之相關的費用。您應該盡快新增此費用。"
 
 #: assets/registrar-fees.php:150
 msgid "You have domains with %s that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible."
-msgstr "您擁有使用這些 TLD 且帶有 %s 的域名，但尚無與它們相關的費用。您應該盡快添加這些費用。"
+msgstr "您擁有使用這些 TLD 且帶有 %s 的域名，但尚無與它們相關的費用。您應該盡快新增這些費用。"
 
 #: assets/registrar-fees.php:157
 msgid "You don't currently have any fees associated with this domain registrar."
@@ -3641,7 +3641,7 @@ msgstr "預設註冊商"
 
 #: assets/registrars.php:66
 msgid "API Registrar"
-msgstr "API註冊商"
+msgstr "API 註冊商"
 
 #: assets/registrars.php:159
 msgid "Add Registrar"
@@ -3692,11 +3692,11 @@ msgstr "缺少 SSL 類型費用"
 
 #: assets/ssl-provider-fees.php:147
 msgid "You have SSL certificates with %s that use this SSL Type, however there are no fees associated with it yet. You should add this fee as soon as possible."
-msgstr "您擁有使用此 SSL 類型的 %s 的 SSL 證書，但尚無與之相關的費用。您應該盡快添加此費用。"
+msgstr "您擁有使用此 SSL 類型的 %s 的 SSL 證書，但尚無與之相關的費用。您應該盡快新增此費用。"
 
 #: assets/ssl-provider-fees.php:149
 msgid "You have SSL certificates with %s that use these SSL Types, however there are no fees associated with them yet. You should add these fees as soon as possible."
-msgstr "您擁有使用這些 SSL 類型的 %s 的 SSL 證書，但尚無與它們相關的費用。您應該盡快添加這些費用。"
+msgstr "您擁有使用這些 SSL 類型的 %s 的 SSL 證書，但尚無與它們相關的費用。您應該盡快新增這些費用。"
 
 #: assets/ssl-provider-fees.php:156
 msgid "You don't currently have any fees associated with this SSL provider."
@@ -3733,7 +3733,7 @@ msgstr "您目前沒有任何 SSL 類型。"
 
 #: bulk/cf/step-two/index.php:94 bulk/main/index.php:69
 msgid "Click here to choose the new"
-msgstr "點擊此處選擇新的"
+msgstr "點選此處選擇新的"
 
 #: bulk/cf/step-two/index.php:110 bulk/cf/step-two/index.php:141
 #: bulk/main/index.php:79 bulk/main/index.php:122
@@ -3783,7 +3783,7 @@ msgstr "請選擇新的%s"
 #: bulk/main/index.php:2276 domains/add.php:442 domains/edit.php:489
 #: domains/index.php:1582 reporting/domains/cost-by-host.php:157
 msgid "Web Hosting Provider"
-msgstr "虛擬主機提供商"
+msgstr "虛擬主機供應商"
 
 #: bulk/main/index.php:365
 msgid "Domains added"
@@ -3978,7 +3978,7 @@ msgstr "更改 DNS 設定檔"
 #: bulk/index.php:105 bulk/main/index.php:1882 bulk/main/index.php:1988
 #: bulk/main/index.php:2503
 msgid "Change IP Address"
-msgstr "更改IP位址"
+msgstr "更改 IP 位址"
 
 #: bulk/index.php:106 bulk/main/index.php:1884 bulk/main/index.php:1989
 #: bulk/main/index.php:2507
@@ -4001,12 +4001,12 @@ msgstr "新增註釋"
 #: bulk/cf/step-two/index.php:252 bulk/cf/step-two/index.php:414
 #: bulk/index.php:108 bulk/main/index.php:1991
 msgid "Update Custom Domain Field"
-msgstr "更新自訂域字段"
+msgstr "更新自訂域欄位"
 
 #: bulk/cf/step-one/index.php:70 bulk/cf/step-two/index.php:259
 #: bulk/index.php:79 bulk/main/index.php:1901
 msgid "The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks."
-msgstr "批次更新程式可讓您同時新增或修改多個網域，無論是數十個還是幾千個，只需點擊幾下即可。"
+msgstr "批次更新程式可讓您同時新增或修改多個網域，無論是數十個還是幾千個，只需點選幾下即可。"
 
 #: bulk/main/index.php:1912
 msgid "The following domains were added"
@@ -4106,7 +4106,7 @@ msgstr "更改虛擬主機提供者"
 
 #: bulk/cf/step-one/index.php:77
 msgid "Choose the Custom Field to Edit"
-msgstr "選擇要編輯的自訂字段"
+msgstr "選擇要編輯的自訂欄位"
 
 #: bulk/main/index.php:2010
 msgid "WARNING: In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted."
@@ -4209,7 +4209,7 @@ msgstr "新的 DNS 設定檔"
 
 #: bulk/main/index.php:2224
 msgid "New IP Address"
-msgstr "新IP位址"
+msgstr "新 IP 位址"
 
 #: bulk/main/index.php:2248
 msgid "New Registrar Account"
@@ -4278,7 +4278,7 @@ msgstr "無效的"
 #: classes/DomainMOD/DomainQueue.php:787 classes/DomainMOD/DomainQueue.php:799
 #: classes/DomainMOD/DomainQueue.php:833
 msgid "[created by queue]"
-msgstr "[由隊列創建]"
+msgstr "[由佇列建立]"
 
 #: classes/DomainMOD/DomainQueue.php:1375
 msgid "Queue Processing Cleared"
@@ -4286,7 +4286,7 @@ msgstr "佇列處理已清除"
 
 #: classes/DomainMOD/DomainQueue.php:1386
 msgid "Queues Cleared"
-msgstr "隊列已清除"
+msgstr "佇列已清除"
 
 #: classes/DomainMOD/DwBuild.php:91
 msgid "The Data Warehouse has been rebuilt"
@@ -4310,7 +4310,7 @@ msgstr "最小生存時間"
 
 #: classes/DomainMOD/DwDisplay.php:43
 msgid "Created"
-msgstr "已創建"
+msgstr "已建立"
 
 #: classes/DomainMOD/DwDisplay.php:44
 msgid "Contact"
@@ -4322,7 +4322,7 @@ msgstr "託管計劃"
 
 #: classes/DomainMOD/DwDisplay.php:47
 msgid "cPanel Theme"
-msgstr "c面板主題"
+msgstr "cPanel 主題"
 
 #: classes/DomainMOD/DwDisplay.php:52
 msgid "Home"
@@ -4342,7 +4342,7 @@ msgstr "清單"
 
 #: classes/DomainMOD/DwDisplay.php:60
 msgid "Addons"
-msgstr "外掛"
+msgstr "附加網域"
 
 #: classes/DomainMOD/DwDisplay.php:61
 msgid "Subdomains"
@@ -4387,11 +4387,11 @@ msgstr "主題"
 
 #: classes/DomainMOD/Email.php:69 classes/DomainMOD/Smtp.php:75
 msgid "Email :: SEND SUCCEEDED"
-msgstr "電子郵件 :: 發送成功"
+msgstr "電子郵件 :: 傳送成功"
 
 #: classes/DomainMOD/Email.php:75 classes/DomainMOD/Smtp.php:81
 msgid "Email :: SEND FAILED"
-msgstr "電子郵件 :: 發送失敗"
+msgstr "電子郵件 :: 傳送失敗"
 
 #: classes/DomainMOD/Email.php:88
 msgid "Upcoming Expirations"
@@ -4403,7 +4403,7 @@ msgstr "到期日"
 
 #: classes/DomainMOD/Email.php:114
 msgid "Expiration Email Sent"
-msgstr "已發送過期電子郵件"
+msgstr "已傳送過期電子郵件"
 
 #: classes/DomainMOD/Email.php:235
 msgid "No Upcoming Expirations"
@@ -4411,7 +4411,7 @@ msgstr "沒有即將到期的"
 
 #: classes/DomainMOD/Email.php:255
 msgid "No Users Are Subscribed"
-msgstr "沒有用戶訂閱"
+msgstr "沒有使用者訂閱"
 
 #: classes/DomainMOD/Email.php:290 classes/DomainMOD/Email.php:299
 msgid "Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days."
@@ -4427,7 +4427,7 @@ msgstr "您收到這封電子郵件是因為您目前訂閱了來自位於以下
 
 #: classes/DomainMOD/Email.php:392 classes/DomainMOD/Email.php:409
 msgid "To unsubscribe from these notifications please visit"
-msgstr "若要取消訂閱這些通知，請訪問"
+msgstr "若要取消訂閱這些通知，請存取"
 
 #: classes/DomainMOD/Layout.php:122
 msgid "Delete This"
@@ -4475,11 +4475,11 @@ msgstr "請閱讀"
 
 #: classes/DomainMOD/Notice.php:46
 msgid "If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data"
-msgstr "如果升級過程中出現問題且您沒有建立備份，可能無法還原您的數據"
+msgstr "如果升級過程中出現問題且您沒有建立備份，可能無法還原您的資料"
 
 #: classes/DomainMOD/Notice.php:47
 msgid "You should also make a note of your current version (%s), as this may be required by the recovery process"
-msgstr "您還應該記下當前版本 (%s)，因為恢復過程可能需要這樣做"
+msgstr "您還應該記下目前版本 (%s)，因為恢復過程可能需要這樣做"
 
 #: classes/DomainMOD/Notice.php:50
 msgid "Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take."
@@ -4495,7 +4495,7 @@ msgstr "停用"
 
 #: classes/DomainMOD/Scheduler.php:112 classes/DomainMOD/Scheduler.php:115
 msgid "Run Now"
-msgstr "立即運行"
+msgstr "立即執行"
 
 #: classes/DomainMOD/Scheduler.php:115
 msgid "Enable"
@@ -4582,7 +4582,7 @@ msgstr "需要注意"
 
 #: classes/DomainMOD/System.php:570
 msgid "External IP API Call"
-msgstr "外部IP API調用"
+msgstr "外部 IP API 呼叫"
 
 #: dashboard/index.php:124
 msgid "System Totals"
@@ -4628,7 +4628,7 @@ msgstr "待定（SSL 憑證）"
 
 #: debug/off/index.php:52 debug/on/index.php:53
 msgid "Debugging Mode is %s"
-msgstr "調試模式是 %s"
+msgstr "除錯模式是 %s"
 
 #: debug/off/index.php:52 debug/on/index.php:56 domains/index.php:1026
 msgid "Off"
@@ -4636,7 +4636,7 @@ msgstr "離開"
 
 #: debug/off/index.php:55 debug/on/index.php:56
 msgid "Turn Debugging Mode"
-msgstr "開啟調試模式"
+msgstr "開啟除錯模式"
 
 #: debug/off/index.php:55 debug/on/index.php:53
 msgid "On"
@@ -4664,7 +4664,7 @@ msgstr "選擇 DNS 設定檔"
 
 #: domains/add.php:292 domains/edit.php:288 ssl/add.php:255 ssl/edit.php:278
 msgid "Choose the IP Address"
-msgstr "選擇IP位址"
+msgstr "選擇 IP 位址"
 
 #: domains/add.php:298 domains/edit.php:294
 msgid "Choose the Web Host"
@@ -4677,7 +4677,7 @@ msgstr "選擇類別"
 #: domains/add.php:505 domains/edit.php:548 domains/index.php:756
 #: ssl/edit.php:502 ssl/index.php:479
 msgid "Custom Fields"
-msgstr "自訂字段"
+msgstr "自訂欄位"
 
 #: domains/edit.php:249
 msgid "Domain %s updated"
@@ -4697,7 +4697,7 @@ msgstr "看完整註釋"
 
 #: domains/edit.php:633
 msgid "Data Warehouse Information for %s"
-msgstr "%s 的資料倉儲訊息"
+msgstr "%s 的資料倉儲資訊"
 
 #: domains/index.php:88 ssl/index.php:74
 msgid "The date range is invalid"
@@ -4803,7 +4803,7 @@ msgstr "在開始為 %s 新增網域之前，您需要新增至少一個網域�
 
 #: domains/index.php:939
 msgid "Please see the %sFirst Run%s section of the User Guide for more detailed information."
-msgstr "請參閱使用者指南的%s首次運行%s部分以獲取更多詳細資訊。"
+msgstr "請參閱使用者指南的%s首次執行%s部分以取得更多詳細資訊。"
 
 #: domains/index.php:942
 msgid "Domain Registrars found"
@@ -4835,7 +4835,7 @@ msgstr "進階過濾"
 
 #: domains/index.php:1478 ssl/index.php:1051
 msgid "Reset Filters"
-msgstr "重置過濾器"
+msgstr "重設過濾器"
 
 #: domains/index.php:1996
 msgid "Live Domains"
@@ -4873,7 +4873,7 @@ msgstr "非活動域"
 #. The character(s) representing the translation of "Pending Transfer"
 #: domains/index.php:2399
 msgid "Pending Transfer Characters"
-msgstr "待轉移字符"
+msgstr "待轉移字元"
 
 #. The character(s) representing the translation of  "Pending Renewal"
 #: domains/index.php:2401 ssl/index.php:1579
@@ -4883,12 +4883,12 @@ msgstr "待續訂角色"
 #. The character(s) representing the translation of  "Pending Other"
 #: domains/index.php:2403 ssl/index.php:1581
 msgid "Pending Other Characters"
-msgstr "待處理的其他字符"
+msgstr "待處理的其他字元"
 
 #. The character(s) representing the translation of  "Pending Registration"
 #: domains/index.php:2405 ssl/index.php:1583
 msgid "Pending Registration Characters"
-msgstr "待註冊字符"
+msgstr "待註冊字元"
 
 #. The character(s) representing the translation of  "Sold"
 #: domains/index.php:2407
@@ -4902,7 +4902,7 @@ msgstr "私人 WHOIS 註冊"
 #. The character(s) representing the translation of  "Private WHOIS"
 #: domains/index.php:2411
 msgid "Private WHOIS Characters"
-msgstr "私人 WHOIS 字符"
+msgstr "私人 WHOIS 字元"
 
 #: domains/index.php:2562 ssl/index.php:1722
 msgid "Your search returned zero results."
@@ -4934,7 +4934,7 @@ msgstr "分段結果過濾"
 
 #: domains/results.php:132
 msgid "segment_results_missing"
-msgstr "分段結果缺失"
+msgstr "分段結果遺失"
 
 #: domains/results.php:213
 msgid "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP"
@@ -4966,7 +4966,7 @@ msgstr "輸入您的使用者名稱和密碼"
 
 #: index.php:141
 msgid "Enter your username"
-msgstr "輸入您的用戶名"
+msgstr "輸入您的使用者名稱"
 
 #: index.php:142
 msgid "Enter your password"
@@ -4974,7 +4974,7 @@ msgstr "輸入您的密碼"
 
 #: index.php:171
 msgid "Demo Username"
-msgstr "演示用戶名"
+msgstr "演示使用者名稱"
 
 #: index.php:172
 msgid "Demo Password"
@@ -5034,7 +5034,7 @@ msgstr "系統電子郵件地址不符"
 
 #: install/email-system/index.php:94
 msgid "This email address will be used in various locations by the system, such as the FROM address when expiration emails are sent to users."
-msgstr "系統將在各個位置使用此電子郵件地址，例如向使用者發送過期電子郵件時的 FROM 地址。"
+msgstr "系統將在各個位置使用此電子郵件地址，例如向使用者傳送過期電子郵件時的 FROM 地址。"
 
 #: install/go.php:44
 msgid "Administrator"
@@ -5062,7 +5062,7 @@ msgstr "[無網域解析]"
 
 #: install/go.php:52
 msgid "[no ip address]"
-msgstr "[沒有IP位址]"
+msgstr "[沒有 IP 位址]"
 
 #: install/go.php:55
 msgid "Web Server SSL/TLS Certificate"
@@ -5147,7 +5147,7 @@ msgstr "註冊商帳戶已新增至網域清單佇列"
 
 #: queue/add/step-two/index.php:208
 msgid "Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support."
-msgstr "與此帳戶關聯的註冊商沒有 API 支持，或者您尚未更新註冊商以表示 API 支援。"
+msgstr "與此帳戶關聯的註冊商沒有 API 支援，或者您尚未更新註冊商以表示 API 支援。"
 
 #: queue/add/step-two/index.php:209
 msgid "Please check the %sregistrar%s and try again."
@@ -5163,11 +5163,11 @@ msgstr "您輸入的網域中至少有一個已在網域佇列中。"
 
 #: queue/add/step-two/index.php:354 queue/index.php:116 queue/index.php:571
 msgid "Domains Added To Queue"
-msgstr "新增到隊列的域"
+msgstr "新增到佇列的域"
 
 #: queue/add/step-one/index.php:73
 msgid "Domain Queue & API Prerequisites"
-msgstr "域隊列和 API 先決條件"
+msgstr "域佇列和 API 先決條件"
 
 #: queue/add/step-one/index.php:74
 msgid "Before you can add domains to %s using the Domain Queue you must first do the following"
@@ -5179,7 +5179,7 @@ msgstr "確保註冊商有 API 並且您的帳戶已被授予存取權限"
 
 #: queue/add/step-one/index.php:77
 msgid "Enable API Support on the %sregistrar asset%s"
-msgstr "在 %s註冊商資產%s 上啟用 API 支持"
+msgstr "在 %s註冊商資產%s 上啟用 API 支援"
 
 #: queue/add/step-one/index.php:78
 msgid "Save the required API credentials with the %sregistrar account asset%s"
@@ -5191,11 +5191,11 @@ msgstr "選擇要匯入的註冊商帳戶"
 
 #: queue/add/step-two/index.php:395
 msgid "%s requires the following credentials in order to use their API. These credentials must to be saved with the %sregistrar account asset%s."
-msgstr "%s 需要以下憑證才能使用其 API。這些憑證必須與 %s註冊商帳戶資產%s 一起保存。"
+msgstr "%s 需要以下憑證才能使用其 API。這些憑證必須與 %s註冊商帳戶資產%s 一起儲存。"
 
 #: queue/add/step-two/index.php:399
 msgid "Click Here to Enter"
-msgstr "點擊此處進入"
+msgstr "點選此處進入"
 
 #: queue/add/step-two/index.php:491
 msgid "Domain List"
@@ -5227,7 +5227,7 @@ msgstr "登記員（姓名）"
 
 #: queue/index.php:101 queue/index.php:169
 msgid "Account Username"
-msgstr "帳戶用戶名"
+msgstr "帳戶使用者名稱"
 
 #: queue/index.php:102 queue/index.php:555
 msgid "Domain Count"
@@ -5235,7 +5235,7 @@ msgstr "域名數量"
 
 #: queue/index.php:103 queue/index.php:179
 msgid "Ready To Import"
-msgstr "準備導入"
+msgstr "準備匯入"
 
 #: queue/index.php:104 queue/index.php:183
 msgid "Copied To History"
@@ -5244,11 +5244,11 @@ msgstr "複製到歷史記錄"
 #: queue/index.php:105 queue/index.php:184 queue/index.php:556
 #: queue/index.php:657
 msgid "Added By"
-msgstr "添加者"
+msgstr "新增者"
 
 #: queue/index.php:156
 msgid "domain_queue"
-msgstr "域隊列"
+msgstr "域佇列"
 
 #: queue/index.php:173
 msgid "IP Address (Name)"
@@ -5256,7 +5256,7 @@ msgstr "IP 位址（名稱）"
 
 #: queue/index.php:174
 msgid "IP Address (IP)"
-msgstr "IP位址（IP）"
+msgstr "IP 位址（IP）"
 
 #: queue/index.php:177
 msgid "Auto Renew"
@@ -5268,7 +5268,7 @@ msgstr "已經在域中"
 
 #: queue/index.php:181
 msgid "Already in Queue"
-msgstr "已經在隊列中"
+msgstr "已經在佇列中"
 
 #: queue/index.php:182 queue/index.php:209 queue/index.php:685
 msgid "Invalid Domain"
@@ -5276,7 +5276,7 @@ msgstr "無效域名"
 
 #: queue/index.php:186
 msgid "Domain ID"
-msgstr "網域ID"
+msgstr "網域 ID"
 
 #: queue/index.php:199 queue/index.php:675
 msgid "Already in %s"
@@ -5288,7 +5288,7 @@ msgstr "已在域佇列中"
 
 #: queue/index.php:213 queue/index.php:689
 msgid "Successfully Imported"
-msgstr "導入成功"
+msgstr "匯入成功"
 
 #: queue/index.php:434
 msgid "Are you sure you want to clear completed items from the queue?"
@@ -5300,7 +5300,7 @@ msgstr "在清除佇列之前，您應該檢查結果以確保一切正確。"
 
 #: queue/index.php:436
 msgid "YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE"
-msgstr "是的，非常清楚隊列中已完成的項目"
+msgstr "是的，確定清除佇列中已完成的項目"
 
 #: queue/index.php:444
 msgid "Completed items cleared from the queue"
@@ -5332,7 +5332,7 @@ msgstr "網域已從佇列中刪除"
 
 #: queue/index.php:515
 msgid "The Queue Is Currently Processing"
-msgstr "隊列目前正在處理"
+msgstr "佇列目前正在處理"
 
 #: queue/index.php:519
 msgid "The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."
@@ -5340,7 +5340,7 @@ msgstr "網域佇列依賴您的網域註冊商的 API 來匯入您的網域，�
 
 #: queue/index.php:521
 msgid "For more information please see the %sDomain Queue information page%s"
-msgstr "有關詳細信息，請參閱 %s域隊列資訊頁%s"
+msgstr "有關詳細資訊，請參閱 %s域佇列資訊頁%s"
 
 #: queue/index.php:527
 msgid "Clear Completed"
@@ -5364,7 +5364,7 @@ msgstr "額外"
 
 #: queue/intro.php:48
 msgid "The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."
-msgstr "網域佇列可讓您使用網域註冊商的 API 自動匯入網域的詳細信息，例如到期日和 DNS 伺服器，然後將其與網域一起新增到您的主 %s 資料庫中。"
+msgstr "網域佇列可讓您使用網域註冊商的 API 自動匯入網域的詳細資訊，例如到期日和 DNS 伺服器，然後將其與網域一起新增到您的主 %s 資料庫中。"
 
 #: queue/intro.php:49
 msgid "All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains."
@@ -5372,7 +5372,7 @@ msgstr "您所要做的就是選擇註冊商帳戶，提供網域列表，剩下
 
 #: queue/intro.php:51
 msgid "If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."
-msgstr "如果您使用的註冊商尚未受支持，並且他們有 API，請向我們發送電子郵件至 %s，我們將了解如何添加它。"
+msgstr "如果您使用的註冊商尚未受支援，並且他們有 API，請向我們傳送電子郵件至 %s，我們將了解如何新增它。"
 
 #: queue/intro.php:69
 msgid "Currently Supported Registrars"
@@ -5384,7 +5384,7 @@ msgstr "為了使用網域佇列，您必須設定 %s 附帶的 cron 作業。"
 
 #: queue/intro.php:72
 msgid "For more information please see the %sUser Guide%s."
-msgstr "有關詳細信息，請參閱%s用戶指南%s。"
+msgstr "有關詳細資訊，請參閱%s使用者指南%s。"
 
 #: raw.php:44
 msgid "Domains (Raw List)"
@@ -5648,7 +5648,7 @@ msgstr "暫停的帳戶 (%s)"
 
 #: reporting/index.php:49
 msgid "Before running any reports you should %supdate the conversion rates%s."
-msgstr "在運行任何報告之前，您應該%s更新轉換率%s。"
+msgstr "在執行任何報告之前，您應該%s更新轉換率%s。"
 
 #: reporting/index.php:53
 msgid "Domain Reports"
@@ -5897,7 +5897,7 @@ msgstr "分段是網域列表，可用於協助過濾和管理您的%s網域結�
 
 #: segments/index.php:209
 msgid "Segment filters will tell you which domains match with domains that are saved in %s, as well as which domains don't match, and you can easily view and export the results."
-msgstr "分段過濾器將告訴您哪些網域與保存在 %s 中的網域匹配，以及哪些網域不匹配，並且您可以輕鬆查看和匯出結果。"
+msgstr "分段過濾器將告訴您哪些網域與儲存在 %s 中的網域匹配，以及哪些網域不匹配，並且您可以輕鬆檢視和匯出結果。"
 
 #: segments/index.php:222
 msgid "You don't currently have any Segments."
@@ -5913,7 +5913,7 @@ msgstr "您的預設值已更新"
 
 #: settings/defaults/index.php:324
 msgid "Update User Defaults"
-msgstr "更新用戶預設值"
+msgstr "更新使用者預設值"
 
 #: settings/display/index.php:216
 msgid "Display Settings updated"
@@ -5941,7 +5941,7 @@ msgstr "要顯示的列"
 
 #: settings/display/index.php:309
 msgid "Custom Domain Fields to Display"
-msgstr "要顯示的自訂域字段"
+msgstr "要顯示的自訂域欄位"
 
 #: settings/display/index.php:324
 msgid "Main SSL Certificate Page"
@@ -5953,7 +5953,7 @@ msgstr "每頁 SSL 憑證數量"
 
 #: settings/display/index.php:345
 msgid "Custom SSL Fields to Display"
-msgstr "要顯示的自訂 SSL 字段"
+msgstr "要顯示的自訂 SSL 欄位"
 
 #: settings/display/index.php:360
 msgid "Asset Management Pages"
@@ -6061,7 +6061,7 @@ msgstr "SSL 憑證 %s (%s) 已刪除"
 
 #: ssl/edit.php:577
 msgid "SSL Certificate"
-msgstr "SSL憑證"
+msgstr "SSL 憑證"
 
 #: ssl/index.php:269
 msgid "ssl_results"
@@ -6145,7 +6145,7 @@ msgstr "繼續安裝"
 
 #: install/language/index.php:68
 msgid "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
-msgstr "多語言支援是非常新的，所以請耐心等待我們添加新的語言。而且，雖然我們修復了自動生成的翻譯，但其中一些可能非常糟糕。"
+msgstr "多語言支援是非常新的，所以請耐心等待我們新增新的語言。而且，雖然我們修復了自動生成的翻譯，但其中一些可能非常糟糕。"
 
 #: admin/dw/dw.php:117 bulk/cf/step-one/index.php:50
 #: bulk/cf/step-two/index.php:100 bulk/index.php:58
@@ -6166,7 +6166,7 @@ msgstr "建構資訊"
 
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
-msgstr "退出"
+msgstr "登出"
 
 #: reset.php:248
 msgid "Sign In"
@@ -6174,7 +6174,7 @@ msgstr "登入"
 
 #: assets/index.php:47
 msgid "Assets are the building blocks of DomainMOD."
-msgstr "資產是 DomainMOD 的構建塊。"
+msgstr "資產是 DomainMOD 的建構區塊。"
 
 #: assets/index.php:47
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
@@ -6182,7 +6182,7 @@ msgstr "資產包括您使用的網域名稱註冊商和帳戶、您擁有的 SS
 
 #: admin/scheduler/index.php:114
 msgid "Set Run Time"
-msgstr "設定運行時間"
+msgstr "設定執行時間"
 
 #: admin/maintenance/index.php:47 maintenance/index.php:46
 msgid "Maintenance Tasks"
@@ -6220,7 +6220,7 @@ msgstr "提交回饋"
 
 #: feedback/index.php:57
 msgid "View The Project Roadmap"
-msgstr "查看專案路線圖"
+msgstr "檢視專案藍圖"
 
 #: settings/display/index.php:366
 msgid "Miscellaneous"
@@ -6229,11 +6229,11 @@ msgstr "各種各樣的"
 #: _includes/settings/csv-importer-main.inc.php:23
 #: _includes/settings/csv-importer-main.inc.php:24 domains/index.php:2129
 msgid "CSV Importer"
-msgstr "CSV 導入器"
+msgstr "CSV 匯入工具"
 
 #: assets/add/registrar-account.php:171 assets/edit/registrar-account.php:358
 msgid "Account ID"
-msgstr "帳戶ID"
+msgstr "帳戶 ID"
 
 #: assets/edit/registrar-account.php:395 queue/add/step-two/index.php:421
 msgid "Registrar Account ID"
@@ -6257,7 +6257,7 @@ msgstr "此頁面可讓您使用 CSV 範本將所有網域資料匯入 %s 中。
 
 #: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
-msgstr "這是一個非常新的功能（即實驗性的），但到目前為止所有測試都進展得非常順利，而且我個人導入了許多測試 CSV 文件，準確率達到 100%。"
+msgstr "這是一個非常新的功能（即實驗性的），但到目前為止所有測試都進展得非常順利，而且我個人匯入了許多測試 CSV 文件，準確率達到 100%。"
 
 #: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
@@ -6265,7 +6265,7 @@ msgstr "建議您在嘗試 CSV 匯入之前對現有 %s 資料庫執行完整備
 
 #: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
-msgstr "有關如何使用 CSV 導入器的更多信息，請參閱我們的"
+msgstr "有關如何使用 CSV 匯入工具的更多資訊，請參閱我們的"
 
 #: domains/csv-importer/index.php:116
 msgid "User Guide"
@@ -6289,7 +6289,7 @@ msgstr "您可以根據需要匯入盡可能少或任意多的網域資訊。"
 
 #: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
-msgstr "從技術上講，您只能填寫網域列表，並且匯入效果很好，但 DomainMOD 需要為您建立一堆通用資產。不過沒關係，即使您走這條路，更新 %s 為您創建的資訊也很容易。"
+msgstr "從技術上講，您只能填寫網域列表，並且匯入效果很好，但 DomainMOD 需要為您建立一堆通用資產。不過沒關係，即使您走這條路，更新 %s 為您建立的資訊也很容易。"
 
 #: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
@@ -6297,7 +6297,7 @@ msgstr "CSV 匯入範本中的列必須保持原樣。如果列數不準確，�
 
 #: domains/csv-importer/index.php:122
 msgid "Import CSV Template"
-msgstr "導入 CSV 模板"
+msgstr "匯入 CSV 模板"
 
 #: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
@@ -6309,7 +6309,7 @@ msgstr "提交 CSV 文件時請耐心等待。根據資料量，處理可能需�
 
 #: domains/csv-importer/index.php:128
 msgid "Import CSV File"
-msgstr "導入 CSV 文件"
+msgstr "匯入 CSV 文件"
 
 #: domains/csv-importer/index.php:133
 msgid "Click here to delete any and all past CSV Import files that may be saved on your server."
@@ -6317,7 +6317,7 @@ msgstr "按一下此處刪除可能儲存在您的伺服器上的所有過去的
 
 #: domains/index.php:948
 msgid "You can also import your domain data using our CSV Importer"
-msgstr "您也可以使用我們的 CSV 導入器導入您的網域數據"
+msgstr "您也可以使用我們的 CSV 匯入工具匯入您的網域資料"
 
 #: settings/display/index.php:368
 msgid "Dark Mode"
@@ -6354,12 +6354,12 @@ msgstr "測試電子郵件"
 #: _includes/email/send-test-email.inc.php:51
 #: _includes/email/send-test-email.inc.php:90
 msgid "This is a test email to ensure that your %s installation is able to send email successfully. "
-msgstr "這是一封測試電子郵件，旨在確保您的 %s 安裝能夠成功發送電子郵件。 "
+msgstr "這是一封測試電子郵件，目的是確保您的 %s 安裝能夠成功傳送電子郵件。 "
 
 #: _includes/email/send-test-email.inc.php:75
 #: _includes/email/send-test-email.inc.php:98
 msgid "You've received this notification because someone requested a test email be sent from your account."
-msgstr "您收到此通知是因為有人要求從您的帳戶發送測試電子郵件。"
+msgstr "您收到此通知是因為有人要求從您的帳戶傳送測試電子郵件。"
 
 #: _includes/email/send-test-email.inc.php:52
 #: _includes/email/send-test-email.inc.php:91
@@ -6411,15 +6411,15 @@ msgstr "管理工具"
 
 #: admin/tools/send-test-email.php:46
 msgid "Test Email Sent!"
-msgstr "測試郵件已發送！"
+msgstr "測試郵件已傳送！"
 
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
-msgstr "缺失費用設定為 0"
+msgstr "未設定的費用已設為 0"
 
 #: admin/scheduler/index.php:56
 msgid "every 10 minutes"
-msgstr "每10分鐘一班"
+msgstr "每 10 分鐘一班"
 
 #: admin/scheduler/index.php:57
 msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
@@ -6427,11 +6427,11 @@ msgstr "該文件應在 %s 執行，一旦設定完成，任務規劃程式就�
 
 #: admin/tools/index.php:52
 msgid "Send Test Email"
-msgstr "發送測試電子郵件"
+msgstr "傳送測試電子郵件"
 
 #: admin/tools/index.php:53
 msgid "If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to"
-msgstr "如果您想確保您的安裝能夠成功發送電子郵件，請單擊此鏈接，測試電子郵件將發送至"
+msgstr "如果您想確保您的安裝能夠成功傳送電子郵件，請單擊此連結，測試電子郵件將傳送至"
 
 #: index.php:167
 msgid "Please enter your username and password"
@@ -6537,4 +6537,12 @@ msgstr "若找到相符的用戶名或電子郵件地址，系統已將重設密
 #: reset.php:209
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "請點擊下方的按鈕重設密碼。您的新密碼將透過電子郵件寄送給您。"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "驗證 SSL 憑證"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "除非您的伺服器使用自簽名憑證，且您是透過可信賴的網路進行連線，否則請保持此選項啟用。當此選項啟用時，伺服器的 SSL 憑證必須針對您輸入的主機名稱有效。"
 

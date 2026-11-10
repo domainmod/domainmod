@@ -6542,3 +6542,11 @@ msgstr "Eşleşen bir kullanıcı adı veya e-posta adresi varsa, şifrenizi sı
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Şifrenizi sıfırlamak için aşağıdaki düğmeye tıklayın. Yeni şifreniz size e-posta ile gönderilecektir."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL Sertifikasını Doğrula"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Bu seçeneği açık bırakın; yalnızca sunucunuz kendinden imzalı bir sertifika kullanıyorsa ve güvendiğiniz bir ağ üzerinden bağlanıyorsanız kapatın. Bu seçenek açık olduğunda, sunucunun SSL sertifikası girdiğiniz ana bilgisayar adı için geçerli olmalıdır."
+

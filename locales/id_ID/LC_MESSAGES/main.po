@@ -6538,3 +6538,11 @@ msgstr "Jika terdapat nama pengguna atau alamat email yang cocok, tautan untuk m
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Klik tombol di bawah ini untuk mengatur ulang kata sandi Anda. Kata sandi baru Anda akan dikirimkan melalui email kepada Anda."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "Verifikasi Sertifikat SSL"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Biarkan pengaturan ini tetap aktif kecuali jika server Anda menggunakan sertifikat yang ditandatangani sendiri dan Anda terhubung melalui jaringan yang Anda percayai. Jika pengaturan ini diaktifkan, sertifikat SSL server harus valid untuk nama host yang Anda masukkan."
+

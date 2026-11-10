@@ -6538,3 +6538,11 @@ msgstr "如果系统中存在匹配的用户名或电子邮箱地址，重置密
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "点击下面的按钮重置密码。新密码将通过电子邮件发送给您。"
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "验证 SSL 证书"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "除非您的服务器使用的是自签名证书，且您是通过可信网络进行连接，否则请保持此选项启用。启用此选项后，服务器的 SSL 证书必须对您输入的主机名有效。"
+

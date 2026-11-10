@@ -6558,3 +6558,11 @@ msgstr "إذا كان هناك اسم مستخدم أو عنوان بريد إل
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "انقر على الزر أدناه لإعادة تعيين كلمة مرورك. سيتم إرسال كلمة مرورك الجديدة إليك عبر البريد الإلكتروني."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "التحقق من شهادة SSL"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "اترك هذا الخيار قيد التشغيل ما لم يكن الخادم الخاص بك يستخدم شهادة موقعة ذاتيًا وتكون متصلاً عبر شبكة تثق بها. عند تشغيل هذا الخيار، يجب أن تكون شهادة SSL الخاصة بالخادم صالحة لاسم المضيف الذي أدخلته."
+
