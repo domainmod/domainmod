@@ -126,18 +126,15 @@ EOD;
 
     public function apiCall($xml, $account_username, $api_key)
     {
-        $handle = curl_init('https://rr-n1-tor.opensrs.net:55443'); // Production Environment
-        // $handle = curl_init('https://horizon.opensrs.net:55443'); // Test environment
+        $handle = HttpClient::init('https://rr-n1-tor.opensrs.net:55443'); // Production Environment
+        // $handle = HttpClient::init('https://horizon.opensrs.net:55443'); // Test environment
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Content-Type:text/xml',
             'X-Username:' . $account_username,
             'X-Signature:' . md5(md5($xml . $api_key) .  $api_key)));
         curl_setopt($handle, CURLOPT_POST, 1);
         curl_setopt($handle, CURLOPT_POSTFIELDS, $xml);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($handle);
+        $result = HttpClient::exec($handle, 'OpenSRS API');
         return $result;
     }
 

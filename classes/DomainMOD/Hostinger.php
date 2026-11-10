@@ -55,12 +55,9 @@ class Hostinger
         if (self::$test_transport !== null) {
             list($http_code, $body) = call_user_func(self::$test_transport, $full_url, $headers);
         } else {
-            $handle = curl_init($full_url);
+            $handle = HttpClient::init($full_url);
             curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($handle, CURLOPT_TIMEOUT, 30);
-            $body = curl_exec($handle);
+            $body = HttpClient::exec($handle, 'Hostinger API');
             $http_code = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
             // No curl_close(): it has done nothing since PHP 8.0 and is deprecated in 8.5
         }

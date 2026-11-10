@@ -77,6 +77,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'C' =>
         array (
             'Cron\\' => 5,
+            'Composer\\CaBundle\\' => 18,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
@@ -191,6 +192,10 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         array (
             0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
         ),
+        'Composer\\CaBundle\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
+        ),
         'Carbon\\Doctrine\\' =>
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
@@ -301,6 +306,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'Carbon\\Unit' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Unit.php',
         'Carbon\\WeekDay' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WeekDay.php',
         'Carbon\\WrapperClock' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WrapperClock.php',
+        'Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/CronExpression.php',
@@ -409,6 +415,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\GoDaddy' => __DIR__ . '/../..' . '/classes/DomainMOD/GoDaddy.php',
         'DomainMOD\\Goal' => __DIR__ . '/../..' . '/classes/DomainMOD/Goal.php',
         'DomainMOD\\Hostinger' => __DIR__ . '/../..' . '/classes/DomainMOD/Hostinger.php',
+        'DomainMOD\\HttpClient' => __DIR__ . '/../..' . '/classes/DomainMOD/HttpClient.php',
         'DomainMOD\\InternetBs' => __DIR__ . '/../..' . '/classes/DomainMOD/InternetBs.php',
         'DomainMOD\\Language' => __DIR__ . '/../..' . '/classes/DomainMOD/Language.php',
         'DomainMOD\\Layout' => __DIR__ . '/../..' . '/classes/DomainMOD/Layout.php',

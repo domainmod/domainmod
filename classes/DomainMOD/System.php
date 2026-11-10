@@ -550,19 +550,17 @@ class System
 
     public function getFileContFopen($filename)
     {
-        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
+        // PHP reads HTTP options from the 'http' key for https:// URLs too. The timeout is per read, not a total limit.
+        $context = stream_context_create(array(
+            'http' => array('header' => "Connection: close\r\n", 'timeout' => 15),
+            'ssl' => HttpClient::streamSslOptions()));
         return file_get_contents($filename, false, $context);
     }
 
     public function getFileContCurl($filename)
     {
-        $handle = curl_init();
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($handle, CURLOPT_URL, $filename);
-        $result = curl_exec($handle);
-        return $result;
+        $handle = HttpClient::init($filename, 10, 15);
+        return HttpClient::exec($handle, 'Remote file');
     }
 
     public function getIpRemotely()

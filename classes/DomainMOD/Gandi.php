@@ -63,15 +63,13 @@ class Gandi
     // One GET request: array(HTTP status, body or false)
     public function request($full_url, $authorization)
     {
-        $handle = curl_init($full_url);
+        $handle = HttpClient::init($full_url);
         curl_setopt($handle, CURLOPT_ENCODING, '');
         curl_setopt($handle, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($handle, CURLOPT_TIMEOUT, 30);
         curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($handle, CURLOPT_HTTPHEADER, array('authorization: ' . $authorization));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($handle);
+        $result = HttpClient::exec($handle, 'Gandi API');
         $status = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
 
         return array($status, $result);

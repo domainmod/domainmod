@@ -52,13 +52,10 @@ class Porkbun
             'apikey' => $api_key,
             'secretapikey' => $api_secret));
 
-        $handle = curl_init($full_url);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+        $handle = HttpClient::init($full_url);
         curl_setopt($handle, CURLOPT_POST, 1);
         curl_setopt($handle, CURLOPT_POSTFIELDS, $post_data);
-        $result = curl_exec($handle);
+        $result = HttpClient::exec($handle, 'Porkbun API');
         return $result;
     }
 

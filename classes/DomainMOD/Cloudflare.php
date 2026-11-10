@@ -376,17 +376,14 @@ class Cloudflare
         if (self::$test_transport !== null) return call_user_func(self::$test_transport, $full_url, $headers);
 
         $response_headers = array();
-        $handle = curl_init($full_url);
+        $handle = HttpClient::init($full_url);
         curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($handle, CURLOPT_TIMEOUT, 30);
         curl_setopt($handle, CURLOPT_HEADERFUNCTION, function ($curl, $header) use (&$response_headers) {
             $parts = explode(':', $header, 2);
             if (count($parts) == 2) $response_headers[strtolower(trim($parts[0]))] = trim($parts[1]);
             return strlen($header);
         });
-        $body = curl_exec($handle);
+        $body = HttpClient::exec($handle, 'Cloudflare API');
         $http_code = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
         // No curl_close(): it has done nothing since PHP 8.0 and is deprecated in 8.5
 

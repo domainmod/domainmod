@@ -51,6 +51,8 @@ $new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_user
 $new_api_token = isset($_POST['new_api_token']) ? $sanitize->text($_POST['new_api_token']) : '';
 $new_hash = isset($_POST['new_hash']) ? $sanitize->text($_POST['new_hash']) : '';
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+// certificate checks are on unless the box is unticked (an unticked checkbox isn't posted)
+$new_verify_ssl = $_SERVER['REQUEST_METHOD'] == 'POST' ? (int) ($_POST['new_verify_ssl'] ?? 0) : 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -59,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt = $pdo->prepare("
             INSERT INTO dw_servers
-            (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, notes, created_by, insert_time)
+            (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, verify_ssl, notes, created_by, insert_time)
             VALUES
-            (:new_name, :new_host, :new_protocol, :new_port, :new_username, :new_api_token, :new_hash, :new_notes, :created_by, :timestamp)");
+            (:new_name, :new_host, :new_protocol, :new_port, :new_username, :new_api_token, :new_hash, :new_verify_ssl, :new_notes, :created_by, :timestamp)");
         $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
         $stmt->bindValue('new_host', $new_host, PDO::PARAM_STR);
         $stmt->bindValue('new_protocol', $new_protocol, PDO::PARAM_STR);
@@ -69,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
         $stmt->bindValue('new_api_token', $new_api_token, PDO::PARAM_STR);
         $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_LOB);
+        $stmt->bindValue('new_verify_ssl', $new_verify_ssl === 1 ? 1 : 0, PDO::PARAM_INT);
         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
         $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
         $timestamp = $time->stamp();
@@ -116,6 +119,7 @@ echo $form->showInputText('new_username', _('Username') . ' (100)', _('Enter the
 <?php
 echo $form->showInputText('new_api_token', _('API Token') . ' (255)', _('Enter the API token.'), $unsanitize->text($new_api_token), '255', '', '1', '', '');
 echo $form->showInputTextarea('new_hash', _('Remote Access Key/Hash'), _('Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.'), $unsanitize->text($new_hash), '1', '', '');
+echo $form->showSwitch(_('Verify SSL Certificate') . '?', _("Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."), 'new_verify_ssl', $new_verify_ssl, '', '<BR><BR>');
 echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton(_('Add Server'), '', '');
 echo $form->showFormBottom('');

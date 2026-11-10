@@ -164,15 +164,17 @@ class DwBuild
         }
     }
 
-    public function apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash)
+    public function apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash, $verify_ssl = 1)
     {
-        return $this->apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash);
+        return $this->apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash, $verify_ssl);
     }
 
-    public function apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash)
+    // Certificates are verified unless the user has switched verification off for this server (self-signed certificates);
+    // servers set to the http protocol are allowed plain HTTP
+    public function apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash, $verify_ssl = 1)
     {
         $query = $protocol . "://" . $host . ":" . $port . $api_call;
-        $curl = curl_init(); // Create Curl Object
+        $curl = HttpClient::init($query, 10, 60, (int) $verify_ssl === 1, $protocol === 'http');
         $header = array();
         if ($api_token != "") {
             $header[0] = "Authorization: WHM " . $username . ":" . $api_token;
@@ -180,14 +182,7 @@ class DwBuild
             $header[0] = "Authorization: WHM " . $username . ":" . preg_replace("'(\r|\n)'", "", $hash); // Remove newlines
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header); // Set curl header
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // Return contents of transfer on curl_exec
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); // Allow certs that do not match the domain
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // Allow self-signed certs
-        curl_setopt($curl, CURLOPT_URL, $query); // Set your URL
-        $api_results = curl_exec($curl); // Execute Query, assign to $api_results
-        if ($api_results === false) {
-            error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
-        }
+        $api_results = HttpClient::exec($curl, 'Data Warehouse server ' . $host);
 
         return $api_results;
     }
