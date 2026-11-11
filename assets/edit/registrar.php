@@ -111,6 +111,9 @@ if ($del === 1) {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
+    $existing_registrar_accounts = 0;
+    $existing_domains = 0;
+
     $stmt = $pdo->prepare("
         SELECT registrar_id
         FROM registrar_accounts
