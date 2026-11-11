@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.24.02    2026-11-10
+- Added a Verify SSL Certificate setting to each Data Warehouse server
+- Added timeouts to registrar API and Data Warehouse connections
+- Fixed registrar API, Data Warehouse, and update check connections not verifying SSL certificates (security fix)
+
 v4.24.01    2026-11-08
 - Fixed read-only users being able to delete and change data (security fix)
 
