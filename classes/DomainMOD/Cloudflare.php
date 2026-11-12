@@ -123,7 +123,7 @@ class Cloudflare
     {
         $failed = array('', array(), '', '');
 
-        $api_url = $this->registrarUrl($account_id, 'registrations/' . rawurlencode($domain));
+        $api_url = $this->registrarUrl($account_id, 'registrations/' . rawurlencode(Domain::forApi($domain)));
         $array_results = $this->apiCall($api_url, $account_username, $api_key);
 
         $expires_at = $array_results['result']['expires_at'] ?? null;
@@ -174,7 +174,7 @@ class Cloudflare
 
     public function getNameServers($account_username, $account_id, $api_key, $domain)
     {
-        $api_url = $this->base_url . 'zones?name=' . rawurlencode($domain) . '&account.id=' . rawurlencode($account_id);
+        $api_url = $this->base_url . 'zones?name=' . rawurlencode(Domain::forApi($domain)) . '&account.id=' . rawurlencode($account_id);
         $array_results = $this->apiCall($api_url, $account_username, $api_key);
 
         $name_servers = array();

@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             // cycle through domains here
                             foreach ($domain_array as $key => $new_domain) {
 
-                                $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+                                $new_tld = DomainMOD\Domain::tldOf($new_domain);
 
                                 $stmt = $pdo->prepare("
                                     SELECT id

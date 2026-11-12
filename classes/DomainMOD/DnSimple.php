@@ -34,6 +34,8 @@ class DnSimple
 
     public function getApiUrl($account_id, $command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.dnsimple.com/v2/';
         if ($command == 'accountid') {
             return $base_url . 'whoami';

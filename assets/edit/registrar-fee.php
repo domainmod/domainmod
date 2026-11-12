@@ -64,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdo->beginTransaction();
 
         $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
+        // the stored form, so a fee entered as xn--p1ai or DE matches domains under рф or de
+        $new_tld = $sanitize->text(DomainMOD\Domain::normalizeTld(htmlspecialchars_decode($new_tld, ENT_QUOTES)));
 
         $stmt = $pdo->prepare("
                 UPDATE fees
@@ -86,6 +88,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
         $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
         $stmt->execute();
+
+        // use the ID of the fee that was just updated, not the posted one (a form opened before an upgrade can name
+        // a fee row that has since been merged into this one)
+        $stmt = $pdo->prepare("
+                SELECT id
+                FROM fees
+                WHERE registrar_id = :rid
+                  AND tld = :new_tld
+                LIMIT 1");
+        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->execute();
+        $fee_id = (int) $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        if ($fee_id === 0) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+
+            $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+            $_SESSION['s_message_danger'] .= sprintf(_('There is no fee for %s'), $new_tld) . '<BR>';
+
+            header("Location: ../registrar-fees.php?rid=" . $rid);
+            exit;
+
+        }
 
         $stmt = $pdo->prepare("
                 UPDATE domains

@@ -49,6 +49,21 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
+/*
+ * The keyword search as an SQL condition on a domain column. The term is quoted by PDO rather than pasted into the
+ * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
+ * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
+ * was typed, so casing rules can't send both to the wrong spelling.
+ */
+$domain_search_condition = function ($column, $term) use ($pdo) {
+    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
+    $lower = mb_strtolower($term, 'UTF-8');
+    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
+    $idn = DomainMOD\Domain::normalize($term);
+    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
+    return '(' . implode(' OR ', $conditions) . ')';
+};
+
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $pcid = (int) ($_REQUEST['pcid'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
@@ -151,6 +166,11 @@ if ($tld && $tld != '') {
 
         $tld = '';
 
+    } else {
+
+        // the stored form, so xn--p1ai finds domains under рф (quoted by PDO wherever it's used in SQL below)
+        $tld = DomainMOD\Domain::normalizeTld(htmlspecialchars_decode($tld, ENT_QUOTES));
+
     }
 
 }
@@ -225,7 +245,7 @@ if ($raid !== 0) {
 }
 
 if ($tld != "") {
-    $tld_string = " AND d.tld = '$tld' ";
+    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
 } else {
     $tld_string = "";
 }
@@ -237,7 +257,7 @@ if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD'
 }
 
 if ($_SESSION['s_search_for'] != "") {
-    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%' ";
+    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . " ";
 } else {
     $search_string = "";
 }
@@ -407,7 +427,7 @@ if ($segid !== 0) {
         SET filtered = '1'
         WHERE active = '1'
           AND segment_id = :segid
-          AND domain NOT LIKE '%" . $search_for . "%'");
+          AND NOT " . $domain_search_condition('domain', $search_for));
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
 
@@ -1094,7 +1114,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1104,7 +1124,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1204,12 +1224,12 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $rid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1311,7 +1331,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1321,7 +1341,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1421,7 +1441,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1431,7 +1451,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1540,7 +1560,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1550,7 +1570,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1650,7 +1670,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1660,7 +1680,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1760,7 +1780,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
@@ -1770,7 +1790,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1880,7 +1900,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('domain', $_SESSION['s_search_for']);
                 } else {
                     $search_string = "";
                 }
@@ -1964,7 +1984,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('domain', $_SESSION['s_search_for']);
                 } else {
                     $search_string = "";
                 }

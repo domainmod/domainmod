@@ -51,6 +51,28 @@ $del = (int) ($_GET['del'] ?? 0);
 
 $new_domain = isset($_POST['new_domain']) ? $sanitize->text($_POST['new_domain']) : '';
 $new_tld = $_POST['new_tld'] ?? '';
+
+// the domain can't be changed here, so use the stored name and work out its TLD, rather than trusting the posted
+// hidden fields (a form opened before an upgrade can hold an old TLD)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $did !== 0) {
+
+    $stmt = $pdo->prepare("
+        SELECT domain
+        FROM domains
+        WHERE id = :did");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
+    $stored_domain = $stmt->fetchColumn();
+    $stmt->closeCursor();
+
+    if ($stored_domain !== false) {
+
+        $new_domain = $sanitize->text($stored_domain);
+        $new_tld = DomainMOD\Domain::tldOf($stored_domain);
+
+    }
+
+}
 $new_expiry_date = $_POST['datepick'] ?? '';
 $new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_function']) : '';
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);

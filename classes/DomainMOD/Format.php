@@ -48,7 +48,9 @@ class Format
         $domain_list = explode("\r\n", $clean_domain_list);
         $new_domain_list = array();
         foreach ($domain_list as $value) {
-            $new_domain_list[] = $this->sanitize->text($this->stripSpacing($value));
+            // the stored form (münchen.de for xn--mnchen-3ya.de), before duplicates are removed; a line that isn't
+            // a valid domain is kept as typed, so the page's invalid-domain check still reports it
+            $new_domain_list[] = $this->sanitize->text(Domain::normalizeOrKeep($this->stripSpacing($value)));
         }
         return array_unique($new_domain_list);
     }

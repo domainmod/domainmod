@@ -34,6 +34,8 @@ class Fabulous
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.fabulous.com/';
         if ($command == 'domainlist') {
             return $base_url . 'listDomains?username=' . $account_username . '&password=' . $account_password;

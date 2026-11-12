@@ -35,6 +35,8 @@ class Namecheap
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address, $page_number)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.namecheap.com/xml.response?&ApiUser=' . $account_username . '&ApiKey=' . $api_key . '&UserName=' . $account_username;
         if ($command == 'domainlist') {
             return $base_url . '&Command=namecheap.domains.getList&ClientIp=' . $api_ip_address . '&PageSize=100' . '&Page=' . $page_number;
@@ -152,7 +154,7 @@ class Namecheap
 
             foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $value) {
 
-                if ($value['Name'] == $domain) {
+                if (Domain::sameDomain($value['Name'] ?? '', $domain)) {
 
                     $autorenewal_result = $value['AutoRenew'];
 

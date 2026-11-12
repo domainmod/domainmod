@@ -431,13 +431,25 @@ class DomainQueue
                     // only process the domain if $ready_to_import = 1 (ie. all the information is valid)
                     if ($ready_to_import == '1') {
 
-                        $new_domain_id = $this->importToMainDb($row->id);
+                        // the domain may have reached the main domain table since it was queued (added by hand, or
+                        // a queued punycode name that's the same domain as one already there), so check again
+                        $existing_domain_id = $this->getDomainIdByName($row->domain);
 
-                        // updates queue with the new domain id
-                        $this->updateNewDomainId($row->id, $new_domain_id);
+                        if ($existing_domain_id) {
 
-                        // markFinishedDomain confirms that the domain was added to the main domain database before marketing it as finished
-                        $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+                            $this->markAlreadyInDomains($row->id, $existing_domain_id);
+
+                        } else {
+
+                            $new_domain_id = $this->importToMainDb($row->id);
+
+                            // updates queue with the new domain id
+                            $this->updateNewDomainId($row->id, $new_domain_id);
+
+                            // markFinishedDomain confirms that the domain was added to the main domain database before marketing it as finished
+                            $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+
+                        }
 
                     }
 
@@ -703,10 +715,13 @@ class DomainQueue
         $has_match = '';
 
         // get the rDNS for the IP
-        $live_ip = gethostbyname($domain . '.');
+        // look up the punycode form, which is what DNS uses
+        $ascii_domain = Domain::toAscii($domain);
+        $live_ip = $ascii_domain !== '' ? gethostbyname($ascii_domain . '.') : '';
 
-        // If the domain doesn't resolve assign an IP and rDNS of 0.0.0.0
-        if ($live_ip == $domain || $live_ip == $domain . '.') {
+        // If the domain doesn't resolve assign an IP and rDNS of 0.0.0.0 (gethostbyname() returns the name it was
+        // given when it can't resolve it)
+        if (filter_var($live_ip, FILTER_VALIDATE_IP) === false) {
 
             $live_ip = '0.0.0.0';
             $rdns = '0.0.0.0';
@@ -900,6 +915,20 @@ class DomainQueue
     {
         $pdo = $this->deeb->cnxx;
 
+        // registrars often return punycode (xn--mnchen-3ya.de); store the normalised form (münchen.de), and skip a
+        // name that isn't a valid domain rather than failing the whole list
+        $raw_domain = $domain;
+        $domain = Domain::normalize($domain);
+        if ($domain === '') {
+
+            // logged whether or not debugging is on, since the domain is left out of the queue
+            $log_message = 'Skipped an invalid domain name in a Domain Queue list';
+            $log_extra = array('Domain' => $raw_domain, 'API Registrar ID' => $api_registrar_id);
+            $this->log->addEntry('warning', $log_message, $log_extra);
+            return;
+
+        }
+
         $tld = $this->domain->getTld($domain);
 
         // check to make sure that the domain isn't already in the main domain table
@@ -1080,6 +1109,37 @@ class DomainQueue
 
             return $new_domain_id;
         }
+    }
+
+    // The ID of a domain in the main domain table, or false if it isn't there
+    public function getDomainIdByName($domain)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id
+            FROM domains
+            WHERE domain = :domain
+            LIMIT 1");
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+        $stmt->closeCursor();
+        return $result ? (int) $result : false;
+    }
+
+    // Finishes a queued domain that's already in the main domain table, the same way as one found when it was queued
+    public function markAlreadyInDomains($queue_domain_id, $domain_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE domain_queue
+            SET domain_id = :domain_id,
+                processing = '0',
+                ready_to_import = '1',
+                finished = '1',
+                already_in_domains = '1'
+            WHERE id = :queue_domain_id");
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     public function updateNewDomainId($queue_domain_id, $new_domain_id)

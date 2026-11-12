@@ -47,6 +47,21 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
+/*
+ * The keyword search as an SQL condition on the domain column. The term is quoted by PDO rather than pasted into the
+ * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
+ * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
+ * was typed, so casing rules can't send both to the wrong spelling.
+ */
+$domain_search_condition = function ($column, $term) use ($pdo) {
+    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
+    $lower = mb_strtolower($term, 'UTF-8');
+    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
+    $idn = DomainMOD\Domain::normalize($term);
+    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
+    return '(' . implode(' OR ', $conditions) . ')';
+};
+
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
 $did = (int) ($_REQUEST['did'] ?? 0);
@@ -169,8 +184,10 @@ if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD'
 } else {
     $range_string = "";
 }
+// certificate names are stored HTML-encoded (as the search term is), so they're compared as they are; only the domain
+// side of the search is decoded and normalised
 if ($_SESSION['s_search_for_ssl'] != "") {
-    $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+    $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
 } else {
     $search_string = "";
 }
@@ -722,7 +739,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -819,7 +836,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -916,7 +933,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1015,7 +1032,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1117,7 +1134,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1214,7 +1231,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1311,7 +1328,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1413,7 +1430,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
             } else {
                 $search_string = "";
             }

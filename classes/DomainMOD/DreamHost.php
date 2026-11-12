@@ -98,7 +98,8 @@ class DreamHost
 
         foreach ($records as $value) {
 
-            $domain = RegistrarResponse::text(RegistrarResponse::get($value, 'domain'));
+            // cached under the stored form (münchen.de), which getFullInfo() is later given
+            $domain = Domain::normalizeOrKeep(RegistrarResponse::text(RegistrarResponse::get($value, 'domain')));
             $domain_list[] = $domain;
             $expiry_date = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($value, 'expires')));
             $autorenew = $this->processAutorenew(RegistrarResponse::text(RegistrarResponse::get($value, 'autorenew')));

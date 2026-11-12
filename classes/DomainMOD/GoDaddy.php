@@ -34,6 +34,8 @@ class GoDaddy
 
     public function getApiUrl($domain, $command)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.godaddy.com/v1/';
         if ($command == 'domainlist') {
             return $base_url . 'domains?statusGroups=VISIBLE&limit=1000';

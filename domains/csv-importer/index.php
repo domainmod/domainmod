@@ -82,7 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $filename = $upload->get_tmp_name();
                 $csv->parse($filename, $_SESSION['s_user_id']);
 
+                $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
                 $_SESSION['s_message_success'] .= _('Your CSV Import has been completed');
+
+                if (!empty($csv->invalid_domains)) {
+
+                    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                    $_SESSION['s_message_danger'] .= _('These domains weren\'t imported because they aren\'t valid domain names') . ':<BR>'
+                        . implode('<BR>', array_map(function ($value) { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }, $csv->invalid_domains)) . '<BR>';
+
+                }
 
                 header("Location: ../");
                 exit;

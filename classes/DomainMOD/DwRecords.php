@@ -43,7 +43,7 @@ class DwRecords
                 id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 server_id INT(10) UNSIGNED NOT NULL,
                 dns_zone_id INT(10) UNSIGNED NOT NULL,
-                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
                 zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 new_order INT(10) UNSIGNED NOT NULL,
                 mname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -76,7 +76,8 @@ class DwRecords
 
     public function getApiCall($domain)
     {
-        return "/json-api/dumpzone?api.version=1&domain=" . $domain;
+        // WHM takes the punycode form of the zone name
+        return "/json-api/dumpzone?api.version=1&domain=" . Domain::forApi($domain);
     }
 
     public function insertRecords($api_results, $server_id, $zone_id, $domain)

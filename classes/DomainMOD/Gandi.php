@@ -34,6 +34,8 @@ class Gandi
 
     public function getApiUrl($command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.gandi.net/v5/domain/';
         if ($command == 'domainlist') {
             return $base_url . 'domains';

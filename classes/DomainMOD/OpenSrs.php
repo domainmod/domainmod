@@ -68,6 +68,8 @@ EOD;
 
     public function domainInfo($domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $xml = <<<EOD
                 <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
                 <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
@@ -97,6 +99,8 @@ EOD;
 
     public function domainPrivacy($domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $xml = <<<EOD
                 <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
                 <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>

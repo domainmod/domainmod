@@ -27,6 +27,15 @@ class Domain
     public $log;
     public $time;
 
+    // IDNA options for converting domain names in both directions: UTS #46 nontransitional processing, with the
+    // hostname rules (letters, digits, and hyphens in each label) and the Bidi and ContextJ checks
+    const IDNA_TO_ASCII = IDNA_NONTRANSITIONAL_TO_ASCII | IDNA_USE_STD3_RULES | IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ;
+    const IDNA_TO_UNICODE = IDNA_NONTRANSITIONAL_TO_UNICODE | IDNA_USE_STD3_RULES | IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ;
+
+    // normalize() results for this PHP process, keyed by the raw value, so a list that's scanned once per domain
+    // converts each entry only once
+    private static $normalized = array();
+
     public function __construct()
     {
         $this->deeb = Database::getInstance();
@@ -61,8 +70,107 @@ class Domain
         return array($invalid_to_display, $invalid_domains, $invalid_count, $result_message);
     }
 
+    /*
+     * A domain name (or TLD) in punycode, the form registrars, DNS, and WHM expect, or '' if it isn't a valid name.
+     * Used for anything that leaves DomainMOD, and for validation.
+     */
+    public static function toAscii($input)
+    {
+        $input = trim((string) $input);
+        // idn_to_ascii() throws a ValueError on an empty string
+        if ($input === '') return '';
+        $ascii = idn_to_ascii($input, self::IDNA_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
+        return is_string($ascii) ? $ascii : '';
+    }
+
+    /*
+     * The form DomainMOD stores a domain name (or TLD) in: lowercase Unicode (münchen.de), whether it arrives in
+     * Unicode or punycode, without a trailing dot. Names with a character outside the Basic Multilingual Plane, which
+     * the utf8 (3-byte) columns can't hold, are stored in punycode instead. Returns '' if the name isn't valid.
+     * Running it on its own result gives the same result.
+     */
+    public static function normalize($input)
+    {
+        $ascii = self::toAscii($input);
+        if ($ascii === '') return '';
+
+        // the root dot, removed after IDNA mapping so a trailing ideographic full stop (。) is handled too
+        if (str_ends_with($ascii, '.')) $ascii = substr($ascii, 0, -1);
+        if ($ascii === '' || str_ends_with($ascii, '.')) return '';
+
+        $unicode = idn_to_utf8($ascii, self::IDNA_TO_UNICODE, INTL_IDNA_VARIANT_UTS46);
+        if (!is_string($unicode) || $unicode === '') return '';
+        $unicode = mb_strtolower($unicode, 'UTF-8');
+
+        // any 4-byte UTF-8 character (outside the Basic Multilingual Plane)
+        if (preg_match('/[\x{10000}-\x{10FFFF}]/u', $unicode)) return strtolower($ascii);
+
+        return $unicode;
+    }
+
+    // A typed or imported domain in its stored form, or the input unchanged (trimmed) if it isn't a valid domain, so
+    // the usual invalid-domain checks still see and report what was entered
+    public static function normalizeOrKeep($input)
+    {
+        $normalized = self::normalize($input);
+        return $normalized !== '' ? $normalized : trim((string) $input);
+    }
+
+    // A domain name as a registrar API expects it (punycode), or the name unchanged if it can't be converted (an old
+    // invalid name, which the registrar then reports as unknown)
+    public static function forApi($domain)
+    {
+        $ascii = self::toAscii($domain);
+        return $ascii !== '' ? $ascii : (string) $domain;
+    }
+
+    // normalize(), remembered for the rest of this PHP process
+    public static function normalizeCached($input)
+    {
+        $key = (string) $input;
+        if (!array_key_exists($key, self::$normalized)) {
+            self::$normalized[$key] = self::normalize($key);
+        }
+        return self::$normalized[$key];
+    }
+
+    /*
+     * Whether a domain name from a registrar (or another outside system) is the same domain as $target, which must
+     * already be normalised. Canonical ASCII names are compared directly; anything else (Unicode, punycode, a trailing
+     * dot, surrounding spaces) is normalised first
+     */
+    public static function sameDomain($outside_name, $target)
+    {
+        $outside_name = (string) $outside_name;
+        $lower = strtolower($outside_name);
+        if (preg_match('/^[a-z0-9-]+(\.[a-z0-9-]+)+$/', $lower) && !preg_match('/(^|\.)xn--/', $lower)) {
+            return $lower === $target;
+        }
+        $normalized = self::normalizeCached($outside_name);
+        return $normalized !== '' && $normalized === $target;
+    }
+
+    // The TLD (everything after the first dot), normalised, or the extracted text unchanged if it doesn't normalise or
+    // would be too long for the 50-character TLD columns once normalised
+    public static function tldOf($domain)
+    {
+        return self::normalizeTld(preg_replace("/^((.*?)\.)(.*)$/", "\\3", (string) $domain));
+    }
+
+    // A TLD in its stored form, or unchanged (trimmed) if it doesn't normalise or would be too long for the
+    // 50-character TLD columns once normalised (the IDN upgrade leaves those as they are too)
+    public static function normalizeTld($tld)
+    {
+        $tld = trim((string) $tld);
+        $normalized = self::normalize($tld);
+        return ($normalized !== '' && mb_strlen($normalized, 'UTF-8') <= 50) ? $normalized : $tld;
+    }
+
     public function checkFormat($input_domain)
     {
+        $input_domain = (string) $input_domain;
+        if ($input_domain === '' || self::normalize($input_domain) === '') return false;
+
         if (
             // positive
             preg_match("/^(.+?)\.(.+?)$/", $input_domain) && // has at least one period in the middle
@@ -185,7 +293,7 @@ class Domain
 
     public function getTld($domain)
     {
-        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
+        return self::tldOf($domain);
     }
 
     public function getDomainPart($domain)

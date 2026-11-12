@@ -42,7 +42,7 @@ class DwAccounts
             CREATE TABLE IF NOT EXISTS dw_accounts (
                 id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 server_id INT(10) UNSIGNED NOT NULL,
-                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
                 ip VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -134,7 +134,8 @@ class DwAccounts
 
             foreach ($array_results['data']['acct'] as $account) {
 
-                $bind_domain = $account['domain'] ? $account['domain'] : '';
+                // stored the same way as the domains table (münchen.de for xn--mnchen-3ya.de), so they match
+                $bind_domain = $account['domain'] ? Domain::normalizeOrKeep($account['domain']) : '';
                 $bind_ip = $account['ip'] ? $account['ip'] : '';
                 $bind_owner = $account['owner'] ? $account['owner'] : '';
                 $bind_user = $account['user'] ? $account['user'] : '';

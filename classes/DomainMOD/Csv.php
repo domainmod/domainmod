@@ -32,6 +32,9 @@ class Csv
     public $time;
     public $user;
 
+    // Domains in the file that weren't imported because they aren't valid domain names
+    public $invalid_domains = array();
+
     public function __construct()
     {
         $this->assets = new Assets();
@@ -123,6 +126,14 @@ class Csv
                 $dns_ip_8 = $row[61];
                 $dns_ip_9 = $row[62];
                 $dns_ip_10 = $row[63];
+
+                // the stored form first (example.com. and xn--mnchen-3ya.de are valid), then the format check
+                $domain = Domain::normalizeOrKeep($domain);
+                if (!$this->domainadd->domain->checkFormat($domain)) {
+                    $this->invalid_domains[] = trim((string) $domain);
+                    $count++;
+                    continue;
+                }
 
                 echo $this->domainadd->addDomainFull($user_id, $creation_type, $domain, $expiry, $function,
                     $auto_renewal, $privacy, $status, $registration_fee, $renewal_fee, $transfer_fee, $privacy_fee,

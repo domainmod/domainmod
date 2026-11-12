@@ -53,7 +53,7 @@ try {
 
     $rid_tld_pairs = array();
     foreach ($result as $row) {
-        $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
+        $tld = DomainMOD\Domain::tldOf($row->domain);
         $key = $row->registrar_id . '_' . $tld;  // Create a unique key
         $rid_tld_pairs[$key] = array('rid' => $row->registrar_id, 'tld' => $tld);
     }

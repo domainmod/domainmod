@@ -163,6 +163,11 @@ class DomainAdd
 
         $creation_type_id = $this->system->getCreationTypeId($creation_type);
 
+        // Store the domain in its normalised form (münchen.de for xn--mnchen-3ya.de), and skip one that isn't a
+        // valid domain name
+        $domain = Domain::normalize($domain);
+        if ($domain === '') return false;
+
         // Check to see if the domain already exists
         if ($this->domain->checkDomainExistence($domain) == true) {
 
