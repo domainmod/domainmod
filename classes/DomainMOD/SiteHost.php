@@ -7,8 +7,6 @@
  *
  * Project: http://domainmod.org   Author: https://greg.ca
  *
- * SiteHost Domain Queue connector contributed by David McNeill <david@rackteck.co.nz>.
- *
  * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
  * version.
@@ -21,16 +19,18 @@
  *
  */
 //@formatter:off
+//@formatter:off
 namespace DomainMOD;
 
 class SiteHost
 {
     public $format;
     public $log;
-    public $base_url = 'https://api.sitehost.nz/1.5/';
 
-    // Test-only hook: when set, it replaces the HTTP request (see the test harness)
-    public static $test_transport = null;
+    // SiteHost returns its domain list in pages, so this is how many domains to ask for at a time, and a cap on how many
+    // pages to read (10,000 domains) in case the list of pages never ends
+    const PAGE_SIZE = 100;
+    const MAX_PAGES = 100;
 
     public function __construct()
     {
@@ -38,165 +38,222 @@ class SiteHost
         $this->log = new Log('class.sitehost');
     }
 
-    public function getApiUrl($command, $client_id, $domain = '', $page_number = 1, $page_size = 100)
+    public function getApiUrl($api_key, $client_id, $command, $domain, $page_number = 1)
     {
-        $params = array('client_id' => $client_id);
+        $base_url = 'https://api.sitehost.nz/1.5/srs/';
+        $parameters = array('apikey' => $api_key, 'client_id' => $client_id);
 
         if ($command == 'domainlist') {
-            $params['filters[page_number]'] = (int) $page_number;
-            $params['filters[page_size]'] = (int) $page_size;
-            return $this->base_url . 'srs/list_domains.json?' . http_build_query($params);
+            $parameters['filters[page_size]'] = self::PAGE_SIZE;
+            $parameters['filters[page_number]'] = $page_number;
+            return $base_url . 'list_domains.json?' . http_build_query($parameters);
         } elseif ($command == 'info') {
-            $params['domain'] = $domain;
-            return $this->base_url . 'srs/get_domain.json?' . http_build_query($params);
-        } elseif ($command == 'nameservers') {
-            $params['domain'] = $domain;
-            return $this->base_url . 'srs/list_name_servers.json?' . http_build_query($params);
-        } elseif ($command == 'privacy') {
-            // Privacy lives on list_domains (private), not get_domain
-            $params['filters[domain]'] = $domain;
-            $params['filters[page_number]'] = 1;
-            $params['filters[page_size]'] = 1;
-            return $this->base_url . 'srs/list_domains.json?' . http_build_query($params);
+            // the domain list has everything except the DNS servers, including the privacy status that get_domain
+            // doesn't return. The domain filter is a search, so the results are matched against the domain below
+            $parameters['filters[domain]'] = $domain;
+            $parameters['filters[page_size]'] = self::PAGE_SIZE;
+            $parameters['filters[page_number]'] = $page_number;
+            return $base_url . 'list_domains.json?' . http_build_query($parameters);
+        } elseif ($command == 'dnsservers') {
+            $parameters['domain'] = $domain;
+            return $base_url . 'list_name_servers.json?' . http_build_query($parameters);
         } else {
-            return 'Unable to build API URL';
+            return _('Unable to build API URL');
         }
     }
 
-    // Returns array(HTTP code, decoded JSON or null). $api_key is appended as a query parameter.
-    public function apiCall($full_url, $api_key)
+    public function apiCall($full_url)
     {
-        $sep = str_contains($full_url, '?') ? '&' : '?';
-        $full_url .= $sep . 'apikey=' . rawurlencode($api_key);
-
-        if (self::$test_transport !== null) {
-            list($http_code, $body) = call_user_func(self::$test_transport, $full_url);
-        } else {
-            $handle = curl_init($full_url);
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($handle, CURLOPT_TIMEOUT, 30);
-            $body = curl_exec($handle);
-            $http_code = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
-            // No curl_close(): it has done nothing since PHP 8.0 and is deprecated in 8.5
-        }
-
-        $array_results = is_string($body) ? json_decode($body, true) : null;
-        return array((int) $http_code, is_array($array_results) ? $array_results : null);
+        $handle = HttpClient::init($full_url);
+        $result = HttpClient::exec($handle, 'SiteHost API');
+        return $result;
     }
 
     public function getDomainList($api_key, $client_id)
     {
         $domain_list = array();
+        $domain_count = 0;
         $page_number = 1;
-        $page_size = 100;
         $total_pages = 1;
 
-        /*
-         * On any failure return '' rather than 0 and an empty array: the Domain Queue treats any other result (even
-         * 0 and an empty array, since 0 != '' in PHP 8) as a complete list and marks it finished, so it would never
-         * be retried
-         */
-        do {
+        while ($page_number <= $total_pages) {
 
-            $api_url = $this->getApiUrl('domainlist', $client_id, '', $page_number, $page_size);
-            list($http_code, $array_results) = $this->apiCall($api_url, $api_key);
+            if ($page_number > self::MAX_PAGES) {
 
-            if ($http_code != 200 || !is_array($array_results) || empty($array_results['status'])
-                || !isset($array_results['return']['data']) || !is_array($array_results['return']['data'])) {
-
-                $this->logFailure('Unable to get domain list', $http_code, $array_results, $api_key, $client_id);
+                $this->logFailure('Unable to get domain list (the list of pages did not end)', null, $api_key, $client_id);
                 return array('', '');
 
             }
 
-            $total_pages = max(1, (int) ($array_results['return']['total_pages'] ?? 1));
+            $api_url = $this->getApiUrl($api_key, $client_id, 'domainlist', '', $page_number);
+            $api_results = $this->apiCall($api_url);
+            $array_results = RegistrarResponse::parseJson($api_results);
 
-            foreach ($array_results['return']['data'] as $item) {
+            // confirm that the api call was successful
+            if (!(RegistrarResponse::get($array_results, 'status') === true && RegistrarResponse::isJsonListAt($api_results, 'return', 'data'))) {
 
-                if (!is_array($item) || empty($item['domain']) || !is_string($item['domain'])) {
+                $this->logFailure('Unable to get domain list', $array_results, $api_key, $client_id);
 
-                    $this->logFailure('Unable to get domain list (unexpected response)', $http_code, null, $api_key, $client_id);
-                    return array('', '');
-
-                }
-
-                $domain_list[] = strtolower($item['domain']);
+                // a failed call isn't an account with no domains, so the Domain Queue retries the list
+                return array('', '');
 
             }
 
+            foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'return', 'data')) as $item) {
+
+                $domain = RegistrarResponse::text(RegistrarResponse::get($item, 'domain'));
+                if ($domain === '') {
+
+                    $this->log->error('Unable to read a domain in the domain list');
+
+                    // one unreadable record fails the whole list (it's retried), rather than finishing with domains missing
+                    return array('', '');
+
+                }
+                $domain_list[] = $domain;
+                $domain_count++;
+
+            }
+
+            // without the page count, a list that's only partly read could look complete
+            $total_pages = $this->readCount(RegistrarResponse::get($array_results, 'return', 'total_pages'));
+            if ($total_pages === null) {
+
+                $this->logFailure('Unable to get domain list (no page count)', $array_results, $api_key, $client_id);
+                return array('', '');
+
+            }
             $page_number++;
 
-        } while ($page_number <= $total_pages);
+        }
 
-        return array(count($domain_list), $domain_list);
+        return array($domain_count, $domain_list);
     }
 
     public function getFullInfo($api_key, $client_id, $domain)
     {
-        $failed = array('', array(), '', '');
-
-        list($http_code, $array_results) = $this->apiCall($this->getApiUrl('info', $client_id, $domain), $api_key);
-
-        if ($http_code != 200 || !is_array($array_results) || empty($array_results['status'])
-            || empty($array_results['return']['Domain'])) {
-
-            $this->logFailure('Unable to get domain details', $http_code, $array_results, $api_key, $client_id, $domain);
-            return $failed;
-
-        }
-
-        $ret = $array_results['return'];
-        $expiration_date = $this->processExpiry($ret['DateBilledUntil'] ?? '');
-        $autorenewal_status = $this->processAutorenew(isset($ret['autorenew_term']) ? (int) $ret['autorenew_term'] > 0 : false);
-
-        list($ns_code, $ns_results) = $this->apiCall($this->getApiUrl('nameservers', $client_id, $domain), $api_key);
+        $expiration_date = '';
         $dns_servers = array();
-        if ($ns_code == 200 && is_array($ns_results) && !empty($ns_results['status']) && isset($ns_results['return'])
-            && is_array($ns_results['return'])) {
-            foreach ($ns_results['return'] as $ns) {
-                if (is_array($ns) && !empty($ns['name']) && is_string($ns['name'])) {
-                    $dns_servers[] = strtolower($ns['name']);
-                }
+        $privacy_status = '';
+        $autorenewal_status = '';
+
+        // find the domain in the search results, which can run to more than one page
+        $domain_details = null;
+        $array_results = null;
+        $page_number = 1;
+        $total_pages = 1;
+
+        while ($domain_details === null && $page_number <= $total_pages && $page_number <= self::MAX_PAGES) {
+
+            $api_url = $this->getApiUrl($api_key, $client_id, 'info', $domain, $page_number);
+            $api_results = $this->apiCall($api_url);
+            $array_results = RegistrarResponse::parseJson($api_results);
+
+            // confirm that the api call was successful
+            if (!(RegistrarResponse::get($array_results, 'status') === true && RegistrarResponse::isJsonListAt($api_results, 'return', 'data'))) {
+                break;
             }
-        }
-        $dns_servers = $this->processDns($dns_servers);
 
-        // Privacy is on the list endpoint, not get_domain
-        $privacy_status = '0';
-        list($priv_code, $priv_results) = $this->apiCall($this->getApiUrl('privacy', $client_id, $domain), $api_key);
-        if ($priv_code == 200 && is_array($priv_results) && !empty($priv_results['status'])
-            && !empty($priv_results['return']['data'][0]) && is_array($priv_results['return']['data'][0])) {
-            $privacy_status = $this->processPrivacy(!empty($priv_results['return']['data'][0]['private'])
-                && (string) $priv_results['return']['data'][0]['private'] !== '0');
+            foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'return', 'data')) as $item) {
+
+                if (strtolower(RegistrarResponse::text(RegistrarResponse::get($item, 'domain'))) === strtolower($domain)) {
+                    $domain_details = $item;
+                    break;
+                }
+
+            }
+
+            $total_pages = (int) $this->readCount(RegistrarResponse::get($array_results, 'return', 'total_pages'));
+            $page_number++;
+
         }
 
-        if ($expiration_date == '' || $expiration_date == '0000-00-00' || $expiration_date == '1970-01-01') {
-            $this->logFailure('Unable to get domain details (unexpected expiry)', $http_code, null, $api_key, $client_id, $domain);
-            return $failed;
+        if ($domain_details === null) {
+
+            $this->logFailure('Unable to get domain details', $array_results, $api_key, $client_id, $domain);
+            return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+
         }
+
+        // the privacy and auto renewal settings must be readable, or the domain would be imported with them turned off
+        $privacy_result = RegistrarResponse::text(RegistrarResponse::get($domain_details, 'private'));
+        $autorenewal_result = RegistrarResponse::text(RegistrarResponse::get($domain_details, 'autorenew_term'));
+        if (!in_array($privacy_result, array('0', '1'), true) || $this->readCount($autorenewal_result) === null) {
+
+            $this->logFailure('Unable to get domain details (unreadable privacy or auto renewal status)', null, $api_key, $client_id, $domain);
+            return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+
+        }
+
+        // get dns servers. A failed call leaves the details empty, so the Domain Queue tries the domain again later
+        // rather than importing it with placeholder DNS servers
+        $dns_result = $this->getDnsServers($api_key, $client_id, $domain);
+        if ($dns_result === null) {
+            return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+        }
+        $dns_servers = $this->processDns($dns_result);
+
+        // get expiration date
+        $expiration_date = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($domain_details, 'datebilleduntil')));
+
+        // get privacy status
+        $privacy_status = $this->processPrivacy($privacy_result);
+
+        // get auto renewal status
+        $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 
-    public function convertToArray($api_result)
+    // The domain's DNS servers, or null if the call failed
+    public function getDnsServers($api_key, $client_id, $domain)
     {
-        return json_decode($api_result, true);
+        $dns_servers = array();
+
+        $api_url = $this->getApiUrl($api_key, $client_id, 'dnsservers', $domain);
+        $api_results = $this->apiCall($api_url);
+        $array_results = RegistrarResponse::parseJson($api_results);
+
+        // confirm that the api call was successful
+        if (RegistrarResponse::get($array_results, 'status') === true && RegistrarResponse::isJsonListAt($api_results, 'return')) {
+
+            foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'return')) as $item) {
+
+                $dns_server = RegistrarResponse::text(RegistrarResponse::get($item, 'name'));
+                if ($dns_server === '') {
+
+                    // an unreadable record fails the call, rather than the domain being imported with DNS servers missing
+                    $this->logFailure('Unable to read a DNS server', null, $api_key, $client_id, $domain);
+                    return null;
+
+                }
+                $dns_servers[] = $dns_server;
+
+            }
+
+        } else {
+
+            $this->logFailure('Unable to get DNS servers', $array_results, $api_key, $client_id, $domain);
+            return null;
+
+        }
+
+        return $dns_servers;
     }
 
-    public function processExpiry($date_str)
+    public function processExpiry($expiry_result)
     {
-        if (!is_string($date_str) || $date_str === '' || str_starts_with($date_str, '0000-00-00')) {
+        // SiteHost uses 0000-00-00 00:00:00 for a date that isn't set
+        if ($expiry_result === '' || str_starts_with($expiry_result, '0000-00-00')) {
             return '';
         }
-        $unix = strtotime($date_str);
-        return $unix ? gmdate('Y-m-d', $unix) : '';
+        return substr($expiry_result, 0, 10);
     }
 
     public function processDns($dns_result)
     {
         $dns_servers = array();
-        if (!empty($dns_result)) {
+        if (!empty(array_filter($dns_result))) {
             $dns_servers = array_values(array_filter($dns_result));
         } else {
             $dns_servers[0] = 'no.dns-servers.1';
@@ -207,26 +264,45 @@ class SiteHost
 
     public function processPrivacy($privacy_result)
     {
-        return ($privacy_result) ? '1' : '0';
+        if ($privacy_result == '1') {
+            $privacy_status = '1';
+        } else {
+            $privacy_status = '0';
+        }
+        return $privacy_status;
     }
 
     public function processAutorenew($autorenewal_result)
     {
-        return ($autorenewal_result) ? '1' : '0';
+        // autorenew_term is how many years each auto renewal is for, and 0 when auto renewal is off
+        if ((int) $autorenewal_result > 0) {
+            $autorenewal_status = '1';
+        } else {
+            $autorenewal_status = '0';
+        }
+        return $autorenewal_status;
     }
 
-    protected function logFailure($message, $http_code, $array_results, $api_key, $client_id, $domain = '')
+    // A whole number from the API (SiteHost returns them as strings), or null if it isn't one
+    protected function readCount($value)
     {
-        $log_extra = array(
-            'HTTP Code' => $http_code,
-            'API Key' => $this->format->obfusc($api_key),
-            'Client ID' => $client_id
-        );
-        if ($domain !== '') $log_extra = array('Domain' => $domain) + $log_extra;
-        if (is_array($array_results) && isset($array_results['msg']) && is_string($array_results['msg'])) {
-            $log_extra['Message'] = $array_results['msg'];
+        $value = RegistrarResponse::text($value);
+        return preg_match('/^[0-9]+$/', $value) ? (int) $value : null;
+    }
+
+    protected function logFailure($log_message, $array_results, $api_key, $client_id, $domain = '')
+    {
+        $log_extra = array();
+        if ($domain !== '') $log_extra['Domain'] = $domain;
+        $log_extra['API Key'] = $this->format->obfusc($api_key);
+        $log_extra['Client ID'] = $client_id;
+        $api_message = RegistrarResponse::text(RegistrarResponse::get($array_results, 'msg'));
+        if ($api_message !== '' && $api_key !== '') {
+            // in case an error message ever echoes the request back
+            $api_message = str_replace(array($api_key, rawurlencode($api_key), urlencode($api_key)), '[API key]', $api_message);
         }
-        $this->log->error($message, $log_extra);
+        if ($api_message !== '') $log_extra['Message'] = $api_message;
+        $this->log->error($log_message, $log_extra);
     }
 
 } //@formatter:on

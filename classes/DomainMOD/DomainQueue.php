@@ -219,6 +219,12 @@ class DomainQueue
             list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
             list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
+        } elseif ($row->api_registrar_name == 'Hostinger') {
+
+            $registrar = new Hostinger();
+            $api_key = $this->api->getKey($row->account_id);
+            list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
+
         } elseif ($row->api_registrar_name == 'Internet.bs') {
 
             $registrar = new InternetBs();
@@ -261,18 +267,12 @@ class DomainQueue
             list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
             list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
-        } elseif ($row->api_registrar_name == 'Hostinger') {
-
-            $registrar = new Hostinger();
-            $api_key = $this->api->getKey($row->account_id);
-            list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
-
         } elseif ($row->api_registrar_name == 'SiteHost') {
 
             $registrar = new SiteHost();
             $api_key = $this->api->getKey($row->account_id);
-            $client_id = $this->api->getAccountId($row->account_id);
-            list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $client_id);
+            $account_id = $this->api->getAccountId($row->account_id);
+            list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $account_id);
 
         } else {
 
@@ -367,6 +367,12 @@ class DomainQueue
                     list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
                     list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
+                } elseif ($row->api_registrar_name == 'Hostinger') {
+
+                    $registrar = new Hostinger();
+                    $api_key = $this->api->getKey($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
+
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs();
@@ -415,18 +421,12 @@ class DomainQueue
                     list($reseller_id, $api_key) = $this->api->getResellerIdKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
 
-                } elseif ($row->api_registrar_name == 'Hostinger') {
-
-                    $registrar = new Hostinger();
-                    $api_key = $this->api->getKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
-
                 } elseif ($row->api_registrar_name == 'SiteHost') {
 
                     $registrar = new SiteHost();
                     $api_key = $this->api->getKey($row->account_id);
-                    $client_id = $this->api->getAccountId($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $client_id, $row->domain);
+                    $account_id = $this->api->getAccountId($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $row->domain);
 
                 } else {
 
