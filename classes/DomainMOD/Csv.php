@@ -135,7 +135,7 @@ class Csv
                     continue;
                 }
 
-                echo $this->domainadd->addDomainFull($user_id, $creation_type, $domain, $expiry, $function,
+                $this->domainadd->addDomainFull($user_id, $creation_type, $domain, $expiry, $function,
                     $auto_renewal, $privacy, $status, $registration_fee, $renewal_fee, $transfer_fee, $privacy_fee,
                     $misc_fee, $fee_currency, $domain_notes, $category, $stakeholder, $category_notes,
                     $hosting_provider, $hosting_provider_url, $hosting_provider_notes, $registrar, $registrar_url,
