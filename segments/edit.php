@@ -116,6 +116,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
+                // the segment may have been deleted while the form was open; then nothing is saved
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM segments
+                    WHERE id = :new_segid");
+                $stmt->bindValue('new_segid', $new_segid, PDO::PARAM_INT);
+                $stmt->execute();
+                $segment_exists = $stmt->fetchColumn();
+                $stmt->closeCursor();
+
+                if (!$segment_exists) {
+
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That segment no longer exists.') . '<BR>';
+                    header("Location: index.php");
+                    exit;
+
+                }
+
                 $new_data_formatted = $format->formatForMysql($domain_array);
 
                 $stmt = $pdo->prepare("
@@ -133,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindValue('number_of_domains', $number_of_domains, PDO::PARAM_INT);
                 $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
                 $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-                $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+                $stmt->bindValue('segid', $new_segid, PDO::PARAM_INT);
                 $stmt->execute();
 
                 // Delete domains that have been removed from the segment
@@ -231,15 +250,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    if ($result) {
+    if (!$result) {
 
-        $new_id = $result->id;
-        $new_name = $result->name;
-        $new_description = $result->description;
-        $domain_array_formatted = $result->segment;
-        $new_notes = $result->notes;
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That segment no longer exists.') . '<BR>';
+        header("Location: index.php");
+        exit;
 
     }
+
+    $new_id = $result->id;
+    $new_name = $result->name;
+    $new_description = $result->description;
+    $domain_array_formatted = $result->segment;
+    $new_notes = $result->notes;
 
     $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_array_formatted);
     $raw_domain_list = preg_replace("/','/", "\r\n", $raw_domain_list);

@@ -67,6 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM ssl_accounts
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $new_sslpaid, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That SSL provider account no longer exists.') . '<BR>';
+                header("Location: ../ssl-accounts.php");
+                exit;
+
+            }
+
             $stmt = $pdo->prepare("
                 UPDATE ssl_accounts
                 SET owner_id = :new_owner_id,
@@ -212,13 +231,19 @@ if ($del === 1) {
         $result = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        if (!$result) {
 
-            $temp_username = $result->username;
-            $temp_owner_name = $result->owner_name;
-            $temp_ssl_provider_name = $result->ssl_provider_name;
+            // already deleted, or the link was changed
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That SSL provider account no longer exists.') . '<BR>';
+            header("Location: ../ssl-accounts.php");
+            exit;
 
         }
+
+        $temp_username = $result->username;
+        $temp_owner_name = $result->owner_name;
+        $temp_ssl_provider_name = $result->ssl_provider_name;
 
         $stmt = $pdo->prepare("
             DELETE FROM ssl_accounts

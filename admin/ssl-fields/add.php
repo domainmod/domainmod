@@ -51,7 +51,10 @@ $new_description = isset($_POST['new_description']) ? $sanitize->text($_POST['ne
 $new_field_type_id = (int) ($_POST['new_field_type_id'] ?? 0);
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name)) {
+// the field types the ALTER TABLE below knows how to create
+$valid_field_type = in_array($new_field_type_id, array(1, 2, 3, 4, 5, 6), true);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name) && $valid_field_type) {
 
     $stmt = $pdo->prepare("
         SELECT field_name
@@ -156,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
         if ($new_name == '') $_SESSION['s_message_danger'] .= _('Enter the Display Name') . '<BR>';
         if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['s_message_danger'] .= _('The Database Field Name format is incorrect') . '<BR>';
+        if (!$valid_field_type) $_SESSION['s_message_danger'] .= _('Choose the Data Type') . '<BR>';
 
     }
 

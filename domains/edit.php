@@ -125,6 +125,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM domains
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
+                header("Location: ../domains/index.php");
+                exit;
+
+            }
+
             $stmt = $pdo->prepare("
                 SELECT registrar_id, owner_id
                 FROM registrar_accounts
@@ -134,12 +153,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->fetch();
             $stmt->closeCursor();
 
-            if ($result) {
+            if (!$result) {
 
-                $new_registrar_id = $result->registrar_id;
-                $new_owner_id = $result->owner_id;
+                // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                header("Location: edit.php?did=" . $did . "");
+                exit;
 
             }
+
+            $new_registrar_id = $result->registrar_id;
+            $new_owner_id = $result->owner_id;
 
             $stmt = $pdo->prepare("
                 SELECT id
@@ -386,6 +411,25 @@ if ($del === 1) {
         try {
 
             $pdo->beginTransaction();
+
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM domains
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
+                header("Location: ../domains/index.php");
+                exit;
+
+            }
 
             $stmt = $pdo->prepare("
                 DELETE FROM domains

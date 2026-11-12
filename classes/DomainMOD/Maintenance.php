@@ -220,12 +220,11 @@ class Maintenance
         $result = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        // nothing to recalculate for a domain that no longer exists
+        if (!$result) return;
 
-            $registrar_id = $result->registrar_id;
-            $tld = $result->tld;
-
-        }
+        $registrar_id = $result->registrar_id;
+        $tld = $result->tld;
 
         $stmt = $pdo->prepare("
             UPDATE domains

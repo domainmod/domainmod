@@ -56,12 +56,16 @@ if ($export_data === 1) {
         $result = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        if (!$result) {
 
-            $segment_name = $result->name;
-            $number_of_domains = $result->number_of_domains;
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That segment no longer exists.') . '<BR>';
+            header("Location: index.php");
+            exit;
 
         }
+
+        $segment_name = $result->name;
+        $number_of_domains = $result->number_of_domains;
 
     } else {
 

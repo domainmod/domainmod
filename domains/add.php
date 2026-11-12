@@ -123,12 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $stmt->fetch();
                 $stmt->closeCursor();
 
-                if ($result) {
+                if (!$result) {
 
-                    $new_registrar_id = $result->registrar_id;
-                    $new_owner_id = $result->owner_id;
+                    // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: add.php");
+                    exit;
 
                 }
+
+                $new_registrar_id = $result->registrar_id;
+                $new_owner_id = $result->owner_id;
 
                 if ($new_privacy === 1) {
 

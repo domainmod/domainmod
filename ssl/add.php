@@ -93,6 +93,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // the domain may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM domains
+                WHERE id = :new_domain_id");
+            $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $domain_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$domain_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The domain you chose no longer exists. Please choose another one.') . '<BR>';
+                header("Location: add.php");
+                exit;
+
+            }
+
             $stmt = $pdo->prepare("
                 SELECT ssl_provider_id, owner_id
                 FROM ssl_accounts
@@ -102,12 +121,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->fetch();
             $stmt->closeCursor();
 
-            if ($result) {
+            if (!$result) {
 
-                $new_ssl_provider_id = $result->ssl_provider_id;
-                $new_owner_id = $result->owner_id;
+                // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The SSL provider account you chose no longer exists. Please choose another one.') . '<BR>';
+                header("Location: add.php");
+                exit;
 
             }
+
+            $new_ssl_provider_id = $result->ssl_provider_id;
+            $new_owner_id = $result->owner_id;
 
             $stmt = $pdo->prepare("
                 SELECT id, (renewal_fee + misc_fee) AS total_cost
