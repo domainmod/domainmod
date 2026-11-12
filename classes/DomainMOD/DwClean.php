@@ -91,13 +91,26 @@ class DwClean
 
             foreach ($result as $row) {
 
-                $bind_wrapped = wordwrap($row->{$field}, $wrap_at, "<BR>", true);
+                // wrapped first, then HTML-escaped (the text comes from the WHM server), so the wrapping can't split
+                // an escape sequence; the line breaks are the only HTML added
+                $bind_wrapped = DwDisplay::wrapEscaped($row->{$field}, $wrap_at);
                 $bind_id = $row->id;
                 $stmt->execute();
 
             }
 
         }
+    }
+
+    /*
+     * An SQL expression for a column HTML-escaped (the same characters as htmlspecialchars() with ENT_QUOTES). DNS
+     * record text comes from the WHM server (a cPanel user controls their own zone's records), so types() and
+     * content() escape every field they build the record HTML from; the stored fields stay as WHM sent them, for the
+     * CSV export
+     */
+    protected function escapedColumn($column)
+    {
+        return "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(`" . $column . "`, '&', '&amp;'), '<', '&lt;'), '>', '&gt;'), '\"', '&quot;'), '''', '&#039;')";
     }
 
     public function lines()
@@ -118,7 +131,7 @@ class DwClean
     {
         $this->deeb->cnxx->query("
             UPDATE dw_dns_records
-            SET `formatted_type` = concat('<strong" . ">" . "', `type`, '</strong" . ">" . "')");
+            SET `formatted_type` = concat('<strong" . ">" . "', " . $this->escapedColumn('type') . ", '</strong" . ">" . "')");
     }
 
     public function content()
@@ -126,7 +139,7 @@ class DwClean
         $pdo = $this->deeb->cnxx;
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`name`, ' | ', `address`, ' | ', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('name') . ", ' | ', " . $this->escapedColumn('address') . ", ' | ', `ttl`)
             WHERE type = 'A'");
 
         $pdo->query("
@@ -136,37 +149,37 @@ class DwClean
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`name`, ' | ', `cname`, ' |', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('name') . ", ' | ', " . $this->escapedColumn('cname') . ", ' |', `ttl`)
             WHERE type = 'CNAME'");
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`preference`, ' | ', `exchange`, ' | ', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('preference') . ", ' | ', " . $this->escapedColumn('exchange') . ", ' | ', `ttl`)
             WHERE type = 'MX'");
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`nsdname`, ' | ', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('nsdname') . ", ' | ', `ttl`)
             WHERE type = 'NS'");
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`name`, ' | ', `mname`, ' | ', `rname`, ' | ', `ttl`, '<BR" . ">" . "',
+            SET formatted_output = concat(" . $this->escapedColumn('name') . ", ' | ', " . $this->escapedColumn('mname') . ", ' | ', " . $this->escapedColumn('rname') . ", ' | ', `ttl`, '<BR" . ">" . "',
                 '<strong" . ">" . _("Serial") . ":</strong" . ">" . " ', `serial`, ' |
-                <strong" . ">" . _("Refresh") . ":</strong" . ">" . " ', `refresh`, ' |
+                <strong" . ">" . _("Refresh") . ":</strong" . ">" . " ', " . $this->escapedColumn('refresh') . ", ' |
                 <strong" . ">" . _("Retry") . ":</strong" . ">" . " ', `retry`, ' |
-                <strong" . ">" . _("Expire") . ":</strong" . ">" . " ', `expire`, ' |
+                <strong" . ">" . _("Expire") . ":</strong" . ">" . " ', " . $this->escapedColumn('expire') . ", ' |
                 <strong" . ">" . _("Minimum TTL") . ":</strong" . ">" . " ', `minimum`)
             WHERE type = 'SOA'");
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`name`, ' | ', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('name') . ", ' | ', `ttl`)
             WHERE type = 'SRV'");
 
         $pdo->query("
             UPDATE dw_dns_records
-            SET formatted_output = concat(`name`, ' | ', `formatted_output`, ' | ', `ttl`)
+            SET formatted_output = concat(" . $this->escapedColumn('name') . ", ' | ', `formatted_output`, ' | ', `ttl`)
             WHERE type = 'TXT'");
 
         $pdo->query("
