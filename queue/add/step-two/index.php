@@ -253,6 +253,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $date = new DomainMOD\Date();
 
+                // set by the two checks below when a domain is already in DomainMOD or in the queue
+                $has_existing_domains = '0';
+                $has_existing_domains_queue = '0';
+
                 // cycle through domains here
                 foreach ($domain_array as $key => $new_domain) {
 
