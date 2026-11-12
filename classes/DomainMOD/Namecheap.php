@@ -49,11 +49,8 @@ class Namecheap
 
     public function apiCall($full_url)
     {
-        $handle = curl_init($full_url);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($handle);
+        $handle = HttpClient::init($full_url);
+        $result = HttpClient::exec($handle, 'Namecheap API');
         return $result;
     }
 

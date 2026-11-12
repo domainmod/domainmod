@@ -6542,3 +6542,11 @@ msgstr "যদি কোনো মিলিত ব্যবহারকারী
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "নিচের বোতামে ক্লিক করে আপনার পাসওয়ার্ড রিসেট করুন। আপনার নতুন পাসওয়ার্ড ইমেইলে পাঠানো হবে।"
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL সার্টিফিকেট যাচাই করুন"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "এটি চালু রাখুন। কেবল তখনই এটি বন্ধ করুন, যখন আপনার সার্ভার স্ব-স্বাক্ষরিত সার্টিফিকেট ব্যবহার করে এবং আপনি এমন একটি নেটওয়ার্কের মাধ্যমে সংযোগ করেন যা আপনি বিশ্বাস করেন। চালু থাকলে, সার্ভারের SSL সার্টিফিকেট অবশ্যই আপনি যে হোস্ট নামটি প্রবেশ করেছেন তার জন্য বৈধ হতে হবে।"
+

@@ -97,12 +97,9 @@ class NameCom
 
     public function apiCall($full_url, $account_username, $api_key)
     {
-        $handle = curl_init($full_url);
+        $handle = HttpClient::init($full_url);
         curl_setopt($handle, CURLOPT_USERPWD, $account_username . ':' . $api_key);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($handle);
+        $result = HttpClient::exec($handle, 'Name.com API');
         return $result;
     }
 

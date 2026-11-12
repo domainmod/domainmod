@@ -6542,3 +6542,11 @@ msgstr "اگر کوئی مطابقت رکھنے والا صارف نام یا ا
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "اپنا پاس ورڈ ری سیٹ کرنے کے لیے نیچے دیے گئے بٹن پر کلک کریں۔ آپ کا نیا پاس ورڈ آپ کو ای میل کر دیا جائے گا۔"
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "ایس ایس ایل سرٹیفکیٹ کی تصدیق کریں"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "اسے فعال رہنے دیں۔ اسے صرف اسی صورت میں بند کریں جب آپ کا سرور خود دستخط شدہ سرٹیفیکیٹ استعمال کرتا ہو اور آپ کسی ایسے نیٹ ورک کے ذریعے کنکٹ ہوتے ہوں جس پر آپ بھروسہ کرتے ہیں۔ جب یہ فعال ہو، سرور کا SSL سرٹیفیکیٹ آپ کے درج کردہ ہوسٹ نام کے لیے درست ہونا چاہیے۔"
+

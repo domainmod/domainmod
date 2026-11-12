@@ -1004,6 +1004,7 @@ try {
             `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `api_token` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `hash` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `verify_ssl` TINYINT(1) NOT NULL DEFAULT '1',
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `dw_accounts` INT(10) UNSIGNED NOT NULL,
             `dw_dns_zones` INT(10) UNSIGNED NOT NULL,

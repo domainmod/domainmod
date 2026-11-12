@@ -6542,3 +6542,11 @@ msgstr "பொருந்தும் பயனர் பெயர் அல்
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைக்க கீழே உள்ள பொத்தானைக் கிளிக் செய்யவும். உங்கள் புதிய கடவுச்சொல் உங்களுக்கு மின்னஞ்சல் செய்யப்படும்."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL சான்றிதழைச் சரிபார்க்கவும்"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "உங்கள் சர்வர் ஒரு சுய-கையொப்பமிட்ட சான்றிதழைப் பயன்படுத்தினால் மற்றும் நீங்கள் நம்பும் ஒரு நெட்வொர்க்கில் இணைந்தால் தவிர இதை ஆன் செய்துகொண்டே இருங்கள். இது ஆன் செய்யப்பட்டிருக்கும்போது, நீங்கள் உள்ளிடும் ஹோஸ்ட் பெயருக்கு சர்வரின் SSL சான்றிதழ் செல்லுபடியாகும் வகையில் இருக்க வேண்டும்."
+

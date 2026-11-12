@@ -6538,3 +6538,11 @@ msgstr "Nếu có tên người dùng hoặc địa chỉ email trùng khớp, m
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Hãy nhấp vào nút bên dưới để đặt lại mật khẩu. Mật khẩu mới của bạn sẽ được gửi qua email."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "Xác minh chứng chỉ SSL"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Hãy để tùy chọn này bật trừ khi máy chủ của bạn sử dụng chứng chỉ tự ký và bạn kết nối qua một mạng mà bạn tin cậy. Khi tùy chọn này được bật, chứng chỉ SSL của máy chủ phải hợp lệ đối với tên máy chủ mà bạn đã nhập."
+

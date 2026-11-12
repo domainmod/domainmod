@@ -6542,3 +6542,11 @@ msgstr "यदि कोई मेल खाने वाला उपयोग�
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "अपना पासवर्ड रीसेट करने के लिए नीचे दिए गए बटन पर क्लिक करें। आपका नया पासवर्ड आपको ईमेल कर दिया जाएगा।"
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "एसएसएल प्रमाणपत्र सत्यापित करें"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "इसे चालू ही रखें। इसे केवल तभी बंद करें जब आपका सर्वर स्वयं-हस्ताक्षरित प्रमाणपत्र का उपयोग करता हो और आप किसी ऐसे नेटवर्क से कनेक्ट होते हों जिस पर आप भरोसा करते हैं। जब यह चालू हो, तो सर्वर का SSL प्रमाणपत्र आपके द्वारा दर्ज किए गए होस्ट नाम के लिए वैध होना चाहिए।"
+

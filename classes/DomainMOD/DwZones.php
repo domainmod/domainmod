@@ -104,7 +104,7 @@ class DwZones
         return $stmt->fetchAll();
     }
 
-    public function processEachZone($result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
+    public function processEachZone($result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash, $verify_ssl = 1)
     {
         foreach ($result_zones as $row_zones) {
 
@@ -112,7 +112,7 @@ class DwZones
             $records = new DwRecords();
 
             $api_call = $records->getApiCall($row_zones->domain);
-            $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash);
+            $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash, $verify_ssl);
             $records->insertRecords($api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }

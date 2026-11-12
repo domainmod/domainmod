@@ -110,6 +110,9 @@ if ($del === 1) {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
+    $existing_ssl_provider_accounts = 0;
+    $existing_ssl_certs = 0;
+
     $stmt = $pdo->prepare("
         SELECT ssl_provider_id
         FROM ssl_accounts

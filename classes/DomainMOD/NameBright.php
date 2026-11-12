@@ -58,27 +58,21 @@ class NameBright
     {
         if ($command == 'accesstoken') {
 
-            $handle = curl_init($full_url);
+            $handle = HttpClient::init($full_url);
             // the body only: response headers before the JSON would stop the access token being read
             curl_setopt($handle, CURLOPT_HEADER, false);
             curl_setopt($handle, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($handle, CURLOPT_POST, true);
             curl_setopt($handle, CURLOPT_POSTFIELDS, $post_fields);
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-            $result = curl_exec($handle);
+            $result = HttpClient::exec($handle, 'NameBright API');
 
         } else {
 
-            $handle = curl_init($full_url);
+            $handle = HttpClient::init($full_url);
             curl_setopt($handle, CURLOPT_HTTPHEADER, array(
                 'Authorization: Bearer ' . $access_token,
                 'Accept: application/json'));
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-            $result = curl_exec($handle);
+            $result = HttpClient::exec($handle, 'NameBright API');
 
         }
         return $result;

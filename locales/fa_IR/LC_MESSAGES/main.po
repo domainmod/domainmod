@@ -6542,3 +6542,11 @@ msgstr "اگر نام کاربری یا آدرس ایمیل مطابقی وجو�
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "برای ریست کردن رمز عبور خود، روی دکمه زیر کلیک کنید. رمز عبور جدیدتان برایتان ایمیل خواهد شد."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "تأیید گواهی SSL"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "این گزینه را روشن بگذارید مگر اینکه سرور شما از گواهی خودامضا استفاده کند و شما از طریق شبکه‌ای که به آن اعتماد دارید متصل شوید. وقتی این گزینه فعال باشد، گواهی SSL سرور باید برای نام میزبانی که وارد کرده‌اید معتبر باشد."
+

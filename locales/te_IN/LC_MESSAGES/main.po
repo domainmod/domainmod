@@ -6542,3 +6542,11 @@ msgstr "మీకు సరిపోయే యూజర్‌నేమ్ లే
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయడానికి దిగువ బటన్‌పై క్లిక్ చేయండి. మీ కొత్త పాస్‌వర్డ్ మీకు ఇమెయిల్ చేయబడుతుంది."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "SSL సర్టిఫికేట్‌ను ధృవీకరించండి"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "మీ సర్వర్ స్వీయ-సంతకం చేసిన సర్టిఫికేట్‌ను ఉపయోగించి, మీరు నమ్మకమైన నెట్‌వర్క్ ద్వారా కనెక్ట్ చేస్తే తప్ప దీనిని ఆఫ్ చేయవద్దు. ఇది ఆన్‌లో ఉన్నప్పుడు, మీరు నమోదు చేసిన హోస్ట్ పేరుకు సర్వర్ యొక్క SSL సర్టిఫికేట్ చెల్లుబాటు అయ్యి ఉండాలి."
+

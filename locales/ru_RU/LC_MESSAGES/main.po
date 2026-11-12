@@ -6550,3 +6550,11 @@ msgstr "Если найдены совпадающие имя пользоват
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Нажмите кнопку ниже, чтобы сбросить пароль. Новый пароль будет отправлен вам по электронной почте."
 
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "Проверить SSL-сертификат"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Оставьте этот параметр включенным, если только ваш сервер не использует самоподписанный сертификат и вы подключаетесь через сеть, которой доверяете. Когда этот параметр включен, SSL-сертификат сервера должен быть действителен для введенного вами имени хоста."
+

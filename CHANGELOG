@@ -1,7 +1,9 @@
 DomainMOD CHANGELOG
 ===================
-v4.24.02    TBD
-- Added SiteHost API support (Domain Queue). Prices are in NZD.
+v4.24.02    2026-11-10
+- Added a Verify SSL Certificate setting to each Data Warehouse server
+- Added timeouts to registrar API and Data Warehouse connections
+- Fixed registrar API, Data Warehouse, and update check connections not verifying SSL certificates (security fix)
 
 v4.24.01    2026-11-08
 - Fixed read-only users being able to delete and change data (security fix)
@@ -14,8 +16,6 @@ v4.24.0     2026-11-08
 - Updated Cloudflare to its current Registrar API (API tokens, and more than 20 domains)
 - Updated password resets to email a single-use reset link
 - Updated the supported PHP and MariaDB versions (PHP 8.2 or later is now required)
-- Updated all translations
-- Updated Documentation (User Guide)
 - Fixed domains and SSL certificates being left out of lists and cost reports for users missing a currency conversion rate
 - Fixed duplicate currency conversion rates counting assets twice in lists and cost reports
 - Fixed failed Domain Queue lists being marked as finished
@@ -49,8 +49,6 @@ v4.24.0     2026-11-08
 v4.23.01    2026-11-07
 - Added AI Code Rating
 - Updated Feedback page to use gettext
-- Updated all translations
-- Updated Documentation (User Guide)
 - Fixed backups and imports being saved in the web-accessible temp folder
 
 v4.23.0     2025-01-04

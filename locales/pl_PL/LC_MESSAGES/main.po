@@ -40,7 +40,7 @@ msgstr "Admin"
 #: _includes/settings/admin-custom-domain-fields.inc.php:24
 #: admin/domain-fields/index.php:116 admin/index.php:50
 msgid "Custom Domain Fields"
-msgstr "Pola dodatkowe"
+msgstr "Niestandardowe pola domen"
 
 #: _includes/breadcrumbs/admin-add-custom-ssl-field.inc.php:23
 #: _includes/breadcrumbs/admin-edit-custom-ssl-field.inc.php:23
@@ -49,7 +49,7 @@ msgstr "Pola dodatkowe"
 #: _includes/settings/admin-custom-ssl-fields.inc.php:24 admin/index.php:51
 #: admin/ssl-fields/index.php:116
 msgid "Custom SSL Fields"
-msgstr "Dodatkowe pola SSL"
+msgstr "Niestandardowe pola SSL"
 
 #: _includes/breadcrumbs/admin-users-add.inc.php:23
 #: _includes/breadcrumbs/admin-users-edit.inc.php:23
@@ -118,7 +118,7 @@ msgstr "DNS"
 #: _includes/breadcrumbs/assets-add-host.inc.php:23
 #: _includes/breadcrumbs/assets-edit-host.inc.php:23
 msgid "Web Hosts"
-msgstr "Web Hosty"
+msgstr "Dostawcy hostingu"
 
 #: _includes/breadcrumbs/assets-add-ip-address.inc.php:23
 #: _includes/breadcrumbs/assets-edit-ip-address.inc.php:23
@@ -163,7 +163,7 @@ msgstr "Stawki"
 #: _includes/settings/assets-ssl-accounts.inc.php:24
 #: assets/account-owners.php:189
 msgid "SSL Accounts"
-msgstr "Konta z SSL"
+msgstr "Konta dostawców SSL"
 
 #: _includes/breadcrumbs/assets-add-ssl-provider-fee.inc.php:23
 #: _includes/breadcrumbs/assets-add-ssl-provider.inc.php:23
@@ -179,7 +179,7 @@ msgstr "Dostawcy certyfikatów SSL"
 #: _includes/breadcrumbs/assets-edit-ssl-type.inc.php:23
 #: _includes/settings/assets-ssl-types.inc.php:24
 msgid "SSL Types"
-msgstr "Rodzaje SSL"
+msgstr "Typy certyfikatów SSL"
 
 #: _includes/breadcrumbs/csv-importer-main.inc.php:22
 #: _includes/breadcrumbs/domains-add.inc.php:22
@@ -296,7 +296,7 @@ msgstr "Certyfikaty SSL"
 
 #: _includes/email/send-new-password.inc.php:31
 msgid "Your %s Password has been Reset"
-msgstr "Twoje hasło %s zostało zresetowane"
+msgstr "Hasło do %s zostało zresetowane"
 
 #: _includes/email/send-new-password.inc.php:51
 #: _includes/email/send-new-password.inc.php:97
@@ -314,7 +314,7 @@ msgstr "URL"
 #: _includes/email/send-reset-link.inc.php:56
 #: _includes/email/send-reset-link.inc.php:98
 msgid "Your Username"
-msgstr "Użytkownik"
+msgstr "Twoja nazwa użytkownika"
 
 #: _includes/email/send-new-password.inc.php:57
 #: _includes/email/send-new-password.inc.php:101
@@ -329,7 +329,7 @@ msgstr "Nowe hasło"
 #: _includes/email/send-test-email.inc.php:93 classes/DomainMOD/Email.php:385
 #: classes/DomainMOD/Email.php:403
 msgid "Best Regards"
-msgstr "Najlepsze pozdrowienia"
+msgstr "Z poważaniem"
 
 #: _includes/email/send-new-password.inc.php:78
 #: _includes/email/send-new-password.inc.php:108
@@ -346,11 +346,11 @@ msgstr "Jeśli sam o to nie poprosiłeś, wygląda na to, że ktoś może próbo
 #: _includes/email/send-new-password.inc.php:112
 #: _includes/email/send-reset-link.inc.php:109
 msgid "Password Reset"
-msgstr "Zapomniane hasło"
+msgstr "Resetowanie hasła"
 
 #: _includes/layout/asset-footer.inc.php:24
 msgid "Inactive Assets are currently hidden."
-msgstr "Aktywa nieaktywne są obecnie ukryte."
+msgstr "Nieaktywne zasoby są obecnie ukryte."
 
 #: _includes/layout/asset-footer.inc.php:24
 msgid "Click here to display them"
@@ -358,7 +358,7 @@ msgstr "Kliknij tutaj, aby je wyświetlić"
 
 #: _includes/layout/asset-footer.inc.php:28
 msgid "Inactive Assets are currently displayed."
-msgstr "Aktywa nieaktywne są aktualnie wyświetlane."
+msgstr "Nieaktywne zasoby są obecnie wyświetlane."
 
 #: _includes/layout/asset-footer.inc.php:28
 msgid "Click here to hide them"
@@ -366,7 +366,7 @@ msgstr "Kliknij tutaj, aby je ukryć"
 
 #: _includes/layout/footer.inc.php:36
 msgid "%s%s%s is open source software released under the %sGNU/GPL License%s."
-msgstr "%s%s%s to oprogramowanie open source wydane w ramach licencji %sGNU/GPL%s."
+msgstr "%s%s%s to oprogramowanie o otwartym kodzie źródłowym udostępniane na licencji %sGNU/GPL%s."
 
 #: _includes/layout/footer.inc.php:37
 msgid "Created by"
@@ -389,18 +389,18 @@ msgstr "Certyfikaty SSL"
 #: _includes/layout/menu-main.inc.php:85
 #: _includes/settings/bulk-main.inc.php:23
 msgid "Bulk Updater"
-msgstr "Masowe akcje"
+msgstr "Aktualizacja zbiorcza"
 
 #: _includes/layout/menu-main.inc.php:103
 #: _includes/settings/dw-intro.inc.php:23 _includes/settings/dw-main.inc.php:23
 #: settings/display/index.php:363
 msgid "Data Warehouse"
-msgstr "Dane zewnętrzne"
+msgstr "Hurtownia danych"
 
 #: _includes/layout/header.inc.php:134 _includes/layout/menu-main.inc.php:120
 #: _includes/settings/settings-display.inc.php:23 settings/index.php:46
 msgid "Display Settings"
-msgstr "Wygląd"
+msgstr "Ustawienia wyświetlania"
 
 #: _includes/layout/menu-main.inc.php:126
 #: _includes/settings/settings-defaults.inc.php:23 settings/index.php:47
@@ -416,7 +416,7 @@ msgstr "Profil użytkownika"
 #: _includes/settings/settings-password.inc.php:23 settings/index.php:49
 #: settings/password/index.php:141
 msgid "Change Password"
-msgstr "Zmiana hasła"
+msgstr "Zmień hasło"
 
 #: _includes/layout/menu-main.inc.php:147
 #: _includes/layout/menu-main.inc.php:222
@@ -429,15 +429,15 @@ msgstr "Konserwacja"
 #: admin/scheduler/run.php:137 cron.php:103 cron.php:130 install/go.php:63
 #: maintenance/index.php:47
 msgid "Update Conversion Rates"
-msgstr "Aktualizacja współczynników konwersji"
+msgstr "Aktualizuj kursy walut"
 
 #: _includes/layout/menu-main.inc.php:161 maintenance/index.php:48
 msgid "Update Domain Fees"
-msgstr "Aktualizacja opłat za domeny"
+msgstr "Aktualizuj opłaty za domeny"
 
 #: _includes/layout/menu-main.inc.php:167 maintenance/index.php:49
 msgid "Update SSL Fees"
-msgstr "Aktualizacja opłat za korzystanie z protokołu SSL"
+msgstr "Aktualizuj opłaty za certyfikaty SSL"
 
 #: _includes/layout/menu-main.inc.php:178
 #: _includes/settings/admin-main.inc.php:24
@@ -462,7 +462,7 @@ msgstr "Harmonogram zadań"
 #: _includes/layout/menu-main.inc.php:234
 #: _includes/settings/admin-backup-main.inc.php:23 admin/index.php:55
 msgid "Backup & Restore"
-msgstr "Kopia zapasowa"
+msgstr "Kopie zapasowe i przywracanie"
 
 #: _includes/layout/menu-main.inc.php:240
 #: _includes/settings/admin-debug-log-main.inc.php:23 admin/index.php:56
@@ -488,7 +488,7 @@ msgstr "Aktualności"
 
 #: _includes/layout/pagination-large-mode.inc.php:26
 msgid "(Listing %s of %s)"
-msgstr "(Listowanie %s z %s)"
+msgstr "(Wyświetlono %s z %s)"
 
 #: _includes/layout/reporting-block-sub.inc.php:24
 #: _includes/layout/reporting-block-sub.inc.php:28
@@ -552,7 +552,7 @@ msgstr "Wszystkie"
 #: reporting/ssl/cost-by-owner.php:142 reporting/ssl/cost-by-provider.php:149
 #: reporting/ssl/cost-by-type.php:142 ssl/index.php:277 ssl/index.php:1495
 msgid "Total Cost"
-msgstr "Razem"
+msgstr "Łączny koszt"
 
 #: _includes/layout/reporting-block-sub.inc.php:36 domains/index.php:438
 #: domains/index.php:2141 domains/index.php:2143
@@ -607,11 +607,11 @@ msgstr "Zobacz dziennik debugowania"
 
 #: _includes/layout/table-maintenance.inc.php:52
 msgid "You can disable debugging mode in %sSettings%s."
-msgstr "Możesz wyłączyć tryb debugowania w %sUstawienia%s."
+msgstr "Tryb debugowania można wyłączyć w %sustawieniach%s."
 
 #: _includes/layout/table-maintenance.inc.php:57
 msgid "Please contact your %s administrator to disable debugging"
-msgstr "Skontaktuj się z administratorem %s, aby wyłączyć debugowanie"
+msgstr "Aby wyłączyć debugowanie, skontaktuj się z administratorem %s"
 
 #: _includes/settings/admin-add-custom-domain-field.inc.php:23
 msgid "Add Custom Domain Field"
@@ -651,11 +651,11 @@ msgstr "Kopia zapasowa"
 #: _includes/settings/admin-debug-log-main.inc.php:24
 #: _includes/settings/system-debug.inc.php:24
 msgid "Debug"
-msgstr "Debug"
+msgstr "Debugowanie"
 
 #: _includes/settings/admin-edit-custom-domain-field.inc.php:23
 msgid "Edit Custom Domain Field"
-msgstr "Edytuj pole niestandardowe"
+msgstr "Edytuj niestandardowe pole domeny"
 
 #: _includes/settings/admin-edit-custom-domain-field.inc.php:24
 #: _includes/settings/admin-edit-custom-ssl-field.inc.php:24
@@ -677,11 +677,11 @@ msgstr "Edytuj pole niestandardowe"
 #: _includes/settings/segments-edit.inc.php:24
 #: _includes/settings/ssl-edit.inc.php:24
 msgid "Edit"
-msgstr "Edycja"
+msgstr "Edytuj"
 
 #: _includes/settings/admin-edit-custom-ssl-field.inc.php:23
 msgid "Edit Custom SSL Field"
-msgstr "Edycja niestandardowego pola SSL"
+msgstr "Edytuj niestandardowe pole SSL"
 
 #: _includes/settings/admin-main.inc.php:23
 msgid "System Administration"
@@ -689,7 +689,7 @@ msgstr "Zarządzanie systemem"
 
 #: _includes/settings/admin-maintenance-main.inc.php:23
 msgid "Admin Maintenance"
-msgstr "Obsługa administracyjna"
+msgstr "Konserwacja systemu"
 
 #: _includes/settings/admin-scheduler-main.inc.php:24
 msgid "Scheduler"
@@ -706,7 +706,7 @@ msgstr "Edycja użytkownika"
 
 #: _includes/settings/admin-users-main.inc.php:23
 msgid "User Administration"
-msgstr "Zarządzanie użytkownikiem"
+msgstr "Zarządzanie użytkownikami"
 
 #: _includes/settings/assets-add-category.inc.php:23 assets/add/category.php:94
 #: assets/categories.php:163
@@ -720,7 +720,7 @@ msgstr "Dodaj profil DNS"
 
 #: _includes/settings/assets-add-host.inc.php:23 assets/add/host.php:94
 msgid "Add Web Host"
-msgstr "Dodaj host"
+msgstr "Dodaj dostawcę hostingu"
 
 #: _includes/settings/assets-add-ip-address.inc.php:23
 #: assets/add/ip-address.php:102 assets/ip-addresses.php:165
@@ -772,56 +772,56 @@ msgstr "Profile DNS"
 
 #: _includes/settings/assets-edit-category.inc.php:23
 msgid "Edit Category"
-msgstr "Edycja Kategoria"
+msgstr "Edytuj kategorię"
 
 #: _includes/settings/assets-edit-dns.inc.php:23
 msgid "Edit DNS Profile"
-msgstr "Edycja profilu DNS"
+msgstr "Edytuj profil DNS"
 
 #: _includes/settings/assets-edit-host.inc.php:23
 msgid "Edit Web Host"
-msgstr "Edycja hosta"
+msgstr "Edytuj dostawcę hostingu"
 
 #: _includes/settings/assets-edit-ip-address.inc.php:23
 msgid "Edit IP Address"
-msgstr "Edycja adresu IP"
+msgstr "Edytuj adres IP"
 
 #: _includes/settings/assets-edit-owner.inc.php:23
 msgid "Edit Owner"
-msgstr "Właściciel edycji"
+msgstr "Edytuj właściciela"
 
 #: _includes/settings/assets-edit-registrar-account.inc.php:23
 msgid "Edit Registrar Account"
-msgstr "Edycja konta rejestratora"
+msgstr "Edytuj konto rejestratora"
 
 #: _includes/settings/assets-edit-registrar-fee.inc.php:23
 msgid "Edit Registrar Fee"
-msgstr "Edycja Rejestrator Opłata"
+msgstr "Edytuj stawkę rejestratora"
 
 #: _includes/settings/assets-edit-registrar.inc.php:23
 msgid "Edit Domain Registrar"
-msgstr "Edytuj Rejestrator Domen"
+msgstr "Edytuj rejestratora domen"
 
 #: _includes/settings/assets-edit-ssl-account.inc.php:23
 msgid "Edit SSL Provider Account"
-msgstr "Edycja konta dostawcy SSL"
+msgstr "Edytuj konto dostawcy SSL"
 
 #: _includes/settings/assets-edit-ssl-provider-fee.inc.php:23
 msgid "Edit SSL Provider Fee"
-msgstr "Edytuj Opłatę za usługę Provider SSL"
+msgstr "Edytuj stawkę dostawcy SSL"
 
 #: _includes/settings/assets-edit-ssl-provider.inc.php:23
 msgid "Edit SSL Provider"
-msgstr "Edycja dostawcy usług SSL"
+msgstr "Edytuj dostawcę SSL"
 
 #: _includes/settings/assets-edit-ssl-type.inc.php:23
 msgid "Edit SSL Type"
-msgstr "Edycja typu SSL"
+msgstr "Edytuj typ certyfikatu SSL"
 
 #: _includes/settings/assets-hosting.inc.php:23 assets/hosting.php:141
 #: assets/index.php:55
 msgid "Web Hosting Providers"
-msgstr "Dostawcy hostingu internetowego"
+msgstr "Dostawcy usług hostingowych"
 
 #: _includes/settings/assets-hosting.inc.php:24
 msgid "Hosting"
@@ -848,7 +848,7 @@ msgstr "Konta rejestratora domen"
 
 #: _includes/settings/assets-registrar-fees-missing.inc.php:23
 msgid "Domain Registrar Fees Missing"
-msgstr "Rejestrator domen Opłaty za brakujące"
+msgstr "Brakujące stawki rejestratorów domen"
 
 #: _includes/settings/assets-registrar-fees-missing.inc.php:24
 #: _includes/settings/assets-ssl-provider-fees-missing.inc.php:24
@@ -873,7 +873,7 @@ msgstr "Konta dostawców SSL"
 
 #: _includes/settings/assets-ssl-provider-fees-missing.inc.php:23
 msgid "SSL Provider Fees Missing"
-msgstr "Opłaty dostawcy usług SSL Brak opłaty"
+msgstr "Brakujące stawki dostawców SSL"
 
 #: _includes/settings/assets-ssl-provider-fees.inc.php:23
 #: _includes/settings/reporting-ssl-fees.inc.php:23
@@ -912,14 +912,14 @@ msgstr "Wyświetlanie listy wszystkich kont serwerowych"
 
 #: _includes/settings/dw-list-accounts.inc.php:29
 msgid "Listing Server Accounts on %s (%s)"
-msgstr "Notowanie kont serwerów na %s (%s)"
+msgstr "Lista kont serwera %s (%s)"
 
 #: _includes/settings/dw-list-accounts.inc.php:32 admin/dw/dw.php:209
 #: admin/dw/dw.php:541 admin/dw/intro.php:67 assets/registrars.php:61
 #: assets/registrars.php:169 assets/ssl-providers.php:61
 #: assets/ssl-providers.php:160 domains/edit.php:639
 msgid "Accounts"
-msgstr "Rachunki"
+msgstr "Konta"
 
 #: _includes/settings/dw-list-zones.inc.php:25
 msgid "Listing All DNS Zones & Records"
@@ -927,7 +927,7 @@ msgstr "Lista wszystkich stref i rekordów DNS"
 
 #: _includes/settings/dw-list-zones.inc.php:29
 msgid "Listing DNS Zones & Records on %s (%s)"
-msgstr "Notowanie stref i zapisów DNS w %s (%s)"
+msgstr "Lista stref i rekordów DNS na serwerze %s (%s)"
 
 #: _includes/settings/dw-list-zones.inc.php:32 admin/dw/dw.php:227
 msgid "Zones"
@@ -935,11 +935,11 @@ msgstr "Strefy"
 
 #: _includes/settings/dw-rebuild.inc.php:23
 msgid "Rebuild Data Warehouse"
-msgstr "Odśwież dane zewnętrze"
+msgstr "Odbuduj hurtownię danych"
 
 #: _includes/settings/dw-rebuild.inc.php:24
 msgid "Rebuild"
-msgstr "Odśwież"
+msgstr "Odbuduj"
 
 #: _includes/settings/dw-servers.inc.php:23
 msgid "Manage DW Servers"
@@ -951,7 +951,7 @@ msgstr "Wybierz swoją walutę"
 
 #: _includes/settings/install.email.admin.inc.php:23
 msgid "Administrator Email Address"
-msgstr "Administrator Adres e-mail"
+msgstr "Adres e-mail administratora"
 
 #: _includes/settings/install.email.system.inc.php:23
 #: admin/settings/index.php:166
@@ -994,71 +994,71 @@ msgstr "Informacja"
 #: _includes/settings/queue-main.inc.php:23 dashboard/index.php:189
 #: queue/index.php:158 queue/index.php:646
 msgid "Domain Queue"
-msgstr "Kolejka domenowa"
+msgstr "Kolejka domen"
 
 #: _includes/settings/reporting-domain-cost-by-category.inc.php:23
 msgid "Domain Cost by Category Report"
-msgstr "Koszt domeny według kategorii Sprawozdanie"
+msgstr "Raport kosztów domen według kategorii"
 
 #: _includes/settings/reporting-domain-cost-by-category.inc.php:24
 msgid "Domain Cost by Category"
-msgstr "Domena Koszt według kategorii"
+msgstr "Koszty domen według kategorii"
 
 #: _includes/settings/reporting-domain-cost-by-dns.inc.php:23
 msgid "Domain Cost by DNS Report"
-msgstr "Koszt domeny według raportu DNS"
+msgstr "Raport kosztów domen według profilu DNS"
 
 #: _includes/settings/reporting-domain-cost-by-dns.inc.php:24
 msgid "Domain Cost by DNS"
-msgstr "Koszt domeny przez DNS"
+msgstr "Koszty domen według profilu DNS"
 
 #: _includes/settings/reporting-domain-cost-by-host.inc.php:23
 msgid "Domain Cost by Web Host Report"
-msgstr "Koszt domeny według Web Hosta Raport"
+msgstr "Raport kosztów domen według dostawcy hostingu"
 
 #: _includes/settings/reporting-domain-cost-by-host.inc.php:24
 msgid "Domain Cost by Web Host"
-msgstr "Koszt domeny przez Web Hosta"
+msgstr "Koszty domen według dostawcy hostingu"
 
 #: _includes/settings/reporting-domain-cost-by-ip.inc.php:23
 msgid "Domain Cost by IP Address Report"
-msgstr "Koszt domeny według adresów IP Raport"
+msgstr "Raport kosztów domen według adresu IP"
 
 #: _includes/settings/reporting-domain-cost-by-ip.inc.php:24
 msgid "Domain Cost by IP Address"
-msgstr "Koszt domeny według adresu IP"
+msgstr "Koszty domen według adresu IP"
 
 #: _includes/settings/reporting-domain-cost-by-month.inc.php:23
 msgid "Domain Cost by Month Report"
-msgstr "Koszt domeny do raportu miesięcznego"
+msgstr "Raport kosztów domen według miesięcy"
 
 #: _includes/settings/reporting-domain-cost-by-month.inc.php:24
 msgid "Domain Cost by Month"
-msgstr "Koszt domeny według miesiąca"
+msgstr "Koszty domen według miesięcy"
 
 #: _includes/settings/reporting-domain-cost-by-owner.inc.php:23
 msgid "Domain Cost by Owner Report"
-msgstr "Koszt domeny w podziale na właścicieli"
+msgstr "Raport kosztów domen według właścicieli"
 
 #: _includes/settings/reporting-domain-cost-by-owner.inc.php:24
 msgid "Domain Cost by Owner"
-msgstr "Koszt domeny przez Właściciela"
+msgstr "Koszty domen według właścicieli"
 
 #: _includes/settings/reporting-domain-cost-by-registrar.inc.php:23
 msgid "Domain Cost by Registrar Report"
-msgstr "Koszt domeny według Sprawozdania Rejestratora"
+msgstr "Raport kosztów domen według rejestratorów"
 
 #: _includes/settings/reporting-domain-cost-by-registrar.inc.php:24
 msgid "Domain Cost by Registrar"
-msgstr "Koszt domeny przez Rejestratora"
+msgstr "Koszty domen według rejestratorów"
 
 #: _includes/settings/reporting-domain-cost-by-tld.inc.php:23
 msgid "Domain Cost by TLD Report"
-msgstr "Koszt domeny według raportu TLD"
+msgstr "Raport kosztów domen według TLD"
 
 #: _includes/settings/reporting-domain-cost-by-tld.inc.php:24
 msgid "Domain Cost by TLD"
-msgstr "Koszt domeny według TLD"
+msgstr "Koszty domen według TLD"
 
 #: _includes/settings/reporting-domain-fees.inc.php:24
 msgid "Domain Fees"
@@ -1066,80 +1066,80 @@ msgstr "Opłaty za domeny"
 
 #: _includes/settings/reporting-dw-potential-problems.inc.php:23
 msgid "DW Potential Problems Report"
-msgstr "DW Raport o potencjalnych problemach"
+msgstr "Raport potencjalnych problemów hurtowni danych"
 
 #: _includes/settings/reporting-dw-potential-problems.inc.php:24
 msgid "DW Potential Problems"
-msgstr "DW Potencjalne problemy"
+msgstr "Potencjalne problemy hurtowni danych"
 
 #: _includes/settings/reporting-ssl-cost-by-category.inc.php:23
 msgid "SSL Cost by Category Report"
-msgstr "Koszt oświetlenia półprzewodnikowego według kategorii Sprawozdanie"
+msgstr "Raport kosztów certyfikatów SSL według kategorii"
 
 #: _includes/settings/reporting-ssl-cost-by-category.inc.php:24
 msgid "SSL Cost by Category"
-msgstr "Koszt oświetlenia półprzewodnikowego według kategorii"
+msgstr "Koszty certyfikatów SSL według kategorii"
 
 #: _includes/settings/reporting-ssl-cost-by-domain.inc.php:23
 msgid "SSL Cost by Domain Report"
-msgstr "Koszt oświetlenia półprzewodnikowego według domen Raport"
+msgstr "Raport kosztów certyfikatów SSL według domen"
 
 #: _includes/settings/reporting-ssl-cost-by-domain.inc.php:24
 msgid "SSL Cost by Domain"
-msgstr "Koszt oświetlenia półprzewodnikowego według domeny"
+msgstr "Koszty certyfikatów SSL według domen"
 
 #: _includes/settings/reporting-ssl-cost-by-ip.inc.php:23
 msgid "SSL Cost by IP Address Report"
-msgstr "Koszt oświetlenia półprzewodnikowego według adresów IP Sprawozdanie"
+msgstr "Raport kosztów certyfikatów SSL według adresu IP"
 
 #: _includes/settings/reporting-ssl-cost-by-ip.inc.php:24
 msgid "SSL Cost by IP Address"
-msgstr "Koszt oświetlenia półprzewodnikowego według adresów IP"
+msgstr "Koszty certyfikatów SSL według adresu IP"
 
 #: _includes/settings/reporting-ssl-cost-by-month.inc.php:23
 msgid "SSL Cost by Month Report"
-msgstr "Koszt oświetlenia półprzewodnikowego według miesięcznego sprawozdania"
+msgstr "Raport kosztów certyfikatów SSL według miesięcy"
 
 #: _includes/settings/reporting-ssl-cost-by-month.inc.php:24
 msgid "SSL Cost by Month"
-msgstr "Koszt oświetlenia półprzewodnikowego według miesiąca"
+msgstr "Koszty certyfikatów SSL według miesięcy"
 
 #: _includes/settings/reporting-ssl-cost-by-owner.inc.php:23
 msgid "SSL Cost by Owner Report"
-msgstr "Sprawozdanie dotyczące kosztów oświetlenia półprzewodnikowego w podziale na właścicieli"
+msgstr "Raport kosztów certyfikatów SSL według właścicieli"
 
 #: _includes/settings/reporting-ssl-cost-by-owner.inc.php:24
 msgid "SSL Cost by Owner"
-msgstr "Koszt oświetlenia półprzewodnikowego według właściciela"
+msgstr "Koszty certyfikatów SSL według właścicieli"
 
 #: _includes/settings/reporting-ssl-cost-by-provider.inc.php:23
 msgid "SSL Cost by Provider Report"
-msgstr "Sprawozdanie dotyczące kosztów oświetlenia półprzewodnikowego w podziale na dostawców"
+msgstr "Raport kosztów certyfikatów SSL według dostawców"
 
 #: _includes/settings/reporting-ssl-cost-by-provider.inc.php:24
 msgid "SSL Cost by Provider"
-msgstr "Koszt oświetlenia półprzewodnikowego przez dostawcę"
+msgstr "Koszty certyfikatów SSL według dostawców"
 
 #: _includes/settings/reporting-ssl-cost-by-type.inc.php:23
 msgid "SSL Cost by Type Report"
-msgstr "Sprawozdanie dotyczące kosztów oświetlenia półprzewodnikowego według rodzaju"
+msgstr "Raport kosztów certyfikatów SSL według typów"
 
 #: _includes/settings/reporting-ssl-cost-by-type.inc.php:24
 msgid "SSL Cost by Type"
-msgstr "Koszt oświetlenia półprzewodnikowego według typu"
+msgstr "Koszty certyfikatów SSL według typów"
 
 #: _includes/settings/reporting-ssl-fees.inc.php:24
 msgid "SSL Fees"
-msgstr "Opłaty SSL"
+msgstr "Opłaty za certyfikaty SSL"
 
 #: _includes/settings/segments-add.inc.php:23 segments/add.php:198
 #: segments/index.php:212
 msgid "Add Segment"
-msgstr "Dodaj Segment"
+msgstr "Dodaj segment"
 
 #: _includes/settings/segments-edit.inc.php:23
 msgid "Edit Segment"
-msgstr "Edycja Segment"
+msgstr "Edytuj segment"
 
 #: _includes/settings/segments-main.inc.php:23
 msgid "Segment Filters"
@@ -1151,7 +1151,7 @@ msgstr "Dodaj certyfikat SSL"
 
 #: _includes/settings/ssl-edit.inc.php:23
 msgid "Edit SSL Certificate"
-msgstr "Edycja certyfikatu SSL"
+msgstr "Edytuj certyfikat SSL"
 
 #: _includes/settings/system-debug.inc.php:23
 msgid "Debugging"
@@ -1159,7 +1159,7 @@ msgstr "Debugowanie"
 
 #: _includes/settings/system-notice.inc.php:23
 msgid "Notice"
-msgstr "Zawiadomienie"
+msgstr "Powiadomienie"
 
 #: _includes/update.inc.php:85 _includes/update.inc.php:86
 msgid "Your database has been upgraded"
@@ -1183,7 +1183,7 @@ msgstr "Twoja baza danych jest już aktualna"
 
 #: admin/backup/cleanup/index.php:46
 msgid "Backups were cleaned up"
-msgstr "Kopie zapasowe zostały oczyszczone"
+msgstr "Usunięto stare pliki kopii zapasowych"
 
 #: admin/backup/index.php:86
 msgid "Please choose a backup file to restore"
@@ -1208,7 +1208,7 @@ msgstr "Proces ten tworzy kopię zapasową danych zapisanych w Twojej bazie dany
 #: admin/dw/intro.php:53 domains/csv-importer/index.php:120
 #: domains/csv-importer/index.php:124 queue/intro.php:71
 msgid "Note"
-msgstr "Uwagi"
+msgstr "Uwaga"
 
 #: admin/backup/index.php:133
 msgid "Database Backup File"
@@ -1220,11 +1220,11 @@ msgstr "Kopia zapasowa całej bazy danych"
 
 #: admin/backup/index.php:136
 msgid "Restore"
-msgstr "Przywracanie"
+msgstr "Przywróć"
 
 #: admin/backup/index.php:138
 msgid "Database Restore File"
-msgstr "Plik przywracania bazy danych (Database Restore File)"
+msgstr "Plik kopii zapasowej do przywrócenia"
 
 #: admin/backup/index.php:139 admin/domain-fields/add.php:174
 #: admin/domain-fields/add.php:183 admin/maintenance/index.php:49
@@ -1248,15 +1248,15 @@ msgstr "Przywróć całą bazę danych"
 #: admin/backup/index.php:147 admin/dw/dw.php:299
 #: domains/csv-importer/index.php:132
 msgid "Cleanup"
-msgstr "Oczyść"
+msgstr "Czyszczenie"
 
 #: admin/backup/index.php:148
 msgid "Click here to delete any and all past backup and restore files that may be saved on your server."
-msgstr "Kliknij tutaj, aby usunąć wszystkie poprzednie kopie zapasowe i przywrócić pliki, które mogą być zapisane na Twoim serwerze."
+msgstr "Kliknij tutaj, aby usunąć wszystkie pliki wcześniejszych kopii zapasowych i przywracania danych, które mogą znajdować się na serwerze."
 
 #: admin/backup/index.php:149 domains/csv-importer/index.php:134
 msgid "Perform Cleanup"
-msgstr "Przeprowadzić czyszczenie"
+msgstr "Wyczyść"
 
 #: admin/debug-log/index.php:53
 msgid "debug_log"
@@ -1300,7 +1300,7 @@ msgstr "Dodatkowe"
 #: reporting/domains/registrar-fees.php:120 reporting/ssl/provider-fees.php:120
 #: ssl/index.php:477
 msgid "Inserted"
-msgstr "Wstawione"
+msgstr "Dodano"
 
 #: admin/debug-log/index.php:113
 msgid "The Debug Log is empty"
@@ -1308,15 +1308,15 @@ msgstr "Dziennik debugowania jest pusty"
 
 #: admin/debug-log/index.php:117
 msgid "Debugging can be enabled in %sSettings%s."
-msgstr "Debugowanie może być włączone w %sSettings%s."
+msgstr "Debugowanie można włączyć w %sustawieniach%s."
 
 #: admin/debug-log/index.php:123 admin/maintenance/index.php:50
 msgid "Clear Debug Log"
-msgstr "Przejrzysty dziennik debugowania"
+msgstr "Wyczyść dziennik debugowania"
 
 #: admin/debug-log/index.php:137 segments/index.php:143
 msgid "Insert Time"
-msgstr "Wstawianie czasu"
+msgstr "Czas dodania"
 
 #: admin/defaults/index.php:106
 msgid "The System Defaults were updated"
@@ -1324,7 +1324,7 @@ msgstr "Zaktualizowano ustawienia domyślne systemu"
 
 #: admin/defaults/index.php:122 settings/defaults/index.php:180
 msgid "Domain Defaults"
-msgstr "Domeny domyślne"
+msgstr "Domyślne ustawienia domen"
 
 #: admin/defaults/index.php:126 settings/defaults/index.php:184
 msgid "Default Domain Registrar"
@@ -1341,7 +1341,7 @@ msgstr "Domyślny profil DNS"
 
 #: admin/defaults/index.php:168 settings/defaults/index.php:219
 msgid "Default Web Hosting Provider"
-msgstr "Default Web Hosting Provider"
+msgstr "Domyślny dostawca hostingu"
 
 #: admin/defaults/index.php:181 admin/defaults/index.php:264
 #: settings/defaults/index.php:229 settings/defaults/index.php:294
@@ -1382,11 +1382,11 @@ msgstr "Wprowadzona przez Ciebie nazwa pola bazy danych już istnieje"
 
 #: admin/domain-fields/add.php:131
 msgid "Custom Domain Field %s (%s) added"
-msgstr "Domena własna Pole %s (%s) dodane"
+msgstr "Dodano niestandardowe pole domeny %s (%s)"
 
 #: admin/domain-fields/add.php:156 admin/ssl-fields/add.php:156
 msgid "Enter the Display Name"
-msgstr "Wprowadź nazwę wyświetlacza"
+msgstr "Wprowadź nazwę wyświetlaną"
 
 #: admin/domain-fields/add.php:157 admin/ssl-fields/add.php:157
 msgid "The Database Field Name format is incorrect"
@@ -1396,7 +1396,7 @@ msgstr "Format nazwy pola bazy danych jest nieprawidłowy"
 #: admin/domain-fields/index.php:61 admin/ssl-fields/add.php:173
 #: admin/ssl-fields/edit.php:240 admin/ssl-fields/index.php:61
 msgid "Display Name"
-msgstr "Nazwa wyświetlacza"
+msgstr "Nazwa wyświetlana"
 
 #: admin/domain-fields/add.php:174 admin/domain-fields/edit.php:242
 #: admin/ssl-fields/add.php:174 admin/ssl-fields/edit.php:242
@@ -1461,15 +1461,15 @@ msgstr "Dodaj pole niestandardowe"
 
 #: admin/domain-fields/edit.php:68
 msgid "The Custom Domain Field you're trying to edit is invalid"
-msgstr "Pole Domeny Własnej, które próbujesz edytować jest nieważne"
+msgstr "Niestandardowe pole domeny, które próbujesz edytować, jest nieprawidłowe"
 
 #: admin/domain-fields/edit.php:112
 msgid "Custom Domain Field %s (%s) updated"
-msgstr "Pole domeny niestandardowej %s (%s) zaktualizowane"
+msgstr "Zaktualizowano niestandardowe pole domeny %s (%s)"
 
 #: admin/domain-fields/edit.php:135 admin/ssl-fields/edit.php:135
 msgid "Enter the display name"
-msgstr "Wprowadź nazwę wyświetlacza"
+msgstr "Wprowadź nazwę wyświetlaną"
 
 #: admin/domain-fields/edit.php:168
 msgid "The Custom Domain Field cannot be deleted"
@@ -1477,7 +1477,7 @@ msgstr "Niestandardowe pole domeny nie może zostać usunięte"
 
 #: admin/domain-fields/edit.php:207
 msgid "Custom Domain Field %s (%s) delete"
-msgstr "Domena niestandardowa Pole %s (%s) usunąć"
+msgstr "Usunięto niestandardowe pole domeny %s (%s)"
 
 #: admin/domain-fields/edit.php:248 admin/dw/edit-server.php:220
 #: admin/ssl-fields/edit.php:248 admin/users/edit.php:449
@@ -1493,7 +1493,7 @@ msgstr "Zapisz"
 
 #: admin/domain-fields/edit.php:251
 msgid "Custom Domain Field"
-msgstr "Pole domeny niestandardowej"
+msgstr "Niestandardowe pole domeny"
 
 #: admin/domain-fields/index.php:53
 msgid "custom_domain_field_list"
@@ -1502,7 +1502,7 @@ msgstr "custom_domain_field_list"
 #: admin/domain-fields/index.php:62 admin/ssl-fields/index.php:62
 #: admin/ssl-fields/index.php:137
 msgid "DB Field"
-msgstr "Pole DB"
+msgstr "Pole bazy danych"
 
 #: admin/domain-fields/index.php:66 admin/dw/servers.php:73
 #: admin/ssl-fields/index.php:66 admin/users/index.php:73
@@ -1559,11 +1559,11 @@ msgstr "Nieznane"
 #: assets/ssl-accounts.php:175 assets/ssl-providers.php:148
 #: assets/ssl-types.php:139
 msgid "Below is a list of all the %s that have been added to %s."
-msgstr "Poniżej znajduje się lista wszystkich %s, które zostały dodane do %s."
+msgstr "Poniżej znajduje się lista wszystkich elementów typu %s dodanych do %s."
 
 #: admin/domain-fields/index.php:118
 msgid "Custom Domain Fields help extend the functionality of %s by allowing the user to create their own data fields."
-msgstr "Własne Pola Domeny pomagają rozszerzyć funkcjonalność %s, pozwalając użytkownikowi na tworzenie własnych pól danych."
+msgstr "Niestandardowe pola domen pozwalają rozszerzyć funkcjonalność %s o własne pola danych."
 
 #: admin/domain-fields/index.php:119
 msgid "For example, if you wanted to keep track of which domains are currently setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains."
@@ -1571,15 +1571,15 @@ msgstr "Na przykład, jeśli chcesz śledzić, które domeny są obecnie skonfig
 
 #: admin/domain-fields/index.php:120
 msgid "Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!"
-msgstr "Połączenie niestandardowych pól z możliwością ich aktualizacji za pomocą Bulk Updater, a niebo jest limitem w odniesieniu do tego, jakie dane można łatwo śledzić!"
+msgstr "Dzięki niestandardowym polom i możliwości ich zbiorczej aktualizacji możesz łatwo śledzić niemal dowolne dane!"
 
 #: admin/domain-fields/index.php:122
 msgid "And when you export your domain data, the information contained in your custom fields will automatically be included in the exported data."
-msgstr "A kiedy wyeksportujesz dane swojej domeny, informacje zawarte w Twoich niestandardowych polach zostaną automatycznie włączone do wyeksportowanych danych."
+msgstr "Podczas eksportowania danych domen informacje z niestandardowych pól są automatycznie uwzględniane w pliku wynikowym."
 
 #: admin/domain-fields/index.php:127
 msgid "It appears as though you haven't created any Custom Domain Fields yet. %sClick here%s to add one."
-msgstr "Wygląda na to, że nie stworzyłeś jeszcze żadnych niestandardowych pól domeny. %sKliknij tutaj%s aby dodać jedno."
+msgstr "Nie utworzono jeszcze żadnych niestandardowych pól domen. %sKliknij tutaj%s, aby dodać pole."
 
 #: admin/domain-fields/index.php:138 admin/dw/add-server.php:105
 #: admin/dw/edit-server.php:205 admin/dw/servers.php:61
@@ -1601,7 +1601,7 @@ msgstr "Serwer %s (%s) dodany"
 
 #: admin/dw/add-server.php:84 admin/dw/edit-server.php:64
 msgid "Enter a display name for the server"
-msgstr "Wprowadź nazwę wyświetlacza dla serwera"
+msgstr "Wprowadź nazwę wyświetlaną serwera"
 
 #: admin/dw/add-server.php:85 admin/dw/edit-server.php:67
 msgid "Enter the hostname"
@@ -1613,7 +1613,7 @@ msgstr "Wprowadź protokół"
 
 #: admin/dw/add-server.php:87 admin/dw/edit-server.php:73
 msgid "Enter the port"
-msgstr "Wejście do portu"
+msgstr "Wprowadź port"
 
 #: admin/dw/add-server.php:88 admin/dw/edit-server.php:76
 #: admin/users/reset-password.php:129 assets/edit/registrar-account.php:161
@@ -1622,19 +1622,19 @@ msgstr "Wpisz nazwę użytkownika"
 
 #: admin/dw/add-server.php:89 admin/dw/edit-server.php:79
 msgid "Enter either the API token or remote access key/hash"
-msgstr "Wprowadź token API lub klucz zdalnego dostępu/hash"
+msgstr "Wprowadź token API albo klucz lub skrót dostępu zdalnego"
 
 #: admin/dw/add-server.php:105 admin/dw/edit-server.php:205
 msgid "Enter the display name for this server"
-msgstr "Wprowadź nazwę wyświetlacza dla tego serwera"
+msgstr "Wprowadź nazwę wyświetlaną tego serwera"
 
 #: admin/dw/add-server.php:106 admin/dw/edit-server.php:206
 msgid "Host Name"
-msgstr "Imię i nazwisko gospodarza"
+msgstr "Nazwa hosta"
 
 #: admin/dw/add-server.php:106 admin/dw/edit-server.php:206
 msgid "Enter the host name of your WHM installation (ie. server1.example.com)."
-msgstr "Wprowadzić nazwę hosta instalacji WHM (np. server1.example.com)."
+msgstr "Wprowadź nazwę hosta instalacji WHM (np. server1.example.com)."
 
 #: admin/dw/add-server.php:107 admin/dw/edit-server.php:207
 #: admin/dw/servers.php:63 classes/DomainMOD/Smtp.php:69
@@ -1643,15 +1643,15 @@ msgstr "Protokół"
 
 #: admin/dw/add-server.php:107 admin/dw/edit-server.php:207
 msgid "Enter the protocol you connect with."
-msgstr "Wpisz protokół, z którym się łączysz."
+msgstr "Wprowadź protokół używany do połączenia."
 
 #: admin/dw/add-server.php:108 admin/dw/edit-server.php:208
 msgid "Secured (https)"
-msgstr "Zabezpieczone (https)"
+msgstr "Zabezpieczony (HTTPS)"
 
 #: admin/dw/add-server.php:109 admin/dw/edit-server.php:209
 msgid "Unsecured (http)"
-msgstr "Niezabezpieczony (http)"
+msgstr "Niezabezpieczony (HTTP)"
 
 #: admin/dw/add-server.php:111 admin/dw/edit-server.php:211
 #: admin/dw/servers.php:64 admin/dw/servers.php:141
@@ -1661,7 +1661,7 @@ msgstr "Port"
 
 #: admin/dw/add-server.php:111 admin/dw/edit-server.php:211
 msgid "Enter the port that you connect to (usually 2086 or 2087)."
-msgstr "Wprowadź port, z którym się łączysz (zazwyczaj 2086 lub 2087)."
+msgstr "Wprowadź numer portu połączenia (zwykle 2086 lub 2087)."
 
 #: admin/dw/add-server.php:112 admin/dw/edit-server.php:212
 #: admin/dw/servers.php:65 admin/dw/servers.php:142 admin/users/add.php:215
@@ -1681,12 +1681,12 @@ msgstr "Wpisz nazwę użytkownika dla swojej instalacji WHM."
 
 #: admin/dw/add-server.php:114 admin/dw/edit-server.php:214
 msgid "Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use."
-msgstr "Wymagany jest tylko jeden z poniższych elementów, albo API Token albo klucz zdalnego dostępu/Hash. Klucz zdalnego dostępu/Hash będzie jednak usuwany z głowicy WHM w wersji 68, więc jeśli Twoja głowica WHM obsługuje już token API, to powinieneś go użyć."
+msgstr "Wymagany jest tylko jeden z poniższych elementów: token API albo klucz/skrót dostępu zdalnego. W WHM od wersji 68 klucz dostępu zdalnego jest wycofywany, dlatego jeśli Twoja wersja WHM obsługuje token API, użyj właśnie jego."
 
 #: admin/dw/add-server.php:116 admin/dw/edit-server.php:216
 #: admin/dw/servers.php:66
 msgid "API Token"
-msgstr "API Token"
+msgstr "Token API"
 
 #: admin/dw/add-server.php:116 admin/dw/edit-server.php:216
 msgid "Enter the API token."
@@ -1694,11 +1694,11 @@ msgstr "Wprowadź token API."
 
 #: admin/dw/add-server.php:117 admin/dw/edit-server.php:217
 msgid "Remote Access Key/Hash"
-msgstr "Klucz zdalnego dostępu/Hash"
+msgstr "Klucz/skrót dostępu zdalnego"
 
 #: admin/dw/add-server.php:117 admin/dw/edit-server.php:217
 msgid "Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for \"Remote Access\". Click on the \"Setup Remote Access Key\" option on the left, and your hash will be displayed on the right-hand side of the screen."
-msgstr "Wprowadzić klucz/hasło zdalnego dostępu do instalacji głowicy WHM. Można go pobrać z głowicy WHM, logując się i wyszukując \"Zdalny dostęp\". Kliknąć na opcję \"Konfiguracja klucza zdalnego dostępu\" po lewej stronie, a po prawej stronie ekranu pojawi się hash."
+msgstr "Wprowadź klucz lub skrót dostępu zdalnego do instalacji WHM. Aby go uzyskać, zaloguj się do WHM i wyszukaj „Remote Access”. Po lewej stronie wybierz „Setup Remote Access Key”. Skrót pojawi się po prawej stronie ekranu."
 
 #: admin/dw/add-server.php:119
 msgid "Add Server"
@@ -1710,7 +1710,7 @@ msgstr "Zarządzanie serwerami"
 
 #: admin/dw/dw.php:146
 msgid "Rebuild DW"
-msgstr "Odbudować DW"
+msgstr "Odbuduj hurtownię danych"
 
 #: admin/dw/dw.php:191 admin/dw/dw.php:234
 msgid "View Data"
@@ -1727,7 +1727,7 @@ msgstr "Wyświetl wszystko"
 
 #: admin/dw/dw.php:217 domains/edit.php:685
 msgid "DNS Zones & Records"
-msgstr "Strefy i rejestry DNS"
+msgstr "Strefy i rekordy DNS"
 
 #: admin/dw/dw.php:227
 msgid "Records"
@@ -1735,7 +1735,7 @@ msgstr "Rekordy"
 
 #: admin/dw/dw.php:269
 msgid "You don't currently have any servers setup in your Data Warehouse."
-msgstr "Nie masz obecnie żadnych ustawień serwerów w swojej Hurtowni Danych."
+msgstr "W hurtowni danych nie skonfigurowano jeszcze żadnych serwerów."
 
 #: admin/dw/dw.php:269 assets/account-owners.php:292 assets/categories.php:241
 #: assets/dns.php:243 assets/hosting.php:203 assets/ip-addresses.php:249
@@ -1744,7 +1744,7 @@ msgstr "Nie masz obecnie żadnych ustawień serwerów w swojej Hurtowni Danych."
 #: assets/ssl-provider-fees.php:156 assets/ssl-providers.php:230
 #: assets/ssl-types.php:197 segments/index.php:222
 msgid "Click here to add one"
-msgstr "Kliknij tutaj, aby dodać jeden"
+msgstr "Kliknij tutaj, aby dodać"
 
 #: admin/dw/dw.php:276 admin/dw/dw.php:395
 msgid "Successful"
@@ -1753,11 +1753,11 @@ msgstr "Udało się"
 #: admin/dw/dw.php:283 admin/dw/dw.php:303 admin/dw/dw.php:402
 #: admin/dw/dw.php:428
 msgid "Building"
-msgstr "Budynek"
+msgstr "Trwa tworzenie"
 
 #: admin/dw/dw.php:314 admin/dw/dw.php:414
 msgid "Never Built"
-msgstr "Nieutworzono"
+msgstr "Nigdy nie utworzono"
 
 #: admin/dw/dw.php:358 admin/dw/dw.php:540 admin/dw/edit-server.php:223
 #: classes/DomainMOD/Smtp.php:69
@@ -1766,23 +1766,23 @@ msgstr "Serwer"
 
 #: admin/dw/dw.php:359
 msgid "Build Start"
-msgstr "Buduj Start"
+msgstr "Rozpoczęcie tworzenia"
 
 #: admin/dw/dw.php:360
 msgid "Build End"
-msgstr "Buduj Koniec"
+msgstr "Zakończenie tworzenia"
 
 #: admin/dw/dw.php:361
 msgid "Build Time"
-msgstr "Czas budowy"
+msgstr "Czas tworzenia"
 
 #: admin/dw/dw.php:362
 msgid "Build Status"
-msgstr "Status tworzenia"
+msgstr "Stan tworzenia"
 
 #: admin/dw/dw.php:369
 msgid "Full Build"
-msgstr "Full Build"
+msgstr "Pełna aktualizacja"
 
 #: admin/dw/dw.php:410 admin/dw/dw.php:422 dashboard/index.php:200
 #: domains/index.php:689 domains/index.php:1996 queue/index.php:126
@@ -1797,7 +1797,7 @@ msgstr "W trakcie"
 
 #: admin/dw/dw.php:534
 msgid "Data Warehouse Totals"
-msgstr "Dane zewnętrzne ogółem"
+msgstr "Podsumowanie hurtowni danych"
 
 #: admin/dw/dw.php:542 admin/dw/intro.php:70
 msgid "DNS Zones"
@@ -1805,7 +1805,7 @@ msgstr "Strefy DNS"
 
 #: admin/dw/dw.php:543 admin/dw/intro.php:73
 msgid "DNS Records"
-msgstr "DNS Records"
+msgstr "Rekordy DNS"
 
 #: admin/dw/dw.php:562
 msgid "All Servers"
@@ -1813,7 +1813,7 @@ msgstr "Wszystkie serwery"
 
 #: admin/dw/edit-server.php:111
 msgid "Server %s (%s) updated"
-msgstr "Serwer %s (%s) aktualizacja"
+msgstr "Zaktualizowano serwer %s (%s)"
 
 #: admin/dw/edit-server.php:188
 msgid "Server %s (%s) deleted"
@@ -1821,35 +1821,35 @@ msgstr "Serwer %s (%s) usunięty"
 
 #: admin/dw/intro.php:47
 msgid "Proceed to the Data Warehouse"
-msgstr "Przejdź do danych zewnętrznych"
+msgstr "Przejdź do hurtowni danych"
 
 #: admin/dw/intro.php:49
 msgid "%s has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel."
-msgstr "%s posiada wbudowany framework Hurtowni Danych, który pozwala na import danych przechowywanych na Twoim serwerze internetowym. Obecnie jedynymi obsługiwanymi serwerami internetowymi są te, które obsługują WHM/cPanel."
+msgstr "%s ma wbudowaną hurtownię danych umożliwiającą import informacji przechowywanych na serwerze WWW. Obecnie obsługiwane są serwery z WHM/cPanel."
 
 #: admin/dw/intro.php:51
 msgid "If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into %s, you can ignore this section."
-msgstr "Jeżeli Państwa serwer WWW nie uruchamia WHM/cPanel lub nie chcą Państwo importować danych z Państwa serwera WWW do %s, mogą Państwo zignorować ten rozdział."
+msgstr "Jeśli Twój serwer WWW nie korzysta z WHM/cPanel albo nie chcesz importować danych serwera do %s, możesz pominąć tę sekcję."
 
 #: admin/dw/intro.php:53
 msgid "Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server."
-msgstr "Importowanie Twojego serwera(ów) sieciowego(ych) do Hurtowni Danych nie zmieni %snot%s żadnych Twoich innych danych %s, ani żadnych danych na Twoim serwerze sieciowym."
+msgstr "Zaimportowanie serwerów WWW do hurtowni danych %snie%s zmieni innych danych w %s ani danych przechowywanych na serwerach WWW."
 
 #: admin/dw/intro.php:55
 msgid "Automating Builds"
-msgstr "Automatyzacja budynków"
+msgstr "Automatyzacja aktualizacji"
 
 #: admin/dw/intro.php:56
 msgid "If you're going to use the Data Warehouse it's recommended that you setup the %ssystem cron/scheduled job%s in order to automate your builds."
-msgstr "Jeśli zamierzasz korzystać z Hurtowni Danych, zalecane jest ustawienie %ssystem cron/scheduled job%s w celu automatyzacji budowania."
+msgstr "Jeśli zamierzasz korzystać z hurtowni danych, zalecamy skonfigurowanie %ssystemowego zadania cron%s, aby automatyzować jej aktualizacje."
 
 #: admin/dw/intro.php:58
 msgid "There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."
-msgstr "Podczas budowania jest dużo pracy w tle, a często przeglądarka internetowa traci czas, jeśli spróbujesz budować poprzez oprogramowanie zamiast korzystać z pracy crona, co prowadzi do niekompletnych i brakujących informacji w Hurtowni Danych."
+msgstr "Podczas aktualizacji hurtowni danych wykonywanych jest wiele operacji w tle. Uruchomienie aktualizacji z poziomu przeglądarki zamiast zadania cron może spowodować przekroczenie limitu czasu i pozostawienie niekompletnych danych w hurtowni."
 
 #: admin/dw/intro.php:60
 msgid "After you've setup the cron job you will be able to manage the Data Warehouse scheduling through %s's Task Scheduler"
-msgstr "Po skonfigurowaniu zadania crona będziesz mógł zarządzać harmonogramem Hurtowni Danych poprzez %s Task Scheduler"
+msgstr "Po skonfigurowaniu zadania cron możesz zarządzać harmonogramem aktualizacji hurtowni danych w harmonogramie zadań %s."
 
 #: admin/dw/intro.php:63
 msgid "Supported Data"
@@ -1857,15 +1857,15 @@ msgstr "Obsługiwane dane"
 
 #: admin/dw/intro.php:64
 msgid "The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse."
-msgstr "Poniższe sekcje WHM są obecnie obsługiwane, ale naszym celem końcowym jest, aby każda informacja WHM, która może być pobrana za pośrednictwem API, była przechowywana w Hurtowni Danych."
+msgstr "Obecnie obsługiwane są następujące sekcje WHM. Docelowo chcemy przechowywać w hurtowni danych wszystkie informacje dostępne przez API WHM."
 
 #: admin/dw/intro.php:68
 msgid "Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer"
-msgstr "Domena, Adres IP, Właściciel, Użytkownik, Kontakt e-mail, Plan, Temat, Shell, Partycje, Limit dysku, Użycie dysku, Maksymalne dodatki, Maksymalne konta FTP, Maksymalne listy e-mail, Maksymalne zaparkowane domeny, Maksymalne konta POP, Maksymalne konta SQL, Maksymalne subdomeny, Data utworzenia, Status zawieszenia, Powód zawieszenia, Czas zawieszenia, Maksymalny czas wysłania wiadomości e-mail na godzinę, Nieudana wiadomość e-mail % przed odroczeniem, Min. nieudana wiadomość e-mail # przed odroczeniem"
+msgstr "Domena, adres IP, właściciel, użytkownik, e-mail kontaktowy, plan, motyw, powłoka, partycja, limit dysku, wykorzystanie dysku, maksymalna liczba dodatków, kont FTP, list mailingowych, zaparkowanych domen, kont POP, baz SQL i poddomen, data utworzenia, stan zawieszenia, powód i czas zawieszenia, limit wiadomości e-mail na godzinę, procent nieudanych wysyłek przed odroczeniem, minimalna liczba nieudanych wysyłek przed odroczeniem"
 
 #: admin/dw/intro.php:71
 msgid "Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server"
-msgstr "Nazwa pliku strefy, Oryginalne/Primary Source of Zone Data, Email administratora, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server"
+msgstr "Nazwa pliku strefy, pierwotne/główne źródło danych strefy, adres e-mail administratora, numer seryjny, czas odświeżania, czas ponowienia, czas wygaśnięcia, minimalny TTL, autorytatywny serwer nazw"
 
 #: admin/dw/intro.php:74
 msgid "TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data"
@@ -1881,7 +1881,7 @@ msgstr "Liczba kont"
 
 #: admin/dw/list-accounts.php:101 admin/dw/list-zones.php:129
 msgid "Domain Filter"
-msgstr "Filtr"
+msgstr "Filtr domen"
 
 #: admin/dw/list-accounts.php:111 admin/dw/list-zones.php:139
 msgid "Server Name"
@@ -1949,7 +1949,7 @@ msgstr "Użytkownik"
 
 #: admin/dw/list-accounts.php:117 admin/users/index.php:172
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #: admin/dw/list-accounts.php:118
 msgid "Plan"
@@ -1969,19 +1969,19 @@ msgstr "Partycja"
 
 #: admin/dw/list-accounts.php:122
 msgid "Disk Limit (MB)"
-msgstr "Limit na dysku (MB)"
+msgstr "Limit miejsca na dysku (MB)"
 
 #: admin/dw/list-accounts.php:123
 msgid "Disk Used (MB)"
-msgstr "Dysk używany (MB)"
+msgstr "Wykorzystane miejsce na dysku (MB)"
 
 #: admin/dw/list-accounts.php:124
 msgid "Max Addons"
-msgstr "Maks. liczba dodatków"
+msgstr "Maks. liczba domen dodatkowych"
 
 #: admin/dw/list-accounts.php:125
 msgid "Max FTP"
-msgstr "Max FTP"
+msgstr "Maks. liczba kont FTP"
 
 #: admin/dw/list-accounts.php:126
 msgid "Max Email Lists"
@@ -1993,15 +1993,15 @@ msgstr "Maks. liczba zaparkowanych domen"
 
 #: admin/dw/list-accounts.php:128
 msgid "Max POP Accounts"
-msgstr "Rachunki Max POP"
+msgstr "Maks. liczba kont POP"
 
 #: admin/dw/list-accounts.php:129
 msgid "Max SQL Databases"
-msgstr "Max Bazy danych SQL"
+msgstr "Maks. liczba baz danych SQL"
 
 #: admin/dw/list-accounts.php:130
 msgid "Max Subdomains"
-msgstr "Poddomeny Max"
+msgstr "Maks. liczba poddomen"
 
 #: admin/dw/list-accounts.php:131
 msgid "Start Date"
@@ -2025,19 +2025,19 @@ msgstr "Czas zawieszenia (Unix)"
 
 #: admin/dw/list-accounts.php:136
 msgid "Max Emails Per Hour"
-msgstr "Maks. ilość e-maili na godzinę"
+msgstr "Maks. liczba wiadomości e-mail na godzinę"
 
 #: admin/dw/list-accounts.php:137
 msgid "Max Email Failure % (For Rate Limiting)"
-msgstr "Maks. awaria poczty elektronicznej % (dla ograniczenia stawki)"
+msgstr "Maks. odsetek nieudanych wysyłek e-mail (ograniczanie częstotliwości)"
 
 #: admin/dw/list-accounts.php:138
 msgid "Min Email Failure # (For Rate Limiting)"
-msgstr "Min Email Failure # (dla ograniczenia stawki)"
+msgstr "Min. liczba nieudanych wysyłek e-mail (ograniczanie częstotliwości)"
 
 #: admin/dw/list-accounts.php:139 admin/dw/list-zones.php:163
 msgid "Inserted (into DW)"
-msgstr "Włożony (do DW)"
+msgstr "Dodano (do hurtowni danych)"
 
 #: admin/dw/list-accounts.php:199 admin/dw/list-zones.php:230
 msgid "Your search returned 0 results."
@@ -2057,7 +2057,7 @@ msgstr "Dane"
 
 #: admin/dw/list-zones.php:85
 msgid "dw_dns_zones"
-msgstr "dw_dns_zony"
+msgstr "dw_dns_zones"
 
 #: admin/dw/list-zones.php:113
 msgid "Number of DNS Zones"
@@ -2080,11 +2080,11 @@ msgstr "Plik strefy DNS"
 
 #: admin/dw/list-zones.php:143
 msgid "Original/Primary Zone Source"
-msgstr "Strefa oryginalna/strefowa Źródło"
+msgstr "Pierwotne/główne źródło strefy"
 
 #: admin/dw/list-zones.php:144
 msgid "Zone Admin Email"
-msgstr "Administrator Strefy Email"
+msgstr "E-mail administratora strefy"
 
 #: admin/dw/list-zones.php:145 classes/DomainMOD/DwClean.php:155
 msgid "Serial"
@@ -2092,7 +2092,7 @@ msgstr "Serial"
 
 #: admin/dw/list-zones.php:146
 msgid "Zone Refresh TTL"
-msgstr "Zone Refresh TTL"
+msgstr "TTL odświeżania strefy"
 
 #: admin/dw/list-zones.php:147
 msgid "Retry Interval"
@@ -2100,15 +2100,15 @@ msgstr "Częstotliwość powtarzania"
 
 #: admin/dw/list-zones.php:148
 msgid "Zone Expiration"
-msgstr "Strefa Wygaśnięcie"
+msgstr "Czas wygaśnięcia strefy"
 
 #: admin/dw/list-zones.php:149
 msgid "Minimum Record TTL"
-msgstr "Minimalny rekord TTL"
+msgstr "Minimalny TTL rekordu"
 
 #: admin/dw/list-zones.php:150
 msgid "Authoritative Name Server"
-msgstr "Autorytatywny rekord nazw"
+msgstr "Autorytatywny serwer nazw"
 
 #: admin/dw/list-zones.php:151
 msgid "DNS Record"
@@ -2120,7 +2120,7 @@ msgstr "Rekord TTL"
 
 #: admin/dw/list-zones.php:153
 msgid "Record Class"
-msgstr "Rekordowa klasa"
+msgstr "Klasa rekordu"
 
 #: admin/dw/list-zones.php:154
 msgid "Record Type"
@@ -2140,11 +2140,11 @@ msgstr "Priorytet serwera pocztowego"
 
 #: admin/dw/list-zones.php:159
 msgid "Text Record Data"
-msgstr "Dane zapisu tekstowego"
+msgstr "Dane rekordu TXT"
 
 #: admin/dw/list-zones.php:160
 msgid "Zone Line #"
-msgstr "Linia strefy #"
+msgstr "Numer wiersza strefy"
 
 #: admin/dw/list-zones.php:161
 msgid "Number of Lines"
@@ -2152,7 +2152,7 @@ msgstr "Liczba linii"
 
 #: admin/dw/list-zones.php:162
 msgid "Raw Line Output"
-msgstr "Dane surowe"
+msgstr "Surowa zawartość wiersza"
 
 #: admin/dw/list-zones.php:242
 msgid "Zone"
@@ -2160,7 +2160,7 @@ msgstr "Strefa"
 
 #: admin/dw/rebuild.php:57
 msgid "Data Warehouse Rebuilt."
-msgstr "Hurtownia Danych Odbudowana."
+msgstr "Odbudowano hurtownię danych."
 
 #: admin/dw/rebuild.php:65
 msgid "Go To Data Warehouse"
@@ -2168,7 +2168,7 @@ msgstr "Przejdź do Hurtowni Danych"
 
 #: admin/dw/rebuild.php:69
 msgid "There was a problem rebuilding the Data Warehouse."
-msgstr "Był problem z odbudową Hurtowni Danych."
+msgstr "Wystąpił problem podczas odbudowy hurtowni danych."
 
 #: admin/dw/rebuild.php:71
 msgid "Try again"
@@ -2176,7 +2176,7 @@ msgstr "Spróbuj ponownie"
 
 #: admin/dw/servers.php:53
 msgid "dw_servers"
-msgstr "dw_serwery"
+msgstr "dw_servers"
 
 #: admin/dw/servers.php:67
 msgid "Hash"
@@ -2184,19 +2184,19 @@ msgstr "Hash"
 
 #: admin/dw/servers.php:69
 msgid "DW Accounts"
-msgstr "Rachunki DW"
+msgstr "Konta w hurtowni danych"
 
 #: admin/dw/servers.php:70
 msgid "DW DNS Zones"
-msgstr "Strefy DW DNS"
+msgstr "Strefy DNS w hurtowni danych"
 
 #: admin/dw/servers.php:71
 msgid "DW DNS Records"
-msgstr "DW DNS Records"
+msgstr "Rekordy DNS w hurtowni danych"
 
 #: admin/dw/servers.php:72
 msgid "DW Last Built"
-msgstr "DW Last Built"
+msgstr "Ostatnia aktualizacja hurtowni danych"
 
 #: admin/dw/servers.php:129
 msgid "Add Web Server"
@@ -2216,7 +2216,7 @@ msgstr "Zdalny adres IP"
 
 #: admin/info/index.php:54
 msgid "Web Server OS"
-msgstr "Web Server OS"
+msgstr "System operacyjny serwera WWW"
 
 #: admin/info/index.php:55
 msgid "Web Server Software"
@@ -2240,11 +2240,11 @@ msgstr "Tryb MySQL"
 
 #: admin/maintenance/clear-log.php:41
 msgid "Debug Log Cleared"
-msgstr "Plik z logami debug wyczyszczony"
+msgstr "Wyczyszczono dziennik debugowania"
 
 #: admin/maintenance/index.php:48
 msgid "Clear Queue Processing"
-msgstr "Wyczyść przetwarzane kolejki"
+msgstr "Wyczyść stan przetwarzania kolejek"
 
 #: admin/maintenance/index.php:49
 msgid "Clear Queues"
@@ -2252,19 +2252,19 @@ msgstr "Wyczyść kolejki"
 
 #: admin/maintenance/index.php:49
 msgid "This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed."
-msgstr "Spowoduje to całkowite usunięcie wszystkich list oczekujących i domen, niezależnie od ich statusu. Nie należy tego robić, dopóki wszystkie legalne listy i domeny w kolejce nie zostaną pomyślnie przetworzone."
+msgstr "Spowoduje to usunięcie wszystkich list i domen z kolejki, niezależnie od ich statusu. Wykonaj tę operację dopiero po pomyślnym przetworzeniu wszystkich prawidłowych pozycji w kolejce."
 
 #: admin/scheduler/index.php:53
 msgid "The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations."
-msgstr "Task Scheduler pozwala na uruchamianie różnych zadań systemowych w określonym czasie, co pomaga utrzymać Twoją instalację %s na bieżąco i sprawnie działać, jak również powiadamia Cię o ważnych informacjach, takich jak wysyłanie wiadomości e-mail w celu poinformowania Cię o zbliżającym się wygaśnięciu certyfikatu domeny i certyfikatu SSL."
+msgstr "Harmonogram zadań umożliwia uruchamianie zadań systemowych o określonych porach. Dzięki temu instalacja %s pozostaje aktualna i działa prawidłowo, a użytkownicy otrzymują ważne powiadomienia, np. o zbliżającym się wygaśnięciu domen i certyfikatów SSL."
 
 #: admin/scheduler/index.php:54
 msgid "In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation."
-msgstr "Aby skorzystać z Task Scheduler musisz skonfigurować cron/scheduled zadanie na swoim serwerze internetowym, aby wykonać plik %scron.php%s, który znajduje się w głównym folderze twojej instalacji %s."
+msgstr "Aby korzystać z harmonogramu zadań, skonfiguruj na serwerze cykliczne uruchamianie pliku %scron.php%s znajdującego się w katalogu głównym instalacji %s."
 
 #: admin/scheduler/index.php:61
 msgid "Using the Task Scheduler is optional, but %shighly%s recommended."
-msgstr "Korzystanie z Harmonogramu zadań jest opcjonalne, ale zaleca się %shighly%s."
+msgstr "Korzystanie z harmonogramu zadań jest opcjonalne, ale %szdecydowanie%s zalecane."
 
 #: admin/scheduler/index.php:63
 msgid "Current Timestamp"
@@ -2272,7 +2272,7 @@ msgstr "Aktualny znacznik czasu"
 
 #: admin/scheduler/index.php:87
 msgid "Runs"
-msgstr "Uruchmienie"
+msgstr "Uruchomienia"
 
 #: admin/scheduler/index.php:89 admin/users/index.php:61
 #: assets/account-owners.php:59 assets/categories.php:59 assets/dns.php:60
@@ -2302,7 +2302,7 @@ msgstr "Identyfikator zadania"
 
 #: admin/scheduler/run.php:77
 msgid "Slug"
-msgstr "Slug"
+msgstr "Identyfikator tekstowy"
 
 #: admin/scheduler/run.php:77
 msgid "Expression"
@@ -2325,7 +2325,7 @@ msgstr "Aktywne"
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:89 cron.php:76
 #: cron.php:84
 msgid "Cleanup Tasks"
-msgstr "Wyczyść zadania"
+msgstr "Zadania czyszczenia"
 
 #: admin/scheduler/run.php:81 admin/scheduler/run.php:96
 #: admin/scheduler/run.php:110 admin/scheduler/run.php:144
@@ -2348,42 +2348,42 @@ msgstr "Przeprowadzono czyszczenie systemu"
 #: admin/scheduler/run.php:96 admin/scheduler/run.php:105 cron.php:89
 #: cron.php:98 install/go.php:62
 msgid "Send Expiration Email"
-msgstr "Wyślij Email z datą ważności"
+msgstr "Wyślij e-mail z powiadomieniem o wygaśnięciu"
 
 #: admin/scheduler/run.php:140
 msgid "Conversion Rates Updated"
-msgstr "Zaktualizowane współczynniki konwersji"
+msgstr "Zaktualizowano kursy walut"
 
 #: admin/scheduler/run.php:144 admin/scheduler/run.php:152 cron.php:135
 #: cron.php:143
 msgid "New Version Check"
-msgstr "Sprawdź nową wersję"
+msgstr "Sprawdź dostępność nowej wersji"
 
 #: admin/scheduler/run.php:155
 msgid "No Upgrade Available"
-msgstr "Brak możliwości aktualizacji"
+msgstr "Brak dostępnych aktualizacji"
 
 #: admin/scheduler/run.php:159 admin/scheduler/run.php:168 cron.php:148
 #: cron.php:157
 msgid "Build Data Warehouse"
-msgstr "Zbuduj Hurtownię Danych"
+msgstr "Odbuduj hurtownię danych"
 
 #: admin/scheduler/run.php:171
 msgid "Data Warehouse Rebuilt"
-msgstr "Hurtownia danych Przebudowana"
+msgstr "Odbudowano hurtownię danych"
 
 #: admin/scheduler/run.php:175 admin/scheduler/run.php:185 cron.php:162
 #: cron.php:172
 msgid "Process Domain Queue"
-msgstr "Kolejka domen procesowych"
+msgstr "Przetwórz kolejkę domen"
 
 #: admin/scheduler/run.php:188 classes/DomainMOD/DomainQueue.php:465
 msgid "Domain Queue Processed"
-msgstr "Kolejka domen Przetworzone"
+msgstr "Przetworzono kolejkę domen"
 
 #: admin/scheduler/run.php:198
 msgid "Tasks Disabled in Demo Mode"
-msgstr "Zadania Wyłączone w trybie demonstracyjnym"
+msgstr "Zadania wyłączone w trybie demonstracyjnym"
 
 #: admin/scheduler/run.php:202
 msgid "Task Run"
@@ -2399,7 +2399,7 @@ msgstr "Zadanie włączone"
 
 #: admin/scheduler/update.php:110
 msgid "Task Disabled"
-msgstr "Zadanie Niepełnosprawni"
+msgstr "Zadanie wyłączone"
 
 #: admin/settings/index.php:108
 msgid "The System Settings were updated"
@@ -2415,15 +2415,15 @@ msgstr "Wpisz systemowy adres e-mail"
 
 #: admin/settings/index.php:119
 msgid "Enter the number of days to display in expiration emails"
-msgstr "Wprowadź liczbę dni do wyświetlenia w wiadomościach e-mail o wygaśnięciu ważności"
+msgstr "Wprowadź liczbę dni uwzględnianych w powiadomieniach o wygaśnięciu"
 
 #: admin/settings/index.php:165
 msgid "Full %s URL"
-msgstr "Pełny %s URL"
+msgstr "Pełny adres URL %s"
 
 #: admin/settings/index.php:165
 msgid "Enter the full URL of your %s installation, excluding the trailing slash (Example: http://example.com/domainmod)"
-msgstr "Wpisz pełny adres URL swojej instalacji %s, wyłączając ukośnik śledzący (Przykład: http://example.com/domainmod)."
+msgstr "Wprowadź pełny adres URL instalacji %s bez ukośnika na końcu (np. http://example.com/domainmod)."
 
 #: admin/settings/index.php:166
 msgid "This should be a valid email address that is monitored by the %s System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by %s."
@@ -2431,31 +2431,31 @@ msgstr "Powinien to być ważny adres e-mail, który jest monitorowany przez adm
 
 #: admin/settings/index.php:167
 msgid "Expiration Days to Display"
-msgstr "Dni wygaśnięcia do wyświetlenia"
+msgstr "Liczba dni do wygaśnięcia"
 
 #: admin/settings/index.php:167
 msgid "This is the number of days in the future to display on the Dashboard and in expiration emails."
-msgstr "Jest to liczba dni w przyszłości do wyświetlenia na Dashboardzie i w wygasających e-mailach."
+msgstr "Liczba dni naprzód uwzględnianych na pulpicie i w powiadomieniach e-mail o wygaśnięciu."
 
 #: admin/settings/index.php:168
 msgid "Email Signature"
-msgstr "Email Podpis"
+msgstr "Podpis wiadomości e-mail"
 
 #: admin/settings/index.php:168
 msgid "Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user's full name and email address. Use the below menu to choose the user that you would like to appear in your system's email signature."
-msgstr "Każda wiadomość wysyłana przez system (powiadomienia o nowych kontach, wiadomości o wygaśnięciu ważności itp.) zawiera podpis elektroniczny, który zawiera imię i nazwisko oraz adres e-mail użytkownika. Użyj poniższego menu, aby wybrać użytkownika, który chciałby się pojawić w podpisie emaila w systemie."
+msgstr "Każda wiadomość wysyłana przez system (np. o nowych kontach lub wygasających domenach) zawiera podpis z imieniem, nazwiskiem i adresem e-mail użytkownika. Wybierz poniżej użytkownika, którego dane mają pojawiać się w podpisie wiadomości systemowych."
 
 #: admin/settings/index.php:180
 msgid "Currency Converter"
-msgstr "Przelicznik walutowy"
+msgstr "Przeliczanie walut"
 
 #: admin/settings/index.php:180
 msgid "Although it doesn't happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren't working properly, try a different source."
-msgstr "Choć nie zdarza się to często, czasem zdarzają się przestoje w pracy konwertorów walutowych. Jeśli tak się stanie, a Twoje konwersje nie działają prawidłowo, spróbuj skorzystać z innego źródła."
+msgstr "Choć zdarza się to rzadko, dostawcy kursów walut mogą mieć przerwy w działaniu. Jeśli przeliczanie walut nie działa prawidłowo, wybierz inne źródło kursów."
 
 #: admin/settings/index.php:184
 msgid "Large Mode"
-msgstr "Duży tryb pracy"
+msgstr "Tryb dla dużych baz danych"
 
 #: admin/settings/index.php:184
 msgid "If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality."
@@ -2481,7 +2481,7 @@ msgstr "Tryb debugowania"
 
 #: admin/settings/index.php:186
 msgid "Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."
-msgstr "Jeśli nie masz problemów z %s i wsparcie poprosiło Cię o włączenie tego, powinieneś zostawić to wyłączone."
+msgstr "Pozostaw tę opcję wyłączoną, chyba że masz problemy z %s i dział pomocy poprosił Cię o włączenie debugowania."
 
 #: admin/settings/index.php:188
 msgid "Local PHP Log"
@@ -2563,19 +2563,19 @@ msgstr "Hasło SMTP"
 
 #: admin/settings/index.php:208
 msgid "Update System Settings"
-msgstr "Aktualizacja ustawień systemowych"
+msgstr "Zaktualizuj ustawienia systemowe"
 
 #: admin/ssl-fields/add.php:131
 msgid "Custom SSL Field %s (%s) added"
-msgstr "Niestandardowe pole dotyczące oświetlenia półprzewodnikowego Dodano %s (%s)"
+msgstr "Dodano niestandardowe pole SSL %s (%s)"
 
 #: admin/ssl-fields/edit.php:68
 msgid "The Custom SSL Field you're trying to edit is invalid"
-msgstr "Niestandardowe pole SSL, które próbujesz edytować jest nieważne"
+msgstr "Niestandardowe pole SSL, które próbujesz edytować, jest nieprawidłowe"
 
 #: admin/ssl-fields/edit.php:112
 msgid "Custom SSL Field %s (%s) updated"
-msgstr "Niestandardowe pole SSL %s (%s) zaktualizowane"
+msgstr "Zaktualizowano niestandardowe pole SSL %s (%s)"
 
 #: admin/ssl-fields/edit.php:168
 msgid "The Custom SSL Field cannot be deleted"
@@ -2583,7 +2583,7 @@ msgstr "Niestandardowe pole SSL nie może zostać usunięte"
 
 #: admin/ssl-fields/edit.php:207
 msgid "Custom SSL Field %s (%s) deleted"
-msgstr "Niestandardowe pole SSL %s (%s) usunięte"
+msgstr "Usunięto niestandardowe pole SSL %s (%s)"
 
 #: admin/ssl-fields/edit.php:251
 msgid "Custom SSL Field"
@@ -2595,11 +2595,11 @@ msgstr "custom_ssl_field_list"
 
 #: admin/ssl-fields/index.php:118
 msgid "Custom SSL Fields help extend the functionality of %s by allowing the user to create their own data fields."
-msgstr "Niestandardowe pola SSL pomagają rozszerzyć funkcjonalność %s, pozwalając użytkownikowi na tworzenie własnych pól danych."
+msgstr "Niestandardowe pola SSL pozwalają rozszerzyć funkcjonalność %s o własne pola danych."
 
 #: admin/ssl-fields/index.php:119
 msgid "For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data."
-msgstr "Na przykład, jeśli pracowałeś w środowisku korporacyjnym i chciałeś prowadzić rejestr tego, kto zakupił każdy z Twoich certyfikatów SSL, możesz utworzyć pole tekstowe z nazwą nabywcy i śledzić te informacje dla każdego z Twoich certyfikatów SSL. A kiedy wyeksportujesz swoje dane SSL, informacje zawarte w Twoich niestandardowych polach zostaną automatycznie włączone do wyeksportowanych danych."
+msgstr "Na przykład w firmie możesz utworzyć niestandardowe pole tekstowe „Nabywca”, aby zapisywać, kto kupił poszczególne certyfikaty SSL. Podczas eksportowania danych certyfikatów SSL informacje z tych pól zostaną automatycznie uwzględnione."
 
 #: admin/ssl-fields/index.php:124
 msgid "It appears as though you haven't created any Custom SSL Fields yet."
@@ -2607,7 +2607,7 @@ msgstr "Wygląda na to, że nie stworzyłeś jeszcze żadnych niestandardowych p
 
 #: admin/ssl-fields/index.php:125
 msgid "%sClick here%s to add one."
-msgstr "%sClick here%s to add one."
+msgstr "%sKliknij tutaj%s, aby dodać pole."
 
 #: admin/users/add.php:90
 msgid "A user with that username already exists"
@@ -2623,7 +2623,7 @@ msgstr "Użytkownik %s %s (%s / %s) dodany."
 
 #: admin/users/add.php:167
 msgid "You can either manually email the above credentials to the user, or you can %sclick here%s to have %s email them for you."
-msgstr "Możesz albo ręcznie wysłać powyższe dane uwierzytelniające do użytkownika, albo możesz kliknąć %sclick here%s aby %s wysłał je do Ciebie."
+msgstr "Możesz samodzielnie przesłać użytkownikowi powyższe dane logowania albo %skliknąć tutaj%s, aby system %s wysłał je za Ciebie."
 
 #: admin/users/add.php:169
 msgid "Use the below form to customize the new user's account."
@@ -2673,7 +2673,7 @@ msgstr "Użytkownik %s %s (%s) zaktualizowany"
 
 #: admin/users/edit.php:255
 msgid "Enter the user's first name"
-msgstr "Wpisz imię i nazwisko użytkownika"
+msgstr "Wprowadź imię użytkownika"
 
 #: admin/users/edit.php:256
 msgid "Enter the user's last name"
@@ -2681,7 +2681,7 @@ msgstr "Wpisz nazwisko użytkownika"
 
 #: admin/users/edit.php:257
 msgid "You have entered an invalid username"
-msgstr "Wpisałeś nieważną nazwę użytkownika"
+msgstr "Wprowadzono nieprawidłową nazwę użytkownika"
 
 #: admin/users/edit.php:258
 msgid "You have entered an invalid email address"
@@ -2689,11 +2689,11 @@ msgstr "Podałeś nieprawidłowy adres e-mail"
 
 #: admin/users/edit.php:301
 msgid "The admin user cannot be deleted"
-msgstr "Użytkownik administracyjny nie może zostać usunięty"
+msgstr "Nie można usunąć konta administratora"
 
 #: admin/users/edit.php:302
 msgid "You can't delete yourself"
-msgstr "Nie możesz się skasować"
+msgstr "Nie możesz usunąć własnego konta"
 
 #: admin/users/edit.php:318
 msgid "User %s %s (%s) deleted"
@@ -2722,11 +2722,11 @@ msgstr "Strefa czasowa"
 
 #: admin/users/edit.php:406 settings/profile/index.php:296
 msgid "Subscribe to Domain & SSL Certificate expiration emails?"
-msgstr "Czy chcesz otrzymywać powiadomienia e-mail z wygasającymi certyfikatami domenowymi i certyfikatami SSL?"
+msgstr "Czy chcesz otrzymywać powiadomienia e-mail o wygasających domenach i certyfikatach SSL?"
 
 #: admin/users/edit.php:410 admin/users/edit.php:414
 msgid "Admin Privileges"
-msgstr "Przywileje administracyjne"
+msgstr "Uprawnienia administratora"
 
 #: admin/users/edit.php:420 admin/users/index.php:67 admin/users/index.php:200
 msgid "Read-Only"
@@ -2795,7 +2795,7 @@ msgstr "R"
 
 #: admin/users/index.php:200
 msgid "Strike"
-msgstr "Strike"
+msgstr "Przekreślenie"
 
 #: admin/users/reset-password.php:73
 msgid "The password could not be reset due to an invalid username."
@@ -2821,7 +2821,7 @@ msgstr "Domyślny właściciel domeny"
 #: assets/account-owners.php:66 assets/account-owners.php:288
 #: assets/categories.php:237 assets/ip-addresses.php:245
 msgid "Default SSL Owner"
-msgstr "Domyślny właściciel SSL"
+msgstr "Domyślny właściciel certyfikatu SSL"
 
 #: assets/account-owners.php:288 assets/categories.php:237 assets/dns.php:239
 #: assets/hosting.php:199 assets/ip-addresses.php:245
@@ -2829,7 +2829,7 @@ msgstr "Domyślny właściciel SSL"
 #: assets/ssl-accounts.php:240 assets/ssl-providers.php:226
 #: assets/ssl-types.php:193
 msgid "Set Defaults"
-msgstr "Ustawienie domyślne"
+msgstr "Ustaw wartości domyślne"
 
 #: assets/account-owners.php:292
 msgid "You don't currently have any Owners."
@@ -2841,7 +2841,7 @@ msgstr "Właściciel %s dodany"
 
 #: assets/add/account-owner.php:73
 msgid "Enter the Owner's name"
-msgstr "Wpisz nazwisko Właściciela"
+msgstr "Wprowadź nazwę właściciela"
 
 #: assets/add/account-owner.php:89 assets/edit/account-owner.php:214
 msgid "Owner Name"
@@ -2849,7 +2849,7 @@ msgstr "Nazwa właściciela"
 
 #: assets/add/category.php:68
 msgid "Category %s added"
-msgstr "Kategoria Dodane %s"
+msgstr "Dodano kategorię %s"
 
 #: assets/add/category.php:75 assets/edit/category.php:84
 msgid "Enter the Category name"
@@ -2862,11 +2862,11 @@ msgstr "Nazwa kategorii"
 #: assets/add/category.php:92 assets/categories.php:61
 #: assets/categories.php:173 assets/edit/category.php:153
 msgid "Stakeholder"
-msgstr "Zainteresowana strona"
+msgstr "Interesariusz"
 
 #: assets/add/dns.php:123
 msgid "DNS Profile %s added"
-msgstr "Profil DNS Dodano %s"
+msgstr "Dodano profil DNS %s"
 
 #: assets/add/dns.php:131
 msgid "Enter a name for the DNS Profile"
@@ -2895,23 +2895,23 @@ msgstr "Serwer DNS"
 
 #: assets/add/host.php:68
 msgid "Web Host %s added"
-msgstr "Web Hosty dodane %s"
+msgstr "Dodano dostawcę hostingu %s"
 
 #: assets/add/host.php:75 assets/edit/host.php:83
 msgid "Enter the Web Host's name"
-msgstr "Wpisz nazwę Web Hosta"
+msgstr "Wprowadź nazwę dostawcy hostingu"
 
 #: assets/add/host.php:91 assets/edit/host.php:150
 msgid "Web Host Name"
-msgstr "Nazwa hosta strony internetowej"
+msgstr "Nazwa dostawcy hostingu"
 
 #: assets/add/host.php:92 assets/edit/host.php:151
 msgid "Web Host's URL"
-msgstr "Adres URL Web Hosta"
+msgstr "Adres URL dostawcy hostingu"
 
 #: assets/add/ip-address.php:70
 msgid "IP Address %s (%s) added"
-msgstr "Adres IP Dodano %s (%s)"
+msgstr "Dodano adres IP %s (%s)"
 
 #: assets/add/ip-address.php:78
 msgid "Enter a name for the IP address"
@@ -2926,7 +2926,7 @@ msgstr "Wprowadź adres IP"
 #: reporting/domains/cost-by-ip-address.php:157
 #: reporting/ssl/cost-by-ip-address.php:157 ssl/index.php:469
 msgid "IP Address Name"
-msgstr "Adres IP Nazwa"
+msgstr "Nazwa adresu IP"
 
 #: assets/add/ip-address.php:100 assets/edit/ip-address.php:157
 #: assets/ip-addresses.php:62 assets/ip-addresses.php:176
@@ -2939,7 +2939,7 @@ msgstr "rDNS"
 
 #: assets/add/registrar-account.php:91
 msgid "Registrar Account %s (%s, %s) added"
-msgstr "Konto Rejestratora %s (%s, %s) dodane"
+msgstr "Dodano konto rejestratora %s (%s, %s)"
 
 #: assets/add/registrar-account.php:111 assets/add/ssl-provider-account.php:100
 msgid "Choose the owner"
@@ -2986,14 +2986,14 @@ msgstr "Hasło"
 #: assets/edit/ssl-provider-account.php:288 assets/registrar-accounts.php:79
 #: assets/ssl-accounts.php:78
 msgid "Reseller Account"
-msgstr "Konto odsprzedawcy"
+msgstr "Konto resellera"
 
 #: assets/add/registrar-account.php:175 assets/add/ssl-provider-account.php:175
 #: assets/edit/registrar-account.php:362 assets/edit/registrar-account.php:404
 #: assets/edit/ssl-provider-account.php:289 assets/registrar-accounts.php:80
 #: assets/ssl-accounts.php:79 queue/add/step-two/index.php:430
 msgid "Reseller ID"
-msgstr "Identyfikator sprzedawcy"
+msgstr "Identyfikator resellera"
 
 #: assets/add/registrar-account.php:179 assets/edit/registrar-account.php:457
 #: assets/registrar-accounts.php:81
@@ -3010,7 +3010,7 @@ msgstr "Klucz API"
 #: assets/edit/registrar-account.php:459 assets/registrar-accounts.php:83
 #: queue/add/step-two/index.php:457
 msgid "API Secret"
-msgstr "API Secret"
+msgstr "Tajny klucz API"
 
 #: assets/add/registrar-account.php:183 assets/edit/registrar-account.php:468
 msgid "API IP Address"
@@ -3018,7 +3018,7 @@ msgstr "Adres IP API"
 
 #: assets/add/registrar-account.php:183 assets/edit/registrar-account.php:468
 msgid "The IP Address that you whitelisted with the domain registrar for API access."
-msgstr "Adres IP, który wybrałeś wraz z rejestratorem domeny dla dostępu do API."
+msgstr "Adres IP dodany do listy dozwolonych adresów u rejestratora w celu korzystania z API."
 
 #: assets/add/registrar-fee.php:66
 msgid "Enter the TLD"
@@ -3026,11 +3026,11 @@ msgstr "Wprowadź TLD"
 
 #: assets/add/registrar-fee.php:86
 msgid "A fee for this TLD already exists"
-msgstr "Opłata za tę TLD już istnieje"
+msgstr "Dla tej domeny najwyższego poziomu (TLD) istnieje już stawka"
 
 #: assets/add/registrar-fee.php:88 assets/add/ssl-provider-fee.php:85
 msgid "Edit Fee"
-msgstr "Opłata za redakcję"
+msgstr "Edytuj stawkę"
 
 #: assets/add/registrar-fee.php:156 assets/add/ssl-provider-fee.php:143
 msgid "The fee for %s has been added"
@@ -3038,7 +3038,7 @@ msgstr "Opłata za %s została dodana"
 
 #: assets/add/registrar-fee.php:189 assets/edit/registrar-fee.php:177
 msgid "Back to Registrar Fees"
-msgstr "Powrót do Rejestratora Opłaty"
+msgstr "Powrót do stawek rejestratora"
 
 #: assets/add/registrar-fee.php:193 assets/edit/registrar-fee.php:182
 msgid "Domain Registrar"
@@ -3083,7 +3083,7 @@ msgstr "Opłata transferowa"
 #: assets/registrar-fees.php:74 domains/index.php:732
 #: reporting/domains/registrar-fees.php:116
 msgid "Privacy Fee"
-msgstr "Opłata za prywatność"
+msgstr "Opłata za ochronę prywatności"
 
 #: assets/add/registrar-fee.php:201 assets/add/ssl-provider-fee.php:199
 #: assets/edit/registrar-fee.php:191 assets/edit/ssl-provider-fee.php:189
@@ -3092,12 +3092,12 @@ msgstr "Opłata za prywatność"
 #: reporting/domains/registrar-fees.php:117 reporting/ssl/provider-fees.php:117
 #: ssl/index.php:461
 msgid "Misc Fee"
-msgstr "Opłata Misc"
+msgstr "Opłata dodatkowa"
 
 #: assets/add/registrar-fee.php:217 assets/add/ssl-provider-fee.php:216
 #: assets/registrar-fees.php:117 assets/ssl-provider-fees.php:114
 msgid "Add Fee"
-msgstr "Dodaj Opłatę"
+msgstr "Dodaj stawkę"
 
 #: assets/add/registrar.php:69
 msgid "Registrar %s added"
@@ -3105,11 +3105,11 @@ msgstr "Rejestrator %s dodany"
 
 #: assets/add/registrar.php:86
 msgid "Enter the registrar name"
-msgstr "Wpisz nazwisko rejestratora"
+msgstr "Wprowadź nazwę rejestratora"
 
 #: assets/add/registrar.php:102
 msgid "Registrar's Name"
-msgstr "Nazwisko sekretarza"
+msgstr "Nazwa rejestratora"
 
 #: assets/add/registrar.php:103 assets/edit/registrar.php:209
 msgid "Registrar's URL"
@@ -3152,7 +3152,7 @@ msgstr "Opłata za ten typ SSL już istnieje"
 
 #: assets/add/ssl-provider-fee.php:176 assets/edit/ssl-provider-fee.php:171
 msgid "Back to SSL Provider Fees"
-msgstr "Powrót do opłat za korzystanie z usług dostawcy usług SSL"
+msgstr "Powrót do stawek dostawcy SSL"
 
 #: assets/add/ssl-provider-fee.php:183 assets/edit/ssl-type.php:153
 #: assets/ssl-types.php:60 settings/display/index.php:339 ssl/index.php:362
@@ -3166,7 +3166,7 @@ msgstr "Wybierz typ SSL"
 
 #: assets/add/ssl-provider.php:68
 msgid "SSL Provider %s added"
-msgstr "Dostawca oświetlenia półprzewodnikowego Dodano %s"
+msgstr "Dodano dostawcę SSL %s"
 
 #: assets/add/ssl-provider.php:85 assets/edit/ssl-provider.php:84
 msgid "Enter the SSL provider's name"
@@ -3178,11 +3178,11 @@ msgstr "Nazwa dostawcy SSL"
 
 #: assets/add/ssl-provider.php:102 assets/edit/ssl-provider.php:208
 msgid "SSL Provider's URL"
-msgstr "URL dostawcy usług SSL"
+msgstr "Adres URL dostawcy SSL"
 
 #: assets/add/ssl-type.php:66
 msgid "SSL Type %s added"
-msgstr "Typ SSL Dodano %s"
+msgstr "Dodano typ certyfikatu SSL %s"
 
 #: assets/add/ssl-type.php:73
 msgid "Enter the SSL Type"
@@ -3256,27 +3256,27 @@ msgstr "Nie masz obecnie żadnych profili DNS."
 
 #: assets/edit/account-owner.php:74
 msgid "Owner %s updated"
-msgstr "Właściciel %s został zaktualizowany"
+msgstr "Zaktualizowano właściciela %s"
 
 #: assets/edit/account-owner.php:81
 msgid "Enter the owner's name"
-msgstr "Wpisz nazwisko właściciela"
+msgstr "Wprowadź nazwę właściciela"
 
 #: assets/edit/account-owner.php:172
 msgid "This Owner has registrar accounts associated with it and cannot be deleted"
-msgstr "Właściciel ten posiada powiązane z nim konta rejestratora i nie może ich usunąć"
+msgstr "Nie można usunąć tego właściciela, ponieważ ma powiązane konta rejestratorów"
 
 #: assets/edit/account-owner.php:176
 msgid "This Owner has domains associated with it and cannot be deleted"
-msgstr "Właściciel ten posiada powiązane z nim domeny, których nie można usunąć"
+msgstr "Nie można usunąć tego właściciela, ponieważ ma powiązane domeny"
 
 #: assets/edit/account-owner.php:180
 msgid "This Owner has SSL accounts associated with it and cannot be deleted"
-msgstr "Właściciel ten posiada powiązane z nim konta SSL i nie może ich usunąć"
+msgstr "Nie można usunąć tego właściciela, ponieważ ma powiązane konta SSL"
 
 #: assets/edit/account-owner.php:184
 msgid "This Owner has SSL certificates associated with it and cannot be deleted"
-msgstr "Właściciel ten posiada powiązane z nim certyfikaty SSL i nie może ich usunąć"
+msgstr "Nie można usunąć tego właściciela, ponieważ ma powiązane certyfikaty SSL"
 
 #: assets/edit/account-owner.php:195
 msgid "Owner %s deleted"
@@ -3288,7 +3288,7 @@ msgstr "Kategoria %s została zaktualizowana"
 
 #: assets/edit/category.php:123
 msgid "This Category has domains associated with it and cannot be deleted"
-msgstr "Kategoria ta posiada powiązane z nią domeny i nie może być usunięta"
+msgstr "Nie można usunąć tej kategorii, ponieważ są do niej przypisane domeny"
 
 #: assets/edit/category.php:133
 msgid "Category %s deleted"
@@ -3296,7 +3296,7 @@ msgstr "Kategoria %s została usunięta"
 
 #: assets/edit/dns.php:149
 msgid "DNS Profile %s updated"
-msgstr "Profil DNS Zaktualizowany %s"
+msgstr "Zaktualizowano profil DNS %s"
 
 #: assets/edit/dns.php:156
 msgid "Enter a name for the DNS profile"
@@ -3312,7 +3312,7 @@ msgstr "Wprowadź drugi serwer DNS"
 
 #: assets/edit/dns.php:216
 msgid "This DNS Profile has domains associated with it and cannot be deleted"
-msgstr "Ten profil DNS posiada powiązane z nim domeny i nie może być usunięty"
+msgstr "Nie można usunąć tego profilu DNS, ponieważ są do niego przypisane domeny"
 
 #: assets/edit/dns.php:226
 msgid "DNS Profile %s deleted"
@@ -3320,21 +3320,21 @@ msgstr "Profil DNS %s usunięty"
 
 #: assets/edit/host.php:76
 msgid "Web Host %s updated"
-msgstr "Web Hosty %s aktualizowane"
+msgstr "Zaktualizowano dostawcę hostingu %s"
 
 #: assets/edit/host.php:121
 msgid "This Web Host has domains associated with it and cannot be deleted"
-msgstr "Ten Web Host posiada powiązane z nim domeny i nie może być usunięty"
+msgstr "Nie można usunąć tego dostawcy hostingu, ponieważ są do niego przypisane domeny"
 
 #: assets/edit/host.php:131
 msgid "Web Host %s deleted"
-msgstr "Web Hosty %s usunięty"
+msgstr "Usunięto dostawcę hostingu %s"
 
 #: assets/edit/host.php:157 assets/hosting.php:60 domains/index.php:637
 #: domains/index.php:747 domains/results.php:170 queue/index.php:175
 #: settings/display/index.php:304
 msgid "Web Host"
-msgstr "Web Host"
+msgstr "Dostawca hostingu"
 
 #: assets/edit/ip-address.php:79
 msgid "IP Address %s (%s) updated"
@@ -3350,11 +3350,11 @@ msgstr "Wprowadź adres IP"
 
 #: assets/edit/ip-address.php:126
 msgid "This IP Address has domains associated with it and cannot be deleted"
-msgstr "Ten adres IP posiada powiązane z nim domeny i nie może być usunięty"
+msgstr "Nie można usunąć tego adresu IP, ponieważ są do niego przypisane domeny"
 
 #: assets/edit/ip-address.php:136
 msgid "IP Address %s (%s) deleted"
-msgstr "Adres IP %s (%s) skreślony"
+msgstr "Usunięto adres IP %s (%s)"
 
 #: assets/edit/registrar-account.php:127
 msgid "Registrar Account %s (%s, %s) updated"
@@ -3371,15 +3371,15 @@ msgstr "Wybierz Rejestratora"
 
 #: assets/edit/registrar-account.php:211
 msgid "This Registrar Account has domains associated with it and cannot be deleted"
-msgstr "To Konto Rejestratora posiada powiązane z nim domeny i nie może być usunięte"
+msgstr "Nie można usunąć tego konta rejestratora, ponieważ są do niego przypisane domeny"
 
 #: assets/edit/registrar-account.php:248
 msgid "Registrar Account %s (%s, %s) deleted"
-msgstr "Konto Rejestratora %s (%s, %s) usunięty"
+msgstr "Usunięto konto rejestratora %s (%s, %s)"
 
 #: assets/add/registrar-account.php:177 assets/edit/registrar-account.php:366
 msgid "API Credentials"
-msgstr "Dane API Credentials"
+msgstr "Dane uwierzytelniające API"
 
 #: assets/edit/registrar-account.php:368 queue/add/step-two/index.php:394
 msgid "API Requirements"
@@ -3387,7 +3387,7 @@ msgstr "Wymagania dotyczące API"
 
 #: assets/edit/registrar-account.php:369
 msgid "%s requires the following credentials in order to use their API."
-msgstr "%s wymaga następujących uprawnień, aby móc korzystać z ich API."
+msgstr "%s wymaga następujących danych uwierzytelniających do korzystania ze swojego API."
 
 #: assets/edit/registrar-account.php:373 queue/add/step-two/index.php:399
 msgid "Missing"
@@ -3403,7 +3403,7 @@ msgstr "Nazwa użytkownika konta rejestratora"
 
 #: assets/edit/registrar-account.php:386 queue/add/step-two/index.php:412
 msgid "Registrar Account Password"
-msgstr "Hasło do konta Registrar"
+msgstr "Hasło do konta rejestratora"
 
 #: assets/edit/registrar-account.php:413 queue/add/step-two/index.php:439
 msgid "API Application Name"
@@ -3411,7 +3411,7 @@ msgstr "Nazwa aplikacji API"
 
 #: assets/edit/registrar-account.php:440 queue/add/step-two/index.php:466
 msgid "Connecting IP Address"
-msgstr "Podłączanie adresu IP"
+msgstr "Adres IP połączenia"
 
 #: assets/edit/registrar-account.php:452 queue/add/step-two/index.php:481
 msgid "Registrar Notes"
@@ -3419,7 +3419,7 @@ msgstr "Uwagi rejestratora"
 
 #: assets/edit/registrar-account.php:468
 msgid "%sClick here%s to add a new IP Address"
-msgstr "%sClick here%s to add a new IP Address"
+msgstr "%sKliknij tutaj%s, aby dodać nowy adres IP"
 
 #: assets/edit/registrar-account.php:491 bulk/main/index.php:192
 #: bulk/main/index.php:727 bulk/main/index.php:2042 bulk/main/index.php:2249
@@ -3435,19 +3435,19 @@ msgstr "Opłata za %s została zaktualizowana"
 
 #: assets/edit/registrar.php:77
 msgid "Registrar %s updated"
-msgstr "Rejestrator %s aktualizowany"
+msgstr "Zaktualizowano rejestratora %s"
 
 #: assets/edit/registrar.php:84
 msgid "Enter the Registrar name"
-msgstr "Wpisz nazwisko rejestratora"
+msgstr "Wprowadź nazwę rejestratora"
 
 #: assets/edit/registrar.php:144
 msgid "This Registrar has Registrar Accounts associated with it and cannot be deleted"
-msgstr "Ten Rejestrator posiada powiązane z nim Konta Rejestratora i nie można go usunąć"
+msgstr "Nie można usunąć tego rejestratora, ponieważ ma powiązane konta rejestratorów"
 
 #: assets/edit/registrar.php:145
 msgid "This Registrar has domains associated with it and cannot be deleted"
-msgstr "Ten Rejestrator posiada powiązane z nim domeny i nie może być usunięty"
+msgstr "Nie można usunąć tego rejestratora, ponieważ są do niego przypisane domeny"
 
 #: assets/edit/registrar.php:175
 msgid "Registrar %s deleted"
@@ -3455,7 +3455,7 @@ msgstr "Rejestrator %s usunięty"
 
 #: assets/edit/registrar.php:208
 msgid "Registrar Name"
-msgstr "Nazwisko rejestratora"
+msgstr "Nazwa rejestratora"
 
 #: assets/edit/ssl-provider-account.php:112
 msgid "SSL Account %s (%s, %s) updated"
@@ -3467,7 +3467,7 @@ msgstr "To konto SSL posiada powiązane z nim certyfikaty SSL i nie może zosta�
 
 #: assets/edit/ssl-provider-account.php:225
 msgid "SSL Account %s (%s, %s) deleted"
-msgstr "Rachunek SSL %s (%s, %s) usunięty"
+msgstr "Usunięto konto SSL %s (%s, %s)"
 
 #: assets/edit/ssl-provider-account.php:295 ssl/add.php:328 ssl/edit.php:413
 #: ssl/index.php:347 ssl/index.php:466 ssl/index.php:944
@@ -3476,23 +3476,23 @@ msgstr "Konto dostawcy usług SSL"
 
 #: assets/edit/ssl-provider.php:77
 msgid "SSL Provider %s updated"
-msgstr "Dostawca oświetlenia półprzewodnikowego Aktualizacja %s"
+msgstr "Zaktualizowano dostawcę SSL %s"
 
 #: assets/edit/ssl-provider.php:143
 msgid "This SSL Provider has Accounts associated with it and cannot be deleted"
-msgstr "Ten dostawca usług SSL posiada powiązane z nim konta, których nie można usunąć"
+msgstr "Nie można usunąć tego dostawcy SSL, ponieważ ma powiązane konta"
 
 #: assets/edit/ssl-provider.php:144
 msgid "This SSL Provider has SSL Certificates associated with it and cannot be deleted"
-msgstr "Ten dostawca usług SSL posiada powiązane z nim certyfikaty SSL i nie można ich usunąć"
+msgstr "Nie można usunąć tego dostawcy SSL, ponieważ ma powiązane certyfikaty SSL"
 
 #: assets/edit/ssl-provider.php:174
 msgid "SSL Provider %s deleted"
-msgstr "Dostawca oświetlenia półprzewodnikowego %s usunięty"
+msgstr "Usunięto dostawcę SSL %s"
 
 #: assets/edit/ssl-type.php:74
 msgid "SSL Type %s updated"
-msgstr "Typ SSL Aktualizacja %s"
+msgstr "Zaktualizowano typ certyfikatu SSL %s"
 
 #: assets/edit/ssl-type.php:81
 msgid "Enter the Type name"
@@ -3504,7 +3504,7 @@ msgstr "Ten typ posiada powiązane z nim certyfikaty SSL i nie można go usuną�
 
 #: assets/edit/ssl-type.php:128
 msgid "SSL Type %s deleted"
-msgstr "Typ SSL %s usunięty"
+msgstr "Usunięto typ certyfikatu SSL %s"
 
 #: assets/hosting.php:51
 msgid "web_hosting_provider_list"
@@ -3512,11 +3512,11 @@ msgstr "web_hosting_provider_list"
 
 #: assets/hosting.php:62
 msgid "Default Web Host"
-msgstr "Domyślny Web Host"
+msgstr "Domyślny dostawca hostingu"
 
 #: assets/hosting.php:143
 msgid "Add Hosting Provider"
-msgstr "Dodanie dostawcy usług hostingowych"
+msgstr "Dodaj dostawcę hostingu"
 
 #: assets/hosting.php:154 assets/registrars.php:171
 #: assets/ssl-providers.php:162
@@ -3525,7 +3525,7 @@ msgstr "Opcje"
 
 #: assets/hosting.php:203
 msgid "You don't currently have any Web Hosts."
-msgstr "Nie masz obecnie żadnych Web Hostów."
+msgstr "Nie skonfigurowano jeszcze żadnych dostawców hostingu."
 
 #: assets/index.php:65
 msgid "Shared"
@@ -3533,7 +3533,7 @@ msgstr "Współdzielone"
 
 #: assets/ip-addresses.php:51
 msgid "ip_address_list"
-msgstr "ip_adres_list"
+msgstr "ip_address_list"
 
 #: assets/ip-addresses.php:65
 msgid "Default Domain IP Address"
@@ -3565,15 +3565,15 @@ msgstr "Konto domyślne"
 
 #: assets/registrar-accounts.php:274 assets/ssl-accounts.php:240
 msgid "Reseller"
-msgstr "Sprzedawca"
+msgstr "Reseller"
 
 #: assets/registrar-accounts.php:285
 msgid "Before adding a Registrar Account you must add at least one Registrar."
-msgstr "Przed dodaniem Konta Rejestratora należy dodać co najmniej jednego Rejestratora."
+msgstr "Przed dodaniem konta rejestratora należy dodać co najmniej jednego rejestratora."
 
 #: assets/registrar-accounts.php:285
 msgid "Click here to add a Registrar"
-msgstr "Kliknij tutaj, aby dodać Rejestratora"
+msgstr "Kliknij tutaj, aby dodać rejestratora"
 
 #: assets/registrar-accounts.php:289
 msgid "You don't currently have any Registrar Accounts."
@@ -3581,11 +3581,11 @@ msgstr "Obecnie nie posiadasz żadnego konta rejestratora."
 
 #: assets/registrar-fees-missing.php:58
 msgid "The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees as soon as possible."
-msgstr "Brakuje następujących rejestratorów/TLD: Opłaty za domeny. W celu zapewnienia dokładnego zgłaszania domen prosimy o jak najszybszą aktualizację tych opłat."
+msgstr "Dla poniższych rejestratorów i domen najwyższego poziomu (TLD) brakuje stawek. Uzupełnij je jak najszybciej, aby raporty kosztów domen były prawidłowe."
 
 #: assets/registrar-fees-missing.php:64 assets/registrar-fees.php:133
 msgid "Missing TLD Fees"
-msgstr "Brakujące opłaty TLD"
+msgstr "Brakujące stawki dla TLD"
 
 #: assets/registrar-fees.php:61
 msgid "registrar_fee_list"
@@ -3597,20 +3597,20 @@ msgstr "Poniżej znajduje się lista wszystkich opłat związanych z"
 
 #: assets/registrar-fees.php:148
 msgid "You have domains with %s that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible."
-msgstr "W systemie znajdują się domeny (%s), dla których nie podano stawek rejestracji i odnowień. Należy jak najszybciej zaktualizować stawki/opłaty."
+msgstr "Masz domeny u rejestratora %s z tym rozszerzeniem TLD, ale nie podano jeszcze odpowiedniej stawki. Dodaj ją jak najszybciej."
 
 #: assets/registrar-fees.php:150
 msgid "You have domains with %s that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible."
-msgstr "W systemie znajdują się domeny (%s), dla których nie podano stawek rejestracji i odnowień. Należy jak najszybciej zaktualizować stawki/opłaty."
+msgstr "Masz domeny u rejestratora %s z tymi rozszerzeniami TLD, ale nie podano jeszcze odpowiednich stawek. Dodaj je jak najszybciej."
 
 #: assets/registrar-fees.php:157
 msgid "You don't currently have any fees associated with this domain registrar."
-msgstr "Obecnie nie masz żadnych opłat związanych z tym rejestratorem domen."
+msgstr "Nie zdefiniowano jeszcze żadnych stawek dla tego rejestratora domen."
 
 #: assets/registrar-fees.php:166 reporting/domains/registrar-fees.php:208
 #: reporting/ssl/provider-fees.php:200
 msgid "Initial"
-msgstr "Początkowo"
+msgstr "Opłata początkowa"
 
 #: assets/registrar-fees.php:167 reporting/domains/registrar-fees.php:209
 #: reporting/ssl/provider-fees.php:201
@@ -3641,15 +3641,15 @@ msgstr "Domyślny rejestrator"
 
 #: assets/registrars.php:66
 msgid "API Registrar"
-msgstr "Rejestrator API"
+msgstr "Rejestrator obsługujący API"
 
 #: assets/registrars.php:159
 msgid "Add Registrar"
-msgstr "Dodaj Rejestratora"
+msgstr "Dodaj rejestratora"
 
 #: assets/registrars.php:239
 msgid "You don't currently have any Domain Registrars."
-msgstr "Nie masz obecnie żadnych Rejestratorów Domen."
+msgstr "Nie skonfigurowano jeszcze żadnych rejestratorów domen."
 
 #: assets/ssl-accounts.php:65
 msgid "ssl_provider_account_list"
@@ -3668,7 +3668,7 @@ msgstr "Dostawca"
 
 #: assets/ssl-accounts.php:251
 msgid "Before adding an SSL Provider Account you must add at least one SSL Provider."
-msgstr "Przed dodaniem konta dostawcy usług SSL należy dodać co najmniej jednego dostawcę usług SSL."
+msgstr "Przed dodaniem konta dostawcy SSL należy dodać co najmniej jednego dostawcę SSL."
 
 #: assets/ssl-accounts.php:251 ssl/index.php:613
 msgid "Click here to add an SSL Provider"
@@ -3676,11 +3676,11 @@ msgstr "Kliknij tutaj, aby dodać dostawcę SSL"
 
 #: assets/ssl-accounts.php:255
 msgid "You don't currently have any SSL Provider Accounts."
-msgstr "Obecnie nie posiadasz żadnego konta dostawcy SSL."
+msgstr "Nie skonfigurowano jeszcze żadnych kont dostawców SSL."
 
 #: assets/ssl-provider-fees-missing.php:58
 msgid "The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees as soon as possible."
-msgstr "Następujące certyfikaty SSL są brakującymi opłatami. Aby mieć pewność, że raporty SSL są dokładne, prosimy o jak najszybszą aktualizację tych opłat."
+msgstr "Dla poniższych certyfikatów SSL brakuje stawek. Uzupełnij je jak najszybciej, aby raporty kosztów certyfikatów SSL były prawidłowe."
 
 #: assets/ssl-provider-fees.php:62
 msgid "ssl_provider_fee_list"
@@ -3688,19 +3688,19 @@ msgstr "ssl_provider_fee_list"
 
 #: assets/ssl-provider-fees.php:131
 msgid "Missing SSL Type Fees"
-msgstr "Brakujące opłaty typu SSL"
+msgstr "Brakujące stawki dla typów certyfikatów SSL"
 
 #: assets/ssl-provider-fees.php:147
 msgid "You have SSL certificates with %s that use this SSL Type, however there are no fees associated with it yet. You should add this fee as soon as possible."
-msgstr "W systemie znajdują się certyfikaty SSL (%s), dla których nie podano stawek rejestracji i odnowień. Należy jak najszybciej zaktualizować stawki/opłaty."
+msgstr "Masz certyfikaty SSL u dostawcy %s tego typu, ale nie podano jeszcze odpowiedniej stawki. Dodaj ją jak najszybciej."
 
 #: assets/ssl-provider-fees.php:149
 msgid "You have SSL certificates with %s that use these SSL Types, however there are no fees associated with them yet. You should add these fees as soon as possible."
-msgstr "W systemie znajdują się certyfikaty SSL (%s), dla których nie podano stawek rejestracji i odnowień. Należy jak najszybciej zaktualizować stawki/opłaty."
+msgstr "Masz certyfikaty SSL u dostawcy %s tych typów, ale nie podano jeszcze odpowiednich stawek. Dodaj je jak najszybciej."
 
 #: assets/ssl-provider-fees.php:156
 msgid "You don't currently have any fees associated with this SSL provider."
-msgstr "Obecnie nie ma żadnych opłat związanych z tym dostawcą SSL."
+msgstr "Nie zdefiniowano jeszcze żadnych stawek dla tego dostawcy SSL."
 
 #: assets/ssl-providers.php:51
 msgid "ssl_provider_list"
@@ -3729,7 +3729,7 @@ msgstr "ssl_certificate_type_list"
 
 #: assets/ssl-types.php:197
 msgid "You don't currently have any SSL Types."
-msgstr "Nie posiadasz obecnie żadnych typów SSL."
+msgstr "Nie skonfigurowano jeszcze żadnych typów certyfikatów SSL."
 
 #: bulk/cf/step-two/index.php:94 bulk/main/index.php:69
 msgid "Click here to choose the new"
@@ -3738,27 +3738,27 @@ msgstr "Kliknij tutaj, aby wybrać nowy"
 #: bulk/cf/step-two/index.php:110 bulk/cf/step-two/index.php:141
 #: bulk/main/index.php:79 bulk/main/index.php:122
 msgid "Enter the list of domains to apply the action to"
-msgstr "Wpisz listę domen, w których ma być zastosowana akcja do"
+msgstr "Wprowadź listę domen, których ma dotyczyć operacja"
 
 #: bulk/cf/step-two/index.php:122 bulk/main/index.php:103
 #: queue/add/step-two/index.php:228 segments/add.php:72 segments/edit.php:81
 msgid "There is %s invalid domain on your list"
-msgstr "Na Twojej liście znajduje się %s nieważnej domeny"
+msgstr "Na liście znajduje się %s nieprawidłowa domena"
 
 #: bulk/cf/step-two/index.php:126 bulk/main/index.php:107
 #: queue/add/step-two/index.php:232 segments/add.php:76 segments/edit.php:85
 msgid "There are %s invalid domains on your list"
-msgstr "Na Twojej liście znajdują się %s nieważnych domen"
+msgstr "Na liście znajdują się nieprawidłowe domeny: %s"
 
 #: bulk/cf/step-two/index.php:130 bulk/main/index.php:111
 #: queue/add/step-two/index.php:236 segments/add.php:80 segments/edit.php:89
 msgid "Plus %s other"
-msgstr "Plus %s inny"
+msgstr "Oraz %s inna"
 
 #: bulk/cf/step-two/index.php:134 bulk/main/index.php:115
 #: queue/add/step-two/index.php:240 segments/add.php:84 segments/edit.php:93
 msgid "Plus %s others"
-msgstr "Plus %s inne"
+msgstr "Oraz %s innych"
 
 #: bulk/main/index.php:145
 msgid "Domains Renewed"
@@ -3766,11 +3766,11 @@ msgstr "Domeny odnowione"
 
 #: bulk/main/index.php:186 queue/add/step-two/index.php:296
 msgid "At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s)."
-msgstr "Przynajmniej jedna z wprowadzonych przez Ciebie domen istnieje już w %s. %s Powinieneś uruchomić listę domen przez filtr segmentowy, aby określić, która z nich istnieje."
+msgstr "Co najmniej jedna z podanych domen już istnieje w %s. %s Aby ustalić, o które domeny chodzi, przefiltruj listę za pomocą segmentu."
 
 #: bulk/main/index.php:187
 msgid "You have entered an invalid expiry date"
-msgstr "Wpisałeś nieważną datę ważności"
+msgstr "Podano nieprawidłową datę wygaśnięcia"
 
 #: bulk/main/index.php:188 bulk/main/index.php:189 bulk/main/index.php:190
 #: bulk/main/index.php:191 bulk/main/index.php:192 bulk/main/index.php:466
@@ -3783,7 +3783,7 @@ msgstr "Proszę wybrać nowe %s"
 #: bulk/main/index.php:2276 domains/add.php:442 domains/edit.php:489
 #: domains/index.php:1582 reporting/domains/cost-by-host.php:157
 msgid "Web Hosting Provider"
-msgstr "Web Hosting Provider"
+msgstr "Dostawca hostingu"
 
 #: bulk/main/index.php:365
 msgid "Domains added"
@@ -3797,7 +3797,7 @@ msgstr "Rok"
 
 #: bulk/main/index.php:405
 msgid "Domain Renewed For %s"
-msgstr "Domena odnowiona Dla %s"
+msgstr "Domena odnowiona na %s"
 
 #: bulk/main/index.php:446
 msgid "Domains Fully Renewed"
@@ -3805,7 +3805,7 @@ msgstr "Domeny w pełni odnowione"
 
 #: bulk/main/index.php:515
 msgid "Category Changed"
-msgstr "Kategoria została zaktualizowana"
+msgstr "Zmieniono kategorię"
 
 #: bulk/main/index.php:586
 msgid "DNS Profile Changed"
@@ -3813,7 +3813,7 @@ msgstr "Zmiana profilu DNS"
 
 #: bulk/main/index.php:657
 msgid "IP Address Changed"
-msgstr "Zmieniony adres IP"
+msgstr "Zmieniono adres IP"
 
 #: bulk/main/index.php:83 bulk/main/index.php:91 bulk/main/index.php:679
 msgid "Enter the new Note"
@@ -3829,11 +3829,11 @@ msgstr "Konto rejestratora zostało zmienione"
 
 #: bulk/main/index.php:927
 msgid "Web Hosting Provider Changed"
-msgstr "Dostawca hostingu internetowego zmienił się"
+msgstr "Zmieniono dostawcę hostingu"
 
 #: bulk/main/index.php:1018
 msgid "Domains (and associated data) Deleted"
-msgstr "Domeny (i związane z nimi dane) Skreślony"
+msgstr "Usunięto domeny wraz z powiązanymi danymi"
 
 #: bulk/main/index.php:1080
 msgid "Domains marked as expired"
@@ -3861,36 +3861,36 @@ msgstr "Domeny oznaczone jako oczekujące na odnowienie"
 
 #: bulk/main/index.php:1452
 msgid "Domains marked as Pending (Other)"
-msgstr "Domeny oznaczone jako Oczekujące (Inne)"
+msgstr "Domeny oznaczone jako oczekujące (inne)"
 
 #: bulk/main/index.php:1514
 msgid "Domains marked as Auto Renewal"
-msgstr "Domeny oznaczone jako Auto Renewal"
+msgstr "Domeny oznaczone do automatycznego odnowienia"
 
 #: bulk/main/index.php:1574
 msgid "Domains marked as Manual Renewal"
-msgstr "Domeny oznaczone jako ręczne odnawianie"
+msgstr "Domeny oznaczone do ręcznego odnowienia"
 
 #: bulk/main/index.php:1654
 msgid "Domains marked as Private WHOIS"
-msgstr "Domeny oznaczone jako prywatne WHOIS"
+msgstr "Domeny oznaczone jako korzystające z prywatnego WHOIS"
 
 #: bulk/main/index.php:1732
 msgid "Domains marked as Public WHOIS"
-msgstr "Domeny oznaczone jako Public WHOIS"
+msgstr "Domeny oznaczone jako korzystające z publicznego WHOIS"
 
 #: bulk/main/index.php:1752 domains/add.php:275 domains/edit.php:271
 #: ssl/add.php:232 ssl/edit.php:255
 msgid "The expiry date you entered is invalid"
-msgstr "Wprowadzona data ważności jest nieważna"
+msgstr "Podano nieprawidłową datę wygaśnięcia"
 
 #: bulk/main/index.php:1801
 msgid "Expiry Date Updated"
-msgstr "Aktualizacja daty ważności"
+msgstr "Zaktualizowano datę wygaśnięcia"
 
 #: bulk/cf/step-two/index.php:216
 msgid "Custom Field %s updated"
-msgstr "Pole niestandardowe %s aktualizowane"
+msgstr "Zaktualizowano niestandardowe pole %s"
 
 #: bulk/index.php:87 bulk/main/index.php:1848 bulk/main/index.php:1970
 #: bulk/main/index.php:2431 queue/add/step-two/index.php:507
@@ -3903,7 +3903,7 @@ msgstr "Odnów domeny"
 
 #: bulk/main/index.php:1852
 msgid "Fully Renew Domains"
-msgstr "Całkowicie odnowić domeny"
+msgstr "Odnów domeny w pełni"
 
 #: bulk/index.php:96 bulk/main/index.php:1854 bulk/main/index.php:1979
 #: bulk/main/index.php:2467
@@ -3923,47 +3923,47 @@ msgstr "Zaznacz jako aktywne"
 #: bulk/index.php:92 bulk/main/index.php:1860 bulk/main/index.php:1975
 #: bulk/main/index.php:2451
 msgid "Mark as Pending Transfer"
-msgstr "Oznaczyć jako oczekujące na przekazanie"
+msgstr "Oznacz jako oczekujące na transfer"
 
 #: bulk/index.php:93 bulk/main/index.php:1862 bulk/main/index.php:1976
 #: bulk/main/index.php:2455
 msgid "Mark as Pending Registration"
-msgstr "Oznaczenie jako oczekujące na rejestrację"
+msgstr "Oznacz jako oczekujące na rejestrację"
 
 #: bulk/index.php:94 bulk/main/index.php:1864 bulk/main/index.php:1977
 #: bulk/main/index.php:2459
 msgid "Mark as Pending Renewal"
-msgstr "Zaznacz jako oczekujący na odnowienie"
+msgstr "Oznacz jako oczekujące na odnowienie"
 
 #: bulk/index.php:95 bulk/main/index.php:1866 bulk/main/index.php:1978
 #: bulk/main/index.php:2463
 msgid "Mark as Pending (Other)"
-msgstr "Oznaczyć jako oczekujące (inne)"
+msgstr "Oznacz jako oczekujące (inne)"
 
 #: bulk/index.php:98 bulk/main/index.php:1868 bulk/main/index.php:1981
 #: bulk/main/index.php:2475
 msgid "Mark as Auto Renewal"
-msgstr "Zaznacz jako odnowienie automatyczne"
+msgstr "Oznacz do automatycznego odnowienia"
 
 #: bulk/index.php:99 bulk/main/index.php:1870 bulk/main/index.php:1982
 #: bulk/main/index.php:2479
 msgid "Mark as Manual Renewal"
-msgstr "Oznaczyć jako odnowienie ręczne"
+msgstr "Oznacz do ręcznego odnowienia"
 
 #: bulk/index.php:100 bulk/main/index.php:1872 bulk/main/index.php:1983
 #: bulk/main/index.php:2483
 msgid "Mark as Private WHOIS"
-msgstr "Zaznacz jako prywatny WHOIS"
+msgstr "Oznacz jako korzystające z prywatnego WHOIS"
 
 #: bulk/index.php:101 bulk/main/index.php:1874 bulk/main/index.php:1984
 #: bulk/main/index.php:2487
 msgid "Mark as Public WHOIS"
-msgstr "Zaznacz jako publiczny KIMIS"
+msgstr "Oznacz jako korzystające z publicznego WHOIS"
 
 #: bulk/index.php:104 bulk/main/index.php:1876 bulk/main/index.php:1987
 #: bulk/main/index.php:2499
 msgid "Change Expiry Date"
-msgstr "Zmiana Data wygaśnięcia"
+msgstr "Zmień datę wygaśnięcia"
 
 #: bulk/index.php:102 bulk/main/index.php:1878 bulk/main/index.php:1985
 #: bulk/main/index.php:2491
@@ -3987,7 +3987,7 @@ msgstr "Zmiana konta rejestratora"
 
 #: bulk/main/index.php:1886
 msgid "Change Hosting Provider"
-msgstr "Zmiana dostawcy usług hostingowych"
+msgstr "Zmień dostawcę hostingu"
 
 #: bulk/index.php:109 bulk/main/index.php:1888 bulk/main/index.php:1992
 #: bulk/main/index.php:2515
@@ -4001,12 +4001,12 @@ msgstr "Dodaj notatkę"
 #: bulk/cf/step-two/index.php:252 bulk/cf/step-two/index.php:414
 #: bulk/index.php:108 bulk/main/index.php:1991
 msgid "Update Custom Domain Field"
-msgstr "Aktualizacja pola domeny niestandardowej"
+msgstr "Zaktualizuj niestandardowe pole domeny"
 
 #: bulk/cf/step-one/index.php:70 bulk/cf/step-two/index.php:259
 #: bulk/index.php:79 bulk/main/index.php:1901
 msgid "The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks."
-msgstr "Bulk Updater umożliwia dodawanie lub modyfikowanie wielu domen jednocześnie, niezależnie od tego, czy jest to kilkadziesiąt czy kilka tysięcy, a wszystko to za pomocą kilku kliknięć."
+msgstr "Aktualizacja zbiorcza umożliwia dodawanie i modyfikowanie wielu domen jednocześnie — od kilkudziesięciu do kilku tysięcy — za pomocą kilku kliknięć."
 
 #: bulk/main/index.php:1912
 msgid "The following domains were added"
@@ -4026,7 +4026,7 @@ msgstr "Następujące domeny zostały oznaczone jako aktywne"
 
 #: bulk/main/index.php:1924
 msgid "The following domains were marked as Pending Transfer"
-msgstr "Następujące domeny zostały oznaczone jako Domeny oczekujące na przekazanie (Pending Transfer)"
+msgstr "Następujące domeny oznaczono jako oczekujące na transfer"
 
 #: bulk/main/index.php:1926
 msgid "The following domains were marked as Pending Registration"
@@ -4038,23 +4038,23 @@ msgstr "Następujące domeny zostały oznaczone jako oczekujące na odnowienie"
 
 #: bulk/main/index.php:1930
 msgid "The following domains were marked as Pending (Other)"
-msgstr "Następujące domeny zostały oznaczone jako Oczekujące (Inne)"
+msgstr "Następujące domeny oznaczono jako oczekujące (inne)"
 
 #: bulk/main/index.php:1932
 msgid "The following domains were marked as Auto Renewal"
-msgstr "Następujące domeny zostały oznaczone jako Auto Renewal"
+msgstr "Następujące domeny oznaczono do automatycznego odnowienia"
 
 #: bulk/main/index.php:1934
 msgid "The following domains were marked as Manual Renewal"
-msgstr "Następujące domeny zostały oznaczone jako Ręczne Odnawianie (Manual Renewal)"
+msgstr "Następujące domeny oznaczono do ręcznego odnowienia"
 
 #: bulk/main/index.php:1936
 msgid "The following domains were marked as Private WHOIS"
-msgstr "Następujące domeny zostały oznaczone jako prywatne WHOIS"
+msgstr "Następujące domeny oznaczono jako korzystające z prywatnego WHOIS"
 
 #: bulk/main/index.php:1938
 msgid "The following domains were marked as Public WHOIS"
-msgstr "Następujące domeny zostały oznaczone jako Publiczne WHOIS"
+msgstr "Następujące domeny oznaczono jako korzystające z publicznego WHOIS"
 
 #: bulk/main/index.php:1940
 msgid "The expiry date was updated for the following domains"
@@ -4078,7 +4078,7 @@ msgstr "W następujących domenach nastąpiła zmiana konta rejestratora"
 
 #: bulk/main/index.php:1950
 msgid "The following domains had their Web Hosting Provider changed"
-msgstr "W następujących domenach nastąpiła zmiana dostawcy usług hostingowych Web Hosting Provider"
+msgstr "Dla następujących domen zmieniono dostawcę hostingu"
 
 #: bulk/main/index.php:1952
 msgid "The following domains (and associated SSL Certificates) were deleted"
@@ -4090,19 +4090,19 @@ msgstr "Do następujących domen została dołączona notatka"
 
 #: bulk/index.php:86 bulk/main/index.php:1969
 msgid "Choose Action"
-msgstr "Wybierz Działanie"
+msgstr "Wybierz działanie"
 
 #: bulk/index.php:89 bulk/main/index.php:1972
 msgid "Renew Domains (Update Expiry Date, Mark Active, Add Note)"
-msgstr "Odnowienie domen (data wygaśnięcia aktualizacji, zaznaczenie aktywne, dodanie uwagi)"
+msgstr "Odnów domeny (zmień datę wygaśnięcia, oznacz jako aktywne, dodaj notatkę)"
 
 #: bulk/index.php:90 bulk/main/index.php:1973
 msgid "Renew Domains (Update Expiry Date Only)"
-msgstr "Odnowienie domen (tylko data wygaśnięcia aktualizacji)"
+msgstr "Odnów domeny (zmień tylko datę wygaśnięcia)"
 
 #: bulk/index.php:107 bulk/main/index.php:1990 bulk/main/index.php:2511
 msgid "Change Web Hosting Provider"
-msgstr "Zmiana dostawcy usług hostingowych"
+msgstr "Zmień dostawcę hostingu"
 
 #: bulk/cf/step-one/index.php:77
 msgid "Choose the Custom Field to Edit"
@@ -4114,16 +4114,16 @@ msgstr "OSTRZEŻENIE: Oprócz usunięcia domen, usunięte zostaną również wsz
 
 #: bulk/main/index.php:2010
 msgid "If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead."
-msgstr "Jeśli nie chcesz całkowicie usunąć wszystkich śladów domen z systemu, możesz lepiej oznaczyć je jako wygasłe."
+msgstr "Jeśli nie chcesz całkowicie usuwać domen i związanych z nimi danych z systemu, lepiej oznaczyć je jako wygasłe."
 
 #: bulk/main/index.php:2015 queue/add/step-two/index.php:495
 #: queue/add/step-two/index.php:499
 msgid "Domains to add (one per line)"
-msgstr "Domeny do dodania (jedna na linię)"
+msgstr "Domeny do dodania (po jednej w wierszu)"
 
 #: bulk/cf/step-two/index.php:280 bulk/main/index.php:2019
 msgid "Domains to update (one per line)"
-msgstr "Domeny do aktualizacji (jedna na linię)"
+msgstr "Domeny do aktualizacji (po jednej w wierszu)"
 
 #: bulk/main/index.php:2031 domains/add.php:330 domains/edit.php:421
 #: domains/index.php:737 domains/results.php:174
@@ -4136,7 +4136,7 @@ msgstr "Funkcja"
 #: settings/display/index.php:334 ssl/add.php:290 ssl/edit.php:379
 #: ssl/index.php:458
 msgid "Expiry Date"
-msgstr "Wygasa"
+msgstr "Data wygaśnięcia"
 
 #: bulk/main/index.php:2149 domains/add.php:482 domains/edit.php:520
 #: domains/index.php:681 domains/index.php:727 domains/results.php:156
@@ -4197,7 +4197,7 @@ msgstr "Ochrona prywatności włączona"
 
 #: bulk/main/index.php:2167
 msgid "Renew For"
-msgstr "Odnowić na"
+msgstr "Odnów na"
 
 #: bulk/main/index.php:2175
 msgid "New Category"
@@ -4217,7 +4217,7 @@ msgstr "Nowe konto rejestratora"
 
 #: bulk/main/index.php:2275
 msgid "New Web Hosting Provider"
-msgstr "Nowy Web Hosting Provider"
+msgstr "Nowy dostawca hostingu"
 
 #: bulk/cf/step-two/index.php:408 bulk/main/index.php:2320
 msgid "Notes (will be appended to current domain notes)"
@@ -4233,11 +4233,11 @@ msgstr "Oznacz jako odnowione"
 
 #: bulk/main/index.php:2519
 msgid "Perform Bulk Action"
-msgstr "Wykonanie akcji masowej"
+msgstr "Wykonaj operację zbiorczą"
 
 #: checks.php:213
 msgid "Your password should be changed for security purposes"
-msgstr "Twoje hasło powinno być zmienione dla celów bezpieczeństwa"
+msgstr "Ze względów bezpieczeństwa należy zmienić hasło"
 
 #: classes/DomainMOD/AboveCom.php:43 classes/DomainMOD/DnSimple.php:47
 #: classes/DomainMOD/DreamHost.php:43 classes/DomainMOD/Dynadot.php:43
@@ -4251,7 +4251,7 @@ msgstr "Nie można zbudować adresu URL API"
 
 #: classes/DomainMOD/Conversion.php:160
 msgid "Conversion Rates updated"
-msgstr "Zaktualizowane wskaźniki konwersji"
+msgstr "Zaktualizowano kursy walut"
 
 #: classes/DomainMOD/Dashboard.php:47 domains/index.php:2113
 #: domains/index.php:2117 domains/index.php:2121
@@ -4264,11 +4264,11 @@ msgstr "Linia %s zawiera nieprawidłową domenę"
 
 #: classes/DomainMOD/DomainQueue.php:419
 msgid "Invalid Domain Registrar"
-msgstr "Nieważny Rejestrator Domen (ang. Invalid Domain Registrar)"
+msgstr "Nieprawidłowy rejestrator domen"
 
 #: classes/DomainMOD/DomainQueue.php:77
 msgid "Domain List Queue Processed"
-msgstr "Lista domen kolejka przetwarzana"
+msgstr "Przetworzono kolejkę list domen"
 
 #: classes/DomainMOD/DomainQueue.php:446 classes/DomainMOD/GoDaddy.php:137
 #: classes/DomainMOD/NameSilo.php:129
@@ -4278,15 +4278,15 @@ msgstr "Nieprawidłowe"
 #: classes/DomainMOD/DomainQueue.php:787 classes/DomainMOD/DomainQueue.php:799
 #: classes/DomainMOD/DomainQueue.php:833
 msgid "[created by queue]"
-msgstr "[stworzony przez kolejkę]"
+msgstr "[utworzono w kolejce]"
 
 #: classes/DomainMOD/DomainQueue.php:1375
 msgid "Queue Processing Cleared"
-msgstr "Przetwarzanie w kolejce Rozliczone"
+msgstr "Wyczyszczono stan przetwarzania kolejki"
 
 #: classes/DomainMOD/DomainQueue.php:1386
 msgid "Queues Cleared"
-msgstr "Rozliczone kolejki"
+msgstr "Wyczyszczono kolejki"
 
 #: classes/DomainMOD/DwBuild.php:91
 msgid "The Data Warehouse has been rebuilt"
@@ -4294,7 +4294,7 @@ msgstr "Hurtownia danych została przebudowana"
 
 #: classes/DomainMOD/DwClean.php:156
 msgid "Refresh"
-msgstr "Odświeżyć"
+msgstr "Odśwież"
 
 #: classes/DomainMOD/DwClean.php:157
 msgid "Retry"
@@ -4302,7 +4302,7 @@ msgstr "Ponów"
 
 #: classes/DomainMOD/DwClean.php:158
 msgid "Expire"
-msgstr "Wygasają"
+msgstr "Wygaśnięcie"
 
 #: classes/DomainMOD/DwClean.php:159
 msgid "Minimum TTL"
@@ -4310,7 +4310,7 @@ msgstr "Minimalne TTL"
 
 #: classes/DomainMOD/DwDisplay.php:43
 msgid "Created"
-msgstr "Stworzone"
+msgstr "Utworzono"
 
 #: classes/DomainMOD/DwDisplay.php:44
 msgid "Contact"
@@ -4322,7 +4322,7 @@ msgstr "Plan hostingowy"
 
 #: classes/DomainMOD/DwDisplay.php:47
 msgid "cPanel Theme"
-msgstr "Temat panel"
+msgstr "Motyw cPanel"
 
 #: classes/DomainMOD/DwDisplay.php:52
 msgid "Home"
@@ -4330,7 +4330,7 @@ msgstr "Strona główna"
 
 #: classes/DomainMOD/DwDisplay.php:53
 msgid "HD Quota"
-msgstr "HD powierzchnia"
+msgstr "Limit miejsca na dysku"
 
 #: classes/DomainMOD/DwDisplay.php:58
 msgid "POP"
@@ -4387,15 +4387,15 @@ msgstr "Temat"
 
 #: classes/DomainMOD/Email.php:69 classes/DomainMOD/Smtp.php:75
 msgid "Email :: SEND SUCCEEDED"
-msgstr "Email :: WYSYŁANE"
+msgstr "E-mail :: WYSYŁANIE POWIODŁO SIĘ"
 
 #: classes/DomainMOD/Email.php:75 classes/DomainMOD/Smtp.php:81
 msgid "Email :: SEND FAILED"
-msgstr "Email :: PRZESŁANO ZADANE"
+msgstr "E-mail :: WYSYŁANIE NIE POWIODŁO SIĘ"
 
 #: classes/DomainMOD/Email.php:88
 msgid "Upcoming Expirations"
-msgstr "Nadchodzące wyjazdy"
+msgstr "Zbliżające się terminy wygaśnięcia"
 
 #: classes/DomainMOD/Email.php:109
 msgid "Expiration"
@@ -4403,31 +4403,31 @@ msgstr "Wygaśnięcie"
 
 #: classes/DomainMOD/Email.php:114
 msgid "Expiration Email Sent"
-msgstr "Wysłany e-mail z datą ważności"
+msgstr "Wysłano powiadomienie e-mail o wygaśnięciu"
 
 #: classes/DomainMOD/Email.php:235
 msgid "No Upcoming Expirations"
-msgstr "Brak nadchodzących wyjazdów"
+msgstr "Brak zbliżających się terminów wygaśnięcia"
 
 #: classes/DomainMOD/Email.php:255
 msgid "No Users Are Subscribed"
-msgstr "Żaden użytkownik nie jest subskrybowany"
+msgstr "Żaden użytkownik nie subskrybuje powiadomień"
 
 #: classes/DomainMOD/Email.php:290 classes/DomainMOD/Email.php:299
 msgid "Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days."
-msgstr "Poniżej znajduje się lista wszystkich domen i certyfikatów SSL w %s, których ważność wygaśnie w ciągu najbliższych %s dni."
+msgstr "Poniżej znajduje się lista domen i certyfikatów SSL w systemie %s, które wygasną w ciągu najbliższych %s dni."
 
 #: classes/DomainMOD/Email.php:292 classes/DomainMOD/Email.php:300
 msgid "If you would like to change the frequency of this email notification please contact your %s administrator."
-msgstr "Jeśli chciałbyś zmienić częstotliwość wysyłania tego powiadomienia e-mail, skontaktuj się z administratorem %s."
+msgstr "Jeśli chcesz zmienić częstotliwość tych powiadomień e-mail, skontaktuj się z administratorem %s."
 
 #: classes/DomainMOD/Email.php:392 classes/DomainMOD/Email.php:408
 msgid "You've received this email because you're currently subscribed to receive expiration notifications from the %s installation located at"
-msgstr "Otrzymałeś ten e-mail, ponieważ obecnie jesteś zapisany do otrzymywania powiadomień o wygaśnięciu ważności od instalacji %s znajdującej się pod adresem"
+msgstr "Otrzymujesz tę wiadomość, ponieważ subskrybujesz powiadomienia o wygasaniu domen i certyfikatów z instalacji %s dostępnej pod adresem"
 
 #: classes/DomainMOD/Email.php:392 classes/DomainMOD/Email.php:409
 msgid "To unsubscribe from these notifications please visit"
-msgstr "Aby zrezygnować z subskrypcji tych powiadomień, należy odwiedzić stronę"
+msgstr "Aby zrezygnować z tych powiadomień, przejdź na stronę"
 
 #: classes/DomainMOD/Layout.php:122
 msgid "Delete This"
@@ -4463,7 +4463,7 @@ msgstr "Dostępna jest aktualizacja bazy danych"
 
 #: classes/DomainMOD/Notice.php:38
 msgid "Your %s software was recently updated, so we now need to upgrade your database."
-msgstr "Twoje oprogramowanie %s zostało niedawno zaktualizowane, więc teraz musimy zaktualizować Twoją bazę danych."
+msgstr "Oprogramowanie %s zostało niedawno zaktualizowane, dlatego trzeba teraz zaktualizować bazę danych."
 
 #: classes/DomainMOD/Notice.php:44 classes/DomainMOD/Notice.php:48
 msgid "Critical Warning"
@@ -4483,15 +4483,15 @@ msgstr "Należy również zanotować swoją aktualną wersję (%s), ponieważ mo
 
 #: classes/DomainMOD/Notice.php:50
 msgid "Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take."
-msgstr "Proszę być cierpliwym, to może chwilę potrwać. Im starsza jest twoja obecna wersja, tym dłużej trwa aktualizacja."
+msgstr "Prosimy o cierpliwość — aktualizacja może potrwać chwilę. Im starsza wersja systemu, tym dłużej może trwać ten proces."
 
 #: classes/DomainMOD/Notice.php:50
 msgid "Upgrade Database"
-msgstr "Aktualizacja bazy danych"
+msgstr "Zaktualizuj bazę danych"
 
 #: classes/DomainMOD/Scheduler.php:112
 msgid "Disable"
-msgstr "Wyłączyć"
+msgstr "Wyłącz"
 
 #: classes/DomainMOD/Scheduler.php:112 classes/DomainMOD/Scheduler.php:115
 msgid "Run Now"
@@ -4499,7 +4499,7 @@ msgstr "Uruchom"
 
 #: classes/DomainMOD/Scheduler.php:115
 msgid "Enable"
-msgstr "Włączyć"
+msgstr "Włącz"
 
 #: classes/DomainMOD/Smtp.php:68
 msgid "SMTP"
@@ -4538,7 +4538,7 @@ msgstr "Ustawienia PHP"
 
 #: classes/DomainMOD/System.php:296
 msgid "Get Live Version"
-msgstr "Uzyskaj wersję Live"
+msgstr "Sprawdź najnowszą wersję"
 
 #: classes/DomainMOD/System.php:308
 msgid "A new version of %s is available for download."
@@ -4578,26 +4578,26 @@ msgstr "Informacja"
 
 #: classes/DomainMOD/System.php:461
 msgid "Attention Required"
-msgstr "Uwaga Wymagana"
+msgstr "Wymagana uwaga"
 
 #: classes/DomainMOD/System.php:570
 msgid "External IP API Call"
-msgstr "Zewnętrzne połączenie API IP"
+msgstr "Zapytanie do zewnętrznego API adresów IP"
 
 #: dashboard/index.php:124
 msgid "System Totals"
-msgstr "Podsumowanie"
+msgstr "Podsumowanie systemu"
 
 #: dashboard/index.php:160
 msgid "Sold Domains"
-msgstr "Sprzedane Domeny"
+msgstr "Sprzedane domeny"
 
 #: dashboard/index.php:78
 msgid "Expiring in the next day"
 msgid_plural "Expiring in the next %s days"
-msgstr[0] "Wygasa w ciągu %s dni"
-msgstr[1] "Wygasną w ciągu %s dni"
-msgstr[2] "Wygasną w ciągu %s dni"
+msgstr[0] "Wygasa w ciągu najbliższego dnia"
+msgstr[1] "Wygasają w ciągu najbliższych %s dni"
+msgstr[2] "Wygasają w ciągu najbliższych %s dni"
 msgstr[3] "Wygaśnięcie w następnym dniu %s"
 
 #: dashboard/index.php:209 queue/index.php:122 queue/index.php:221
@@ -4611,7 +4611,7 @@ msgstr "Zakończono"
 
 #: dashboard/index.php:236
 msgid "Pending (Domains)"
-msgstr "W trakcie (Domeny)"
+msgstr "Oczekujące (domeny)"
 
 #: dashboard/index.php:252 dashboard/index.php:330
 msgid "Pending Renewals"
@@ -4627,11 +4627,11 @@ msgstr "Transfery w trakcie"
 
 #: dashboard/index.php:314
 msgid "Pending (SSL Certificates)"
-msgstr "W trakcie (certyfikaty SSL)"
+msgstr "Oczekujące (certyfikaty SSL)"
 
 #: debug/off/index.php:52 debug/on/index.php:53
 msgid "Debugging Mode is %s"
-msgstr "Tryb debugowania to %s"
+msgstr "Tryb debugowania: %s"
 
 #: debug/off/index.php:52 debug/on/index.php:56 domains/index.php:1026
 msgid "Off"
@@ -4639,7 +4639,7 @@ msgstr "Wyłączone"
 
 #: debug/off/index.php:55 debug/on/index.php:56
 msgid "Turn Debugging Mode"
-msgstr "Włącz tryb debugowania"
+msgstr "Zmień tryb debugowania"
 
 #: debug/off/index.php:55 debug/on/index.php:53
 msgid "On"
@@ -4651,7 +4651,7 @@ msgstr "Ta domena jest już w %s"
 
 #: domains/add.php:250
 msgid "Domain %s added"
-msgstr "Domena dodana %s"
+msgstr "Dodano domenę %s"
 
 #: domains/add.php:271
 msgid "The domain format is incorrect"
@@ -4671,7 +4671,7 @@ msgstr "Wybierz adres IP"
 
 #: domains/add.php:298 domains/edit.php:294
 msgid "Choose the Web Host"
-msgstr "Wybierz Web Hosta"
+msgstr "Wybierz dostawcę hostingu"
 
 #: domains/add.php:304 domains/edit.php:300 ssl/add.php:261 ssl/edit.php:284
 msgid "Choose the Category"
@@ -4684,7 +4684,7 @@ msgstr "Pola niestandardowe"
 
 #: domains/edit.php:249
 msgid "Domain %s updated"
-msgstr "Domena %s aktualizacja"
+msgstr "Zaktualizowano domenę %s"
 
 #: domains/edit.php:358
 msgid "This Domain has SSL Certificates associated with it and cannot be deleted"
@@ -4692,7 +4692,7 @@ msgstr "Domena ta posiada powiązane z nią certyfikaty SSL i nie może być usu
 
 #: domains/edit.php:385
 msgid "Domain %s deleted"
-msgstr "Domena %s usunięta"
+msgstr "Usunięto domenę %s"
 
 #: domains/edit.php:535 ssl/edit.php:489
 msgid "View Full Notes"
@@ -4700,15 +4700,15 @@ msgstr "Zobacz pełne notatki"
 
 #: domains/edit.php:633
 msgid "Data Warehouse Information for %s"
-msgstr "Hurtownia danych Informacje dla %s"
+msgstr "Informacje o %s w hurtowni danych"
 
 #: domains/index.php:88 ssl/index.php:74
 msgid "The date range is invalid"
-msgstr "Zakres dat jest nieważny"
+msgstr "Nieprawidłowy zakres dat"
 
 #: domains/index.php:689 ssl/index.php:427
 msgid "Live"
-msgstr "Na żywo"
+msgstr "Dane bieżące"
 
 #: domains/index.php:421
 msgid "domain_results"
@@ -4716,7 +4716,7 @@ msgstr "domain_results"
 
 #: domains/index.php:423
 msgid "Domain Search Results Export"
-msgstr "Wyniki wyszukiwania w domenie Eksport"
+msgstr "Eksport wyników wyszukiwania domen"
 
 #: domains/index.php:503
 msgid "Segment Results"
@@ -4745,11 +4745,11 @@ msgstr "Dopasowane, ale przefiltrowane domeny"
 #: domains/index.php:549 domains/index.php:2120 domains/results.php:53
 #: domains/results.php:183
 msgid "Missing Domains"
-msgstr "Brakujące Domeny"
+msgstr "Brakujące domeny"
 
 #: domains/index.php:558 ssl/index.php:292
 msgid "Search Filters"
-msgstr "Filtry poszukiwawcze"
+msgstr "Filtry wyszukiwania"
 
 #: domains/index.php:564 domains/index.php:1471 ssl/index.php:299
 #: ssl/index.php:1049
@@ -4758,7 +4758,7 @@ msgstr "Wyszukiwanie słów kluczowych"
 
 #: domains/index.php:671 ssl/index.php:409
 msgid "Expiry Date Range"
-msgstr "Zakres dat wygaśnięcia Termin ważności"
+msgstr "Zakres dat wygaśnięcia"
 
 #: domains/index.php:689 domains/index.php:1996
 msgid "Transfers"
@@ -4766,7 +4766,7 @@ msgstr "Transfery"
 
 #: domains/index.php:734 ssl/index.php:462
 msgid "Total Yearly Cost"
-msgstr "Roczny koszt ogółem"
+msgstr "Łączny koszt roczny"
 
 #: domains/index.php:738 domains/results.php:162
 msgid "Renewal Status"
@@ -4782,7 +4782,7 @@ msgstr "Adres IP rDNS"
 
 #: domains/index.php:749 domains/results.php:172
 msgid "Category Stakeholder"
-msgstr "Kategoria Zainteresowana strona"
+msgstr "Interesariusz kategorii"
 
 #: domains/index.php:803 domains/results.php:222
 msgid "Manual Renewal"
@@ -4806,7 +4806,7 @@ msgstr "Zanim zaczniesz dodawać domeny do %s, musisz dodać co najmniej jednego
 
 #: domains/index.php:939
 msgid "Please see the %sFirst Run%s section of the User Guide for more detailed information."
-msgstr "Więcej szczegółowych informacji można znaleźć w sekcji %sFirst Run%s w podręczniku użytkownika."
+msgstr "Więcej informacji znajdziesz w sekcji %sPierwsze uruchomienie%s podręcznika użytkownika."
 
 #: domains/index.php:942
 msgid "Domain Registrars found"
@@ -4814,7 +4814,7 @@ msgstr "Rejestratorzy domen znalezieni"
 
 #: domains/index.php:945
 msgid "Click here to add a Domain Registrar"
-msgstr "Kliknij tutaj, aby dodać Rejestratora Domen"
+msgstr "Kliknij tutaj, aby dodać rejestratora domen"
 
 #: domains/index.php:952
 msgid "Domain Registrar Accounts found"
@@ -4830,11 +4830,11 @@ msgstr "Znalezione domeny"
 
 #: domains/index.php:962
 msgid "Add a domain %smanually%s, add domains using the %sDomain Queue%s, or see the %sAdding Domains%s section of the User Guide for more options."
-msgstr "Dodaj domenę %smanually%s, dodaj domeny używając %sDomain Queue%s, lub zobacz sekcję %sAdding Domains%s w podręczniku użytkownika, aby uzyskać więcej opcji."
+msgstr "Dodaj domenę %sręcznie%s, dodaj domeny przez %skolejkę domen%s albo sprawdź sekcję %sDodawanie domen%s w podręczniku użytkownika."
 
 #: domains/index.php:1013 ssl/index.php:654
 msgid "Advanced Filtering"
-msgstr "Filtry"
+msgstr "Filtrowanie zaawansowane"
 
 #: domains/index.php:1478 ssl/index.php:1051
 msgid "Reset Filters"
@@ -4846,7 +4846,7 @@ msgstr "Aktywne domeny"
 
 #: domains/index.php:2062 ssl/index.php:1477
 msgid "Expiring Between"
-msgstr "Wygaśnięcie między"
+msgstr "Wygasające w okresie"
 
 #: domains/index.php:1476 ssl/index.php:1050
 msgid "Apply Filters"
@@ -4858,7 +4858,7 @@ msgstr "Dane surowe (lista)"
 
 #: domains/index.php:2190 domains/index.php:2192 ssl/index.php:1509
 msgid "Expiry"
-msgstr "Wygasa"
+msgstr "Data wygaśnięcia"
 
 #: domains/index.php:2210 domains/index.php:2212 settings/display/index.php:298
 #: settings/display/index.php:335 ssl/index.php:1514
@@ -4871,32 +4871,32 @@ msgstr "IP"
 
 #: domains/index.php:2397
 msgid "Inactive Domain"
-msgstr "Domena Nieaktywna"
+msgstr "Nieaktywna domena"
 
 #. The character(s) representing the translation of "Pending Transfer"
 #: domains/index.php:2399
 msgid "Pending Transfer Characters"
-msgstr "Oczekiwane znaki transferowe"
+msgstr "Znaki oznaczające oczekujący transfer"
 
 #. The character(s) representing the translation of  "Pending Renewal"
 #: domains/index.php:2401 ssl/index.php:1579
 msgid "Pending Renewal Characters"
-msgstr "W oczekiwaniu na znaki odnowy"
+msgstr "Znaki oznaczające oczekujące odnowienie"
 
 #. The character(s) representing the translation of  "Pending Other"
 #: domains/index.php:2403 ssl/index.php:1581
 msgid "Pending Other Characters"
-msgstr "W oczekiwaniu na inne znaki"
+msgstr "Znaki oznaczające inne operacje oczekujące"
 
 #. The character(s) representing the translation of  "Pending Registration"
 #: domains/index.php:2405 ssl/index.php:1583
 msgid "Pending Registration Characters"
-msgstr "Oczekiwane znaki rejestracyjne"
+msgstr "Znaki oznaczające oczekującą rejestrację"
 
 #. The character(s) representing the translation of  "Sold"
 #: domains/index.php:2407
 msgid "Pending Sold Characters"
-msgstr "Oczekujące na sprzedaż znaki"
+msgstr "Znaki oznaczające oczekującą sprzedaż"
 
 #: domains/index.php:2411
 msgid "Private WHOIS Registration"
@@ -4905,7 +4905,7 @@ msgstr "Prywatna rejestracja WHOIS"
 #. The character(s) representing the translation of  "Private WHOIS"
 #: domains/index.php:2411
 msgid "Private WHOIS Characters"
-msgstr "Prywatne postacie WHOIS"
+msgstr "Znaki oznaczające prywatny WHOIS"
 
 #: domains/index.php:2562 ssl/index.php:1722
 msgid "Your search returned zero results."
@@ -4913,11 +4913,11 @@ msgstr "Twoje wyszukiwanie zwróciło zero wyników."
 
 #: domains/notes.php:57
 msgid "Domain Notes (%s)"
-msgstr "Uwagi do domen (%s)"
+msgstr "Notatki do domen (%s)"
 
 #: domains/notes.php:70 ssl/notes.php:70
 msgid "Notes For %s"
-msgstr "Uwagi Dla %s"
+msgstr "Notatki dotyczące %s"
 
 #: domains/results.php:49 domains/results.php:143
 msgid "Inactive Domains"
@@ -4929,15 +4929,15 @@ msgstr "Domeny filtrowane"
 
 #: domains/results.php:124
 msgid "segment_results_inactive"
-msgstr "segment_wyniki_inactive"
+msgstr "segment_results_inactive"
 
 #: domains/results.php:128
 msgid "segment_results_filtered"
-msgstr "segment_wyniki_filtrowane"
+msgstr "segment_results_filtered"
 
 #: domains/results.php:132
 msgid "segment_results_missing"
-msgstr "segment_wyniki_przekazanie"
+msgstr "segment_results_missing"
 
 #: domains/results.php:213
 msgid "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP"
@@ -4957,7 +4957,7 @@ msgstr "Poniższe domeny znajdują się w segmencie %s, a nie w Twojej bazie dan
 
 #: domains/results.php:311 domains/results.php:313 domains/results.php:315
 msgid "Export Results"
-msgstr "Wyniki eksportu"
+msgstr "Eksportuj wyniki"
 
 #: index.php:125
 msgid "Login Failed"
@@ -4985,7 +4985,7 @@ msgstr "Hasło demonstracyjne"
 
 #: index.php:212
 msgid "Forgot your Password"
-msgstr "Zapomniałeś swojego hasła"
+msgstr "Nie pamiętasz hasła?"
 
 #: bulk/cf/step-one/index.php:94 bulk/index.php:111 bulk/main/index.php:1994
 #: install/currency/index.php:241 install/email-admin/index.php:92
@@ -5008,11 +5008,11 @@ msgstr "Ten adres e-mail zostanie użyty dla pierwszego konta administratora, kt
 
 #: install/email-admin/index.php:87 install/email-system/index.php:98
 msgid "Enter Email"
-msgstr "Wprowadź Email"
+msgstr "Wprowadź adres e-mail"
 
 #: install/email-admin/index.php:88 install/email-system/index.php:99
 msgid "Confirm Email"
-msgstr "Potwierdź Email"
+msgstr "Potwierdź adres e-mail"
 
 #: bulk/cf/step-one/index.php:92 bulk/cf/step-two/index.php:412
 #: bulk/cf/step-two/index.php:423 bulk/main/index.php:2427
@@ -5025,7 +5025,7 @@ msgstr "Powrót"
 
 #: install/language/index.php:102
 msgid "Begin Installation"
-msgstr "Rozpoczęcie instalacji"
+msgstr "Rozpocznij instalację"
 
 #: install/email-system/index.php:69
 msgid "Please enter and confirm the system email address"
@@ -5037,7 +5037,7 @@ msgstr "Adresy e-mail w systemie nie zgadzały się"
 
 #: install/email-system/index.php:94
 msgid "This email address will be used in various locations by the system, such as the FROM address when expiration emails are sent to users."
-msgstr "Ten adres e-mail będzie używany przez system w różnych lokalizacjach, np. adres OD, gdy do użytkowników wysyłane są wiadomości e-mail o wygaśnięciu ważności."
+msgstr "Ten adres e-mail będzie używany przez system m.in. jako adres nadawcy powiadomień o wygasaniu domen i certyfikatów."
 
 #: install/go.php:44
 msgid "Administrator"
@@ -5061,7 +5061,7 @@ msgstr "[brak właściciela]"
 
 #: install/go.php:51
 msgid "[no dns]"
-msgstr "Nie ma mowy"
+msgstr "[brak DNS]"
 
 #: install/go.php:52
 msgid "[no ip address]"
@@ -5077,7 +5077,7 @@ msgstr "S/MIME i certyfikat uwierzytelniający"
 
 #: install/go.php:57
 msgid "Object Code Signing Certificate"
-msgstr "Kod obiektu Podpisywanie certyfikatu"
+msgstr "Certyfikat podpisywania kodu"
 
 #: install/go.php:58
 msgid "Digital ID"
@@ -5097,7 +5097,7 @@ msgstr "Sprawdź, czy nie ma nowej wersji"
 
 #: install/go.php:66
 msgid "Data Warehouse Build"
-msgstr "Budynek Hurtowni Danych"
+msgstr "Aktualizacja hurtowni danych"
 
 #: install/go.php:1271
 msgid "%s has been successfully installed and you should now delete the %s folder"
@@ -5117,27 +5117,27 @@ msgstr "Pierwszą rzeczą, którą musimy zrobić, to sprawdzić, czy Twój serw
 
 #: install/requirements/index.php:54
 msgid "All of the below items should say %s or %s. If they don't, you still may be able to install %s, but certain features might not work completely."
-msgstr "Wszystkie poniższe pozycje powinny zawierać %s lub %s. Jeżeli nie zawierają, możesz nadal być w stanie zainstalować %s, ale niektóre funkcje mogą nie działać poprawnie."
+msgstr "Wszystkie poniższe pozycje powinny mieć wartość %s lub %s. W przeciwnym razie instalacja %s może się udać, ale niektóre funkcje mogą nie działać prawidłowo."
 
 #: install/requirements/index.php:56
 msgid "If any of the items say %s or %s, we recommend you install and/or update the appropriate software so that all of the requirements are met."
-msgstr "Jeśli któryś z tych elementów mówi %s lub %s, zalecamy zainstalowanie i/lub aktualizację odpowiedniego oprogramowania, aby wszystkie wymagania zostały spełnione."
+msgstr "Jeśli jakakolwiek pozycja ma wartość %s lub %s, zalecamy zainstalowanie lub zaktualizowanie odpowiedniego oprogramowania, aby spełnić wymagania."
 
 #: invalid.php:46
 msgid "The page you're trying to access is invalid."
-msgstr "Strona, do której próbujesz się dostać, jest nieważna."
+msgstr "Strona, którą próbujesz otworzyć, jest nieprawidłowa."
 
 #: invalid.php:48
 msgid "Go home"
-msgstr "Przejdź do storny głównej"
+msgstr "Przejdź do strony głównej"
 
 #: maintenance/update-domain-fees.php:47
 msgid "Domain Fees updated"
-msgstr "Opłaty za domeny zostały aktualizowane"
+msgstr "Zaktualizowano opłaty za domeny"
 
 #: maintenance/update-ssl-fees.php:47
 msgid "SSL Certificate Fees updated"
-msgstr "Aktualizacja opłat za certyfikat SSL"
+msgstr "Zaktualizowano opłaty za certyfikaty SSL"
 
 #: queue/add/step-one/index.php:59 queue/add/step-two/index.php:107
 #: queue/add/step-two/index.php:213 queue/add/step-two/index.php:298
@@ -5146,7 +5146,7 @@ msgstr "Proszę wybrać konto rejestratora"
 
 #: queue/add/step-two/index.php:151
 msgid "Registrar Account Added To Domain List Queue"
-msgstr "Konto rejestratora dodane do kolejki listy domen"
+msgstr "Dodano konto rejestratora do kolejki list domen"
 
 #: queue/add/step-two/index.php:208
 msgid "Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support."
@@ -5154,7 +5154,7 @@ msgstr "Albo rejestrator powiązany z tym kontem nie ma obsługi API, albo użyt
 
 #: queue/add/step-two/index.php:209
 msgid "Please check the %sregistrar%s and try again."
-msgstr "Proszę sprawdzić %sregistrar%s i spróbować ponownie."
+msgstr "Sprawdź ustawienia %srejestratora%s i spróbuj ponownie."
 
 #: queue/add/step-two/index.php:214 queue/add/step-two/index.php:247
 msgid "Enter the list of domains to add to the queue"
@@ -5170,7 +5170,7 @@ msgstr "Domeny dodane do kolejki"
 
 #: queue/add/step-one/index.php:73
 msgid "Domain Queue & API Prerequisites"
-msgstr "Kolejka domen i API Warunki wstępne"
+msgstr "Kolejka domen — wymagania API"
 
 #: queue/add/step-one/index.php:74
 msgid "Before you can add domains to %s using the Domain Queue you must first do the following"
@@ -5182,19 +5182,19 @@ msgstr "Upewnij się, że rejestrator posiada API i że Twoje konto ma do niego 
 
 #: queue/add/step-one/index.php:77
 msgid "Enable API Support on the %sregistrar asset%s"
-msgstr "Włącz obsługę API na %sregistrar asset%s"
+msgstr "Włącz obsługę API w %sustawieniach rejestratora%s"
 
 #: queue/add/step-one/index.php:78
 msgid "Save the required API credentials with the %sregistrar account asset%s"
-msgstr "Zapisz wymagane dane uwierzytelniające API za pomocą %sregistrar account asset%s"
+msgstr "Zapisz wymagane dane dostępowe API w %sustawieniach konta rejestratora%s"
 
 #: queue/add/step-one/index.php:93
 msgid "Choose the Registrar Account to import"
-msgstr "Wybierz Konto Rejestratora, które chcesz zaimportować"
+msgstr "Wybierz konto rejestratora do importu"
 
 #: queue/add/step-two/index.php:395
 msgid "%s requires the following credentials in order to use their API. These credentials must to be saved with the %sregistrar account asset%s."
-msgstr "%s wymaga następujących uprawnień, aby móc korzystać z ich API. Te dane uwierzytelniające muszą być zapisane w %sregistrar account asset%s."
+msgstr "%s wymaga następujących danych uwierzytelniających do korzystania ze swojego API. Zapisz te dane w %sustawieniach konta rejestratora%s."
 
 #: queue/add/step-two/index.php:399
 msgid "Click Here to Enter"
@@ -5210,15 +5210,15 @@ msgstr "API %s posiada funkcję listy domen, więc nie musisz nawet dostarczać 
 
 #: queue/add/step-two/index.php:495
 msgid "Optional"
-msgstr "Nieobowiązkowo"
+msgstr "Opcjonalnie"
 
 #: queue/index.php:89
 msgid "domain_list_queue"
-msgstr "domena_list_queue"
+msgstr "domain_list_queue"
 
 #: queue/index.php:91 queue/index.php:548
 msgid "Domain List Queue"
-msgstr "Kolejka do listy domen"
+msgstr "Kolejka list domen"
 
 #: queue/index.php:98 queue/index.php:166
 msgid "Registrar (API)"
@@ -5226,7 +5226,7 @@ msgstr "Rejestrator (API)"
 
 #: queue/index.php:99 queue/index.php:167
 msgid "Registrar (Name)"
-msgstr "Rejestrator (nazwisko)"
+msgstr "Rejestrator (nazwa)"
 
 #: queue/index.php:101 queue/index.php:169
 msgid "Account Username"
@@ -5234,15 +5234,15 @@ msgstr "Nazwa użytkownika konta"
 
 #: queue/index.php:102 queue/index.php:555
 msgid "Domain Count"
-msgstr "Hrabia Domeny"
+msgstr "Liczba domen"
 
 #: queue/index.php:103 queue/index.php:179
 msgid "Ready To Import"
-msgstr "Gotowy do importu"
+msgstr "Gotowe do importu"
 
 #: queue/index.php:104 queue/index.php:183
 msgid "Copied To History"
-msgstr "Skopiowane do historii"
+msgstr "Skopiowano do historii"
 
 #: queue/index.php:105 queue/index.php:184 queue/index.php:556
 #: queue/index.php:657
@@ -5267,7 +5267,7 @@ msgstr "Automatyczne odnawianie"
 
 #: queue/index.php:180
 msgid "Already in Domains"
-msgstr "Już w Domenach"
+msgstr "Już na liście domen"
 
 #: queue/index.php:181
 msgid "Already in Queue"
@@ -5275,7 +5275,7 @@ msgstr "Już w kolejce"
 
 #: queue/index.php:182 queue/index.php:209 queue/index.php:685
 msgid "Invalid Domain"
-msgstr "Nieważna domena"
+msgstr "Nieprawidłowa domena"
 
 #: queue/index.php:186
 msgid "Domain ID"
@@ -5287,11 +5287,11 @@ msgstr "Już w %s"
 
 #: queue/index.php:204 queue/index.php:680
 msgid "Already in Domain Queue"
-msgstr "Już w kolejce do domeny"
+msgstr "Już w kolejce domen"
 
 #: queue/index.php:213 queue/index.php:689
 msgid "Successfully Imported"
-msgstr "Sukcesywnie importowane"
+msgstr "Zaimportowano pomyślnie"
 
 #: queue/index.php:434
 msgid "Are you sure you want to clear completed items from the queue?"
@@ -5303,11 +5303,11 @@ msgstr "Przed wyczyszczeniem kolejki należy przejrzeć wyniki, aby upewnić si�
 
 #: queue/index.php:436
 msgid "YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE"
-msgstr "TAK, NAPRAWDĘ JASNE WYPEŁNIONE POZYCJE Z KOLEJKI"
+msgstr "TAK, NAPRAWDĘ USUŃ ZAKOŃCZONE POZYCJE Z KOLEJKI"
 
 #: queue/index.php:444
 msgid "Completed items cleared from the queue"
-msgstr "Pozycje ukończone usunięte z kolejki"
+msgstr "Usunięto zakończone pozycje z kolejki"
 
 #: queue/index.php:453
 msgid "Are you sure you want to delete this Domain List from the Queue?"
@@ -5319,7 +5319,7 @@ msgstr "TAK, NAPRAWDĘ USUŃ TĘ LISTĘ DOMEN Z KOLEJKI"
 
 #: queue/index.php:466
 msgid "Domain List deleted from Queue"
-msgstr "Lista domen usuniętych z kolejki"
+msgstr "Usunięto listę domen z kolejki"
 
 #: queue/index.php:475
 msgid "Are you sure you want to delete this Domain from the Queue?"
@@ -5343,11 +5343,11 @@ msgstr "Kolejka domen opiera się na API rejestratora domen w celu zaimportowani
 
 #: queue/index.php:521
 msgid "For more information please see the %sDomain Queue information page%s"
-msgstr "Więcej informacji można znaleźć na stronie informacji o kolejce domen %sDomain Queue%s"
+msgstr "Więcej informacji znajdziesz na %sstronie poświęconej kolejce domen%s"
 
 #: queue/index.php:527
 msgid "Clear Completed"
-msgstr "Czyszczenie zakończone"
+msgstr "Usuń zakończone"
 
 #: queue/index.php:529
 msgid "More Info"
@@ -5355,7 +5355,7 @@ msgstr "Więcej informacji"
 
 #: queue/index.php:533
 msgid "Export Lists"
-msgstr "Export list"
+msgstr "Eksportuj listy"
 
 #: queue/index.php:538
 msgid "Export Domains"
@@ -5375,27 +5375,27 @@ msgstr "Jedyne co musisz zrobić, to wybrać konto rejestratora, dostarczyć lis
 
 #: queue/intro.php:51
 msgid "If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."
-msgstr "Jeśli używasz rejestratora, który nie jest jeszcze obsługiwany, a oni mają API, wyślij nam wiadomość e-mail w %s, a my zobaczymy, co możemy zrobić z dodaniem go."
+msgstr "Jeśli korzystasz z rejestratora, którego jeszcze nie obsługujemy, a udostępnia on API, napisz do nas na adres %s. Sprawdzimy możliwość dodania jego obsługi."
 
 #: queue/intro.php:69
 msgid "Currently Supported Registrars"
-msgstr "Obecnie wspierani rejestratorzy"
+msgstr "Obecnie obsługiwani rejestratorzy"
 
 #: queue/intro.php:71
 msgid "In order to use the Domain Queue you must setup the cron job that comes with %s."
-msgstr "Aby skorzystać z kolejki domen musisz ustawić zadanie crona, które jest dostarczane z %s."
+msgstr "Aby korzystać z kolejki domen, skonfiguruj zadanie cron dostarczone z %s."
 
 #: queue/intro.php:72
 msgid "For more information please see the %sUser Guide%s."
-msgstr "Więcej informacji można znaleźć w przewodniku %sUser Guide%s."
+msgstr "Więcej informacji znajdziesz w %spodręczniku użytkownika%s."
 
 #: raw.php:44
 msgid "Domains (Raw List)"
-msgstr "Domeny (lista surowa)"
+msgstr "Domeny (surowa lista)"
 
 #: raw.php:49
 msgid "SSL Certificates (Raw List)"
-msgstr "Certyfikaty SSL (lista surowa)"
+msgstr "Certyfikaty SSL (surowa lista)"
 
 #: reporting/domains/cost-by-category.php:60
 #: reporting/domains/cost-by-dns.php:60 reporting/domains/cost-by-host.php:60
@@ -5408,15 +5408,15 @@ msgstr "Certyfikaty SSL (lista surowa)"
 #: reporting/ssl/cost-by-owner.php:60 reporting/ssl/cost-by-provider.php:60
 #: reporting/ssl/cost-by-type.php:60
 msgid "The end date proceeds the start date"
-msgstr "Data końcowa jest datą początkową"
+msgstr "Data końcowa jest wcześniejsza niż początkowa"
 
 #: reporting/domains/cost-by-category.php:114
 msgid "domain_cost_by_category_report_all"
-msgstr "domena_cost_by_category_report_all"
+msgstr "domain_cost_by_category_report_all"
 
 #: reporting/domains/cost-by-category.php:119
 msgid "domain_cost_by_category_report"
-msgstr "domena_cost_by_category_report"
+msgstr "domain_cost_by_category_report"
 
 #: reporting/domains/cost-by-category.php:158
 #: reporting/domains/cost-by-category.php:215
@@ -5482,35 +5482,35 @@ msgstr "Brak wyników."
 
 #: reporting/domains/cost-by-dns.php:114
 msgid "domain_cost_by_dns_report_all"
-msgstr "domena_cost_by_dns_report_all"
+msgstr "domain_cost_by_dns_report_all"
 
 #: reporting/domains/cost-by-dns.php:119
 msgid "domain_cost_by_dns_report"
-msgstr "domena_cost_by_dns_report"
+msgstr "domain_cost_by_dns_report"
 
 #: reporting/domains/cost-by-host.php:114
 msgid "domain_cost_by_web_host_report_all"
-msgstr "domena_cost_by_web_host_report_all"
+msgstr "domain_cost_by_web_host_report_all"
 
 #: reporting/domains/cost-by-host.php:119
 msgid "domain_cost_by_web_host_report"
-msgstr "domena_cost_by_web_host_report"
+msgstr "domain_cost_by_web_host_report"
 
 #: reporting/domains/cost-by-ip-address.php:114
 msgid "domain_cost_by_ip_address_report_all"
-msgstr "domena_cost_by_ip_adres_report_all"
+msgstr "domain_cost_by_ip_address_report_all"
 
 #: reporting/domains/cost-by-ip-address.php:119
 msgid "domain_cost_by_ip_address_report"
-msgstr "domena_cost_by_ip_adres_report"
+msgstr "domain_cost_by_ip_address_report"
 
 #: reporting/domains/cost-by-month.php:110
 msgid "domain_cost_by_month_report_all"
-msgstr "domena_cost_by_month_report_all"
+msgstr "domain_cost_by_month_report_all"
 
 #: reporting/domains/cost-by-month.php:115
 msgid "domain_cost_by_month_report"
-msgstr "domena_cost_by_month_report"
+msgstr "domain_cost_by_month_report"
 
 #: reporting/domains/cost-by-month.php:154
 #: reporting/domains/cost-by-month.php:271 reporting/ssl/cost-by-month.php:154
@@ -5522,7 +5522,7 @@ msgstr "Miesiąc"
 #: reporting/domains/cost-by-month.php:273 reporting/ssl/cost-by-month.php:156
 #: reporting/ssl/cost-by-month.php:273
 msgid "By Year"
-msgstr "Na rok"
+msgstr "Według roku"
 
 #: reporting/domains/cost-by-month.php:193
 #: reporting/domains/cost-by-month.php:308 reporting/ssl/cost-by-month.php:193
@@ -5594,19 +5594,19 @@ msgstr "domain_cost_by_owner_report"
 
 #: reporting/domains/cost-by-registrar.php:119
 msgid "domain_cost_by_registrar_report_all"
-msgstr "domena_cost_by_registrar_report_all"
+msgstr "domain_cost_by_registrar_report_all"
 
 #: reporting/domains/cost-by-registrar.php:124
 msgid "domain_cost_by_registrar_report"
-msgstr "domena_cost_by_registrar_report"
+msgstr "domain_cost_by_registrar_report"
 
 #: reporting/domains/cost-by-tld.php:112
 msgid "domain_cost_by_tld_report_all"
-msgstr "domena_cost_by_tld_report_all"
+msgstr "domain_cost_by_tld_report_all"
 
 #: reporting/domains/cost-by-tld.php:117
 msgid "domain_cost_by_tld_report"
-msgstr "domena_cost_by_tld_report"
+msgstr "domain_cost_by_tld_report"
 
 #: reporting/domains/registrar-fees.php:84
 msgid "registrar_fee_report_all"
@@ -5618,15 +5618,15 @@ msgstr "registrar_fee_report_active"
 
 #: reporting/domains/registrar-fees.php:99
 msgid "All Registrar Fees"
-msgstr "Wszystkie opłaty rejestratora"
+msgstr "Wszystkie stawki rejestratorów"
 
 #: reporting/domains/registrar-fees.php:103
 msgid "Active Registrar Fees"
-msgstr "Aktywny rejestrator Opłaty"
+msgstr "Aktywne stawki rejestratorów"
 
 #: reporting/domains/registrar-fees.php:198 reporting/ssl/provider-fees.php:190
 msgid "Active Only"
-msgstr "Tylko aktywny"
+msgstr "Tylko aktywne"
 
 #: reporting/domains/registrar-fees.php:215
 msgid "Last Updated"
@@ -5639,11 +5639,11 @@ msgstr "dw_potential_problems_report"
 #: reporting/dw/potential-problems.php:86
 #: reporting/dw/potential-problems.php:154
 msgid "Accounts without a DNS Zone (%s)"
-msgstr "Rachunki bez strefy DNS (%s)"
+msgstr "Konta bez strefy DNS (%s)"
 
 #: reporting/dw/potential-problems.php:101
 msgid "DNS Zones without an Account (%s)"
-msgstr "Strefy DNS bez rachunku (%s)"
+msgstr "Strefy DNS bez konta (%s)"
 
 #: reporting/dw/potential-problems.php:116
 msgid "Suspended Accounts (%s)"
@@ -5651,7 +5651,7 @@ msgstr "Konta zawieszone (%s)"
 
 #: reporting/index.php:49
 msgid "Before running any reports you should %supdate the conversion rates%s."
-msgstr "Przed uruchomieniem jakichkolwiek raportów %s należy uaktualnić stawki opłat %s."
+msgstr "Przed wygenerowaniem raportów należy %szaktualizować kursy walut%s."
 
 #: reporting/index.php:53
 msgid "Domain Reports"
@@ -5675,11 +5675,11 @@ msgstr "Koszt według miesiąca"
 
 #: reporting/index.php:58 reporting/index.php:70
 msgid "Cost by Owner"
-msgstr "Koszt według Właściciela"
+msgstr "Koszt według właściciela"
 
 #: reporting/index.php:59
 msgid "Cost by Registrar"
-msgstr "Koszty ponoszone przez sekretarza"
+msgstr "Koszt według rejestratora"
 
 #: reporting/index.php:60
 msgid "Cost by TLD"
@@ -5687,15 +5687,15 @@ msgstr "Koszt według TLD"
 
 #: reporting/index.php:61
 msgid "Cost by Web Host"
-msgstr "Koszt przez Web Hosta"
+msgstr "Koszt według dostawcy hostingu"
 
 #: reporting/index.php:62
 msgid "Registrar Fees"
-msgstr "Opłaty rejestracyjne"
+msgstr "Stawki rejestratorów"
 
 #: reporting/index.php:65
 msgid "SSL Certificate Reports"
-msgstr "Sprawozdania z certyfikatów SSL"
+msgstr "Raporty certyfikatów SSL"
 
 #: reporting/index.php:67
 msgid "Cost by Domain"
@@ -5739,7 +5739,7 @@ msgstr "ssl_cost_by_category_report"
 #: reporting/ssl/cost-by-provider.php:271
 #: reporting/ssl/cost-by-provider.php:275 reporting/ssl/cost-by-type.php:160
 msgid "Per Cert"
-msgstr "Per Cert"
+msgstr "Na certyfikat"
 
 #: reporting/ssl/cost-by-domain.php:114
 msgid "ssl_cost_by_domain_report_all"
@@ -5751,15 +5751,15 @@ msgstr "ssl_cost_by_domain_report"
 
 #: reporting/ssl/cost-by-ip-address.php:114
 msgid "ssl_cost_by_ip_address_report_all"
-msgstr "ssl_cost_by_ip_adres_report_all"
+msgstr "ssl_cost_by_ip_address_report_all"
 
 #: reporting/ssl/cost-by-ip-address.php:119
 msgid "ssl_cost_by_ip_address_report"
-msgstr "ssl_cost_by_ip_adres_report"
+msgstr "ssl_cost_by_ip_address_report"
 
 #: reporting/ssl/cost-by-month.php:60
 msgid "The ending date proceeds the starting date"
-msgstr "Data końcowa jest datą początkową"
+msgstr "Data końcowa jest wcześniejsza niż początkowa"
 
 #: reporting/ssl/cost-by-month.php:110
 msgid "ssl_cost_by_month_report_all"
@@ -5799,7 +5799,7 @@ msgstr "ssl_cost_by_type_report"
 
 #: reporting/ssl/cost-by-type.php:217
 msgid "Pert Cert"
-msgstr "Pert Cert"
+msgstr "Na certyfikat"
 
 #: reporting/ssl/provider-fees.php:86
 msgid "ssl_provider_fee_report_all"
@@ -5811,11 +5811,11 @@ msgstr "ssl_provider_fee_report_active"
 
 #: reporting/ssl/provider-fees.php:101
 msgid "All SSL Provider Fees"
-msgstr "Wszystkie opłaty dla dostawców usług SSL"
+msgstr "Wszystkie stawki dostawców SSL"
 
 #: reporting/ssl/provider-fees.php:105
 msgid "Active SSL Provider Fees"
-msgstr "Opłaty dla aktywnych dostawców usług SSL"
+msgstr "Aktywne stawki dostawców SSL"
 
 #: reporting/ssl/provider-fees.php:114 ssl/add.php:353 ssl/edit.php:432
 msgid "Certificate Type"
@@ -5839,7 +5839,7 @@ msgstr "Nazwa użytkownika lub adres e-mail"
 
 #: segments/add.php:106 segments/edit.php:113
 msgid "invalid domain"
-msgstr "nieważny obszar"
+msgstr "nieprawidłowa domena"
 
 #: segments/add.php:174 segments/edit.php:218
 msgid "Enter the Segment name"
@@ -5855,11 +5855,11 @@ msgstr "Nazwa segmentu"
 
 #: segments/add.php:195 segments/edit.php:305
 msgid "Segment Domains (one per line)"
-msgstr "Domeny segmentowe (jedna na linię)"
+msgstr "Domeny w segmencie (po jednej w wierszu)"
 
 #: segments/edit.php:195
 msgid "Segment %s update"
-msgstr "Segment Aktualizacja %s"
+msgstr "Zaktualizowano segment %s"
 
 #: segments/edit.php:273
 msgid "Segment %s deleted"
@@ -5867,7 +5867,7 @@ msgstr "Segment %s usunięty"
 
 #: segments/edit.php:309
 msgid "Update Segment"
-msgstr "Aktualizacja Segmentu"
+msgstr "Zaktualizuj segment"
 
 #: segments/edit.php:311 segments/index.php:82 segments/index.php:96
 #: segments/index.php:133
@@ -5876,7 +5876,7 @@ msgstr "Segment"
 
 #: segments/index.php:86
 msgid "segment_list"
-msgstr "segment_lista"
+msgstr "segment_list"
 
 #: segments/index.php:102 segments/index.php:138
 msgid "Number of Domains in Segment"
@@ -5896,15 +5896,15 @@ msgstr "Czas aktualizacji"
 
 #: segments/index.php:207
 msgid "Segments are lists of domains that can be used to help filter and manage your %sdomain results%s."
-msgstr "Segmenty to listy domen, które można wykorzystać do filtrowania %swyników wyszukiwania domen%s i zarządzania nimi."
+msgstr "Segmenty to listy domen umożliwiające filtrowanie i porządkowanie %swyników wyszukiwania domen%s."
 
 #: segments/index.php:209
 msgid "Segment filters will tell you which domains match with domains that are saved in %s, as well as which domains don't match, and you can easily view and export the results."
-msgstr "Filtry segmentowe powiedzą Ci, które domeny pasują do domen zapisanych w %s, a które nie, i możesz łatwo przeglądać i eksportować wyniki."
+msgstr "Filtry segmentów pozwalają sprawdzić, które domeny pasują do domen zapisanych w %s, a które nie. Wyniki można łatwo wyświetlić i wyeksportować."
 
 #: segments/index.php:222
 msgid "You don't currently have any Segments."
-msgstr "Nie masz obecnie żadnych Segmentów."
+msgstr "Nie utworzono jeszcze żadnych segmentów."
 
 #: segments/index.php:232
 msgid "Count"
@@ -5916,11 +5916,11 @@ msgstr "Twoje ustawienia domyślne zostały zaktualizowane"
 
 #: settings/defaults/index.php:324
 msgid "Update User Defaults"
-msgstr "Aktualizacja domyślnych ustawień użytkownika"
+msgstr "Zaktualizuj domyślne ustawienia użytkownika"
 
 #: settings/display/index.php:216
 msgid "Display Settings updated"
-msgstr "Aktualizacja ustawień wyświetlacza"
+msgstr "Zaktualizowano ustawienia wyświetlania"
 
 #: settings/display/index.php:225
 msgid "Enter the default number of domains to display"
@@ -5932,7 +5932,7 @@ msgstr "Wpisz domyślną liczbę certyfikatów SSL do wyświetlenia"
 
 #: settings/display/index.php:287
 msgid "Main Domain Page"
-msgstr "Główna strona domeny"
+msgstr "Główna strona domen"
 
 #: settings/display/index.php:294
 msgid "Number of domains per page"
@@ -5948,7 +5948,7 @@ msgstr "Niestandardowe pola domeny do wyświetlania"
 
 #: settings/display/index.php:324
 msgid "Main SSL Certificate Page"
-msgstr "Strona główna certyfikatu SSL"
+msgstr "Główna strona certyfikatów SSL"
 
 #: settings/display/index.php:331
 msgid "Number of SSL certificates per page"
@@ -5960,23 +5960,23 @@ msgstr "Niestandardowe pola SSL do wyświetlania"
 
 #: settings/display/index.php:360
 msgid "Asset Management Pages"
-msgstr "Strony zarządzania aktywami (Asset Management Pages)"
+msgstr "Strony zarządzania zasobami"
 
 #: settings/display/index.php:361
 msgid "Display inactive Assets"
-msgstr "Wyświetlanie nieaktywnych aktywów"
+msgstr "Wyświetlaj nieaktywne zasoby"
 
 #: settings/display/index.php:364
 msgid "Display intro page"
-msgstr "Wyświetlanie strony wstępnej"
+msgstr "Wyświetlaj stronę wprowadzającą"
 
 #: settings/display/index.php:370
 msgid "Update Display Settings"
-msgstr "Aktualizacja ustawień wyświetlacza"
+msgstr "Zaktualizuj ustawienia wyświetlania"
 
 #: settings/password/index.php:72
 msgid "Your password could not be updated"
-msgstr "Twoje hasło nie mogło być zaktualizowane"
+msgstr "Nie udało się zmienić hasła"
 
 #: settings/password/index.php:73 settings/profile/index.php:73
 msgid "If the problem persists please contact your administrator"
@@ -5984,15 +5984,15 @@ msgstr "Jeśli problem się utrzymuje, skontaktuj się z administratorem"
 
 #: settings/password/index.php:93
 msgid "Password changed"
-msgstr "Zmiana hasła"
+msgstr "Hasło zostało zmienione"
 
 #: settings/password/index.php:117
 msgid "Your passwords were left blank"
-msgstr "Twoje hasła pozostały puste"
+msgstr "Nie podano haseł"
 
 #: settings/password/index.php:121
 msgid "Your passwords didn't match"
-msgstr "Twoje hasła nie pasowały do siebie"
+msgstr "Podane hasła nie są zgodne"
 
 #: settings/password/index.php:139
 msgid "New Password"
@@ -6004,7 +6004,7 @@ msgstr "Potwierdź nowe hasło"
 
 #: settings/profile/index.php:72
 msgid "Your profile could not be updated"
-msgstr "Twój profil nie mógł być aktualizowany"
+msgstr "Nie udało się zaktualizować profilu"
 
 #: settings/profile/index.php:179
 msgid "Your profile was updated"
@@ -6024,11 +6024,11 @@ msgstr "Twoje nazwisko nie mogło być zaktualizowane"
 
 #: settings/profile/index.php:298
 msgid "Update Profile"
-msgstr "Aktualizacja profilu"
+msgstr "Zaktualizuj profil"
 
 #: ssl/add.php:210
 msgid "SSL Certificate %s added"
-msgstr "Certyfikat SSL Dodano %s"
+msgstr "Dodano certyfikat SSL %s"
 
 #: ssl/add.php:229
 msgid "Enter a name for the SSL certificate"
@@ -6052,7 +6052,7 @@ msgstr "Status certyfikatu"
 
 #: ssl/edit.php:230
 msgid "SSL Certificate %s updated"
-msgstr "Certyfikat SSL Aktualizacja %s"
+msgstr "Zaktualizowano certyfikat SSL %s"
 
 #: ssl/edit.php:252
 msgid "Enter the SSL certificate name"
@@ -6060,7 +6060,7 @@ msgstr "Wpisz nazwę certyfikatu SSL"
 
 #: ssl/edit.php:346
 msgid "SSL Certificate %s (%s) deleted"
-msgstr "Certyfikat SSL %s (%s) skreślony"
+msgstr "Usunięto certyfikat SSL %s (%s)"
 
 #: ssl/edit.php:577
 msgid "SSL Certificate"
@@ -6072,7 +6072,7 @@ msgstr "ssl_results"
 
 #: ssl/index.php:271
 msgid "SSL Certificate Search Results Export"
-msgstr "Wyniki wyszukiwania certyfikatów SSL Eksport"
+msgstr "Eksport wyników wyszukiwania certyfikatów SSL"
 
 #: ssl/index.php:312
 msgid "Associated Domain"
@@ -6092,7 +6092,7 @@ msgstr "Status SSL"
 
 #: ssl/index.php:457
 msgid "SSL Cert Status"
-msgstr "Status SSL Cert"
+msgstr "Status certyfikatu SSL"
 
 #: ssl/index.php:516
 msgid "ERROR -- PROBLEM WITH CODE IN SSL/INDEX.PHP"
@@ -6128,19 +6128,19 @@ msgstr "Kliknij tutaj, aby dodać certyfikat SSL"
 
 #: ssl/index.php:1438
 msgid "Live SSL Certificates"
-msgstr "Certyfikaty SSL na żywo"
+msgstr "Aktywne certyfikaty SSL"
 
 #: ssl/index.php:1491 ssl/index.php:1716
 msgid "Add SSL Cert"
-msgstr "Dodaj SSL Cert"
+msgstr "Dodaj certyfikat SSL"
 
 #: ssl/notes.php:57
 msgid "SSL Certificate Notes (%s)"
-msgstr "Certyfikat SSL Uwagi (%s)"
+msgstr "Notatki dotyczące certyfikatu SSL (%s)"
 
 #: _includes/layout/header.inc.php:122
 msgid "Expiration Emails"
-msgstr "Wygaśnięcie Emaile"
+msgstr "Powiadomienia o wygaśnięciu"
 
 #: install/email-system/index.php:103
 msgid "Proceed With Installation"
@@ -6148,7 +6148,7 @@ msgstr "Kontynuuj instalację"
 
 #: install/language/index.php:68
 msgid "Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."
-msgstr "Obsługa wielojęzyczna jest bardzo nowa, więc proszę trzymać się z nami podczas dodawania nowych języków. A także podczas poprawiania naszych automatycznie generowanych tłumaczeń, z których niektóre są prawdopodobnie bardzo złe."
+msgstr "Obsługa wielu języków została niedawno wprowadzona, dlatego prosimy o wyrozumiałość podczas dodawania kolejnych tłumaczeń i poprawiania tłumaczeń generowanych automatycznie, z których część może zawierać błędy."
 
 #: admin/dw/dw.php:117 bulk/cf/step-one/index.php:50
 #: bulk/cf/step-two/index.php:100 bulk/index.php:58
@@ -6165,7 +6165,7 @@ msgstr "Wyszukiwanie domeny"
 
 #: admin/dw/dw.php:264
 msgid "Build Information"
-msgstr "Informacje o kompilacji"
+msgstr "Informacje o aktualizacji hurtowni danych"
 
 #: _includes/layout/menu-main.inc.php:256
 msgid "Logout"
@@ -6177,11 +6177,11 @@ msgstr "Zaloguj się"
 
 #: assets/index.php:47
 msgid "Assets are the building blocks of DomainMOD."
-msgstr "Zasoby to elementy konstrukcyjne DomainMOD."
+msgstr "Zasoby są podstawowymi elementami konfiguracji DomainMOD."
 
 #: assets/index.php:47
 msgid "Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on."
-msgstr "Zasoby obejmują takie rzeczy, jak rejestratorzy domen i używane konta, posiadane typy certyfikatów SSL, serwery DNS i adresy IP, kategorie, których chcesz używać do grupowania podobnych domen i tak dalej."
+msgstr "Zasoby obejmują m.in. rejestratorów domen i konta, typy posiadanych certyfikatów SSL, serwery DNS, adresy IP oraz kategorie służące do grupowania domen."
 
 #: admin/scheduler/index.php:114
 msgid "Set Run Time"
@@ -6211,7 +6211,7 @@ msgstr "Twoja opinia jest dla nas ważna!"
 #: _includes/layout/header.inc.php:38
 #: _includes/settings/feedback-main.inc.php:24
 msgid "Feedback"
-msgstr "Sprzężenie zwrotne"
+msgstr "Opinie i sugestie"
 
 #: classes/DomainMOD/Notice.php:45
 msgid "We strongly recommend that you backup your %s installation directory and database before proceeding with the upgrade"
@@ -6223,7 +6223,7 @@ msgstr "Prześlij opinię"
 
 #: feedback/index.php:57
 msgid "View The Project Roadmap"
-msgstr "Zobacz mapę drogową projektu"
+msgstr "Zobacz plan rozwoju projektu"
 
 #: settings/display/index.php:366
 msgid "Miscellaneous"
@@ -6244,7 +6244,7 @@ msgstr "Identyfikator konta rejestratora"
 
 #: domains/csv-importer/cleanup/index.php:39
 msgid "CSV Import files were cleaned up"
-msgstr "Pliki importu CSV zostały wyczyszczone"
+msgstr "Usunięto pliki importu CSV"
 
 #: domains/csv-importer/index.php:75
 msgid "Please choose a CSV template file to import"
@@ -6252,7 +6252,7 @@ msgstr "Wybierz plik szablonu CSV do zaimportowania"
 
 #: domains/csv-importer/index.php:83
 msgid "Your CSV Import has been completed"
-msgstr "Twój import CSV został zakończony"
+msgstr "Zakończono import CSV"
 
 #: domains/csv-importer/index.php:114
 msgid "This page allows you to import all of your domain data into %s using a CSV template."
@@ -6260,7 +6260,7 @@ msgstr "Ta strona umożliwia importowanie wszystkich danych domeny do %s przy u�
 
 #: domains/csv-importer/index.php:115
 msgid "This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I've personally imported many test CSV files with 100% accuracy."
-msgstr "Jest to bardzo nowa funkcja (tj. eksperymentalna), ale wszystkie dotychczasowe testy przebiegały niesamowicie dobrze, a ja osobiście zaimportowałem wiele testowych plików CSV ze 100% dokładnością."
+msgstr "To nowa, eksperymentalna funkcja, ale dotychczasowe testy przebiegły bardzo dobrze. Udało nam się zaimportować wiele testowych plików CSV z pełną poprawnością danych."
 
 #: domains/csv-importer/index.php:115
 msgid "It's recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover."
@@ -6268,7 +6268,7 @@ msgstr "Zaleca się wykonanie pełnej kopii zapasowej istniejącej bazy danych %
 
 #: domains/csv-importer/index.php:116
 msgid "For more information on how to use the CSV Importer, please see our"
-msgstr "Więcej informacji na temat korzystania z narzędzia CSV Importer można znaleźć w naszym"
+msgstr "Więcej informacji na temat importowania plików CSV znajdziesz w naszym"
 
 #: domains/csv-importer/index.php:116
 msgid "User Guide"
@@ -6288,11 +6288,11 @@ msgstr "aby pobrać szablon importu CSV."
 
 #: domains/csv-importer/index.php:119
 msgid "You can import as little or as much domain information as you want."
-msgstr "Możesz zaimportować tyle informacji o domenie, ile chcesz."
+msgstr "Możesz zaimportować dowolną ilość informacji o domenach."
 
 #: domains/csv-importer/index.php:119
 msgid "Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It's ok though, even if you go this route it's pretty easy to update the information that %s creates for you."
-msgstr "Technicznie rzecz biorąc, możesz wypełnić tylko listę domen i będzie się dobrze importować, ale DomainMOD będzie musiał utworzyć dla ciebie kilka ogólnych zasobów. Jest jednak w porządku, nawet jeśli pójdziesz tą trasą, dość łatwo jest zaktualizować informacje, które tworzy dla Ciebie %s."
+msgstr "Możesz zaimportować nawet samą listę domen. DomainMOD utworzy wówczas potrzebne zasoby z domyślnymi danymi. Informacje dodane automatycznie przez %s można później łatwo zaktualizować."
 
 #: domains/csv-importer/index.php:120
 msgid "The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail."
@@ -6304,7 +6304,7 @@ msgstr "Importuj szablon CSV"
 
 #: domains/csv-importer/index.php:124
 msgid "This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped."
-msgstr "Spowoduje to wstawienie tylko <strong>nowych</strong> domen do Twojej bazy danych %s, istniejące domeny zostaną pominięte."
+msgstr "Do bazy danych %s zostaną dodane tylko <strong>nowe</strong> domeny. Już istniejące domeny zostaną pominięte."
 
 #: domains/csv-importer/index.php:126
 msgid "Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process."
@@ -6332,11 +6332,11 @@ msgstr "Zalecamy sprawdzenie"
 
 #: classes/DomainMOD/Notice.php:40
 msgid "section of our website to ensure that your server is ready for the new version. If your server has software incompatibilities, the upgrade may fail."
-msgstr "naszej stronie internetowej, aby upewnić się, że Twój serwer jest gotowy na nową wersję. Jeśli oprogramowanie Twojego serwera jest niezgodne, aktualizacja może się nie powieść."
+msgstr "sekcji naszej strony internetowej, aby upewnić się, że serwer jest gotowy na nową wersję. Jeśli oprogramowanie serwera jest niezgodne z wymaganiami, aktualizacja może się nie powieść."
 
 #: classes/DomainMOD/Notice.php:42
 msgid " Software Requirements"
-msgstr " Wymagania Systemowe"
+msgstr " Wymagania systemowe"
 
 #: _includes/layout/menu-main.inc.php:27
 msgid "NAVIGATION"
@@ -6352,12 +6352,12 @@ msgstr "Darmowe API kursów walut"
 
 #: _includes/email/send-test-email.inc.php:31
 msgid "Test Email"
-msgstr "E-mail testowy"
+msgstr "Testowa wiadomość e-mail"
 
 #: _includes/email/send-test-email.inc.php:51
 #: _includes/email/send-test-email.inc.php:90
 msgid "This is a test email to ensure that your %s installation is able to send email successfully. "
-msgstr "To jest e-mail testowy, który ma na celu sprawdzenie, czy instalacja %s jest w stanie pomyślnie wysyłać wiadomości e-mail. "
+msgstr "To wiadomość testowa służąca sprawdzeniu, czy instalacja %s może prawidłowo wysyłać wiadomości e-mail. "
 
 #: _includes/email/send-test-email.inc.php:75
 #: _includes/email/send-test-email.inc.php:98
@@ -6371,7 +6371,7 @@ msgstr "Jeżeli nie zażądałeś tego ze swojego konta, powinieneś zgłosić t
 
 #: _includes/email/send-test-email.inc.php:100
 msgid "DomainMOD Test Email"
-msgstr "DomainMOD Testowy E-mail"
+msgstr "Wiadomość testowa DomainMOD"
 
 #: _includes/layout/menu-main.inc.php:228
 #: _includes/settings/admin-tools-main.inc.php:24 admin/index.php:54
@@ -6381,32 +6381,32 @@ msgstr "Narzędzia"
 
 #: _includes/layout/table-maintenance.inc.php:26
 msgid "Some of your Domains are missing fees. Until you enter the fees, the Domains will not be visible in DomainMOD."
-msgstr "Niektóre z Twoich domen nie mają opłat. Dopóki nie wprowadzisz opłat, domeny nie będą widoczne w DomainMOD."
+msgstr "Dla niektórych domen nie podano stawek. Dopóki ich nie uzupełnisz, domeny te nie będą widoczne w DomainMOD."
 
 #: _includes/layout/table-maintenance.inc.php:27
 msgid "If you don't care about tracking Domain fees, "
-msgstr "Jeśli nie zależy Ci na śledzeniu opłat za domenę, "
+msgstr "Jeśli nie chcesz śledzić kosztów domen, "
 
 #: _includes/layout/table-maintenance.inc.php:27
 #: _includes/layout/table-maintenance.inc.php:38
 msgid "click here to set all missing fees to 0"
-msgstr "kliknij tutaj, aby ustawić wszystkie brakujące opłaty na 0"
+msgstr "kliknij tutaj, aby ustawić wszystkie brakujące stawki na 0"
 
 #: _includes/layout/table-maintenance.inc.php:28
 msgid "If you've already updated all new fees, you should %supdate the Domain fees system-wide%s. This may take some time."
-msgstr "Jeśli zaktualizowałeś już wszystkie nowe opłaty, powinieneś %szaktualizować system opłat za domenę%s. Może to potrwać trochę czasu."
+msgstr "Jeśli uzupełniono już wszystkie nowe stawki, należy %szaktualizować opłaty za domeny w całym systemie%s. Może to trochę potrwać."
 
 #: _includes/layout/table-maintenance.inc.php:37
 msgid "Some of your SSL Certificates are missing fees. Until you enter the fees, the SSL Certificates will not be visible in DomainMOD."
-msgstr "Niektóre z Twoich certyfikatów SSL nie mają opłat. Dopóki nie wprowadzisz opłat, certyfikaty SSL nie będą widoczne w DomainMOD."
+msgstr "Dla niektórych certyfikatów SSL nie podano stawek. Dopóki ich nie uzupełnisz, certyfikaty te nie będą widoczne w DomainMOD."
 
 #: _includes/layout/table-maintenance.inc.php:38
 msgid "If you don't care about tracking SSL Certificate fees, "
-msgstr "Jeśli nie zależy Ci na śledzeniu opłat za certyfikat SSL, "
+msgstr "Jeśli nie chcesz śledzić kosztów certyfikatów SSL, "
 
 #: _includes/layout/table-maintenance.inc.php:39
 msgid "If you've already updated all new fees, you should %supdate the SSL Certificate fees system-wide%s. This may take some time."
-msgstr "Jeśli zaktualizowałeś już wszystkie nowe opłaty, powinieneś %szaktualizować opłaty za certyfikaty SSL w całym systemie%s. Może to potrwać trochę czasu."
+msgstr "Jeśli uzupełniono już wszystkie nowe stawki, należy %szaktualizować opłaty za certyfikaty SSL w całym systemie%s. Może to trochę potrwać."
 
 #: _includes/settings/admin-tools-main.inc.php:23
 msgid "Admin Tools"
@@ -6418,7 +6418,7 @@ msgstr "E-mail testowy został wysłany!"
 
 #: assets/zero-out-domain-fees.php:107 assets/zero-out-ssl-fees.php:106
 msgid "Missing fees set to 0"
-msgstr "Brak opłat ustawiony na 0"
+msgstr "Ustawiono brakujące stawki na 0"
 
 #: admin/scheduler/index.php:56
 msgid "every 10 minutes"
@@ -6426,7 +6426,7 @@ msgstr "co 10 minut"
 
 #: admin/scheduler/index.php:57
 msgid "This file should be executed %s, and once it's setup the Task Scheduler will be live."
-msgstr "Ten plik powinien zostać uruchomiony %s, a po jego skonfigurowaniu Harmonogram zadań zostanie uruchomiony."
+msgstr "Ten plik powinien być uruchamiany %s. Po jego skonfigurowaniu harmonogram zadań zacznie działać."
 
 #: admin/tools/index.php:52
 msgid "Send Test Email"
@@ -6438,7 +6438,7 @@ msgstr "Jeśli chcesz mieć pewność, że Twoja instalacja może pomyślnie wys
 
 #: index.php:167
 msgid "Please enter your username and password"
-msgstr "Proszę wpisać nazwę użytkownika i hasło"
+msgstr "Wprowadź nazwę użytkownika i hasło"
 
 #: admin/backup/index.php:81 domains/csv-importer/index.php:70
 msgid "This file can't be processed because PHP's upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again."
@@ -6450,19 +6450,19 @@ msgstr "Te pliki zostały pozostawione przez starszą wersję %s. Zawierają one
 
 #: feedback/index.php:47
 msgid "Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"
-msgstr "Niezależnie od tego, czy masz komentarz, pytanie, prośbę o funkcję, czy zgłoszenie błędu, czekamy na Twoją odpowiedź!"
+msgstr "Chcesz podzielić się opinią, zadać pytanie, zaproponować nową funkcję lub zgłosić błąd? Napisz do nas!"
 
 #: feedback/index.php:49
 msgid "We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."
-msgstr "Niedawno uruchomiliśmy nowy Portal Wsparcia, który pozwoli nam na lepszą komunikację i transparentność z naszymi użytkownikami. Nowy portal nie tylko umożliwia użytkownikom zgłaszanie pytań i problemów, ale także głosowanie na elementy, które są dla nich najważniejsze, co pomaga nam określić priorytety i priorytety, którymi powinniśmy się zająć w następnej kolejności."
+msgstr "Niedawno uruchomiliśmy nowy portal pomocy, który usprawnia komunikację z użytkownikami i zapewnia większą przejrzystość. Można w nim zgłaszać pytania i problemy oraz głosować na najważniejsze zgłoszenia. Dzięki temu łatwiej ustalamy, nad czym pracować w pierwszej kolejności."
 
 #: feedback/index.php:53
 msgid "So what are you waiting for? Speak your mind or checkout the Roadmap below!"
-msgstr "Na co więc czekasz? Powiedz, co myślisz, albo sprawdź poniższą Mapę Drogową!"
+msgstr "Na co czekasz? Podziel się opinią lub sprawdź plan rozwoju projektu poniżej!"
 
 #: feedback/index.php:51
 msgid "On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."
-msgstr "Jeśli chodzi o to, nad czym pracujemy dalej, z naszym nowym Portalem Wsparcia zintegrowaliśmy Mapę Drogową projektu. Mapa Drogowa jest tworzona automatycznie na podstawie zgłoszeń od użytkowników i ich aktualnego statusu (zaplanowane, w toku, ukończone itd.). Dzięki niej użytkownicy będą mogli publicznie śledzić postępy prac nad %s."
+msgstr "Z nowym portalem pomocy zintegrowaliśmy plan rozwoju projektu. Jest on tworzony automatycznie na podstawie zgłoszeń użytkowników i ich aktualnego statusu (planowane, w toku, ukończone itd.). Dzięki temu można publicznie śledzić postępy prac nad %s."
 
 #: _includes/email/send-reset-link.inc.php:31
 msgid "Reset your %s Password"
@@ -6549,4 +6549,12 @@ msgstr "Jeśli znaleziono pasującą nazwę użytkownika lub adres e-mail, na te
 #: reset.php:209
 msgid "Click the button below to reset your password. Your new password will be emailed to you."
 msgstr "Kliknij przycisk poniżej, aby zresetować hasło. Nowe hasło zostanie wysłane na Twój adres e-mail."
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Verify SSL Certificate"
+msgstr "Sprawdź certyfikat SSL"
+
+#: admin/dw/add-server.php:122 admin/dw/edit-server.php:226
+msgid "Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."
+msgstr "Pozostaw tę opcję włączoną, chyba że serwer korzysta z certyfikatu z podpisem własnym, a połączenie odbywa się za pośrednictwem sieci, której ufasz. Gdy opcja ta jest włączona, certyfikat SSL serwera musi być ważny dla podanej nazwy hosta."
 

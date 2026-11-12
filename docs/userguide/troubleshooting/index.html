@@ -290,6 +290,27 @@ I'm trying to import data using the Domain Queue, but everything is stuck on "Pr
 I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server
 </h4></p>
 <p>The Data Warehouse is read-only. You can import data from your web server into your Data Warehouse, but this data is for informational purposes only, and you can't edit your server data within DomainMOD and have it update your web server. This is something that will be worked on in the future, but is currently not possible.</p>
+<p><a name="sslverify"></a><h4>
+After upgrading, I'm getting the error "Unable to verify the SSL certificate of a remote server"
+</h4></p>
+<p>As of v4.24.02, DomainMOD checks the SSL certificate of every server it connects to, such as your registrars' APIs, your Data Warehouse servers, and the update check. This error means a server's certificate couldn't be verified, so DomainMOD didn't connect to it. The error names the service and includes the cURL error, which can help narrow down the cause.</p>
+<p>To fix it:</p>
+<ol>
+<li>
+<p>Check that your server's date and time are correct. If the clock is wrong, valid certificates can look expired.</p>
+</li>
+<li>
+<p>Update your operating system's CA certificates (on most Linux systems this is the <strong>ca-certificates</strong> package).</p>
+</li>
+<li>
+<p>If <code>curl.cainfo</code>, <code>openssl.cafile</code>, or <code>openssl.capath</code> in your php.ini points to a file or folder that's missing or out of date, fix the path or remove the setting, then restart Apache/PHP.</p>
+</li>
+<li>
+<p>If your server connects to the internet through a proxy that inspects HTTPS traffic, add the proxy's CA certificate to your server's trusted certificates.</p>
+</li>
+</ol>
+<p>If the error is for a Data Warehouse server with a self-signed certificate, the best fix is to give that server a valid certificate, or to add its certificate (or the CA that signed it) to your DomainMOD server's trusted CA certificates. As a last resort, if you connect to it over a network you trust, you can switch off <strong>Verify SSL Certificate?</strong> for that server only (see <a href="../data-warehouse/#setup">Data Warehouse Setup</a>). With it off, DomainMOD can't tell whether it's talking to your real server, so anyone able to intercept the connection could see your WHM API Token or Remote Access Key.</p>
+<p>If you see "Unable to connect to a remote server" instead, DomainMOD couldn't reach the server, so check your server's network connection and firewall. "A remote server didn't respond in time" means the server took too long to connect or answer, so check that the remote service is up and that your server can reach it, then try again.</p>
 <p><a name="dberr1045"></a><h4>
 I'm getting the error, "Database Connection Error: 1045"
 </h4></p>
