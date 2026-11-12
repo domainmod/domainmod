@@ -98,6 +98,7 @@ class GoDaddy
 
     public function getFullInfo($api_key, $api_secret, $domain)
     {
+        $domain_status = '';
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';

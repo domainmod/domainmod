@@ -178,7 +178,7 @@ if ($export_data === 1) {
                 $api_ip_name,
                 $api_ip_address,
                 $row->oname,
-                $total_domain_count,
+                $total_domains,
                 $is_default,
                 $row->notes,
                 $creation_type,

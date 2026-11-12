@@ -43,6 +43,7 @@ $generate = $_GET['generate'] ?? 0;
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
 // the Data Warehouse tables only exist once it has been built
+$account_list_raw = $zone_list_raw = $suspended_list_raw = '';
 $dwaccounts = new DomainMOD\DwAccounts();
 $dwzones = new DomainMOD\DwZones();
 $dw_built = $dwaccounts->checkForAccountTable() && $dwzones->checkForZoneTable();

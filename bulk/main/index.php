@@ -162,6 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     $date = new DomainMOD\Date();
 
+                    // set by the check below when a domain is already in DomainMOD
+                    $has_existing_domains = '0';
+
                     // cycle through domains here
                     foreach ($domain_array as $key => $new_domain) {
 

@@ -97,6 +97,7 @@ foreach ($result as $box) {
 
         <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $box->last_duration; ?><BR><?php
 
+        $hour = '';
         if ($box->next_run != '1970-01-01 00:00:00') {
             $next_run = $time->toUserTimezone($schedule->getDateOutput($box->next_run));
             $hour = date('H', strtotime($next_run));

@@ -145,9 +145,19 @@ if (!$result) {
 <a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a>&nbsp;&nbsp;<?php
 if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
-$result = $pdo->query("
+// the Data Warehouse tables only exist once it has been built
+$dwaccounts_check = new DomainMOD\DwAccounts();
+$dwzones_check = new DomainMOD\DwZones();
+$dw_built = $dwaccounts_check->checkForAccountTable() && $dwzones_check->checkForZoneTable();
+
+$result = !$dw_built ? 0 : $pdo->query("
     SELECT count(*)
     FROM dw_accounts")->fetchColumn();
+
+$no_results_accounts = 0;
+$no_results_dns_zones = 0;
+$temp_total_accounts = 0;
+$temp_total_dns_zones = 0;
 
 if (!$result) {
 
@@ -159,7 +169,7 @@ if (!$result) {
 
 }
 
-$result = $pdo->query("
+$result = !$dw_built ? 0 : $pdo->query("
     SELECT count(*)
     FROM dw_dns_records")->fetchColumn();
 
@@ -495,7 +505,8 @@ if ($no_results_build_info !== 1) { ?>
 
 }
 
-$result = $pdo->query("
+$dwstats_check = new DomainMOD\DwStats();
+$result = !$dwstats_check->checkForServerTotalsTable() ? array() : $pdo->query("
     SELECT dw_accounts, dw_dns_zones, dw_dns_records
     FROM dw_server_totals")->fetchAll();
 

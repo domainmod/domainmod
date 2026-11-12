@@ -152,6 +152,9 @@ class Namecheap
         // confirm that the api call was successful
         if ($array_results[0]['@attributes']['Status'] == "OK") {
 
+            // stays empty (manual renewal) if the domain isn't in the list
+            $autorenewal_result = '';
+
             foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $value) {
 
                 if (Domain::sameDomain($value['Name'] ?? '', $domain)) {

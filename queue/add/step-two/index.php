@@ -47,6 +47,14 @@ $pdo = $deeb->cnxx;
 $new_raid = (int) ($_REQUEST['new_raid'] ?? 0);
 $raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
 
+// the chosen account's registrar details, empty until an account is chosen (the form can be submitted without one)
+$api_registrar_name = $registrar_notes = '';
+$req_account_username = $req_account_password = $req_account_id = $req_reseller_id = $req_api_app_name = '0';
+$req_api_key = $req_api_secret = $req_ip_address = $lists_domains = '0';
+$ret_expiry_date = $ret_dns_servers = $ret_privacy_status = $ret_autorenewal_status = '0';
+$account_username = $account_password = $account_id = $reseller_id = $api_app_name = $api_key = $api_secret = '';
+$api_ip_id = 0;
+
 if ($new_raid !== 0) {
 
     $stmt = $pdo->prepare("
@@ -87,7 +95,7 @@ if ($new_raid !== 0) {
         $reseller_id = $result->reseller_id;
         $api_app_name = $result->api_app_name;
         $api_key = $result->api_key;
-        $api_secret = $result->api_key;
+        $api_secret = $result->api_secret;
         $api_ip_id = $result->api_ip_id;
 
     }

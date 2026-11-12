@@ -166,6 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                     }
                     $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
 
+                    $temp_name = '';
+
                     $stmt = $pdo->prepare("
                         SELECT `name`, field_name
                         FROM domain_fields
@@ -213,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-                    $_SESSION['s_message_success'] .= sprintf(_('Custom Field %s updated'), $name_array[0]) . '<BR>';
+                    $_SESSION['s_message_success'] .= sprintf(_('Custom Field %s updated'), $temp_name) . '<BR>';
 
                 } catch (Exception $e) {
 

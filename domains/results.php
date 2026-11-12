@@ -187,6 +187,9 @@ if ($export_data === 1) {
 
     if ($type == "inactive" || $type == "filtered") {
 
+        $total_initial_fee_export = 0;
+        $total_renewal_fee_export = 0;
+
         foreach ($result as $row) {
 
             $temp_initial_fee = $row->initial_fee * $row->conversion;
