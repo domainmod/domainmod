@@ -111,6 +111,25 @@ if ($result) {
 
 }
 
+// The Refresh Domain form posts here too, and is handled on its own, before the save handler.
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') === '1') {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+    $refresh = new DomainMOD\DomainRefresh();
+    list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
+
+    if ($refreshed) {
+        $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
+    } else {
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
+    }
+
+    header('Location: edit.php?did=' . $did);
+    exit;
+
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
@@ -691,6 +710,35 @@ echo $form->showInputHidden('new_domain', $new_domain);
 echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
+
+// Refresh Domain, in its own form (read-only users can't change data, so they don't see it).
+if (($_SESSION['s_read_only'] ?? '') != '1') {
+
+    $refresh = new DomainMOD\DomainRefresh();
+    $refresh_api_name = $refresh->registrarApiName($did); ?>
+
+    <BR><h3><?php echo _('Refresh Domain'); ?></h3><?php
+
+    if ($refresh_api_name !== '') {
+
+        echo sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto renewal status using your %s API, and update them here."), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
+        echo '&nbsp;' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.");
+        echo '&nbsp;' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+
+    } else {
+
+        echo _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto renewal status aren't available this way, so they're left as they are.");
+
+    } ?>
+    <BR><BR><?php
+
+    echo $form->showFormTop('');
+    echo $form->showInputHidden('refresh_domain', '1');
+    echo $form->showInputHidden('did', $did);
+    echo $form->showSubmitButton(_('Refresh Domain'), '', '');
+    echo $form->showFormBottom('');
+
+}
 
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);
