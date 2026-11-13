@@ -50,7 +50,14 @@ $pdo = $deeb->cnxx;
 
 $system->removeLegacyTempFiles();
 
-if (DEMO_INSTALLATION == false) {
+if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) {
+
+    // New code can expect database changes that only the upgrade makes, so tasks wait until it has run.
+    $log_message = 'Scheduled tasks are waiting for the database upgrade';
+    $log_extra = array('Database Version' => $system->getDbVersion(), 'Software Version' => SOFTWARE_VERSION);
+    $log->notice($log_message, $log_extra);
+
+} elseif (DEMO_INSTALLATION == false) {
 
     // A task's running flag is only cleared when it isn't really running (see Scheduler::clearStoppedTasks()).
     $schedule->clearStoppedTasks();

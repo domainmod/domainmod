@@ -105,11 +105,116 @@ class Scheduler
         }
     }
 
-    // The next time a task is due, worked out from now, as a UTC timestamp.
-    public function getNextRun($expression)
+    /*
+     * The next time a task is due, worked out from now in the task's time zone, as a UTC timestamp. A daily task (a fixed
+     * minute and hour) is worked out with PHP's own dates rather than the cron library, which can skip a whole day or
+     * return a repeated time twice when the clocks change. It runs once every day: just after the change when its time
+     * doesn't exist that day, and at the first occurrence when its time happens twice. $now (a Unix timestamp) is for
+     * testing.
+     */
+    public function getNextRun($expression, $timezone = 'UTC', $now = null)
     {
-        $cron = new \Cron\CronExpression($expression);
-        return $cron->getNextRunDate()->format('Y-m-d H:i:s');
+        $zone = $this->getZone($timezone);
+        $daily_time = $this->getDailyTime($expression);
+
+        if ($daily_time === null) {
+
+            $cron = new \Cron\CronExpression($expression);
+            $current_time = ($now === null) ? 'now' : (new \DateTimeImmutable('@' . (int) $now))->setTimezone($zone);
+            return $cron->getNextRunDate($current_time, 0, false, $zone->getName())->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+
+        }
+
+        list($hour, $minute) = $daily_time;
+        $now = ($now === null) ? time() : (int) $now;
+        // Today's date in the task's zone, then the days around it as plain calendar dates (worked out in UTC, so a clock
+        // change can't move them).
+        $today = new \DateTimeImmutable((new \DateTimeImmutable('@' . $now))->setTimezone($zone)->format('Y-m-d'), new \DateTimeZone('UTC'));
+        $next = null;
+
+        // Yesterday's time too, since a time just before midnight can be moved forward into today by a clock change.
+        foreach (array('-1 day', '+0 days', '+1 day') as $day) {
+
+            $candidate = $this->resolveLocalTime($today->modify($day)->format('Y-m-d'), $hour, $minute, $zone);
+            if ($candidate > $now && ($next === null || $candidate < $next)) $next = $candidate;
+
+        }
+
+        return gmdate('Y-m-d H:i:s', $next);
+    }
+
+    // The hour and minute of a daily task's expression (such as '0 7 * * *'), or null for any other expression.
+    public function getDailyTime($expression)
+    {
+        if (!preg_match('/^(\d{1,2}) (\d{1,2}) \* \* \*$/', trim((string) $expression), $matches)) return null;
+        if ((int) $matches[1] > 59 || (int) $matches[2] > 23) return null;
+
+        return array((int) $matches[2], (int) $matches[1]);
+    }
+
+    // Whether PHP accepts a time zone, including older names such as Canada/Pacific.
+    public function isValidZone($timezone)
+    {
+        try {
+
+            new \DateTimeZone((string) $timezone);
+            return (string) $timezone !== '';
+
+        } catch (\Exception $e) {
+
+            return false;
+
+        }
+    }
+
+    // A time zone PHP accepts, or UTC if it isn't one.
+    public function getZone($timezone)
+    {
+        try {
+
+            if ((string) $timezone === '') throw new \Exception('No time zone');
+            return new \DateTimeZone((string) $timezone);
+
+        } catch (\Exception $e) {
+
+            $log = new Log('class.scheduler');
+            $log_message = 'Invalid time zone for a scheduled task, so UTC was used';
+            $log_extra = array('Time Zone' => (string) $timezone);
+            $log->warning($log_message, $log_extra);
+
+            return new \DateTimeZone('UTC');
+
+        }
+    }
+
+    /*
+     * A local date and time in a zone, as a Unix timestamp. PHP moves a time that doesn't exist (the clocks went forward)
+     * forward by the size of the gap. For a time that happens twice (the clocks went back), PHP doesn't always pick the
+     * same occurrence, so if the same local time also existed at an earlier offset, the earlier moment is used.
+     */
+    protected function resolveLocalTime($date, $hour, $minute, $zone)
+    {
+        $local = new \DateTimeImmutable(sprintf('%s %02d:%02d:00', $date, $hour, $minute), $zone);
+        $timestamp = $local->getTimestamp();
+        $wall_time = $local->format('Y-m-d H:i');
+
+        // Up to and including a change at exactly this moment (PHP can return the moment of the change itself).
+        $transitions = $zone->getTransitions($timestamp - 86400, $timestamp + 1);
+        if (!is_array($transitions)) return $timestamp;
+
+        for ($i = 1; $i < count($transitions); $i++) {
+
+            $shift = $transitions[$i - 1]['offset'] - $transitions[$i]['offset'];
+            if ($shift <= 0) continue;
+
+            $earlier = $timestamp - $shift;
+            $earlier_time = (new \DateTimeImmutable('@' . $earlier))->setTimezone($zone);
+
+            if ($earlier_time->format('Y-m-d H:i') === $wall_time) return $earlier;
+
+        }
+
+        return $timestamp;
     }
 
     /*
@@ -123,7 +228,7 @@ class Scheduler
 
         if ($task && $task->active == '1') {
 
-            $next_run = $this->getNextRun($task->expression);
+            $next_run = $this->getNextRun($task->expression, $task->timezone);
 
         } else {
 
@@ -173,7 +278,7 @@ class Scheduler
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
+            SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active
             FROM scheduler
             WHERE id = :task_id
             ORDER BY sort_order ASC");

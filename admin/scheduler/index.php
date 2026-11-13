@@ -65,7 +65,7 @@ echo str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text);
 <BR>
 <?php
 $result = $pdo->query("
-        SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
+        SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC")->fetchAll();
 
@@ -85,7 +85,13 @@ foreach ($result as $box) {
         <?php echo $box->description ?>
     </div>
     <div>
-        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR>
+        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR><?php
+
+        // A daily task's time is shown in its own time zone, which may not be the viewer's.
+        $daily_time = $schedule->getDailyTime($box->expression);
+        if ($daily_time !== null) { ?>
+            <strong><?php echo _('Run Time'); ?>:</strong> <?php echo sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . htmlentities($schedule->getZone($box->timezone)->getName(), ENT_QUOTES, 'UTF-8') . ')'; ?><BR><?php
+        } ?>
 
         <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($box->active, $box->id); ?><BR><?php
 
@@ -98,10 +104,9 @@ foreach ($result as $box) {
 
         <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $box->last_duration; ?><BR><?php
 
-        $hour = '';
+        $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
         if ($box->next_run != '1970-01-01 00:00:00') {
             $next_run = $time->toUserTimezone($schedule->getDateOutput($box->next_run));
-            $hour = date('H', strtotime($next_run));
         } else {
             $next_run = '-';
 
@@ -116,7 +121,8 @@ foreach ($result as $box) {
                 <?php echo $form->showCsrfField(); ?>
                 <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
                     <?php echo $schedule->hourSelect($hour); ?>
-                </select><BR><BR><?php
+                </select><BR>
+                <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php
                 echo $form->showInputHidden('a', 'u');
                 echo $form->showInputHidden('id', $box->id);
                 echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
