@@ -1142,11 +1142,16 @@ class DomainQueue
         $stmt->execute();
     }
 
-    public function updateDnsServers($queue_domain_id, $dns_servers, $created_by)
+    /*
+     * The DNS profile for a list of DNS servers: array(id, created). An existing profile with the same servers (in any
+     * order and case) is used, otherwise a new one is created with $name and $notes. Refreshing a domain passes $lock,
+     * inside its transaction, so a matched profile is locked and checked again before it's used.
+     */
+    public function findOrCreateDnsProfile($dns_servers, $created_by, $name = '[created by queue]', $notes = 'Created by queue.', $lock = false)
     {
         $pdo = $this->deeb->cnxx;
 
-        $has_match = '';
+        $matches = array();
 
         // lower case the DNS servers for accurate matching
         $lower_value = array();
@@ -1175,11 +1180,10 @@ class DomainQueue
                 }
                 $filtered_dns = $lower_value;
 
-                // If there's a match use it
+                // If there's a match use it (the last match wins)
                 if (array_count_values($filtered_dns) == array_count_values($dns_servers)) {
 
-                    $new_dns_id = $row->id;
-                    $has_match = '1';
+                    $matches[] = $row->id;
 
                 }
 
@@ -1187,8 +1191,13 @@ class DomainQueue
 
         }
 
+        // With $lock, each match is locked and checked again, newest choice first, since a profile can change between
+        // the read above and the caller's update.
+        $new_dns_id = $lock ? $this->lockMatchingDnsProfile(array_reverse($matches), $dns_servers) : end($matches);
+        $created = false;
+
         // If the DNS Profile doesn't exist create a new one
-        if ($has_match != '1') {
+        if (!$new_dns_id) {
 
             $new_servers = array();
             $count = 0;
@@ -1210,7 +1219,7 @@ class DomainQueue
                 (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers,
                  creation_type_id, created_by, insert_time)
                 VALUES
-                ('[created by queue]', :new_servers0, :new_servers1, :new_servers2, :new_servers3, :new_servers4,
+                (:name, :new_servers0, :new_servers1, :new_servers2, :new_servers3, :new_servers4,
                  :new_servers5, :new_servers6, :new_servers7, :new_servers8, :new_servers9, :notes, :number_of_servers,
                  :creation_type_id, :created_by, :insert_time)");
 
@@ -1225,8 +1234,9 @@ class DomainQueue
             if (!isset($new_servers[8])) $new_servers[8] = '';
             if (!isset($new_servers[9])) $new_servers[9] = '';
 
-            $temp_notes = $this->time->timeBasic() . ' - Created by queue.';
+            $temp_notes = $this->time->timeBasic() . ' - ' . $notes;
 
+            $stmt->bindValue('name', $name, \PDO::PARAM_STR);
             $stmt->bindValue('new_servers0', $new_servers[0], \PDO::PARAM_STR);
             $stmt->bindValue('new_servers1', $new_servers[1], \PDO::PARAM_STR);
             $stmt->bindValue('new_servers2', $new_servers[2], \PDO::PARAM_STR);
@@ -1246,8 +1256,46 @@ class DomainQueue
             $stmt->execute();
 
             $new_dns_id = $pdo->lastInsertId('id');
+            $created = true;
 
         }
+
+        return array($new_dns_id, $created);
+    }
+
+    // The first of $dns_ids whose profile still has exactly $dns_servers (already lower case), locked for the rest of the
+    // transaction, or 0 when none does.
+    protected function lockMatchingDnsProfile($dns_ids, $dns_servers)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10
+            FROM dns
+            WHERE id = :dns_id
+            FOR UPDATE");
+
+        foreach ($dns_ids as $dns_id) {
+
+            $stmt->bindValue('dns_id', $dns_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch();
+            $stmt->closeCursor();
+            if (!$row) continue;
+
+            $existing_dns = array_map('strtolower', array_filter(array($row->dns1, $row->dns2, $row->dns3, $row->dns4,
+                $row->dns5, $row->dns6, $row->dns7, $row->dns8, $row->dns9, $row->dns10)));
+
+            if (array_count_values($existing_dns) == array_count_values($dns_servers)) return $dns_id;
+
+        }
+
+        return 0;
+    }
+
+    public function updateDnsServers($queue_domain_id, $dns_servers, $created_by)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        list($new_dns_id) = $this->findOrCreateDnsProfile($dns_servers, $created_by);
 
         $stmt = $pdo->prepare("
             UPDATE domain_queue

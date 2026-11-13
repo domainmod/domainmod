@@ -407,6 +407,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Domain' => __DIR__ . '/../..' . '/classes/DomainMOD/Domain.php',
         'DomainMOD\\DomainAdd' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainAdd.php',
         'DomainMOD\\DomainQueue' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainQueue.php',
+        'DomainMOD\\DomainRefresh' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainRefresh.php',
         'DomainMOD\\DreamHost' => __DIR__ . '/../..' . '/classes/DomainMOD/DreamHost.php',
         'DomainMOD\\DwAccounts' => __DIR__ . '/../..' . '/classes/DomainMOD/DwAccounts.php',
         'DomainMOD\\DwBuild' => __DIR__ . '/../..' . '/classes/DomainMOD/DwBuild.php',

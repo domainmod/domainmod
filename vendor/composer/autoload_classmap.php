@@ -194,6 +194,7 @@ return array(
     'DomainMOD\\Domain' => $baseDir . '/classes/DomainMOD/Domain.php',
     'DomainMOD\\DomainAdd' => $baseDir . '/classes/DomainMOD/DomainAdd.php',
     'DomainMOD\\DomainQueue' => $baseDir . '/classes/DomainMOD/DomainQueue.php',
+    'DomainMOD\\DomainRefresh' => $baseDir . '/classes/DomainMOD/DomainRefresh.php',
     'DomainMOD\\DreamHost' => $baseDir . '/classes/DomainMOD/DreamHost.php',
     'DomainMOD\\DwAccounts' => $baseDir . '/classes/DomainMOD/DwAccounts.php',
     'DomainMOD\\DwBuild' => $baseDir . '/classes/DomainMOD/DwBuild.php',
