@@ -32,6 +32,12 @@ class DomainQueue
     public $system;
     public $time;
 
+    // Domains added with RDAP: rows attempted per run, rows read per run (so rows skipped for a busy server don't use
+    // up the batch), and the seconds a run may spend on them
+    const RDAP_BATCH = 100;
+    const RDAP_CANDIDATES = 1000;
+    const RDAP_BUDGET = 240;
+
     public function __construct()
     {
         $this->api = new Api();
@@ -486,9 +492,369 @@ class DomainQueue
 
         }
 
+        // domains added with RDAP go after the API registrars' domains, so API imports never wait behind them
+        $this->processRdapQueue();
+
         $this->copyToHistoryDomain();
 
         return _('Domain Queue Processed') . '<BR>';
+    }
+
+    /*
+     * Domains added with RDAP (queue/add/rdap.php) have no registrar or account yet: RDAP fills in the expiry date and
+     * name servers and names the registrar, then RdapAssets finds or creates the registrar and account. Each run takes
+     * at most RDAP_BATCH rows within a time budget; rows are claimed one at a time, so overlapping runs can't both
+     * process a row; and a server that rate-limits or fails is skipped for the rest of the run.
+     */
+    public function processRdapQueue()
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $rdap_api_registrar_id = $this->getRdapApiRegistrarId();
+        if (!$rdap_api_registrar_id) return;
+
+        // never-tried rows first (oldest first), then retries, least recently tried first
+        $stmt = $pdo->prepare("
+            SELECT id, domain, tld, owner_id, created_by
+            FROM domain_queue
+            WHERE api_registrar_id = :api_registrar_id
+              AND account_id = '0'
+              AND processing = '0'
+              AND ready_to_import = '0'
+              AND finished = '0'
+              AND copied_to_history = '0'
+              AND already_in_domains = '0'
+              AND already_in_queue = '0'
+            ORDER BY (last_attempt > '1970-01-01 00:00:00'), last_attempt, id
+            LIMIT " . self::RDAP_CANDIDATES);
+        $stmt->bindValue('api_registrar_id', $rdap_api_registrar_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        if (!$result) return;
+
+        $started = microtime(true);
+        $budget = self::RDAP_BUDGET;
+        $max_execution_time = (int) ini_get('max_execution_time');
+
+        if ($max_execution_time > 0) {
+
+            // keep a quarter of what's left (at most a minute) for the rest of the run
+            $remaining = $max_execution_time - ($started - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $started));
+            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4)));
+
+        }
+
+        $log_message = '[START] Processing RDAP domains in the Domain Queue';
+        $this->log->notice($log_message);
+
+        $rdap = new Rdap();
+        $rdap_assets = new RdapAssets();
+        $skipped_servers = array();
+        $attempted = 0;
+
+        foreach ($result as $row) {
+
+            if ($attempted >= self::RDAP_BATCH || microtime(true) - $started >= $budget) break;
+
+            // the bootstrap download (the first time serverFor() needs it) also counts against the budget
+            $ascii_domain = Domain::forApi($row->domain);
+            $server = ($ascii_domain !== '') ? $rdap->serverFor($ascii_domain, $started + $budget) : '';
+            if ($server !== '' && isset($skipped_servers[$server])) continue;
+            if (microtime(true) - $started >= $budget) break;
+
+            try {
+
+                $claimed = $this->claimRdapRow($row->id);
+
+            } catch (\Throwable $e) {
+
+                $this->logRdapError('Unable to claim an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
+                $claimed = false;
+
+            }
+
+            if (!$claimed) continue;
+
+            $attempted++;
+
+            /*
+             * Every database write for the row is inside a per-row handler, so one failure is logged and the row is
+             * left for the next run, instead of stopping the whole run with the row still claimed. The lookup never runs
+             * past the end of the budget.
+             */
+            try {
+
+                $lookup = $rdap->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
+
+                if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
+
+                    $this->releaseRdapRow($row->id, ($lookup['status'] === 'rate_limited') ? 'retry_rate_limited' : 'retry_error');
+                    if ($server !== '') $skipped_servers[$server] = true;
+                    continue;
+
+                } elseif ($lookup['status'] === 'no_server') {
+
+                    $this->markInvalidDomain($row->id, 'no_server|' . mb_substr((string) $row->tld, 0, 60));
+                    continue;
+
+                } elseif ($lookup['status'] === 'not_found') {
+
+                    $this->markInvalidDomain($row->id, 'not_found');
+                    continue;
+
+                } elseif ($lookup['expiry_date'] === '') {
+
+                    $this->markInvalidDomain($row->id, 'no_expiry');
+                    continue;
+
+                }
+
+                // network work (the IP lookup) happens before the lock, which then only covers database work
+                $ip_id = $this->updateIp($row->id, $row->domain, $row->created_by);
+
+            } catch (\Throwable $e) {
+
+                $this->logRdapError('Unable to process an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
+                $this->releaseRdapRow($row->id, 'retry_error');
+                continue;
+
+            }
+
+            if (!$this->getRdapLock()) {
+
+                $this->releaseRdapRow($row->id, 'retry_lock');
+                continue;
+
+            }
+
+            $imported = false;
+
+            try {
+
+                $pdo->beginTransaction();
+
+                list($registrar_id, $account_id) = $rdap_assets->resolve($lookup['registrar_name'],
+                    $lookup['registrar_iana_id'], $lookup['registrar_url'], $row->owner_id, $row->created_by);
+
+                $stmt = $pdo->prepare("
+                    UPDATE domain_queue
+                    SET registrar_id = :registrar_id,
+                        account_id = :account_id
+                    WHERE id = :queue_domain_id");
+                $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
+                $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+                $stmt->bindValue('queue_domain_id', $row->id, \PDO::PARAM_INT);
+                $stmt->execute();
+
+                // a domain with no name servers still imports, with the usual placeholders
+                $dns_servers = $lookup['name_servers'] ?: array('no.dns-servers.1', 'no.dns-servers.2');
+
+                $this->updateExpirationDate($row->id, $lookup['expiry_date']);
+                $dns_id = $this->updateDnsServers($row->id, $dns_servers, $row->created_by);
+                $cat_id = $this->updateCategory($row->id, $row->created_by);
+                $hosting_id = $this->updateHosting($row->id, $row->created_by);
+
+                // RDAP doesn't give WHOIS privacy or auto renewal, so both are No (see the RDAP page's warning)
+                $this->updatePrivacy($row->id, '0');
+                $this->updateRenewStatus($row->id, '0');
+
+                if ($registrar_id && $account_id && $dns_id && $ip_id && $cat_id && $hosting_id) {
+
+                    $stmt = $pdo->prepare("
+                        UPDATE domain_queue
+                        SET ready_to_import = '1',
+                            message = ''
+                        WHERE id = :queue_domain_id");
+                    $stmt->bindValue('queue_domain_id', $row->id, \PDO::PARAM_INT);
+                    $stmt->execute();
+
+                    /*
+                     * The import happens in the same transaction, so a failure (or a run that dies) leaves the row as it
+                     * was, still waiting for RDAP, instead of prepared but never imported. The domain may have reached
+                     * the main domain table since it was queued, so check again.
+                     */
+                    $existing_domain_id = $this->getDomainIdByName($row->domain);
+
+                    if ($existing_domain_id) {
+
+                        $this->markAlreadyInDomains($row->id, $existing_domain_id);
+
+                    } else {
+
+                        $new_domain_id = $this->importToMainDb($row->id);
+
+                        // importToMainDb() returns a message instead of an id when it can't import the row
+                        if (!ctype_digit((string) $new_domain_id)) {
+
+                            throw new \RuntimeException('The domain could not be imported');
+
+                        }
+
+                        $this->updateNewDomainId($row->id, $new_domain_id);
+                        $this->markFinishedDomain($row->id, $row->domain, $lookup['expiry_date'], $dns_id, $ip_id,
+                            $cat_id, $hosting_id, '0', '0');
+
+                    }
+
+                    $imported = true;
+
+                }
+
+                if ($imported) {
+
+                    $pdo->commit();
+                    $rdap_assets->remember();
+
+                } else {
+
+                    // nothing usable to import yet: undo the registrar and account changes and retry later
+                    $pdo->rollBack();
+                    $rdap_assets->forget();
+
+                }
+
+            } catch (\Throwable $e) {
+
+                try {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                } catch (\Throwable $rollback_error) {
+                }
+
+                $rdap_assets->forget();
+                $this->logRdapError('Unable to save an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
+                $imported = false;
+
+            }
+
+            $this->releaseRdapLock();
+
+            if (!$imported) $this->releaseRdapRow($row->id, 'retry_error');
+
+        }
+
+        $log_message = '[END] Processing RDAP domains in the Domain Queue';
+        $this->log->notice($log_message);
+    }
+
+    // The id of the RDAP source in api_registrars, or 0 before the database update that adds it
+    public function getRdapApiRegistrarId()
+    {
+        return (int) $this->deeb->cnxx->query("
+            SELECT id
+            FROM api_registrars
+            WHERE `name` = 'RDAP'
+            LIMIT 1")->fetchColumn();
+    }
+
+    // Claims one row for this run (true) unless another run already has it or it's no longer waiting (false)
+    public function claimRdapRow($queue_domain_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            UPDATE domain_queue
+            SET processing = '1',
+                last_attempt = :last_attempt
+            WHERE id = :queue_domain_id
+              AND processing = '0'
+              AND ready_to_import = '0'
+              AND finished = '0'
+              AND copied_to_history = '0'
+              AND already_in_domains = '0'
+              AND already_in_queue = '0'");
+        $bind_timestamp = $this->time->stamp();
+        $stmt->bindValue('last_attempt', $bind_timestamp, \PDO::PARAM_STR);
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    // Leaves a row for a later run, with the reason it's waiting (never throws, so a failure can't stop the run)
+    public function releaseRdapRow($queue_domain_id, $message)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        try {
+
+            $stmt = $pdo->prepare("
+                UPDATE domain_queue
+                SET processing = '0',
+                    message = :message
+                WHERE id = :queue_domain_id");
+            $stmt->bindValue('message', $message, \PDO::PARAM_STR);
+            $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+        } catch (\Throwable $e) {
+
+            $this->logRdapError('Unable to release an RDAP domain in the Domain Queue', '', $e);
+
+        }
+    }
+
+    // Serialises finding or creating registrars and accounts across overlapping queue runs (true when held)
+    public function getRdapLock()
+    {
+        try {
+
+            return (string) $this->deeb->cnxx->query("SELECT GET_LOCK('domainmod_rdap_assets', 10)")->fetchColumn() === '1';
+
+        } catch (\Throwable $e) {
+
+            $this->logRdapError('Unable to get the RDAP lock for the Domain Queue', '', $e);
+            return false;
+
+        }
+    }
+
+    public function releaseRdapLock()
+    {
+        try {
+
+            $this->deeb->cnxx->query("SELECT RELEASE_LOCK('domainmod_rdap_assets')");
+
+        } catch (\Throwable $e) {
+
+            $this->logRdapError('Unable to release the RDAP lock for the Domain Queue', '', $e);
+
+        }
+    }
+
+    // The text for a stored RDAP message code, translated for the viewing user (escape it when printing)
+    public function getRdapMessage($code)
+    {
+        $code_parts = explode('|', (string) $code, 2);
+
+        if ($code_parts[0] === '') {
+            $message = '';
+        } elseif ($code_parts[0] === 'no_server') {
+            $message = sprintf(_('No RDAP server for .%s domains'), $code_parts[1] ?? '');
+        } elseif ($code_parts[0] === 'no_expiry') {
+            $message = _('RDAP has no expiry date for this domain');
+        } elseif ($code_parts[0] === 'not_found') {
+            $message = _('Domain not found in RDAP');
+        } elseif ($code_parts[0] === 'retry_rate_limited') {
+            $message = _('Will retry: the RDAP server is limiting requests');
+        } elseif ($code_parts[0] === 'retry_error') {
+            $message = _('Will retry: the RDAP lookup failed');
+        } elseif ($code_parts[0] === 'retry_lock') {
+            $message = _('Will retry: another Domain Queue run was busy');
+        } else {
+            $message = _('RDAP lookup failed');
+        }
+
+        return $message;
+    }
+
+    // Logging never stops the run (see processQueueListRow())
+    protected function logRdapError($log_message, $domain, $error)
+    {
+        try {
+            $log_extra = array('Domain' => $domain, 'Error' => $error->getMessage());
+            $this->log->error($log_message, $log_extra);
+        } catch (\Throwable $log_error) {
+        }
     }
 
     public function getQueueList()
@@ -508,9 +874,11 @@ class DomainQueue
     public function getQueueDomain()
     {
         return $this->deeb->cnxx->query("
-            SELECT dq.id, dq.api_registrar_id, dq.domain, dq.account_id, dq.created_by, ar.name AS api_registrar_name
+            SELECT dq.id, dq.api_registrar_id, dq.domain, dq.owner_id, dq.registrar_id, dq.account_id, dq.created_by,
+                ar.name AS api_registrar_name
             FROM domain_queue AS dq, api_registrars AS ar
             WHERE dq.api_registrar_id = ar.id
+              AND ar.name != 'RDAP'
               AND dq.processing = '0'
               AND dq.ready_to_import = '0'
               AND dq.finished = '0'
@@ -553,7 +921,8 @@ class DomainQueue
               AND finished = '0'
               AND copied_to_history = '0'
               AND already_in_domains = '0'
-              AND already_in_queue = '0'");
+              AND already_in_queue = '0'
+              AND api_registrar_id NOT IN (SELECT id FROM api_registrars WHERE `name` = 'RDAP')");
     }
 
     public function updateDomain($queue_domain_id, $domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by)
@@ -1264,9 +1633,26 @@ class DomainQueue
 
     }
 
-    public function markInvalidDomain($queue_domain_id)
+    public function markInvalidDomain($queue_domain_id, $message = '')
     {
         $pdo = $this->deeb->cnxx;
+
+        // RDAP rows also record why they failed (see getRdapMessage())
+        if ($message !== '') {
+
+            $stmt = $pdo->prepare("
+                UPDATE domain_queue
+                SET finished = '1',
+                    invalid_domain = '1',
+                    processing = '0',
+                    message = :message
+                WHERE id = :queue_domain_id");
+            $stmt->bindValue('message', $message, \PDO::PARAM_STR);
+            $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            return;
+
+        }
 
         $stmt = $pdo->prepare("
             UPDATE domain_queue
@@ -1337,9 +1723,9 @@ class DomainQueue
         $pdo = $this->deeb->cnxx;
 
         $result = $pdo->query("
-            SELECT api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
-                dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, created_by,
-                insert_time
+            SELECT id, api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
+                dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
+                message, created_by, insert_time
             FROM domain_queue
             WHERE finished = '1'
               AND copied_to_history = '0'
@@ -1355,12 +1741,12 @@ class DomainQueue
             $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_history
                 (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
-                 dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, created_by,
-                 insert_time)
+                 dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
+                 message, created_by, insert_time)
                 VALUES
                 (:api_registrar_id, :domain_id, :owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date,
                  :cat_id, :dns_id, :ip_id, :hosting_id, :autorenew, :privacy, :already_in_domains,
-                 :already_in_queue, :created_by, :insert_time)");
+                 :already_in_queue, :invalid_domain, :message, :created_by, :insert_time)");
             $stmt->bindParam('api_registrar_id', $bind_api_registrar_id, \PDO::PARAM_INT);
             $stmt->bindParam('domain_id', $bind_domain_id, \PDO::PARAM_INT);
             $stmt->bindParam('owner_id', $bind_owner_id, \PDO::PARAM_INT);
@@ -1377,38 +1763,71 @@ class DomainQueue
             $stmt->bindParam('privacy', $bind_privacy, \PDO::PARAM_INT);
             $stmt->bindParam('already_in_domains', $bind_already_in_domains, \PDO::PARAM_INT);
             $stmt->bindParam('already_in_queue', $bind_already_in_queue, \PDO::PARAM_INT);
+            $stmt->bindParam('invalid_domain', $bind_invalid_domain, \PDO::PARAM_INT);
+            $stmt->bindParam('message', $bind_message, \PDO::PARAM_STR);
             $stmt->bindParam('created_by', $bind_created_by, \PDO::PARAM_INT);
             $stmt->bindParam('insert_time', $bind_insert_time, \PDO::PARAM_STR);
 
-            foreach ($result as $row) {
-
-                $bind_api_registrar_id = $row->api_registrar_id;
-                $bind_domain_id = $row->domain_id;
-                $bind_owner_id = $row->owner_id;
-                $bind_registrar_id = $row->registrar_id;
-                $bind_account_id = $row->account_id;
-                $bind_domain = $row->domain;
-                $bind_tld = $row->tld;
-                $bind_expiry_date = $row->expiry_date;
-                $bind_cat_id = $row->cat_id;
-                $bind_dns_id = $row->dns_id;
-                $bind_ip_id = $row->ip_id;
-                $bind_hosting_id = $row->hosting_id;
-                $bind_autorenew = $row->autorenew;
-                $bind_privacy = $row->privacy;
-                $bind_already_in_domains = $row->already_in_domains;
-                $bind_already_in_queue = $row->already_in_queue;
-                $bind_created_by = $row->created_by;
-                $bind_insert_time = $row->insert_time;
-                $stmt->execute();
-
-            }
-
-            $this->deeb->cnxx->query("
+            // each row is marked copied only when this run copies it (and in the same transaction), so overlapping
+            // queue runs can neither skip a row that finished after the SELECT nor copy a row twice
+            $stmt2 = $pdo->prepare("
                 UPDATE domain_queue
                 SET copied_to_history = '1'
-                WHERE finished = '1'
+                WHERE id = :queue_domain_id
                   AND copied_to_history = '0'");
+
+            foreach ($result as $row) {
+
+                try {
+
+                    $pdo->beginTransaction();
+                    $stmt2->bindValue('queue_domain_id', $row->id, \PDO::PARAM_INT);
+                    $stmt2->execute();
+
+                    if ($stmt2->rowCount() !== 1) {
+
+                        $pdo->rollBack();
+                        continue;
+
+                    }
+
+                    $bind_api_registrar_id = $row->api_registrar_id;
+                    $bind_domain_id = $row->domain_id;
+                    $bind_owner_id = $row->owner_id;
+                    $bind_registrar_id = $row->registrar_id;
+                    $bind_account_id = $row->account_id;
+                    $bind_domain = $row->domain;
+                    $bind_tld = $row->tld;
+                    $bind_expiry_date = $row->expiry_date;
+                    $bind_cat_id = $row->cat_id;
+                    $bind_dns_id = $row->dns_id;
+                    $bind_ip_id = $row->ip_id;
+                    $bind_hosting_id = $row->hosting_id;
+                    $bind_autorenew = $row->autorenew;
+                    $bind_privacy = $row->privacy;
+                    $bind_already_in_domains = $row->already_in_domains;
+                    $bind_already_in_queue = $row->already_in_queue;
+                    $bind_invalid_domain = $row->invalid_domain;
+                    $bind_message = $row->message;
+                    $bind_created_by = $row->created_by;
+                    $bind_insert_time = $row->insert_time;
+                    $stmt->execute();
+                    $pdo->commit();
+
+                } catch (\Throwable $e) {
+
+                    try {
+                        if ($pdo->inTransaction()) $pdo->rollBack();
+                    } catch (\Throwable $rollback_error) {
+                    }
+
+                    $log_message = 'Unable to copy a Domain Queue result to the history table';
+                    $log_extra = array('Domain' => $row->domain, 'Error' => $e->getMessage());
+                    $this->log->error($log_message, $log_extra);
+
+                }
+
+            }
 
         }
     }

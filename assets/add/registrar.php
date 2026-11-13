@@ -34,6 +34,7 @@ $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $validate = new DomainMOD\Validate();
+$queue = new DomainMOD\DomainQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -46,6 +47,8 @@ $pdo = $deeb->cnxx;
 $new_registrar = isset($_POST['new_registrar']) ? $sanitize->text($_POST['new_registrar']) : '';
 $new_url = isset($_POST['new_url']) ? $sanitize->text($_POST['new_url']) : '';
 $new_api_registrar_id = (int) ($_POST['new_api_registrar_id'] ?? 0);
+// RDAP is a Domain Queue source, not a registrar's API, so it can't be chosen here
+if ($new_api_registrar_id !== 0 && $new_api_registrar_id === $queue->getRdapApiRegistrarId()) $new_api_registrar_id = 0;
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -105,6 +108,7 @@ echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsan
 $result = $pdo->query("
     SELECT id, `name`
     FROM api_registrars
+    WHERE `name` != 'RDAP'
     ORDER BY `name` ASC")->fetchAll();
 
 echo $form->showDropdownTop('new_api_registrar_id', _('API Support'), _('If the registrar has an API please select it from the list below.'), '', '');

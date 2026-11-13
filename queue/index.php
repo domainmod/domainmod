@@ -42,6 +42,7 @@ require_once DIR_INC . '/settings/queue-main.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;
+$queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 
 $list_id = (int) ($_GET['list_id'] ?? 0);
 $dell = (int) ($_GET['dell'] ?? 0);
@@ -71,13 +72,13 @@ $result_domains = $pdo->query("
     SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
         dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
         dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue, dq.invalid_domain,
-        dq.copied_to_history, dq.created_by, dq.insert_time, r.name AS registrar_name,
+        dq.copied_to_history, dq.message, dq.created_by, dq.insert_time, r.name AS registrar_name,
         ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
-    FROM domain_queue AS dq, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
-    WHERE dq.registrar_id = r.id
-      AND dq.account_id = ra.id
-      AND dq.owner_id = o.id
-      AND dq.api_registrar_id = ar.id
+    FROM domain_queue AS dq
+    JOIN api_registrars AS ar ON dq.api_registrar_id = ar.id
+    LEFT JOIN registrars AS r ON dq.registrar_id = r.id
+    LEFT JOIN registrar_accounts AS ra ON dq.account_id = ra.id
+    LEFT JOIN owners AS o ON dq.owner_id = o.id
     ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC")->fetchAll();
 
 if ($export_data === 1) {
@@ -207,6 +208,7 @@ if ($export_data === 1) {
                     } elseif ($row_domains->invalid_domain === 1) {
 
                         $export_processing = _('Invalid Domain');
+                        if ($row_domains->message != '') $export_processing .= ': ' . $queue->getRdapMessage($row_domains->message);
 
                     } else {
 
@@ -223,10 +225,15 @@ if ($export_data === 1) {
                     } else {
 
                         $export_processing = _('Pending');
+                        if ($row_domains->message != '') $export_processing .= ': ' . $queue->getRdapMessage($row_domains->message);
 
                     }
 
                 }
+
+                // RDAP rows find their registrar and account when they're processed
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found by RDAP');
+                $export_registrar = $row_domains->registrar_name ?? $rdap_unresolved;
 
                 if ($row_domains->expiry_date == '1970-01-01') {
 
@@ -380,7 +387,7 @@ if ($export_data === 1) {
 
                 }
 
-                $account_export = $assets->getUsername($row_domains->account_id);
+                $account_export = $row_domains->account_id ? $assets->getUsername($row_domains->account_id) : $rdap_unresolved;
 
                 if ($row_domains->created_by == '0') {
 
@@ -396,7 +403,7 @@ if ($export_data === 1) {
                     $export_processing,
                     $row_domains->domain,
                     $row_domains->api_registrar_name,
-                    $row_domains->registrar_name,
+                    $export_registrar,
                     $row_domains->owner,
                     $account_export,
                     $row_domains->tld,
@@ -523,10 +530,12 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
 
 } ?>
 <?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE); ?>
+<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can paste a list of your domains and their details are looked up using RDAP instead."); ?>
 
 <?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <?php
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 if ($_SESSION['s_domains_in_queue'] == '1') { ?>
@@ -689,6 +698,7 @@ if (!$result_domains) {
                     } elseif ($row_domains->invalid_domain === 1) {
 
                         echo $layout->highlightText('red', _('Invalid Domain'));
+                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
 
                     } else {
 
@@ -705,17 +715,19 @@ if (!$result_domains) {
                     } else {
 
                         echo _('Pending');
+                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
 
                     }
 
-                } ?>
+                }
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found by RDAP'); ?>
             </td>
             <td>
                 <?php echo $row_domains->domain; ?>
             </td>
             <td>
-                <?php echo $row_domains->registrar_name; ?>, <?php echo $row_domains->owner; ?>
-                (<?php echo $row_domains->username; ?>)
+                <?php echo $row_domains->registrar_name ?? $rdap_unresolved; ?>, <?php echo $row_domains->owner; ?>
+                (<?php echo $row_domains->username ?? $rdap_unresolved; ?>)
             </td>
             <td><?php
                 if ($row_domains->expiry_date == '1970-01-01') {

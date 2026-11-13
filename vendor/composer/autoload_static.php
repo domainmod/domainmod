@@ -443,6 +443,8 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Ovh' => __DIR__ . '/../..' . '/classes/DomainMOD/Ovh.php',
         'DomainMOD\\Porkbun' => __DIR__ . '/../..' . '/classes/DomainMOD/Porkbun.php',
         'DomainMOD\\QueryBuild' => __DIR__ . '/../..' . '/classes/DomainMOD/QueryBuild.php',
+        'DomainMOD\\Rdap' => __DIR__ . '/../..' . '/classes/DomainMOD/Rdap.php',
+        'DomainMOD\\RdapAssets' => __DIR__ . '/../..' . '/classes/DomainMOD/RdapAssets.php',
         'DomainMOD\\RegistrarResponse' => __DIR__ . '/../..' . '/classes/DomainMOD/RegistrarResponse.php',
         'DomainMOD\\Reporting' => __DIR__ . '/../..' . '/classes/DomainMOD/Reporting.php',
         'DomainMOD\\ResellerClub' => __DIR__ . '/../..' . '/classes/DomainMOD/ResellerClub.php',

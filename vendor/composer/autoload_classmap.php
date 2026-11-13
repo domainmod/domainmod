@@ -230,6 +230,8 @@ return array(
     'DomainMOD\\Ovh' => $baseDir . '/classes/DomainMOD/Ovh.php',
     'DomainMOD\\Porkbun' => $baseDir . '/classes/DomainMOD/Porkbun.php',
     'DomainMOD\\QueryBuild' => $baseDir . '/classes/DomainMOD/QueryBuild.php',
+    'DomainMOD\\Rdap' => $baseDir . '/classes/DomainMOD/Rdap.php',
+    'DomainMOD\\RdapAssets' => $baseDir . '/classes/DomainMOD/RdapAssets.php',
     'DomainMOD\\RegistrarResponse' => $baseDir . '/classes/DomainMOD/RegistrarResponse.php',
     'DomainMOD\\Reporting' => $baseDir . '/classes/DomainMOD/Reporting.php',
     'DomainMOD\\ResellerClub' => $baseDir . '/classes/DomainMOD/ResellerClub.php',

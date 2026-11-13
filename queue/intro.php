@@ -29,6 +29,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
+$queue = new DomainMOD\DomainQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -36,6 +37,7 @@ require_once DIR_INC . '/settings/queue-info.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;
+$queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <html>
@@ -48,12 +50,14 @@ $pdo = $deeb->cnxx;
 <?php echo sprintf(_("The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."), SOFTWARE_TITLE) . '&nbsp;'; ?>
 <?php echo _('All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains.'); ?><BR>
 <BR>
+<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can still add your domains by pasting a list of them, and their details are looked up using RDAP, the public replacement for WHOIS (WHOIS privacy and auto renewal are set to No, since RDAP doesn't include them).") . '<BR><BR>'; ?>
 <?php echo sprintf(_("If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."), '<a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a>'); ?><BR>
 <BR>
 <?php
 $result = $pdo->query("
     SELECT `name`
     FROM api_registrars
+    WHERE `name` != 'RDAP'
     ORDER BY name ASC")->fetchAll();
 
 $supported_registrars = $supported_registrars ?? '';
@@ -72,6 +76,7 @@ $supported_registrars = substr($supported_registrars, 2);
 <?php echo sprintf(_('For more information please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<?php if ($queue_rdap_available) { ?>&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
