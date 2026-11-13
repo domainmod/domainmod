@@ -276,7 +276,7 @@ if ($no_results_build_info !== 1) { ?>
 
     if ($result_count == 0) {
 
-        echo "<BR>" . _("You don't currently have any servers setup in your Data Warehouse.") . " <a href=\"add-server.php\">" . _('Click here to add one') . "</a>.";
+        echo "<BR>" . _("You don't currently have any servers set up in your Data Warehouse.") . " <a href=\"add-server.php\">" . _('Click here to add one') . "</a>.";
 
     } else {
 

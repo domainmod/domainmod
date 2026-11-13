@@ -48,7 +48,7 @@ $message_html .= "
                         sans-serif\">";
 $message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
     SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-$message_html .= _('Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . '<BR>';
+$message_html .= _('Your password has been reset and you can find it below. The next time you log in you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . '<BR>';
 $message_html .= "<BR>";
 $message_html .= _('URL') . ": <a title=\"" . SOFTWARE_TITLE . "\" target=\"_blank\" href=\"" . $full_url . "/\">" .
     $full_url . "/</a><BR>";
@@ -94,7 +94,7 @@ $message_html .= "<BR></font>
 
 $message_text = $message_text ?? '';
 $message_text .= $headline . "\n\n";
-$message_text .= _('Your password has been reset and you can find it below. The next time you login you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . "\n\n";
+$message_text .= _('Your password has been reset and you can find it below. The next time you log in you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . "\n\n";
 $message_text .= "URL: " . $full_url . "\n";
 $message_text .= "\n";
 $message_text .= _('Your Username') . ": " . $username . "\n";

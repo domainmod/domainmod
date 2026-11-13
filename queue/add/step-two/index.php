@@ -416,7 +416,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($new_raid !== 0) { ?>
 
     <strong><?php echo _('API Requirements'); ?></strong><BR>
-    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must to be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
+    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
 
     <ul><?php
 

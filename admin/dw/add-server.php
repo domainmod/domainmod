@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 echo $form->showInputText('new_name', _('Name') . ' (100)', _('Enter the display name for this server'), $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the host name of your WHM installation (ie. server1.example.com).'), $unsanitize->text($new_host), '100', '', '1', '', '');
+echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the host name of your WHM installation (i.e. server1.example.com).'), $unsanitize->text($new_host), '100', '', '1', '', '');
 echo $form->showDropdownTop('new_protocol', _('Protocol') . ' (5)', _('Enter the protocol you connect with.'), '1', '');
 echo $form->showDropdownOption('https', _('Secured (https)'), $new_protocol);
 echo $form->showDropdownOption('http', _('Unsecured (http)'), $new_protocol);

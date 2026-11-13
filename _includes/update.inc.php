@@ -88,8 +88,8 @@ if ($current_db_version < SOFTWARE_VERSION) {
 } elseif ($current_db_version > SOFTWARE_VERSION) {
 
     $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The upgrade process cannot be completed, as your versions are currently out-of-sync.') .
-    _('The software on your server is older than your database version. This should never happen.') . "<BR><BR>" . sprintf(_('Please logout and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "<BR>";
-    $message_danger_cli = _('The upgrade process cannot be completed, as your versions are currently out-of-sync.') . ' ' . _('The software on your server is older than your database version. This should never happen.') . "\r\n\r\n" . sprintf(_('Please logout and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "\r\n\r\n";
+    _('The software on your server is older than your database version. This should never happen.') . "<BR><BR>" . sprintf(_('Please log out and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "<BR>";
+    $message_danger_cli = _('The upgrade process cannot be completed, as your versions are currently out-of-sync.') . ' ' . _('The software on your server is older than your database version. This should never happen.') . "\r\n\r\n" . sprintf(_('Please log out and log back in, and if the problem persists please contact your %s administrator.'), SOFTWARE_TITLE) . "\r\n\r\n";
 
     $_SESSION['s_version_error'] = '1';
 

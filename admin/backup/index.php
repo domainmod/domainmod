@@ -122,7 +122,7 @@ echo sprintf(_('This page enables you to perform complete backups and restores o
 echo '&nbsp;'; echo _('This allows you to export your entire system in a single file so that it can easily be backed up and restored.');
 echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?><BR>
 <BR>
-<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file.'); ?><BR>
+<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?><BR>
 
 <h3><?php echo _('Backup'); ?></h3>
 <?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>
@@ -135,7 +135,7 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
     <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
     <?php echo ("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?><BR>
-    <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."); ?><BR>
+    <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to log in using the accounts in the data you restored."); ?><BR>
     <?php echo $layout->showButton('submit', _('Restore Entire Database')); ?>
 </form>
 <BR>

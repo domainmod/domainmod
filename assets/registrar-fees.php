@@ -145,7 +145,7 @@ if ($result2) { ?>
     $all_missing_fees = substr($temp_all_missing_fees, 0, -2); ?>
     <strong><?php echo $all_missing_fees; ?></strong><BR>
     <?php if ($count == 1) { ?>
-        <?php echo sprintf(_('You have domains with %s that use this TLDs, however there are no fees associated with it yet. You should add this fee as soon as possible.'), $registrar_name); ?><BR><BR><BR>
+        <?php echo sprintf(_('You have domains with %s that use this TLD, however there are no fees associated with it yet. You should add this fee as soon as possible.'), $registrar_name); ?><BR><BR><BR>
     <?php } else { ?>
        <?php echo sprintf(_('You have domains with %s that use these TLDs, however there are no fees associated with them yet. You should add these fees as soon as possible.'), $registrar_name); ?><BR><BR><BR>
     <?php }
