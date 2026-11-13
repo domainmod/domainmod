@@ -2573,7 +2573,9 @@ if ($result) { ?>
             echo "<BR><BR>";
         }?>
 
-        <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php
+        <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
+        <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
+        <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a><BR><BR><?php
 
     }
 
