@@ -46,12 +46,10 @@ class DomainRefresh
 
     /*
      * Fields a registrar API doesn't really report, because its class always returns the same value or a default when
-     * the domain or field is missing (Gandi's privacy, ResellerClub's and Hostinger's auto renewal, Namecheap's auto
-     * renewal when its list doesn't include the domain, and DNSimple's privacy and auto renewal, which its class reads
-     * from the name server response). These are left as they are.
+     * the domain or field is missing (Gandi's privacy, ResellerClub's and Hostinger's auto renewal, and Namecheap's
+     * auto renewal when its list doesn't include the domain). These are left as they are.
      */
     public static $unreported_fields = array(
-        'DNSimple' => array('privacy', 'autorenew'),
         'Gandi' => array('privacy'),
         'Hostinger' => array('autorenew'),
         'Namecheap' => array('autorenew'),
