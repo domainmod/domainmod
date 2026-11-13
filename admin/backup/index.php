@@ -59,13 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (isset($_FILES["file"])) {
 
-            // Remove any restore file left in the web-accessible temp folder by older versions
-            if (file_exists(DIR_TEMP . '/domainmod-restore.sql')) {
-
-                unlink(DIR_TEMP . '/domainmod-restore.sql');
-
-            }
-
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("sql"));
             $upload->max_size(50); // in MB
@@ -146,11 +139,6 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
     <?php echo $layout->showButton('submit', _('Restore Entire Database')); ?>
 </form>
 <BR>
-
-<h3><?php echo _('Cleanup'); ?></h3>
-<?php echo _('Click here to delete any and all past backup and restore files that may be saved on your server.'); ?><BR>
-<a href="cleanup/?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
-<BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

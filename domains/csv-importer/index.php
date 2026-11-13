@@ -49,13 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (isset($_FILES["file"])) {
 
-            // Remove any import file left in the web-accessible temp folder by older versions
-            if (file_exists(DIR_TEMP . '/import.csv')) {
-
-                unlink(DIR_TEMP . '/import.csv');
-
-            }
-
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("csv"));
             $upload->max_size(50); // in MB
@@ -141,11 +134,6 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
     <?php echo $layout->showButton('submit', _('Import CSV File')); ?>
 </form>
 <BR>
-
-<h3><?php echo _('Cleanup'); ?></h3>
-<?php echo _('Click here to delete any and all past CSV Import files that may be saved on your server.'); ?><BR>
-<a href="cleanup/?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
-<BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
