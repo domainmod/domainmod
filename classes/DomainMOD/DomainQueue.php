@@ -255,6 +255,13 @@ class DomainQueue
             list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
             list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
+        } elseif ($row->api_registrar_name == 'OVH') {
+
+            $registrar = new Ovh();
+            list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
+            $account_id = $this->api->getAccountId($row->account_id);
+            list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret, $account_id);
+
         } elseif ($row->api_registrar_name == 'Porkbun') {
 
             $registrar = new Porkbun();
@@ -395,6 +402,13 @@ class DomainQueue
                     $registrar = new OpenSrs();
                     list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'OVH') {
+
+                    $registrar = new Ovh();
+                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
+                    $account_id = $this->api->getAccountId($row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $account_id, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Porkbun') {
 

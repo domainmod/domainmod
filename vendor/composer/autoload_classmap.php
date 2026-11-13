@@ -227,6 +227,7 @@ return array(
     'DomainMOD\\Namecheap' => $baseDir . '/classes/DomainMOD/Namecheap.php',
     'DomainMOD\\Notice' => $baseDir . '/classes/DomainMOD/Notice.php',
     'DomainMOD\\OpenSrs' => $baseDir . '/classes/DomainMOD/OpenSrs.php',
+    'DomainMOD\\Ovh' => $baseDir . '/classes/DomainMOD/Ovh.php',
     'DomainMOD\\Porkbun' => $baseDir . '/classes/DomainMOD/Porkbun.php',
     'DomainMOD\\QueryBuild' => $baseDir . '/classes/DomainMOD/QueryBuild.php',
     'DomainMOD\\RegistrarResponse' => $baseDir . '/classes/DomainMOD/RegistrarResponse.php',

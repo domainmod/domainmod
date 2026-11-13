@@ -440,6 +440,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Namecheap' => __DIR__ . '/../..' . '/classes/DomainMOD/Namecheap.php',
         'DomainMOD\\Notice' => __DIR__ . '/../..' . '/classes/DomainMOD/Notice.php',
         'DomainMOD\\OpenSrs' => __DIR__ . '/../..' . '/classes/DomainMOD/OpenSrs.php',
+        'DomainMOD\\Ovh' => __DIR__ . '/../..' . '/classes/DomainMOD/Ovh.php',
         'DomainMOD\\Porkbun' => __DIR__ . '/../..' . '/classes/DomainMOD/Porkbun.php',
         'DomainMOD\\QueryBuild' => __DIR__ . '/../..' . '/classes/DomainMOD/QueryBuild.php',
         'DomainMOD\\RegistrarResponse' => __DIR__ . '/../..' . '/classes/DomainMOD/RegistrarResponse.php',
