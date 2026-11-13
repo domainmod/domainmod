@@ -23,6 +23,8 @@ namespace DomainMOD;
 
 class Csv
 {
+    const COLUMNS = 64; // the number of columns in the CSV Import Template
+
     public $assets;
     public $conversion;
     public $deeb;
@@ -34,6 +36,11 @@ class Csv
 
     // Domains in the file that weren't imported because they aren't valid domain names
     public $invalid_domains = array();
+
+    // The first rows in the file (counted like a spreadsheet, so the header is row 1) that don't have the template's
+    // columns, and how many such rows there are in all.
+    public $invalid_rows = array();
+    public $invalid_row_count = 0;
 
     public function __construct()
     {
@@ -47,8 +54,14 @@ class Csv
         $this->user = new User();
     }
 
+    /*
+     * Imports the file, and returns whether it did. Nothing is imported if any row has a different number of columns
+     * from the template, since the values would land in the wrong fields ($invalid_rows lists the first of them).
+     */
     public function parse($filename, $user_id)
     {
+        if (!$this->checkColumns($filename)) return false;
+
         $this->deeb->cnxx->beginTransaction();
 
         $user_currency = $this->user->getDefaultCurrency($user_id);
@@ -58,7 +71,7 @@ class Csv
 
         while (($row = fgetcsv($handle)) !== false) {
 
-            if ($count !== 0) {
+            if ($count !== 0 && !$this->isBlankRow($row)) {
 
                 $creation_type = 'CSV Importer';
 
@@ -166,6 +179,39 @@ class Csv
 
         if ($this->deeb->cnxx->InTransaction()) $this->deeb->cnxx->commit();
 
+        return true;
+    }
+
+    // Whether every row in the file, the header included, has the template's number of columns. Blank lines are skipped.
+    public function checkColumns($filename)
+    {
+        $this->invalid_rows = array();
+        $this->invalid_row_count = 0;
+
+        $handle = fopen($filename, "r");
+        $row_number = 0;
+
+        while (($row = fgetcsv($handle)) !== false) {
+
+            $row_number++;
+            if ($this->isBlankRow($row)) continue;
+            if (count($row) === self::COLUMNS) continue;
+
+            // Only the first few are kept, since a large file could have millions.
+            $this->invalid_row_count++;
+            if (count($this->invalid_rows) < 10) $this->invalid_rows[] = $row_number;
+
+        }
+
+        fclose($handle);
+
+        return $this->invalid_row_count === 0;
+    }
+
+    // fgetcsv() returns a blank line as a single null field.
+    protected function isBlankRow($row)
+    {
+        return count($row) === 1 && $row[0] === null;
     }
 
 }

@@ -74,7 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $csv = new DomainMOD\Csv();
                 $filename = $upload->get_tmp_name();
-                $csv->parse($filename, $_SESSION['s_user_id']);
+
+                if (!$csv->parse($filename, $_SESSION['s_user_id'])) {
+
+                    // The class keeps the first few rows, which is enough to find the problem.
+                    $rows = $csv->invalid_rows;
+                    $more = $csv->invalid_row_count - count($rows);
+
+                    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                    $_SESSION['s_message_danger'] .= sprintf(_('Nothing was imported because these rows don\'t have the %s columns that the CSV Import Template has'), DomainMOD\Csv::COLUMNS) . ': '
+                        . implode(', ', $rows) . ($more > 0 ? ' ' . sprintf(_('(and %s more)'), $more) : '') . '.<BR>';
+
+                    header("Location: ./");
+                    exit;
+
+                }
 
                 $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
                 $_SESSION['s_message_success'] .= _('Your CSV Import has been completed');
