@@ -313,137 +313,15 @@ class DomainQueue
 
             foreach ($result as $row) {
 
-                // Only some registrars report a domain status, so start each domain without one, or an "invalid" status
-                // from the previous domain would carry over to this one
-                $domain_status = '';
+                $registrar_info = $this->fetchRegistrarInfo($row->api_registrar_name, $row->account_id, $row->domain);
 
-                if ($row->api_registrar_name == 'Above.com') {
-
-                    $registrar = new AboveCom();
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($row->account_id, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Cloudflare') {
-
-                    $registrar = new Cloudflare();
-                    $api_key = $this->api->getKey($row->account_id);
-                    $account_id = $this->api->getAccountId($row->account_id);
-                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_id, $api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'DNSimple') {
-
-                    $registrar = new DnSimple();
-                    $api_key = $this->api->getKey($row->account_id);
-                    $account_id = $this->api->getAccountId($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'DreamHost') {
-
-                    $registrar = new DreamHost();
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($row->account_id, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Dynadot') {
-
-                    $registrar = new Dynadot();
-                    $api_key = $this->api->getKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'eNom') {
-
-                    $registrar = new Enom();
-                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Fabulous') {
-
-                    $registrar = new Fabulous();
-                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Freenom') {
-
-                    $registrar = new Freenom();
-                    list($account_username, $account_password) = $this->api->getUserPass($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Gandi') {
-
-                    $registrar = new Gandi();
-                    $api_key = $this->api->getKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'GoDaddy') {
-
-                    $registrar = new GoDaddy();
-                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
-                    list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Internet.bs') {
-
-                    $registrar = new InternetBs();
-                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Name.com') {
-
-                    $registrar = new NameCom();
-                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'NameBright') {
-
-                    $registrar = new NameBright();
-                    list($account_username, $api_app_name, $api_secret) = $this->api->getUserAppSecret($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_app_name, $api_secret, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Namecheap') {
-
-                    $registrar = new Namecheap();
-                    list($account_username, $api_key, $api_ip_address) = $this->api->getUserKeyIp($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $api_ip_address, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'NameSilo') {
-
-                    $registrar = new NameSilo();
-                    $api_key = $this->api->getKey($row->account_id);
-                    list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'OpenSRS') {
-
-                    $registrar = new OpenSrs();
-                    list($account_username, $api_key) = $this->api->getUserKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'OVH') {
-
-                    $registrar = new Ovh();
-                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
-                    $account_id = $this->api->getAccountId($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $account_id, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Porkbun') {
-
-                    $registrar = new Porkbun();
-                    list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'ResellerClub') {
-
-                    $registrar = new ResellerClub();
-                    list($reseller_id, $api_key) = $this->api->getResellerIdKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
-
-                } elseif ($row->api_registrar_name == 'Hostinger') {
-
-                    $registrar = new Hostinger();
-                    $api_key = $this->api->getKey($row->account_id);
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
-
-                } else {
+                if ($registrar_info === false) {
 
                     return _('Invalid Domain Registrar');
 
                 }
+
+                list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar_info;
 
                 // make sure the domain details were successfully retrieved
                 if ($expiration_date != '' && $expiration_date != '0000-00-00' && $expiration_date != '1970-01-01'
@@ -506,11 +384,154 @@ class DomainQueue
     }
 
     /*
+     * Fetches one domain's details from its registrar's API: array($domain_status, $expiration_date, $dns_servers,
+     * $privacy_status, $autorenew_status), where $domain_status is '' for registrars that don't report one. Returns
+     * false for a registrar name with no API class here. Values are returned as the registrar class gives them, so
+     * callers make their own checks.
+     */
+    public function fetchRegistrarInfo($api_registrar_name, $registrar_account_id, $domain)
+    {
+        // Only some registrars report a domain status.
+        $domain_status = '';
+
+        if ($api_registrar_name == 'Above.com') {
+
+            $registrar = new AboveCom();
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($registrar_account_id, $domain);
+
+        } elseif ($api_registrar_name == 'Cloudflare') {
+
+            $registrar = new Cloudflare();
+            $api_key = $this->api->getKey($registrar_account_id);
+            $account_id = $this->api->getAccountId($registrar_account_id);
+            list($account_username, $account_password) = $this->api->getUserPass($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_id, $api_key, $domain);
+
+        } elseif ($api_registrar_name == 'DNSimple') {
+
+            $registrar = new DnSimple();
+            $api_key = $this->api->getKey($registrar_account_id);
+            $account_id = $this->api->getAccountId($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $domain);
+
+        } elseif ($api_registrar_name == 'DreamHost') {
+
+            $registrar = new DreamHost();
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($registrar_account_id, $domain);
+
+        } elseif ($api_registrar_name == 'Dynadot') {
+
+            $registrar = new Dynadot();
+            $api_key = $this->api->getKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $domain);
+
+        } elseif ($api_registrar_name == 'eNom') {
+
+            $registrar = new Enom();
+            list($account_username, $account_password) = $this->api->getUserPass($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $domain);
+
+        } elseif ($api_registrar_name == 'Fabulous') {
+
+            $registrar = new Fabulous();
+            list($account_username, $account_password) = $this->api->getUserPass($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $domain);
+
+        } elseif ($api_registrar_name == 'Freenom') {
+
+            $registrar = new Freenom();
+            list($account_username, $account_password) = $this->api->getUserPass($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $domain);
+
+        } elseif ($api_registrar_name == 'Gandi') {
+
+            $registrar = new Gandi();
+            $api_key = $this->api->getKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $domain);
+
+        } elseif ($api_registrar_name == 'GoDaddy') {
+
+            $registrar = new GoDaddy();
+            list($api_key, $api_secret) = $this->api->getKeySecret($registrar_account_id);
+            list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $domain);
+
+        } elseif ($api_registrar_name == 'Internet.bs') {
+
+            $registrar = new InternetBs();
+            list($api_key, $api_secret) = $this->api->getKeySecret($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $domain);
+
+        } elseif ($api_registrar_name == 'Name.com') {
+
+            $registrar = new NameCom();
+            list($account_username, $api_key) = $this->api->getUserKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $domain);
+
+        } elseif ($api_registrar_name == 'NameBright') {
+
+            $registrar = new NameBright();
+            list($account_username, $api_app_name, $api_secret) = $this->api->getUserAppSecret($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_app_name, $api_secret, $domain);
+
+        } elseif ($api_registrar_name == 'Namecheap') {
+
+            $registrar = new Namecheap();
+            list($account_username, $api_key, $api_ip_address) = $this->api->getUserKeyIp($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $api_ip_address, $domain);
+
+        } elseif ($api_registrar_name == 'NameSilo') {
+
+            $registrar = new NameSilo();
+            $api_key = $this->api->getKey($registrar_account_id);
+            list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $domain);
+
+        } elseif ($api_registrar_name == 'OpenSRS') {
+
+            $registrar = new OpenSrs();
+            list($account_username, $api_key) = $this->api->getUserKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $domain);
+
+        } elseif ($api_registrar_name == 'OVH') {
+
+            $registrar = new Ovh();
+            list($api_key, $api_secret) = $this->api->getKeySecret($registrar_account_id);
+            $account_id = $this->api->getAccountId($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $account_id, $domain);
+
+        } elseif ($api_registrar_name == 'Porkbun') {
+
+            $registrar = new Porkbun();
+            list($api_key, $api_secret) = $this->api->getKeySecret($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $domain);
+
+        } elseif ($api_registrar_name == 'ResellerClub') {
+
+            $registrar = new ResellerClub();
+            list($reseller_id, $api_key) = $this->api->getResellerIdKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $domain);
+
+        } elseif ($api_registrar_name == 'Hostinger') {
+
+            $registrar = new Hostinger();
+            $api_key = $this->api->getKey($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $domain);
+
+        } else {
+
+            return false;
+
+        }
+
+        return array($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status);
+    }
+
+    /*
      * Domains added with RDAP (queue/add/rdap.php) have no registrar or account yet: RDAP fills in the expiry date and
      * name servers and names the registrar, then RdapAssets finds or creates the registrar and account. Each run takes
      * at most RDAP_BATCH rows within a time budget; rows are claimed one at a time, so overlapping runs can't both
      * process a row; and a server that rate-limits or fails is skipped for the rest of the run.
      */
+
     public function processRdapQueue()
     {
         $pdo = $this->deeb->cnxx;
