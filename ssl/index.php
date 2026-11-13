@@ -125,6 +125,14 @@ if ($export_data !== 1) {
 if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
 if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
 
+// A range saved by an older version may not have been checked, so anything that isn't a real date range is dropped.
+if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateFormat($_SESSION['s_end_date'])) {
+
+    $_SESSION['s_start_date'] = 'YYYY-MM-DD';
+    $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+
+}
+
 // Anything else (including translated values in links from older versions) falls back to the default
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
@@ -180,7 +188,7 @@ if ($sslpcid !== 0) {
     $sslpcid_string = "";
 }
 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+    $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
 } else {
     $range_string = "";
 }
@@ -221,7 +229,7 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
           $range_string
           $search_string";
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
-$_SESSION['s_raw_list_query'] = $sql;
+$_SESSION['s_raw_list_sql'] = $sql;
 
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
@@ -734,7 +742,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -831,7 +839,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -928,7 +936,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -1027,7 +1035,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -1129,7 +1137,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -1226,7 +1234,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslipid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -1323,7 +1331,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
@@ -1425,7 +1433,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }

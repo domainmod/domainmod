@@ -84,11 +84,13 @@ list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $result_limit = $_REQUEST['result_limit'];
-    $sort_by = $_REQUEST['sort_by'];
-    $numBegin = $_REQUEST['numBegin'];
-    $begin = $_REQUEST['begin'];
-    $num = $_REQUEST['num'];
+    // These go into the query's LIMIT and the page links, so they must be whole numbers. An unknown sort falls back
+    // to the default below.
+    $result_limit = isset($_REQUEST['result_limit']) && (int) $_REQUEST['result_limit'] > 0 ? (int) $_REQUEST['result_limit'] : '';
+    $sort_by = isset($_REQUEST['sort_by']) && preg_match('/^[a-z]{1,3}_[ad]$/', (string) $_REQUEST['sort_by']) ? $_REQUEST['sort_by'] : '';
+    $numBegin = isset($_REQUEST['numBegin']) ? max(0, (int) $_REQUEST['numBegin']) : '';
+    $begin = isset($_REQUEST['begin']) ? max(0, (int) $_REQUEST['begin']) : '';
+    $num = isset($_REQUEST['num']) ? max(0, (int) $_REQUEST['num']) : '';
 
 }
 
@@ -149,6 +151,14 @@ if ($export_data !== 1) {
 
 if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
 if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+
+// A range saved by an older version may not have been checked, so anything that isn't a real date range is dropped.
+if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateFormat($_SESSION['s_end_date'])) {
+
+    $_SESSION['s_start_date'] = 'YYYY-MM-DD';
+    $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+
+}
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
@@ -251,7 +261,7 @@ if ($tld != "") {
 }
 
 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
 } else {
     $range_string = "";
 }
@@ -326,7 +336,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
           $search_string
           $sort_by_string";
 $_SESSION['s_raw_list_type'] = 'domains';
-$_SESSION['s_raw_list_query'] = $sql;
+$_SESSION['s_raw_list_sql'] = $sql;
 
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
@@ -993,9 +1003,9 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $temp_numbegin = $_REQUEST['numBegin'] ?? 0;
-    $temp_begin = $_REQUEST['begin'] ?? 0;
-    $temp_num = $_REQUEST['num'] ?? 0;
+    $temp_numbegin = max(0, (int) ($_REQUEST['numBegin'] ?? 0));
+    $temp_begin = max(0, (int) ($_REQUEST['begin'] ?? 0));
+    $temp_num = max(0, (int) ($_REQUEST['num'] ?? 0));
 
     $parameters = array($total_rows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $temp_numbegin, $temp_begin, $temp_num);
     $navigate = $layout->pageBrowser($parameters);
@@ -1119,7 +1129,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1336,7 +1346,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1446,7 +1456,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1565,7 +1575,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1675,7 +1685,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1785,7 +1795,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1895,7 +1905,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (expiry_date >= '" . $_SESSION['s_start_date'] . "' AND expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
@@ -1979,7 +1989,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (expiry_date >= '" . $_SESSION['s_start_date'] . "' AND expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
