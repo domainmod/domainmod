@@ -54,7 +54,9 @@ class Conversion
 
         // Two page loads at once could both insert the same missing rate (the table has no unique key on user and
         // currency yet), which would count those assets twice in the reports. Take a per-user lock and check again
-        $lock_name = 'domainmod_conversions_' . (int) $user_id;
+        // Named locks are shared by every database on the server, so the name includes a short hash of this database's
+        // name, and two installations on one server don't block each other.
+        $lock_name = 'domainmod_conversions_' . substr(md5(DB_NAME), 0, 12) . '_' . (int) $user_id;
         $lock = $pdo->prepare('SELECT GET_LOCK(:lock_name, 10)');
         $lock->bindValue('lock_name', $lock_name, \PDO::PARAM_STR);
         $lock->execute();

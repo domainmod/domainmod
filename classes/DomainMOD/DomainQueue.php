@@ -887,7 +887,11 @@ class DomainQueue
     {
         try {
 
-            return (string) $this->deeb->cnxx->query("SELECT GET_LOCK('domainmod_rdap_assets', 10)")->fetchColumn() === '1';
+            $stmt = $this->deeb->cnxx->prepare("SELECT GET_LOCK(:lock_name, 10)");
+            $stmt->bindValue('lock_name', $this->getRdapLockName(), \PDO::PARAM_STR);
+            $stmt->execute();
+
+            return (string) $stmt->fetchColumn() === '1';
 
         } catch (\Throwable $e) {
 
@@ -901,13 +905,24 @@ class DomainQueue
     {
         try {
 
-            $this->deeb->cnxx->query("SELECT RELEASE_LOCK('domainmod_rdap_assets')");
+            $stmt = $this->deeb->cnxx->prepare("SELECT RELEASE_LOCK(:lock_name)");
+            $stmt->bindValue('lock_name', $this->getRdapLockName(), \PDO::PARAM_STR);
+            $stmt->execute();
 
         } catch (\Throwable $e) {
 
             $this->logRdapError('Unable to release the RDAP lock for the Domain Queue', '', $e);
 
         }
+    }
+
+    /*
+     * Named locks are shared by every database on the server, so the name includes a short hash of this database's name,
+     * and two installations on one server don't block each other (as the Task Scheduler's locks do).
+     */
+    protected function getRdapLockName()
+    {
+        return 'domainmod_rdap_assets_' . substr(md5(DB_NAME), 0, 12);
     }
 
     // The id of the 'Queue (Edited Manually)' creation type, or 0 before the database update that adds it

@@ -22,9 +22,9 @@
 namespace DomainMOD;
 
 /*
- * Finds or creates the registrar and registrar account for a domain imported with RDAP. Callers hold the
- * 'domainmod_rdap_assets' lock and an open transaction around resolve(), so overlapping cron runs can't create the
- * same registrar or account twice.
+ * Finds or creates the registrar and registrar account for a domain imported with RDAP. Callers hold the Domain
+ * Queue's RDAP lock (DomainQueue::getRdapLock()) and an open transaction around resolve(), so overlapping cron runs
+ * can't create the same registrar or account twice.
  */
 class RdapAssets
 {
