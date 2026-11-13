@@ -56,6 +56,85 @@ class Scheduler
         $stmt->execute();
     }
 
+    /*
+     * Takes the task's database lock without waiting, and returns whether it got it. The database releases a named lock
+     * by itself when the connection that holds it ends, so a run that crashes or is killed frees its task straight away.
+     */
+    public function getTaskLock($task_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("SELECT GET_LOCK(:lock_name, 0)");
+        $stmt->bindValue('lock_name', $this->getTaskLockName($task_id), \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return (string) $stmt->fetchColumn() === '1';
+    }
+
+    public function releaseTaskLock($task_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("SELECT RELEASE_LOCK(:lock_name)");
+        $stmt->bindValue('lock_name', $this->getTaskLockName($task_id), \PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    /*
+     * Named locks are shared by every database on the server, so the name includes a short hash of this database's name,
+     * and two installations on one server don't block each other (it stays well under MySQL's 64-character limit).
+     */
+    protected function getTaskLockName($task_id)
+    {
+        return 'domainmod_task_' . substr(md5(DB_NAME), 0, 12) . '_' . (int) $task_id;
+    }
+
+    // Clears the running flag of any task that isn't really running (its lock is free), such as after a crash.
+    public function clearStoppedTasks()
+    {
+        $result = $this->deeb->cnxx->query("
+            SELECT id
+            FROM scheduler
+            WHERE is_running = '1'")->fetchAll();
+
+        foreach ($result as $row) {
+
+            if ($this->getTaskLock($row->id)) {
+
+                $this->isFinished($row->id);
+                $this->releaseTaskLock($row->id);
+
+            }
+
+        }
+    }
+
+    // The next time a task is due, worked out from now, as a UTC timestamp.
+    public function getNextRun($expression)
+    {
+        $cron = new \Cron\CronExpression($expression);
+        return $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    }
+
+    /*
+     * Records a finished task: when it ran, how long it took, and when it's next due, worked out now that it has
+     * finished, from the task's current settings (so a task that ran past its next time isn't due again straight away,
+     * and a task disabled while it ran stays disabled). Then clears its running flag.
+     */
+    public function finishTask($task_id, $started)
+    {
+        $task = $this->getTask($task_id);
+
+        if ($task && $task->active == '1') {
+
+            $next_run = $this->getNextRun($task->expression);
+
+        } else {
+
+            $next_run = $task ? $task->next_run : '1970-01-01 00:00:00';
+
+        }
+
+        $this->updateTime($task_id, $started, $next_run);
+        $this->isFinished($task_id);
+    }
+
     public function updateTime($task_id, $timestamp, $next_run)
     {
         $current_time = $this->time->stamp();

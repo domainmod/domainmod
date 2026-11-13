@@ -59,6 +59,7 @@ echo str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text);
 ?>
 <BR>
 <?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?><BR>
+<?php echo sprintf(_('To stop anyone else from running cron.php, you can give it a key in config.inc.php. See the %sUser Guide%s for details.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
 <BR>
 <?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
 <BR>

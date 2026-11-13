@@ -31,3 +31,5 @@ define('DB_PASSWORD', $dbpassword);
 // 'auto'; any other unrecognised value is refused when connecting, rather than quietly weakening what was asked for
 define('DB_SSL_MODE', isset($dbsslmode) ? strtolower(trim((string) $dbsslmode)) : 'auto');
 define('DB_SSL_CA', $dbsslca ?? '');
+// Optional Task Scheduler key (see config.SAMPLE.inc.php). Older config files don't have one.
+define('CRON_KEY', isset($cron_key) ? trim((string) $cron_key) : '');

@@ -50,7 +50,7 @@ $id = (int) $_GET['id'] ?? 0;
 if (DEMO_INSTALLATION == false) {
 
     $stmt = $pdo->prepare("
-        SELECT `name`, slug, expression, active
+        SELECT `name`, slug, expression, active, next_run
         FROM scheduler
         WHERE id = :id");
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
@@ -64,131 +64,127 @@ if (DEMO_INSTALLATION == false) {
         $log_extra = array('Task ID' => $id);
         $log->critical($log_message, $log_extra);
 
+    } elseif (!$schedule->getTaskLock($id)) {
+
+        $_SESSION['s_message_danger'] .= _('That task is already running. Please try again once it finishes.') . '<BR>';
+
     } else {
 
-        if ($result->active == '1') {
+        try {
 
-            $cron = new Cron\CronExpression($result->expression);
-            $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+            $started = $time->stamp();
+            $log_extra = array(_('Task ID') => $id, _('Name') => $result->name, _('Slug') => $result->slug, _('Expression') => $result->expression, _('Active') => $result->active, _('Next Run') => $result->next_run);
 
-        } else {
+            if ($result->slug == 'cleanup') {
 
-            $next_run = '1970-01-01 00:00:00';
+                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
 
-        }
+                $schedule->isRunning($id);
+                $maint->performCleanup();
+                $schedule->finishTask($id, $started);
 
-        $log_extra = array(_('Task ID') => $id, _('Name') => $result->name, _('Slug') => $result->slug, _('Expression') => $result->expression, _('Active') => $result->active, _('Next Run') => $next_run);
+                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
 
-        if ($result->slug == 'cleanup') {
+                $_SESSION['s_message_success'] .= _('System Cleanup Performed');
 
-            $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
+            } elseif ($result->slug == 'expiration-email') {
 
-            $schedule->isRunning($id);
-            $maint->performCleanup();
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
+                $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
 
-            $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
+                $email = new DomainMOD\Email();
+                $schedule->isRunning($id);
+                $email->sendExpirations();
+                $schedule->finishTask($id, $started);
 
-            $_SESSION['s_message_success'] .= _('System Cleanup Performed');
+                $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
 
-        } elseif ($result->slug == 'expiration-email') {
+            } elseif ($result->slug == 'update-conversion-rates') {
 
-            $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
+                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
 
-            $email = new DomainMOD\Email();
-            $schedule->isRunning($id);
-            $email->sendExpirations();
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
+                $schedule->isRunning($id);
 
-            $log_message = sprintf('[%s]' . _('Send Expiration Email'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
+                $result_conversion = $pdo->query("
+                    SELECT user_id, default_currency
+                    FROM user_settings")->fetchAll();
 
-        } elseif ($result->slug == 'update-conversion-rates') {
+                if (!$result_conversion) {
 
-            $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
+                    $log_message = 'No user currencies found';
+                    $log->critical($log_message);
 
-            $schedule->isRunning($id);
+                } else {
 
-            $result_conversion = $pdo->query("
-                SELECT user_id, default_currency
-                FROM user_settings")->fetchAll();
+                    foreach ($result_conversion as $row_conversion) {
 
-            if (!$result_conversion) {
+                        $conversion->updateRates($row_conversion->default_currency, $row_conversion->user_id);
 
-                $log_message = 'No user currencies found';
-                $log->critical($log_message);
-
-            } else {
-
-                foreach ($result_conversion as $row_conversion) {
-
-                    $conversion->updateRates($row_conversion->default_currency, $row_conversion->user_id);
+                    }
 
                 }
 
+                $schedule->finishTask($id, $started);
+
+                $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
+
+                $_SESSION['s_message_success'] .= _('Conversion Rates Updated');
+
+            } elseif ($result->slug == 'check-new-version') {
+
+                $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                $schedule->isRunning($id);
+                $system->checkVersion(SOFTWARE_VERSION);
+                $schedule->finishTask($id, $started);
+
+                $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
+
+                $_SESSION['s_message_success'] .= _('No Upgrade Available');
+
+            } elseif ($result->slug == 'data-warehouse-build') {
+
+                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                $dw = new DomainMOD\DwBuild();
+                $schedule->isRunning($id);
+                $dw->build();
+                $schedule->finishTask($id, $started);
+
+                $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
+
+                $_SESSION['s_message_success'] .= _('Data Warehouse Rebuilt');
+
+            } elseif ($result->slug == 'domain-queue') {
+
+                $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                $queue = new DomainMOD\DomainQueue();
+                $schedule->isRunning($id);
+                $queue->processQueueList();
+                $queue->processQueueDomain();
+                $schedule->finishTask($id, $started);
+
+                $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
+
+                $_SESSION['s_message_success'] .= _('Domain Queue Processed');
+
             }
 
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
+        } finally {
 
-            $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
-
-            $_SESSION['s_message_success'] .= _('Conversion Rates Updated');
-
-        } elseif ($result->slug == 'check-new-version') {
-
-            $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
-
-            $schedule->isRunning($id);
-            $system->checkVersion(SOFTWARE_VERSION);
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
-
-            $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
-
-            $_SESSION['s_message_success'] .= _('No Upgrade Available');
-
-        } elseif ($result->slug == 'data-warehouse-build') {
-
-            $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
-
-            $dw = new DomainMOD\DwBuild();
-            $schedule->isRunning($id);
-            $dw->build();
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
-
-            $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
-
-            $_SESSION['s_message_success'] .= _('Data Warehouse Rebuilt');
-
-        } elseif ($result->slug == 'domain-queue') {
-
-            $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('Start')));
-            $log->notice($log_message, $log_extra);
-
-            $queue = new DomainMOD\DomainQueue();
-            $schedule->isRunning($id);
-            $queue->processQueueList();
-            $queue->processQueueDomain();
-            $schedule->updateTime($id, $time->stamp(), $next_run);
-            $schedule->isFinished($id);
-
-            $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
-            $log->notice($log_message);
-
-            $_SESSION['s_message_success'] .= _('Domain Queue Processed');
+            $schedule->releaseTaskLock($id);
 
         }
 

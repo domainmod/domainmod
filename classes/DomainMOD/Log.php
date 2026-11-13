@@ -34,9 +34,10 @@ class Log
         $this->time = new Time();
 
         if (isset($_SERVER['REQUEST_URI'])) {
-            // The security token is never stored in the log.
+            // The security token is never stored in the log, and neither is cron.php's key.
             $csrf = new Csrf();
             $this->url = $csrf->removeToken($_SERVER['REQUEST_URI']);
+            if (basename((string) ($_SERVER['SCRIPT_NAME'] ?? '')) === 'cron.php') $this->url = $csrf->removeParameter($this->url, 'key');
         } else {
             $this->url = '';
         }

@@ -150,11 +150,17 @@ class Csrf
         return $this->removeToken($redirect_url);
     }
 
-    /*
-     * A URL without its csrf_token parameter, however it's written. Each parameter is read with PHP's own parser
-     * (parse_str()), so any spelling PHP would accept as csrf_token is removed too.
-     */
+    // A URL without its csrf_token parameter, however it's written (see removeParameter()).
     public function removeToken($url)
+    {
+        return $this->removeParameter($url, self::FIELD);
+    }
+
+    /*
+     * A URL without the named parameter, however it's written. Each parameter is read with PHP's own parser
+     * (parse_str()), so any spelling PHP would accept as that name is removed too.
+     */
+    public function removeParameter($url, $name)
     {
         $url = (string) $url;
         $fragment = '';
@@ -177,7 +183,7 @@ class Csrf
             $parsed = array();
             parse_str($pair, $parsed);
 
-            if (!array_key_exists(self::FIELD, $parsed)) $kept[] = $pair;
+            if (!array_key_exists($name, $parsed)) $kept[] = $pair;
 
         }
 
