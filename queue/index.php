@@ -43,6 +43,7 @@ require_once DIR_INC . '/settings/queue-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
+$queue_fix_available = $queue->getEditedCreationTypeId() > 0;
 
 $list_id = (int) ($_GET['list_id'] ?? 0);
 $dell = (int) ($_GET['dell'] ?? 0);
@@ -209,6 +210,10 @@ if ($export_data === 1) {
 
                         $export_processing = _('Invalid Domain');
                         if ($row_domains->message != '') $export_processing .= ': ' . $queue->getRdapMessage($row_domains->message);
+
+                    } elseif ($row_domains->message == 'edited') {
+
+                        $export_processing = _('Imported (Edited Manually)');
 
                     } else {
 
@@ -529,8 +534,16 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     </button><BR><BR><?php
 
 } ?>
-<?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . '&nbsp;'; ?>
-<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can paste a list of your domains and their details are looked up using RDAP instead.") . '&nbsp;'; ?>
+<?php
+if ($queue_rdap_available) {
+
+    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP instead."), SOFTWARE_TITLE) . '&nbsp;';
+
+} else {
+
+    echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . '&nbsp;';
+
+} ?>
 
 <?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
 <BR>
@@ -700,6 +713,10 @@ if (!$result_domains) {
                         echo $layout->highlightText('red', _('Invalid Domain'));
                         if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
 
+                    } elseif ($row_domains->message == 'edited') {
+
+                        echo $layout->highlightText('green', _('Imported (Edited Manually)'));
+
                     } else {
 
                         echo $layout->highlightText('green', _('Successfully Imported'));
@@ -821,7 +838,11 @@ if (!$result_domains) {
                 }
                 echo $to_display; ?>
             </td>
-            <td>
+            <td><?php
+                if ($queue_fix_available && $row_domains->finished == '1' && $row_domains->invalid_domain === 1
+                    && $row_domains->already_in_domains != '1' && $row_domains->already_in_queue != '1') { ?>
+                    <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>"><i class="fa fa-edit" style="padding-top: 3px;"></i></a>&nbsp;<?php
+                } ?>
                 <a href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>"><i class="fa fa-times" style="padding-top: 3px;"></i></a>
             </td>
             </tr><?php

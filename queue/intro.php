@@ -47,10 +47,19 @@ $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 </head>
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_("The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."), SOFTWARE_TITLE) . '&nbsp;'; ?>
-<?php echo _('All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains.'); ?><BR>
-<BR>
-<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can still add your domains by pasting a list of them, and their details are looked up using RDAP, the public replacement for WHOIS (WHOIS privacy and auto renewal are set to No, since RDAP doesn't include them).") . '<BR><BR>'; ?>
+<?php
+if ($queue_rdap_available) {
+
+    echo sprintf(_('The Domain Queue imports the details of your domains, such as their expiry dates and DNS servers, and adds them to your main %s database along with your domains. There are two ways to use it.'), SOFTWARE_TITLE) . '<BR><BR>';
+    echo sprintf(_("If %s supports your registrar's API, choose the registrar account and supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains."), SOFTWARE_TITLE) . '<BR><BR>';
+    echo _("If your registrar isn't supported, paste a list of your domains and their details are looked up using RDAP, the public replacement for WHOIS. WHOIS privacy and auto renewal are set to No, since RDAP doesn't include them.") . '<BR><BR>';
+
+} else {
+
+    echo sprintf(_("The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."), SOFTWARE_TITLE) . '&nbsp;';
+    echo _('All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains.') . '<BR><BR>';
+
+} ?>
 <?php echo sprintf(_("If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."), '<a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a>'); ?><BR>
 <BR>
 <?php

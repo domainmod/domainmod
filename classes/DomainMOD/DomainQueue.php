@@ -821,12 +821,44 @@ class DomainQueue
         }
     }
 
+    // The id of the 'Queue (Edited Manually)' creation type, or 0 before the database update that adds it
+    public function getEditedCreationTypeId()
+    {
+        return (int) $this->deeb->cnxx->query("
+            SELECT id
+            FROM creation_types
+            WHERE `name` = 'Queue (Edited Manually)'
+            LIMIT 1")->fetchColumn();
+    }
+
+    // A queue domain that failed and hasn't been fixed and imported since (queue/edit/), or false
+    public function getFixableQueueDomain($queue_domain_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT id, domain, account_id, expiry_date, cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, message
+            FROM domain_queue
+            WHERE id = :queue_domain_id
+              AND finished = '1'
+              AND invalid_domain = '1'
+              AND already_in_domains = '0'
+              AND already_in_queue = '0'
+              AND message != 'edited'");
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        return $result;
+    }
+
     // The text for a stored RDAP message code, translated for the viewing user (escape it when printing)
     public function getRdapMessage($code)
     {
         $code_parts = explode('|', (string) $code, 2);
 
-        if ($code_parts[0] === '') {
+        if ($code_parts[0] === '' || $code_parts[0] === 'edited') {
             $message = '';
         } elseif ($code_parts[0] === 'no_server') {
             $message = sprintf(_('No RDAP server for .%s domains'), $code_parts[1] ?? '');
@@ -1791,6 +1823,24 @@ class DomainQueue
 
                     }
 
+                    /*
+                     * Read the row again now that it's claimed (and locked), so a fix by hand (queue/edit/) that
+                     * committed after the list above was read is copied as it is now, not as it was
+                     */
+                    $stmt3 = $pdo->prepare("
+                        SELECT api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date,
+                            cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue,
+                            invalid_domain, message, created_by, insert_time
+                        FROM domain_queue
+                        WHERE id = :queue_domain_id
+                        FOR UPDATE");
+                    $stmt3->bindValue('queue_domain_id', $row->id, \PDO::PARAM_INT);
+                    $stmt3->execute();
+                    $current_row = $stmt3->fetch();
+                    $stmt3->closeCursor();
+
+                    if ($current_row) $row = (object) array_merge((array) $row, (array) $current_row);
+
                     $bind_api_registrar_id = $row->api_registrar_id;
                     $bind_domain_id = $row->domain_id;
                     $bind_owner_id = $row->owner_id;
@@ -1835,6 +1885,10 @@ class DomainQueue
     public function clearFinished()
     {
         $pdo = $this->deeb->cnxx;
+
+        // finished domains are only removed once they're in the history, so copy any still waiting first (a domain fixed
+        // and imported by hand in queue/edit/ waits for its copy until the queue next runs)
+        $this->copyToHistoryDomain();
 
         $pdo->query("
             DELETE FROM domain_queue_list
