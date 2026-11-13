@@ -112,6 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         $_SESSION['s_is_logged_in'] = 1;
 
+        // A new session ID and security token at sign-in, so neither can be carried over from before.
+        session_regenerate_id(true);
+        $csrf = new DomainMOD\Csrf();
+        $csrf->newToken();
+
         header("Location: checks.php");
         exit;
 

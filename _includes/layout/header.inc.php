@@ -101,7 +101,7 @@ $search_for = $search_for ?? '';
             </li>
 <?php */ ?>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo $web_root; ?>/settings/toggles/dark-mode/" role="button">
+                <a class="nav-link" href="<?php echo $web_root; ?>/settings/toggles/dark-mode/?<?php echo (new DomainMOD\Csrf())->query(); ?>" role="button">
                     <i class="fas fa-adjust"></i>
                 </a>
             </li>

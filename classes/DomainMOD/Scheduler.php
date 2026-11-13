@@ -108,11 +108,13 @@ class Scheduler
 
     public function createActive($active, $task_id)
     {
-        $result = '<strong><font color=\'green\'>' . _('Active') . '</font></strong> [<a href=\'update.php?a=d&id=' . $task_id .
-            '\'>' . Format::toLower(_('Disable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
+        // These links change data, so they carry the session's security token (see Csrf).
+        $token = (new Csrf())->query();
+        $result = '<strong><font color=\'green\'>' . _('Active') . '</font></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
+            '\'>' . Format::toLower(_('Disable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
         if ($active == '0') {
-            $result = '<strong><font color=\'red\'>' . _('Inactive') . '</font></strong> [<a href=\'update.php?a=e&id=' . $task_id .
-                '\'>' . Format::toLower(_('Enable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
+            $result = '<strong><font color=\'red\'>' . _('Inactive') . '</font></strong> [<a href=\'update.php?a=e&id=' . $task_id . '&' . $token .
+                '\'>' . Format::toLower(_('Enable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
         }
         return $result;
     }

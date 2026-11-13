@@ -143,7 +143,7 @@ if (!$result) {
 }
 ?>
 <a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a>&nbsp;&nbsp;<?php
-if ($has_servers == 1) { ?><a href="rebuild.php"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
+if ($has_servers == 1) { ?><a href="rebuild.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
 // the Data Warehouse tables only exist once it has been built
 $dwaccounts_check = new DomainMOD\DwAccounts();

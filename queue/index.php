@@ -35,6 +35,7 @@ $queue = new DomainMOD\DomainQueue();
 $user = new DomainMOD\User();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$csrf = new DomainMOD\Csrf();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -445,12 +446,13 @@ if ($clear === 1) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to clear completed items from the queue?') . '<BR><BR>' .
         _('Before clearing the queue you should review the results to make sure that everything is correct.') . '<BR><BR>' .
-        '<a href="index.php?really_clear=1">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_clear=1&' . $csrf->query() . '">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_clear === 1) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $queue->clearFinished();
@@ -465,12 +467,13 @@ if ($really_clear === 1) {
 if ($dell === 1 && $list_id !== 0) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain List from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_dell=1&list_id=' . $list_id . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_dell=1&list_id=' . $list_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_dell === 1 && $list_id !== 0) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
@@ -489,12 +492,13 @@ if ($really_dell === 1 && $list_id !== 0) {
 if ($deld === 1 && $domain_id !== 0) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_deld === 1 && $domain_id !== 0) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("

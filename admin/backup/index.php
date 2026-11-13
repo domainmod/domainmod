@@ -30,6 +30,7 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/admin/backup/index.php');
 $layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -136,6 +137,7 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
 
 <BR><BR><h3><?php echo _('Restore'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
+<?php echo $form->showCsrfField(); ?>
     <?php echo _('Database Restore File'); ?>: domainmod-backup.sql <input type="file" name="file"><BR>
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
     <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
@@ -147,7 +149,7 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
 
 <h3><?php echo _('Cleanup'); ?></h3>
 <?php echo _('Click here to delete any and all past backup and restore files that may be saved on your server.'); ?><BR>
-<a href="cleanup/"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
+<a href="cleanup/?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
 <BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

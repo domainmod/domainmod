@@ -395,6 +395,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Assets' => __DIR__ . '/../..' . '/classes/DomainMOD/Assets.php',
         'DomainMOD\\Cloudflare' => __DIR__ . '/../..' . '/classes/DomainMOD/Cloudflare.php',
         'DomainMOD\\Conversion' => __DIR__ . '/../..' . '/classes/DomainMOD/Conversion.php',
+        'DomainMOD\\Csrf' => __DIR__ . '/../..' . '/classes/DomainMOD/Csrf.php',
         'DomainMOD\\Csv' => __DIR__ . '/../..' . '/classes/DomainMOD/Csv.php',
         'DomainMOD\\Currency' => __DIR__ . '/../..' . '/classes/DomainMOD/Currency.php',
         'DomainMOD\\CustomField' => __DIR__ . '/../..' . '/classes/DomainMOD/CustomField.php',

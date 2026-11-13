@@ -119,6 +119,10 @@ class Layout
 
     public function deleteButton($item_type, $item_name, $url)
     {
+        // Deleting changes data, so the link carries the session's security token (see DomainMOD\Csrf).
+        $csrf = new Csrf();
+        $url .= (strpos($url, '?') === false ? '?' : '&') . $csrf->query();
+
         echo $this->modalButton(Format::toUpper(_('Delete This')) . ' ' . Format::toUpper($item_type));
         echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }

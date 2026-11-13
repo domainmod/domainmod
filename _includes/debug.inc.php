@@ -21,3 +21,11 @@
 ?>
 <?php
 define('DEBUG_MODE', $system->getDebugMode());
+
+// Every signed-in POST must carry the session's security token (see DomainMOD\Csrf), or it changes nothing.
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && ($_SESSION['s_is_logged_in'] ?? '') == 1) {
+
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['REQUEST_URI'] ?? '');
+
+}

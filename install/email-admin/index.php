@@ -44,6 +44,10 @@ $new_admin_email2 = isset($_POST['new_admin_email2']) ? $sanitize->text($_POST['
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // The installer runs while signed out, so it checks the security token itself (see DomainMOD\Csrf).
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['REQUEST_URI'] ?? '');
+
     if ($new_admin_email1 != '' && ($new_admin_email1 === $new_admin_email2)) {
 
         $_SESSION['new_admin_email'] = $new_admin_email1;

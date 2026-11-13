@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s / %s) added.'), $new_first_name, $new_last_name, $new_username, $new_password) . '<BR><BR>';
 
-            $_SESSION['s_message_success'] .= sprintf(_('You can either manually email the above credentials to the user, or you can %sclick here%s to have %s email them for you.'), '<a href="reset-password.php?new_username=' . $new_username . '">', '</a>', SOFTWARE_TITLE) . '<BR><BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('You can either manually email the above credentials to the user, or you can %sclick here%s to have %s email them for you.'), '<a href="reset-password.php?new_username=' . $new_username . '&' . (new DomainMOD\Csrf())->query() . '">', '</a>', SOFTWARE_TITLE) . '<BR><BR>';
 
             $_SESSION['s_message_success'] .= _("Use the below form to customize the new user's account.") . '<BR>';
 

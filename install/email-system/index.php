@@ -55,11 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_system_email']) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // The installer runs while signed out, so it checks the security token itself (see DomainMOD\Csrf).
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['REQUEST_URI'] ?? '');
+
     if ($new_system_email1 != '' && ($new_system_email1 === $new_system_email2)) {
 
         $_SESSION['new_system_email'] = $new_system_email1;
 
-        header("Location: ../go.php");
+        header("Location: ../go.php?" . $csrf->query());
         exit;
 
     } else {

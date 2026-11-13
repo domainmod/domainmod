@@ -43,6 +43,10 @@ $_SESSION['s_installation_currency'] = $_SESSION['s_installation_currency'] ?? '
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // The installer runs while signed out, so it checks the security token itself (see DomainMOD\Csrf).
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['REQUEST_URI'] ?? '');
+
     $_SESSION['s_installation_currency'] = $sanitize->text($_POST['new_currency']);
 
     header("Location: ../timezone/");

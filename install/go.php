@@ -36,6 +36,11 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->loginCheck();
+
+// Only the installer's last step can start the installation (see DomainMOD\Csrf).
+$csrf = new DomainMOD\Csrf();
+$csrf->check(WEB_ROOT . '/install/');
+
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 

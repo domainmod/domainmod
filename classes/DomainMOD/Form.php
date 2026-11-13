@@ -29,8 +29,16 @@ class Form
         ob_start();
             echo $before; ?>
             <form method="post">
+                <?php echo $this->showCsrfField(); ?>
                 <div class="form-group"><?php
         return ob_get_clean();
+    }
+
+    // The hidden security token field, for forms that don't use showFormTop() (see DomainMOD\Csrf).
+    public function showCsrfField()
+    {
+        $csrf = new Csrf();
+        return $csrf->field();
     }
 
     public function showFormBottom($after)

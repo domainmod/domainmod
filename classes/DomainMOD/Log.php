@@ -34,7 +34,9 @@ class Log
         $this->time = new Time();
 
         if (isset($_SERVER['REQUEST_URI'])) {
-            $this->url = $_SERVER['REQUEST_URI'];
+            // The security token is never stored in the log.
+            $csrf = new Csrf();
+            $this->url = $csrf->removeToken($_SERVER['REQUEST_URI']);
         } else {
             $this->url = '';
         }

@@ -36,6 +36,8 @@ require_once DIR_INC . '/settings/system-debug.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
 $deeb->cnxx->query("UPDATE settings SET debug_mode = '0'");
@@ -53,7 +55,7 @@ require_once DIR_INC . '/layout/header-bare.inc.php';
 echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', DomainMOD\Format::toUpper(_('Off'))));
 ?>
 <BR><BR>
-<a href="../on/"><?php echo _('Turn Debugging Mode') . ' ' . DomainMOD\Format::toUpper(_('On')); ?></a>
+<a href="../on/?<?php echo $csrf->query(); ?>"><?php echo _('Turn Debugging Mode') . ' ' . DomainMOD\Format::toUpper(_('On')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

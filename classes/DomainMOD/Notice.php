@@ -47,7 +47,7 @@ class Notice
             Format::toUpper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . ".<BR>
             <BR><span style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . Format::toUpper(_('Critical Warning')) . " -- " . Format::toUpper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>" .
 
-            _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
+            _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1&" . (new Csrf())->query() . "'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
 
     }
 

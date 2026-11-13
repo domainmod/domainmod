@@ -182,6 +182,7 @@ return array(
     'DomainMOD\\Assets' => $baseDir . '/classes/DomainMOD/Assets.php',
     'DomainMOD\\Cloudflare' => $baseDir . '/classes/DomainMOD/Cloudflare.php',
     'DomainMOD\\Conversion' => $baseDir . '/classes/DomainMOD/Conversion.php',
+    'DomainMOD\\Csrf' => $baseDir . '/classes/DomainMOD/Csrf.php',
     'DomainMOD\\Csv' => $baseDir . '/classes/DomainMOD/Csv.php',
     'DomainMOD\\Currency' => $baseDir . '/classes/DomainMOD/Currency.php',
     'DomainMOD\\CustomField' => $baseDir . '/classes/DomainMOD/CustomField.php',

@@ -35,6 +35,8 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? '');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
 $_SESSION['s_message_success'] .= $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);

@@ -30,6 +30,7 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/domains/csv-importer/index.php');
 $layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -132,6 +133,7 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 
 <BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
+<?php echo $form->showCsrfField(); ?>
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
     <input type="file" name="file"><BR><BR>
     <?php echo _('Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process.'); ?><BR>
@@ -142,7 +144,7 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 
 <h3><?php echo _('Cleanup'); ?></h3>
 <?php echo _('Click here to delete any and all past CSV Import files that may be saved on your server.'); ?><BR>
-<a href="cleanup/"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
+<a href="cleanup/?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
 <BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

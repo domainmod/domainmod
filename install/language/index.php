@@ -43,6 +43,10 @@ $_ENV['LANG'] = $_ENV['LANG'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // The installer runs while signed out, so it checks the security token itself (see DomainMOD\Csrf).
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['REQUEST_URI'] ?? '');
+
     $_SESSION['s_installation_language'] = $sanitize->text($_POST['new_language']);
 
     header("Location: ../requirements/");

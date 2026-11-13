@@ -112,6 +112,7 @@ foreach ($result as $box) {
 
             <BR>
             <form name="edit_task_form" method="post" action="update.php">
+                <?php echo $form->showCsrfField(); ?>
                 <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
                     <?php echo $schedule->hourSelect($hour); ?>
                 </select><BR><BR><?php
