@@ -75,7 +75,7 @@ $supported_registrars = substr($supported_registrars, 2);
 <strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('In order to use the Domain Queue you must setup the cron job that comes with %s.'), SOFTWARE_TITLE) . '&nbsp;'; ?>
 <?php echo sprintf(_('For more information please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
 <?php if ($queue_rdap_available) { ?>&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

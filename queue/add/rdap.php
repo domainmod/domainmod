@@ -152,7 +152,7 @@ if (!$rdap_api_registrar_id) {
 
 } else {
 
-    echo sprintf(_("Paste a list of domains and %s will look each one up using RDAP, filling in its expiry date and DNS servers and finding which registrar it's at, so you don't need to choose a registrar or enter any API details. Registrars and registrar accounts that don't exist yet are created for you."), SOFTWARE_TITLE) . '<BR><BR>';
+    echo sprintf(_("Paste a list of domains and %s will look each one up using RDAP, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."), SOFTWARE_TITLE, SOFTWARE_TITLE) . '<BR><BR>';
 
     echo '<strong>' . _('Please note') . '</strong><BR>';
     echo _("Domain details are looked up using RDAP, the public replacement for WHOIS. RDAP doesn't include a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . '<BR><BR>';

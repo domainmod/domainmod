@@ -2146,8 +2146,8 @@ if ($segid !== 0) {
 if ($result) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
+    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
     <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a>
-    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', _('Raw List')); ?></a>
     <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
 

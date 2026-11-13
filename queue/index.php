@@ -529,12 +529,12 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     </button><BR><BR><?php
 
 } ?>
-<?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE); ?>
-<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can paste a list of your domains and their details are looked up using RDAP instead."); ?>
+<?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . '&nbsp;'; ?>
+<?php if ($queue_rdap_available) echo _("If your registrar isn't supported, you can paste a list of your domains and their details are looked up using RDAP instead.") . '&nbsp;'; ?>
 
-<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
+<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
 <?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <?php
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
