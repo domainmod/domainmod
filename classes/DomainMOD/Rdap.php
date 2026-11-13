@@ -152,6 +152,12 @@ class Rdap
         return '';
     }
 
+    // Whether the IANA bootstrap is available, so an empty serverFor() really means the TLD has no RDAP server
+    public function hasBootstrap($deadline = null)
+    {
+        return (bool) $this->bootstrap($deadline ?? (microtime(true) + 30));
+    }
+
     public function statusMessage($status)
     {
         if ($status === 'not_found') {
@@ -261,9 +267,10 @@ class Rdap
     /*
      * One HTTPS GET with the destination checks: https on port 443, a hostname (not an IP literal) that resolves only
      * to public addresses, with the checked address pinned so DNS can't swap it; redirects followed by hand (at most
-     * three, each checked the same way); the body capped while it streams. Returns array(status, body).
+     * three, each checked the same way); the body capped while it streams. Returns array(status, body). Also used by
+     * Whois for its HTTPS requests to IANA.
      */
-    protected function fetch($url, $deadline, $max_bytes, $paced)
+    public function fetch($url, $deadline, $max_bytes, $paced)
     {
         for ($hop = 0; $hop <= self::MAX_REDIRECTS; $hop++) {
 
@@ -426,7 +433,7 @@ class Rdap
     }
 
     // One public address for the host, or '' if it doesn't resolve or any of its addresses isn't public
-    protected function publicAddress($host)
+    public function publicAddress($host)
     {
         $addresses = array();
 

@@ -52,7 +52,7 @@ if ($queue_rdap_available) {
 
     echo sprintf(_('The Domain Queue imports the details of your domains, such as their expiry dates and DNS servers, and adds them to your main %s database along with your domains. There are two ways to use it.'), SOFTWARE_TITLE) . '<BR><BR>';
     echo sprintf(_("If %s supports your registrar's API, choose the registrar account and supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains."), SOFTWARE_TITLE) . '<BR><BR>';
-    echo _("If your registrar isn't supported, paste a list of your domains and their details are looked up using RDAP, the public replacement for WHOIS. WHOIS privacy and auto renewal are set to No, since RDAP doesn't include them.") . '<BR><BR>';
+    echo _("If your registrar isn't supported, paste a list of your domains and their details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. WHOIS privacy and auto renewal are set to No, since neither one includes them.") . '<BR><BR>';
 
 } else {
 

@@ -237,7 +237,7 @@ if ($export_data === 1) {
                 }
 
                 // RDAP rows find their registrar and account when they're processed
-                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found by RDAP');
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup');
                 $export_registrar = $row_domains->registrar_name ?? $rdap_unresolved;
 
                 if ($row_domains->expiry_date == '1970-01-01') {
@@ -537,7 +537,7 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
 <?php
 if ($queue_rdap_available) {
 
-    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP instead."), SOFTWARE_TITLE) . '&nbsp;';
+    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP or WHOIS instead."), SOFTWARE_TITLE) . '&nbsp;';
 
 } else {
 
@@ -737,7 +737,7 @@ if (!$result_domains) {
                     }
 
                 }
-                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found by RDAP'); ?>
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup'); ?>
             </td>
             <td>
                 <?php echo $row_domains->domain; ?>

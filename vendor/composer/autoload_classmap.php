@@ -246,6 +246,7 @@ return array(
     'DomainMOD\\Upgrade' => $baseDir . '/classes/DomainMOD/Upgrade.php',
     'DomainMOD\\User' => $baseDir . '/classes/DomainMOD/User.php',
     'DomainMOD\\Validate' => $baseDir . '/classes/DomainMOD/Validate.php',
+    'DomainMOD\\Whois' => $baseDir . '/classes/DomainMOD/Whois.php',
     'Filter\\FilterException' => $vendorDir . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
     'Filter\\FilterFailedException' => $vendorDir . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
     'GJClasses\\Auth0' => $vendorDir . '/chetcuti/gjclasses/src/GJClasses/Auth0.php',

@@ -459,6 +459,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Upgrade' => __DIR__ . '/../..' . '/classes/DomainMOD/Upgrade.php',
         'DomainMOD\\User' => __DIR__ . '/../..' . '/classes/DomainMOD/User.php',
         'DomainMOD\\Validate' => __DIR__ . '/../..' . '/classes/DomainMOD/Validate.php',
+        'DomainMOD\\Whois' => __DIR__ . '/../..' . '/classes/DomainMOD/Whois.php',
         'Filter\\FilterException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
         'Filter\\FilterFailedException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
         'GJClasses\\Auth0' => __DIR__ . '/..' . '/chetcuti/gjclasses/src/GJClasses/Auth0.php',

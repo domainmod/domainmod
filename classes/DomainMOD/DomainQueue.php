@@ -38,6 +38,11 @@ class DomainQueue
     const RDAP_CANDIDATES = 1000;
     const RDAP_BUDGET = 240;
 
+    // Domains whose TLD has no RDAP server are looked up with WHOIS instead: queries to one WHOIS server per run (so a
+    // large paste can't get the server's IP blocked), and the consecutive connection failures before a row fails
+    const WHOIS_PER_SERVER = 20;
+    const WHOIS_MAX_FAILURES = 5;
+
     public function __construct()
     {
         $this->api = new Api();
@@ -549,7 +554,9 @@ class DomainQueue
 
         $rdap = new Rdap();
         $rdap_assets = new RdapAssets();
+        $whois = new Whois();
         $skipped_servers = array();
+        $whois_queries = array();
         $attempted = 0;
 
         foreach ($result as $row) {
@@ -560,6 +567,20 @@ class DomainQueue
             $ascii_domain = Domain::forApi($row->domain);
             $server = ($ascii_domain !== '') ? $rdap->serverFor($ascii_domain, $started + $budget) : '';
             if ($server !== '' && isset($skipped_servers[$server])) continue;
+
+            // with no RDAP server, the WHOIS server takes its place for the busy-server skip and the per-server cap
+            $whois_found = false;
+            $whois_server = '';
+
+            if ($server === '' && $ascii_domain !== '' && $rdap->hasBootstrap($started + $budget)) {
+
+                list($whois_found, $whois_server) = $whois->serverFor($ascii_domain, $started + $budget);
+
+                if ($whois_server !== '' && (isset($skipped_servers['whois:' . $whois_server])
+                        || ($whois_queries[$whois_server] ?? 0) >= self::WHOIS_PER_SERVER)) continue;
+
+            }
+
             if (microtime(true) - $started >= $budget) break;
 
             try {
@@ -594,8 +615,59 @@ class DomainQueue
 
                 } elseif ($lookup['status'] === 'no_server') {
 
-                    $this->markInvalidDomain($row->id, 'no_server|' . mb_substr((string) $row->tld, 0, 60));
-                    continue;
+                    // no RDAP server for the TLD, so try WHOIS
+                    $failures = $this->getWhoisFailures($row->id);
+
+                    if (!$whois_found) {
+
+                        // IANA couldn't be asked for the WHOIS server, so port 43 was never tried: keep the count
+                        $this->releaseRdapRow($row->id, 'retry_whois_error|' . $failures);
+                        continue;
+
+                    }
+
+                    if ($whois_server === '') {
+
+                        $this->markInvalidDomain($row->id, 'no_lookup|' . mb_substr((string) $row->tld, 0, 60));
+                        continue;
+
+                    }
+
+                    $whois_queries[$whois_server] = ($whois_queries[$whois_server] ?? 0) + 1;
+                    $lookup = $whois->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
+
+                    if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
+
+                        $skipped_servers['whois:' . $whois_server] = true;
+
+                        // only a connection that couldn't be made counts (some hosts block port 43), any reply resets the
+                        // count, and a lookup that never tried to connect (too little time left) leaves it as it was
+                        if ($lookup['connection_failed']) {
+                            $failures++;
+                        } elseif ($lookup['replied']) {
+                            $failures = 0;
+                        }
+
+                        if ($failures >= self::WHOIS_MAX_FAILURES) {
+                            $this->markInvalidDomain($row->id, 'whois_unreachable');
+                        } elseif ($lookup['status'] === 'rate_limited') {
+                            $this->releaseRdapRow($row->id, 'retry_whois_rate_limited');
+                        } else {
+                            $this->releaseRdapRow($row->id, 'retry_whois_error|' . $failures);
+                        }
+                        continue;
+
+                    } elseif ($lookup['status'] === 'not_found') {
+
+                        $this->markInvalidDomain($row->id, 'whois_not_found');
+                        continue;
+
+                    } elseif ($lookup['expiry_date'] === '') {
+
+                        $this->markInvalidDomain($row->id, 'whois_no_expiry');
+                        continue;
+
+                    }
 
                 } elseif ($lookup['status'] === 'not_found') {
 
@@ -770,6 +842,23 @@ class DomainQueue
         return $stmt->rowCount() === 1;
     }
 
+    // Consecutive failed connections to the row's WHOIS server so far (kept in its message, see processRdapQueue())
+    public function getWhoisFailures($queue_domain_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT message
+            FROM domain_queue
+            WHERE id = :queue_domain_id");
+        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $message = (string) $stmt->fetchColumn();
+
+        $code_parts = explode('|', $message, 2);
+        return ($code_parts[0] === 'retry_whois_error') ? (int) ($code_parts[1] ?? 0) : 0;
+    }
+
     // Leaves a row for a later run, with the reason it's waiting (never throws, so a failure can't stop the run)
     public function releaseRdapRow($queue_domain_id, $message)
     {
@@ -872,6 +961,18 @@ class DomainQueue
             $message = _('Will retry: the RDAP lookup failed');
         } elseif ($code_parts[0] === 'retry_lock') {
             $message = _('Will retry: another Domain Queue run was busy');
+        } elseif ($code_parts[0] === 'no_lookup') {
+            $message = sprintf(_('Neither RDAP nor WHOIS is available for .%s domains'), $code_parts[1] ?? '');
+        } elseif ($code_parts[0] === 'whois_no_expiry') {
+            $message = _('WHOIS has no expiry date for this domain');
+        } elseif ($code_parts[0] === 'whois_not_found') {
+            $message = _('Domain not found in WHOIS');
+        } elseif ($code_parts[0] === 'whois_unreachable') {
+            $message = _("WHOIS couldn't be reached (your server may block port 43)");
+        } elseif ($code_parts[0] === 'retry_whois_rate_limited') {
+            $message = _('Will retry: the WHOIS server is limiting requests');
+        } elseif ($code_parts[0] === 'retry_whois_error') {
+            $message = _('Will retry: the WHOIS lookup failed');
         } else {
             $message = _('RDAP lookup failed');
         }
