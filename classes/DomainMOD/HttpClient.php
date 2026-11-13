@@ -32,6 +32,8 @@ class HttpClient
 {
     private static $ca_option = null;
     private static $bundle_path = null;
+    private static $deadline = null;
+    private static $timeouts = null; // each handle's own connect and total timeouts, so exec() can cap them again
 
     // A cURL handle for $url with verification, timeouts, and HTTPS-only set. Only the Data Warehouse passes $verify =
     // false (servers whose certificate checks the user has switched off) or $allow_http = true (servers set to http).
@@ -39,8 +41,8 @@ class HttpClient
     {
         $handle = curl_init($url);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
-        curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
+        self::handleTimeouts()[$handle] = array($connect_timeout, $timeout);
+        self::applyTimeouts($handle);
         curl_setopt($handle, CURLOPT_FOLLOWLOCATION, false);
 
         if (defined('CURLOPT_PROTOCOLS_STR')) {
@@ -78,6 +80,20 @@ class HttpClient
     // checks still apply). Failures are logged with $label and the cURL error, never the URL, which can carry API keys.
     public static function exec($handle, $label)
     {
+        // Once an overall deadline has passed, no new request starts. It's logged and returned as a timeout.
+        $remaining = self::remaining();
+        if ($remaining !== null && $remaining <= 0) {
+
+            $log = new Log('class.httpclient');
+            $log->error("A remote server didn't respond in time", array('Service' => $label, 'cURL Error' => 'The overall time limit had already passed'));
+            return false;
+
+        }
+
+        // Set the handle's timeouts again, since a deadline may have come closer, been set, or been cleared since init().
+        // A handle init() didn't make is left as it is.
+        if (isset(self::handleTimeouts()[$handle])) self::applyTimeouts($handle);
+
         $result = curl_exec($handle);
 
         if ($result === false) {
@@ -99,6 +115,51 @@ class HttpClient
         }
 
         return $result;
+    }
+
+    /*
+     * An optional overall deadline (an absolute time, as microtime(true) returns) for every call made until it's cleared,
+     * so a task that makes several calls, or waits and retries, can't run past it. Refreshing a domain sets one around
+     * its registrar call. With none set, calls behave exactly as before.
+     */
+    public static function setDeadline($deadline)
+    {
+        self::$deadline = (float) $deadline;
+    }
+
+    public static function clearDeadline()
+    {
+        self::$deadline = null;
+    }
+
+    // The seconds left before the overall deadline, or null when none is set.
+    public static function remaining()
+    {
+        return self::$deadline === null ? null : self::$deadline - microtime(true);
+    }
+
+    // Sets a handle's own timeouts, each capped to the whole seconds left before an overall deadline when one is set (at
+    // least one second, since cURL treats 0 as no limit).
+    private static function applyTimeouts($handle)
+    {
+        list($connect_timeout, $timeout) = self::handleTimeouts()[$handle];
+
+        $remaining = self::remaining();
+        if ($remaining !== null) {
+            $seconds = max(1, (int) floor($remaining));
+            $connect_timeout = min($connect_timeout, $seconds);
+            $timeout = min($timeout, $seconds);
+        }
+
+        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+        curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
+    }
+
+    // A WeakMap, so an entry goes away with its handle.
+    private static function handleTimeouts()
+    {
+        if (self::$timeouts === null) self::$timeouts = new \WeakMap();
+        return self::$timeouts;
     }
 
     // SSL options for a PHP stream context (file_get_contents() on an https:// URL). Streams don't read curl.cainfo, so

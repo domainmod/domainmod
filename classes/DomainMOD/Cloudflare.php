@@ -348,9 +348,21 @@ class Cloudflare
         return $this->base_url . 'accounts/' . rawurlencode($account_id) . '/' . $this->registrar_path . '/' . $path;
     }
 
-    // Wait inline, unless that would take this run's total wait for the credential past the limit
+    // Wait inline, unless that would take this run's total wait for the credential past the limit, or run past an
+    // overall deadline (see HttpClient::setDeadline()).
     protected function wait($credential, $seconds, $full_url)
     {
+        // The wait is still owed, so later calls with this credential hold off until it would have ended.
+        $remaining = HttpClient::remaining();
+        if ($remaining !== null && $remaining <= $seconds + 1) {
+
+            self::$cooldown_until[$credential] = time() + $seconds;
+            $this->log->warning('Cloudflare API wait skipped, because it would run past the time limit',
+                array('URL' => $full_url));
+            return false;
+
+        }
+
         $waited = self::$waited[$credential] ?? 0;
         if ($waited + $seconds > self::MAX_INLINE_WAIT) {
 
