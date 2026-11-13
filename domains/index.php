@@ -811,6 +811,11 @@ if ($export_data == 1) {
         $temp_misc_fee = $row->misc_fee * $row->conversion;
         $temp_total_cost = $row->total_cost * $row->conversion;
 
+        // Blank for any value not listed below, rather than the previous domain's label.
+        $domain_status = '';
+        $autorenew_status = '';
+        $privacy_status = '';
+
         if ($row->active == "0") {
             $domain_status = DomainMOD\Format::toUpper(_('Expired'));
         } elseif ($row->active == "1") {
@@ -2025,6 +2030,8 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 echo $form->showDropdownTop('is_active', '', '', '', '');
                 echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
                 foreach ($result_active as $row_active) {
+
+                    $display_text = $row_active->active;
 
                     if ($row_active->active == "0") {
                         $display_text = _('Expired');

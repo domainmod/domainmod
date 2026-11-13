@@ -45,6 +45,14 @@ $segid = (int) ($_GET['segid'] ?? 0);
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $type = $_GET['type'] ?? '';
 
+// Only the three lists this page shows (a link with any other type has nothing to list).
+if (!in_array($type, array('inactive', 'filtered', 'missing'), true)) {
+
+    header("Location: ../segments/");
+    exit;
+
+}
+
 if ($type == "inactive") {
     $page_title = _('Segments') . ' - ' . _('Inactive Domains');
 } elseif ($type == "filtered") {

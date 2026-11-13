@@ -1463,6 +1463,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', 'LIVE');
             foreach ($result_active as $row_active) {
 
+                $display_text = $row_active->active;
+
                 if ($row_active->active == "0") {
                     $display_text = "Expired";
                 } elseif ($row_active->active == "1") {

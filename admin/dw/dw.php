@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
             if ($result) {
 
                 $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $action[1];
+                $_SESSION['s_dw_server_id'] = (int) $action[1];
                 $_SESSION['s_dw_server_name'] = $result->name;
                 $_SESSION['s_dw_server_host'] = $result->host;
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
             if ($result) {
 
                 $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $action[1];
+                $_SESSION['s_dw_server_id'] = (int) $action[1];
                 $_SESSION['s_dw_server_name'] = $result->name;
                 $_SESSION['s_dw_server_host'] = $result->host;
 

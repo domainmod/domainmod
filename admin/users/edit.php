@@ -87,10 +87,11 @@ if ($result) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
+// Set before the checks below, since a form with a field left blank skips them but still shows these messages.
+$invalid_username = '';
+$invalid_email_address = '';
 
-    $invalid_username = '';
-    $invalid_email_address = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
 
     // Check to see if the username is already taken
     $stmt = $pdo->prepare("

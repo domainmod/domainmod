@@ -29,9 +29,11 @@ $slug = "domains-main";
 // If the expiry date is visible sort by it, otherwise sort by the domain
 $_SESSION['s_display_domain_expiry_date'] == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
 
+// The table looks the same in large mode, which only leaves out the DataTables script.
+$datatable_class = 'table table-striped dt-responsive cell-border compact';
+
 if ($_SESSION['s_system_large_mode'] != '1') {
 
-    $datatable_class = 'table table-striped dt-responsive cell-border compact';
     $datatable_options = 'var oldStart = 0;
                           $(\'#' . $slug . '\').DataTable({
                               "paging": true,

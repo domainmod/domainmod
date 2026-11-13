@@ -130,13 +130,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $stmt->fetch();
                 $stmt->closeCursor();
 
-                if ($result) {
+                if (!$result) {
 
-                    $temp_owner_id = $result->owner_id;
-                    $temp_registrar_id = $result->registrar_id;
-                    $temp_api_registrar_id = $result->api_registrar_id;
+                    // The account was deleted while the form was open (or the form was changed), so nothing is saved.
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] .= _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: ../step-one/");
+                    exit;
 
                 }
+
+                $temp_owner_id = $result->owner_id;
+                $temp_registrar_id = $result->registrar_id;
+                $temp_api_registrar_id = $result->api_registrar_id;
 
                 $stmt = $pdo->prepare("
                     INSERT INTO domain_queue_list
@@ -327,13 +333,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $result = $stmt->fetch();
                         $stmt->closeCursor();
 
-                        if ($result) {
+                        if (!$result) {
 
-                            $temp_owner_id = $result->owner_id;
-                            $temp_registrar_id = $result->registrar_id;
-                            $temp_api_registrar_id = $result->api_registrar_id;
+                            // The account was deleted while the form was open (or the form was changed), so nothing is saved.
+                            if ($pdo->InTransaction()) $pdo->rollback();
+                            $_SESSION['s_message_danger'] .= _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                            header("Location: ../step-one/");
+                            exit;
 
                         }
+
+                        $temp_owner_id = $result->owner_id;
+                        $temp_registrar_id = $result->registrar_id;
+                        $temp_api_registrar_id = $result->api_registrar_id;
 
                         // cycle through domains here
                         foreach ($domain_array as $key => $new_domain) {

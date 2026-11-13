@@ -93,8 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    $new_owner = $result->name;
-    $new_notes = $result->notes;
+    if ($result) {
+
+        $new_owner = $result->name;
+        $new_notes = $result->notes;
+
+    }
 
 }
 
