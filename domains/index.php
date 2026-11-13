@@ -2524,7 +2524,7 @@ if ($result) { ?>
 
                                 } elseif ($field['type_id'] == '2') { // Text
 
-                                    echo $row->{$field['field']};
+                                    echo $layout->customFieldText($row->{$field['field']});
 
                                 } elseif ($field['type_id'] == '4') { // Date
 
@@ -2534,7 +2534,7 @@ if ($result) { ?>
 
                                     } else {
 
-                                        echo $row->{$field['field']};
+                                        echo $layout->customFieldText($row->{$field['field']});
 
                                     }
 
@@ -2546,7 +2546,7 @@ if ($result) { ?>
 
                                     } else {
 
-                                        echo $row->{$field['field']};
+                                        echo $layout->customFieldText($row->{$field['field']});
 
                                     }
 
@@ -2554,7 +2554,7 @@ if ($result) { ?>
 
                                     if ($row->{$field['field']} != '') {
 
-                                        echo "[<a target='_blank' href='" . $row->{$field['field']} . "'>open</a>]";
+                                        echo $layout->customFieldLink($row->{$field['field']});
 
                                     }
 

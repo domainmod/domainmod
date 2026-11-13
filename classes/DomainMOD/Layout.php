@@ -247,4 +247,31 @@ class Layout
         return '';
     }
 
+    // A custom field's text, escaped for the page, since custom field values are saved as typed.
+    public function customFieldText($value)
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+
+    /*
+     * A URL custom field's "open" link. Only web, FTP, and mail addresses (or ones with no scheme) become links, so a
+     * saved javascript: or data: address is shown as text instead of running when it's clicked.
+     */
+    public function customFieldLink($url)
+    {
+        $url = trim((string) $url);
+        if ($url === '') return '';
+
+        // Browsers ignore tabs, line breaks, and other control characters in a link, so they're ignored here too.
+        $scheme_check = preg_replace('/[\x00-\x20\x7f]+/', '', $url);
+
+        if (preg_match('/^([a-z][a-z0-9+.-]*):/i', $scheme_check, $matches) && !in_array(strtolower($matches[1]), array('http', 'https', 'ftp', 'ftps', 'sftp', 'mailto'), true)) {
+
+            return $this->customFieldText($url);
+
+        }
+
+        return "[<a target='_blank' rel='noopener noreferrer' href='" . $this->customFieldText($url) . "'>" . _('open') . '</a>]';
+    }
+
 } //@formatter:on
