@@ -43,6 +43,26 @@ html {
 .domainmod-css-logo-background-colour {
     background-color: #f1f1f1;
 }
+/* The full logo, centred in the sidebar's logo area. It's positioned within the whole sidebar, so its top is half the
+   compact brand area's height (2.75rem), and AdminLTE's small upward nudge is undone so it sits exactly in the
+   middle. The selector matches AdminLTE's own in strength, so this file's later rule wins. */
+.sidebar-brand.domainmod-css-logo-background-colour .logo-xl {
+    top: 1.375rem;
+    left: 50%;
+    margin-top: 0;
+    transform: translate(-50%, -50%);
+}
+/* In dark mode the logo area takes the sidebar's colour, and only the logo sits on a small light tile (its lettering
+   is dark). The padding sits outside AdminLTE's height limit, so the logo keeps its size. */
+[data-bs-theme="dark"] .domainmod-css-logo-background-colour {
+    background-color: transparent;
+}
+[data-bs-theme="dark"] .domainmod-css-logo-background-colour .logo-xl {
+    box-sizing: content-box;
+    padding: .15rem .5rem;
+    background-color: #d6d9dc;
+    border-radius: .4rem;
+}
 /* The small logo in the collapsed sidebar, centred and sized to fit it. AdminLTE places it for a wider sidebar, which
    crops it in the compact one. It's positioned within the whole sidebar, so its top is half the compact brand area's
    height (2.75rem). */
@@ -87,6 +107,13 @@ html {
    match it there. */
 :root {
     --bs-body-font-size: .875rem;
+}
+/* The sidebar a little narrower than AdminLTE's 250px, leaving the content more room. The full logo (220px on its
+   dark mode tile) still fits, and so does the longest menu item. AdminLTE sets it on :root and [data-bs-theme=light],
+   so it's set here the same way. */
+:root,
+[data-bs-theme] {
+    --lte-sidebar-width: 230px;
 }
 /* The header's colour mode menu. Its width is set here rather than in a style attribute, which the CSP blocks. */
 .domainmod-css-colour-mode-menu {
