@@ -75,7 +75,7 @@ if ($result) {
     foreach ($field_array as $field) {
 
         $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field];
+        ${'new_' . $field} = $_POST[$full_field] ?? '';
 
     }
 
