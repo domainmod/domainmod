@@ -152,10 +152,10 @@ if (!$rdap_api_registrar_id) {
 
 } else {
 
-    echo sprintf(_("Paste a list of domains and %s will look each one up using RDAP, or WHOIS for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."), SOFTWARE_TITLE, SOFTWARE_TITLE) . '<BR><BR>';
+    echo sprintf(_("Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."), SOFTWARE_TITLE, SOFTWARE_TITLE) . '<BR><BR>';
 
     echo '<strong>' . _('Please note') . '</strong><BR>';
-    echo _("Domain details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. Neither one includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . '<BR><BR>';
+    echo _("Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . '<BR><BR>';
     echo _("Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import.") . '<BR><BR>';
 
     echo $form->showFormTop('');
