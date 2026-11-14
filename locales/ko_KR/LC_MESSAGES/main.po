@@ -1688,7 +1688,7 @@ msgstr "강타"
 msgid "Expression"
 msgstr "표현"
 
-#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:297 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
+#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:287 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
 msgid "Active"
 msgstr "활동적인"
 
@@ -2108,7 +2108,7 @@ msgstr "로그인 수"
 msgid "Last Login"
 msgstr "마지막 로그인"
 
-#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:300
+#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:290
 msgid "Inactive"
 msgstr "비활성"
 
@@ -3612,15 +3612,15 @@ msgstr "잠시 기다려 주세요. 잠시 시간이 걸릴 수 있습니다. �
 msgid "Upgrade Database"
 msgstr "데이터베이스 업그레이드"
 
-#: classes/DomainMOD/Scheduler.php:298
+#: classes/DomainMOD/Scheduler.php:288
 msgid "Disable"
 msgstr "장애를 입히다"
 
-#: classes/DomainMOD/Scheduler.php:298 classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:288 classes/DomainMOD/Scheduler.php:291
 msgid "Run Now"
 msgstr "지금 실행"
 
-#: classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:291
 msgid "Enable"
 msgstr "할 수 있게 하다"
 
@@ -5924,17 +5924,9 @@ msgstr "도메인을 대기열에 추가할 수 없습니다."
 msgid "RDAP imports become available after the next database update."
 msgstr "RDAP 가져오기 기능은 다음 데이터베이스 업데이트 이후에 사용할 수 있게 됩니다."
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, or WHOIS for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "도메인 목록을 붙여넣으면 %s가 RDAP을 사용하여 각 도메인을 조회하거나, RDAP이 지원하지 않는 도메인의 경우 WHOIS를 통해 만료일과 DNS 서버 정보를 채우고 해당 도메인이 어느 등록기관에 속해 있는지 파악하므로, 사용자가 등록기관을 선택하거나 API 세부 정보를 입력할 필요가 없습니다. 아직 %s에 등록되지 않은 등록 기관은 자동으로 추가됩니다. 각 도메인은 해당 등록 기관에 계정이 정확히 하나만 있는 경우 해당 계정으로 이동하며, 그렇지 않은 경우 처음 생성되어 이후 가져오기 작업에 사용되는 \"RDAP Import\"라는 일반 계정으로 이동합니다."
-
 #: queue/add/rdap.php:157
 msgid "Please note"
 msgstr "참고해 주시기 바랍니다"
-
-#: queue/add/rdap.php:158
-msgid "Domain details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. Neither one includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
-msgstr "도메인 세부 정보는 WHOIS를 대체하는 공개 프로토콜인 RDAP을 통해 조회하거나, RDAP이 지원하지 않는 도메인의 경우 WHOIS 자체를 통해 조회합니다. 두 방법 모두 도메인의 WHOIS 개인정보 보호 또는 자동 갱신 상태를 포함하지 않으므로, 두 항목 모두 ‘아니요’로 설정됩니다. 나중에 일괄 업데이트 도구를 사용하여 해당 정보를 수정할 수 있습니다."
 
 #: queue/add/rdap.php:159
 msgid "Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import."
@@ -6075,4 +6067,12 @@ msgstr "해당 SSL 인증서는 더 이상 존재하지 않습니다."
 #: update.php:33
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "이 스크립트는 명령줄에서만 실행할 수 있습니다. 브라우저에서 업그레이드하려면 관리자 권한으로 %s에 로그인하십시오."
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "도메인 목록을 붙여넣으면 %s가 WHOIS를 대체하는 공개 프로토콜인 RDAP을 사용하여 각 도메인을 조회하거나, RDAP이 지원하지 않는 도메인의 경우 WHOIS 자체를 통해 조회하여 만료일과 DNS 서버 정보를 채우고 해당 도메인이 어느 등록기관에 속해 있는지 파악하므로, 사용자가 등록기관을 선택하거나 API 세부 정보를 입력할 필요가 없습니다. 아직 %s에 등록되지 않은 등록기관은 자동으로 추가됩니다. 각 도메인은 해당 등록기관에 계정이 정확히 하나만 있는 경우 해당 계정으로 이동하며, 그렇지 않은 경우 처음 생성되어 이후 가져오기 작업에 사용되는 \"RDAP Import\"라는 일반 계정으로 이동합니다."
+
+#: queue/add/rdap.php:158
+msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
+msgstr "RDAP과 WHOIS 모두 도메인의 WHOIS 개인정보 보호 또는 자동 갱신 상태를 포함하지 않으므로, 두 항목 모두 ‘아니요’로 설정됩니다. 나중에 ‘대량 업데이트 도구’를 사용하여 해당 항목을 업데이트할 수 있습니다."
 

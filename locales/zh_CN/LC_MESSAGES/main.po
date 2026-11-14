@@ -1688,7 +1688,7 @@ msgstr "蛞蝓"
 msgid "Expression"
 msgstr "表达"
 
-#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:297 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
+#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:287 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
 msgid "Active"
 msgstr "积极的"
 
@@ -2108,7 +2108,7 @@ msgstr "登录次数"
 msgid "Last Login"
 msgstr "上次登录"
 
-#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:300
+#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:290
 msgid "Inactive"
 msgstr "不活跃"
 
@@ -3612,15 +3612,15 @@ msgstr "请耐心等待，这可能需要一点时间。当前版本越旧，升
 msgid "Upgrade Database"
 msgstr "升级数据库"
 
-#: classes/DomainMOD/Scheduler.php:298
+#: classes/DomainMOD/Scheduler.php:288
 msgid "Disable"
 msgstr "禁用"
 
-#: classes/DomainMOD/Scheduler.php:298 classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:288 classes/DomainMOD/Scheduler.php:291
 msgid "Run Now"
 msgstr "立即运行"
 
-#: classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:291
 msgid "Enable"
 msgstr "使能够"
 
@@ -5924,17 +5924,9 @@ msgstr "无法将域名添加到队列中"
 msgid "RDAP imports become available after the next database update."
 msgstr "RDAP 导入功能将在下次数据库更新后可用。"
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, or WHOIS for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "粘贴域名列表后，%s 将使用 RDAP 查询每个域名；对于 RDAP 未涵盖的域名，则使用 WHOIS 进行查询，从而填入其到期日期和 DNS 服务器信息，并确定其所属的注册商，因此您无需选择注册商或输入任何 API 详细信息。 如果某个注册商尚未包含在 %s 中，系统会自动为您添加。每个域名将被添加到您在该注册商处的账户中（如果您仅有一个账户）；否则，将被添加到一个名为“RDAP Import”的通用账户中——该账户在首次导入时创建，并用于后续的导入操作。"
-
 #: queue/add/rdap.php:157
 msgid "Please note"
 msgstr "请注意"
-
-#: queue/add/rdap.php:158
-msgid "Domain details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. Neither one includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
-msgstr "域名详细信息可通过 RDAP（作为 WHOIS 的公开替代方案）进行查询；对于 RDAP 未涵盖的域名，则直接使用 WHOIS 进行查询。这两种方式均不包含域名的 WHOIS 隐私保护或自动续费状态，因此这两项均将设置为“否”。您之后可使用“批量更新器”对这些信息进行更新。"
 
 #: queue/add/rdap.php:159
 msgid "Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import."
@@ -6075,4 +6067,12 @@ msgstr "该 SSL 证书已不存在。"
 #: update.php:33
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "该脚本只能在命令行下运行。若要通过浏览器进行升级，请以管理员身份登录 %s。"
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "粘贴域名列表后，%s 将使用 RDAP（WHOIS 的公开替代方案）查询每个域名；对于 RDAP 未涵盖的域名，则直接使用 WHOIS 进行查询，从而填入其到期日期和 DNS 服务器信息，并确定其所属的注册商，因此您无需选择注册商或输入任何 API 详细信息。如果某个注册商尚未包含在 %s 中，系统会自动为您添加。每个域名将被添加到您在该注册商处的账户中（如果您仅有一个账户）；否则，将被添加到一个名为“RDAP Import”的通用账户中——该账户会在首次导入时创建，并用于后续的导入操作。"
+
+#: queue/add/rdap.php:158
+msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
+msgstr "RDAP 和 WHOIS 均不包含域名的 WHOIS 隐私或自动续费状态，因此这两项都将设置为“否”。您之后可以使用“批量更新器”来更新这些信息。"
 

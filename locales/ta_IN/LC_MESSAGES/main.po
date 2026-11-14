@@ -1688,7 +1688,7 @@ msgstr "ஸ்லக்"
 msgid "Expression"
 msgstr "வெளிப்பாடு"
 
-#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:297 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
+#: admin/scheduler/run.php:76 admin/users/index.php:106 assets/account-owners.php:123 assets/categories.php:112 assets/dns.php:115 assets/hosting.php:94 assets/ip-addresses.php:113 assets/registrar-accounts.php:150 assets/registrars.php:101 assets/ssl-accounts.php:123 assets/ssl-providers.php:100 assets/ssl-types.php:93 bulk/main/index.php:2165 classes/DomainMOD/Scheduler.php:287 domains/add.php:489 domains/edit.php:610 domains/index.php:719 domains/index.php:727 domains/index.php:822 domains/index.php:2031 domains/index.php:2039 domains/results.php:212 queue/edit/index.php:629 ssl/add.php:437 ssl/edit.php:544 ssl/index.php:452 ssl/index.php:460 ssl/index.php:533 ssl/index.php:1463
 msgid "Active"
 msgstr "செயலில்"
 
@@ -2108,7 +2108,7 @@ msgstr "உள்நுழைவுகளின் எண்ணிக்கை"
 msgid "Last Login"
 msgstr "கடைசி உள்நுழைவு"
 
-#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:300
+#: admin/users/index.php:110 admin/users/index.php:200 assets/account-owners.php:127 assets/categories.php:116 assets/dns.php:119 assets/hosting.php:98 assets/ip-addresses.php:117 assets/registrar-accounts.php:154 assets/registrars.php:105 assets/ssl-accounts.php:127 assets/ssl-providers.php:104 assets/ssl-types.php:97 classes/DomainMOD/Scheduler.php:290
 msgid "Inactive"
 msgstr "செயலற்றது"
 
@@ -3612,15 +3612,15 @@ msgstr "பொறுமையாக இருங்கள், இதற்கு
 msgid "Upgrade Database"
 msgstr "தரவுத்தளத்தை மேம்படுத்தவும்"
 
-#: classes/DomainMOD/Scheduler.php:298
+#: classes/DomainMOD/Scheduler.php:288
 msgid "Disable"
 msgstr "முடக்கு"
 
-#: classes/DomainMOD/Scheduler.php:298 classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:288 classes/DomainMOD/Scheduler.php:291
 msgid "Run Now"
 msgstr "இப்போது இயக்கவும்"
 
-#: classes/DomainMOD/Scheduler.php:301
+#: classes/DomainMOD/Scheduler.php:291
 msgid "Enable"
 msgstr "இயக்கு"
 
@@ -5930,17 +5930,9 @@ msgstr "கியூவில் டொமைன்களைச் சேர்�
 msgid "RDAP imports become available after the next database update."
 msgstr "RDAP இறக்குமதிகள் அடுத்த தரவுத்தளப் புதுப்பிப்புக்குப் பிறகு கிடைக்கும்."
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, or WHOIS for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "டொமைன்களின் பட்டியலை ஒட்டினால், %s ஒவ்வொன்றையும் RDAP-ஐப் பயன்படுத்தியும், RDAP-இல் வராத டொமைன்களுக்கு WHOIS-ஐப் பயன்படுத்தியும் தேடி, அதன் காலாவதித் தேதி மற்றும் DNS சர்வர்களை நிரப்பி, அது எந்தப் பதிவாளரிடம் (registrar) உள்ளது என்பதைக் கண்டறியும். இதனால் நீங்கள் ஒரு பதிவாளரைத் தேர்ந்தெடுக்கவோ அல்லது ஏதேனும் API விவரங்களை உள்ளிடவோ தேவையில்லை. %s-ல் இன்னும் இல்லாத ஒரு பதிவாளர் உங்களுக்காகச் சேர்க்கப்படுகிறார். அந்தப் பதிவாளரிடம் உங்களுக்குச் சரியாக ஒரே ஒரு கணக்கு இருந்தால், ஒவ்வொரு டொமைனும் அந்தக் கணக்கில் சேர்க்கப்படும், இல்லையெனில், முதல் முறையாக உருவாக்கப்பட்டுப் பிற்கால இறக்குமதிகளுக்குப் பயன்படுத்தப்படும் \"RDAP Import\" என்ற பொதுவான கணக்கில் சேர்க்கப்படும்."
-
 #: queue/add/rdap.php:157
 msgid "Please note"
 msgstr "தயவுசெய்து கவனிக்கவும்"
-
-#: queue/add/rdap.php:158
-msgid "Domain details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. Neither one includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
-msgstr "RDAP (WHOIS-க்குப் பதிலான பொதுவான அமைப்பு) பயன்படுத்தி டொமைன் விவரங்கள் கண்டறியப்படுகின்றன, அல்லது RDAP-இல் வராத டொமைன்களுக்கு WHOIS நேரடியாகப் பயன்படுத்தப்படுகிறது. இரண்டில் எதுவும் டொமைனின் WHOIS தனியுரிமை அல்லது தானியங்கு புதுப்பித்தல் நிலையை உள்ளடக்கியிருக்காது, எனவே இரண்டும் 'இல்லை' என அமைக்கப்படும். நீங்கள் பின்னர் பல்லக புதுப்பிப்பானைப் (Bulk Updater) பயன்படுத்தி அவற்றைப் புதுப்பிக்கலாம்."
 
 #: queue/add/rdap.php:159
 msgid "Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import."
@@ -6081,4 +6073,12 @@ msgstr "அந்த SSL சான்றிதழ் இனி இல்லை."
 #: update.php:33
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "இந்த ஸ்கிரிப்ட்டை கட்டளை வரியிலிருந்து மட்டுமே இயக்க முடியும். உங்கள் உலாவியிலிருந்து மேம்படுத்த, %s-இல் ஒரு நிர்வாகியாக உள்நுழையவும்."
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "டொமைன்களின் பட்டியலை ஒட்டினால், %s அவற்றை RDAP-ஐப் பயன்படுத்தி (WHOIS-க்கான பொது மாற்று) அல்லது RDAP-இல் வராத டொமைன்களுக்கு WHOIS-ஐப் பயன்படுத்தியே தேடி, அவற்றின் காலாவதித் தேதி மற்றும் DNS சேவையகங்களை நிரப்பி, எந்தப் பதிவாளரிடம் அவை உள்ளன என்பதைக் கண்டறிந்து தரும். இதனால் நீங்கள் ஒரு பதிவாளரைத் தேர்ந்தெடுக்கவோ அல்லது ஏதேனும் API விவரங்களை உள்ளிடவோ தேவையில்லை. %s-ல் இன்னும் சேர்க்கப்படாத ஒரு பதிவாளர் உங்களுக்காகச் சேர்க்கப்படுகிறார். அந்தப் பதிவாளரிடம் உங்களுக்கு ஒரே ஒரு கணக்கு இருந்தால், ஒவ்வொரு டொமைனும் அந்தக் கணக்கில் சேர்க்கப்படும்; இல்லையெனில், முதல் முறை உருவாக்கப்பட்டு, பிற்கால இறக்குமதிகளுக்குப் பயன்படுத்தப்படும் \"RDAP Import\" என்ற பொதுவான கணக்கில் சேர்க்கப்படும்."
+
+#: queue/add/rdap.php:158
+msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
+msgstr "RDAP அல்லது WHOIS இரண்டிலும் ஒரு டொமைனின் WHOIS தனியுரிமை அல்லது தானியங்கு புதுப்பித்தல் நிலை சேர்க்கப்படவில்லை, எனவே இரண்டும் 'இல்லை' என அமைக்கப்படும். நீங்கள் பின்னர் Bulk Updater-ஐப் பயன்படுத்தி அவற்றைப் புதுப்பிக்கலாம்."
 
