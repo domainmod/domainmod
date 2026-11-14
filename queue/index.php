@@ -549,7 +549,7 @@ if ($queue_rdap_available) {
 
 } ?>
 
-<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
+<?php echo sprintf(_("For more information, please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
 <?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>

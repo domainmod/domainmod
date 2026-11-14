@@ -46,15 +46,19 @@ $system->authCheck();
 
 <?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?><BR>
 <BR>
-<?php echo _("We recently launched a new Support Portal that will allow us to have better communication and transparency with our users. Not only does the new portal allow users to submit questions and issues, but users can then vote on the items that are most important to them, which helps us prioritize what should be worked on next."); ?><BR>
+<?php echo _("Questions, problems, and feature requests (including new registrar integrations) go in our Support Portal. Other users can vote on the requests that matter most to them, which helps us decide what to work on next."); ?><BR>
 <BR>
-<?php echo sprintf(_("On the subject of what's being worked on next, integrated with our new Support Portal is a project Roadmap. The Roadmap is created automatically based on the issues submitted by users and their current status (Planned, In Progress, Completed, etc.). This Roadmap will give users a public look into how things are progressing with the development of %s."), SOFTWARE_TITLE); ?><BR>
+<?php echo sprintf(_("If you're a developer and you've found a bug you can point to in the code, you can open an issue on GitHub instead. Please report each bug in one place only, not both. Security vulnerabilities should never be reported publicly, so please follow our %ssecurity policy%s instead."), '<a target="_blank" href="https://github.com/domainmod/domainmod/security/policy">', '</a>'); ?><BR>
 <BR>
-<?php echo _("So what are you waiting for? Speak your mind or checkout the Roadmap below!"); ?><BR>
+<?php echo _("The Support Portal also has a project Roadmap, built automatically from what users have submitted and where each item stands (Planned, In Progress, Completed, and so on), so you can see how development is progressing."); ?><BR>
+<BR>
+<?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?><BR>
 <BR>
 <a target="_blank" href="https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new"><?php echo $layout->showButton('button', _('Submit Feedback')); ?></a>
 &nbsp;&nbsp;&nbsp;
-<a target="_blank" href="https://support.domainmod.org/roadmap"><?php echo $layout->showButton('button', _('View The Project Roadmap')); ?></a>
+<a target="_blank" href="https://github.com/domainmod/domainmod/issues/new/choose"><?php echo $layout->showButton('button', _('Report a Bug on GitHub')); ?></a>
+&nbsp;&nbsp;&nbsp;
+<a target="_blank" href="https://support.domainmod.org/roadmap"><?php echo $layout->showButton('button', _('View the Project Roadmap')); ?></a>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
