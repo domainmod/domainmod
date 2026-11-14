@@ -1,6 +1,6 @@
 <?php
 /**
- * /theme/plugins/select2/js/index.php
+ * /theme/plugins/tom-select/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -20,5 +20,5 @@
  */
 ?>
 <?php
-header("Location: ../../../../invalid.php");
+header("Location: ../../../invalid.php");
 exit;
