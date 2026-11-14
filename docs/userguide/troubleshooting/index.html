@@ -273,13 +273,14 @@ The software seems to be working properly, but some messages are being displayed
 <pre><code>error_reporting = E_ALL
 </code></pre>
 <p>But you should have something that looks like this:</p>
-<pre><code>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_STRICT &amp; ~E_DEPRECATED
+<pre><code>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_DEPRECATED
 </code></pre>
+<p>If your current line includes <code>~E_STRICT</code>, you can remove it. PHP 8 never raises E_STRICT, and PHP 8.4 deprecated the constant.</p>
 <p>Commented out in your php.ini file, above the error_reporting directive, there may be a suggested error reporting line for a "Production" environment. Try using that line instead of what you're using now, restart Apache/PHP, and that should get rid of the errors.</p>
 <p><a name="pending"></a><h4>
 I'm trying to connect DomainMOD to my domain registrar account using the API so that I can import my domains, but everything in the Domain Queue just says "Pending"
 </h4> </p>
-<p>In order to import your domains using the domain registrar's API you must setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD. In addition to having the cron job running, you must also have your API credential saved along with your registrar account Asset.</p>
+<p>In order to import your domains using the domain registrar's API you must set up the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD. In addition to having the cron job running, you must also have your API credential saved along with your registrar account Asset. (Domains you <a href="../domain-queue/#rdap">add without an API</a> don't need any API credentials, but they still need the cron job.)</p>
 <p><a name="processing"></a><h4>
 I'm trying to import data using the Domain Queue, but everything is stuck on "Processing"
 </h4></p>
@@ -336,7 +337,7 @@ My fees are all showing up as zero
 <p>Click the <strong>Update System Settings</strong> button. </p>
 </li>
 </ol>
-<p>After the Currency Converter source has been changed you can force a currency conversion update by going to <em>Maintenance -&gt; Update Conversion Rates</em>.</p>
+<p>After the Currency Converter source has been changed you can force a currency conversion update by going to <em>Administration -&gt; Task Scheduler</em>, and then clicking the "run now" link beside "Update Conversion Rates".</p>
 <h2 id="debugging"><BR>Debugging</h2>
 <p>If you're still having issues you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors, which can help us troubleshoot your issue.</p>
 <div class="admonition note">
@@ -349,7 +350,7 @@ My fees are all showing up as zero
 <p>Click <strong>Administration</strong> on the main menu, then click <strong>System Settings</strong>.</p>
 </li>
 <li>
-<p>Change the <strong>Debugging Mode</strong> option to <strong>Enabled</strong>.</p>
+<p>Turn on the <strong>Debugging Mode</strong> switch.</p>
 </li>
 <li>
 <p>Click the <strong>Update System Settings</strong> button.</p>
@@ -358,7 +359,7 @@ My fees are all showing up as zero
 <p>Once debugging is enabled use DomainMOD as you normally would, repeating the steps you took when you first encountered the issue. Once you've done this continue with the below steps.</p>
 <ol>
 <li>
-<p>If you haven't already, visit the DomainMOD <a href="https://domainmod.org/forum/">support forum</a> or <a href="https://domainmod.org/issues/">issue tracker</a> and post about your issue.</p>
+<p>If you haven't already, post about your issue in the <a href="https://support.domainmod.org">Support Portal</a>. If you're a developer and can point to the code, you can submit a GitHub <a href="https://github.com/domainmod/domainmod/issues">issue</a> instead.</p>
 </li>
 <li>
 <p>In DomainMOD, click on <strong>Administration</strong> and then <strong>Debug Log</strong>.</p>
@@ -377,7 +378,7 @@ My fees are all showing up as zero
 <p>Look for the heading named <strong>PHP Error Log Location</strong>. This will show you the location of the PHP error log on your web server.</p>
 </li>
 </ol>
-<p>Once you have both your debugging log and PHP error log send an email to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;">&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;</a> and attach the log files. Please also include the URL to your support forum post or issue tracker ticket so that we can determine the issue you're contacting us about.</p>
+<p>Once you have both your debugging log and PHP error log send an email to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;">&#100;&#101;&#98;&#117;&#103;&#103;&#105;&#110;&#103;&#64;&#100;&#111;&#109;&#97;&#105;&#110;&#109;&#111;&#100;&#46;&#111;&#114;&#103;</a> and attach the log files. Please also include the URL to your Support Portal post or GitHub issue so that we can determine the issue you're contacting us about.</p>
 <p>We will review your logs and get back to you as soon as we can!</p>
 <p>Also, if you haven't already, make sure you disable Debugging Mode.</p>
 <h2 id="helper-programs"><BR>Helper Programs</h2>

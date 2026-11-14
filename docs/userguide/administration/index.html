@@ -210,7 +210,8 @@
 <p>* The Bulk Updater currently only allows you to update Custom Domain Fields, but not Custom SSL Certificate Fields.</p>
 </div>
 <h2 id="task-scheduler">Task Scheduler</h2>
-<p>This information is coming soon...</p>
+<p>The Task Scheduler (<strong>Administration</strong> -&gt; <strong>Task Scheduler</strong>) runs DomainMOD's system jobs, such as processing the Domain Queue, sending expiration emails, and building the Data Warehouse. In order for it to work, you must set up the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD, and you can also limit who can run it with a <a href="../getting-started/#task-scheduler-key">Task Scheduler Key</a>.</p>
+<p>As of v4.25.0, each daily task runs at the same local time all year, including across daylight saving time changes. When you set a daily task's run time, it's saved in your own time zone (from your user settings), and the Task Scheduler page shows each daily task's run time along with its time zone. Changing your time zone later doesn't move tasks that are already set, so set their run times again if you want them to follow your new time zone. When you upgrade to v4.25.0, existing daily tasks keep running at the same moment, using the time zone of the user who installed DomainMOD (or of the first administrator).</p>
                 
             </div>
           </div>

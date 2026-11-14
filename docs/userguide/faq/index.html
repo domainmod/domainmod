@@ -211,14 +211,15 @@
 <h2 id="configuration"><BR>Configuration</h2>
 <h4>Can I import my domains into DomainMOD using a CSV file?</h4>
 
-<p>Not currently, but this is something that we're investigating for the future. If your domain registrar has an API, and it's <a href="../domain-queue/#supported-registrars">supported by DomainMOD</a>, you can use the <a href="../domain-queue/">Domain Queue</a> to automatically import your domains.</p>
+<p>Yes. As of v4.19, you can use the <a href="../csv-importer/">CSV Importer</a> to import all of your domain data using a CSV template. You can also use the <a href="../domain-queue/">Domain Queue</a> to import your domains automatically, either using your registrar's API (if it's <a href="../domain-queue/#supported-registrars">supported by DomainMOD</a>) or by <a href="../domain-queue/#rdap">adding them without an API</a>.</p>
 <h4>Does DomainMOD support multiple languages?</h4>
 
 <p>Yes! As of v4.16.0 DomainMOD supports Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Dutch, English (CA), English (US), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Marathi, Persian, Polish, Portuguese, Portuguese (BR), Russian, Spanish, Tamil, Telugu, Turkish, Urdu, and Vietnamese. If you speak one of these languages, you will probably be horrified at the quality of the current translations. This is because an automated translation service was used for this, but I hope the quality of the translations will improve greatly over time.</p>
 <p>If you would like to help improve the translations, feel free to head over to our <a href="https://github.com/domainmod/translations">translations page on GitHub</a>.</p>
 <h4>Which domain registrar APIs does DomainMOD currently support?</h4>
 
-<p>DomainMOD currently supports Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Hostinger, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, Porkbun, and ResellerClub.</p>
+<p>DomainMOD currently supports Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Hostinger, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, OVH, Porkbun, ResellerClub, and SiteHost.</p>
+<p>If your registrar isn't supported, you can still import your domains with the Domain Queue by <a href="../domain-queue/#rdap">adding them without an API</a>, which looks up their details using RDAP or WHOIS.</p>
 <h2 id="usage"><BR>Usage</h2>
 <h4>How many domains can I manage with DomainMOD?</h4>
 
@@ -241,9 +242,14 @@
 <p class="admonition-title">Note</p>
 <p>As of v4.13, you can now display your Custom Fields on the main domain page.</p>
 </div>
-<h4>Are the domain expiration dates updated automatically using the domain's WHOIS information?</h4>
-
-<p>No, expiration dates currently need to be updated manually when the domains are renewed. Expiration dates can be updated one-by-one or by using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
+<p><a name="refresh"></a><h4>Are the domain expiration dates updated automatically using the domain's WHOIS information?</h4> </p>
+<p>Not automatically, but as of v4.25.0 you can refresh a domain whenever you like. On the domain's edit page, click the <strong>Refresh Domain</strong> button, and DomainMOD will look up the domain's current details and update them straight away, listing what changed.</p>
+<p>If your registrar account uses a supported registrar API with its API details filled in, DomainMOD uses the API, which can update the expiry date, DNS servers, WHOIS privacy, and auto renewal status (some registrars' APIs don't report all of these, and anything not reported is left as it is). Otherwise, or if the API can't be used, DomainMOD uses public RDAP and WHOIS data instead, which only updates the expiry date and DNS servers.</p>
+<p>To avoid overloading your registrar and the RDAP and WHOIS servers, there's a short wait between refreshes. Read-only users don't see the Refresh Domain box.</p>
+<p>Expiration dates can also be updated one-by-one by editing the domain, or by using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
+<p><a name="idn"></a><h4>Does DomainMOD support internationalized domain names (IDNs)?</h4></p>
+<p>Yes. As of v4.25.0, you can enter an internationalized domain name such as münchen.de in either its Unicode form or its punycode form (xn--mnchen-3ya.de), and DomainMOD stores it in its lowercase Unicode form, so searches match it whichever form you use. The one exception is a name with a character that the database can't store, such as an emoji, which is kept in punycode. This works everywhere you add domains, including the CSV Importer, the Bulk Updater, and the Domain Queue, and DomainMOD converts the domain back to punycode when it talks to registrar APIs and other servers.</p>
+<p>When you upgrade to v4.25.0, any domains you've already stored in punycode are converted to Unicode (apart from the exception above). If this leaves two domains with the same name (for example, münchen.de and xn--mnchen-3ya.de), both are kept so that you can decide which one to keep.</p>
 <p><a name="registryapis"></a><h4>Do you plan to add API support for domain registries?</h4></p>
 <p>For API imports we've been trying to focus on actual registrars, since unlike registries they cover more than just one (or a few) domain extensions, and actual registrars are what most domainers use, which is who DomainMOD is primarily for. There are always exceptions to this of course, but in general this is the case.</p>
 <p>Also, if we were to start adding API import support for registries this would open up a pretty big can of worms, since there are literally hundreds of registries that could be added. If we add one registrar we add support for all of the extensions that registrar has, whereas if we add support for a registry we only add support for a single extension (or in some cases a few extensions).</p>

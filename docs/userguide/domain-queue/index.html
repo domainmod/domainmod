@@ -101,6 +101,15 @@
     <li class="toctree-l2"><a href="#usage">Usage</a></li>
     
 
+    <li class="toctree-l2"><a href="#adding-domains-without-an-api">Adding Domains Without an API</a></li>
+    
+
+    <li class="toctree-l2"><a href="#fixing-failed-domains">Fixing Failed Domains</a></li>
+    
+
+    <li class="toctree-l2"><a href="#keeping-domains-up-to-date">Keeping Domains Up To Date</a></li>
+    
+
     <li class="toctree-l2"><a href="#api-notes">API Notes</a></li>
     
 
@@ -204,10 +213,11 @@
 
                 
                 <p>One of the easiest options for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let DomainMOD take care of the rest (and in some cases you don't even need to supply the list of domains, it will be automatically retrieved from your registrar account).</p>
-<p>This option uses your domain registrar's API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.</p>
+<p>If your registrar has an API that DomainMOD supports, the Domain Queue uses it to retrieve the information required to add your domains, so before using this option make sure your API credentials have been saved with your registrar account. If your registrar isn't supported, you can still paste in a list of your domains, and DomainMOD will look up their details using RDAP, the public replacement for WHOIS, or WHOIS itself for domains that RDAP doesn't cover.</p>
 <h2 id="supported-registrars">Supported Registrars</h2>
 <p>The following registrars are currently supported by the Domain Queue:</p>
-<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Hostinger, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, Porkbun, ResellerClub</strong></p>
+<p><strong>Above.com, Cloudflare, DNSimple, DreamHost, Dynadot, eNom, Fabulous, Freenom (Reseller Accounts Only), Gandi, GoDaddy, Hostinger, Internet.bs, Name.com, NameBright, Namecheap, NameSilo, OpenSRS, OVH, Porkbun, ResellerClub, and SiteHost</strong></p>
+<p>If your registrar isn't on this list, you can still use the Domain Queue by <a href="#rdap">adding your domains without an API</a>.</p>
 <h2 id="usage">Usage</h2>
 <div class="admonition warning">
 <p class="admonition-title">Requirement</p>
@@ -218,7 +228,10 @@
 <p>Click on <strong>Domains</strong> on the main menu.</p>
 </li>
 <li>
-<p>Click the <strong>Add Domains To Queue</strong> button on the Domains page.</p>
+<p>Click the <strong>Add Domains Automatically</strong> button on the Domains page.</p>
+</li>
+<li>
+<p>Click the <strong>Add Domains Using an API</strong> button.</p>
 </li>
 <li>
 <p>On the dropdown list, choose the registrar account that you would like to import using the Domain Queue.</p>
@@ -236,6 +249,50 @@
 <p>Once all of your imports have completed you can click the <strong>Clear Completed</strong> button in order to clear the queue.</p>
 </li>
 </ol>
+<h2 id="adding-domains-without-an-api"><a name="rdap"></a>Adding Domains Without an API</h2>
+<p>If DomainMOD doesn't support your registrar's API, you can paste in a list of your domains and DomainMOD will look up each one using RDAP, the public replacement for WHOIS, or WHOIS itself for domains that RDAP doesn't cover. This fills in each domain's expiry date and DNS servers, and works out which registrar it's at, so you don't need to choose a registrar or enter any API details.</p>
+<ol>
+<li>
+<p>Click on <strong>Domains</strong> on the main menu.</p>
+</li>
+<li>
+<p>Click the <strong>Add Domains Automatically</strong> button on the Domains page.</p>
+</li>
+<li>
+<p>Click the <strong>Add Domains Without an API</strong> button.</p>
+</li>
+<li>
+<p>Choose the owner of the domains.</p>
+</li>
+<li>
+<p>Paste in your list of domains, one per line (up to 1,000 at a time).</p>
+</li>
+<li>
+<p>Click the <strong>Add Domains</strong> button, and you'll be taken to the Domain Queue page, where you can follow the progress of your imports.</p>
+</li>
+</ol>
+<p>A registrar that isn't in DomainMOD yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named "RDAP Import", which is created the first time it's needed and used for later imports.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both are set to No. You can update them afterwards using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
+</div>
+<p>Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. WHOIS lookups also need your server to be able to connect to WHOIS servers on port 43, which some web hosts block. If a domain can't be looked up, it fails in the queue with the reason, and you can finish it by hand with <a href="#fix">Fix and Import</a>.</p>
+<h2 id="fixing-failed-domains"><a name="fix"></a>Fixing Failed Domains</h2>
+<p>If a domain fails in the Domain Queue, you can fix it by hand and import it, rather than adding it again from scratch.</p>
+<ol>
+<li>
+<p>On the Domain Queue page, click the edit icon (<strong>Fix and Import</strong>) beside the domain that failed.</p>
+</li>
+<li>
+<p>The Fix and Import page shows the reason the domain failed, and is pre-filled with everything the Domain Queue already knows about it. Fill in the rest of its details, such as the expiry date and registrar account.</p>
+</li>
+<li>
+<p>Click the <strong>Import Domain</strong> button.</p>
+</li>
+</ol>
+<p>The domain is added with the creation type "Queue (Edited Manually)", and the Domain Queue shows it as "Imported (Edited Manually)".</p>
+<h2 id="keeping-domains-up-to-date">Keeping Domains Up To Date</h2>
+<p>Once your domains have been added, you can update a single domain at any time using the <strong>Refresh Domain</strong> box on its edit page. See <a href="../faq/#refresh">Refreshing a Domain</a> for details.</p>
 <h2 id="api-notes"><a name="apinotes"></a>API Notes</h2>
 <p>This section contains various notes and things to watch out for when using the domain registrar APIs.</p>
 <h4>Cloudflare</h4>
@@ -256,6 +313,7 @@
 <p>Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.</p>
 <h4>GoDaddy</h4>
 
+<p>For the API Key, create a Personal Access Token at <a href="https://developer.godaddy.com/personal-access-token">https://developer.godaddy.com/personal-access-token</a> with the <strong>domains.domain:read</strong> permission, and leave the API Secret blank. A classic API key and secret also still work until GoDaddy retires them.</p>
 <p>When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
 <p>GoDaddy only gives API access to accounts it considers eligible, and has at times limited it to accounts with at least 10 domains or a Discount Domain Club membership. If GoDaddy refuses your account's API requests, domains added to the Domain Queue from it will stay at "Pending".</p>
 <h4>Hostinger</h4>
@@ -267,12 +325,25 @@
 <p>NameSilo's domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer</p>
 <p>When retrieving your list of domains via the API, <strong>Inactive</strong> domains are not returned.</p>
 <p>When retrieving the details of a specific domain via the API, <strong>Inactive</strong> and <strong>Expired (pending delete)</strong> domains will not return any data.</p>
+<h4>OVH</h4>
+
+<p>An OVH registrar account uses the following fields:</p>
+<p><strong>API Key</strong>: your OVH Application Key.<br />
+<strong>API Secret</strong>: your Application Secret.<br />
+<strong>Account ID</strong>: your Consumer Key.</p>
+<p>Create all three on the key page for your OVH region (<a href="https://eu.api.ovh.com/createToken/">Europe</a>, <a href="https://ca.api.ovh.com/createToken/">Canada</a>, or <a href="https://api.us.ovhcloud.com/createToken/">US</a>), with two read-only rights: <strong>GET /domain</strong> and <strong>GET /domain/*</strong>.</p>
 <h4>Porkbun</h4>
 
 <p>When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
 <h4>ResellerClub</h4>
 
 <p>ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.</p>
+<h4>SiteHost</h4>
+
+<p>A SiteHost registrar account uses the following fields:</p>
+<p><strong>Account ID</strong>: your SiteHost Account ID, which is shown on your SiteHost invoices.<br />
+<strong>API Key</strong>: a key from the SiteHost Control Panel (in the API module) with access to <strong>Domains (SRS)</strong>.</p>
+<p>SiteHost prices are in NZD.</p>
 <h2 id="example"><a name="example"></a>Example</h2>
 <p>Below is an example of how to use the Domain Queue to import the domains from a Namecheap account:</p>
 <p>Create a <strong>Domain Registrar</strong> asset, ensuring that you've selected <strong>Namecheap</strong> on the <strong>API Support</strong> dropdown list.</p>

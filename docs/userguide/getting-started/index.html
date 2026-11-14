@@ -218,6 +218,7 @@
                 <p>Project Home: <a href="https://domainmod.org">https://domainmod.org</a><br />
 Project Demo: <a href="https://demo.domainmod.org">https://demo.domainmod.org</a><br />
 Documentation: <a href="https://domainmod.org/docs/">https://domainmod.org/docs/</a><br />
+Support: <a href="https://domainmod.org/support/">https://domainmod.org/support/</a><br />
 Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/source/</a></p>
 <h2 id="about">About</h2>
 <p>DomainMOD is an open source application written in PHP &amp; MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.</p>
@@ -270,6 +271,11 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <p class="admonition-title">Note</p>
 <p>This file should be executed every 10 minutes.</p>
 </div>
+<p><a name="task-scheduler-key"></a><strong>Task Scheduler Key (Optional)</strong></p>
+<p>By default, cron.php runs whenever its URL is opened, which is how many installations schedule it. As of v4.25.0, you can stop anyone else from running it by giving it a key. Add the following line to your config.inc.php file, replacing YourKeyHere with a long, random value:</p>
+<pre><code>$cron_key = 'YourKeyHere';
+</code></pre>
+<p>Once a key is set, cron.php only runs from the command line (<code>php cron.php</code>) or from a URL that includes the key, such as <code>https://example.com/cron.php?key=YourKeyHere</code>, so update your cron job to match. If cron.php is opened without the right key, it displays "This script needs its key" and doesn't run any tasks.</p>
 <h2 id="security">Security</h2>
 <p>Although we've done our best to secure DomainMOD, unfortunately there are many factors that could cause security holes, such as the software being run on insecure hardware, software like PHP and MySQL having out-of-date versions with known vulnerabilities, easy-to-guess passwords being used, and so on. Due to these factors we recommend the following steps to help secure your DomainMOD installation.</p>
 <ol>
@@ -289,7 +295,7 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <p>Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, <strong>use it at your own risk</strong>. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.</p>
 <div class="admonition danger">
 <p class="admonition-title">Warning</p>
-<p>Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the Domain Queue, however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.</p>
+<p>Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the Domain Queue with your registrar's API, however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.</p>
 </div>
 </li>
 <li>
