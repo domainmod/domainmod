@@ -1,12 +1,12 @@
 ---
 rating: B1b
 spec: "0.1"
-updated: 2026-11-06
+updated: 2026-11-13
 ---
 
 # AI Code Rating
 
-**ACR B1b** (Maintainer: Experienced · AI Share: 1–25% · Oversight: Reviewed)
+**[ACR B1b](https://aicoderating.com/B1b/)** (Maintainer: Experienced · AI Share: 1–25% · Oversight: Reviewed)
 
 This project is rated with [AI Code Rating](https://aicoderating.com/spec/0.1/), spec version 0.1.
 
