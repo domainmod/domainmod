@@ -184,10 +184,35 @@ a:hover {
     border-color: var(--bs-primary);
     color: #fff;
 }
-/* Select2's highlighted option in DomainMOD's main colour, as before (AdminLTE's Select2 styling uses Bootstrap's blue) */
-.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+/* Tom Select's multiple choice menus: the highlighted option and chosen item in DomainMOD's main colour, as before,
+   and Bootstrap's colours where Tom Select fixes light ones, so the menus follow dark mode */
+.ts-dropdown .active,
+.ts-wrapper.multi .ts-control > div.active {
     background-color: var(--bs-primary);
     color: #fff;
+}
+.ts-control,
+.ts-control input,
+.ts-dropdown {
+    color: var(--bs-body-color);
+}
+.ts-dropdown {
+    border-color: var(--bs-border-color);
+}
+.ts-wrapper.multi .ts-control > div {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+}
+.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
+    border-left-color: var(--bs-border-color);
+}
+/* The focus ring in DomainMOD's main colour, like the other fields (the menu's border is on its wrapper) */
+.ts-wrapper.form-select.focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
+}
+.focus .ts-control {
+    box-shadow: none;
 }
 /* The sidebar's domain search hides in the collapsed (icons only) sidebar and comes back on hover, as AdminLTE does
    with its menu filter */

@@ -52,8 +52,8 @@ if (file_exists($full_filename)) {
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/jquery/jquery.min.js'); ?>"></script>
 <!-- Bootstrap 5 (with Popper) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
-<!-- Select2 -->
-<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/select2/js/select2.full.min.js'); ?>"></script>
+<!-- Tom Select (the multiple choice menus) -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/js/tom-select.complete.min.js'); ?>"></script>
 <!-- DataTables (after jQuery, so it adds itself as a jQuery plugin), with Bootstrap 5 styling and Responsive -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.bootstrap5.min.js'); ?>"></script>
@@ -66,8 +66,11 @@ if (file_exists($full_filename)) {
 <script nonce="<?php echo CURRENT_NONCE; ?>">
     $(function () {
 
-        //Initialize Select2 Elements
-        $('.select2').select2()
+        // The multiple choice menus (see Form::showMultipleSelectTop()), each with a button to remove a choice. They have
+        // no placeholder, since the label above each one already names it.
+        document.querySelectorAll('select.domainmod-multiple-select').forEach(function (select) {
+            new TomSelect(select, {plugins: ['remove_button']});
+        });
 
         // Every list's column headers cycle between ascending and descending, as before (DataTables 2 and later add a
         // third click that removes the sort)

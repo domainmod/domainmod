@@ -34,9 +34,8 @@
 <!-- Theme style (AdminLTE, which includes Bootstrap's styles), and its colours, which make red the main colour -->
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte-colors.min.css'); ?>">
-<!-- Select2, then AdminLTE's styling for it (which follows the colour mode) -->
-<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/select2/css/select2.min.css'); ?>">
-<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte-select2.min.css'); ?>">
+<!-- Tom Select (the multiple choice menus), with Bootstrap 5 styling -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/css/tom-select.bootstrap5.min.css'); ?>">
 <!-- DataTables, with Bootstrap 5 styling -->
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/css/dataTables.bootstrap5.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/css/responsive.bootstrap5.min.css'); ?>">

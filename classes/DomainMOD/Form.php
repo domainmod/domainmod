@@ -117,8 +117,8 @@ class Form
         ob_start();
             echo $before; ?>
             <div class="mb-3">
-                <label class="form-label"><?php echo $text_to_display; ?></label>
-                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="select2 domainmod-css-width-100-percent" multiple="multiple" data-placeholder="<?php echo $text_to_display; ?>"><?php
+                <label class="form-label" for="<?php echo $name; ?>"><?php echo $text_to_display; ?></label>
+                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="form-select domainmod-multiple-select" multiple="multiple"><?php
         return ob_get_clean();
     }
 
