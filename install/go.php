@@ -100,7 +100,8 @@ try {
         ('Bulk Updater', '" . $timestamp . "'),
         ('Manual or Bulk Updater', '" . $timestamp . "'),
         ('Queue', '" . $timestamp . "'),
-        ('CSV Importer', '" . $timestamp . "')");
+        ('CSV Importer', '" . $timestamp . "'),
+        ('Queue (Edited Manually)', '" . $timestamp . "')");
 
     $creation_type_id_installation = $system->getCreationTypeId('Installation');
     $creation_type_id_manual = $system->getCreationTypeId('Manual');
@@ -516,7 +517,7 @@ try {
         CREATE TABLE IF NOT EXISTS `fees` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `registrar_id` INT(10) UNSIGNED NOT NULL,
-            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `initial_fee` DECIMAL(10,2) NOT NULL,
             `renewal_fee` DECIMAL(10,2) NOT NULL,
             `transfer_fee` DECIMAL(10,2) NOT NULL,
@@ -550,8 +551,8 @@ try {
             `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
-            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `fee_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -581,8 +582,8 @@ try {
             `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -596,6 +597,8 @@ try {
             `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
             `invalid_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `message` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
@@ -610,8 +613,8 @@ try {
             `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `registrar_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -621,6 +624,8 @@ try {
             `privacy` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+            `invalid_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `message` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
@@ -660,7 +665,7 @@ try {
         CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `account_id` INT(10) UNSIGNED NOT NULL,
-            `domain` VARCHAR(255) NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
             `ns1` VARCHAR(255) NOT NULL,
             `ns2` VARCHAR(255) NOT NULL,
@@ -951,7 +956,7 @@ try {
         CREATE TABLE IF NOT EXISTS `segment_data` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `segment_id` INT(10) UNSIGNED NOT NULL,
-            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             `active` TINYINT(1) NOT NULL DEFAULT '0',
             `inactive` TINYINT(1) NOT NULL DEFAULT '0',
             `missing` TINYINT(1) NOT NULL DEFAULT '0',
@@ -1039,6 +1044,7 @@ try {
             `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `interval` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
             `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * *',
+            `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'UTC',
             `last_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `next_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
@@ -1098,23 +1104,33 @@ try {
     $stmt->bindValue('temp_task_scheduler_six', $temp_task_scheduler_six, PDO::PARAM_STR);
     $stmt->execute();
 
-    // Update tasks that run daily
-    $cron = new Cron\CronExpression('0 7 * * *');
-    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    // Daily tasks follow the time zone chosen during installation (with its clock changes), and every task gets its
+    // first run time.
+    $schedule = new DomainMOD\Scheduler();
+    $scheduler_timezone = $schedule->getZone($installation_timezone !== '' ? $installation_timezone : 'UTC')->getName();
 
-    $pdo->query("
+    $stmt = $pdo->prepare("
         UPDATE scheduler
-        SET next_run = '" . $next_run . "'
+        SET `timezone` = :timezone
         WHERE `interval` = 'Daily'");
+    $stmt->bindValue('timezone', $scheduler_timezone, PDO::PARAM_STR);
+    $stmt->execute();
 
-    // Update tasks that run every 5 minutes
-    $cron = new Cron\CronExpression('*/5 * * * *');
-    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    $result = $pdo->query("
+        SELECT id, expression, `timezone`
+        FROM scheduler")->fetchAll();
 
-    $pdo->query("
-        UPDATE scheduler
-        SET next_run = '" . $next_run . "'
-        WHERE `interval` = 'Every 5 Minutes'");
+    foreach ($result as $row) {
+
+        $stmt = $pdo->prepare("
+            UPDATE scheduler
+            SET next_run = :next_run
+            WHERE id = :id");
+        $stmt->bindValue('next_run', $schedule->getNextRun($row->expression, $row->timezone), PDO::PARAM_STR);
+        $stmt->bindValue('id', $row->id, PDO::PARAM_INT);
+        $stmt->execute();
+
+    }
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `api_registrars` (
@@ -1153,17 +1169,20 @@ try {
         ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Freenom', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $timestamp . "'),
         ('Gandi', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'Gandi does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a Gandi account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "'),
-        ('GoDaddy', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue. GoDaddy limits API access to accounts it considers eligible (at times only accounts with at least 10 domains or a Discount Domain Club membership), and if it refuses the requests, domains added to the Domain Queue stay at Pending.', '" . $timestamp . "'),
+        ('GoDaddy', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'API Key: a Personal Access Token from developer.godaddy.com/personal-access-token with the domains.domain:read permission, and leave the API Secret blank. A classic API key and secret also still work until GoDaddy retires them. When retrieving your list of domains from GoDaddy, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from GoDaddy and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue. GoDaddy limits API access to accounts it considers eligible (at times only accounts with at least 10 domains or a Discount Domain Club membership), and if it refuses the requests, domains added to the Domain Queue stay at Pending.', '" . $timestamp . "'),
         ('Internet.bs', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Name.com', '1', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('NameBright', '1', '0', '0', '0', '1', '0', '1', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Namecheap', '1', '0', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('NameSilo', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'NameSilo\'s domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer<BR><BR>When retrieving your list of domains via the API, <STRONG>Inactive</STRONG> domains are not returned.<BR><BR>When retrieving the details of a specific domain via the API, <STRONG>Inactive</STRONG> and <STRONG>Expired (pending delete)</STRONG> domains will not return any data.', '" . $timestamp . "'),
         ('OpenSRS', '1', '0', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
+        ('OVH', '0', '0', '1', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'API Key: your OVH Application Key. API Secret: your Application Secret. Account ID: your Consumer Key. Create all three on the key page for your OVH region (Europe: https://eu.api.ovh.com/createToken/, Canada: https://ca.api.ovh.com/createToken/, US: https://api.us.ovhcloud.com/createToken/) with two read-only rights, GET /domain and GET /domain/*.', '" . $timestamp . "'),
         ('Porkbun', '0', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', 'When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.', '" . $timestamp . "'),
         ('ResellerClub', '0', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "'),
+        ('SiteHost', '0', '0', '1', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'Account ID: your SiteHost Account ID, shown on your SiteHost invoices. API Key: a key from the SiteHost Control Panel (API module) with access to Domains (SRS). SiteHost prices are in NZD.', '" . $timestamp . "'),
         ('Cloudflare', '1', '0', '1', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', 'Username: your Cloudflare account email address (required with a Global API Key; with an API Token it can be any name for this account). Account ID: shown on your Cloudflare dashboard. API Key: an API Token with read access to Registrar domains and Zone Read access (for name servers), or your Global API Key.', '" . $timestamp . "'),
-        ('Hostinger', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '0', 'API Key: an API token from hPanel (Dev tools, API, API tokens). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "')");
+        ('Hostinger', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '0', 'API Key: an API token from hPanel (Dev tools, API, API tokens). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date. Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.', '" . $timestamp . "'),
+        ('RDAP', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '0', '0', 'Domain details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn\'t cover. Neither one includes a domain\'s WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.', '" . $timestamp . "')");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `goal_activity` (

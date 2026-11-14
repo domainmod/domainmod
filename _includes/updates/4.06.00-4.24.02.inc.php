@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/updates/4.06.00-current.inc.php
+ * /_includes/updates/4.06.00-4.24.02.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -2010,11 +2010,6 @@ if ($current_db_version === '4.24.01') {
                 ADD `verify_ssl` TINYINT(1) NOT NULL DEFAULT '1' AFTER `hash`");
 
         }
-
-        /*
-         * This needs to be MOVED from the last version to the newest version with every release
-         */
-        $goal->upgrade($previous_version);
 
         $upgrade->database($new_version);
 

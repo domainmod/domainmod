@@ -68,9 +68,15 @@ if ($current_db_version < SOFTWARE_VERSION) {
 
     }
 
-    if ($current_db_version >= '4.06.00') {
+    if ($current_db_version >= '4.06.00' && $current_db_version < '4.24.02') {
 
-        require_once 'updates/4.06.00-current.inc.php';
+        require_once 'updates/4.06.00-4.24.02.inc.php';
+
+    }
+
+    if ($current_db_version >= '4.24.02') {
+
+        require_once 'updates/4.24.02-current.inc.php';
 
     }
 
