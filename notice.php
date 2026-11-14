@@ -51,10 +51,12 @@ if ($action = 'u') $notice->dbUpgrade();
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<?php
-echo '<strong>' . $_SESSION['s_notice_page_title'] . '</strong><BR>';
-echo $_SESSION['s_notice'];
-?><BR><BR>
+<div class="card card-outline card-danger">
+    <div class="card-header">
+        <h3 class="card-title"><i class="bi bi-info-circle text-danger" aria-hidden="true"></i> <?php echo $_SESSION['s_notice_page_title']; ?></h3>
+    </div>
+    <div class="card-body"><?php echo $_SESSION['s_notice']; ?></div>
+</div>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

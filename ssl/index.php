@@ -1601,13 +1601,13 @@ if ($result) { ?>
                 <td></td>
                 <td>
                     <?php if ($row->active == "0") {
-                        echo "<a title=\"" . _('Expired') . "\"><strong>x</strong></a>&nbsp;";
+                        echo $layout->statusBadge('x', _('Expired'), 'secondary') . "&nbsp;";
                     } elseif ($row->active == "3") {
-                        echo "<a title=\"" . _('Pending (Renewal)') . "\"><strong>" . _('Pending Renewal Characters') . "</strong></a>&nbsp;";
+                        echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning') . "&nbsp;";
                     } elseif ($row->active == "4") {
-                        echo "<a title=\"" . _('Pending (Other)') . "\"><strong>" . _('Pending Other Characters') . "</strong></a>&nbsp;";
+                        echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning') . "&nbsp;";
                     } elseif ($row->active == "5") {
-                        echo "<a title=\"" . _('Pending (Registration)') . "\"><strong>" . _('Pending Registration Characters') . "</strong></a>&nbsp;";
+                        echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning') . "&nbsp;";
                     }
                     ?><a href="edit.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
                 </td>

@@ -2431,21 +2431,21 @@ if ($result) { ?>
 
                     <td>
                         <?php if ($row->active == "0") {
-                            echo "<a title=\"" . _('Inactive Domain') . "\"><strong>x</strong></a>&nbsp;";
+                            echo $layout->statusBadge('x', _('Inactive Domain'), 'secondary') . "&nbsp;";
                         } elseif ($row->active == "2") {
-                            echo "<a title=\"" . _('Pending (Transfer)') . "\"><strong>" . _('Pending Transfer Characters') . "</strong></a>&nbsp;";
+                            echo $layout->statusBadge(_('Pending Transfer Characters'), _('Pending (Transfer)'), 'warning') . "&nbsp;";
                         } elseif ($row->active == "3") {
-                            echo "<a title=\"" . _('Pending (Renewal)') . "\"><strong>" . _('Pending Renewal Characters') . "</strong></a>&nbsp;";
+                            echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning') . "&nbsp;";
                         } elseif ($row->active == "4") {
-                            echo "<a title=\"" . _('Pending (Other)') . "\"><strong>" . _('Pending Other Characters') . "</strong></a>&nbsp;";
+                            echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning') . "&nbsp;";
                         } elseif ($row->active == "5") {
-                            echo "<a title=\"" . _('Pending (Registration)') . "\"><strong>" . _('Pending Registration Characters') . "</strong></a>&nbsp;";
+                            echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning') . "&nbsp;";
                         } elseif ($row->active == "10") {
-                            echo "<a title=\"" . _('Sold') . "\"><strong>" . _('Pending Sold Characters') . "</strong></a>&nbsp;";
+                            echo $layout->statusBadge(_('Pending Sold Characters'), _('Sold'), 'success') . "&nbsp;";
                         }
                         ?>
                         <a href="edit.php?did=<?php echo $row->id; ?>"><?php echo $row->domain; ?></a><?php if ($row->privacy == "1") {
-                            echo "&nbsp;<a title=\"" . _('Private WHOIS Registration') . "\"><strong>" . _('Private WHOIS Characters') . "</strong></a>";
+                            echo "&nbsp;" . $layout->statusBadge(_('Private WHOIS Characters'), _('Private WHOIS Registration'), 'info');
                         } ?>
                     </td>
                     <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>

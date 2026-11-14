@@ -46,6 +46,36 @@ class Layout
         return ob_get_clean();
     }
 
+    /*
+     * A list's status code (such as the translated letter for a pending transfer) as a small coloured badge. Hovering
+     * or focusing it shows what it means (Bootstrap's tooltip, started in the footer), and screen readers read the
+     * description instead of the code. The description is in attributes, not text, so the lists still sort and
+     * search the cell as before (the code and the name).
+     */
+    public function statusBadge($code, $description, $colour)
+    {
+        $description = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
+        ob_start(); ?><span class="badge text-bg-<?php echo $colour; ?>" role="img" aria-label="<?php echo $description; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo $description; ?>" tabindex="0"><?php echo $code; ?></span><?php
+        return ob_get_clean();
+    }
+
+    /*
+     * A page's introduction (a few sentences explaining the page) in an AdminLTE callout box
+     */
+    public function calloutTop()
+    {
+        ob_start(); ?>
+<div class="callout callout-info"><?php
+        return ob_get_clean();
+    }
+
+    public function calloutBottom()
+    {
+        ob_start(); ?>
+</div><?php
+        return ob_get_clean();
+    }
+
     public function pageBrowser($parameters)
     {
         list($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num) = $parameters;

@@ -43,9 +43,13 @@ require_once DIR_INC . '/debug.inc.php';
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<?php echo _("The page you're trying to access is invalid."); ?><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/"><?php echo _('Go home'); ?></a>
+<div class="card card-outline card-warning">
+    <div class="card-body text-center">
+        <p><i class="bi bi-exclamation-triangle text-warning fs-1" aria-hidden="true"></i></p>
+        <p><?php echo _("The page you're trying to access is invalid."); ?></p>
+        <a href="<?php echo $web_root; ?>/" class="btn btn-danger"><?php echo _('Go home'); ?></a>
+    </div>
+</div>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
 </html>

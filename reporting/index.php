@@ -46,9 +46,9 @@ $report = $_REQUEST['report'] ?? '';
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->calloutTop(); ?>
 <?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>'); ?>
-
-<BR><BR>
+<?php echo $layout->calloutBottom(); ?>
 <div class="row">
     <?php echo $layout->contentBoxTop(_('Domain Reports'), '3'); ?>
     <a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>

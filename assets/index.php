@@ -44,8 +44,9 @@ $system->authCheck();
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
+<?php echo $layout->calloutTop(); ?>
 <?php echo _('Assets are the building blocks of DomainMOD.'); ?>&nbsp;<?php echo _('Assets include things like the domain registrars and accounts that you use, the SSL certificate types that you own, your DNS Servers and IP Addresses, the categories you want to use for grouping similar domains, and so on.'); ?><BR>
-<BR>
+<?php echo $layout->calloutBottom(); ?>
 
 <div class="row">
     <?php echo $layout->contentBoxTop(_('Domains'), '3'); ?>

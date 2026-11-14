@@ -7,8 +7,9 @@ html {
     scroll-behavior: auto;
 }
 /* AdminLTE 3 gave every card space below it, and DomainMOD's pages rely on it (such as the buttons under Advanced
-   Filtering). AdminLTE 4 leaves it out. */
-.app-content .card {
+   Filtering). AdminLTE 4 leaves it out, for cards and for the callouts that hold page introductions. */
+.app-content .card,
+.app-content .callout {
     margin-bottom: 1rem;
 }
 .domainmod-css-text-highlight-red {
@@ -130,9 +131,10 @@ a {
 a:hover {
     text-decoration: underline;
 }
-/* Links in the footer's sentence are underlined, since their colour is too close to the text around them to tell
-   them apart */
-.app-footer a {
+/* Links in the footer's sentence and in page introductions (callouts) are underlined, since their colour is too
+   close to the text around them to tell them apart */
+.app-footer a,
+.callout a {
     text-decoration: underline;
 }
 /* AdminLTE's grey for the sidebar's submenu links is too light to read on the light sidebar (WCAG AA). Dark mode

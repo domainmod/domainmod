@@ -20,10 +20,10 @@
  */
 ?>
 <div class="row">
-    <div class="col-4">
+    <div class="d-none d-lg-block col-lg-4">
         &nbsp;
     </div>
-    <div class="col-4">
+    <div class="col-12 col-lg-4">
     <BR><BR><BR>
     <div class="login-logo">
         <img src="<?php echo $web_root; ?>/images/logo-lg.png">

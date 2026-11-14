@@ -66,6 +66,42 @@ if (file_exists($full_filename)) {
 <script nonce="<?php echo CURRENT_NONCE; ?>">
     $(function () {
 
+        // Tooltips, such as on the lists' status badges (see Layout::statusBadge()). Each opens on hover or focus, stays
+        // open while the pointer is over it or the tooltip itself, and Escape closes it. The badge's aria-label already
+        // gives screen readers the same text, so the tooltip isn't also linked as its description.
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+            // No fade, so showing it again straight after hiding can't race Bootstrap's hide transition
+            var tooltip = new bootstrap.Tooltip(element, {trigger: 'manual', animation: false});
+            var hideUnlessInUse = function () {
+                setTimeout(function () {
+                    var tip_in_use = tooltip.tip && tooltip.tip.matches(':hover');
+                    if (!element.matches(':hover') && document.activeElement !== element && !tip_in_use) tooltip.hide();
+                }, 100);
+            };
+            // Bootstrap closes a manual tooltip that's shown again while already open, so it's only shown when closed
+            var is_open = false;
+            var showIfClosed = function () {
+                if (!is_open) tooltip.show();
+            };
+            element.addEventListener('mouseenter', showIfClosed);
+            element.addEventListener('focus', showIfClosed);
+            element.addEventListener('hidden.bs.tooltip', function () { is_open = false; });
+            element.addEventListener('mouseleave', hideUnlessInUse);
+            element.addEventListener('blur', hideUnlessInUse);
+            element.addEventListener('shown.bs.tooltip', function () {
+                is_open = true;
+                element.removeAttribute('aria-describedby');
+                if (tooltip.tip) tooltip.tip.addEventListener('mouseleave', hideUnlessInUse);
+            });
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape') return;
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+                var tooltip = bootstrap.Tooltip.getInstance(element);
+                if (tooltip) tooltip.hide();
+            });
+        });
+
         // The multiple choice menus (see Form::showMultipleSelectTop()), each with a button to remove a choice. They have
         // no placeholder, since the label above each one already names it.
         document.querySelectorAll('select.domainmod-multiple-select').forEach(function (select) {

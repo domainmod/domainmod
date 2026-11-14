@@ -208,11 +208,11 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->calloutTop(); ?>
 <?php echo sprintf(_('Segments are lists of domains that can be used to help filter and manage your %sdomain results%s.'), '<a href="' . $web_root . '/domains/">', '</a>'); ?><BR>
 <BR>
 <?php echo sprintf(_("Segment filters will tell you which domains match with domains that are saved in %s, as well as which domains don't match, and you can easily view and export the results."), SOFTWARE_TITLE); ?>
-<BR>
-<BR>
+<?php echo $layout->calloutBottom(); ?>
 <a href="add.php"><?php echo $layout->showButton('button', _('Add Segment')); ?></a>
 <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
