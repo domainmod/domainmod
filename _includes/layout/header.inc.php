@@ -39,15 +39,6 @@ $search_for = $search_for ?? '';
                 </li>
             </ul>
 
-            <!-- Domain search on wide screens (the sidebar has the same search on every screen) -->
-            <form class="navbar-search d-none d-xl-block ms-3" role="search" action="<?php echo $web_root; ?>/domains/index.php">
-                <label for="navbar-search-input" class="visually-hidden"><?php echo _('Domain Search'); ?></label>
-                <div class="navbar-search-field">
-                    <input type="search" id="navbar-search-input" name="search_for" class="form-control" placeholder="<?php echo _('Domain Search'); ?>" autocomplete="off"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
-                    <button class="navbar-search-submit" type="submit" aria-label="<?php echo _('Search'); ?>"><i class="bi bi-search" aria-hidden="true"></i></button>
-                </div>
-            </form>
-
             <!-- End navbar links -->
             <ul class="navbar-nav ms-auto">
 
@@ -128,13 +119,12 @@ $search_for = $search_for ?? '';
 
         <div class="sidebar-wrapper">
 
-            <!-- Domain search -->
-            <form class="domainmod-css-sidebar-search-padding" role="search" action="<?php echo $web_root; ?>/domains/index.php">
-                <div class="input-group input-group-sm">
-                    <input class="form-control" type="search" placeholder="<?php echo _('Domain Search'); ?>" aria-label="<?php echo _('Domain Search'); ?>" name="search_for"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
-                    <button class="btn btn-outline-secondary" type="submit" aria-label="<?php echo _('Search'); ?>">
-                        <i class="bi bi-search"></i>
-                    </button>
+            <!-- Domain search, styled like the menu filter below it, with the search button inside the field -->
+            <form class="sidebar-search" role="search" action="<?php echo $web_root; ?>/domains/index.php">
+                <label for="sidebar-domain-search-input" class="visually-hidden"><?php echo _('Domain Search'); ?></label>
+                <div class="domainmod-css-search-field">
+                    <input type="search" id="sidebar-domain-search-input" name="search_for" class="form-control form-control-sm" placeholder="<?php echo _('Domain Search'); ?>" autocomplete="off"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
+                    <button class="domainmod-css-search-submit" type="submit" aria-label="<?php echo _('Search'); ?>"><i class="bi bi-search" aria-hidden="true"></i></button>
                 </div>
             </form>
 

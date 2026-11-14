@@ -51,9 +51,35 @@ html {
     max-height: 2rem;
     transform: translate(-50%, -50%);
 }
-.domainmod-css-sidebar-search-padding {
-    padding-top: 10px;
-    padding-bottom: 5px;
+/* The sidebar's domain search, with its search button inside the field. AdminLTE's styles for a search like this
+   (.navbar-search) only apply in the header. */
+.domainmod-css-search-field {
+    position: relative;
+}
+.domainmod-css-search-field .form-control {
+    padding-left: 2.125rem;
+}
+.domainmod-css-search-submit {
+    position: absolute;
+    top: 50%;
+    left: .75rem;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    line-height: 1;
+    color: var(--lte-search-field-icon-color);
+    background: transparent;
+    border: 0;
+    border-radius: 50rem;
+    transform: translateY(-50%);
+}
+.domainmod-css-search-submit:hover,
+.domainmod-css-search-submit:focus-visible {
+    color: var(--lte-search-field-color);
+}
+.domainmod-css-search-submit:focus-visible {
+    outline: 2px solid var(--bs-focus-ring-color);
+    outline-offset: 2px;
 }
 /* Compact text, as AdminLTE 3's text-sm gave (AdminLTE 4 has no text-sm). The tighter spacing comes from AdminLTE's
    compact-mode class, on the body (see Layout::bodyTag()), since AdminLTE's rules for the collapsed sidebar only
@@ -223,9 +249,4 @@ a:hover {
 }
 .focus .ts-control {
     box-shadow: none;
-}
-/* The sidebar's domain search hides in the collapsed (icons only) sidebar and comes back on hover, as AdminLTE does
-   with its menu filter */
-.sidebar-mini.sidebar-collapse .app-sidebar:not(:hover) .domainmod-css-sidebar-search-padding {
-    display: none;
 }
