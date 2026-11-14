@@ -42,12 +42,22 @@ html {
 .domainmod-css-logo-background-colour {
     background-color: #f1f1f1;
 }
+/* The small logo in the collapsed sidebar, centred and sized to fit it. AdminLTE places it for a wider sidebar, which
+   crops it in the compact one. It's positioned within the whole sidebar, so its top is half the compact brand area's
+   height (2.75rem). */
+.sidebar-mini.sidebar-collapse .app-sidebar .logo-xs.brand-image-xl {
+    top: 1.375rem;
+    left: 50%;
+    max-height: 2rem;
+    transform: translate(-50%, -50%);
+}
 .domainmod-css-sidebar-search-padding {
     padding-top: 10px;
     padding-bottom: 5px;
 }
 /* Compact text, as AdminLTE 3's text-sm gave (AdminLTE 4 has no text-sm). The tighter spacing comes from AdminLTE's
-   compact-mode class on .app-wrapper. */
+   compact-mode class, on the body (see Layout::bodyTag()), since AdminLTE's rules for the collapsed sidebar only
+   match it there. */
 :root {
     --bs-body-font-size: .875rem;
 }

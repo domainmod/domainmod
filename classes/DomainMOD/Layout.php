@@ -274,7 +274,7 @@ class Layout
         if ($type === 'login') return '<body class="login-page bg-body-secondary">' . "\n";
         if ($type === 'install') return '<body class="bg-body-secondary">' . "\n";
         if ($type === 'raw') return '<body class="bg-body">' . "\n";
-        return '<body class="layout-fixed sidebar-expand-lg sidebar-mini bg-body-tertiary">' . "\n";
+        return '<body class="layout-fixed sidebar-expand-lg sidebar-mini compact-mode bg-body-tertiary">' . "\n";
     }
 
     /*

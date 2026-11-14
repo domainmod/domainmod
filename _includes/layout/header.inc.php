@@ -23,7 +23,7 @@
 <?php
 $search_for = $search_for ?? '';
 ?>
-<div class="app-wrapper compact-mode">
+<div class="app-wrapper">
 
     <!-- Header -->
     <nav class="app-header navbar navbar-expand bg-body">
