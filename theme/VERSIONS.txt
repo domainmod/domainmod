@@ -9,5 +9,6 @@ DataTables Bootstrap 5 styling 3.1.5  https://registry.npmjs.org/datatables.net-
 DataTables Responsive 4.1.1  https://registry.npmjs.org/datatables.net-responsive/-/datatables.net-responsive-4.1.1.tgz  sha256:095bbfb8ff1c568b734785bd12c0de619e6317b6c079007e578f3a6bbee3f0f2
 DataTables Responsive Bootstrap 5 styling 4.1.1  https://registry.npmjs.org/datatables.net-responsive-bs5/-/datatables.net-responsive-bs5-4.1.1.tgz  sha256:6bd783a77fdcc4fb2785afe646ca91b5ffe1134ba53261f802960e13590150bd
 Tom Select 2.6.2  https://registry.npmjs.org/tom-select/-/tom-select-2.6.2.tgz  sha256:91e3a429b42d9163e8ade96f3603109d3b7faa7f9b1a5259fa30f8f4b162415a
+htmx 2.0.11  https://registry.npmjs.org/htmx.org/-/htmx.org-2.0.11.tgz  sha256:165a2655073e9e6e55e307a7c74e8ebcdb76afb7701f9c16cfd106a13add408e
 Flatpickr 4.6.13  https://registry.npmjs.org/flatpickr/-/flatpickr-4.6.13.tgz  sha256:912da5a92aea3447d39ab83d83706c004c999ee9b013a6267fab3d8710e8a7a8
 jQuery 3.7.1  https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz  sha256:68a9f787516da47c680e09c187bcbac4536b6f85d90eb882844e12919e583f53
