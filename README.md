@@ -5,6 +5,7 @@
 Project Home: <https://domainmod.org>  
 Project Demo: <https://demo.domainmod.org>  
 Documentation: <https://domainmod.org/docs/>  
+Support: <https://domainmod.org/support/>  
 Source Code: <https://domainmod.org/source/>
 
 About
@@ -79,6 +80,8 @@ If you installed DomainMOD using Docker, the cron job will be setup and running 
 
     Filename: /cron.php
 
+To stop anyone else from running cron.php, you can give it a key by adding `$cron_key = 'YourKeyHere';` (with a long random value) to config.inc.php. After that, cron.php only runs from the command line, or from a URL that includes the key, such as `/cron.php?key=YourKeyHere`. See the User Guide for details: <https://domainmod.org/docs/userguide/getting-started/#cron-job>
+
 Security
 --------
 Although we've done our best to secure DomainMOD, unfortunately there are many factors that could cause security holes, such as the software being run on insecure hardware, software like PHP and MySQL having out-of-date versions with known vulnerabilities, easy-to-guess passwords being used, and so on. Due to these factors we recommend the following steps to help secure your DomainMOD installation.
@@ -93,7 +96,7 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 5. Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, **use it at your own risk**. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.
 
-    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the Domain Queue, however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.
+    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is only necessary if you want to import domains using your registrar's API through the Domain Queue (imports using RDAP and WHOIS don't need them), however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.
 
 6. Do not host DomainMOD on a public website or on an easy-to-guess URL.
 

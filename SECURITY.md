@@ -3,6 +3,7 @@
 Project Home: <https://domainmod.org>  
 Project Demo: <https://demo.domainmod.org>  
 Documentation: <https://domainmod.org/docs/>  
+Support: <https://domainmod.org/support/>  
 Source Code: <https://domainmod.org/source/>
 
 # Security Policy
