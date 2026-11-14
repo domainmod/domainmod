@@ -25,13 +25,15 @@
     if ($total_rows > 0 && $total_rows != '') { ?>
         <a href="<?php echo $report_filename; ?>?export_data=1&daterange=<?php echo $daterange; ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
     } ?>
-    <BR><BR><strong><?php echo _('Filter By Date Range'); ?></strong><BR>
+    <BR><BR>
 
     <?php echo $form->showFormTop(''); ?>
 
-    <input type="text" name="daterange" size="16" value="<?php echo $daterange; ?>" />
-
-    <?php echo $form->showSubmitButton(_('Filter Report'), '&nbsp;&nbsp;', '<BR><BR>'); ?>
+    <label for="daterange" class="form-label fw-bold"><?php echo _('Filter By Date Range'); ?></label>
+    <div class="domainmod-date-filter d-flex flex-wrap align-items-center gap-2 mb-4">
+        <input type="text" name="daterange" id="daterange" class="form-control w-auto" size="23" value="<?php echo $daterange; ?>" />
+        <?php echo $form->showSubmitButton(_('Filter Report'), '', ''); ?>
+    </div>
 
 <?php //@formatter:on
 echo $form->showFormBottom('');

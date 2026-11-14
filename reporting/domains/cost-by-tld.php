@@ -36,6 +36,7 @@ $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -205,6 +206,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
     <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 
+    <?php // Each group's share of the total, from the same rows as the table below ?>
+    <?php echo $chart->doughnut($slug . '-chart', $breadcrumb, array_map(function ($row) { return '.' . $row->tld; }, $result), array_column($result, 'total_cost')); ?>
+
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -246,5 +250,6 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

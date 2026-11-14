@@ -36,6 +36,7 @@ $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -77,6 +78,32 @@ $result = $pdo->query("
     ORDER BY year, month")->fetchAll();
 
 $total_rows = count($result);
+
+// The chart's bars: one per month the table lists, each with the same cost as its row (one grouped query rather than one
+// per month, with the same tables and filter as the table's monthly costs)
+$monthly_costs = array();
+foreach ($pdo->query("
+    SELECT YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) AS month, SUM(sslc.total_cost * cc.conversion) AS monthly_cost
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+      AND sslc.active NOT IN ('0')" .
+      $range_string . "
+    GROUP BY year, month")->fetchAll() as $row_monthly_cost) {
+
+    $monthly_costs[$row_monthly_cost->year . '-' . $row_monthly_cost->month] = $row_monthly_cost->monthly_cost;
+
+}
+$chart_labels = array();
+$chart_values = array();
+foreach ($result as $row_chart) {
+
+    $chart_labels[] = $reporting->monthName($row_chart->month) . ' ' . $row_chart->year;
+    $chart_values[] = $monthly_costs[$row_chart->year . '-' . $row_chart->month] ?? 0;
+
+}
 
 $result_grand_total = $pdo->query("
     SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
@@ -263,6 +290,8 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
     <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 
+    <?php echo $chart->bar($slug . '-chart', $breadcrumb, $chart_labels, $chart_values); ?>
+
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -379,5 +408,6 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

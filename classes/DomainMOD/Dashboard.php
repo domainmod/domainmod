@@ -35,9 +35,10 @@ class Dashboard
      * (left out when the count is zero), which screen readers hear with the title, the count, and the dashboard
      * section, so links with the same title (such as Renewals for domains and SSL certificates) differ. $colour is a
      * Bootstrap colour, used the same way across the dashboard (danger for urgent, warning for waiting, success for
-     * done, and secondary for plain counts), and $icon is a Bootstrap Icons class.
+     * done, and secondary for plain counts), and $icon is a Bootstrap Icons class. $detail is an optional short line
+     * under the title, such as a total cost (escaped here, so pass it as plain text).
      */
-    public function displayPanel($title, $count, $colour, $icon, $url, $section = '')
+    public function displayPanel($title, $count, $colour, $icon, $url, $section = '', $detail = '')
     {
         $bootstrap_colour = $colour;
         ob_start(); ?>
@@ -49,6 +50,9 @@ class Dashboard
                         <div>
                             <div class="fs-2 fw-semibold lh-1"><?php echo number_format($count); ?></div>
                             <div class="text-body-secondary mt-1"><?php echo $title; ?></div>
+                            <?php if ($detail != '') { ?>
+                                <div class="small text-body-secondary"><?php echo htmlspecialchars($detail, ENT_QUOTES, 'UTF-8'); ?></div>
+                            <?php } ?>
                         </div>
                         <i class="bi <?php echo $icon; ?> fs-3 text-<?php echo $bootstrap_colour; ?>" aria-hidden="true"></i>
                     </div>

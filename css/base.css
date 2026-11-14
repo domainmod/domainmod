@@ -213,6 +213,11 @@ a:hover {
     display: block;
     width: 100%;
 }
+/* The reports' date range filter keeps its field and button on one line */
+.domainmod-date-filter .flatpickr-wrapper {
+    display: inline-block;
+    width: auto;
+}
 [data-bs-theme="dark"] .flatpickr-calendar {
     background: var(--bs-body-bg);
     box-shadow: 0 0 0 1px var(--bs-border-color), 0 .5rem 1rem rgba(0, 0, 0, .5);
@@ -304,4 +309,99 @@ a:hover {
 a[aria-busy="true"] {
     pointer-events: none;
     opacity: .65;
+}
+/* The charts' colours (js/charts.js reads them, since Chart.js draws on a canvas and can't use CSS directly): a
+   nine-colour palette (a doughnut's slices use the first five, since it has at most five groups, and bars use the
+   first), a grey for a bar chart's "Other" bar, plus the text, grid, and slice border colours, for each colour mode */
+:root,
+[data-bs-theme="light"] {
+    --domainmod-chart-1: #2563eb;
+    --domainmod-chart-2: #dc2626;
+    --domainmod-chart-3: #16a34a;
+    --domainmod-chart-4: #d97706;
+    --domainmod-chart-5: #7c3aed;
+    --domainmod-chart-6: #0891b2;
+    --domainmod-chart-7: #db2777;
+    --domainmod-chart-8: #65a30d;
+    --domainmod-chart-9: #92400e;
+    --domainmod-chart-other: #94a3b8;
+    --domainmod-chart-text: #495057;
+    --domainmod-chart-grid: rgba(0, 0, 0, .1);
+    --domainmod-chart-border: #ffffff;
+}
+[data-bs-theme="dark"] {
+    --domainmod-chart-1: #60a5fa;
+    --domainmod-chart-2: #f87171;
+    --domainmod-chart-3: #4ade80;
+    --domainmod-chart-4: #fbbf24;
+    --domainmod-chart-5: #a78bfa;
+    --domainmod-chart-6: #22d3ee;
+    --domainmod-chart-7: #f472b6;
+    --domainmod-chart-8: #a3e635;
+    --domainmod-chart-9: #d6a76b;
+    --domainmod-chart-other: #64748b;
+    --domainmod-chart-text: #dee2e6;
+    --domainmod-chart-grid: rgba(255, 255, 255, .12);
+    --domainmod-chart-border: #212529;
+}
+/* A chart's drawing area. Chart.js sizes the canvas to fill it, so the height is set here (no inline styles under the
+   CSP), smaller on narrow screens. */
+.domainmod-chart {
+    position: relative;
+    height: 320px;
+}
+@media (max-width: 575.98px) {
+    .domainmod-chart {
+        height: 260px;
+    }
+}
+/* A cost report's horizontal bar chart is as tall as its bars need (up to 15 plus "Other"), so each bar keeps the same
+   thickness however many there are */
+.domainmod-chart.domainmod-chart-bars-1 {
+    height: 92px;
+}
+.domainmod-chart.domainmod-chart-bars-2 {
+    height: 124px;
+}
+.domainmod-chart.domainmod-chart-bars-3 {
+    height: 156px;
+}
+.domainmod-chart.domainmod-chart-bars-4 {
+    height: 188px;
+}
+.domainmod-chart.domainmod-chart-bars-5 {
+    height: 220px;
+}
+.domainmod-chart.domainmod-chart-bars-6 {
+    height: 252px;
+}
+.domainmod-chart.domainmod-chart-bars-7 {
+    height: 284px;
+}
+.domainmod-chart.domainmod-chart-bars-8 {
+    height: 316px;
+}
+.domainmod-chart.domainmod-chart-bars-9 {
+    height: 348px;
+}
+.domainmod-chart.domainmod-chart-bars-10 {
+    height: 380px;
+}
+.domainmod-chart.domainmod-chart-bars-11 {
+    height: 412px;
+}
+.domainmod-chart.domainmod-chart-bars-12 {
+    height: 444px;
+}
+.domainmod-chart.domainmod-chart-bars-13 {
+    height: 476px;
+}
+.domainmod-chart.domainmod-chart-bars-14 {
+    height: 508px;
+}
+.domainmod-chart.domainmod-chart-bars-15 {
+    height: 540px;
+}
+.domainmod-chart.domainmod-chart-bars-16 {
+    height: 572px;
 }

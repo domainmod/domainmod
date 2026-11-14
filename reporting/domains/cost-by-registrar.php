@@ -36,6 +36,7 @@ $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -83,6 +84,23 @@ $result = $pdo->query("
     ORDER BY r.name, o.name, ra.username")->fetchAll();
 
 $total_rows = count($result);
+
+// Each registrar's total for the chart (the table groups by account too), with the same tables and filter as the table
+$result_chart = $pdo->query("
+    SELECT r.name AS registrar_name, SUM(d.total_cost * cc.conversion) AS total_cost
+    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r,
+        registrar_accounts AS ra, owners AS o
+    WHERE d.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND d.registrar_id = r.id
+      AND d.account_id = ra.id
+      AND d.owner_id = o.id
+      AND d.active NOT IN ('0', '10')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string . "
+    GROUP BY r.id, r.name
+    ORDER BY r.name")->fetchAll();
 
 $result_grand_total = $pdo->query("
     SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
@@ -259,6 +277,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
     <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 
+    <?php // Each registrar's share of the total ?>
+    <?php echo $chart->doughnut($slug . '-chart', $breadcrumb, array_column($result_chart, 'registrar_name'), array_column($result_chart, 'total_cost')); ?>
+
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -362,5 +383,6 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

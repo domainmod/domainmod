@@ -36,6 +36,7 @@ $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -84,6 +85,23 @@ $result = $pdo->query("
     ORDER BY sslp.name, o.name, sslpa.username")->fetchAll();
 
 $total_rows = count($result);
+
+// Each provider's total for the chart (the table groups by account too), with the same tables and filter as the table
+$result_chart = $pdo->query("
+    SELECT sslp.name AS provider_name, SUM(sslc.total_cost * cc.conversion) AS total_cost
+    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp,
+        ssl_accounts AS sslpa, owners AS o
+    WHERE sslc.fee_id = f.id
+      AND f.currency_id = c.id
+      AND c.id = cc.currency_id
+      AND sslc.ssl_provider_id = sslp.id
+      AND sslc.account_id = sslpa.id
+      AND sslc.owner_id = o.id
+      AND sslc.active NOT IN ('0')
+      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'" .
+      $range_string . "
+    GROUP BY sslp.id, sslp.name
+    ORDER BY sslp.name")->fetchAll();
 
 $result_grand_total = $pdo->query("
     SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
@@ -261,6 +279,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
     <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 
+    <?php // Each provider's share of the total ?>
+    <?php echo $chart->doughnut($slug . '-chart', $breadcrumb, array_column($result_chart, 'provider_name'), array_column($result_chart, 'total_cost')); ?>
+
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -370,5 +391,6 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

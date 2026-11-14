@@ -31,13 +31,24 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $dashboard = new DomainMOD\Dashboard();
+$reporting = new DomainMOD\Reporting();
+$currency = new DomainMOD\Currency();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dashboard-main.inc.php';
 
 $system->authCheck();
+// Rates for every currency in use, or the renewal cost chart below would leave out what uses a missing one
+(new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
+
+// The domains renewing in the renewal cost chart's 12 months (overdue ones included), shared with the At-Risk tile and
+// the Upcoming Renewals and At-Risk Domains reports
+$today = $time->timeBasic();
+$renewal_rows = $reporting->renewalDomains($reporting->renewalChartEnd($today));
+$at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->timeBasicPlusDays(DomainMOD\Reporting::AT_RISK_DAYS)));
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -72,7 +83,7 @@ $total_count_ssl = $pdo->query("
       AND sslc.active NOT IN ('0')
       AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
 
-if ($total_count_domains || $total_count_ssl) { ?>
+if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
 
     <?php $section = sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?>
     <div class="row">
@@ -110,6 +121,15 @@ if ($total_count_domains || $total_count_ssl) { ?>
     if ($total_count) {
 
         echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange), $section);
+
+    }
+
+    //////////////////////////////////////////////////
+    // At-Risk Domains (its own fixed 30 days, which the tile's title says, beside this row's Expiration Days range)
+    //////////////////////////////////////////////////
+    if ($at_risk_count) {
+
+        echo $dashboard->displayPanel(sprintf(_('At Risk (%s days)'), DomainMOD\Reporting::AT_RISK_DAYS), $at_risk_count, 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php', $section);
 
     } ?>
 
@@ -368,6 +388,31 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
 </div>
 
+<?php
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Renewal Costs, Next 12 Months (the same bars as Upcoming Renewals, with its figures as a table under the chart)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+if ($renewal_rows) {
+
+    $renewal_months = $reporting->renewalMonths($renewal_rows, $today);
+    ob_start(); ?>
+
+    <details class="mt-3">
+        <summary><?php echo _('Show the figures'); ?></summary>
+        <?php echo $reporting->renewalMonthsTable($renewal_months); ?>
+    </details>
+    <div class="text-end mt-2">
+        <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('View'); ?><span class="visually-hidden"> <?php echo _('Upcoming Renewals'); ?></span> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </div><?php
+
+    $after = ob_get_clean(); ?>
+
+    <?php echo $chart->bar('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'), array_column($renewal_months, 'cost'), !empty($renewal_months[0]['overdue']), $after);
+
+}
+?>
+
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

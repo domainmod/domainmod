@@ -51,6 +51,8 @@ $report = $_REQUEST['report'] ?? '';
 <?php echo $layout->calloutBottom(); ?>
 <div class="row">
     <?php echo $layout->contentBoxTop(_('Domain Reports'), '3'); ?>
+    <a href='domains/upcoming-renewals.php'><?php echo _('Upcoming Renewals'); ?></a><BR>
+    <a href='domains/at-risk.php'><?php echo sprintf(_('At-Risk Domains (Next %s Days)'), DomainMOD\Reporting::AT_RISK_DAYS); ?></a><BR>
     <a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>
     <a href='domains/cost-by-dns.php'><?php echo _('Cost by DNS Profile'); ?></a><BR>
     <a href='domains/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a><BR>
@@ -71,11 +73,15 @@ $report = $_REQUEST['report'] ?? '';
     <a href='ssl/cost-by-provider.php'><?php echo _('Cost by Provider'); ?></a><BR>
     <a href='ssl/cost-by-type.php'><?php echo _('Cost by Type'); ?></a><BR>
     <a href='ssl/provider-fees.php?all=0'><?php echo _('Provider Fees'); ?></a><BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
     &nbsp;
     <?php echo $layout->contentBoxBottom(); ?>
 
     <?php echo $layout->contentBoxTop(_('Data Warehouse Reports'), '3'); ?>
     <a href='dw/potential-problems.php?generate=1'><?php echo _('Potential Problems'); ?></a><BR>
+    &nbsp;<BR>
+    &nbsp;<BR>
     &nbsp;<BR>
     &nbsp;<BR>
     &nbsp;<BR>
