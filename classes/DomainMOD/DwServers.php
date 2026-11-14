@@ -33,13 +33,16 @@ class DwServers
     public function get()
     {
         return $this->deeb->cnxx->query("
-            SELECT id, `host`, protocol, `port`, username, api_token, `hash`, verify_ssl
+            SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`, verify_ssl
             FROM dw_servers
             ORDER BY `name`")->fetchAll();
     }
 
+    // Returns the names of the servers whose accounts, zones, or records couldn't be retrieved
     public function processEachServer($result)
     {
+        $failed_servers = array();
+
         $build = new DwBuild();
         $accounts = new DwAccounts();
         $zones = new DwZones();
@@ -63,19 +66,25 @@ class DwServers
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash, $row->verify_ssl);
-            $accounts->insertAccounts($api_results, $row->id);
+            $accounts_retrieved = $accounts->insertAccounts($api_results, $row->id);
 
             $api_call = $zones->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash, $row->verify_ssl);
-            $zones->insertZones($api_results, $row->id);
+            $zones_retrieved = $zones->insertZones($api_results, $row->id);
 
             $result_zones = $zones->getInsertedZones($row->id);
-            $zones->processEachZone($result_zones, $row->id, $row->protocol, $row->host, $row->port, $row->username,
-                $row->api_token, $row->hash, $row->verify_ssl);
+            $records_retrieved = $zones->processEachZone($result_zones, $row->id, $row->protocol, $row->host, $row->port,
+                $row->username, $row->api_token, $row->hash, $row->verify_ssl);
             $this->serverFinish($row->id, $bind_build_start_time);
 
+            if (!$accounts_retrieved || !$zones_retrieved || !$records_retrieved) {
+                $failed_servers[] = $row->name;
+            }
+
         }
+
+        return $failed_servers;
     }
 
     public function serverFinish($server_id, $build_start_time)

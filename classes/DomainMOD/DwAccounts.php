@@ -83,11 +83,13 @@ class DwAccounts
         $pdo = $this->deeb->cnxx;
         $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($array_results['metadata']['result'] !== 1) {
+        // A server that can't be reached sends nothing, which decodes to null
+        if (($array_results['metadata']['result'] ?? null) !== 1) {
 
             $log_message = 'Unable to retrieve Accounts from WHM';
             $log_extra = array('Server ID' => $server_id, 'API Results' => $array_results);
             $this->log->critical($log_message, $log_extra);
+            return false;
 
         } else {
 
@@ -132,7 +134,7 @@ class DwAccounts
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($array_results['data']['acct'] as $account) {
+            foreach ($array_results['data']['acct'] ?? array() as $account) {
 
                 // stored the same way as the domains table (münchen.de for xn--mnchen-3ya.de), so they match
                 $bind_domain = $account['domain'] ? Domain::normalizeOrKeep($account['domain']) : '';
@@ -167,6 +169,7 @@ class DwAccounts
 
         }
 
+        return true;
     }
 
     public function getTotalDwAccounts()

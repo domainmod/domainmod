@@ -49,10 +49,10 @@ class DwDisplay
             </td>
             <td align="left" valign="top">
                 <strong><?php echo _('Shell'); ?>:</strong> <?php echo $this->escape($row->shell); ?><BR>
-                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $this->escape($row->partition); ?> /<?php echo $this->escape($row->user); ?><BR>
+                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $this->escape($row->partition); ?>/<?php echo $this->escape($row->user); ?><BR>
                 <strong><?php echo _('HD Quota'); ?>:</strong> <?php echo $this->escape($row->disklimit); ?>
                 <?php if ($row->disklimit != "unlimited") echo " MB"; ?><BR>
-                <strong>HD Used:</strong> <?php echo number_format((float) $row->diskused); ?> MB
+                <strong><?php echo _('HD Used'); ?>:</strong> <?php echo number_format((float) $row->diskused); ?> MB
             </td>
             <td align="left" valign="top">
                 <strong><?php echo _('POP'); ?>:</strong> <?php echo $this->escape($row->maxpop); ?><BR>
@@ -64,8 +64,11 @@ class DwDisplay
                 <strong><?php echo _('Parked'); ?>:</strong> <?php echo $this->escape($row->maxparked); ?><BR><BR>
             </td>
             <td align="left" valign="top">
-                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo $this->escape($row->suspended); ?><BR>
-                <strong><?php echo _('When') . '?'; ?></strong> <?php echo $this->escape($row->suspendtime); ?><BR>
+                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo (int) $row->suspended === 1 ? _('Yes') : _('No'); ?><BR><?php
+                // WHM sends the suspension time as a Unix timestamp, and 0 when the account isn't suspended
+                if ((int) $row->suspendtime > 0) { ?>
+                <strong><?php echo _('When') . '?'; ?></strong> <?php echo date("Y M jS", (int) $row->suspendtime); ?><BR><?php
+                } ?>
                 <strong><?php echo _('Why') . '?'; ?></strong> <?php echo $this->escape($row->suspendreason); ?>
             </td><?php
 

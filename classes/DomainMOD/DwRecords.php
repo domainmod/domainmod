@@ -85,11 +85,13 @@ class DwRecords
         $pdo = $this->deeb->cnxx;
         $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($array_results['metadata']['result'] !== 1) {
+        // A server that can't be reached sends nothing, which decodes to null
+        if (($array_results['metadata']['result'] ?? null) !== 1) {
 
             $log_message = 'Unable to retrieve DNS Records from WHM';
             $log_extra = array('Server ID' => $server_id, 'Domain' => $domain, 'Zone ID' => $zone_id, 'API Results' => $array_results);
             $this->log->critical($log_message, $log_extra);
+            return false;
 
         } else {
 
@@ -128,7 +130,7 @@ class DwRecords
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($array_results['data']['zone'][0]['record'] as $record) {
+            foreach ($array_results['data']['zone'][0]['record'] ?? array() as $record) {
 
                 $bind_mname = $record['mname'] ? $record['mname'] : '';
                 $bind_rname = $record['rname'] ? $record['rname'] : '';
@@ -155,6 +157,8 @@ class DwRecords
             }
 
         }
+
+        return true;
     }
 
     public function getTotalDwRecords()

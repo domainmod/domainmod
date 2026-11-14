@@ -771,9 +771,9 @@ if ($dw_has_accounts === 1) { ?>
 <table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="10px"></th>
-        <th></th>
-        <th></th>
+        <th width="20px"></th>
+        <th><?php echo _('Server'); ?></th>
+        <th><?php echo _('Data'); ?></th>
         <th></th>
         <th></th>
         <th></th>
@@ -818,8 +818,8 @@ if ($dw_has_zones === 1) { ?>
     <thead>
     <tr>
         <th width="20px"></th>
-        <th></th>
-        <th></th>
+        <th><?php echo _('Server'); ?></th>
+        <th><?php echo _('Data'); ?></th>
     </tr>
     </thead>
     <tbody><?php

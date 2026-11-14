@@ -75,7 +75,7 @@ class DwBuild
         $accounts->createTable();
         $zones->createTable();
         $records->createTable();
-        $servers->processEachServer($result);
+        $failed_servers = $servers->processEachServer($result);
 
         $clean = new DwClean();
         $clean->all();
@@ -87,6 +87,17 @@ class DwBuild
         list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals();
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
         $this->updateEmpty($has_empty);
+
+        if (!empty($failed_servers)) {
+
+            // server names are stored HTML-escaped (they're typed in DomainMOD), so they're decoded before escaping
+            $server_names = array_map(function ($name) {
+                return DwDisplay::escape(htmlspecialchars_decode((string) $name, ENT_QUOTES));
+            }, $failed_servers);
+            $result_message = sprintf(_("The Data Warehouse has been rebuilt, but some data couldn't be retrieved from these servers: %s. Check their details on the Servers page, then rebuild it again."), implode(', ', $server_names));
+            return $result_message;
+
+        }
 
         $result_message = _('The Data Warehouse has been rebuilt');
         return $result_message;
@@ -187,9 +198,10 @@ class DwBuild
         return $api_results;
     }
 
+    // A failed request leaves no string to decode, which counts the same as an empty reply
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, true);
+        return is_string($api_result) ? json_decode($api_result, true) : null;
     }
 
 } //@formatter:on

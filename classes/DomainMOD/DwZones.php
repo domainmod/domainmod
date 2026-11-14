@@ -59,11 +59,13 @@ class DwZones
         $pdo = $this->deeb->cnxx;
         $array_results = $this->dwbuild->convertToArray($api_results);
 
-        if ($array_results['metadata']['result'] !== 1) {
+        // A server that can't be reached sends nothing, which decodes to null
+        if (($array_results['metadata']['result'] ?? null) !== 1) {
 
             $log_message = 'Unable to retrieve DNS Zones from WHM';
             $log_extra = array('Server ID' => $server_id, 'API Results' => $array_results);
             $this->log->critical($log_message, $log_extra);
+            return false;
 
         } else {
 
@@ -78,7 +80,7 @@ class DwZones
             $bind_timestamp = $this->time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
 
-            foreach ($array_results['data']['zone'] as $zone) {
+            foreach ($array_results['data']['zone'] ?? array() as $zone) {
 
                 // stored the same way as the domains table (münchen.de for xn--mnchen-3ya.de), so they match
                 $bind_domain = $zone['domain'] ? Domain::normalizeOrKeep($zone['domain']) : '';
@@ -88,6 +90,8 @@ class DwZones
             }
 
         }
+
+        return true;
     }
 
     public function getInsertedZones($server_id)
@@ -105,8 +109,11 @@ class DwZones
         return $stmt->fetchAll();
     }
 
+    // Returns false if any zone's records couldn't be retrieved
     public function processEachZone($result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash, $verify_ssl = 1)
     {
+        $all_retrieved = true;
+
         foreach ($result_zones as $row_zones) {
 
             $build = new DwBuild();
@@ -114,9 +121,13 @@ class DwZones
 
             $api_call = $records->getApiCall($row_zones->domain);
             $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash, $verify_ssl);
-            $records->insertRecords($api_results, $server_id, $row_zones->id, $row_zones->domain);
+            if (!$records->insertRecords($api_results, $server_id, $row_zones->id, $row_zones->domain)) {
+                $all_retrieved = false;
+            }
 
         }
+
+        return $all_retrieved;
     }
 
     public function getTotalDwZones()
