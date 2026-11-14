@@ -34,6 +34,8 @@ class NameSilo
 
     public function getApiUrl($api_key, $domain, $command)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://www.namesilo.com/api/';
         if ($command == 'domainlist') {
             return $base_url . 'listDomains?version=1&type=xml&key=' . $api_key;
@@ -94,6 +96,7 @@ class NameSilo
 
     public function getFullInfo($api_key, $domain)
     {
+        $domain_status = '';
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';

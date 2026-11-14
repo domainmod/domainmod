@@ -47,6 +47,21 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
+/*
+ * The keyword search as an SQL condition on the domain column. The term is quoted by PDO rather than pasted into the
+ * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
+ * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
+ * was typed, so casing rules can't send both to the wrong spelling.
+ */
+$domain_search_condition = function ($column, $term) use ($pdo) {
+    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
+    $lower = mb_strtolower($term, 'UTF-8');
+    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
+    $idn = DomainMOD\Domain::normalize($term);
+    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
+    return '(' . implode(' OR ', $conditions) . ')';
+};
+
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
 $did = (int) ($_REQUEST['did'] ?? 0);
@@ -110,6 +125,14 @@ if ($export_data !== 1) {
 if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
 if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
 
+// A range saved by an older version may not have been checked, so anything that isn't a real date range is dropped.
+if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateFormat($_SESSION['s_end_date'])) {
+
+    $_SESSION['s_start_date'] = 'YYYY-MM-DD';
+    $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+
+}
+
 // Anything else (including translated values in links from older versions) falls back to the default
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
@@ -165,12 +188,14 @@ if ($sslpcid !== 0) {
     $sslpcid_string = "";
 }
 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+    $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
 } else {
     $range_string = "";
 }
+// certificate names are stored HTML-encoded (as the search term is), so they're compared as they are; only the domain
+// side of the search is decoded and normalised
 if ($_SESSION['s_search_for_ssl'] != "") {
-    $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+    $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
 } else {
     $search_string = "";
 }
@@ -204,7 +229,7 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
           $range_string
           $search_string";
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
-$_SESSION['s_raw_list_query'] = $sql;
+$_SESSION['s_raw_list_sql'] = $sql;
 
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
@@ -717,12 +742,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -814,12 +839,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -911,12 +936,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1010,12 +1035,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1112,12 +1137,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1209,12 +1234,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslipid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1306,12 +1331,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
             } else {
                 $search_string = "";
             }
@@ -1408,12 +1433,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $sslpcid_string = "";
             }
             if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                $range_string = " AND (sslc.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND sslc.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
             } else {
                 $range_string = "";
             }
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
             } else {
                 $search_string = "";
             }
@@ -1437,6 +1462,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             echo $form->showDropdownTop('is_active', '', '', '', '');
             echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', 'LIVE');
             foreach ($result_active as $row_active) {
+
+                $display_text = $row_active->active;
 
                 if ($row_active->active == "0") {
                     $display_text = "Expired";
@@ -1653,7 +1680,7 @@ if ($result) { ?>
 
                             } elseif ($field['type_id'] == 2) { // Text
 
-                                echo $row->{$field['field']};
+                                echo $layout->customFieldText($row->{$field['field']});
 
                             } elseif ($field['type_id'] == 4) { // Date
 
@@ -1663,7 +1690,7 @@ if ($result) { ?>
 
                                 } else {
 
-                                    echo $row->{$field['field']};
+                                    echo $layout->customFieldText($row->{$field['field']});
 
                                 }
 
@@ -1675,7 +1702,7 @@ if ($result) { ?>
 
                                 } else {
 
-                                    echo $row->{$field['field']};
+                                    echo $layout->customFieldText($row->{$field['field']});
 
                                 }
 
@@ -1683,7 +1710,7 @@ if ($result) { ?>
 
                                 if ($row->{$field['field']} != '') {
 
-                                    echo "[<a target='_blank' href='" . $row->{$field['field']} . "'>open</a>]";
+                                    echo $layout->customFieldLink($row->{$field['field']});
 
                                 }
 

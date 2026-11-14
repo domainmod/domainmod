@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $validate = new DomainMOD\Validate();
+$queue = new DomainMOD\DomainQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -49,6 +50,8 @@ $rid = (int) ($_REQUEST['rid'] ?? 0);
 $new_registrar = isset($_POST['new_registrar']) ? $sanitize->text($_POST['new_registrar']) : '';
 $new_url = isset($_POST['new_url']) ? $sanitize->text($_POST['new_url']) : '';
 $new_api_registrar_id = (int) ($_POST['new_api_registrar_id'] ?? 0);
+// RDAP is a Domain Queue source, not a registrar's API, so it can't be chosen here
+if ($new_api_registrar_id !== 0 && $new_api_registrar_id === $queue->getRdapApiRegistrarId()) $new_api_registrar_id = 0;
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -109,6 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $existing_registrar_accounts = 0;
@@ -216,6 +221,7 @@ echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsan
 $result = $pdo->query("
     SELECT id, `name`
     FROM api_registrars
+    WHERE `name` != 'RDAP'
     ORDER BY `name` ASC")->fetchAll();
 
 if ($result) {

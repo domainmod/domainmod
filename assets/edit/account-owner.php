@@ -93,13 +93,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    $new_owner = $result->name;
-    $new_notes = $result->notes;
+    if ($result) {
+
+        $new_owner = $result->name;
+        $new_notes = $result->notes;
+
+    }
 
 }
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $existing_registrar_accounts = 0;

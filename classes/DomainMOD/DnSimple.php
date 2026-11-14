@@ -34,6 +34,8 @@ class DnSimple
 
     public function getApiUrl($account_id, $command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.dnsimple.com/v2/';
         if ($command == 'accountid') {
             return $base_url . 'whoami';
@@ -115,19 +117,19 @@ class DnSimple
             // get expiration date
             $expiration_date = $array_results['data']['expires_on'];
 
+            // Privacy and auto renewal come from the domain's details, before they're replaced by the name server
+            // response below (which only lists the name servers). A missing value stays blank rather than becoming
+            // "off", so the Domain Queue and the refresh don't save a value DNSimple didn't report.
+            $privacy_result = $array_results['data']['private_whois'] ?? null;
+            $privacy_status = is_bool($privacy_result) ? $this->processPrivacy($privacy_result) : '';
+            $autorenewal_result = $array_results['data']['auto_renew'] ?? null;
+            $autorenewal_status = is_bool($autorenewal_result) ? $this->processAutorenew($autorenewal_result) : '';
+
             // get dns servers
             $api_url = $this->getApiUrl($account_id, 'dns', $domain);
             $api_results = $this->apiCall($api_key, $api_url);
             $array_results = $this->convertToArray($api_results);
             $dns_servers = $this->processDns($array_results['data']);
-
-            // get privacy status
-            $privacy_result = $array_results['data']['private_whois'];
-            $privacy_status = $this->processPrivacy($privacy_result);
-
-            // get auto renewal status
-            $autorenewal_result = $array_results['data']['auto_renew'];
-            $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
         } else {
 

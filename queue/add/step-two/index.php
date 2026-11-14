@@ -47,6 +47,14 @@ $pdo = $deeb->cnxx;
 $new_raid = (int) ($_REQUEST['new_raid'] ?? 0);
 $raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
 
+// the chosen account's registrar details, empty until an account is chosen (the form can be submitted without one)
+$api_registrar_name = $registrar_notes = '';
+$req_account_username = $req_account_password = $req_account_id = $req_reseller_id = $req_api_app_name = '0';
+$req_api_key = $req_api_secret = $req_ip_address = $lists_domains = '0';
+$ret_expiry_date = $ret_dns_servers = $ret_privacy_status = $ret_autorenewal_status = '0';
+$account_username = $account_password = $account_id = $reseller_id = $api_app_name = $api_key = $api_secret = '';
+$api_ip_id = 0;
+
 if ($new_raid !== 0) {
 
     $stmt = $pdo->prepare("
@@ -87,7 +95,7 @@ if ($new_raid !== 0) {
         $reseller_id = $result->reseller_id;
         $api_app_name = $result->api_app_name;
         $api_key = $result->api_key;
-        $api_secret = $result->api_key;
+        $api_secret = $result->api_secret;
         $api_ip_id = $result->api_ip_id;
 
     }
@@ -122,13 +130,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $stmt->fetch();
                 $stmt->closeCursor();
 
-                if ($result) {
+                if (!$result) {
 
-                    $temp_owner_id = $result->owner_id;
-                    $temp_registrar_id = $result->registrar_id;
-                    $temp_api_registrar_id = $result->api_registrar_id;
+                    // The account was deleted while the form was open (or the form was changed), so nothing is saved.
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] .= _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: ../step-one/");
+                    exit;
 
                 }
+
+                $temp_owner_id = $result->owner_id;
+                $temp_registrar_id = $result->registrar_id;
+                $temp_api_registrar_id = $result->api_registrar_id;
 
                 $stmt = $pdo->prepare("
                     INSERT INTO domain_queue_list
@@ -253,6 +267,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $date = new DomainMOD\Date();
 
+                // set by the two checks below when a domain is already in DomainMOD or in the queue
+                $has_existing_domains = '0';
+                $has_existing_domains_queue = '0';
+
                 // cycle through domains here
                 foreach ($domain_array as $key => $new_domain) {
 
@@ -315,13 +333,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $result = $stmt->fetch();
                         $stmt->closeCursor();
 
-                        if ($result) {
+                        if (!$result) {
 
-                            $temp_owner_id = $result->owner_id;
-                            $temp_registrar_id = $result->registrar_id;
-                            $temp_api_registrar_id = $result->api_registrar_id;
+                            // The account was deleted while the form was open (or the form was changed), so nothing is saved.
+                            if ($pdo->InTransaction()) $pdo->rollback();
+                            $_SESSION['s_message_danger'] .= _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                            header("Location: ../step-one/");
+                            exit;
 
                         }
+
+                        $temp_owner_id = $result->owner_id;
+                        $temp_registrar_id = $result->registrar_id;
+                        $temp_api_registrar_id = $result->api_registrar_id;
 
                         // cycle through domains here
                         foreach ($domain_array as $key => $new_domain) {
@@ -392,7 +416,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($new_raid !== 0) { ?>
 
     <strong><?php echo _('API Requirements'); ?></strong><BR>
-    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must to be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
+    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
 
     <ul><?php
 

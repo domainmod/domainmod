@@ -19,6 +19,8 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         '19e6faa27d773988183e0f384143fcad' => __DIR__ . '/..' . '/illuminate/reflection/helpers.php',
         'f625ee536139dfb962a398b200bdb2bd' => __DIR__ . '/..' . '/illuminate/support/functions.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
+        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -43,6 +45,8 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
             'Symfony\\Polyfill\\Php84\\' => 23,
             'Symfony\\Polyfill\\Php83\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Clock\\' => 24,
@@ -123,6 +127,14 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
+        ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
         'Symfony\\Contracts\\Translation\\' =>
         array (
@@ -383,6 +395,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Assets' => __DIR__ . '/../..' . '/classes/DomainMOD/Assets.php',
         'DomainMOD\\Cloudflare' => __DIR__ . '/../..' . '/classes/DomainMOD/Cloudflare.php',
         'DomainMOD\\Conversion' => __DIR__ . '/../..' . '/classes/DomainMOD/Conversion.php',
+        'DomainMOD\\Csrf' => __DIR__ . '/../..' . '/classes/DomainMOD/Csrf.php',
         'DomainMOD\\Csv' => __DIR__ . '/../..' . '/classes/DomainMOD/Csv.php',
         'DomainMOD\\Currency' => __DIR__ . '/../..' . '/classes/DomainMOD/Currency.php',
         'DomainMOD\\CustomField' => __DIR__ . '/../..' . '/classes/DomainMOD/CustomField.php',
@@ -394,6 +407,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Domain' => __DIR__ . '/../..' . '/classes/DomainMOD/Domain.php',
         'DomainMOD\\DomainAdd' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainAdd.php',
         'DomainMOD\\DomainQueue' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainQueue.php',
+        'DomainMOD\\DomainRefresh' => __DIR__ . '/../..' . '/classes/DomainMOD/DomainRefresh.php',
         'DomainMOD\\DreamHost' => __DIR__ . '/../..' . '/classes/DomainMOD/DreamHost.php',
         'DomainMOD\\DwAccounts' => __DIR__ . '/../..' . '/classes/DomainMOD/DwAccounts.php',
         'DomainMOD\\DwBuild' => __DIR__ . '/../..' . '/classes/DomainMOD/DwBuild.php',
@@ -428,8 +442,11 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Namecheap' => __DIR__ . '/../..' . '/classes/DomainMOD/Namecheap.php',
         'DomainMOD\\Notice' => __DIR__ . '/../..' . '/classes/DomainMOD/Notice.php',
         'DomainMOD\\OpenSrs' => __DIR__ . '/../..' . '/classes/DomainMOD/OpenSrs.php',
+        'DomainMOD\\Ovh' => __DIR__ . '/../..' . '/classes/DomainMOD/Ovh.php',
         'DomainMOD\\Porkbun' => __DIR__ . '/../..' . '/classes/DomainMOD/Porkbun.php',
         'DomainMOD\\QueryBuild' => __DIR__ . '/../..' . '/classes/DomainMOD/QueryBuild.php',
+        'DomainMOD\\Rdap' => __DIR__ . '/../..' . '/classes/DomainMOD/Rdap.php',
+        'DomainMOD\\RdapAssets' => __DIR__ . '/../..' . '/classes/DomainMOD/RdapAssets.php',
         'DomainMOD\\RegistrarResponse' => __DIR__ . '/../..' . '/classes/DomainMOD/RegistrarResponse.php',
         'DomainMOD\\Reporting' => __DIR__ . '/../..' . '/classes/DomainMOD/Reporting.php',
         'DomainMOD\\ResellerClub' => __DIR__ . '/../..' . '/classes/DomainMOD/ResellerClub.php',
@@ -445,6 +462,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Upgrade' => __DIR__ . '/../..' . '/classes/DomainMOD/Upgrade.php',
         'DomainMOD\\User' => __DIR__ . '/../..' . '/classes/DomainMOD/User.php',
         'DomainMOD\\Validate' => __DIR__ . '/../..' . '/classes/DomainMOD/Validate.php',
+        'DomainMOD\\Whois' => __DIR__ . '/../..' . '/classes/DomainMOD/Whois.php',
         'Filter\\FilterException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
         'Filter\\FilterFailedException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
         'GJClasses\\Auth0' => __DIR__ . '/..' . '/chetcuti/gjclasses/src/GJClasses/Auth0.php',
@@ -754,6 +772,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'League\\Event\\PrioritizedListenersForEvent' => __DIR__ . '/..' . '/league/event/src/PrioritizedListenersForEvent.php',
         'League\\Event\\UnableToSubscribeListener' => __DIR__ . '/..' . '/league/event/src/UnableToSubscribeListener.php',
         'NoDiscard' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
+        'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
         'PHPMailer\\PHPMailer\\DSNConfigurator' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/DSNConfigurator.php',
         'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
@@ -891,6 +910,11 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'Symfony\\Contracts\\Translation\\TranslatableInterface' => __DIR__ . '/..' . '/symfony/translation-contracts/TranslatableInterface.php',
         'Symfony\\Contracts\\Translation\\TranslatorInterface' => __DIR__ . '/..' . '/symfony/translation-contracts/TranslatorInterface.php',
         'Symfony\\Contracts\\Translation\\TranslatorTrait' => __DIR__ . '/..' . '/symfony/translation-contracts/TranslatorTrait.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Info' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Info.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\DisallowedRanges' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/DisallowedRanges.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\Regex' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/Regex.php',
+        'Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Normalizer.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php83\\Php83' => __DIR__ . '/..' . '/symfony/polyfill-php83/Php83.php',
         'Symfony\\Polyfill\\Php84\\Php84' => __DIR__ . '/..' . '/symfony/polyfill-php84/Php84.php',

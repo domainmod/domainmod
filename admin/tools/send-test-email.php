@@ -35,6 +35,8 @@ require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $pdo = $deeb->cnxx;
 
 $first_name = $_SESSION['s_first_name'];

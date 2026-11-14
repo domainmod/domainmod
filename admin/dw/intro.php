@@ -53,11 +53,11 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?><BR>
 
 <BR><h3><?php echo _('Automating Builds'); ?></h3>
-<?php echo sprintf(_("If you're going to use the Data Warehouse it's recommended that you setup the %ssystem cron/scheduled job%s in order to automate your builds."), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?>
+<?php echo sprintf(_("If you're going to use the Data Warehouse it's recommended that you set up the %ssystem cron/scheduled job%s in order to automate your builds."), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?>
 
-<?php echo _("There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."); ?>
+<?php echo _("There's a lot of work being done in the background during a build, and more often than not a web browser will time out if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."); ?>
 
-<?php echo sprintf(_("After you've setup the cron job you will be able to manage the Data Warehouse scheduling through %s's Task Scheduler"), SOFTWARE_TITLE, '<a target="_blank" href="https://domainmod.org/docs/userguide/administration#task-scheduler">', '</a>'); ?><BR>
+<?php echo sprintf(_("After you've set up the cron job you will be able to manage the Data Warehouse scheduling through %s's Task Scheduler"), SOFTWARE_TITLE, '<a target="_blank" href="https://domainmod.org/docs/userguide/administration#task-scheduler">', '</a>'); ?><BR>
 
 <BR>
 <h3><?php echo _('Supported Data'); ?></h3>

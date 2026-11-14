@@ -51,6 +51,28 @@ $del = (int) ($_GET['del'] ?? 0);
 
 $new_domain = isset($_POST['new_domain']) ? $sanitize->text($_POST['new_domain']) : '';
 $new_tld = $_POST['new_tld'] ?? '';
+
+// the domain can't be changed here, so use the stored name and work out its TLD, rather than trusting the posted
+// hidden fields (a form opened before an upgrade can hold an old TLD)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $did !== 0) {
+
+    $stmt = $pdo->prepare("
+        SELECT domain
+        FROM domains
+        WHERE id = :did");
+    $stmt->bindValue('did', $did, PDO::PARAM_INT);
+    $stmt->execute();
+    $stored_domain = $stmt->fetchColumn();
+    $stmt->closeCursor();
+
+    if ($stored_domain !== false) {
+
+        $new_domain = $sanitize->text($stored_domain);
+        $new_tld = DomainMOD\Domain::tldOf($stored_domain);
+
+    }
+
+}
 $new_expiry_date = $_POST['datepick'] ?? '';
 $new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_function']) : '';
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
@@ -89,6 +111,25 @@ if ($result) {
 
 }
 
+// The Refresh Domain form posts here too, and is handled on its own, before the save handler.
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') === '1') {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+    $refresh = new DomainMOD\DomainRefresh();
+    list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
+
+    if ($refreshed) {
+        $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
+    } else {
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
+    }
+
+    header('Location: edit.php?did=' . $did);
+    exit;
+
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
@@ -103,6 +144,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM domains
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
+                header("Location: ../domains/index.php");
+                exit;
+
+            }
+
             $stmt = $pdo->prepare("
                 SELECT registrar_id, owner_id
                 FROM registrar_accounts
@@ -112,12 +172,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->fetch();
             $stmt->closeCursor();
 
-            if ($result) {
+            if (!$result) {
 
-                $new_registrar_id = $result->registrar_id;
-                $new_owner_id = $result->owner_id;
+                // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                header("Location: edit.php?did=" . $did . "");
+                exit;
 
             }
+
+            $new_registrar_id = $result->registrar_id;
+            $new_owner_id = $result->owner_id;
 
             $stmt = $pdo->prepare("
                 SELECT id
@@ -337,6 +403,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
@@ -364,6 +432,25 @@ if ($del === 1) {
         try {
 
             $pdo->beginTransaction();
+
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM domains
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
+                header("Location: ../domains/index.php");
+                exit;
+
+            }
 
             $stmt = $pdo->prepare("
                 DELETE FROM domains
@@ -623,6 +710,35 @@ echo $form->showInputHidden('new_domain', $new_domain);
 echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
+
+// Refresh Domain, in its own form (read-only users can't change data, so they don't see it).
+if (($_SESSION['s_read_only'] ?? '') != '1') {
+
+    $refresh = new DomainMOD\DomainRefresh();
+    $refresh_api_name = $refresh->registrarApiName($did); ?>
+
+    <BR><h3><?php echo _('Refresh Domain'); ?></h3><?php
+
+    if ($refresh_api_name !== '') {
+
+        echo sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto renewal status using your %s API, and update them here."), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
+        echo '&nbsp;' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.");
+        echo '&nbsp;' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+
+    } else {
+
+        echo _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto renewal status aren't available this way, so they're left as they are.");
+
+    } ?>
+    <BR><BR><?php
+
+    echo $form->showFormTop('');
+    echo $form->showInputHidden('refresh_domain', '1');
+    echo $form->showInputHidden('did', $did);
+    echo $form->showSubmitButton(_('Refresh Domain'), '', '');
+    echo $form->showFormBottom('');
+
+}
 
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);

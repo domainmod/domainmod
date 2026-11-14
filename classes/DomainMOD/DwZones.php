@@ -42,7 +42,7 @@ class DwZones
             CREATE TABLE IF NOT EXISTS dw_dns_zones (
                 id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 server_id INT(10) UNSIGNED NOT NULL,
-                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
                 zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 insert_time DATETIME NOT NULL,
                 PRIMARY KEY  (id)
@@ -80,7 +80,8 @@ class DwZones
 
             foreach ($array_results['data']['zone'] as $zone) {
 
-                $bind_domain = $zone['domain'] ? $zone['domain'] : '';
+                // stored the same way as the domains table (münchen.de for xn--mnchen-3ya.de), so they match
+                $bind_domain = $zone['domain'] ? Domain::normalizeOrKeep($zone['domain']) : '';
                 $bind_zonefile = $zone['zonefile'] ? $zone['zonefile'] : '';
                 $stmt->execute();
 

@@ -49,6 +49,21 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
+/*
+ * The keyword search as an SQL condition on a domain column. The term is quoted by PDO rather than pasted into the
+ * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
+ * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
+ * was typed, so casing rules can't send both to the wrong spelling.
+ */
+$domain_search_condition = function ($column, $term) use ($pdo) {
+    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
+    $lower = mb_strtolower($term, 'UTF-8');
+    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
+    $idn = DomainMOD\Domain::normalize($term);
+    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
+    return '(' . implode(' OR ', $conditions) . ')';
+};
+
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $pcid = (int) ($_REQUEST['pcid'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
@@ -69,11 +84,13 @@ list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $result_limit = $_REQUEST['result_limit'];
-    $sort_by = $_REQUEST['sort_by'];
-    $numBegin = $_REQUEST['numBegin'];
-    $begin = $_REQUEST['begin'];
-    $num = $_REQUEST['num'];
+    // These go into the query's LIMIT and the page links, so they must be whole numbers. An unknown sort falls back
+    // to the default below.
+    $result_limit = isset($_REQUEST['result_limit']) && (int) $_REQUEST['result_limit'] > 0 ? (int) $_REQUEST['result_limit'] : '';
+    $sort_by = isset($_REQUEST['sort_by']) && preg_match('/^[a-z]{1,3}_[ad]$/', (string) $_REQUEST['sort_by']) ? $_REQUEST['sort_by'] : '';
+    $numBegin = isset($_REQUEST['numBegin']) ? max(0, (int) $_REQUEST['numBegin']) : '';
+    $begin = isset($_REQUEST['begin']) ? max(0, (int) $_REQUEST['begin']) : '';
+    $num = isset($_REQUEST['num']) ? max(0, (int) $_REQUEST['num']) : '';
 
 }
 
@@ -135,6 +152,14 @@ if ($export_data !== 1) {
 if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
 if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
 
+// A range saved by an older version may not have been checked, so anything that isn't a real date range is dropped.
+if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateFormat($_SESSION['s_end_date'])) {
+
+    $_SESSION['s_start_date'] = 'YYYY-MM-DD';
+    $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+
+}
+
 if ($_SESSION['s_system_large_mode'] == '1') {
 
     if ($result_limit == "") $result_limit = $_SESSION['s_number_of_domains'];
@@ -150,6 +175,11 @@ if ($tld && $tld != '') {
     if ($validate->tld($tld) == false || $tld == '0') {
 
         $tld = '';
+
+    } else {
+
+        // the stored form, so xn--p1ai finds domains under рф (quoted by PDO wherever it's used in SQL below)
+        $tld = DomainMOD\Domain::normalizeTld(htmlspecialchars_decode($tld, ENT_QUOTES));
 
     }
 
@@ -225,19 +255,19 @@ if ($raid !== 0) {
 }
 
 if ($tld != "") {
-    $tld_string = " AND d.tld = '$tld' ";
+    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
 } else {
     $tld_string = "";
 }
 
 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
 } else {
     $range_string = "";
 }
 
 if ($_SESSION['s_search_for'] != "") {
-    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%' ";
+    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . " ";
 } else {
     $search_string = "";
 }
@@ -306,7 +336,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
           $search_string
           $sort_by_string";
 $_SESSION['s_raw_list_type'] = 'domains';
-$_SESSION['s_raw_list_query'] = $sql;
+$_SESSION['s_raw_list_sql'] = $sql;
 
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
@@ -407,7 +437,7 @@ if ($segid !== 0) {
         SET filtered = '1'
         WHERE active = '1'
           AND segment_id = :segid
-          AND domain NOT LIKE '%" . $search_for . "%'");
+          AND NOT " . $domain_search_condition('domain', $search_for));
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
 
@@ -781,6 +811,11 @@ if ($export_data == 1) {
         $temp_misc_fee = $row->misc_fee * $row->conversion;
         $temp_total_cost = $row->total_cost * $row->conversion;
 
+        // Blank for any value not listed below, rather than the previous domain's label.
+        $domain_status = '';
+        $autorenew_status = '';
+        $privacy_status = '';
+
         if ($row->active == "0") {
             $domain_status = DomainMOD\Format::toUpper(_('Expired'));
         } elseif ($row->active == "1") {
@@ -973,9 +1008,9 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $temp_numbegin = $_REQUEST['numBegin'] ?? 0;
-    $temp_begin = $_REQUEST['begin'] ?? 0;
-    $temp_num = $_REQUEST['num'] ?? 0;
+    $temp_numbegin = max(0, (int) ($_REQUEST['numBegin'] ?? 0));
+    $temp_begin = max(0, (int) ($_REQUEST['begin'] ?? 0));
+    $temp_num = max(0, (int) ($_REQUEST['num'] ?? 0));
 
     $parameters = array($total_rows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $temp_numbegin, $temp_begin, $temp_num);
     $navigate = $layout->pageBrowser($parameters);
@@ -1094,17 +1129,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1204,12 +1239,12 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $rid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1311,17 +1346,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1421,17 +1456,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1540,17 +1575,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1650,17 +1685,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1760,17 +1795,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($tld != "") {
-                    $tld_string = " AND d.tld = '$tld' ";
+                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
                 } else {
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= '" . $_SESSION['s_start_date'] . "' AND d.expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
                 } else {
                     $search_string = "";
                 }
@@ -1875,12 +1910,12 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (expiry_date >= '" . $_SESSION['s_start_date'] . "' AND expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('domain', $_SESSION['s_search_for']);
                 } else {
                     $search_string = "";
                 }
@@ -1959,12 +1994,12 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $tld_string = "";
                 }
                 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (expiry_date >= '" . $_SESSION['s_start_date'] . "' AND expiry_date <= '" . $_SESSION['s_end_date'] . "')";
+                    $range_string = " AND (expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
                 } else {
                     $range_string = "";
                 }
                 if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
+                    $search_string = " AND " . $domain_search_condition('domain', $_SESSION['s_search_for']);
                 } else {
                     $search_string = "";
                 }
@@ -1995,6 +2030,8 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 echo $form->showDropdownTop('is_active', '', '', '', '');
                 echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
                 foreach ($result_active as $row_active) {
+
+                    $display_text = $row_active->active;
 
                     if ($row_active->active == "0") {
                         $display_text = _('Expired');
@@ -2126,8 +2163,8 @@ if ($segid !== 0) {
 if ($result) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
+    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
     <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a>
-    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', _('Raw List')); ?></a>
     <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
 
@@ -2487,7 +2524,7 @@ if ($result) { ?>
 
                                 } elseif ($field['type_id'] == '2') { // Text
 
-                                    echo $row->{$field['field']};
+                                    echo $layout->customFieldText($row->{$field['field']});
 
                                 } elseif ($field['type_id'] == '4') { // Date
 
@@ -2497,7 +2534,7 @@ if ($result) { ?>
 
                                     } else {
 
-                                        echo $row->{$field['field']};
+                                        echo $layout->customFieldText($row->{$field['field']});
 
                                     }
 
@@ -2509,7 +2546,7 @@ if ($result) { ?>
 
                                     } else {
 
-                                        echo $row->{$field['field']};
+                                        echo $layout->customFieldText($row->{$field['field']});
 
                                     }
 
@@ -2517,7 +2554,7 @@ if ($result) { ?>
 
                                     if ($row->{$field['field']} != '') {
 
-                                        echo "[<a target='_blank' href='" . $row->{$field['field']} . "'>open</a>]";
+                                        echo $layout->customFieldLink($row->{$field['field']});
 
                                     }
 
@@ -2553,7 +2590,9 @@ if ($result) { ?>
             echo "<BR><BR>";
         }?>
 
-        <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a><BR><BR><?php
+        <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
+        <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
+        <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a><BR><BR><?php
 
     }
 

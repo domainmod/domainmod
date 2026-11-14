@@ -20,13 +20,13 @@
  */
 ?>
 <?php
-if ($_SESSION['s_dw_view_all'] == "1") {
+if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
 
     $page_title = _('Listing All DNS Zones & Records');
 
 } else {
 
-    $page_title = sprintf(_('Listing DNS Zones & Records on %s (%s)'), $_SESSION['s_dw_server_name'], $_SESSION['s_dw_server_host']);
+    $page_title = sprintf(_('Listing DNS Zones & Records on %s (%s)'), $_SESSION['s_dw_server_name'] ?? '', $_SESSION['s_dw_server_host'] ?? '');
 
 }
 $breadcrumb = _('Zones');

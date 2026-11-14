@@ -1,6 +1,6 @@
 <?php
 /**
- * /domains/csv-importer/cleanup/index.php
+ * /_includes/settings/queue-edit.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -20,24 +20,8 @@
  */
 ?>
 <?php
-require_once __DIR__ . '/../../../_includes/start-session.inc.php';
-require_once __DIR__ . '/../../../_includes/init.inc.php';
-require_once DIR_INC . '/config.inc.php';
-require_once DIR_INC . '/software.inc.php';
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-
-$system->authCheck();
-$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
-
-if (file_exists(DIR_TEMP . '/import.csv')) {
-
-    unlink(DIR_TEMP . '/import.csv');
-
-}
-
-$_SESSION['s_message_success'] = _('CSV Import files were cleaned up');
-
-header("Location: ../");
-exit;
+$page_title = _('Fix and Import Domain');
+$breadcrumb = _('Fix and Import');
+$software_section = "queue";
+$software_section_logo = "fa-hourglass-2";
+$slug = "queue-edit";

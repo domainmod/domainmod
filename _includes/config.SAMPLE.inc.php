@@ -36,3 +36,9 @@ $dbpassword = 'dbPassword123';
 // connection and check the server's certificate. 'off' never encrypts the connection.
 // $dbsslmode = 'auto'; // auto, verify, or off
 // $dbsslca = '/path/to/ca.pem'; // for 'verify': the CA that signed the server's certificate (default: the system's trusted CAs)
+
+// Task Scheduler Key (optional)
+// By default cron.php runs whenever its URL is opened, which is how many installations schedule it. If you set a key,
+// cron.php only runs from the command line (php cron.php) or from a URL that includes the key, such as
+// https://example.com/cron.php?key=YourKeyHere. Use a long random value, and update your scheduled job to match.
+// $cron_key = '';

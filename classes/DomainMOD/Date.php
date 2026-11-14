@@ -43,10 +43,18 @@ class Date
         }
     }
 
+    // Returns the start and end dates of a date range picker value, or two empty strings unless both are real dates.
     public function splitAndCheckRange($daterange)
     {
-        $start_date = substr($daterange, 0, 10);
-        $end_date = substr($daterange, -10, 10);
+        $start_date = substr((string) $daterange, 0, 10);
+        $end_date = substr((string) $daterange, -10, 10);
+
+        if (!$this->checkDateFormat($start_date) || !$this->checkDateFormat($end_date)) {
+
+            return array('', '');
+
+        }
+
         return array($start_date, $end_date);
     }
 

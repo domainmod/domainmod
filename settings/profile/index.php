@@ -103,13 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $result = $stmt->fetch();
             $stmt->closeCursor();
 
-            if ($result) {
+            if (!$result) {
 
-                $saved_language = $result->default_language;
-                $saved_currency = $result->default_currency;
-                $saved_timezone = $result->default_timezone;
+                // every user has a settings row; without one there's nothing to save the preferences to
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('Your settings couldn\'t be found, so your profile wasn\'t updated.') . '<BR>';
+                header("Location: index.php");
+                exit;
 
             }
+
+            $saved_language = $result->default_language;
+            $saved_currency = $result->default_currency;
+            $saved_timezone = $result->default_timezone;
 
             if ($saved_currency != $new_currency) {
 

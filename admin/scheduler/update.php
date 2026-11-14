@@ -28,7 +28,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
-$time = new DomainMOD\Time();
+$schedule = new DomainMOD\Scheduler();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
@@ -36,38 +36,46 @@ require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
 $a = $_REQUEST['a'] ?? '';
-$id = $_REQUEST['id'] ?? 0;
+$id = (int) ($_REQUEST['id'] ?? 0);
 $new_hour = $_REQUEST['new_hour'] ?? 0;
+
+// A change waits for a running task, so the task can't overwrite it when it finishes (see Scheduler::finishTask()).
+if (in_array($a, array('u', 'e', 'd'), true) && !$schedule->getTaskLock($id)) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That task is already running. Please try again once it finishes.') . '<BR>';
+    header("Location: index.php");
+    exit;
+
+}
 
 if ($a == 'u') {
 
-    // The form only sends a whole hour from 0 to 23, so ignore anything else rather than saving a wrong time
+    // The form only sends a whole hour from 0 to 23, so ignore anything else rather than saving a wrong time.
     if (!is_string($new_hour) || !ctype_digit($new_hour) || (int) $new_hour > 23) {
+        $schedule->releaseTaskLock($id);
         header("Location: index.php");
         exit;
     }
 
-    $new_time = date('Y-m-d H:i:s', mktime((int) $new_hour, 0, 0, date("m"), date("d"), date("Y")));
-    $new_time_utc = $time->toUtcTimezone($new_time);
-    // Keep the minutes too, for time zones with a half-hour or 45-minute offset
-    $hour = date("G", strtotime($new_time_utc));
-    $minute = (int) date("i", strtotime($new_time_utc));
-    $full_expression = $minute . ' ' . $hour . ' * * *';
-
-    // The next time it's due, so a time earlier in the day doesn't make the task run straight away
-    $cron = new Cron\CronExpression($full_expression);
-    $new_time_utc = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    // The time is saved as typed, in the admin's own time zone, and the task follows that zone's clock changes.
+    $timezone = $schedule->getZone($_SESSION['s_default_timezone'] ?? 'UTC')->getName();
+    $full_expression = '0 ' . (int) $new_hour . ' * * *';
+    $new_time_utc = $schedule->getNextRun($full_expression, $timezone);
 
     $stmt = $pdo->prepare("
         UPDATE scheduler
         SET expression = :full_expression,
+            `timezone` = :timezone,
             next_run = :new_time_utc
         WHERE id = :id");
     $stmt->bindValue('full_expression', $full_expression, PDO::PARAM_STR);
+    $stmt->bindValue('timezone', $timezone, PDO::PARAM_STR);
     $stmt->bindValue('new_time_utc', $new_time_utc, PDO::PARAM_STR);
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -76,33 +84,30 @@ if ($a == 'u') {
 
 } elseif ($a == 'e') {
 
-    $stmt = $pdo->prepare("
-        SELECT expression
-        FROM scheduler
-        WHERE id = :id");
-    $stmt->bindValue('id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    $full_expression = $stmt->fetchColumn();
+    $task = $schedule->getTask($id);
 
-    $cron = new Cron\CronExpression($full_expression);
-    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    if ($task) {
 
-    $stmt = $pdo->prepare("
-        UPDATE scheduler
-        SET active = '1', 
-            next_run = :next_run
-        WHERE id = :id");
-    $stmt->bindValue('next_run', $next_run, PDO::PARAM_STR);
-    $stmt->bindValue('id', $id, PDO::PARAM_INT);
-    $stmt->execute();
+        $next_run = $schedule->getNextRun($task->expression, $task->timezone);
 
-    $message = _('Task Enabled') . '<BR>';
+        $stmt = $pdo->prepare("
+            UPDATE scheduler
+            SET active = '1',
+                next_run = :next_run
+            WHERE id = :id");
+        $stmt->bindValue('next_run', $next_run, PDO::PARAM_STR);
+        $stmt->bindValue('id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $message = _('Task Enabled') . '<BR>';
+
+    }
 
 } elseif ($a == 'd') {
 
     $stmt = $pdo->prepare("
         UPDATE scheduler
-        SET active = '0', 
+        SET active = '0',
             next_run = '1970-01-01 00:00:00'
         WHERE id = :id");
     $stmt->bindValue('id', $id, PDO::PARAM_INT);
@@ -112,7 +117,9 @@ if ($a == 'u') {
 
 }
 
-$_SESSION['s_message_success'] .= $message;
+if (in_array($a, array('u', 'e', 'd'), true)) $schedule->releaseTaskLock($id);
+
+$_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . ($message ?? '');
 
 header("Location: index.php");
 exit;

@@ -45,9 +45,9 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
-<a href="clear-queue-processing.php"><?php echo _('Clear Queue Processing'); ?></a><BR><BR>
-<a href="clear-queues.php"><?php echo _('Clear Queues'); ?></a><BR><strong><?php echo DomainMOD\Format::toUpper(_('Warning')); ?>:</strong> <?php echo _('This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.'); ?><BR><BR>
-<a href="clear-log.php"><?php echo _('Clear Debug Log'); ?></a>
+<a href="clear-queue-processing.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Queue Processing'); ?></a><BR><BR>
+<a href="clear-queues.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Queues'); ?></a><BR><strong><?php echo DomainMOD\Format::toUpper(_('Warning')); ?>:</strong> <?php echo _('This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.'); ?><BR><BR>
+<a href="clear-log.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Debug Log'); ?></a>
 <?php echo $layout->contentBoxBottom(); ?>
 
 <?php //@formatter:on ?>

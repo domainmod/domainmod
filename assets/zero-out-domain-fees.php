@@ -39,6 +39,8 @@ require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/assets-zero-out-domain-fees.inc.php';
 
 $system->authCheck();
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
@@ -53,7 +55,7 @@ try {
 
     $rid_tld_pairs = array();
     foreach ($result as $row) {
-        $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
+        $tld = DomainMOD\Domain::tldOf($row->domain);
         $key = $row->registrar_id . '_' . $tld;  // Create a unique key
         $rid_tld_pairs[$key] = array('rid' => $row->registrar_id, 'tld' => $tld);
     }

@@ -37,19 +37,31 @@ require_once DIR_INC . '/settings/dw-list-accounts.inc.php';
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+
+// The Data Warehouse tables only exist once it has been built.
+$dw_check = new DomainMOD\DwAccounts();
+if (!$dw_check->checkForAccountTable()) {
+
+    header("Location: dw.php");
+    exit;
+
+}
 $pdo = $deeb->cnxx;
 
 $domain = $_GET['domain'] ?? '';
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
-if ($_SESSION['s_dw_view_all'] == "1") {
+// The server chosen on the Data Warehouse page (none yet if this page was opened directly).
+$dw_server_id = (int) ($_SESSION['s_dw_server_id'] ?? 0);
+
+if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
 
     $where_clause = " ";
     $order_clause = " ORDER BY a.unix_startdate DESC, s.name ASC, a.domain ASC ";
 
 } else {
 
-    $where_clause = " AND a.server_id = '" . $_SESSION['s_dw_server_id'] . "' ";
+    $where_clause = " AND a.server_id = '" . $dw_server_id . "' ";
     $order_clause = " ORDER BY s.name ASC, a.unix_startdate DESC ";
 
 }

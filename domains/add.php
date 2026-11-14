@@ -47,7 +47,7 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$new_domain = isset($_POST['new_domain']) ? $sanitize->text($_POST['new_domain']) : '';
+$new_domain = isset($_POST['new_domain']) ? $sanitize->text(DomainMOD\Domain::normalizeOrKeep($_POST['new_domain'])) : '';
 $new_expiry_date = $_POST['datepick'] ?? '';
 $new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_function']) : '';
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $pdo->beginTransaction();
 
-                $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+                $tld = $domain->getTld($new_domain);
 
                 $stmt = $pdo->prepare("
                     SELECT registrar_id, owner_id
@@ -123,12 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $stmt->fetch();
                 $stmt->closeCursor();
 
-                if ($result) {
+                if (!$result) {
 
-                    $new_registrar_id = $result->registrar_id;
-                    $new_owner_id = $result->owner_id;
+                    // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: add.php");
+                    exit;
 
                 }
+
+                $new_registrar_id = $result->registrar_id;
+                $new_owner_id = $result->owner_id;
 
                 if ($new_privacy === 1) {
 

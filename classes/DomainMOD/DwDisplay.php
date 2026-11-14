@@ -41,32 +41,32 @@ class DwDisplay
 
             <td align="left" valign="top">
                 <strong><?php echo _('Created'); ?>:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
-                <strong><?php echo _('Contact'); ?>:</strong> <?php echo $row->email; ?><BR>
-                <strong><?php echo _('IP Address'); ?>:</strong> <?php echo $row->ip; ?><BR>
-                <strong><?php echo _('Hosting Plan'); ?>:</strong> <?php echo $row->plan; ?><BR>
-                <strong><?php echo _('cPanel Theme'); ?>:</strong> <?php echo $row->theme; ?><BR>
-                <strong><?php echo _('User') . ', ' . _('Owner'); ?>:</strong> <?php echo $row->user; ?>, <?php echo $row->owner; ?>
+                <strong><?php echo _('Contact'); ?>:</strong> <?php echo $this->escape($row->email); ?><BR>
+                <strong><?php echo _('IP Address'); ?>:</strong> <?php echo $this->escape($row->ip); ?><BR>
+                <strong><?php echo _('Hosting Plan'); ?>:</strong> <?php echo $this->escape($row->plan); ?><BR>
+                <strong><?php echo _('cPanel Theme'); ?>:</strong> <?php echo $this->escape($row->theme); ?><BR>
+                <strong><?php echo _('User') . ', ' . _('Owner'); ?>:</strong> <?php echo $this->escape($row->user); ?>, <?php echo $this->escape($row->owner); ?>
             </td>
             <td align="left" valign="top">
-                <strong><?php echo _('Shell'); ?>:</strong> <?php echo $row->shell; ?><BR>
-                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $row->partition; ?> /<?php echo $row->user; ?><BR>
-                <strong><?php echo _('HD Quota'); ?>:</strong> <?php echo $row->disklimit; ?>
+                <strong><?php echo _('Shell'); ?>:</strong> <?php echo $this->escape($row->shell); ?><BR>
+                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $this->escape($row->partition); ?> /<?php echo $this->escape($row->user); ?><BR>
+                <strong><?php echo _('HD Quota'); ?>:</strong> <?php echo $this->escape($row->disklimit); ?>
                 <?php if ($row->disklimit != "unlimited") echo " MB"; ?><BR>
-                <strong>HD Used:</strong> <?php echo number_format($row->diskused); ?> MB
+                <strong>HD Used:</strong> <?php echo number_format((float) $row->diskused); ?> MB
             </td>
             <td align="left" valign="top">
-                <strong><?php echo _('POP'); ?>:</strong> <?php echo $row->maxpop; ?><BR>
-                <strong><?php echo _('Lists'); ?>:</strong> <?php echo $row->maxlst; ?><BR>
-                <strong><?php echo _('Addons'); ?>:</strong> <?php echo $row->maxaddons; ?><BR>
-                <strong><?php echo _('Subdomains'); ?>:</strong> <?php echo $row->maxsub; ?><BR>
-                <strong><?php echo _('SQL'); ?>:</strong> <?php echo $row->maxsql; ?><BR>
-                <strong><?php echo _('FTP'); ?>:</strong> <?php echo $row->maxftp; ?><BR>
-                <strong><?php echo _('Parked'); ?>:</strong> <?php echo $row->maxparked; ?><BR><BR>
+                <strong><?php echo _('POP'); ?>:</strong> <?php echo $this->escape($row->maxpop); ?><BR>
+                <strong><?php echo _('Lists'); ?>:</strong> <?php echo $this->escape($row->maxlst); ?><BR>
+                <strong><?php echo _('Addons'); ?>:</strong> <?php echo $this->escape($row->maxaddons); ?><BR>
+                <strong><?php echo _('Subdomains'); ?>:</strong> <?php echo $this->escape($row->maxsub); ?><BR>
+                <strong><?php echo _('SQL'); ?>:</strong> <?php echo $this->escape($row->maxsql); ?><BR>
+                <strong><?php echo _('FTP'); ?>:</strong> <?php echo $this->escape($row->maxftp); ?><BR>
+                <strong><?php echo _('Parked'); ?>:</strong> <?php echo $this->escape($row->maxparked); ?><BR><BR>
             </td>
             <td align="left" valign="top">
-                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo $row->suspended; ?><BR>
-                <strong><?php echo _('When') . '?'; ?></strong> <?php echo $row->suspendtime; ?><BR>
-                <strong><?php echo _('Why') . '?'; ?></strong> <?php echo $row->suspendreason; ?>
+                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo $this->escape($row->suspended); ?><BR>
+                <strong><?php echo _('When') . '?'; ?></strong> <?php echo $this->escape($row->suspendtime); ?><BR>
+                <strong><?php echo _('Why') . '?'; ?></strong> <?php echo $this->escape($row->suspendreason); ?>
             </td><?php
 
             $result = ob_get_clean();
@@ -98,8 +98,8 @@ class DwDisplay
     { 
         ob_start();
         echo $this->showHeading($domain, $show_heading);
-        $server_wrapped = wordwrap($server_name, 20, "<BR>", true);
-        echo $server_wrapped . "<BR>";
+        // server names are stored HTML-escaped (they're typed in DomainMOD), so they're decoded before wrapping
+        echo $this->wrapEscaped(htmlspecialchars_decode((string) $server_name, ENT_QUOTES), 20) . "<BR>";
         echo $this->showUrl($domain, 'zone', 'list-zones.php', $show_url);
         $result = ob_get_clean();
         return $result;
@@ -110,8 +110,7 @@ class DwDisplay
         $result = '';
         
         if ($show_heading == '1') {
-            $visible_heading = wordwrap($heading, 20, "<BR>", true);
-            $result = "<strong>" . $visible_heading . "</strong><BR><BR>";
+            $result = "<strong>" . $this->wrapEscaped($heading, 20) . "</strong><BR><BR>";
         }
         return $result;
     } 
@@ -121,7 +120,7 @@ class DwDisplay
         $result = '';
         
         if ($show_url == '1') {
-            $result = "[<a href=\"" . $url . "?domain=" . $domain . "\">" . $text . "</a>]";
+            $result = "[<a href=\"" . $url . "?domain=" . $this->escape(rawurlencode((string) $domain)) . "\">" . $this->escape($text) . "</a>]";
         }
         return $result;
     } 
@@ -169,12 +168,58 @@ class DwDisplay
         $zone = $this->getZonefile($server_id, $domain);
         echo $this->showHeading($zone, $show_heading);
         $server_name = $this->getServerName($server_id);
-        echo $server_name . "<BR>";
+        echo $this->escape(htmlspecialchars_decode((string) $server_name, ENT_QUOTES)) . "<BR>";
         echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url);
         $result = ob_get_clean();
 
         return $result;
     } 
+
+    // Text from the WHM server (or a server's name), safe to put in the page
+    public static function escape($value)
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    // Wrapped at $width characters, then escaped, with <BR> line breaks (escaping first could split an entity)
+    public static function wrapEscaped($value, $width)
+    {
+        return implode('<BR>', array_map(array(self::class, 'escape'), self::wrapLines($value, $width)));
+    }
+
+    /*
+     * Text wrapped at $width characters (not bytes, so a multi-byte character such as ü is never cut in half): at spaces
+     * where it can, and inside words longer than $width, like wordwrap() with cut_long_words. Bytes that aren't valid
+     * UTF-8 are replaced first
+     */
+    public static function wrapLines($value, $width)
+    {
+        $value = (string) $value;
+        if (!mb_check_encoding($value, 'UTF-8')) $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+
+        $lines = array();
+        foreach (preg_split('/\R/u', $value) as $paragraph) {
+            // null until the line has started, so leading and repeated spaces are kept, as wordwrap() keeps them
+            $line = null;
+            foreach (explode(' ', $paragraph) as $word) {
+                while (mb_strlen($word, 'UTF-8') > $width) {
+                    if ($line !== null) { $lines[] = $line; $line = null; }
+                    $lines[] = mb_substr($word, 0, $width, 'UTF-8');
+                    $word = mb_substr($word, $width, null, 'UTF-8');
+                }
+                $candidate = $line === null ? $word : $line . ' ' . $word;
+                if ($line === null || mb_strlen($candidate, 'UTF-8') <= $width) {
+                    $line = $candidate;
+                } else {
+                    $lines[] = $line;
+                    $line = $word;
+                }
+            }
+            // explode() always returns at least one piece, so the first one has always started the line here
+            $lines[] = $line;
+        }
+        return $lines;
+    }
 
     public function getZonefile($server_id, $domain)
     {

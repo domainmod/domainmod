@@ -34,6 +34,8 @@ class GoDaddy
 
     public function getApiUrl($domain, $command)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.godaddy.com/v1/';
         if ($command == 'domainlist') {
             return $base_url . 'domains?statusGroups=VISIBLE&limit=1000';
@@ -46,9 +48,15 @@ class GoDaddy
 
     public function apiCall($api_key, $api_secret, $full_url)
     {
+        if (trim((string) $api_secret) === '') {
+            $authorization = 'Authorization: Bearer ' . trim((string) $api_key);
+        } else {
+            $authorization = 'Authorization: sso-key ' . $api_key . ':' . $api_secret;
+        }
+
         $handle = HttpClient::init($full_url);
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
-            'Authorization: sso-key ' . $api_key . ':' . $api_secret,
+            $authorization,
             'Accept: application/json'));
         $result = HttpClient::exec($handle, 'GoDaddy API');
         return $result;
@@ -96,6 +104,7 @@ class GoDaddy
 
     public function getFullInfo($api_key, $api_secret, $domain)
     {
+        $domain_status = '';
         $expiration_date = '';
         $dns_servers = array();
         $privacy_status = '';

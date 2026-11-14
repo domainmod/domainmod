@@ -36,6 +36,8 @@ $timestamp = $time->stamp();
 require_once DIR_INC . '/head.inc.php';
 
 $system->authCheck();
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $pdo = $deeb->cnxx;
 
 $_SESSION['s_dark_mode'] = $_SESSION['s_dark_mode'] ?? 0;

@@ -30,6 +30,7 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/admin/backup/index.php');
 $layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -57,13 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
 
         if (isset($_FILES["file"])) {
-
-            // Remove any restore file left in the web-accessible temp folder by older versions
-            if (file_exists(DIR_TEMP . '/domainmod-restore.sql')) {
-
-                unlink(DIR_TEMP . '/domainmod-restore.sql');
-
-            }
 
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("sql"));
@@ -128,7 +122,7 @@ echo sprintf(_('This page enables you to perform complete backups and restores o
 echo '&nbsp;'; echo _('This allows you to export your entire system in a single file so that it can easily be backed up and restored.');
 echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?><BR>
 <BR>
-<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should backup your /_includes/config.inc.php file.'); ?><BR>
+<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?><BR>
 
 <h3><?php echo _('Backup'); ?></h3>
 <?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>
@@ -136,19 +130,15 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
 
 <BR><BR><h3><?php echo _('Restore'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
+<?php echo $form->showCsrfField(); ?>
     <?php echo _('Database Restore File'); ?>: domainmod-backup.sql <input type="file" name="file"><BR>
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
     <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
     <?php echo ("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?><BR>
-    <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to login using the accounts in the data you restored."); ?><BR>
+    <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to log in using the accounts in the data you restored."); ?><BR>
     <?php echo $layout->showButton('submit', _('Restore Entire Database')); ?>
 </form>
 <BR>
-
-<h3><?php echo _('Cleanup'); ?></h3>
-<?php echo _('Click here to delete any and all past backup and restore files that may be saved on your server.'); ?><BR>
-<a href="cleanup/"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
-<BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

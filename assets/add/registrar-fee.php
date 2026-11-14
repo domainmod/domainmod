@@ -68,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
+        // the stored form, so a fee entered as xn--p1ai or DE matches domains under рф or de
+        $new_tld = $sanitize->text(DomainMOD\Domain::normalizeTld(htmlspecialchars_decode($new_tld, ENT_QUOTES)));
         $timestamp = $time->stamp();
 
         $stmt = $pdo->prepare("

@@ -99,7 +99,8 @@ class AboveCom
 
         foreach ($records as $value) {
 
-            $domain = RegistrarResponse::text(RegistrarResponse::get($value, '@attributes', 'domain'));
+            // cached under the stored form (münchen.de), which getFullInfo() is later given
+            $domain = Domain::normalizeOrKeep(RegistrarResponse::text(RegistrarResponse::get($value, '@attributes', 'domain')));
             $domain_list[] = $domain;
             $expiry_date = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($value, 'expiry')));
             $autorenew = $this->processAutorenew(RegistrarResponse::text(RegistrarResponse::get($value, 'autorenew')));

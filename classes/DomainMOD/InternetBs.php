@@ -34,6 +34,8 @@ class InternetBs
 
     public function getApiUrl($api_key, $api_secret, $command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.internet.bs/';
         if ($command == 'domainlist') {
             return $base_url . 'domain/List?apiKey=' . $api_key . '&password=' . $api_secret . '&ResponseFormat=JSON';

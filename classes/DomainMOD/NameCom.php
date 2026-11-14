@@ -78,6 +78,8 @@ class NameCom
 
     public function getApiUrl($command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.name.com/v4/';
 
         if ($command == 'domainlist') {
@@ -121,7 +123,7 @@ class NameCom
         $array_results = $this->convertToArray($api_results);
 
         // confirm that the api call was successful
-        if ($array_results['domainName'] == $domain) {
+        if (Domain::sameDomain($array_results['domainName'] ?? '', $domain)) {
 
             // get expiration date
             $expiration_date = substr($array_results['expireDate'], 0, 10);

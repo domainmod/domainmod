@@ -34,9 +34,12 @@ class Enom
 
     public function getApiUrl($account_username, $account_password, $domain, $command)
     {
+        // eNom takes the name and TLD separately, both in punycode, so split the punycode form (not getTld(), which
+        // returns the TLD in Unicode)
+        $domain = Domain::forApi($domain);
         $domainclass = new Domain();
         $domain_part = $domainclass->getDomainPart($domain);
-        $tld = $domainclass->getTld($domain);
+        $tld = strpos($domain, '.') !== false ? substr($domain, strpos($domain, '.') + 1) : '';
 
         $base_url = 'https://reseller.enom.com/interface.asp?command=';
         if ($command == 'domainlist') {

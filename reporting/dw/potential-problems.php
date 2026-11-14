@@ -42,7 +42,13 @@ $pdo = $deeb->cnxx;
 $generate = $_GET['generate'] ?? 0;
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
-$result_accounts_without_a_dns_zone = $pdo->query("
+// the Data Warehouse tables only exist once it has been built
+$account_list_raw = $zone_list_raw = $suspended_list_raw = '';
+$dwaccounts = new DomainMOD\DwAccounts();
+$dwzones = new DomainMOD\DwZones();
+$dw_built = $dwaccounts->checkForAccountTable() && $dwzones->checkForZoneTable();
+
+$result_accounts_without_a_dns_zone = !$dw_built ? array() : $pdo->query("
     SELECT domain
     FROM dw_accounts
     WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
@@ -50,14 +56,14 @@ $result_accounts_without_a_dns_zone = $pdo->query("
 $sql_accounts_without_a_dns_zone = "";
 $temp_accounts_without_a_dns_zone = count($result_accounts_without_a_dns_zone);
 
-$result_dns_zones_without_an_account = $pdo->query("
+$result_dns_zones_without_an_account = !$dw_built ? array() : $pdo->query("
     SELECT domain
     FROM dw_dns_zones
     WHERE domain NOT IN (SELECT domain FROM dw_accounts)
     ORDER BY domain")->fetchAll();
 $temp_dns_zones_without_an_account = count($result_dns_zones_without_an_account);
 
-$result_suspended_accounts = $pdo->query("
+$result_suspended_accounts = !$dw_built ? array() : $pdo->query("
     SELECT domain
     FROM dw_accounts
     WHERE suspended = '1'
@@ -137,7 +143,7 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
 
-    <BR><a href="<?php echo $report_filename; ?>?export_data=1<?php echo $layout->showButton('button', _('Export')); ?></a>
+    <BR><a href="<?php echo $report_filename; ?>?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
     <BR><BR><?php
 }
 
@@ -155,7 +161,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
-                $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
+                $account_list_raw .= htmlspecialchars($row_accounts_without_a_dns_zone->domain, ENT_QUOTES, 'UTF-8') . ", ";
 
             }
 
@@ -185,7 +191,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
 
-                $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
+                $zone_list_raw .= htmlspecialchars($row_dns_zones_without_an_account->domain, ENT_QUOTES, 'UTF-8') . ", ";
 
             }
 
@@ -215,7 +221,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             foreach ($result_suspended_accounts as $row_suspended_accounts) {
 
-                $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
+                $suspended_list_raw .= htmlspecialchars($row_suspended_accounts->domain, ENT_QUOTES, 'UTF-8') . ", ";
 
             }
 
@@ -233,6 +239,10 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
         }
     }
+
+} elseif (!$dw_built) {
+
+    echo '<BR>' . _('The Data Warehouse hasn\'t been built yet, so there\'s nothing to report.') . '<BR><BR>';
 
 } else {
 

@@ -166,6 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                     }
                     $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
 
+                    $temp_name = '';
+
                     $stmt = $pdo->prepare("
                         SELECT `name`, field_name
                         FROM domain_fields
@@ -213,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-                    $_SESSION['s_message_success'] .= sprintf(_('Custom Field %s updated'), $name_array[0]) . '<BR>';
+                    $_SESSION['s_message_success'] .= sprintf(_('Custom Field %s updated'), $temp_name) . '<BR>';
 
                 } catch (Exception $e) {
 
@@ -256,7 +258,7 @@ $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
 <?php
 $done = $done ?? '';
 if ($done != '1') {
-    echo _("The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
+    echo _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
 } ?>
 <?php if ($done == "1") { ?>
 

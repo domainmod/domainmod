@@ -101,7 +101,7 @@ $search_for = $search_for ?? '';
             </li>
 <?php */ ?>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo $web_root; ?>/settings/toggles/dark-mode/" role="button">
+                <a class="nav-link" href="<?php echo $web_root; ?>/settings/toggles/dark-mode/?<?php echo (new DomainMOD\Csrf())->query(); ?>" role="button">
                     <i class="fas fa-adjust"></i>
                 </a>
             </li>
@@ -223,19 +223,19 @@ $search_for = $search_for ?? '';
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 if ($_SESSION['s_message_danger'] != "") {
                     echo $system->showMessageDanger($_SESSION['s_message_danger']);
-                    unset($_SESSION['s_message_danger']);
+                    $_SESSION['s_message_danger'] = '';
                 }
 
                 $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
                 if ($_SESSION['s_message_success'] != "") {
                     echo $system->showMessageSuccess($_SESSION['s_message_success']);
-                    unset($_SESSION['s_message_success']);
+                    $_SESSION['s_message_success'] = '';
                 }
 
                 $_SESSION['s_message_info'] = $_SESSION['s_message_info'] ?? '';
                 if ($_SESSION['s_message_info'] != "") {
                     echo $system->showMessageInfo($_SESSION['s_message_info']);
-                    unset($_SESSION['s_message_info']);
+                    $_SESSION['s_message_info'] = '';
                 }
 
                 require_once DIR_INC . '/layout/table-maintenance.inc.php'; ?>

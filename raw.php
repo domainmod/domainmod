@@ -59,7 +59,9 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 </head>
 <body class="hold-transition text-sm<?php echo $layout->bodyDarkMode(); ?>">
 <?php
-$result = $pdo->query($_SESSION['s_raw_list_query'])->fetchAll();
+// The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
+unset($_SESSION['s_raw_list_query']);
+$result = isset($_SESSION['s_raw_list_sql']) ? $pdo->query($_SESSION['s_raw_list_sql'])->fetchAll() : array();
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
 

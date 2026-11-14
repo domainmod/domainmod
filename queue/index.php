@@ -35,6 +35,7 @@ $queue = new DomainMOD\DomainQueue();
 $user = new DomainMOD\User();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$csrf = new DomainMOD\Csrf();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -42,6 +43,8 @@ require_once DIR_INC . '/settings/queue-main.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;
+$queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
+$queue_fix_available = $queue->getEditedCreationTypeId() > 0;
 
 $list_id = (int) ($_GET['list_id'] ?? 0);
 $dell = (int) ($_GET['dell'] ?? 0);
@@ -71,13 +74,13 @@ $result_domains = $pdo->query("
     SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
         dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
         dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue, dq.invalid_domain,
-        dq.copied_to_history, dq.created_by, dq.insert_time, r.name AS registrar_name,
+        dq.copied_to_history, dq.message, dq.created_by, dq.insert_time, r.name AS registrar_name,
         ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
-    FROM domain_queue AS dq, registrars AS r, registrar_accounts AS ra, owners AS o, api_registrars AS ar
-    WHERE dq.registrar_id = r.id
-      AND dq.account_id = ra.id
-      AND dq.owner_id = o.id
-      AND dq.api_registrar_id = ar.id
+    FROM domain_queue AS dq
+    JOIN api_registrars AS ar ON dq.api_registrar_id = ar.id
+    LEFT JOIN registrars AS r ON dq.registrar_id = r.id
+    LEFT JOIN registrar_accounts AS ra ON dq.account_id = ra.id
+    LEFT JOIN owners AS o ON dq.owner_id = o.id
     ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC, dq.domain ASC")->fetchAll();
 
 if ($export_data === 1) {
@@ -207,6 +210,11 @@ if ($export_data === 1) {
                     } elseif ($row_domains->invalid_domain === 1) {
 
                         $export_processing = _('Invalid Domain');
+                        if ($row_domains->message != '') $export_processing .= ': ' . $queue->getRdapMessage($row_domains->message);
+
+                    } elseif ($row_domains->message == 'edited') {
+
+                        $export_processing = _('Imported (Edited Manually)');
 
                     } else {
 
@@ -223,10 +231,15 @@ if ($export_data === 1) {
                     } else {
 
                         $export_processing = _('Pending');
+                        if ($row_domains->message != '') $export_processing .= ': ' . $queue->getRdapMessage($row_domains->message);
 
                     }
 
                 }
+
+                // RDAP rows find their registrar and account when they're processed
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup');
+                $export_registrar = $row_domains->registrar_name ?? $rdap_unresolved;
 
                 if ($row_domains->expiry_date == '1970-01-01') {
 
@@ -380,7 +393,7 @@ if ($export_data === 1) {
 
                 }
 
-                $account_export = $assets->getUsername($row_domains->account_id);
+                $account_export = $row_domains->account_id ? $assets->getUsername($row_domains->account_id) : $rdap_unresolved;
 
                 if ($row_domains->created_by == '0') {
 
@@ -396,7 +409,7 @@ if ($export_data === 1) {
                     $export_processing,
                     $row_domains->domain,
                     $row_domains->api_registrar_name,
-                    $row_domains->registrar_name,
+                    $export_registrar,
                     $row_domains->owner,
                     $account_export,
                     $row_domains->tld,
@@ -433,12 +446,13 @@ if ($clear === 1) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to clear completed items from the queue?') . '<BR><BR>' .
         _('Before clearing the queue you should review the results to make sure that everything is correct.') . '<BR><BR>' .
-        '<a href="index.php?really_clear=1">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_clear=1&' . $csrf->query() . '">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_clear === 1) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $queue->clearFinished();
@@ -453,12 +467,13 @@ if ($really_clear === 1) {
 if ($dell === 1 && $list_id !== 0) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain List from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_dell=1&list_id=' . $list_id . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_dell=1&list_id=' . $list_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_dell === 1 && $list_id !== 0) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
@@ -477,12 +492,13 @@ if ($really_dell === 1 && $list_id !== 0) {
 if ($deld === 1 && $domain_id !== 0) {
 
     $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
+        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
 
 }
 
 if ($really_deld === 1 && $domain_id !== 0) {
 
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
@@ -522,11 +538,21 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     </button><BR><BR><?php
 
 } ?>
-<?php echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE); ?>
+<?php
+if ($queue_rdap_available) {
 
-<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>'); ?><BR>
+    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP or WHOIS instead."), SOFTWARE_TITLE) . '&nbsp;';
+
+} else {
+
+    echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . '&nbsp;';
+
+} ?>
+
+<?php echo sprintf(_("For more information please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', _('Add Domains To Queue')); ?></a>
+<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
+<?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <?php
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 if ($_SESSION['s_domains_in_queue'] == '1') { ?>
@@ -689,6 +715,11 @@ if (!$result_domains) {
                     } elseif ($row_domains->invalid_domain === 1) {
 
                         echo $layout->highlightText('red', _('Invalid Domain'));
+                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
+
+                    } elseif ($row_domains->message == 'edited') {
+
+                        echo $layout->highlightText('green', _('Imported (Edited Manually)'));
 
                     } else {
 
@@ -705,17 +736,19 @@ if (!$result_domains) {
                     } else {
 
                         echo _('Pending');
+                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
 
                     }
 
-                } ?>
+                }
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup'); ?>
             </td>
             <td>
                 <?php echo $row_domains->domain; ?>
             </td>
             <td>
-                <?php echo $row_domains->registrar_name; ?>, <?php echo $row_domains->owner; ?>
-                (<?php echo $row_domains->username; ?>)
+                <?php echo $row_domains->registrar_name ?? $rdap_unresolved; ?>, <?php echo $row_domains->owner; ?>
+                (<?php echo $row_domains->username ?? $rdap_unresolved; ?>)
             </td>
             <td><?php
                 if ($row_domains->expiry_date == '1970-01-01') {
@@ -809,7 +842,11 @@ if (!$result_domains) {
                 }
                 echo $to_display; ?>
             </td>
-            <td>
+            <td><?php
+                if ($queue_fix_available && $row_domains->finished == '1' && $row_domains->invalid_domain === 1
+                    && $row_domains->already_in_domains != '1' && $row_domains->already_in_queue != '1') { ?>
+                    <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>"><i class="fa fa-edit" style="padding-top: 3px;"></i></a>&nbsp;<?php
+                } ?>
                 <a href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>"><i class="fa fa-times" style="padding-top: 3px;"></i></a>
             </td>
             </tr><?php

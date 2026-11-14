@@ -34,6 +34,8 @@ class Porkbun
 
     public function getApiUrl($domain, $command)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.porkbun.com/api/json/v3';
 
         if ($command == 'domainlist') {
@@ -117,7 +119,7 @@ class Porkbun
 
             foreach ($array_results['domains'] as $domain_details) {
 
-                if ($domain == $domain_details['domain']) {
+                if (Domain::sameDomain($domain_details['domain'] ?? '', $domain)) {
 
                     // get expiration date
                     $expiration_date = substr($domain_details['expireDate'], 0, 10);

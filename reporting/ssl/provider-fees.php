@@ -41,7 +41,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
-$all = $_GET['all'];
+$all = $_GET['all'] ?? '';
 
 if ($all == "1") {
 

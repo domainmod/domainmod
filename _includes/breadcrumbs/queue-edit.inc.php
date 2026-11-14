@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/backup/cleanup/index.php
+ * /_includes/breadcrumbs/queue-edit.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -19,32 +19,6 @@
  *
  */
 ?>
-<?php
-require_once __DIR__ . '/../../../_includes/start-session.inc.php';
-require_once __DIR__ . '/../../../_includes/init.inc.php';
-require_once DIR_INC . '/config.inc.php';
-require_once DIR_INC . '/software.inc.php';
-require_once DIR_ROOT . '/vendor/autoload.php';
-
-$system = new DomainMOD\System();
-
-$system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
-$system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
-
-if (file_exists(DIR_TEMP . '/domainmod-backup.sql')) {
-
-    unlink(DIR_TEMP . '/domainmod-backup.sql');
-
-}
-
-if (file_exists(DIR_TEMP . '/domainmod-restore.sql')) {
-
-    unlink(DIR_TEMP . '/domainmod-restore.sql');
-
-}
-
-$_SESSION['s_message_success'] = _('Backups were cleaned up');
-
-header("Location: ../");
-exit;
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/queue/"><?php echo _('Queue'); ?></a></li>
+    <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
+</ol>

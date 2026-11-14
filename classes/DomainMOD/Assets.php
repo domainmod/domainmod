@@ -869,8 +869,10 @@ class Assets
         $stmt = $pdo->prepare("
             SELECT id
             FROM api_registrars
-            WHERE `name` = :registrar");
-        $stmt->bindValue('registrar', $registrar, \PDO::PARAM_INT);
+            WHERE `name` = :registrar
+              AND `name` != 'RDAP'");
+        // RDAP is a Domain Queue source, not a registrar's API, so it's never assigned to a registrar
+        $stmt->bindValue('registrar', $registrar, \PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetchColumn();
 

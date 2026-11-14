@@ -47,7 +47,13 @@ $stmt->execute();
 $result = $stmt->fetch();
 $stmt->closeCursor();
 
-if ($result) {
+if (!$result) {
+
+    // the record was deleted, or the link was changed
+    $new_domain = '';
+    $new_notes = _('This record no longer exists.');
+
+} else {
 
     $new_domain = $result->domain;
     $new_notes = $result->notes;

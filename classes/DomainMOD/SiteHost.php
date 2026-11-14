@@ -19,7 +19,6 @@
  *
  */
 //@formatter:off
-//@formatter:off
 namespace DomainMOD;
 
 class SiteHost
@@ -40,6 +39,8 @@ class SiteHost
 
     public function getApiUrl($api_key, $client_id, $command, $domain, $page_number = 1)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://api.sitehost.nz/1.5/srs/';
         $parameters = array('apikey' => $api_key, 'client_id' => $client_id);
 
@@ -156,7 +157,7 @@ class SiteHost
 
             foreach (RegistrarResponse::toList(RegistrarResponse::get($array_results, 'return', 'data')) as $item) {
 
-                if (strtolower(RegistrarResponse::text(RegistrarResponse::get($item, 'domain'))) === strtolower($domain)) {
+                if (Domain::sameDomain(RegistrarResponse::text(RegistrarResponse::get($item, 'domain')), $domain)) {
                     $domain_details = $item;
                     break;
                 }
@@ -185,6 +186,16 @@ class SiteHost
 
         }
 
+        // the expiry date must be a real date, or the domain stays in the queue to be tried again (SiteHost has no date
+        // for a domain that isn't fully registered yet)
+        $expiry_result = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($domain_details, 'datebilleduntil')));
+        if ($expiry_result === '') {
+
+            $this->logFailure('Unable to get domain details (no valid expiry date)', null, $api_key, $client_id, $domain);
+            return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
+
+        }
+
         // get dns servers. A failed call leaves the details empty, so the Domain Queue tries the domain again later
         // rather than importing it with placeholder DNS servers
         $dns_result = $this->getDnsServers($api_key, $client_id, $domain);
@@ -194,7 +205,7 @@ class SiteHost
         $dns_servers = $this->processDns($dns_result);
 
         // get expiration date
-        $expiration_date = $this->processExpiry(RegistrarResponse::text(RegistrarResponse::get($domain_details, 'datebilleduntil')));
+        $expiration_date = $expiry_result;
 
         // get privacy status
         $privacy_status = $this->processPrivacy($privacy_result);
@@ -243,11 +254,14 @@ class SiteHost
 
     public function processExpiry($expiry_result)
     {
-        // SiteHost uses 0000-00-00 00:00:00 for a date that isn't set
-        if ($expiry_result === '' || str_starts_with($expiry_result, '0000-00-00')) {
+        // a real date (YYYY-MM-DD) at the start, or '' (SiteHost uses 0000-00-00 00:00:00 for a date that isn't set)
+        $expiration_date = substr($expiry_result, 0, 10);
+        $date_parts = explode('-', $expiration_date);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiration_date)
+            || !checkdate((int) $date_parts[1], (int) $date_parts[2], (int) $date_parts[0])) {
             return '';
         }
-        return substr($expiry_result, 0, 10);
+        return $expiration_date;
     }
 
     public function processDns($dns_result)

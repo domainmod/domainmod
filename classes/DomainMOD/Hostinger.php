@@ -38,6 +38,8 @@ class Hostinger
 
     public function getApiUrl($command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         if ($command == 'domainlist') {
             return $this->base_url . 'portfolio';
         } elseif ($command == 'info') {

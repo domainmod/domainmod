@@ -26,6 +26,15 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+// The command-line upgrade only. In a browser, the upgrade runs from the "Upgrade Database" button after signing in.
+if (PHP_SAPI !== 'cli') {
+
+    http_response_code(403);
+    echo sprintf(_('This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator.'), SOFTWARE_TITLE);
+    exit;
+
+}
+
 $deeb = DomainMOD\Database::getInstance();
 $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/update.php');

@@ -26,7 +26,8 @@ class Validate
 
    public function tld($tld)
     {
-        if(preg_match('/^[a-z\.\-]+$/i', $tld)) {
+        // a TLD such as de, co.uk, рф, or its punycode form xn--p1ai
+        if(Domain::normalize($tld) !== '') {
 
             return true;
 

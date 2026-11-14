@@ -63,6 +63,10 @@ if ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved !
 
 } elseif ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved == '1') {
 
+    // Approving the upgrade changes the database, so the "Upgrade Database" link carries the security token.
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check('notice.php?a=u');
+
     $timestamp = $time->stamp();
     require_once DIR_INC . '/update.inc.php';
 
@@ -225,7 +229,9 @@ unset($_SESSION['s_running_login_checks']);
 
 if (isset($_SESSION['s_user_redirect'])) {
 
-    $temp_redirect = $_SESSION['s_user_redirect'];
+    // Never with a security token, so a link that sent a signed-out user to an action can't run it once they sign in.
+    $csrf = new DomainMOD\Csrf();
+    $temp_redirect = $csrf->removeToken($_SESSION['s_user_redirect']);
     unset($_SESSION['s_user_redirect']);
 
     header('Location: ' . $temp_redirect);

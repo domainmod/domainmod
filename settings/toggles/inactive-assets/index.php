@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 require_once DIR_INC . '/head.inc.php';
 
 $system->authCheck();
+$csrf = new DomainMOD\Csrf();
+$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 
 $_SESSION['s_display_inactive_assets'] = $_SESSION['s_display_inactive_assets'] ?? 0;
 if ($_SESSION['s_display_inactive_assets'] == '1') {

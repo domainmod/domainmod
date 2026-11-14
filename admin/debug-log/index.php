@@ -78,14 +78,15 @@ if ($export_data === 1) {
 
         foreach ($result as $row) {
 
+            // Log text can come from anyone who reached a page, so it can't start a spreadsheet formula.
             $row_contents = array(
                 $row->id,
                 $row->user_id,
-                $row->area,
-                $row->level,
-                $row->message,
-                $row->extra,
-                $row->url,
+                $export->protectFormula($row->area),
+                $export->protectFormula($row->level),
+                $export->protectFormula($row->message),
+                $export->protectFormula($row->extra),
+                $export->protectFormula($row->url),
                 $row->insert_time
             );
             $export->writeRow($export_file, $row_contents);
@@ -120,7 +121,7 @@ if (!$result) {
 
 } else { ?>
 
-    <a href="../maintenance/clear-log.php"><?php echo $layout->showButton('button', _('Clear Debug Log')); ?></a>
+    <a href="../maintenance/clear-log.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Clear Debug Log')); ?></a>
     <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
@@ -139,30 +140,32 @@ if (!$result) {
         </thead>
         <tbody><?php
 
+        // Log entries can hold text from anyone who reached a page (such as a sign-in's username or the URL), so it's
+        // escaped before it's shown.
         foreach ($result as $row) { ?>
 
             <tr>
             <td></td>
             <td>
-                <?php echo $row->id; ?>
+                <?php echo (int) $row->id; ?>
             </td>
             <td>
-                <?php echo $row->user_id; ?>
+                <?php echo (int) $row->user_id; ?>
             </td>
             <td>
-                <?php echo $row->area; ?>
+                <?php echo htmlspecialchars((string) $row->area, ENT_QUOTES, 'UTF-8'); ?>
             </td>
             <td>
-                <?php echo $row->level; ?>
+                <?php echo htmlspecialchars((string) $row->level, ENT_QUOTES, 'UTF-8'); ?>
             </td>
             <td>
-                <?php echo $row->message; ?>
+                <?php echo htmlspecialchars((string) $row->message, ENT_QUOTES, 'UTF-8'); ?>
             </td>
             <td>
-                <?php echo $row->extra; ?>
+                <?php echo htmlspecialchars((string) $row->extra, ENT_QUOTES, 'UTF-8'); ?>
             </td>
             <td>
-                <?php echo $row->url; ?>
+                <?php echo htmlspecialchars((string) $row->url, ENT_QUOTES, 'UTF-8'); ?>
             </td>
             <td>
                 <?php echo $time->toUserTimezone($row->insert_time); ?>

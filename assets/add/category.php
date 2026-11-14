@@ -42,9 +42,9 @@ require_once DIR_INC . '/settings/assets-add-category.inc.php';
 $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
-$new_category = $sanitize->text($_POST['new_category']);
-$new_stakeholder = $sanitize->text($_POST['new_stakeholder']);
-$new_notes = $sanitize->text($_POST['new_notes']);
+$new_category = isset($_POST['new_category']) ? $sanitize->text($_POST['new_category']) : '';
+$new_stakeholder = isset($_POST['new_stakeholder']) ? $sanitize->text($_POST['new_stakeholder']) : '';
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

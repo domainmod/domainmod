@@ -20,13 +20,13 @@
  */
 ?>
 <?php
-if ($_SESSION['s_dw_view_all'] == "1") {
+if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
 
     $page_title = _('Listing All Server Accounts');
 
 } else {
 
-    $page_title = sprintf(_('Listing Server Accounts on %s (%s)'), $_SESSION['s_dw_server_name'], $_SESSION['s_dw_server_host']);
+    $page_title = sprintf(_('Listing Server Accounts on %s (%s)'), $_SESSION['s_dw_server_name'] ?? '', $_SESSION['s_dw_server_host'] ?? '');
 
 }
 $breadcrumb = _('Accounts');

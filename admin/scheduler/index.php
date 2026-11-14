@@ -51,20 +51,21 @@ $pdo = $deeb->cnxx;
 <body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?>&nbsp;
-<?php echo sprintf(_('In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>&nbsp;
+<?php echo sprintf(_('In order to use the Task Scheduler you must set up a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>&nbsp;
 <?php
 $emphasized_text = _("every 10 minutes");
-$full_text = sprintf(_("This file should be executed %s, and once it's setup the Task Scheduler will be live."), $emphasized_text);
+$full_text = sprintf(_("This file should be executed %s, and once it's set up the Task Scheduler will be live."), $emphasized_text);
 echo str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text);
 ?>
 <BR>
 <?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?><BR>
+<?php echo sprintf(_('To stop anyone else from running cron.php, you can give it a key in config.inc.php. See the %sUser Guide%s for details.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
 <BR>
 <?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
 <BR>
 <?php
 $result = $pdo->query("
-        SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
+        SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC")->fetchAll();
 
@@ -84,7 +85,13 @@ foreach ($result as $box) {
         <?php echo $box->description ?>
     </div>
     <div>
-        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR>
+        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR><?php
+
+        // A daily task's time is shown in its own time zone, which may not be the viewer's.
+        $daily_time = $schedule->getDailyTime($box->expression);
+        if ($daily_time !== null) { ?>
+            <strong><?php echo _('Run Time'); ?>:</strong> <?php echo sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . htmlentities($schedule->getZone($box->timezone)->getName(), ENT_QUOTES, 'UTF-8') . ')'; ?><BR><?php
+        } ?>
 
         <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($box->active, $box->id); ?><BR><?php
 
@@ -97,9 +104,9 @@ foreach ($result as $box) {
 
         <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $box->last_duration; ?><BR><?php
 
+        $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
         if ($box->next_run != '1970-01-01 00:00:00') {
             $next_run = $time->toUserTimezone($schedule->getDateOutput($box->next_run));
-            $hour = date('H', strtotime($next_run));
         } else {
             $next_run = '-';
 
@@ -111,9 +118,11 @@ foreach ($result as $box) {
 
             <BR>
             <form name="edit_task_form" method="post" action="update.php">
+                <?php echo $form->showCsrfField(); ?>
                 <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
                     <?php echo $schedule->hourSelect($hour); ?>
-                </select><BR><BR><?php
+                </select><BR>
+                <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php
                 echo $form->showInputHidden('a', 'u');
                 echo $form->showInputHidden('id', $box->id);
                 echo $form->showSubmitButton(_('Change Time'), '', ''); ?>

@@ -39,15 +39,31 @@ class Export
         return $open_file;
     }
 
+    /*
+     * Writes standard CSV (RFC 4180): quotes are escaped by doubling them, with no backslash escape character. PHP's
+     * default backslash escape writes a backslash before a quote as is, which can end a cell early, and PHP 8.4
+     * deprecates relying on it.
+     */
     public function writeRow($open_file, $row_contents)
     {
-        fputcsv($open_file, $row_contents);
+        fputcsv($open_file, $row_contents, ',', '"', '');
     }
 
     public function writeBlankRow($open_file)
     {
         $blank_line = array('');
-        fputcsv($open_file, $blank_line);
+        fputcsv($open_file, $blank_line, ',', '"', '');
+    }
+
+    /*
+     * For text that anyone could have supplied (such as the Debug Log's usernames and URLs): a value starting with a
+     * character a spreadsheet reads as a formula gets an apostrophe in front, so opening the file can't run it.
+     */
+    public function protectFormula($value)
+    {
+        $value = (string) $value;
+        if ($value !== '' && strpos("=+-@\t\r", $value[0]) !== false) return "'" . $value;
+        return $value;
     }
 
     public function closeFile($open_file)

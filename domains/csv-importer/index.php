@@ -30,6 +30,7 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/domains/csv-importer/index.php');
 $layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -47,13 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
 
         if (isset($_FILES["file"])) {
-
-            // Remove any import file left in the web-accessible temp folder by older versions
-            if (file_exists(DIR_TEMP . '/import.csv')) {
-
-                unlink(DIR_TEMP . '/import.csv');
-
-            }
 
             $upload = new Uploader($_FILES["file"]);
             $upload->allowed_extensions(array("csv"));
@@ -80,9 +74,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $csv = new DomainMOD\Csv();
                 $filename = $upload->get_tmp_name();
-                $csv->parse($filename, $_SESSION['s_user_id']);
 
+                if (!$csv->parse($filename, $_SESSION['s_user_id'])) {
+
+                    // The class keeps the first few rows, which is enough to find the problem.
+                    $rows = $csv->invalid_rows;
+                    $more = $csv->invalid_row_count - count($rows);
+
+                    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                    $_SESSION['s_message_danger'] .= sprintf(_('Nothing was imported because these rows don\'t have the %s columns that the CSV Import Template has'), DomainMOD\Csv::COLUMNS) . ': '
+                        . implode(', ', $rows) . ($more > 0 ? ' ' . sprintf(_('(and %s more)'), $more) : '') . '.<BR>';
+
+                    header("Location: ./");
+                    exit;
+
+                }
+
+                $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
                 $_SESSION['s_message_success'] .= _('Your CSV Import has been completed');
+
+                if (!empty($csv->invalid_domains)) {
+
+                    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                    $_SESSION['s_message_danger'] .= _('These domains weren\'t imported because they aren\'t valid domain names') . ':<BR>'
+                        . implode('<BR>', array_map(function ($value) { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }, $csv->invalid_domains)) . '<BR>';
+
+                }
 
                 header("Location: ../");
                 exit;
@@ -114,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 echo sprintf(_('This page allows you to import all of your domain data into %s using a CSV template.'), SOFTWARE_TITLE);
-echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
+echo '&nbsp;'; echo _('This is a very new feature (i.e. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
 <BR><?php echo _('For more information on how to use the CSV Importer, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-importer/"><?php echo _('User Guide'); ?></a>.
 
 <BR><BR><h3><?php echo _('Download CSV Template'); ?></h3>
@@ -123,6 +140,7 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
 
 <BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
 <form enctype="multipart/form-data" action="" method="post">
+<?php echo $form->showCsrfField(); ?>
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
     <input type="file" name="file"><BR><BR>
     <?php echo _('Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process.'); ?><BR>
@@ -130,11 +148,6 @@ echo '&nbsp;'; echo _('This is a very new feature (ie. experimental), but all te
     <?php echo $layout->showButton('submit', _('Import CSV File')); ?>
 </form>
 <BR>
-
-<h3><?php echo _('Cleanup'); ?></h3>
-<?php echo _('Click here to delete any and all past CSV Import files that may be saved on your server.'); ?><BR>
-<a href="cleanup/"><?php echo $layout->showButton('button', _('Perform Cleanup')); ?></a>
-<BR><BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

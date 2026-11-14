@@ -150,19 +150,19 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php" class="nav-link">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
                         <p><?php echo _('Update Conversion Rates') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php" class="nav-link">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
                         <p><?php echo _('Update Domain Fees') ?></p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php" class="nav-link">
+                    <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link">
                         <i class="far fa-circle-disabled nav-icon"></i>
                         <p><?php echo _('Update SSL Fees') ?></p>
                     </a>

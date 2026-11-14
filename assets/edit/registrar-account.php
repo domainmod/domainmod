@@ -72,6 +72,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM registrar_accounts
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $new_raid, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That registrar account no longer exists.') . '<BR>';
+                header("Location: ../registrar-accounts.php");
+                exit;
+
+            }
+
             $stmt = $pdo->prepare("
                 UPDATE registrar_accounts
                 SET owner_id = :new_owner_id,
@@ -197,6 +216,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $stmt = $pdo->prepare("
@@ -229,13 +250,19 @@ if ($del === 1) {
             $result = $stmt->fetch();
             $stmt->closeCursor();
 
-            if ($result) {
+            if (!$result) {
 
-                $temp_username = $result->username;
-                $temp_owner_name = $result->owner_name;
-                $temp_registrar_name = $result->registrar_name;
+                // already deleted, or the link was changed
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That registrar account no longer exists.') . '<BR>';
+                header("Location: ../registrar-accounts.php");
+                exit;
 
             }
+
+            $temp_username = $result->username;
+            $temp_owner_name = $result->owner_name;
+            $temp_registrar_name = $result->registrar_name;
 
             $stmt = $pdo->prepare("
                 DELETE FROM registrar_accounts
@@ -269,6 +296,13 @@ if ($del === 1) {
     }
 
 }
+
+// the registrar's API requirements, for registrars with an API; registrars without one show no API fields
+$has_api_support = 0;
+$api_registrar_name = $api_registrar_notes = '';
+$req_account_username = $req_account_password = $req_account_id = $req_reseller_id = $req_api_app_name = '0';
+$req_api_key = $req_api_secret = $req_ip_address = $lists_domains = '0';
+$ret_expiry_date = $ret_dns_servers = $ret_privacy_status = $ret_autorenewal_status = '0';
 
 $stmt = $pdo->prepare("
     SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_account_id, apir.req_reseller_id,

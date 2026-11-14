@@ -162,6 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     $date = new DomainMOD\Date();
 
+                    // set by the check below when a domain is already in DomainMOD
+                    $has_existing_domains = '0';
+
                     // cycle through domains here
                     foreach ($domain_array as $key => $new_domain) {
 
@@ -208,17 +211,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $result = $stmt->fetch();
                             $stmt->closeCursor();
 
-                            if ($result) {
+                            if (!$result) {
 
-                                $temp_owner_id = $result->owner_id;
-                                $temp_registrar_id = $result->registrar_id;
+                                // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                                if ($pdo->InTransaction()) $pdo->rollback();
+                                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                                header("Location: index.php?action=" . urlencode($action) . "");
+                                exit;
 
                             }
+
+                            $temp_owner_id = $result->owner_id;
+                            $temp_registrar_id = $result->registrar_id;
 
                             // cycle through domains here
                             foreach ($domain_array as $key => $new_domain) {
 
-                                $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+                                $new_tld = DomainMOD\Domain::tldOf($new_domain);
 
                                 $stmt = $pdo->prepare("
                                     SELECT id
@@ -746,16 +755,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $result = $stmt->fetch();
                             $stmt->closeCursor();
 
-                            if ($result) {
+                            if (!$result) {
 
-                                $new_registrar_account_id = $result->ra_id;
-                                $new_username = $result->username;
-                                $new_registrar_id = $result->r_id;
-                                $new_registrar_name = $result->r_name;
-                                $new_owner_id = $result->o_id;
-                                $new_owner_name = $result->o_name;
+                                // the account was deleted while the form was open (or the form was changed), so nothing is saved
+                                if ($pdo->InTransaction()) $pdo->rollback();
+                                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The registrar account you chose no longer exists. Please choose another one.') . '<BR>';
+                                header("Location: index.php?action=" . urlencode($action) . "");
+                                exit;
 
                             }
+
+                            $new_registrar_account_id = $result->ra_id;
+                            $new_username = $result->username;
+                            $new_registrar_id = $result->r_id;
+                            $new_registrar_name = $result->r_name;
+                            $new_owner_id = $result->o_id;
+                            $new_owner_name = $result->o_name;
 
                             if ($new_notes != "") {
 
@@ -1898,7 +1913,7 @@ if ($breadcrumb_text != '') {
 ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-echo _("The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
+echo _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
 ?>
 <?php
     $done = $done ?? '';

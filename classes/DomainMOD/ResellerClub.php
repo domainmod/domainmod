@@ -34,6 +34,8 @@ class ResellerClub
 
     public function getApiUrl($reseller_id, $api_key, $command, $domain)
     {
+        // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
+        $domain = Domain::forApi($domain);
         $base_url = 'https://httpapi.com/api/domains/details-by-name.json?auth-userid=' . $reseller_id . '&api-key=' . $api_key . '&domain-name=' . $domain;
         if ($command == 'info') {
             return $base_url . '&options=OrderDetails';

@@ -89,7 +89,7 @@ class Maintenance
 
     public function getTld($domain)
     {
-        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
+        return Domain::tldOf($domain);
     }
 
     public function updateSegments()
@@ -220,12 +220,11 @@ class Maintenance
         $result = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        // nothing to recalculate for a domain that no longer exists
+        if (!$result) return;
 
-            $registrar_id = $result->registrar_id;
-            $tld = $result->tld;
-
-        }
+        $registrar_id = $result->registrar_id;
+        $tld = $result->tld;
 
         $stmt = $pdo->prepare("
             UPDATE domains
@@ -399,6 +398,277 @@ class Maintenance
                              SELECT fee_id
                              FROM " . $compare_table . "
                             )");
+    }
+
+    /*
+     * IDN upgrade, step 1 of 3 (before the collation changes): puts every stored domain name and TLD into the form
+     * Domain::normalize() gives (lowercase Unicode, münchen.de for xn--mnchen-3ya.de). Safe to run again: rows that are
+     * already normalised aren't written, so a run that stops part-way (a PHP time limit) can simply be run again.
+     * Returns a report (one line per notable change) for the upgrade message; the same lines are written to the log.
+     */
+    public function normalizeIdnData()
+    {
+        if (function_exists('set_time_limit')) @set_time_limit(0);
+        $report = array();
+
+        $this->normalizeIdnTable('domains', true, $report);
+        $this->normalizeIdnTable('domain_queue', true, $report);
+        $this->normalizeIdnTable('domain_queue_temp', false, $report);
+        $this->normalizeIdnTable('segment_data', false, $report);
+        $this->logIdnReport($report);
+
+        // fee merges delete rows, so their report lines are logged in the same transaction as the merges (a rerun
+        // couldn't rebuild them)
+        $fee_report = array();
+        $this->normalizeIdnFees($fee_report);
+        $this->normalizeIdnSegments();
+
+        return array_merge($report, $fee_report);
+    }
+
+    // IDN upgrade, step 2 of 3: exact (binary) matching on every stored domain name and TLD column. Altering a column
+    // to the collation it already has does nothing, so this is safe to run again
+    public function changeIdnCollations()
+    {
+        $pdo = $this->deeb->cnxx;
+        $columns = array(
+            array('domains', 'domain', 'VARCHAR(255)'), array('domains', 'tld', 'VARCHAR(50)'),
+            array('domain_queue', 'domain', 'VARCHAR(255)'), array('domain_queue', 'tld', 'VARCHAR(50)'),
+            array('domain_queue_history', 'domain', 'VARCHAR(255)'), array('domain_queue_history', 'tld', 'VARCHAR(50)'),
+            array('domain_queue_temp', 'domain', 'VARCHAR(255)'),
+            array('segment_data', 'domain', 'VARCHAR(255)'),
+            array('fees', 'tld', 'VARCHAR(50)'));
+        foreach ($columns as $column) {
+            $pdo->query("ALTER TABLE `" . $column[0] . "` MODIFY `" . $column[1] . "` " . $column[2] . " CHARACTER SET utf8 COLLATE utf8_bin NOT NULL");
+        }
+    }
+
+    // IDN upgrade, step 3 of 3 (after the collation changes): everything that matches by name. Returns a report like
+    // normalizeIdnData()'s
+    public function finishIdnUpgrade()
+    {
+        if (function_exists('set_time_limit')) @set_time_limit(0);
+        $pdo = $this->deeb->cnxx;
+        $report = array();
+
+        // domains that became the same name (Example.com and example.com, or münchen.de and xn--mnchen-3ya.de) are
+        // kept, not merged, so the user can decide which to keep
+        $result = $pdo->query("
+            SELECT domain, COUNT(*) AS total
+            FROM domains
+            GROUP BY domain
+            HAVING COUNT(*) > 1
+            ORDER BY domain")->fetchAll();
+        foreach ($result as $row) {
+            $report[] = sprintf('Domain %s is now listed %d times; check them and delete the extra ones', $row->domain, $row->total);
+        }
+
+        // every fee again, from exact TLD matches only: a domain whose old fee only matched through the old collation
+        // (a strasse.de fee for a.straße.de) is left without one, and shows under missing fees
+        $pdo->query("UPDATE domains SET fee_id = '0', total_cost = '0'");
+        $this->updateAllFees();
+        $this->updateSegments();
+
+        $this->logIdnReport($report);
+        return $report;
+    }
+
+    // Normalises one table's domain column (and its tld column, if it has one), a batch at a time
+    protected function normalizeIdnTable($table, $has_tld, &$report)
+    {
+        $pdo = $this->deeb->cnxx;
+        $columns = $has_tld ? 'id, domain, tld' : 'id, domain';
+        $update = $has_tld
+            ? "UPDATE `" . $table . "` SET domain = :domain, tld = :tld WHERE id = :id"
+            : "UPDATE `" . $table . "` SET domain = :domain WHERE id = :id";
+        $last_id = 0;
+
+        do {
+
+            $stmt = $pdo->prepare("SELECT " . $columns . " FROM `" . $table . "` WHERE id > :last_id ORDER BY id LIMIT 500");
+            $stmt->bindValue('last_id', $last_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $rows = $stmt->fetchAll();
+            $stmt->closeCursor();
+            if (!$rows) break;
+
+            $pdo->beginTransaction();
+            $write = $pdo->prepare($update);
+
+            foreach ($rows as $row) {
+
+                $last_id = (int) $row->id;
+                $domain = Domain::normalize($row->domain);
+
+                if ($domain === '') {
+
+                    if ($table === 'domains') {
+                        $report[] = sprintf('Domain %s isn\'t a valid domain name, so it was left as it is', $row->domain);
+                    }
+                    continue;
+
+                }
+
+                $tld = $has_tld ? Domain::tldOf($domain) : '';
+                if ($domain === $row->domain && (!$has_tld || $tld === $row->tld)) continue;
+
+                // IDNA mapping can make a name longer; one that wouldn't fit its column is left as it is
+                if (mb_strlen($domain, 'UTF-8') > 255 || ($has_tld && mb_strlen($tld, 'UTF-8') > 50)) {
+                    if ($table === 'domains') {
+                        $report[] = sprintf('Domain %s would be too long once converted, so it was left as it is', $row->domain);
+                    }
+                    continue;
+                }
+
+                $write->bindValue('domain', $domain, \PDO::PARAM_STR);
+                if ($has_tld) $write->bindValue('tld', $tld, \PDO::PARAM_STR);
+                $write->bindValue('id', $row->id, \PDO::PARAM_INT);
+                $write->execute();
+
+            }
+
+            $pdo->commit();
+
+        } while (count($rows) === 500);
+    }
+
+    /*
+     * Normalises fee TLDs. Two fees for one registrar that become the same TLD (xn--p1ai and рф, or DE and de) are
+     * merged into one, since the fee screens and updateDomainFees() work by registrar and TLD and couldn't keep them
+     * apart: the one already in its normalised form is kept (or else the oldest), its domains take it over, and the
+     * other is deleted, reported with its old amounts when they differed
+     */
+    protected function normalizeIdnFees(&$report)
+    {
+        $pdo = $this->deeb->cnxx;
+        $fees = $pdo->query("
+            SELECT f.id, f.registrar_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee,
+                   f.misc_fee, f.currency_id, r.name AS registrar_name, c.currency
+            FROM fees AS f
+            LEFT JOIN registrars AS r ON f.registrar_id = r.id
+            LEFT JOIN currencies AS c ON f.currency_id = c.id
+            ORDER BY f.id")->fetchAll();
+
+        $groups = array();
+        foreach ($fees as $fee) {
+            // the stored form (a TLD that doesn't normalise, or would be too long for its column, is left as it is)
+            $fee->normalized = Domain::normalizeTld($fee->tld);
+            $key = $fee->registrar_id . '|' . $fee->normalized;
+            $groups[$key][] = $fee;
+        }
+
+        $pdo->beginTransaction();
+
+        foreach ($groups as $group) {
+
+            // the fee to keep: the one whose TLD was already in its normalised form, or else the oldest
+            $keep = $group[0];
+            foreach ($group as $fee) {
+                if ($fee->tld === $fee->normalized) { $keep = $fee; break; }
+            }
+
+            foreach ($group as $fee) {
+
+                if ($fee->id === $keep->id) continue;
+
+                $same = $fee->currency_id == $keep->currency_id;
+                foreach (array('initial_fee', 'renewal_fee', 'transfer_fee', 'privacy_fee', 'misc_fee') as $amount) {
+                    if ((string) $fee->$amount !== (string) $keep->$amount) $same = false;
+                }
+                if (!$same) {
+                    // the domains that move to the kept fee, named in the report while they can still be found
+                    $stmt = $pdo->prepare("SELECT domain FROM domains WHERE fee_id = :fee_id ORDER BY domain");
+                    $stmt->bindValue('fee_id', $fee->id, \PDO::PARAM_INT);
+                    $stmt->execute();
+                    $moved = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+                    $stmt->closeCursor();
+                    $line = sprintf('The %s fee for %s (%s: initial %s, renewal %s, transfer %s, privacy %s, misc %s) was merged into its %s fee; check it',
+                        $fee->registrar_name, $fee->tld, $fee->currency, $fee->initial_fee, $fee->renewal_fee,
+                        $fee->transfer_fee, $fee->privacy_fee, $fee->misc_fee, $keep->normalized);
+                    if ($moved) {
+                        $line .= sprintf(' (domains moved to it: %s)', implode(', ', $moved));
+                    }
+                    $report[] = $line;
+                    $this->logIdnReport(array($line));
+                }
+
+                $stmt = $pdo->prepare("UPDATE domains SET fee_id = :keep_id WHERE fee_id = :fee_id");
+                $stmt->bindValue('keep_id', $keep->id, \PDO::PARAM_INT);
+                $stmt->bindValue('fee_id', $fee->id, \PDO::PARAM_INT);
+                $stmt->execute();
+
+                $stmt = $pdo->prepare("DELETE FROM fees WHERE id = :fee_id");
+                $stmt->bindValue('fee_id', $fee->id, \PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
+            if ($keep->tld !== $keep->normalized) {
+                $stmt = $pdo->prepare("UPDATE fees SET tld = :tld WHERE id = :id");
+                $stmt->bindValue('tld', $keep->normalized, \PDO::PARAM_STR);
+                $stmt->bindValue('id', $keep->id, \PDO::PARAM_INT);
+                $stmt->execute();
+            }
+
+        }
+
+        $pdo->commit();
+    }
+
+    // Removes a segment's entries that became the same name, and rebuilds its saved list and count. Entries are read
+    // a batch at a time, and the list is built as it goes, so only the names seen so far are held in memory
+    protected function normalizeIdnSegments()
+    {
+        $pdo = $this->deeb->cnxx;
+        $segments = $pdo->query("SELECT id FROM segments ORDER BY id")->fetchAll();
+
+        foreach ($segments as $segment) {
+
+            $pdo->beginTransaction();
+            $seen = array();
+            $list = '';
+            $last_id = 0;
+            $delete = $pdo->prepare("DELETE FROM segment_data WHERE id = :id");
+
+            do {
+
+                $stmt = $pdo->prepare("SELECT id, domain FROM segment_data WHERE segment_id = :segment_id AND id > :last_id ORDER BY id LIMIT 1000");
+                $stmt->bindValue('segment_id', $segment->id, \PDO::PARAM_INT);
+                $stmt->bindValue('last_id', $last_id, \PDO::PARAM_INT);
+                $stmt->execute();
+                $rows = $stmt->fetchAll();
+                $stmt->closeCursor();
+
+                foreach ($rows as $row) {
+                    $last_id = (int) $row->id;
+                    if (isset($seen[$row->domain])) {
+                        $delete->bindValue('id', $row->id, \PDO::PARAM_INT);
+                        $delete->execute();
+                        continue;
+                    }
+                    $seen[$row->domain] = true;
+                    // the same format as Format::formatForMysql()
+                    $list .= ($list === '' ? '' : ',') . "'" . str_replace(' ', '', $row->domain) . "'";
+                }
+
+            } while (count($rows) === 1000);
+
+            $stmt = $pdo->prepare("UPDATE segments SET segment = :segment, number_of_domains = :total WHERE id = :id");
+            $stmt->bindValue('segment', $list, \PDO::PARAM_LOB);
+            $stmt->bindValue('total', count($seen), \PDO::PARAM_INT);
+            $stmt->bindValue('id', $segment->id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $pdo->commit();
+
+        }
+    }
+
+    // The IDN upgrade's report lines, logged whether or not debugging is on
+    protected function logIdnReport($report)
+    {
+        foreach ($report as $line) {
+            $this->log->addEntry('notice', 'IDN upgrade: ' . $line, array());
+        }
     }
 
     public function zeroInvalidIpIds()

@@ -42,12 +42,12 @@ class Notice
             "<strong>v" . SOFTWARE_VERSION . _(' Software Requirements') . "</strong><BR><BR>" . $requirements . "<BR>" .
 
             "<strong><span style='font-size: 200%; color: red;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . Format::toUpper(_('Critical Warning')) . " -- " . Format::toUpper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span><BR><BR>" .
-            Format::toUpper(sprintf(_('We strongly recommend that you backup your %s installation directory and database before proceeding with the upgrade'), SOFTWARE_TITLE)) . ". " .
+            Format::toUpper(sprintf(_('We strongly recommend that you back up your %s installation directory and database before proceeding with the upgrade'), SOFTWARE_TITLE)) . ". " .
             Format::toUpper(_("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data")) . ". " .
             Format::toUpper(sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $_SESSION['s_system_db_version'])) . ".<BR>
             <BR><span style='font-size: 200%; color: red; line-height: 45px;'><i class=\"fa fa-exclamation-triangle\"></i> ***** " . Format::toUpper(_('Critical Warning')) . " -- " . Format::toUpper(_('Please Read')) . " ***** <i class=\"fa fa-exclamation-triangle\"></i></span></strong><BR><BR>" .
 
-            _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
+            _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.') . "<BR><BR><a href='checks.php?u=1&" . (new Csrf())->query() . "'>" . $layout->showButton('button', _('Upgrade Database')) . "</a>";
 
     }
 

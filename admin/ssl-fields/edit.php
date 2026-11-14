@@ -79,6 +79,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         $pdo->beginTransaction();
 
+        // the record may have been deleted while the form was open; then nothing is saved
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM ssl_cert_fields
+            WHERE id = :record_id");
+        $stmt->bindValue('record_id', $new_csfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $record_exists = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        if (!$record_exists) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+            header("Location: ../ssl-fields/");
+            exit;
+
+        }
+
         $stmt = $pdo->prepare("
             SELECT field_name
             FROM ssl_cert_fields
@@ -148,15 +167,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         $result = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        if (!$result) {
 
-            $new_name = $result->name;
-            $new_field_name = $result->field_name;
-            $new_description = $result->description;
-            $new_notes = $result->notes;
-            $new_field_type = $result->field_type;
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+            header("Location: index.php");
+            exit;
 
         }
+
+        $new_name = $result->name;
+        $new_field_name = $result->field_name;
+        $new_description = $result->description;
+        $new_notes = $result->notes;
+        $new_field_type = $result->field_type;
 
     }
 
@@ -164,6 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     if ($csfid === 0) {
@@ -175,6 +200,25 @@ if ($del === 1) {
         try {
 
             $pdo->beginTransaction();
+
+            // the record may have been deleted while the form was open; then nothing is saved
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM ssl_cert_fields
+                WHERE id = :record_id");
+            $stmt->bindValue('record_id', $csfid, PDO::PARAM_INT);
+            $stmt->execute();
+            $record_exists = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$record_exists) {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+                header("Location: ../ssl-fields/");
+                exit;
+
+            }
 
             $stmt = $pdo->prepare("
                 SELECT `name`, field_name

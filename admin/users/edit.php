@@ -87,10 +87,11 @@ if ($result) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
+// Set before the checks below, since a form with a field left blank skips them but still shows these messages.
+$invalid_username = '';
+$invalid_email_address = '';
 
-    $invalid_username = '';
-    $invalid_email_address = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
 
     // Check to see if the username is already taken
     $stmt = $pdo->prepare("
@@ -292,6 +293,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
 if ($del === 1) {
 
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
     $temp_uid = $pdo->query("
@@ -456,8 +459,8 @@ echo $form->showFormBottom('');
 <?php if ($uid == ($_SESSION['s_user_id'] ?? 0)) { // resetting your own password here would log you out ?>
 <?php echo sprintf(_('To change your own password, use %sChange Password%s under Settings.'), '<a href="' . WEB_ROOT . '/settings/password/">', '</a>'); ?><BR><BR>
 <?php } else { ?>
-<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Display Password'))); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR>
+<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1&<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Display Password'))); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR>
 <?php } ?>
 <?php
 $layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1'); ?>
