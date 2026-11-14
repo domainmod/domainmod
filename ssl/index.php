@@ -1596,6 +1596,7 @@ if ($result) { ?>
             </tr>
             </thead>
             <tbody>
+            <?php $today = $time->timeBasic(); // for marking past expiry dates below ?>
             <?php foreach ($result as $row) { ?>
             <tr>
                 <td></td>
@@ -1613,7 +1614,7 @@ if ($result) { ?>
                 </td>
                 <?php if ($_SESSION['s_display_ssl_expiry_date'] == "1") { ?>
                 <td>
-                    <a href="edit.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->expiry_date; ?></a>
+                    <a href="edit.php?sslcid=<?php echo $row->id; ?>"<?php if ($row->active != '0' && $row->expiry_date < $today) echo ' class="domainmod-css-expired" data-bs-toggle="tooltip" data-bs-title="' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '" aria-label="' . $row->expiry_date . ', ' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php echo $row->expiry_date; ?></a>
                 </td>
                 <?php } ?>
                 <?php if ($_SESSION['s_display_ssl_fee'] == "1") { ?>

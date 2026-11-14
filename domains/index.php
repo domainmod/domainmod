@@ -2422,6 +2422,7 @@ if ($result) { ?>
             </tr>
             </thead>
             <tbody>
+            <?php $today = $time->timeBasic(); // for marking past expiry dates below ?>
             <?php foreach ($result as $row) { ?>
                 <tr>
 
@@ -2450,7 +2451,7 @@ if ($result) { ?>
                     </td>
                     <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                         <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="edit.php?did=<?php echo $row->id; ?>"><?php echo $row->expiry_date; ?></a>
+                            <a href="edit.php?did=<?php echo $row->id; ?>"<?php if (!in_array($row->active, array('0', '10')) && $row->expiry_date < $today) echo ' class="domainmod-css-expired" data-bs-toggle="tooltip" data-bs-title="' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '" aria-label="' . $row->expiry_date . ', ' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php echo $row->expiry_date; ?></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>

@@ -175,6 +175,12 @@ a:hover {
     font-size: 200%;
     line-height: 1.4;
 }
+/* A past expiry date on the Domains and SSL lists, in Bootstrap's darker or lighter red for each mode, which stays
+   readable (WCAG AA) on the list's background */
+.domainmod-css-expired {
+    color: var(--bs-danger-text-emphasis);
+    font-weight: 600;
+}
 /* The red and green highlights, lighter in dark mode so they're readable */
 [data-bs-theme="dark"] .domainmod-css-text-highlight-red {
     color: #ff6b6b;
