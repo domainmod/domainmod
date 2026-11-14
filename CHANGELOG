@@ -1,5 +1,39 @@
 DomainMOD CHANGELOG
 ===================
+v4.25.0     2026-11-13
+- Added domain imports without a registrar API, using RDAP, and WHOIS for domains that RDAP doesn't cover
+- Added Fix and Import for Domain Queue domains that failed to import
+- Added Refresh Domain, which updates a domain from its registrar, RDAP, or WHOIS
+- Added support for internationalized domain names (IDNs)
+- Added OVH API support
+- Added SiteHost API support (thanks to @davemc50)
+- Added GoDaddy Personal Access Token support
+- Added an optional key that limits who can run cron.php
+- Added the reason to the log entry when an email fails to send
+- Updated daily scheduled tasks to keep the same local time all year
+- Updated the Domain Queue's button and RDAP wording
+- Updated the Feedback page to show where to ask questions and report bugs, with a new Report a Bug on GitHub button
+- Updated PHPMailer (6.12.0 -> 7.2.0)
+- Fixed cross-site request forgery on forms and action links, and the upgrade script running from a browser (security fix)
+- Fixed SQL injection through the date range filter and Large Mode paging (security fix)
+- Fixed cross-site scripting through Data Warehouse data, Debug Log entries, and custom field values (security fix)
+- Fixed pages failing for users with an older time zone name, such as US/Pacific, on servers whose PHP no longer accepts it
+- Fixed scheduled tasks being able to run twice at once
+- Fixed DNSimple's privacy and auto renewal status in Domain Queue imports
+- Fixed CSV imports accepting files with the wrong number of columns, and failing on servers without output buffering
+- Fixed registrars created by CSV imports being linked to the wrong registrar API
+- Fixed the Domain Queue's export failing when a queued domain has a web host
+- Fixed the Data Warehouse pages failing before the first build
+- Fixed the blank Domains column in the registrar accounts export, and the Potential Problems report's Export link
+- Fixed quotes in CSV exports, and stopped Debug Log exports from starting spreadsheet formulas
+- Fixed the missing custom field name in the Bulk Updater's success message
+- Fixed two DomainMOD installations on one database server blocking each other's conversions and RDAP imports
+- Fixed the add buttons not showing when a domain search has no results
+- Fixed the E_STRICT deprecation message in the log on PHP 8.4 and later
+- Fixed errors when a record no longer exists, and undefined-variable warnings
+- Fixed grammar in the interface text
+- Removed the Perform Cleanup pages, which are no longer needed
+
 v4.24.02    2026-11-10
 - Added a Verify SSL Certificate setting to each Data Warehouse server
 - Added timeouts to registrar API and Data Warehouse connections
