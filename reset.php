@@ -225,7 +225,7 @@ if ($reset_id > 0 || $reset_token !== '') {
 
             <form method="post">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier">
+                    <input type="text" class="form-control" placeholder="<?php echo htmlspecialchars(_('Username or Email Address'), ENT_QUOTES, 'UTF-8'); ?>" maxlength="100" name="user_identifier">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-user"></span>
