@@ -250,6 +250,32 @@ class Assets
         }
     }
 
+    public function getHost($host_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT `name`
+            FROM hosting
+            WHERE id = :host_id");
+        $stmt->bindValue('host_id', $host_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Web Host';
+            $log_extra = array('Web Host ID' => $host_id);
+            $this->log->critical($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
     public function getCat($cat_id)
     {
         $pdo = $this->deeb->cnxx;
