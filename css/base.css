@@ -42,6 +42,12 @@ html {
 }
 .domainmod-css-logo-background-colour {
     background-color: #f1f1f1;
+    /* No line under the logo area (AdminLTE draws one), and none under the top bar either (below) */
+    border-bottom: 0;
+}
+/* No line under the top bar, to match the logo area beside it. Its background already sets it apart from the page. */
+.app-header {
+    border-bottom: 0;
 }
 /* The full logo, centred in the sidebar's logo area. It's positioned within the whole sidebar, so its top is half the
    compact brand area's height (2.75rem), and AdminLTE's small upward nudge is undone so it sits exactly in the
