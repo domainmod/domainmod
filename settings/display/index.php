@@ -43,11 +43,11 @@ $pdo = $deeb->cnxx;
 
 $new_number_of_domains = (int) ($_POST['new_number_of_domains'] ?? 0);
 $new_number_of_ssl_certs = (int) ($_POST['new_number_of_ssl_certs'] ?? 0);
-$domain_column_options = $_POST['domain_column_options'] ?? '';
+$domain_column_options = (array) ($_POST['domain_column_options'] ?? array(''));
 
-$custom_domain_fields = $_POST['custom_domain_fields'] ?? array('');
-$custom_ssl_fields = $_POST['custom_ssl_fields'] ?? '';
-$ssl_column_options = $_POST['ssl_column_options'] ?? '';
+$custom_domain_fields = (array) ($_POST['custom_domain_fields'] ?? array(''));
+$custom_ssl_fields = (array) ($_POST['custom_ssl_fields'] ?? array(''));
+$ssl_column_options = (array) ($_POST['ssl_column_options'] ?? array(''));
 $new_display_inactive_assets = (int) ($_POST['new_display_inactive_assets'] ?? 0);
 $new_display_dw_intro_page = (int) ($_POST['new_display_dw_intro_page'] ?? 0);
 // The colour mode: 0 Light, 1 Dark, or 2 Auto (which follows the system setting)
