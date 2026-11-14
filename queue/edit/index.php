@@ -440,13 +440,13 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
     <?php require_once DIR_INC . '/layout/date-picker-head.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 if (!$edited_creation_type_id) {

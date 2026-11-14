@@ -23,28 +23,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Sets the colour mode before anything is drawn, so it has to come before the stylesheets -->
+<script src="<?php echo $layout->assetUrl('js/colour-mode-init.js'); ?>"></script>
 <link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>
 <?php require_once DIR_ROOT . '/css/detect-and-include-datatables-css.inc.php'; ?>
-<!-- Tell the browser to be responsive to screen width -->
-<!meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-<!-- Google Font: Source Sans Pro -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/fontawesome-free/css/all.min.css">
-<!-- iCheck for checkboxes and radio inputs -->
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-<!-- Select2 -->
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/select2/css/select2.min.css">
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-<!-- Ionicons -->
-<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-<!-- Theme style -->
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/dist/css/adminlte.min.css">
+<!-- Font: Source Sans 3 -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/source-sans-3/source-sans-3.css'); ?>">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap-icons/bootstrap-icons.min.css'); ?>">
+<!-- Theme style (AdminLTE, which includes Bootstrap's styles), and its colours, which make red the main colour -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte-colors.min.css'); ?>">
+<!-- Select2, then AdminLTE's styling for it (which follows the colour mode) -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/select2/css/select2.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/css/adminlte-select2.min.css'); ?>">
+<!-- DataTables, with Bootstrap 5 styling -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/css/dataTables.bootstrap5.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/css/responsive.bootstrap5.min.css'); ?>">
 <!-- Custom DomainMOD styles -->
-<link rel="stylesheet" href="<?php echo $web_root; ?>/css/base.css">
+<link rel="stylesheet" href="<?php echo $layout->assetUrl('css/base.css'); ?>">
 <?php
 $full_filename = DIR_INC . '/layout/head-tags.DEMO.inc.php';
 

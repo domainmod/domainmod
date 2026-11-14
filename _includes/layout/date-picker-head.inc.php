@@ -19,4 +19,4 @@
  *
  */
 ?>
-<link rel="stylesheet" href="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/flatpickr/flatpickr.min.css'); ?>">

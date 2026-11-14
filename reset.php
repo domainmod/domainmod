@@ -192,12 +192,12 @@ if ($reset_id > 0 || $reset_token !== '') {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition login-page text-sm">
+<?php echo $layout->bodyTag('login'); ?>
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 
 <div class="login-box">
@@ -214,7 +214,7 @@ if ($reset_id > 0 || $reset_token !== '') {
                 <input type="hidden" name="token" value="<?php echo htmlspecialchars($reset_token, ENT_QUOTES); ?>">
                 <div class="row">
                     <div class="col-12">
-                        <button type="submit" class="btn btn-danger btn-block"><?php echo _('Reset Password'); ?></button>
+                        <button type="submit" class="btn btn-danger w-100"><?php echo _('Reset Password'); ?></button>
                     </div>
                 </div>
             </form><?php
@@ -226,15 +226,13 @@ if ($reset_id > 0 || $reset_token !== '') {
             <form method="post">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-user"></span>
-                        </div>
-                    </div>
+                    <span class="input-group-text">
+                        <i class="bi bi-person-fill"></i>
+                    </span>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <button type="submit" class="btn btn-danger btn-block"><?php echo _('Reset Password'); ?></button>
+                        <button type="submit" class="btn btn-danger w-100"><?php echo _('Reset Password'); ?></button>
                     </div>
                     <!-- /.col -->
                 </div>

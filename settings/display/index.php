@@ -50,7 +50,9 @@ $custom_ssl_fields = $_POST['custom_ssl_fields'] ?? '';
 $ssl_column_options = $_POST['ssl_column_options'] ?? '';
 $new_display_inactive_assets = (int) ($_POST['new_display_inactive_assets'] ?? 0);
 $new_display_dw_intro_page = (int) ($_POST['new_display_dw_intro_page'] ?? 0);
-$new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 0);
+// The colour mode: 0 Light, 1 Dark, or 2 Auto (which follows the system setting)
+$new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 2);
+if (!in_array($new_dark_mode, array(0, 1, 2), true)) $new_dark_mode = 2;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -274,12 +276,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <?php echo $form->showFormTop(''); ?>
@@ -365,7 +367,13 @@ echo $form->showMultipleSelectBottom('<BR>');
 
 <h3><?php echo _('Miscellaneous'); ?></h3>
 
-<?php echo $form->showSwitch(_('Dark Mode') . '?', '', 'new_dark_mode', $_SESSION['s_dark_mode'], '', '<BR><BR>'); ?>
+<?php
+echo $form->showDropdownTop('new_dark_mode', _('Color Mode'), '', '', '');
+echo $form->showDropdownOption('0', _('Light'), (string) ($_SESSION['s_dark_mode'] ?? 2));
+echo $form->showDropdownOption('1', _('Dark'), (string) ($_SESSION['s_dark_mode'] ?? 2));
+echo $form->showDropdownOption('2', _('Auto (follows your system setting)'), (string) ($_SESSION['s_dark_mode'] ?? 2));
+echo $form->showDropdownBottom('<BR>');
+?>
 
 <?php echo $form->showSubmitButton(_('Update Display Settings'), '', ''); ?>
 

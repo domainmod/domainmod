@@ -30,3 +30,10 @@ if (file_exists($full_filename)) {
 
 }
 $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
+?>
+<!-- Bootstrap 5 (with Popper) -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
+<!-- AdminLTE App (after Bootstrap), which follows the system's colour mode in Auto -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
+<!-- Follows the system's colour mode when AdminLTE can't (after AdminLTE) -->
+<script src="<?php echo $layout->assetUrl('js/colour-mode-save.js'); ?>"></script>

@@ -49,11 +49,12 @@ $datatable_options = 'var oldStart = 0;
                           "order": [[ 1, "asc" ]],
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                          "fnDrawCallback": function (o) {
-                            if ( o._iDisplayStart != oldStart ) {
+                          "drawCallback": function (settings) {
+                            var start = new DataTable.Api(settings).page.info().start;
+                            if ( start != oldStart ) {
                                 var targetOffset = $("#' . $slug . '").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart = o._iDisplayStart;
+                                oldStart = start;
                             }
                           }
                       });';

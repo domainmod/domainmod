@@ -37,12 +37,12 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <a href="<?php echo $web_root; ?>/admin/settings/"><?php echo _('System Settings'); ?></a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/defaults/"><?php echo _('System Defaults'); ?></a><BR><BR>

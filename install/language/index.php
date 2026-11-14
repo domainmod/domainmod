@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <?php
     if ($page_title != "") { ?>
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition text-sm">
+<?php echo $layout->bodyTag('install'); ?>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php echo _("We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."); ?><BR>
 <BR>

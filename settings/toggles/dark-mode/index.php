@@ -29,29 +29,41 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $user = new DomainMOD\User();
-$time = new DomainMOD\Time();
-
-$timestamp = $time->stamp();
 
 require_once DIR_INC . '/head.inc.php';
 
-$system->authCheck();
-$csrf = new DomainMOD\Csrf();
-$csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
-$pdo = $deeb->cnxx;
-
-$_SESSION['s_dark_mode'] = $_SESSION['s_dark_mode'] ?? 0;
-if ($_SESSION['s_dark_mode'] === 1) {
-
-    $_SESSION['s_dark_mode'] = 0;
-
-} elseif ($_SESSION['s_dark_mode'] === 0) {
-
-        $_SESSION['s_dark_mode'] = 1;
-
+// Saved in the background by the header's colour mode switcher (js/colour-mode-save.js), so it answers with a status
+// code rather than a page or a redirect: 204 when saved, 401 when the session has ended, 405 for anything but a POST,
+// and 403 or 400 when the request can't be verified or the choice isn't one of the three. The session is checked
+// before authCheck(), which would send the request to the sign-in page and remember this address to return to.
+if (($_SESSION['s_is_logged_in'] ?? 0) != 1) {
+    http_response_code(401);
+    exit;
 }
 
+$system->authCheck();
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    exit;
+}
+
+$csrf = new DomainMOD\Csrf();
+if (!$csrf->isValid()) {
+    http_response_code(403);
+    exit;
+}
+
+$colour_modes = array('light' => 0, 'dark' => 1, 'auto' => 2);
+$colour_mode = $_POST['colour_mode'] ?? '';
+if (!is_string($colour_mode) || !isset($colour_modes[$colour_mode])) {
+    http_response_code(400);
+    exit;
+}
+
+$_SESSION['s_dark_mode'] = $colour_modes[$colour_mode];
 $user->setDarkMode();
 
-header('Location: ' . $_SESSION['s_redirect']);
+http_response_code(204);
 exit;

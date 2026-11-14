@@ -34,12 +34,12 @@ require_once DIR_INC . '/settings/invalid-page.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>

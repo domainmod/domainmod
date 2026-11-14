@@ -57,11 +57,12 @@ if ($_SESSION['s_system_large_mode'] != '1') {
                               "order": [[ ' . $default_sort_by . ', "asc" ]],
                               "bSortClasses": false,
                               "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                              "fnDrawCallback": function (o) {
-                                if ( o._iDisplayStart != oldStart ) {
+                              "drawCallback": function (settings) {
+                                var start = new DataTable.Api(settings).page.info().start;
+                                if ( start != oldStart ) {
                                     var targetOffset = $("#' . $slug . '").offset().top;
                                     $("html,body").animate({scrollTop: targetOffset}, 0);
-                                    oldStart = o._iDisplayStart;
+                                    oldStart = start;
                                 }
                               }
                           });';

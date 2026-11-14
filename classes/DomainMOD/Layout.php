@@ -131,7 +131,7 @@ class Layout
     {
         ob_start(); ?>
 
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal">
               <?php echo $name; ?>
             </button><?php
 
@@ -142,21 +142,19 @@ class Layout
     {
         ob_start(); ?>
 
-            <div class="modal fade" id="myModal">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalTitle" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title"><?php echo $title; ?></h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <h4 class="modal-title" id="myModalTitle"><?php echo $title; ?></h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo _('Close'); ?>"></button>
                         </div>
                         <div class="modal-body">
                             <p><?php echo sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?></p>
                         </div>
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $left_button; ?></button>
-                            <a href="<?php echo $url; ?>"><button type="button" class="btn btn-danger"><?php echo $right_button; ?></button></a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $left_button; ?></button>
+                            <a href="<?php echo $url; ?>" class="btn btn-danger"><?php echo $right_button; ?></a>
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -176,9 +174,10 @@ class Layout
             <div class="card-header">
                 <h3 class="card-title">
                     <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                        </button>
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" aria-label="<?php echo _('Show or hide'); ?>">
+                            <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                            <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                        </button>&nbsp;&nbsp;
                         <?php echo $title; ?><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
                     </div>
                 </h3>
@@ -235,16 +234,57 @@ class Layout
         return ob_get_clean();
 
     }
-    public function sidebarDarkMode()
+    /*
+     * The colour mode to show: the signed-in user's saved choice (0 Light, 1 Dark, 2 Auto), or Auto when nobody's signed
+     * in (the sign-in and password reset pages, and the installer).
+     */
+    public function colourMode()
     {
-        if (isset($_SESSION['s_dark_mode']) && $_SESSION['s_dark_mode'] === 1) return ' sidebar-dark-red';
-        return ' sidebar-light-red domainmod-css-logo-background-colour';
+        if (($_SESSION['s_is_logged_in'] ?? 0) != 1) return 'auto';
+        $dark_mode = $_SESSION['s_dark_mode'] ?? 2;
+        if ($dark_mode === 0) return 'light';
+        if ($dark_mode === 1) return 'dark';
+        return 'auto';
     }
 
-    public function bodyDarkMode()
+    /*
+     * The page's opening <html> tag, printed in one place so the theme's attributes only need setting here. The colour
+     * mode is the user's choice, which js/colour-mode-init.js turns into light or dark before the page is drawn, and
+     * data-lte-primary makes Bootstrap's red DomainMOD's main colour (buttons included). It ends with a line break
+     * because PHP drops the one that follows the closing tag of the code that prints it.
+     */
+    public function htmlTag()
     {
-        if (isset($_SESSION['s_dark_mode']) && $_SESSION['s_dark_mode'] === 1) return ' dark-mode';
-        return '';
+        // The page's language for browsers and screen readers, from DomainMOD's language code (en_US.UTF-8 is en-US).
+        // Before sign-in it can be the server's locale, such as C.UTF-8, which isn't a language, so that's English.
+        $language = 'en';
+        if (preg_match('/^([a-z]{2,3})_([A-Z]{2})/', DEFAULT_LANGUAGE, $parts)) {
+            $language = $parts[1] . '-' . $parts[2];
+        }
+        return '<html lang="' . $language . '" data-bs-theme="' . $this->colourMode() . '" data-lte-primary="danger">' . "\n";
+    }
+
+    /*
+     * The page's opening <body> tag. 'main' is a page with the sidebar and header, 'login' the sign-in and password
+     * reset pages, 'install' the installer, and 'raw' a bare page (such as the Raw List). Like htmlTag(), it ends with a
+     * line break.
+     */
+    public function bodyTag($type = 'main')
+    {
+        if ($type === 'login') return '<body class="login-page bg-body-secondary">' . "\n";
+        if ($type === 'install') return '<body class="bg-body-secondary">' . "\n";
+        if ($type === 'raw') return '<body class="bg-body">' . "\n";
+        return '<body class="layout-fixed sidebar-expand-lg sidebar-mini bg-body-tertiary">' . "\n";
+    }
+
+    /*
+     * The URL of one of DomainMOD's own stylesheets or scripts ($path is relative to the root, such as
+     * 'theme/dist/css/adminlte.min.css'), with the version and the file's modification time added, so browsers fetch a
+     * fresh copy after an upgrade rather than reusing an old one they've cached.
+     */
+    public function assetUrl($path)
+    {
+        return WEB_ROOT . '/' . $path . '?v=' . rawurlencode(SOFTWARE_VERSION) . '.' . (int) @filemtime(DIR_ROOT . '/' . $path);
     }
 
     // A custom field's text, escaped for the page, since custom field values are saved as typed.

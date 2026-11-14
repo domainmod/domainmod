@@ -30,21 +30,27 @@ class Dashboard
         $this->layout = new Layout();
     }
 
+    /*
+     * A small box with a count. $colour and $icon keep the names the dashboard has always passed (AdminLTE 3's colours
+     * and Ionicons names), which are turned into Bootstrap's colours and Bootstrap Icons here.
+     */
     public function displayPanel($title, $count, $colour, $icon, $url)
     {
+        $colours = array('green' => 'success', 'yellow' => 'warning', 'red' => 'danger', 'info' => 'info');
+        $icons = array('checkmark-circled' => 'bi-check-circle-fill', 'android-cart' => 'bi-cart-fill', 'clock' => 'bi-clock-fill');
+        $bootstrap_colour = $colours[$colour] ?? 'secondary';
+        $link_colour = in_array($bootstrap_colour, array('warning', 'info'), true) ? 'link-dark' : 'link-light';
         ob_start(); ?>
 
         <div class="col-lg-2 col-6">
-            <div class="small-box bg-<?php echo $colour; ?>">
+            <div class="small-box text-bg-<?php echo $bootstrap_colour; ?>">
                 <div class="inner">
                     <h3><?php echo number_format($count); ?></h3>
                     <p><?php echo $title; ?></p>
                 </div>
-                <div class="icon">
-                    <i class="ion ion-<?php echo $icon; ?>"></i>
-                </div>
+                <i class="small-box-icon bi <?php echo $icons[$icon] ?? 'bi-circle-fill'; ?>" aria-hidden="true"></i>
                 <?php if ($count != 0) { ?>
-                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer"><?php echo _('View'); ?> <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer <?php echo $link_colour; ?> link-underline-opacity-0 link-underline-opacity-50-hover"><?php echo _('View'); ?> <i class="bi bi-arrow-right-circle-fill"></i></a>
                 <?php } else { ?>
                     <span class="small-box-footer">&nbsp;</span>
                 <?php } ?>
@@ -60,7 +66,7 @@ class Dashboard
 
             <div class="col-md-2 col-sm-6 col-12">
                 <div class="info-box shadow-sm">
-                    <span class="info-box-icon bg-danger"><a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>"><i class="far fa-times-circle"></i></a></span>
+                    <span class="info-box-icon text-bg-danger shadow-sm"><a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="link-light" aria-label="<?php echo $title; ?>"><i class="bi bi-x-circle"></i></a></span>
                     <div class="info-box-content align-items-center">
                         <span class="info-box-text"><?php echo $title; ?></span>
                         <span class="info-box-number"><?php echo number_format($count); ?></span>

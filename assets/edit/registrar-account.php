@@ -340,12 +340,12 @@ if ($result) {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
@@ -406,8 +406,8 @@ if ($has_api_support >= 1) {
 
     <ul><?php
 
-        $missing_text = ' (<span style="color: #a30000"><strong>' . DomainMOD\Format::toLower(_('Missing')) . '</strong></span>)';
-        $saved_text = ' (<span style="color: darkgreen"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
+        $missing_text = ' (<span class="domainmod-css-text-highlight-red"><strong>' . DomainMOD\Format::toLower(_('Missing')) . '</strong></span>)';
+        $saved_text = ' (<span class="domainmod-css-text-highlight-green"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
 
         if ($req_account_username == '1') {
             echo '<li>' . _('Registrar Account Username');

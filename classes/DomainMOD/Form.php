@@ -30,7 +30,7 @@ class Form
             echo $before; ?>
             <form method="post">
                 <?php echo $this->showCsrfField(); ?>
-                <div class="form-group"><?php
+                <div class="mb-3"><?php
         return ob_get_clean();
     }
 
@@ -54,8 +54,8 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+            <div class="mb-3">
+                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>">
@@ -68,8 +68,8 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+            <div class="mb-3">
+                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
                     echo $name; ?>"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
@@ -89,10 +89,10 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+            <div class="mb-3">
+                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <select class="form-control" name="<?php echo $name; ?>"><?php
+                <select class="form-select" name="<?php echo $name; ?>"><?php
         return ob_get_clean();
     }
 
@@ -116,8 +116,8 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group">
-                <label><?php echo $text_to_display; ?></label>
+            <div class="mb-3">
+                <label class="form-label"><?php echo $text_to_display; ?></label>
                 <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="select2 domainmod-css-width-100-percent" multiple="multiple" data-placeholder="<?php echo $text_to_display; ?>"><?php
         return ob_get_clean();
     }
@@ -146,10 +146,10 @@ class Form
     {
         ob_start();
             echo $before; ?>
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input name="<?php echo $name; ?>" class="custom-control-input custom-control-input-red" type="checkbox" id="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
-                      <label for="<?php echo $name; ?>" class="custom-control-label"><?php echo $text_to_display; ?></label>
+                <div class="mb-3">
+                    <div class="form-check">
+                      <input name="<?php echo $name; ?>" class="form-check-input" type="checkbox" id="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
+                      <label for="<?php echo $name; ?>" class="form-check-label"><?php echo $text_to_display; ?></label>
                         <?php if ($subtext != '') echo '<BR>' . $subtext; ?>
                     </div>
                 </div><?php
@@ -161,7 +161,7 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="form-group clearfix"><strong><?php echo $text_to_display; ?></strong><BR><?php echo $subtext; ?><?php
+            <div class="mb-3"><strong><?php echo $text_to_display; ?></strong><BR><?php echo $subtext; ?><?php
         return ob_get_clean();
     }
 
@@ -177,9 +177,9 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="icheck-primary d-inline icheck-red">
-                <input type="radio" id="<?php echo $name . $value; ?>" name="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
-                <label for="<?php echo $name . $value; ?>"><?php echo $text_to_display; ?></label>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" id="<?php echo $name . $value; ?>" name="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
+                <label for="<?php echo $name . $value; ?>" class="form-check-label"><?php echo $text_to_display; ?></label>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -201,7 +201,9 @@ class Form
             echo $before; ?>
             <strong><?php echo $text_to_display; ?></strong><BR>
             <?php if ($subtext != '') echo $subtext . '<BR>'; ?>
-            <input type="checkbox" name="<?php echo $name; ?>"<?php if ($value == '1') { echo " checked "; } else { echo " unchecked "; } ?>data-bootstrap-switch data-on-color="danger" value="1"><?php
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="1" aria-label="<?php echo htmlspecialchars(strip_tags($text_to_display), ENT_QUOTES, 'UTF-8'); ?>"<?php if ($value == '1') echo ' checked'; ?>>
+            </div><?php
             echo $after;
         return ob_get_clean();
     }

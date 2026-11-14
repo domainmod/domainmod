@@ -517,12 +517,12 @@ if ($really_deld === 1 && $domain_id !== 0) {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 $queue->checkProcessingLists();
@@ -533,8 +533,8 @@ $_SESSION['s_domain_queue_processing'] = $_SESSION['s_domain_queue_processing'] 
 
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
-    <button type="button" class="btn btn-default btn-lrg">
-        <i class="fa fa-spin fa-refresh"></i>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
+    <button type="button" class="btn btn-secondary btn-lg">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
     </button><BR><BR><?php
 
 } ?>
@@ -659,7 +659,7 @@ if (!$result_lists) {
                 echo $to_display; ?>
             </td>
             <td>
-                <a href="index.php?dell=1&list_id=<?php echo $row_lists->id; ?>"><i class="fa fa-times" style="padding-top: 3px;"></i></a>
+                <a href="index.php?dell=1&list_id=<?php echo $row_lists->id; ?>" title="<?php echo _('Delete'); ?>" aria-label="<?php echo _('Delete'); ?>"><i class="bi bi-x-lg"></i></a>
             </td>
             </tr><?php
 
@@ -845,9 +845,9 @@ if (!$result_domains) {
             <td><?php
                 if ($queue_fix_available && $row_domains->finished == '1' && $row_domains->invalid_domain === 1
                     && $row_domains->already_in_domains != '1' && $row_domains->already_in_queue != '1') { ?>
-                    <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>"><i class="fa fa-edit" style="padding-top: 3px;"></i></a>&nbsp;<?php
+                    <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>" aria-label="<?php echo _('Fix and Import'); ?>"><i class="bi bi-pencil-square"></i></a>&nbsp;<?php
                 } ?>
-                <a href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>"><i class="fa fa-times" style="padding-top: 3px;"></i></a>
+                <a href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>" title="<?php echo _('Delete'); ?>" aria-label="<?php echo _('Delete'); ?>"><i class="bi bi-x-lg"></i></a>
             </td>
             </tr><?php
 

@@ -37,7 +37,7 @@ $system->loginCheck();
 $system->installCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <?php
     if ($page_title != "") { ?>
@@ -47,7 +47,7 @@ $system->installCheck();
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition text-sm">
+<?php echo $layout->bodyTag('install'); ?>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php echo _("The first thing we need to do is check to see if your web server meets the software's requirements."); ?><BR>
 <BR>

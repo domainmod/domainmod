@@ -1,11 +1,21 @@
 html {
     overflow-y: scroll;
 }
+/* Bootstrap 5 scrolls smoothly, which Bootstrap 4 didn't. Jumping straight there, as before, keeps paging back to the
+   top of a list instant, and stops Safari losing a date picker click while the page is still scrolling. */
+:root {
+    scroll-behavior: auto;
+}
+/* AdminLTE 3 gave every card space below it, and DomainMOD's pages rely on it (such as the buttons under Advanced
+   Filtering). AdminLTE 4 leaves it out. */
+.app-content .card {
+    margin-bottom: 1rem;
+}
 .domainmod-css-text-highlight-red {
     color: #a30000;
 }
 .domainmod-css-text-highlight-green {
-    color: #009933;
+    color: #007a29;
 }
 .domainmod-css-padding-left {
     padding-left: 10px;
@@ -36,24 +46,151 @@ html {
     padding-top: 10px;
     padding-bottom: 5px;
 }
-.dark-mode a {
+/* Compact text, as AdminLTE 3's text-sm gave (AdminLTE 4 has no text-sm). The tighter spacing comes from AdminLTE's
+   compact-mode class on .app-wrapper. */
+:root {
+    --bs-body-font-size: .875rem;
+}
+/* The header's colour mode menu. Its width is set here rather than in a style attribute, which the CSP blocks. */
+.domainmod-css-colour-mode-menu {
+    --bs-dropdown-min-width: 8rem;
+}
+/* DomainMOD's own page numbers (Large Mode) keep the text colour in dark mode */
+[data-bs-theme="dark"] .pagination_menu_block a,
+[data-bs-theme="dark"] .pagination_menu_block a:hover {
     color: #e3e3e3;
 }
-/* Links in the page content stand out from the text, as they do in light mode (the menus keep the colour above).
-   :where() keeps these rules low in specificity, so the exceptions below can restore other colours */
-.dark-mode .content-wrapper a:where(:not(.btn, .nav-link, .page-link, .dropdown-item)) {
-    color: #8cc4ff;
-}
-.dark-mode .content-wrapper a:where(:not(.btn, .nav-link, .page-link, .dropdown-item)):hover {
-    color: #b8daff;
-}
-/* Exceptions: alert links stay as the theme draws them on the alert's colour, and DomainMOD's own page numbers keep
-   the menu colour */
-.dark-mode .content-wrapper .alert a:where(:not(.btn)),
-.dark-mode .content-wrapper .alert a:where(:not(.btn)):hover {
+/* The current section in the sidebar menu is shown in DomainMOD's main colour, as before */
+.app-sidebar .sidebar-menu > .nav-item > .nav-link.active {
+    background-color: var(--bs-primary);
     color: #fff;
 }
-.dark-mode .content-wrapper .pagination_menu_block a,
-.dark-mode .content-wrapper .pagination_menu_block a:hover {
-    color: #e3e3e3;
+/* The large logo on the sign-in, installer, and bare pages has dark lettering, so in dark mode it sits on the same
+   light background as the sidebar's logo */
+[data-bs-theme="dark"] .login-logo img {
+    background-color: #f1f1f1;
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+}
+/* Links stay blue with no underline, as before. data-lte-primary="danger" would turn them red, so they're set back
+   here (with the same selectors AdminLTE's colours use, so these win), a shade darker than Bootstrap's blue so they
+   pass WCAG AA on the light grey page, and lighter in dark mode so they're easy to read. */
+[data-lte-primary] {
+    --bs-link-color: #0b5ed7;
+    --bs-link-color-rgb: 11, 94, 215;
+    --bs-link-hover-color: #0a58ca;
+    --bs-link-hover-color-rgb: 10, 88, 202;
+}
+[data-bs-theme="dark"][data-lte-primary],
+[data-bs-theme="dark"] [data-lte-primary] {
+    --bs-link-color: #6ea8fe;
+    --bs-link-color-rgb: 110, 168, 254;
+    --bs-link-hover-color: #9ec5fe;
+    --bs-link-hover-color-rgb: 158, 197, 254;
+}
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+/* Links in the footer's sentence are underlined, since their colour is too close to the text around them to tell
+   them apart */
+.app-footer a {
+    text-decoration: underline;
+}
+/* AdminLTE's grey for the sidebar's submenu links is too light to read on the light sidebar (WCAG AA). Dark mode
+   keeps its own colour, since AdminLTE's dark rule is more specific. */
+.app-sidebar {
+    --lte-sidebar-submenu-color: #5c636a;
+}
+/* The database upgrade notice's critical warning (a class, since the CSP blocks style attributes) */
+.domainmod-css-critical-warning {
+    color: var(--bs-danger);
+    font-size: 200%;
+    line-height: 1.4;
+}
+/* The red and green highlights, lighter in dark mode so they're readable */
+[data-bs-theme="dark"] .domainmod-css-text-highlight-red {
+    color: #ff6b6b;
+}
+[data-bs-theme="dark"] .domainmod-css-text-highlight-green {
+    color: #5cd68a;
+}
+/* On/off switches a little larger than Bootstrap's, so they're easy to see and click next to the compact text */
+.form-switch .form-check-input {
+    font-size: 1.25rem;
+}
+/* Flatpickr's calendar in DomainMOD's colours: chosen days in the main colour, and dark mode from Bootstrap's own
+   colour variables (Flatpickr doesn't follow data-bs-theme by itself) */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+.flatpickr-wrapper {
+    display: block;
+    width: 100%;
+}
+[data-bs-theme="dark"] .flatpickr-calendar {
+    background: var(--bs-body-bg);
+    box-shadow: 0 0 0 1px var(--bs-border-color), 0 .5rem 1rem rgba(0, 0, 0, .5);
+}
+[data-bs-theme="dark"] .flatpickr-calendar.arrowTop::after {
+    border-bottom-color: var(--bs-body-bg);
+}
+[data-bs-theme="dark"] .flatpickr-calendar.arrowBottom::after {
+    border-top-color: var(--bs-body-bg);
+}
+[data-bs-theme="dark"] .flatpickr-months .flatpickr-month,
+[data-bs-theme="dark"] .flatpickr-current-month .flatpickr-monthDropdown-months,
+[data-bs-theme="dark"] .flatpickr-current-month input.cur-year,
+[data-bs-theme="dark"] span.flatpickr-weekday,
+[data-bs-theme="dark"] .flatpickr-day {
+    color: var(--bs-body-color);
+    fill: var(--bs-body-color);
+    background: transparent;
+}
+[data-bs-theme="dark"] .flatpickr-current-month .flatpickr-monthDropdown-months option {
+    background: var(--bs-body-bg);
+}
+[data-bs-theme="dark"] .flatpickr-months .flatpickr-prev-month svg,
+[data-bs-theme="dark"] .flatpickr-months .flatpickr-next-month svg {
+    fill: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .flatpickr-day:hover,
+[data-bs-theme="dark"] .flatpickr-day:focus,
+[data-bs-theme="dark"] .flatpickr-day.inRange {
+    background: var(--bs-secondary-bg);
+    border-color: var(--bs-secondary-bg);
+    box-shadow: -5px 0 0 var(--bs-secondary-bg), 5px 0 0 var(--bs-secondary-bg);
+}
+[data-bs-theme="dark"] .flatpickr-day.today {
+    border-color: var(--bs-secondary-color);
+}
+[data-bs-theme="dark"] .flatpickr-day.prevMonthDay,
+[data-bs-theme="dark"] .flatpickr-day.nextMonthDay,
+[data-bs-theme="dark"] .flatpickr-day.flatpickr-disabled {
+    color: var(--bs-secondary-color);
+}
+[data-bs-theme="dark"] .flatpickr-day.selected,
+[data-bs-theme="dark"] .flatpickr-day.startRange,
+[data-bs-theme="dark"] .flatpickr-day.endRange {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #fff;
+}
+/* Select2's highlighted option in DomainMOD's main colour, as before (AdminLTE's Select2 styling uses Bootstrap's blue) */
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+/* The sidebar's domain search hides in the collapsed (icons only) sidebar and comes back on hover, as AdminLTE does
+   with its menu filter */
+.sidebar-mini.sidebar-collapse .app-sidebar:not(:hover) .domainmod-css-sidebar-search-padding {
+    display: none;
 }

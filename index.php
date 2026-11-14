@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 $new_password = "";
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <?php
     if ($page_title != "") { ?>
@@ -164,7 +164,7 @@ $new_password = "";
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition login-page text-sm">
+<?php echo $layout->bodyTag('login'); ?>
 <?php require_once DIR_INC . '/layout/header-login.inc.php'; ?>
 
 <div class="card card-outline card-danger">
@@ -181,19 +181,15 @@ $new_password = "";
         <form action="" method="post">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Username" name="new_username" maxlength="20">
-                <div class="input-group-append">
-                    <div class="input-group-text">
-                        <span class="fas fa-user"></span>
-                    </div>
-                </div>
+                <span class="input-group-text">
+                    <i class="bi bi-person-fill"></i>
+                </span>
             </div>
             <div class="input-group mb-3">
                 <input type="password" class="form-control" placeholder="Password" name="new_password" maxlength="72">
-                <div class="input-group-append">
-                    <div class="input-group-text">
-                        <span class="fas fa-lock"></span>
-                    </div>
-                </div>
+                <span class="input-group-text">
+                    <i class="bi bi-lock-fill"></i>
+                </span>
             </div>
             <div class="row">
                 <div class="col-8">
@@ -201,7 +197,7 @@ $new_password = "";
                 </div>
                 <!-- /.col -->
                 <div class="col-4">
-                    <button type="submit" class="btn btn-danger btn-block">Sign In</button>
+                    <button type="submit" class="btn btn-danger w-100">Sign In</button>
                 </div>
                 <!-- /.col -->
             </div>

@@ -52,12 +52,12 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition text-sm<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag('raw'); ?>
 <?php
 // The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
 unset($_SESSION['s_raw_list_query']);

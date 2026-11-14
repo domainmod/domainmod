@@ -36,12 +36,12 @@ require_once DIR_INC . '/settings/settings-main.inc.php';
 $system->authCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <a href="display/"><?php echo _('Display Settings'); ?></a><BR><BR>
 <a href="defaults/"><?php echo _('User Defaults'); ?></a><BR><BR>

@@ -284,10 +284,10 @@ class Scheduler
     {
         // These links change data, so they carry the session's security token (see Csrf).
         $token = (new Csrf())->query();
-        $result = '<strong><font color=\'green\'>' . _('Active') . '</font></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
+        $result = '<strong><span class=\'domainmod-css-text-highlight-green\'>' . _('Active') . '</span></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
             '\'>' . Format::toLower(_('Disable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
         if ($active == '0') {
-            $result = '<strong><font color=\'red\'>' . _('Inactive') . '</font></strong> [<a href=\'update.php?a=e&id=' . $task_id . '&' . $token .
+            $result = '<strong><span class=\'domainmod-css-text-highlight-red\'>' . _('Inactive') . '</span></strong> [<a href=\'update.php?a=e&id=' . $task_id . '&' . $token .
                 '\'>' . Format::toLower(_('Enable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
         }
         return $result;

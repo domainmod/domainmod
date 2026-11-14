@@ -1,3 +1,4 @@
 #dw-servers thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
 #dw-servers tbody tr:hover { background-color: #cccccc; }
 #dw-servers tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+[data-bs-theme="dark"] #dw-servers tbody tr:hover { background-color: #343a40; }

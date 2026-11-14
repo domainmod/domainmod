@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <?php
     if ($page_title != "") { ?>
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } ?>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition text-sm">
+<?php echo $layout->bodyTag('install'); ?>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php echo _('This email address will be used for the first administrator account, which will be created during the installation process.'); ?><BR>
 <BR>

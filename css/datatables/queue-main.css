@@ -4,3 +4,5 @@
 #queue-main-domains thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
 #queue-main-domains tbody tr:hover { background-color: #cccccc; }
 #queue-main-domains tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+[data-bs-theme="dark"] #queue-main-lists tbody tr:hover { background-color: #343a40; }
+[data-bs-theme="dark"] #queue-main-domains tbody tr:hover { background-color: #343a40; }

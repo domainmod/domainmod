@@ -20,23 +20,24 @@
  *
  */
 ?>
+            </div>
+            <!-- /.container-fluid -->
         </div>
-        <!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+        <!-- /.app-content -->
+    </main>
+    <!-- /.app-main -->
 
-<footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-        Version <?php echo SOFTWARE_VERSION; ?>
-    </div>
-    <!-- Default to the left -->
-    <?php echo sprintf(_('%s%s%s is open source software released under the %sGNU/GPL License%s.'), '<a href="http://domainmod.org">', SOFTWARE_TITLE, '</a>', '<a href="http://www.gnu.org/licenses/">', '</a>'); ?>
-    <?php echo _('Created by'); ?> <a href="https://greg.ca">Greg Chetcuti</a>.<BR>
-</footer>
+    <footer class="app-footer">
+        <!-- To the right -->
+        <div class="float-end d-none d-sm-inline">
+            Version <?php echo SOFTWARE_VERSION; ?>
+        </div>
+        <!-- Default to the left -->
+        <?php echo sprintf(_('%s%s%s is open source software released under the %sGNU/GPL License%s.'), '<a href="http://domainmod.org">', SOFTWARE_TITLE, '</a>', '<a href="http://www.gnu.org/licenses/">', '</a>'); ?>
+        <?php echo _('Created by'); ?> <a href="https://greg.ca">Greg Chetcuti</a>.<BR>
+    </footer>
 </div>
+<!-- /.app-wrapper -->
 <?php $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"]; ?>
 <?php
 $full_filename = DIR_INC . '/layout/footer.DEMO.inc.php';
@@ -48,39 +49,31 @@ if (file_exists($full_filename)) {
 }
 ?>
 <!-- jQuery -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/jquery/jquery.min.js'); ?>"></script>
+<!-- Bootstrap 5 (with Popper) -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
 <!-- Select2 -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/select2/js/select2.full.min.js"></script>
-<!-- Bootstrap Switch -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
-<!-- DataTables  & Plugins -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/jszip/jszip.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/pdfmake/pdfmake.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/pdfmake/vfs_fonts.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<!-- AdminLTE App -->
-<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/dist/js/adminlte.min.js"></script>
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/select2/js/select2.full.min.js'); ?>"></script>
+<!-- DataTables (after jQuery, so it adds itself as a jQuery plugin), with Bootstrap 5 styling and Responsive -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.min.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.bootstrap5.min.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/dataTables.responsive.min.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/responsive.bootstrap5.min.js'); ?>"></script>
+<!-- AdminLTE App (after Bootstrap) -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
+<!-- Saves the colour mode choice to the user's account (after AdminLTE) -->
+<script src="<?php echo $layout->assetUrl('js/colour-mode-save.js'); ?>"></script>
 <script nonce="<?php echo CURRENT_NONCE; ?>">
     $(function () {
 
         //Initialize Select2 Elements
         $('.select2').select2()
 
-        <?php echo $datatable_options ?? ''; ?>
+        // Every list's column headers cycle between ascending and descending, as before (DataTables 2 and later add a
+        // third click that removes the sort)
+        DataTable.defaults.column.orderSequence = ['asc', 'desc'];
 
-        $("input[data-bootstrap-switch]").each(function(){
-            $(this).bootstrapSwitch('state', $(this).prop('checked'));
-        })
+        <?php echo $datatable_options ?? ''; ?>
 
     });
 </script>

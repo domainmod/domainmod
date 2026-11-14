@@ -36,12 +36,12 @@ require_once DIR_INC . '/settings/maintenance-main.inc.php';
 $system->authCheck();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<html>
+<?php echo $layout->htmlTag(); ?>
 <head>
     <title><?php echo $layout->pageTitle($page_title); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed text-sm select2-red<?php echo $layout->bodyDarkMode(); ?>">
+<?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
 <a href="update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Update Conversion Rates'); ?></a><BR><BR>

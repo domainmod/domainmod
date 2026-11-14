@@ -19,10 +19,12 @@
  *
  */
 ?>
-<ol class="breadcrumb float-sm-right">
+<nav aria-label="<?php echo _('Breadcrumb'); ?>">
+<ol class="breadcrumb float-sm-end">
     <?php if ($software_section == 'dashboard') { ?>
         <li class="breadcrumb-item active"><?php echo _("Dashboard"); ?></li>
     <?php } else { ?>
         <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/"><?php echo _("Dashboard"); ?></a></li>
     <?php } ?>
     <?php require_once DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'; ?>
+</nav>

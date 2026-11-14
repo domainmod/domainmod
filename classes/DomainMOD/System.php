@@ -347,14 +347,17 @@ class System
             exit;
         } else {
             $pdo = $this->deeb->cnxx;
+            // The colour mode comes along too, so a change saved in another browser shows on this one's next page
             $stmt = $pdo->prepare("
-                SELECT `password`
-                FROM users
-                WHERE username = :new_username
-                  AND active = '1'");
+                SELECT u.`password`, us.dark_mode
+                FROM users AS u
+                LEFT JOIN user_settings AS us ON us.user_id = u.id
+                WHERE u.username = :new_username
+                  AND u.active = '1'");
             $stmt->bindValue('new_username', $_SESSION['s_username'] ?? '', \PDO::PARAM_STR);
             $stmt->execute();
-            $stored_hash = $stmt->fetchColumn();
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stored_hash = $result === false ? false : $result['password'];
             // An incomplete session, or a user who's gone or inactive, is logged out too
             $session_hash = $_SESSION['s_stored_hash'] ?? '';
             if ($session_hash === '' || $stored_hash === false || $session_hash != $stored_hash) {
@@ -363,6 +366,7 @@ class System
                 header('Location: ' . WEB_ROOT . '/logout.php');
                 exit;
             }
+            if ($result['dark_mode'] !== null) $_SESSION['s_dark_mode'] = (int) $result['dark_mode'];
         }
     }
 
@@ -423,9 +427,9 @@ class System
         ob_start(); ?>
         <div class="alert alert-success alert-dismissible">
         <?php /* ?>
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <?php */ ?>
-            <h4><i class="icon fa fa-check"></i> <?php echo _('Success'); ?></h4>
+            <h4><i class="bi bi-check-circle-fill"></i> <?php echo _('Success'); ?></h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -435,7 +439,7 @@ class System
     {
         ob_start(); ?>
         <div class="alert alert-danger alert-dismissible">
-            <h4><i class="icon fa fa-exclamation-circle"></i> <?php echo _('Alert'); ?>!</h4>
+            <h4><i class="bi bi-exclamation-circle-fill"></i> <?php echo _('Alert'); ?>!</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -446,9 +450,9 @@ class System
         ob_start(); ?>
         <div class="alert alert-info alert-dismissible">
         <?php /* ?>
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <?php */ ?>
-            <h4><i class="icon fa fa-info"></i> <?php echo _('Info'); ?></h4>
+            <h4><i class="bi bi-info-circle-fill"></i> <?php echo _('Info'); ?></h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -458,7 +462,7 @@ class System
     {
         ob_start(); ?>
         <div class="alert alert-warning alert-dismissible">
-            <h4><i class="icon fa fa-exclamation-triangle"></i> <?php echo _('Attention Required'); ?>!</h4>
+            <h4><i class="bi bi-exclamation-triangle-fill"></i> <?php echo _('Attention Required'); ?>!</h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
@@ -467,8 +471,8 @@ class System
     public function showDebugTable($result_message)
     {
         ob_start(); ?>
-        <div class="alert alert-info alert-dismissible bg-aqua-active">
-            <h4><i class="icon fa fa-info-circle"></i> <?php echo _('Info'); ?></h4>
+        <div class="alert alert-info alert-dismissible">
+            <h4><i class="bi bi-info-circle-fill"></i> <?php echo _('Info'); ?></h4>
             <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
