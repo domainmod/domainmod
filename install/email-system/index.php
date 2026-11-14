@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_system_email1', _('Enter Email'), '', $unsanitize->text($new_system_email1), '100', '', '', '', '');
+echo $form->showInputText('new_system_email1', _('Enter Email'), '', $unsanitize->text($new_system_email1), '100', '', '', '', '', '1');
 echo $form->showInputText('new_system_email2', _('Confirm Email'), '', $unsanitize->text($new_system_email2), '100', '', '', '', '');
 ?>
 <a href="../email-admin/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>

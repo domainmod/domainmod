@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', _('Host') . ' / ' . _('Label') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_name', _('Host') . ' / ' . _('Label') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '', '1');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }

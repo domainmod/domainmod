@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_password', _('New Password') . ' (72)', '', '', '72', '1', '1', '', '');
+echo $form->showInputText('new_password', _('New Password') . ' (72)', '', '', '72', '1', '1', '', '', '1');
 echo $form->showInputText('new_password_confirmation', _('Confirm New Password') . ' (72)', '', '', '72', '1', '1', '', '');
 echo $form->showSubmitButton(_('Change Password'), '', '');
 echo $form->showFormBottom('');

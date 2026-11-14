@@ -50,7 +50,13 @@ class Form
         return ob_get_clean();
     }
 
-    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after)
+    /*
+     * A text (or password) field with its label. $autofocus ('1') puts the cursor in it when the page loads, for the
+     * first field of a page whose main job is entering something new (such as an Add page). It's left off when the page
+     * is showing an error message (including one carried over from a redirect) or the form is shown again after a
+     * submit, so the focus doesn't skip past the message.
+     */
+    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '')
     {
         ob_start();
             echo $before; ?>
@@ -58,13 +64,16 @@ class Form
                 <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
-                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>">
+                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
             </div><?php
             echo $after;
         return ob_get_clean();
     }
 
-    public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after)
+    /*
+     * A text area with its label. $autofocus ('1') works as in showInputText().
+     */
+    public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after, $autofocus = '')
     {
         ob_start();
             echo $before; ?>
@@ -72,7 +81,7 @@ class Form
                 <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    echo $name; ?>"<?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div><?php
             echo $after;
         return ob_get_clean();

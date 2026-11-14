@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class System
 {
+    /*
+     * Set once this page has shown an error message (showMessageDanger()), so a form below it doesn't take the focus
+     * away from the message (see Form::showInputText())
+     */
+    public static $error_shown = false;
+
     public $deeb;
     public $log;
     public $layout;
@@ -462,6 +468,7 @@ class System
 
     public function showMessageDanger($result_message)
     {
+        self::$error_shown = true;
         ob_start(); ?>
         <div class="alert alert-danger alert-dismissible">
             <h4><i class="bi bi-exclamation-circle-fill"></i> <?php echo _('Alert'); ?>!</h4>

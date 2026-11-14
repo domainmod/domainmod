@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', _('Profile Name'), '', $unsanitize->text($new_name), '255', '', '1', '', ''); ?>
+echo $form->showInputText('new_name', _('Profile Name'), '', $unsanitize->text($new_name), '255', '', '1', '', '', '1'); ?>
 <table width="100%">
     <tbody>
     <tr>

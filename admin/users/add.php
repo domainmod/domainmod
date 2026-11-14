@@ -211,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', _('First Name') . ' (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '');
+echo $form->showInputText('new_first_name', _('First Name') . ' (50)', '', $unsanitize->text($new_first_name), '50', '', '1', '', '', '1');
 echo $form->showInputText('new_last_name', _('Last Name') . ' (50)', '', $sanitize->text($new_last_name), '50', '', '1', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (30)', '', $sanitize->text($new_username), '30', '', '1', '', '');
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $sanitize->text($new_email_address), '100', '', '1', '', '');

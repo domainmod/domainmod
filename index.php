@@ -180,7 +180,7 @@ $new_password = "";
 
         <form action="" method="post">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Username" name="new_username" maxlength="20">
+                <input type="text" class="form-control" placeholder="Username" name="new_username" maxlength="20"<?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                 <span class="input-group-text">
                     <i class="bi bi-person-fill"></i>
                 </span>

@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_registrar', _("Registrar's Name") . ' (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
+echo $form->showInputText('new_registrar', _("Registrar's Name") . ' (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '', '1');
 echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
 
 $result = $pdo->query("

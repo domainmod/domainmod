@@ -332,7 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_domain', _('Domain') . ' (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '');
+echo $form->showInputText('new_domain', _('Domain') . ' (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '', '1');
 echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');

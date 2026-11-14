@@ -225,7 +225,7 @@ if ($reset_id > 0 || $reset_token !== '') {
 
             <form method="post">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier">
+                    <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier"<?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                     <span class="input-group-text">
                         <i class="bi bi-person-fill"></i>
                     </span>
