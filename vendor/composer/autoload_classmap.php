@@ -241,6 +241,7 @@ return array(
     'DomainMOD\\Sanitize' => $baseDir . '/classes/DomainMOD/Sanitize.php',
     'DomainMOD\\Scheduler' => $baseDir . '/classes/DomainMOD/Scheduler.php',
     'DomainMOD\\Segment' => $baseDir . '/classes/DomainMOD/Segment.php',
+    'DomainMOD\\SiteHost' => $baseDir . '/classes/DomainMOD/SiteHost.php',
     'DomainMOD\\Smtp' => $baseDir . '/classes/DomainMOD/Smtp.php',
     'DomainMOD\\System' => $baseDir . '/classes/DomainMOD/System.php',
     'DomainMOD\\Time' => $baseDir . '/classes/DomainMOD/Time.php',

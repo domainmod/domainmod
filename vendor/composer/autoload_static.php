@@ -454,6 +454,7 @@ class ComposerStaticInitc644515a34dbbb52e346576667b33e22
         'DomainMOD\\Sanitize' => __DIR__ . '/../..' . '/classes/DomainMOD/Sanitize.php',
         'DomainMOD\\Scheduler' => __DIR__ . '/../..' . '/classes/DomainMOD/Scheduler.php',
         'DomainMOD\\Segment' => __DIR__ . '/../..' . '/classes/DomainMOD/Segment.php',
+        'DomainMOD\\SiteHost' => __DIR__ . '/../..' . '/classes/DomainMOD/SiteHost.php',
         'DomainMOD\\Smtp' => __DIR__ . '/../..' . '/classes/DomainMOD/Smtp.php',
         'DomainMOD\\System' => __DIR__ . '/../..' . '/classes/DomainMOD/System.php',
         'DomainMOD\\Time' => __DIR__ . '/../..' . '/classes/DomainMOD/Time.php',

@@ -77,7 +77,8 @@ class DomainRefresh
         'OpenSRS' => array('username', 'api_key'),
         'OVH' => array('api_key', 'api_secret', 'api_account_id'),
         'Porkbun' => array('api_key', 'api_secret'),
-        'ResellerClub' => array('reseller_id', 'api_key'));
+        'ResellerClub' => array('reseller_id', 'api_key'),
+        'SiteHost' => array('api_key', 'api_account_id'));
 
     // The names registrar clients return when the API gave no name servers.
     public static $placeholder_dns = array('no.dns-servers.1', 'no.dns-servers.2');
