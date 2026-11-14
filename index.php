@@ -180,7 +180,7 @@ $new_password = "";
 
         <form action="" method="post">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Username" name="new_username" maxlength="20">
+                <input type="text" class="form-control" placeholder="<?php echo htmlspecialchars(_('Username'), ENT_QUOTES, 'UTF-8'); ?>" name="new_username" maxlength="20">
                 <div class="input-group-append">
                     <div class="input-group-text">
                         <span class="fas fa-user"></span>
@@ -188,7 +188,7 @@ $new_password = "";
                 </div>
             </div>
             <div class="input-group mb-3">
-                <input type="password" class="form-control" placeholder="Password" name="new_password" maxlength="72">
+                <input type="password" class="form-control" placeholder="<?php echo htmlspecialchars(_('Password'), ENT_QUOTES, 'UTF-8'); ?>" name="new_password" maxlength="72">
                 <div class="input-group-append">
                     <div class="input-group-text">
                         <span class="fas fa-lock"></span>
@@ -201,7 +201,7 @@ $new_password = "";
                 </div>
                 <!-- /.col -->
                 <div class="col-4">
-                    <button type="submit" class="btn btn-danger btn-block">Sign In</button>
+                    <button type="submit" class="btn btn-danger btn-block"><?php echo _('Sign In'); ?></button>
                 </div>
                 <!-- /.col -->
             </div>
