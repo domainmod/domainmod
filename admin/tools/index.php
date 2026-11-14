@@ -50,7 +50,7 @@ $pdo = $deeb->cnxx;
 
 <?php echo $layout->contentBoxTop(_('Tools'), '3'); ?>
 <a href="send-test-email.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _("Send Test Email"); ?></a><BR>
-<?php echo _("If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to") . " <strong>" . $_SESSION['s_email_address']; ?>.
+<?php echo _("If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to") . " <strong>" . $_SESSION['s_email_address'] . "</strong>"; ?>.
 <?php echo $layout->contentBoxBottom(); ?>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
