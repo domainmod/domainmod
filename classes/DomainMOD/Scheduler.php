@@ -152,30 +152,20 @@ class Scheduler
         return array((int) $matches[2], (int) $matches[1]);
     }
 
-    // Whether PHP accepts a time zone, including older names such as Canada/Pacific.
+    // Whether a time zone can be used, including older names such as Canada/Pacific (see Time::zone()).
     public function isValidZone($timezone)
     {
-        try {
-
-            new \DateTimeZone((string) $timezone);
-            return (string) $timezone !== '';
-
-        } catch (\Exception $e) {
-
-            return false;
-
-        }
+        return Time::isKnownZone($timezone);
     }
 
-    // A time zone PHP accepts, or UTC if it isn't one.
+    // The time zone (an older name becomes the zone it points to), or UTC if it isn't one.
     public function getZone($timezone)
     {
-        try {
+        if (Time::isKnownZone($timezone)) {
 
-            if ((string) $timezone === '') throw new \Exception('No time zone');
-            return new \DateTimeZone((string) $timezone);
+            return Time::zone($timezone);
 
-        } catch (\Exception $e) {
+        } else {
 
             $log = new Log('class.scheduler');
             $log_message = 'Invalid time zone for a scheduled task, so UTC was used';
