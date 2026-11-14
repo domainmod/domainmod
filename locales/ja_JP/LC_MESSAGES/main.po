@@ -6068,11 +6068,11 @@ msgstr "そのSSL証明書はもはや存在しません。"
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "このスクリプトはコマンドラインからのみ実行できます。ブラウザからアップグレードを行うには、管理者として %s にサインインしてください。"
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "ドメインのリストを貼り付けると、%s が RDAP（WHOIS の公開代替サービス）を使用して各ドメインを検索します。RDAP でカバーされていないドメインについては WHOIS 自体を使用して検索し、有効期限や DNS サーバー情報を取得し、どのレジストラに所属しているかを特定します。そのため、レジストラを選択したり、API 情報を入力したりする必要はありません。%s にまだ登録されていないレジストラは、自動的に追加されます。各ドメインは、そのレジストラにアカウントが 1 つだけある場合はそのアカウントに、それ以外の場合は初回に作成され、以降のインポートにも使用される「RDAP Import」という名前の汎用アカウントに登録されます。"
-
 #: queue/add/rdap.php:158
 msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
 msgstr "RDAPにもWHOISにも、ドメインのWHOISプライバシー設定や自動更新ステータスは含まれていないため、どちらも「いいえ」に設定されます。これらは後で「Bulk Updater」を使用して更新することができます。"
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains, and %s will look up each one for you. It uses RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. It fills in each domain's expiry date and DNS servers and works out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "ドメインの一覧を貼り付けると、%sが各ドメインを自動的に検索します。このツールは、WHOISに代わる公開プロトコルであるRDAPを使用します。RDAPの対象外となるドメインについては、WHOIS自体を利用します。各ドメインの有効期限やDNSサーバー情報を自動的に入力し、レジストラを特定するため、レジストラを選択したりAPI情報を手動で入力したりする必要はありません。%sにまだ登録されていないレジストラは、自動的に追加されます。各ドメインは、そのレジストラにアカウントが1つだけある場合はそのアカウントに、それ以外の場合は初回に作成され、以降のインポートにも使用される「RDAP Import」という名前の共通アカウントに登録されます。"
 

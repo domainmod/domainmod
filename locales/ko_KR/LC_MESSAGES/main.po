@@ -6068,11 +6068,11 @@ msgstr "해당 SSL 인증서는 더 이상 존재하지 않습니다."
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "이 스크립트는 명령줄에서만 실행할 수 있습니다. 브라우저에서 업그레이드하려면 관리자 권한으로 %s에 로그인하십시오."
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "도메인 목록을 붙여넣으면 %s가 WHOIS를 대체하는 공개 프로토콜인 RDAP을 사용하여 각 도메인을 조회하거나, RDAP이 지원하지 않는 도메인의 경우 WHOIS 자체를 통해 조회하여 만료일과 DNS 서버 정보를 채우고 해당 도메인이 어느 등록기관에 속해 있는지 파악하므로, 사용자가 등록기관을 선택하거나 API 세부 정보를 입력할 필요가 없습니다. 아직 %s에 등록되지 않은 등록기관은 자동으로 추가됩니다. 각 도메인은 해당 등록기관에 계정이 정확히 하나만 있는 경우 해당 계정으로 이동하며, 그렇지 않은 경우 처음 생성되어 이후 가져오기 작업에 사용되는 \"RDAP Import\"라는 일반 계정으로 이동합니다."
-
 #: queue/add/rdap.php:158
 msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
 msgstr "RDAP과 WHOIS 모두 도메인의 WHOIS 개인정보 보호 또는 자동 갱신 상태를 포함하지 않으므로, 두 항목 모두 ‘아니요’로 설정됩니다. 나중에 ‘대량 업데이트 도구’를 사용하여 해당 항목을 업데이트할 수 있습니다."
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains, and %s will look up each one for you. It uses RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. It fills in each domain's expiry date and DNS servers and works out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "도메인 목록을 붙여넣으면 %s가 각 도메인을 대신 조회해 줍니다. 이 도구는 WHOIS를 대체하는 공개 프로토콜인 RDAP을 사용하며, RDAP이 지원하지 않는 도메인의 경우 WHOIS 자체를 사용합니다. 각 도메인의 만료일과 DNS 서버 정보를 자동으로 채워주고, 해당 도메인이 어떤 등록기관에 속해 있는지 파악하므로, 사용자가 등록기관을 선택하거나 API 세부 정보를 입력할 필요가 없습니다. 아직 %s에 등록되지 않은 등록 기관은 자동으로 추가됩니다. 해당 등록 기관 계정이 정확히 하나만 있는 경우 각 도메인은 해당 계정으로 이동하며, 그렇지 않은 경우 처음 생성되어 이후 가져오기 작업에 사용되는 “RDAP Import”라는 일반 계정으로 이동합니다."
 

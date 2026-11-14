@@ -6068,11 +6068,11 @@ msgstr "该 SSL 证书已不存在。"
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "该脚本只能在命令行下运行。若要通过浏览器进行升级，请以管理员身份登录 %s。"
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "粘贴域名列表后，%s 将使用 RDAP（WHOIS 的公开替代方案）查询每个域名；对于 RDAP 未涵盖的域名，则直接使用 WHOIS 进行查询，从而填入其到期日期和 DNS 服务器信息，并确定其所属的注册商，因此您无需选择注册商或输入任何 API 详细信息。如果某个注册商尚未包含在 %s 中，系统会自动为您添加。每个域名将被添加到您在该注册商处的账户中（如果您仅有一个账户）；否则，将被添加到一个名为“RDAP Import”的通用账户中——该账户会在首次导入时创建，并用于后续的导入操作。"
-
 #: queue/add/rdap.php:158
 msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
 msgstr "RDAP 和 WHOIS 均不包含域名的 WHOIS 隐私或自动续费状态，因此这两项都将设置为“否”。您之后可以使用“批量更新器”来更新这些信息。"
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains, and %s will look up each one for you. It uses RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. It fills in each domain's expiry date and DNS servers and works out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "粘贴一组域名列表，%s 会为您逐一查询。该工具使用 RDAP（作为 WHOIS 的公开替代方案），对于 RDAP 未涵盖的域名则直接使用 WHOIS 本身。它会自动填入每个域名的到期日期和 DNS 服务器信息，并确定其所属的注册商，因此您无需选择注册商或输入任何 API 信息。若某家注册商尚未收录在 %s 中，系统会自动为您添加。每个域名将添加到您在该注册商处的账户中（如果您仅有一个账户）；否则，将添加到一个名为“RDAP Import”的通用账户中——该账户在首次导入时创建，并用于后续的导入操作。"
 

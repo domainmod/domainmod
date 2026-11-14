@@ -6068,11 +6068,11 @@ msgstr "該 SSL 憑證已不存在。"
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "此腳本僅能透過命令列執行。若要透過瀏覽器進行升級，請以管理員身分登入 %s。"
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "貼上網域名稱清單，%s 便會透過 RDAP（WHOIS 的公開替代方案）查詢每個網域名稱；對於 RDAP 未涵蓋的網域名稱，則會直接使用 WHOIS 進行查詢，填入其到期日期與 DNS 伺服器資訊，並判定該網域名稱所屬的註冊商，因此您無需手動選擇註冊商或輸入任何 API 詳細資料。若某家註冊商尚未收錄於 %s 中，系統會自動為您新增該註冊商。每個網域將被加入您在該註冊商處的帳戶中（若您僅擁有一個帳戶）；否則，則會加入一個名為「RDAP Import」的通用帳戶——該帳戶會在首次匯入時建立，並用於後續的匯入作業。"
-
 #: queue/add/rdap.php:158
 msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
 msgstr "RDAP 和 WHOIS 均未包含網域的 WHOIS 隱私設定或自動續約狀態，因此這兩項都會被設為「否」。您稍後可使用「批次更新工具」來更新這些設定。"
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains, and %s will look up each one for you. It uses RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. It fills in each domain's expiry date and DNS servers and works out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "貼上一份網域名單，%s 便會為您逐一查詢。它使用 RDAP（作為 WHOIS 的公開替代方案），或針對 RDAP 未涵蓋的網域直接使用 WHOIS 本身。它會填入每個網域的到期日期和 DNS 伺服器，並推算出該網域所屬的註冊商，因此您無需選擇註冊商或輸入任何 API 詳細資訊。若某家註冊商尚未收錄於 %s 中，系統會自動為您新增該註冊商。若您在該註冊商處僅有一個帳戶，每個網域將直接存入該帳戶；否則，則會存入一個名為「RDAP Import」的通用帳戶——該帳戶會在首次匯入時建立，並用於後續的匯入作業。"
 

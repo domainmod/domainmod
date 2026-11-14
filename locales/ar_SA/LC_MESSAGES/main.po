@@ -6098,11 +6098,11 @@ msgstr "لم تعد شهادة SSL تلك موجودة."
 msgid "This script can only be run from the command line. To upgrade from your browser, sign in to %s as an administrator."
 msgstr "لا يمكن تشغيل هذا البرنامج النصي إلا من سطر الأوامر. للترقية من متصفحك، قم بتسجيل الدخول إلى %s بصفة مسؤول."
 
-#: queue/add/rdap.php:155
-msgid "Paste a list of domains and %s will look each one up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover, filling in its expiry date and DNS servers and working out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
-msgstr "الصق قائمة بالنطاقات وسيقوم %s بالبحث عن كل منها باستخدام RDAP، وهو البديل العام لـ WHOIS، أو باستخدام WHOIS نفسه بالنسبة للنطاقات التي لا يغطيها RDAP، حيث يقوم بتعبئة تاريخ انتهاء الصلاحية وخوادم DNS وتحديد المسجل الذي ينتمي إليه النطاق، وبذلك لن تحتاج إلى اختيار مسجل أو إدخال أي تفاصيل تتعلق بواجهة برمجة التطبيقات (API). يتم إضافة أي مسجل غير موجود في %s تلقائيًا نيابة عنك. يتم إضافة كل نطاق إلى حسابك لدى ذلك المسجل إذا كان لديك حساب واحد فقط، أو إلى حساب عام باسم «RDAP Import» يتم إنشاؤه عند الاستيراد الأول ويُستخدم لعمليات الاستيراد اللاحقة."
-
 #: queue/add/rdap.php:158
 msgid "Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater."
 msgstr "لا يتضمن RDAP ولا WHOIS حالة خصوصية WHOIS للنطاق ولا حالة التجديد التلقائي، لذا سيتم تعيين كلا الإعدادين على «لا». يمكنك تحديثهما لاحقًا باستخدام أداة التحديث الجماعي."
+
+#: queue/add/rdap.php:155
+msgid "Paste a list of domains, and %s will look up each one for you. It uses RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. It fills in each domain's expiry date and DNS servers and works out which registrar it's at, so you don't need to choose a registrar or enter any API details. A registrar that isn't in %s yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named \"RDAP Import\" that's created the first time and used for later imports."
+msgstr "الصق قائمة بالنطاقات، وسيقوم %s بالبحث عن كل منها نيابة عنك. يستخدم هذا البرنامج RDAP، وهو البديل العام لـ WHOIS، أو WHOIS نفسه للنطاقات التي لا يغطيها RDAP. ويقوم بملء تاريخ انتهاء صلاحية كل نطاق وخوادم DNS الخاصة به، ويحدد المسجل الذي ينتمي إليه، لذا لن تحتاج إلى اختيار مسجل أو إدخال أي تفاصيل API. يتم إضافة أي مسجل غير موجود في %s نيابة عنك. يتم إضافة كل نطاق إلى حسابك لدى ذلك المسجل إذا كان لديك حساب واحد فقط، أو إلى حساب عام باسم \"RDAP Import\" يتم إنشاؤه عند الاستيراد الأول ويُستخدم للاستيرادات اللاحقة."
 
