@@ -74,8 +74,9 @@ $total_count_ssl = $pdo->query("
 
 if ($total_count_domains || $total_count_ssl) { ?>
 
+    <?php $section = sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?>
     <div class="row">
-        <h4>&nbsp;&nbsp;<?php echo sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?></h4>
+        <h4 class="mt-3"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -92,7 +93,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
     if ($total_count) {
 
-        echo $dashboard->displayExpPanel(_('Domains'), $total_count, '/domains/index.php?daterange=' . urlencode($daterange));
+        echo $dashboard->displayExpPanel(_('Domains'), $total_count, '/domains/index.php?daterange=' . urlencode($daterange), $section);
 
     }
 
@@ -108,7 +109,7 @@ if ($total_count_domains || $total_count_ssl) { ?>
 
     if ($total_count) {
 
-        echo $dashboard->displayExpPanel(_('SSL Certs'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange));
+        echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange), $section);
 
     } ?>
 
@@ -117,52 +118,148 @@ if ($total_count_domains || $total_count_ssl) { ?>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// System Totals
+// Domain Panels
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-?>
-<div class="row">
-    <h4>&nbsp;&nbsp;<?php echo _('System Totals'); ?></h4>
-</div>
+$total_count = $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active IN ('3', '5', '2', '4')")->fetchColumn();
 
-<div class="row">
+if ($total_count) { ?>
 
-    <?php
-    //////////////////////////////////////////////////
-    // Active Domains
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM domains
-        WHERE active NOT IN ('0', '10')")->fetchColumn();
+    <?php $section = _('Pending Domains'); ?>
+    <div class="row">
+        <h4 class="mt-3"><?php echo $section; ?></h4>
+    </div>
 
-    echo $dashboard->displayPanel(_('Domains'), $total_count, 'green', 'checkmark-circled', '/domains/index.php?is_active=LIVE');
+    <div class="row">
 
-    //////////////////////////////////////////////////
-    // Active SSL Certificates
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM ssl_certs
-        WHERE active NOT IN ('0', '10')")->fetchColumn();
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '3'")->fetchColumn();
 
-    echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'green', 'checkmark-circled', '/ssl/index.php?is_active=LIVE');
+        if ($total_count) {
 
-    //////////////////////////////////////////////////
-    // Sold Domains
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM domains
-        WHERE active = '10'")->fetchColumn();
+            echo $dashboard->displayPanel(_('Renewals'), $total_count, 'warning', 'bi-arrow-repeat', '/domains/index.php?is_active=3', $section);
 
-    if ($total_count) {
+        } ?>
 
-        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'info', 'android-cart', '/domains/index.php?is_active=10');
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Registrations (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '5'")->fetchColumn();
 
-    } ?>
+        if ($total_count) {
 
-</div>
-<?php
+            echo $dashboard->displayPanel(_('Registrations'), $total_count, 'warning', 'bi-plus-circle', '/domains/index.php?is_active=5', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Transfers (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '2'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Transfers'), $total_count, 'warning', 'bi-arrow-left-right', '/domains/index.php?is_active=2', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (Domains)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM domains
+            WHERE active = '4'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/domains/index.php?is_active=4', $section);
+
+        } ?>
+
+    </div><?php
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SSL Certificate Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs
+    WHERE active IN ('3', '5', '4')")->fetchColumn();
+
+if ($total_count) { ?>
+
+    <?php $section = _('Pending SSL Certificates'); ?>
+    <div class="row">
+        <h4 class="mt-3"><?php echo $section; ?></h4>
+    </div>
+
+    <div class="row">
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '3'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Renewals'), $total_count, 'warning', 'bi-arrow-repeat', '/ssl/index.php?is_active=3', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Registrations (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '5'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Registrations'), $total_count, 'warning', 'bi-plus-circle', '/ssl/index.php?is_active=5', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '4'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/ssl/index.php?is_active=4', $section);
+
+        } ?>
+
+    </div><?php
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Domain Queue
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,8 +282,9 @@ $total_count_finished = $pdo->query("
 
 if ($total_count_processing || $total_count_pending || $total_count_finished) { ?>
 
+    <?php $section = _('Domain Queue'); ?>
     <div class="row">
-        <h4><?php echo _('Domain Queue'); ?></h4>
+        <h4 class="mt-3"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -197,7 +295,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_pending) {
 
-            echo $dashboard->displayPanel(_('Pending'), $total_count_pending, 'yellow', 'clock', '/queue/');
+            echo $dashboard->displayPanel(_('Pending'), $total_count_pending, 'warning', 'bi-hourglass-split', '/queue/', $section);
 
         }
 
@@ -206,7 +304,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_processing) {
 
-            echo $dashboard->displayPanel(_('Processing'), $total_count_processing, 'yellow', 'clock', '/queue/');
+            echo $dashboard->displayPanel(_('Processing'), $total_count_processing, 'warning', 'bi-gear', '/queue/', $section);
 
         }
 
@@ -215,7 +313,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
         //////////////////////////////////////////////////
         if ($total_count_finished) {
 
-            echo $dashboard->displayPanel(_('Finished'), $total_count_finished, 'green', 'checkmark-circled', '/queue/');
+            echo $dashboard->displayPanel(_('Finished'), $total_count_finished, 'success', 'bi-check-circle-fill', '/queue/', $section);
 
         } ?>
 
@@ -223,145 +321,52 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Domain Panels
+// System Totals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-$total_count = $pdo->query("
-    SELECT count(*)
-    FROM domains
-    WHERE active IN ('3', '5', '2', '4')")->fetchColumn();
+?>
+<?php $section = _('Totals'); ?>
+<div class="row">
+    <h4 class="mt-3"><?php echo $section; ?></h4>
+</div>
 
-if ($total_count) { ?>
+<div class="row">
 
-    <div class="row">
-        <h4>&nbsp;&nbsp;<?php echo _('Pending (Domains)'); ?></h4>
-    </div>
+    <?php
+    //////////////////////////////////////////////////
+    // Active Domains
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM domains
+        WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-    <div class="row">
+    echo $dashboard->displayPanel(_('Domains'), $total_count, 'secondary', 'bi-globe2', '/domains/index.php?is_active=LIVE', $section);
 
-        <?php
-        //////////////////////////////////////////////////
-        // Pending Renewals (Domains)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM domains
-            WHERE active = '3'")->fetchColumn();
+    //////////////////////////////////////////////////
+    // Active SSL Certificates
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM ssl_certs
+        WHERE active NOT IN ('0', '10')")->fetchColumn();
 
-        if ($total_count) {
+    echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'secondary', 'bi-shield-lock', '/ssl/index.php?is_active=LIVE', $section);
 
-            echo $dashboard->displayPanel(_('Pending Renewals'), $total_count, 'red', 'clock', '/domains/index.php?is_active=3');
+    //////////////////////////////////////////////////
+    // Sold Domains
+    //////////////////////////////////////////////////
+    $total_count = $pdo->query("
+        SELECT count(*)
+        FROM domains
+        WHERE active = '10'")->fetchColumn();
 
-        } ?>
+    if ($total_count) {
 
-        <?php
-        //////////////////////////////////////////////////
-        // Pending Registrations (Domains)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM domains
-            WHERE active = '5'")->fetchColumn();
+        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'secondary', 'bi-cart', '/domains/index.php?is_active=10', $section);
 
-        if ($total_count) {
+    } ?>
 
-            echo $dashboard->displayPanel(_('Pending Registrations'), $total_count, 'yellow', 'clock', '/domains/index.php?is_active=5');
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Transfers (Domains)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM domains
-            WHERE active = '2'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Pending Transfers'), $total_count, 'info', 'clock', '/domains/index.php?is_active=2');
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Other (Domains)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM domains
-            WHERE active = '4'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Pending (Other)'), $total_count, 'green', 'clock', '/domains/index.php?is_active=4');
-
-        } ?>
-
-    </div><?php
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// SSL Certificate Panels
-////////////////////////////////////////////////////////////////////////////////////////////////////
-$total_count = $pdo->query("
-    SELECT count(*)
-    FROM ssl_certs
-    WHERE active IN ('3', '5', '4')")->fetchColumn();
-
-if ($total_count) { ?>
-
-    <div class="row">
-        <h4>&nbsp;&nbsp;<?php echo _('Pending (SSL Certificates)'); ?></h4>
-    </div>
-
-    <div class="row">
-
-        <?php
-        //////////////////////////////////////////////////
-        // Pending Renewals (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '3'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Pending Renewals'), $total_count, 'red', 'clock', '/ssl/index.php?is_active=3');
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Registrations (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '5'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Pending Registrations'), $total_count, 'yellow', 'clock', '/ssl/index.php?is_active=5');
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Other (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '4'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Pending (Other)'), $total_count, 'green', 'clock', '/ssl/index.php?is_active=4');
-
-        } ?>
-
-    </div><?php
-
-} ?>
+</div>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

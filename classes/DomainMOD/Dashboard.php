@@ -31,50 +31,47 @@ class Dashboard
     }
 
     /*
-     * A small box with a count. $colour and $icon keep the names the dashboard has always passed (AdminLTE 3's colours
-     * and Ionicons names), which are turned into Bootstrap's colours and Bootstrap Icons here.
+     * A count in an outline card: the number, the title, the icon in the card's colour, and a View link to the list
+     * (left out when the count is zero), which screen readers hear with the title, the count, and the dashboard
+     * section, so links with the same title (such as Renewals for domains and SSL certificates) differ. $colour is a
+     * Bootstrap colour, used the same way across the dashboard (danger for urgent, warning for waiting, success for
+     * done, and secondary for plain counts), and $icon is a Bootstrap Icons class.
      */
-    public function displayPanel($title, $count, $colour, $icon, $url)
+    public function displayPanel($title, $count, $colour, $icon, $url, $section = '')
     {
-        $colours = array('green' => 'success', 'yellow' => 'warning', 'red' => 'danger', 'info' => 'info');
-        $icons = array('checkmark-circled' => 'bi-check-circle-fill', 'android-cart' => 'bi-cart-fill', 'clock' => 'bi-clock-fill');
-        $bootstrap_colour = $colours[$colour] ?? 'secondary';
-        $link_colour = in_array($bootstrap_colour, array('warning', 'info'), true) ? 'link-dark' : 'link-light';
+        $bootstrap_colour = $colour;
         ob_start(); ?>
 
-        <div class="col-lg-2 col-6">
-            <div class="small-box text-bg-<?php echo $bootstrap_colour; ?>">
-                <div class="inner">
-                    <h3><?php echo number_format($count); ?></h3>
-                    <p><?php echo $title; ?></p>
+        <div class="col-lg-2 col-sm-4 col-6">
+            <div class="card card-outline card-<?php echo $bootstrap_colour; ?> h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fs-2 fw-semibold lh-1"><?php echo number_format($count); ?></div>
+                            <div class="text-body-secondary mt-1"><?php echo $title; ?></div>
+                        </div>
+                        <i class="bi <?php echo $icon; ?> fs-3 text-<?php echo $bootstrap_colour; ?>" aria-hidden="true"></i>
+                    </div>
                 </div>
-                <i class="small-box-icon bi <?php echo $icons[$icon] ?? 'bi-circle-fill'; ?>" aria-hidden="true"></i>
-                <?php if ($count != 0) { ?>
-                    <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="small-box-footer <?php echo $link_colour; ?> link-underline-opacity-0 link-underline-opacity-50-hover"><?php echo _('View'); ?> <i class="bi bi-arrow-right-circle-fill"></i></a>
-                <?php } else { ?>
-                    <span class="small-box-footer">&nbsp;</span>
-                <?php } ?>
+                <div class="card-footer text-end">
+                    <?php if ($count != 0) { ?>
+                        <a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('View'); ?><span class="visually-hidden"> <?php echo $title; ?> (<?php echo number_format($count); ?>)<?php if ($section != '') echo ', ' . $section; ?></span> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    <?php } else { ?>
+                        &nbsp;
+                    <?php } ?>
+                </div>
             </div>
         </div><?php
 
         return ob_get_clean();
     }
 
-    public function displayExpPanel($title, $count, $url)
+    /*
+     * The count of domains or SSL certificates expiring soon, in the same card as the other counts, marked urgent
+     */
+    public function displayExpPanel($title, $count, $url, $section = '')
     {
-        ob_start(); ?>
-
-            <div class="col-md-2 col-sm-6 col-12">
-                <div class="info-box shadow-sm">
-                    <span class="info-box-icon text-bg-danger shadow-sm"><a href="<?php echo WEB_ROOT; ?><?php echo $url; ?>" class="link-light" aria-label="<?php echo $title; ?>"><i class="bi bi-x-circle"></i></a></span>
-                    <div class="info-box-content align-items-center">
-                        <span class="info-box-text"><?php echo $title; ?></span>
-                        <span class="info-box-number"><?php echo number_format($count); ?></span>
-                    </div>
-                </div>
-            </div><?php
-
-        return ob_get_clean();
+        return $this->displayPanel($title, $count, 'danger', 'bi-calendar-event', $url, $section);
     }
 
 } //@formatter:on
