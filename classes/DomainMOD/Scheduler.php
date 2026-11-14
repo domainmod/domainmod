@@ -282,15 +282,87 @@ class Scheduler
 
     public function createActive($active, $task_id)
     {
-        // These links change data, so they carry the session's security token (see Csrf).
+        // These links change data, so they carry the session's security token (see Csrf). Run Now runs the task in place
+        // with htmx and replaces the task's details with the result (see taskCard()).
         $token = (new Csrf())->query();
+        $layout = new Layout();
+        $run_now = $layout->htmxTaskLink('run.php?id=' . $task_id . '&' . $token, Format::toLower(_('Run Now')), '#domainmod-task-' . $task_id, 'outerHTML', 'domainmod-task-' . $task_id . '-working');
+        $spinner = $layout->htmxSpinner('domainmod-task-' . $task_id . '-working');
         $result = '<strong><span class=\'domainmod-css-text-highlight-green\'>' . _('Active') . '</span></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
-            '\'>' . Format::toLower(_('Disable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
+            '\'>' . Format::toLower(_('Disable')) . '</a>] [' . $run_now . ']' . $spinner;
         if ($active == '0') {
             $result = '<strong><span class=\'domainmod-css-text-highlight-red\'>' . _('Inactive') . '</span></strong> [<a href=\'update.php?a=e&id=' . $task_id . '&' . $token .
-                '\'>' . Format::toLower(_('Enable')) . '</a>] [<a href=\'run.php?id=' . $task_id . '&' . $token . '\'>' . Format::toLower(_('Run Now')) . '</a>]';
+                '\'>' . Format::toLower(_('Enable')) . '</a>] [' . $run_now . ']' . $spinner;
         }
         return $result;
+    }
+
+    /*
+     * A task's details on the Task Scheduler page, inside its card: the description, when it runs, its status and links,
+     * its last and next run, and the run time form for daily tasks. Run Now (run.php) sends this back after an htmx run,
+     * with the run's result messages in $messages, which take the keyboard focus so they're announced.
+     */
+    public function taskCard($task, $messages = '')
+    {
+        $form = new Form();
+        ob_start(); ?>
+        <div id="domainmod-task-<?php echo $task->id; ?>"><?php
+
+            if ($messages != '') { ?>
+                <div tabindex="-1" data-domainmod-focus><?php echo $messages; ?></div><?php
+            } ?>
+
+            <div>
+                <?php echo $task->description ?>
+            </div>
+            <div>
+                <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $task->interval; ?><BR><?php
+
+                // A daily task's time is shown in its own time zone, which may not be the viewer's.
+                $daily_time = $this->getDailyTime($task->expression);
+                if ($daily_time !== null) { ?>
+                    <strong><?php echo _('Run Time'); ?>:</strong> <?php echo sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . htmlentities($this->getZone($task->timezone)->getName(), ENT_QUOTES, 'UTF-8') . ')'; ?><BR><?php
+                } ?>
+
+                <strong><?php echo _('Status'); ?>:</strong> <?php echo $this->createActive($task->active, $task->id); ?><BR><?php
+
+                if ($task->last_run != '1970-01-01 00:00:00') {
+                    $last_run = $this->time->toUserTimezone($this->getDateOutput($task->last_run));
+                } else {
+                    $last_run = '-';
+
+                } ?>
+
+                <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $task->last_duration; ?><BR><?php
+
+                $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
+                if ($task->next_run != '1970-01-01 00:00:00') {
+                    $next_run = $this->time->toUserTimezone($this->getDateOutput($task->next_run));
+                } else {
+                    $next_run = '-';
+
+                } ?>
+
+                <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
+
+                if ($task->interval == 'Daily' && $task->active == '1') { ?>
+
+                    <BR>
+                    <form name="edit_task_form" method="post" action="update.php">
+                        <?php echo $form->showCsrfField(); ?>
+                        <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
+                            <?php echo $this->hourSelect($hour); ?>
+                        </select><BR>
+                        <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php
+                        echo $form->showInputHidden('a', 'u');
+                        echo $form->showInputHidden('id', $task->id);
+                        echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
+                    </form><?php
+                } ?>
+
+            </div>
+        </div><?php
+        return ob_get_clean();
     }
 
     public function getDateOutput($next_run)

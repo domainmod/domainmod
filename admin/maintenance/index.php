@@ -45,9 +45,10 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
-<a href="clear-queue-processing.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Queue Processing'); ?></a><BR><BR>
-<a href="clear-queues.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Queues'); ?></a><BR><strong><?php echo DomainMOD\Format::toUpper(_('Warning')); ?>:</strong> <?php echo _('This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.'); ?><BR><BR>
-<a href="clear-log.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Clear Debug Log'); ?></a>
+<div id="domainmod-maintenance-result" aria-live="polite"></div>
+<?php echo $layout->htmxTaskLink('clear-queue-processing.php?' . (new DomainMOD\Csrf())->query(), _('Clear Queue Processing'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-1') . $layout->htmxSpinner('domainmod-maintenance-working-1'); ?><BR><BR>
+<?php echo $layout->htmxTaskLink('clear-queues.php?' . (new DomainMOD\Csrf())->query(), _('Clear Queues'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-2') . $layout->htmxSpinner('domainmod-maintenance-working-2'); ?><BR><strong><?php echo DomainMOD\Format::toUpper(_('Warning')); ?>:</strong> <?php echo _('This will completely delete all queue lists and domains, regardless of their status. This should not be run until all legitimate lists and domains in the queue have been successfully processed.'); ?><BR><BR>
+<?php echo $layout->htmxTaskLink('clear-log.php?' . (new DomainMOD\Csrf())->query(), _('Clear Debug Log'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?>
 <?php echo $layout->contentBoxBottom(); ?>
 
 <?php //@formatter:on ?>

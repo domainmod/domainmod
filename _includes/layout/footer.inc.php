@@ -59,6 +59,8 @@ if (file_exists($full_filename)) {
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.bootstrap5.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/dataTables.responsive.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/responsive.bootstrap5.min.js'); ?>"></script>
+<!-- htmx, for tasks that run in place (its settings are in head-tags.inc.php) -->
+<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/htmx/htmx.min.js'); ?>"></script>
 <!-- AdminLTE App (after Bootstrap) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
 <!-- Saves the colour mode choice to the user's account (after AdminLTE) -->
@@ -68,31 +70,39 @@ if (file_exists($full_filename)) {
 
         // Tooltips, such as on the lists' status badges (see Layout::statusBadge()). Each opens on hover or focus, stays
         // open while the pointer is over it or the tooltip itself, and Escape closes it. The badge's aria-label already
-        // gives screen readers the same text, so the tooltip isn't also linked as its description.
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
-            // No fade, so showing it again straight after hiding can't race Bootstrap's hide transition
-            var tooltip = new bootstrap.Tooltip(element, {trigger: 'manual', animation: false});
-            var hideUnlessInUse = function () {
-                setTimeout(function () {
-                    var tip_in_use = tooltip.tip && tooltip.tip.matches(':hover');
-                    if (!element.matches(':hover') && document.activeElement !== element && !tip_in_use) tooltip.hide();
-                }, 100);
-            };
-            // Bootstrap closes a manual tooltip that's shown again while already open, so it's only shown when closed
-            var is_open = false;
-            var showIfClosed = function () {
-                if (!is_open) tooltip.show();
-            };
-            element.addEventListener('mouseenter', showIfClosed);
-            element.addEventListener('focus', showIfClosed);
-            element.addEventListener('hidden.bs.tooltip', function () { is_open = false; });
-            element.addEventListener('mouseleave', hideUnlessInUse);
-            element.addEventListener('blur', hideUnlessInUse);
-            element.addEventListener('shown.bs.tooltip', function () {
-                is_open = true;
-                element.removeAttribute('aria-describedby');
-                if (tooltip.tip) tooltip.tip.addEventListener('mouseleave', hideUnlessInUse);
+        // gives screen readers the same text, so the tooltip isn't also linked as its description. They're started on
+        // the page and again on anything htmx swaps in.
+        var startTooltips = function (root) {
+            root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+                if (bootstrap.Tooltip.getInstance(element)) return;
+                // No fade, so showing it again straight after hiding can't race Bootstrap's hide transition
+                var tooltip = new bootstrap.Tooltip(element, {trigger: 'manual', animation: false});
+                var hideUnlessInUse = function () {
+                    setTimeout(function () {
+                        var tip_in_use = tooltip.tip && tooltip.tip.matches(':hover');
+                        if (!element.matches(':hover') && document.activeElement !== element && !tip_in_use) tooltip.hide();
+                    }, 100);
+                };
+                // Bootstrap closes a manual tooltip that's shown again while already open, so it's only shown when closed
+                var is_open = false;
+                var showIfClosed = function () {
+                    if (!is_open) tooltip.show();
+                };
+                element.addEventListener('mouseenter', showIfClosed);
+                element.addEventListener('focus', showIfClosed);
+                element.addEventListener('hidden.bs.tooltip', function () { is_open = false; });
+                element.addEventListener('mouseleave', hideUnlessInUse);
+                element.addEventListener('blur', hideUnlessInUse);
+                element.addEventListener('shown.bs.tooltip', function () {
+                    is_open = true;
+                    element.removeAttribute('aria-describedby');
+                    if (tooltip.tip) tooltip.tip.addEventListener('mouseleave', hideUnlessInUse);
+                });
             });
+        };
+        startTooltips(document);
+        document.addEventListener('htmx:load', function (event) {
+            startTooltips(event.detail.elt);
         });
         document.addEventListener('keydown', function (event) {
             if (event.key !== 'Escape') return;
@@ -106,6 +116,57 @@ if (file_exists($full_filename)) {
         // no placeholder, since the label above each one already names it.
         document.querySelectorAll('select.domainmod-multiple-select').forEach(function (select) {
             new TomSelect(select, {plugins: ['remove_button']});
+        });
+
+        // htmx tasks (see Layout::htmxTaskLink() and DomainQueue::processingNotice()). A real result carries the
+        // X-DomainMOD-Result header. Anything else, such as the sign-in page or the page a failed check redirected to,
+        // isn't swapped in, and a message says it didn't work instead. A link is marked busy while its task runs.
+        var htmx_error = <?php echo json_encode(_("That didn't work. Please reload the page and try again.")); ?>;
+        var showHtmxError = function (element, target) {
+            var alert = document.createElement('div');
+            alert.className = 'alert alert-danger';
+            alert.setAttribute('role', 'alert');
+            alert.textContent = htmx_error;
+            if (element.hasAttribute('hx-trigger') && element.getAttribute('hx-trigger').indexOf('every') === 0) {
+                // A polling notice: swap in a plain copy, which htmx stops polling, with the message after it
+                var copy = element.cloneNode(true);
+                Array.prototype.slice.call(copy.attributes).forEach(function (attribute) {
+                    if (attribute.name.indexOf('hx-') === 0) copy.removeAttribute(attribute.name);
+                });
+                element.replaceWith(copy);
+                copy.insertAdjacentElement('afterend', alert);
+            } else if (target) {
+                target.insertAdjacentElement('afterbegin', alert);
+            }
+        };
+        document.addEventListener('htmx:beforeSwap', function (event) {
+            if (event.detail.xhr.getResponseHeader('X-DomainMOD-Result') === '1') return;
+            event.detail.shouldSwap = false;
+            event.detail.isError = false;
+            showHtmxError(event.detail.elt, event.detail.target);
+        });
+        document.addEventListener('htmx:sendError', function (event) {
+            showHtmxError(event.detail.elt, event.detail.target);
+        });
+        document.addEventListener('htmx:beforeRequest', function (event) {
+            event.detail.elt.setAttribute('aria-busy', 'true');
+        });
+        document.addEventListener('htmx:afterRequest', function (event) {
+            event.detail.elt.removeAttribute('aria-busy');
+        });
+        // A result (such as Run Now's) is read out through a polite live region that's on the page from the start, since
+        // a region swapped in with its text isn't reliably announced. It takes the focus only when the swap took it away
+        // (Run Now replaces the link that had it), so it never pulls focus from somewhere someone has moved on to.
+        var htmx_announcer = document.createElement('div');
+        htmx_announcer.className = 'visually-hidden';
+        htmx_announcer.setAttribute('aria-live', 'polite');
+        document.body.appendChild(htmx_announcer);
+        document.addEventListener('htmx:afterSettle', function (event) {
+            var focus_lost = !document.activeElement || document.activeElement === document.body;
+            var result = event.detail.elt.querySelector('[data-domainmod-focus]');
+            if (!result) return;
+            htmx_announcer.textContent = result.textContent.replace(/\s+/g, ' ').trim();
+            if (focus_lost) result.focus();
         });
 
         // Every list's column headers cycle between ascending and descending, as before (DataTables 2 and later add a

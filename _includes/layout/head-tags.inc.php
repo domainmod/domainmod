@@ -23,6 +23,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- htmx's settings for the strict CSP: no eval, no inserted styles (its indicator rules are in base.css), no scripts in
+     swapped content, requests to this site only, and no copies of pages kept in the browser's storage -->
+<meta name="htmx-config" content='{"allowEval": false, "includeIndicatorStyles": false, "allowScriptTags": false, "selfRequestsOnly": true, "historyCacheSize": 0}'>
 <!-- Sets the colour mode before anything is drawn, so it has to come before the stylesheets -->
 <script src="<?php echo $layout->assetUrl('js/colour-mode-init.js'); ?>"></script>
 <link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>

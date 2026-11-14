@@ -44,5 +44,11 @@ $_SESSION['s_message_success'] .= $queue->clearProcessing();
 $queue->checkListQueue();
 $queue->checkDomainQueue();
 
+// An htmx request gets just the result message, shown in the task list's card, instead of a redirect
+if ($system->isHtmxRequest()) {
+    echo $system->htmxTaskResult();
+    exit;
+}
+
 header("Location: index.php");
 exit;

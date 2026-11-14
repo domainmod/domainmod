@@ -422,6 +422,31 @@ class System
         }
     }
 
+    /*
+     * Whether this request came from htmx (its HX-Request header), so a page can answer with just the part that changed
+     * instead of a redirect or the whole page
+     */
+    public function isHtmxRequest()
+    {
+        return ($_SERVER['HTTP_HX_REQUEST'] ?? '') === 'true';
+    }
+
+    /*
+     * Answers an htmx request for a task (such as a maintenance task) with the result messages the next page would have
+     * shown, in the same alerts, and clears them so they don't show again. The X-DomainMOD-Result header tells the
+     * footer's script this is a real result, not a page that a redirect (such as a failed check's) landed on.
+     */
+    public function htmxTaskResult()
+    {
+        header('X-DomainMOD-Result: 1');
+        $result = '';
+        if (($_SESSION['s_message_danger'] ?? '') != '') $result .= $this->showMessageDanger($_SESSION['s_message_danger']);
+        if (($_SESSION['s_message_success'] ?? '') != '') $result .= $this->showMessageSuccess($_SESSION['s_message_success']);
+        $_SESSION['s_message_danger'] = '';
+        $_SESSION['s_message_success'] = '';
+        return $result;
+    }
+
     public function showMessageSuccess($result_message)
     {
         ob_start(); ?>

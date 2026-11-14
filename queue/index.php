@@ -533,9 +533,7 @@ $_SESSION['s_domain_queue_processing'] = $_SESSION['s_domain_queue_processing'] 
 
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
-    <button type="button" class="btn btn-secondary btn-lg">
-        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
-    </button><BR><BR><?php
+    <?php echo $queue->processingNotice(); ?><BR><BR><?php
 
 } ?>
 <?php

@@ -43,5 +43,11 @@ $pdo->query("TRUNCATE log");
 
 $_SESSION['s_message_success'] .= _('Debug Log Cleared');
 
+// An htmx request gets just the result message, shown in the task list's card, instead of a redirect
+if ($system->isHtmxRequest()) {
+    echo $system->htmxTaskResult();
+    exit;
+}
+
 header("Location: index.php");
 exit;

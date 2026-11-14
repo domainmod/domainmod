@@ -41,5 +41,11 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
 $_SESSION['s_message_success'] .= $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
+// An htmx request gets just the result message, shown in the task list's card, instead of a redirect
+if ($system->isHtmxRequest()) {
+    echo $system->htmxTaskResult();
+    exit;
+}
+
 header("Location: index.php");
 exit;

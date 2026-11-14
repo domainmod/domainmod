@@ -291,3 +291,17 @@ a:hover {
 .focus .ts-control {
     box-shadow: none;
 }
+/* htmx's indicators (its own styles are turned off, since the CSP blocks the style tag it would insert): a spinner
+   shows only while its request runs, and a link is shown as busy while its task runs (the footer's script marks it
+   aria-busy) */
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    display: inline-block;
+}
+a[aria-busy="true"] {
+    pointer-events: none;
+    opacity: .65;
+}

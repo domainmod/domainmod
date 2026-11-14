@@ -48,5 +48,11 @@ $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
 $_SESSION['s_message_success'] .= _('SSL Certificate Fees updated') . '<BR>';
 
+// An htmx request gets just the result message, shown in the task list's card, instead of a redirect
+if ($system->isHtmxRequest()) {
+    echo $system->htmxTaskResult();
+    exit;
+}
+
 header("Location: index.php");
 exit;

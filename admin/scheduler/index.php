@@ -31,7 +31,6 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
@@ -81,55 +80,7 @@ foreach ($result as $box) {
     } ?>
 
     <?php echo $layout->contentBoxTop($box->name, '4'); ?>
-    <div>
-        <?php echo $box->description ?>
-    </div>
-    <div>
-        <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $box->interval; ?><BR><?php
-
-        // A daily task's time is shown in its own time zone, which may not be the viewer's.
-        $daily_time = $schedule->getDailyTime($box->expression);
-        if ($daily_time !== null) { ?>
-            <strong><?php echo _('Run Time'); ?>:</strong> <?php echo sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . htmlentities($schedule->getZone($box->timezone)->getName(), ENT_QUOTES, 'UTF-8') . ')'; ?><BR><?php
-        } ?>
-
-        <strong><?php echo _('Status'); ?>:</strong> <?php echo $schedule->createActive($box->active, $box->id); ?><BR><?php
-
-        if ($box->last_run != '1970-01-01 00:00:00') {
-            $last_run = $time->toUserTimezone($schedule->getDateOutput($box->last_run));
-        } else {
-            $last_run = '-';
-
-        } ?>
-
-        <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $box->last_duration; ?><BR><?php
-
-        $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
-        if ($box->next_run != '1970-01-01 00:00:00') {
-            $next_run = $time->toUserTimezone($schedule->getDateOutput($box->next_run));
-        } else {
-            $next_run = '-';
-
-        } ?>
-
-        <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
-
-        if ($box->interval == 'Daily' && $box->active == '1') { ?>
-
-            <BR>
-            <form name="edit_task_form" method="post" action="update.php">
-                <?php echo $form->showCsrfField(); ?>
-                <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
-                    <?php echo $schedule->hourSelect($hour); ?>
-                </select><BR>
-                <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php
-                echo $form->showInputHidden('a', 'u');
-                echo $form->showInputHidden('id', $box->id);
-                echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
-            </form><?php
-        } ?>
-
-    </div><?php
+    <?php echo $schedule->taskCard($box); ?><?php
     echo $layout->contentBoxBottom();
 
     if ($count == 3 || $count == 6) { ?>

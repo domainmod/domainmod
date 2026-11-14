@@ -44,9 +44,10 @@ $system->authCheck();
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
-<a href="update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Update Conversion Rates'); ?></a><BR><BR>
-<a href="update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Update Domain Fees'); ?></a><BR><BR>
-<a href="update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _('Update SSL Fees'); ?></a><BR>
+<div id="domainmod-maintenance-result" aria-live="polite"></div>
+<?php echo $layout->htmxTaskLink('update-conversions.php?' . (new DomainMOD\Csrf())->query(), _('Update Conversion Rates'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-1') . $layout->htmxSpinner('domainmod-maintenance-working-1'); ?><BR><BR>
+<?php echo $layout->htmxTaskLink('update-domain-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Domain Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-2') . $layout->htmxSpinner('domainmod-maintenance-working-2'); ?><BR><BR>
+<?php echo $layout->htmxTaskLink('update-ssl-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update SSL Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?><BR>
 <?php echo $layout->contentBoxBottom(); ?>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

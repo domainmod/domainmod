@@ -2172,6 +2172,20 @@ class DomainQueue
         }
     }
 
+    /*
+     * The Domain Queue page's notice while the queue is processing. With htmx it asks queue/processing.php every 5
+     * seconds whether the queue is still processing, and that page reloads the queue page once it has finished. Its
+     * fixed id lets htmx keep the keyboard focus on it when a check replaces it.
+     */
+    public function processingNotice()
+    {
+        ob_start(); ?>
+        <button type="button" id="domainmod-queue-processing" class="btn btn-secondary btn-lg" hx-get="processing.php" hx-trigger="every 5s" hx-swap="outerHTML">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
+        </button><?php
+        return ob_get_clean();
+    }
+
     public function checkProcessingLists()
     {
         $result = $this->deeb->cnxx->query("

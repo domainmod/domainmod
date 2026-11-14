@@ -204,5 +204,13 @@ if (DEMO_INSTALLATION == false) {
 
 }
 
+// An htmx Run Now gets the task's details back with the result in them, instead of a redirect
+$task = $schedule->getTask($id);
+if ($system->isHtmxRequest() && $task) {
+    $messages = $system->htmxTaskResult();
+    echo $schedule->taskCard($task, $messages);
+    exit;
+}
+
 header("Location: index.php");
 exit;
