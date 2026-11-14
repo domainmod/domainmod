@@ -152,7 +152,7 @@ Please see CODE_OF_CONDUCT.md for a detailed explanation of our code of conduct.
 
 Contributing
 ------------
-Please see CONTRIBUTING.md for our contributing guidelines.
+Please see CONTRIBUTING.md for our contributing guidelines, and CONTRIBUTORS.md for everyone who has contributed code.
 
 Support
 -------

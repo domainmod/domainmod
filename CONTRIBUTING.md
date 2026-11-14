@@ -33,3 +33,7 @@ Please don't report security vulnerabilities in a public issue or in the Support
 If you're looking to contribute to DomainMOD by doing some translation work, please note that the language files are located in their own repository.
 
 The official DomainMOD translation files can be found here: https://github.com/domainmod/translations
+
+## Contributors
+
+Everyone whose pull request has been merged is listed in [CONTRIBUTORS.md](CONTRIBUTORS.md).
