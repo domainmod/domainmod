@@ -60,10 +60,10 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/assets/" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
-                <i class="nav-icon bi bi-boxes"></i>
+            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
+                <i class="nav-icon bi bi-bar-chart-fill"></i>
                 <p>
-                    <?php echo _('Assets'); ?>
+                    <?php echo _('Reporting'); ?>
                 </p>
             </a>
         </li>
@@ -84,10 +84,10 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
-                <i class="nav-icon bi bi-bar-chart-fill"></i>
+            <a href="<?php echo $web_root; ?>/assets/" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
+                <i class="nav-icon bi bi-boxes"></i>
                 <p>
-                    <?php echo _('Reporting'); ?>
+                    <?php echo _('Assets'); ?>
                 </p>
             </a>
         </li>
@@ -112,18 +112,6 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/settings/display/" class="nav-link<?php if ($slug == "settings-display") echo " active"; ?>" aria-label="<?php echo _('Display Settings'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('Display Settings') ?></p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/settings/defaults/" class="nav-link<?php if ($slug == "settings-defaults") echo " active"; ?>" aria-label="<?php echo _('User Defaults'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('User Defaults') ?></p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/profile/" class="nav-link<?php if ($slug == "settings-profile") echo " active"; ?>" aria-label="<?php echo _('User Profile'); ?>">
                         <i class="nav-icon bi"></i>
                         <p><?php echo _('User Profile') ?></p>
@@ -135,13 +123,25 @@
                         <p><?php echo _('Change Password') ?></p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/display/" class="nav-link<?php if ($slug == "settings-display") echo " active"; ?>" aria-label="<?php echo _('Display Settings'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('Display Settings') ?></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/defaults/" class="nav-link<?php if ($slug == "settings-defaults") echo " active"; ?>" aria-label="<?php echo _('User Defaults'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('User Defaults') ?></p>
+                    </a>
+                </li>
             </ul>
         </li>
         <li class="nav-item<?php if ($software_section == "maintenance") echo " menu-open"; ?>">
-            <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>" aria-label="<?php echo _('Maintenance'); ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>" aria-label="<?php echo _('Fees & Rates'); ?>">
                 <i class="nav-icon bi bi-check-lg"></i>
                 <p>
-                    <?php echo _('Maintenance') ?>
+                    <?php echo _('Fees & Rates') ?>
                     <i class="nav-arrow bi bi-chevron-right"></i>
                 </p>
             </a>
