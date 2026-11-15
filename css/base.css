@@ -473,3 +473,23 @@ div.dt-container > div.bottom {
         transition: none;
     }
 }
+/* A list's status drawn as an icon (Layout::statusBadge() with an icon). Privacy is on most domains, so its grey
+   shield is a little smaller and quieter than the coloured status icons. */
+.domainmod-status-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+.domainmod-status-icon .bi-shield-lock-fill {
+    font-size: 0.85em;
+    margin-left: 0.2rem;
+}
+/* In light mode the grey privacy shield is lightened, so it stays quiet but keeps over 3:1 contrast on white, striped,
+   and hovered rows */
+[data-bs-theme="light"] .domainmod-status-icon.text-body-secondary {
+    color: #7d858c !important;
+}
+/* In light mode the warning colour's emphasis shade is nearly brown, so the pending icons use a deeper gold that
+   still has over 3:1 contrast on white */
+[data-bs-theme="light"] .domainmod-status-icon.text-warning-emphasis {
+    color: #997404 !important;
+}

@@ -1602,13 +1602,13 @@ if ($result) { ?>
                 <td></td>
                 <td>
                     <?php if ($row->active == "0") {
-                        echo $layout->statusBadge('x', _('Expired'), 'secondary') . "&nbsp;";
+                        echo $layout->statusBadge('x', _('Expired'), 'secondary', 'bi-x-circle') . "&nbsp;";
                     } elseif ($row->active == "3") {
-                        echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning') . "&nbsp;";
+                        echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning', 'bi-arrow-repeat') . "&nbsp;";
                     } elseif ($row->active == "4") {
-                        echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning') . "&nbsp;";
+                        echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning', 'bi-three-dots') . "&nbsp;";
                     } elseif ($row->active == "5") {
-                        echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning') . "&nbsp;";
+                        echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning', 'bi-plus-circle') . "&nbsp;";
                     }
                     ?><a href="edit.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
                 </td>

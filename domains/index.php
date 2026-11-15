@@ -2432,21 +2432,21 @@ if ($result) { ?>
 
                     <td>
                         <?php if ($row->active == "0") {
-                            echo $layout->statusBadge('x', _('Inactive Domain'), 'secondary') . "&nbsp;";
+                            echo $layout->statusBadge('x', _('Inactive Domain'), 'secondary', 'bi-pause-circle') . "&nbsp;";
                         } elseif ($row->active == "2") {
-                            echo $layout->statusBadge(_('Pending Transfer Characters'), _('Pending (Transfer)'), 'warning') . "&nbsp;";
+                            echo $layout->statusBadge(_('Pending Transfer Characters'), _('Pending (Transfer)'), 'warning', 'bi-arrow-left-right') . "&nbsp;";
                         } elseif ($row->active == "3") {
-                            echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning') . "&nbsp;";
+                            echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning', 'bi-arrow-repeat') . "&nbsp;";
                         } elseif ($row->active == "4") {
-                            echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning') . "&nbsp;";
+                            echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning', 'bi-three-dots') . "&nbsp;";
                         } elseif ($row->active == "5") {
-                            echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning') . "&nbsp;";
+                            echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning', 'bi-plus-circle') . "&nbsp;";
                         } elseif ($row->active == "10") {
-                            echo $layout->statusBadge(_('Pending Sold Characters'), _('Sold'), 'success') . "&nbsp;";
+                            echo $layout->statusBadge(_('Pending Sold Characters'), _('Sold'), 'success', 'bi-tag') . "&nbsp;";
                         }
                         ?>
                         <a href="edit.php?did=<?php echo $row->id; ?>"><?php echo $row->domain; ?></a><?php if ($row->privacy == "1") {
-                            echo "&nbsp;" . $layout->statusBadge(_('Private WHOIS Characters'), _('Private WHOIS Registration'), 'info');
+                            echo "&nbsp;" . $layout->statusBadge(_('Private WHOIS Characters'), _('Private WHOIS Registration'), 'muted', 'bi-shield-lock-fill');
                         } ?>
                     </td>
                     <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>

@@ -52,9 +52,17 @@ class Layout
      * description instead of the code. The description is in attributes, not text, so the lists still sort and
      * search the cell as before (the code and the name).
      */
-    public function statusBadge($code, $description, $colour)
+    public function statusBadge($code, $description, $colour, $icon = '')
     {
         $description = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
+        if ($icon != '') {
+            // The Domains and SSL lists show a status as just an icon in the colour's deeper (emphasis) shade, which
+            // keeps it readable in both colour modes ('muted' is the plain grey used for privacy). The code stays as hidden text, so the lists still sort and search
+            // on it.
+            $icon_class = $colour == 'muted' ? 'text-body-secondary' : 'text-' . $colour . '-emphasis';
+            ob_start(); ?><span class="domainmod-status-icon <?php echo $icon_class; ?>" role="img" aria-label="<?php echo $description; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo $description; ?>" tabindex="0"><i class="bi <?php echo $icon; ?>" aria-hidden="true"></i><span class="visually-hidden"><?php echo $code; ?></span></span><?php
+            return ob_get_clean();
+        }
         ob_start(); ?><span class="badge text-bg-<?php echo $colour; ?>" role="img" aria-label="<?php echo $description; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo $description; ?>" tabindex="0"><?php echo $code; ?></span><?php
         return ob_get_clean();
     }
