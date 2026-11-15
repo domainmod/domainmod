@@ -71,6 +71,41 @@ class Domain
     }
 
     /*
+     * The domains on a list that aren't in DomainMOD: the first few, to show, and how many there are in all. Used before
+     * an action that changes existing domains, so it doesn't run on a domain that isn't there.
+     */
+    public function findMissingDomains($lines)
+    {
+        $missing_to_display = 5;
+        $missing = array();
+        $missing_count = 0;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id
+            FROM domains
+            WHERE domain = :domain
+            LIMIT 1");
+
+        foreach ($lines as $domain) {
+
+            $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if (!$result) {
+
+                if ($missing_count < $missing_to_display) $missing[] = $domain;
+                $missing_count++;
+
+            }
+
+        }
+
+        return array($missing, $missing_count);
+    }
+
+    /*
      * A domain name (or TLD) in punycode, the form registrars, DNS, and WHM expect, or '' if it isn't a valid name.
      * Used for anything that leaves DomainMOD, and for validation.
      */
