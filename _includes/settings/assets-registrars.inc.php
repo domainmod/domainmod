@@ -23,7 +23,6 @@
 $page_title = _('Domain Registrars');
 $breadcrumb = _('Registrars');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-registrars";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

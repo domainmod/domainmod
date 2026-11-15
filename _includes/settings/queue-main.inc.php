@@ -23,7 +23,6 @@
 $page_title = _('Domain Queue');
 $breadcrumb = $page_title;
 $software_section = "queue";
-$software_section_logo = "fa-hourglass-2";
 $slug = "queue-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

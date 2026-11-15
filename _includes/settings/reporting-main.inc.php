@@ -23,5 +23,4 @@
 $page_title = _('Reporting');
 $breadcrumb = $page_title;
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-main";

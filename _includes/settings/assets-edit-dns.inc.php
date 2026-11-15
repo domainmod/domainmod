@@ -23,5 +23,4 @@
 $page_title = _('Edit DNS Profile');
 $breadcrumb = _('Edit');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-edit-dns";

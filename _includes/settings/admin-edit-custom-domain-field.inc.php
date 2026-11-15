@@ -23,5 +23,4 @@
 $page_title = _('Edit Custom Domain Field');
 $breadcrumb = _('Edit');
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-edit-custom-domain-field";

@@ -23,7 +23,6 @@
 $page_title = _('Edit Domain');
 $breadcrumb = _('Edit');
 $software_section = "domains";
-$software_section_logo = "fa-sitemap";
 $slug = "domains-edit";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

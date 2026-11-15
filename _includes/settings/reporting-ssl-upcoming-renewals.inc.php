@@ -23,7 +23,6 @@
 $page_title = _('SSL Upcoming Renewals Report');
 $breadcrumb = _('SSL Upcoming Renewals');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-upcoming-renewals";
 $report_section = 'ssl';
 $report_filename = 'upcoming-renewals.php';

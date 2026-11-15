@@ -23,5 +23,4 @@
 $page_title = _('Admin Maintenance');
 $breadcrumb = _('Maintenance');
 $software_section = "admin";
-$software_section_logo = "fa-check";
 $slug = "admin-maintenance-main";

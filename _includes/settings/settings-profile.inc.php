@@ -23,5 +23,4 @@
 $page_title = _('User Profile');
 $breadcrumb = $page_title;
 $software_section = "settings";
-$software_section_logo = "fa-gears";
 $slug = "settings-profile";

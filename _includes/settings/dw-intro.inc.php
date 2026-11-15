@@ -23,5 +23,4 @@
 $page_title = _('Data Warehouse');
 $breadcrumb = _('Intro');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-intro";

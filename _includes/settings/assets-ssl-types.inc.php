@@ -23,7 +23,6 @@
 $page_title = _('SSL Certificate Types');
 $breadcrumb = _('SSL Types');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-ssl-types";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

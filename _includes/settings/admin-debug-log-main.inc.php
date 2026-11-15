@@ -23,7 +23,6 @@
 $page_title = _('Debug Log');
 $breadcrumb = _('Debug');
 $software_section = "admin";
-$software_section_logo = "fa-bug";
 $slug = "admin-debug-log-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

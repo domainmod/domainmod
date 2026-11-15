@@ -23,7 +23,6 @@
 $page_title = _('DW Potential Problems Report');
 $breadcrumb = _('DW Potential Problems');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-dw-potential-problems";
 $report_section = 'dw';
 $report_filename = 'potential-problems.php';

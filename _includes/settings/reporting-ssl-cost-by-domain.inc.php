@@ -23,7 +23,6 @@
 $page_title = _('SSL Cost by Domain Report');
 $breadcrumb = _('SSL Cost by Domain');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-domain";
 $report_section = 'ssl';
 $report_filename = 'cost-by-domain.php';

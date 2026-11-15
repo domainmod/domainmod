@@ -23,5 +23,4 @@
 $page_title = _('Your Feedback Is Important to Us!');
 $breadcrumb = _('Feedback');
 $software_section = "feedback";
-$software_section_logo = "fa-comment";
 $slug = "feedback-main";

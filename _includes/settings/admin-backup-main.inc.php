@@ -23,5 +23,4 @@
 $page_title = _('Backup & Restore');
 $breadcrumb = _('Backup');
 $software_section = "admin";
-$software_section_logo = "fa-download";
 $slug = "admin-backup-main";

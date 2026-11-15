@@ -23,5 +23,4 @@
 $page_title = _('Fix and Import Domain');
 $breadcrumb = _('Fix and Import');
 $software_section = "queue";
-$software_section_logo = "fa-hourglass-2";
 $slug = "queue-edit";

@@ -23,5 +23,4 @@
 $page_title = _('Edit SSL Certificate');
 $breadcrumb = _('Edit');
 $software_section = "ssl";
-$software_section_logo = "fa-lock";
 $slug = "ssl-edit";

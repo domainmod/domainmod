@@ -23,7 +23,6 @@
 $page_title = _('Custom Domain Fields');
 $breadcrumb = _('Custom Domain Fields');
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-custom-domain-fields";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

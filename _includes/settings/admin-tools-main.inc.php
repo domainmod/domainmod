@@ -23,5 +23,4 @@
 $page_title = _('Admin Tools');
 $breadcrumb = _('Tools');
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-tools-main";

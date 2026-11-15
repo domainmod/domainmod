@@ -23,7 +23,6 @@
 $page_title = _('Domain Cost by Registrar Report');
 $breadcrumb = _('Domain Cost by Registrar');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-registrar";
 $report_section = 'domains';
 $report_filename = 'cost-by-registrar.php';

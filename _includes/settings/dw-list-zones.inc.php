@@ -31,7 +31,6 @@ if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
 }
 $breadcrumb = _('Zones');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-list-zones";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

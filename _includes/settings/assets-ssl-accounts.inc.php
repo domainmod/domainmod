@@ -23,7 +23,6 @@
 $page_title = _('SSL Provider Accounts');
 $breadcrumb = _('SSL Accounts');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-ssl-accounts";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

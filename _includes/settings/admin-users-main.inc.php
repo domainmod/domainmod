@@ -23,7 +23,6 @@
 $page_title = _('User Administration');
 $breadcrumb = _('Users');
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-users-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

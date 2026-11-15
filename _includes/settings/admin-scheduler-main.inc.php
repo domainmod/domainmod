@@ -23,5 +23,4 @@
 $page_title = _('Task Scheduler');
 $breadcrumb = _('Scheduler');
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-scheduler-main";

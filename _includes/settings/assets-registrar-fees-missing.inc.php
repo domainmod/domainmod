@@ -23,7 +23,6 @@
 $page_title = _('Domain Registrar Fees Missing');
 $breadcrumb = _('Missing Fees');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-registrar-fees-missing";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

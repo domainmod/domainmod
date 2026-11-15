@@ -23,5 +23,4 @@
 $page_title = _('Rebuild Data Warehouse');
 $breadcrumb = _('Rebuild');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-rebuild";

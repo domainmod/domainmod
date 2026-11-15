@@ -23,7 +23,6 @@
 $page_title = _('Domain Cost by IP Address Report');
 $breadcrumb = _('Domain Cost by IP Address');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-ip";
 $report_section = 'domains';
 $report_filename = 'cost-by-ip-address.php';

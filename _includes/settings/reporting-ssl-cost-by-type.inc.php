@@ -23,7 +23,6 @@
 $page_title = _('SSL Cost by Type Report');
 $breadcrumb = _('SSL Cost by Type');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-type";
 $report_section = 'ssl';
 $report_filename = 'cost-by-type.php';

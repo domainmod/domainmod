@@ -23,7 +23,6 @@
 $page_title = _('Account Owners');
 $breadcrumb = _('Owners');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-owners";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

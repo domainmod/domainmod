@@ -23,5 +23,4 @@
 $page_title = _('Add Domains Without an API');
 $breadcrumb = _('Add');
 $software_section = "queue";
-$software_section_logo = "fa-hourglass-2";
 $slug = "queue-add-rdap";

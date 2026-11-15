@@ -23,7 +23,6 @@
 $page_title = _('Domain Cost by Web Host Report');
 $breadcrumb = _('Domain Cost by Web Host');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-host";
 $report_section = 'domains';
 $report_filename = 'cost-by-host.php';

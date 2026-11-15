@@ -23,5 +23,4 @@
 $page_title = _('Add Domain');
 $breadcrumb = _('Add');
 $software_section = "domains";
-$software_section_logo = "fa-sitemap";
 $slug = "domains-add";

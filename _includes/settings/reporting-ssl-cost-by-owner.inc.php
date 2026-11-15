@@ -23,7 +23,6 @@
 $page_title = _('SSL Cost by Owner Report');
 $breadcrumb = _('SSL Cost by Owner');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-cost-by-owner";
 $report_section = 'ssl';
 $report_filename = 'cost-by-owner.php';

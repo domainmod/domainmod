@@ -23,7 +23,6 @@
 $page_title = _('SSL At-Risk Certificates Report');
 $breadcrumb = _('SSL At-Risk Certificates');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-at-risk";
 $report_section = 'ssl';
 $report_filename = 'at-risk.php';

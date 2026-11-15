@@ -23,7 +23,6 @@
 $page_title = _('Domain Cost by Category Report');
 $breadcrumb = _('Domain Cost by Category');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-category";
 $report_section = 'domains';
 $report_filename = 'cost-by-category.php';

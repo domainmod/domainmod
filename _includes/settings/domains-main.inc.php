@@ -23,7 +23,6 @@
 $page_title = _('Domains');
 $breadcrumb = _('Domains');
 $software_section = "domains";
-$software_section_logo = "fa-sitemap";
 $slug = "domains-main";
 
 // If the expiry date is visible sort by it, otherwise sort by the domain

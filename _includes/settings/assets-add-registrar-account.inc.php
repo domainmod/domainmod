@@ -23,5 +23,4 @@
 $page_title = _('Add Registrar Account');
 $breadcrumb = _('Add');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-add-registrar-account";

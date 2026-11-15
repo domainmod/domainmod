@@ -23,5 +23,4 @@
 $page_title = _('CSV Importer');
 $breadcrumb = _('CSV Importer');
 $software_section = "domains";
-$software_section_logo = "fa-upload";
 $slug = "csv-importer-main";

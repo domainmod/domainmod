@@ -23,5 +23,4 @@
 $page_title = _('Edit IP Address');
 $breadcrumb = _('Edit');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-edit-ip-address";

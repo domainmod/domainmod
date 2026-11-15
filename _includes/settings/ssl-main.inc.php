@@ -23,7 +23,6 @@
 $page_title = _('SSL Certificates');
 $breadcrumb = _('SSL Certs');
 $software_section = "ssl";
-$software_section_logo = "fa-lock";
 $slug = "ssl-main";
 
 // If the expiry date is visible sort by it, otherwise sort by the SSL certificate name

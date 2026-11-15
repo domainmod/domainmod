@@ -23,5 +23,4 @@
 $page_title = _('Edit DW Server');
 $breadcrumb = _('Edit');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-edit-server";

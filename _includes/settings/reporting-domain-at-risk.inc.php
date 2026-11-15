@@ -23,7 +23,6 @@
 $page_title = _('At-Risk Domains Report');
 $breadcrumb = _('At-Risk Domains');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-at-risk";
 $report_section = 'domains';
 $report_filename = 'at-risk.php';

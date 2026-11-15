@@ -23,7 +23,6 @@
 $page_title = _('Segment Filters');
 $breadcrumb = _('Segments');
 $software_section = "segments";
-$software_section_logo = "fa-filter";
 $slug = "segments-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

@@ -23,7 +23,6 @@
 $page_title = _('IP Addresses');
 $breadcrumb = _('IPs');
 $software_section = "assets";
-$software_section_logo = "fa-cubes";
 $slug = "assets-ip-addresses";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

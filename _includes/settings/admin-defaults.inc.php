@@ -23,5 +23,4 @@
 $page_title = _('System Defaults');
 $breadcrumb = $page_title;
 $software_section = "admin";
-$software_section_logo = "fa-wrench";
 $slug = "admin-defaults";

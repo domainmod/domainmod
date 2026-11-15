@@ -23,7 +23,6 @@
 $page_title = _('Manage DW Servers');
 $breadcrumb = _('Servers');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-servers";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;

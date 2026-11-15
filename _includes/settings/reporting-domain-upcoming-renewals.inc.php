@@ -23,7 +23,6 @@
 $page_title = _('Upcoming Renewals Report');
 $breadcrumb = _('Upcoming Renewals');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-upcoming-renewals";
 $report_section = 'domains';
 $report_filename = 'upcoming-renewals.php';

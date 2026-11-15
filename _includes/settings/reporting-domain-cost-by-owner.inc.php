@@ -23,7 +23,6 @@
 $page_title = _('Domain Cost by Owner Report');
 $breadcrumb = _('Domain Cost by Owner');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-cost-by-owner";
 $report_section = 'domains';
 $report_filename = 'cost-by-owner.php';

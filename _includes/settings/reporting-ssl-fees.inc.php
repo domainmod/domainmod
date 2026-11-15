@@ -23,7 +23,6 @@
 $page_title = _('SSL Provider Fees');
 $breadcrumb = _('SSL Fees');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-ssl-fees";
 $report_section = 'ssl';
 $report_filename = 'provider-fees.php';

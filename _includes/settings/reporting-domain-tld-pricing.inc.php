@@ -23,7 +23,6 @@
 $page_title = _('TLD Pricing Report');
 $breadcrumb = _('TLD Pricing');
 $software_section = "reporting";
-$software_section_logo = "fa-bar-chart";
 $slug = "reporting-domain-tld-pricing";
 $report_section = 'domains';
 $report_filename = 'tld-pricing.php';

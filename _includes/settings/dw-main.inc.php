@@ -23,7 +23,6 @@
 $page_title = _('Data Warehouse');
 $breadcrumb = _('DW');
 $software_section = "dw";
-$software_section_logo = "fa-database";
 $slug = "dw-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
