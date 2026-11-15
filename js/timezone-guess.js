@@ -22,23 +22,20 @@
 // chosen yet (the page then adds a hidden marker naming the menu) and only when that time zone is on the list. It
 // goes through the searchable menu (js/search-select.js) when there is one. Without JavaScript nothing changes.
 //
-// Browsers report the current names for a few time zones that the list still has under their older names.
-var timezoneGuessAliases = {
-    'Europe/Kyiv': 'Europe/Kiev',
-    'Asia/Yangon': 'Asia/Rangoon',
-    'Pacific/Kanton': 'Pacific/Enderbury',
-    'America/Nuuk': 'America/Godthab'
-};
+// The list has only the current names, and some browsers report an older one (such as Asia/Calcutta), so the marker
+// also carries the older names and the zones they stand for (DomainMOD\Time::LEGACY_ZONES).
 document.querySelectorAll('[data-domainmod-guess-timezone]').forEach(function (marker) {
     var select = document.querySelector('select[name="' + marker.getAttribute('data-domainmod-guess-timezone') + '"]');
     if (!select) return;
     var zone = '';
+    var aliases = {};
     try {
         zone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        aliases = JSON.parse(marker.getAttribute('data-domainmod-timezone-aliases') || '{}') || {};
     } catch (error) {
         return;
     }
-    if (timezoneGuessAliases[zone]) zone = timezoneGuessAliases[zone];
+    if (Object.prototype.hasOwnProperty.call(aliases, zone)) zone = aliases[zone];
     var listed = Array.prototype.some.call(select.options, function (option) {
         return option.value === zone;
     });
