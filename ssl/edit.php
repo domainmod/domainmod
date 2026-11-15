@@ -613,6 +613,13 @@ if ($result) {
                 $stmt->closeCursor();
                 $field_data = $result_data->{$row->field_name};
 
+                // A Date or Time Stamp that was never set shows blank rather than its placeholder date
+                if (($row->type_id == "4" || $row->type_id == "5") && DomainMOD\Time::isUnset($field_data)) {
+
+                    $field_data = '';
+
+                }
+
             }
 
             if ($row->type_id == "1") { // Check Box

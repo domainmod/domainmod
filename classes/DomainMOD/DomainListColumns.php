@@ -192,9 +192,9 @@ class DomainListColumns
                     if ($type == '2') {
                         $typed[] = $name;
                     } elseif ($type == '4') {
-                        $typed[] = "CASE WHEN " . $name . " = '1970-01-01' THEN '' ELSE CAST(" . $name . " AS CHAR) END";
+                        $typed[] = "CASE WHEN " . $name . " IN ('1970-01-01', '0000-00-00') THEN '' ELSE CAST(" . $name . " AS CHAR) END";
                     } elseif ($type == '5') {
-                        $typed[] = "CASE WHEN " . $name . " = '1970-01-01 00:00:00' THEN '' ELSE CAST(" . $name . " AS CHAR) END";
+                        $typed[] = "CASE WHEN " . $name . " IN ('1970-01-01 00:00:00', '0000-00-00 00:00:00') THEN '' ELSE CAST(" . $name . " AS CHAR) END";
                     }
             }
         }
