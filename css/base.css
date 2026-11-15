@@ -1512,3 +1512,49 @@ html.domainmod-toasts-compact {
 [dir="rtl"] .nav-arrow::before {
     transform: none;
 }
+
+/* The filter toolbar (DomainMOD\FilterToolbar, on the Domains list): each active filter as a chip that removes it, in
+   the theme's secondary background with a border in the secondary text colour (well over 3:1 in both colour modes),
+   and the filters in a Bootstrap offcanvas panel, 420px wide and full width on phones. Logical properties throughout, so
+   right-to-left languages mirror it, and the panel's padding is trimmed on the smallest phones so the date calendar
+   fits. */
+.domainmod-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    color: var(--bs-body-color);
+    background-color: var(--bs-secondary-bg);
+    border: 1px solid var(--bs-secondary-color);
+}
+.domainmod-filter-chip:hover,
+.domainmod-filter-chip:focus-visible {
+    color: var(--bs-emphasis-color);
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-emphasis-color);
+}
+.domainmod-filter-chip .bi {
+    font-size: .75em;
+}
+.domainmod-filter-chip-text {
+    overflow-wrap: anywhere;
+}
+.domainmod-filter-panel {
+    --bs-offcanvas-width: 420px;
+}
+.domainmod-filter-panel .domainmod-form,
+.domainmod-filter-inline .domainmod-form {
+    max-width: none;
+}
+.domainmod-filter-inline {
+    max-width: 48rem;
+}
+@media (max-width: 575.98px) {
+    .domainmod-filter-panel {
+        --bs-offcanvas-width: 100%;
+    }
+}
+@media (max-width: 359.98px) {
+    .domainmod-filter-panel .offcanvas-body {
+        padding-inline: .5rem;
+    }
+}

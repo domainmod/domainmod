@@ -160,6 +160,36 @@ if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateForma
 
 }
 
+// The keyword and date range the list is filtered by. An export reads them from its own request when its link carries
+// them (FilterToolbar::exportUrl() always does), without touching the session, so another tab's filters can't leak into
+// it. An older export link without them falls back to the session, as before.
+$filter_search_for = $_SESSION['s_search_for'];
+$filter_start_date = $_SESSION['s_start_date'];
+$filter_end_date = $_SESSION['s_end_date'];
+
+if ($export_data === 1) {
+
+    if (array_key_exists('search_for', $_GET)) $filter_search_for = $search_for;
+
+    if (array_key_exists('daterange', $_GET)) {
+
+        // The same test the list uses when it saves a range, so the export matches the list exactly
+        if ($new_start_date != '' && $new_start_date != 'YYYY-MM-DD') {
+
+            $filter_start_date = $new_start_date;
+            $filter_end_date = $new_end_date;
+
+        } else {
+
+            $filter_start_date = 'YYYY-MM-DD';
+            $filter_end_date = 'YYYY-MM-DD';
+
+        }
+
+    }
+
+}
+
 if ($_SESSION['s_system_large_mode'] == '1') {
 
     if ($result_limit == "") $result_limit = $_SESSION['s_number_of_domains'];
@@ -260,14 +290,14 @@ if ($tld != "") {
     $tld_string = "";
 }
 
-if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
+if ($filter_start_date != '' && $filter_start_date != 'YYYY-MM-DD') {
+    $range_string = " AND (d.expiry_date >= " . $pdo->quote($filter_start_date) . " AND d.expiry_date <= " . $pdo->quote($filter_end_date) . ")";
 } else {
     $range_string = "";
 }
 
-if ($_SESSION['s_search_for'] != "") {
-    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . " ";
+if ($filter_search_for != "") {
+    $search_string = " AND " . $domain_search_condition('d.domain', $filter_search_for) . " ";
 } else {
     $search_string = "";
 }
@@ -594,11 +624,11 @@ if ($export_data == 1) {
     $row_contents = array('[' . _('Search Filters') . ']');
     $export->writeRow($export_file, $row_contents);
 
-    if ($_SESSION['s_search_for'] != "") {
+    if ($filter_search_for != "") {
 
         $row_contents = array(
             _('Keyword Search') . ':',
-            $_SESSION['s_search_for']
+            $filter_search_for
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -701,11 +731,11 @@ if ($export_data == 1) {
 
     }
 
-    if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
+    if ($filter_start_date != '' && $filter_start_date != 'YYYY-MM-DD') {
 
         $row_contents = array(
             _('Expiry Date Range') . ':',
-            $_SESSION['s_start_date']  . " to " . $_SESSION['s_end_date']
+            $filter_start_date  . " to " . $filter_end_date
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -1008,44 +1038,86 @@ if ($segid !== 0) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
-    $box_type = 'expanded';
-    $box_icon = 'minus';
-} else {
-    $box_type = 'collapsed';
-    $box_icon = 'plus';
+if ($_SESSION['s_system_large_mode'] != '1') {
+
+    $result_limit = '';
+    $sort_by = '';
+
+}
+
+// The status names, as the status menu shows them, so the menu and the status chip always match
+$status_names = array('0' => _('Expired'), '1' => _('Active'), '2' => _('Pending (Transfer)'),
+    '3' => _('Pending (Renewal)'), '4' => _('Pending (Other)'), '5' => _('Pending (Registration)'), '10' => _('Sold'),
+    'LIVE' => _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')',
+    'ALL' => DomainMOD\Format::toUpper(_('All')));
+
+/*
+ * The filter toolbar's state (DomainMOD\FilterToolbar): every active filter with its plain-text name for its chip, and
+ * in Large Mode the results per page and sort order, which every link carries without being chips. Each id filter's
+ * name is read with one small query, only when that filter is on, and an id that no longer exists still gets a chip.
+ */
+$filter_toolbar = new DomainMOD\FilterToolbar('domain-filters', $web_root . '/domains/index.php', $web_root . '/domains/index.php');
+$filter_name = function ($sql, $id) use ($pdo) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $name = $stmt->fetchColumn();
+    $stmt->closeCursor();
+    return $name === false ? DomainMOD\FilterToolbar::notFound() : DomainMOD\FilterToolbar::decode($name);
+};
+if ($segid !== 0) $filter_toolbar->addFilter('segid', $segid, 0, $filter_name("SELECT `name` FROM segments WHERE id = :id", $segid), _('Segment'));
+if ($rid !== 0) $filter_toolbar->addFilter('rid', $rid, 0, $filter_name("SELECT `name` FROM registrars WHERE id = :id", $rid), _('Registrar'));
+if ($raid !== 0) $filter_toolbar->addFilter('raid', $raid, 0, $filter_name("
+    SELECT CONCAT(r.name, ', ', o.name, ' (', ra.username, ')')
+    FROM registrar_accounts AS ra, registrars AS r, owners AS o
+    WHERE ra.registrar_id = r.id
+      AND ra.owner_id = o.id
+      AND ra.id = :id", $raid), _('Registrar Account'));
+if ($dnsid !== 0) $filter_toolbar->addFilter('dnsid', $dnsid, 0, $filter_name("SELECT `name` FROM dns WHERE id = :id", $dnsid), _('DNS Profile'));
+if ($ipid !== 0) $filter_toolbar->addFilter('ipid', $ipid, 0, $filter_name("SELECT CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id = :id", $ipid), _('IP Address'));
+if ($whid !== 0) $filter_toolbar->addFilter('whid', $whid, 0, $filter_name("SELECT `name` FROM hosting WHERE id = :id", $whid), _('Web Hosting Provider'));
+if ($pcid !== 0) $filter_toolbar->addFilter('pcid', $pcid, 0, $filter_name("SELECT `name` FROM categories WHERE id = :id", $pcid), _('Category'));
+if ($oid !== 0) $filter_toolbar->addFilter('oid', $oid, 0, $filter_name("SELECT `name` FROM owners WHERE id = :id", $oid), _('Owner'));
+if ($tld != '') $filter_toolbar->addFilter('tld', $tld, '', '.' . $tld, _('TLD'));
+$filter_toolbar->addFilter('is_active', $is_active, 'LIVE', $status_names[$is_active] ?? $is_active, _('Status'));
+if ($_SESSION['s_search_for'] != '') {
+    $filter_keyword = DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']);
+    $filter_toolbar->addFilter('search_for', $filter_keyword, '', '"' . $filter_keyword . '"', _('Keyword Search'));
+}
+if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
+    $filter_toolbar->addFilter('daterange', $_SESSION['s_start_date'] . ' - ' . $_SESSION['s_end_date'], '',
+        sprintf(_('Expiring: %1$s to %2$s'), $_SESSION['s_start_date'], $_SESSION['s_end_date']));
+}
+if ($_SESSION['s_system_large_mode'] == '1') {
+    $filter_toolbar->addCarried('result_limit', $result_limit);
+    $filter_toolbar->addCarried('sort_by', $sort_by);
 }
 
 if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
-    if ($_SESSION['s_system_large_mode'] != '1') {
+    // The no-JavaScript page (expand=1) draws the form as a card under the toolbar instead of in the side panel
+    $filter_expanded = ($expand === 1);
 
-        $result_limit = '';
-        $sort_by = '';
-
-    } ?>
-
-    <div class="box box-default box-solid"><?php
-
-        echo $layout->expandableBoxTop(_('Advanced Filtering'), './', 'reset');
+    echo $filter_toolbar->toolbar($filter_expanded);
+    echo $filter_toolbar->panelTop($filter_expanded);
 
         echo $form->showFormTop(''); ?>
 
-        <div class="row">
-            <div class="col-6"><?php
+        <div><?php
                 // SEGMENT
                 $result_segment = $pdo->query("
                 SELECT id, `name`
                 FROM segments
                 ORDER BY `name` ASC")->fetchAll();
 
-                echo $form->showDropdownTop('segid', '', '', '', '');
+                echo $form->showDropdownTop('segid', _('Segment'), '', '', '');
                 echo $form->showDropdownOption('', _('Segment Filter') . ' - ' . DomainMOD\Format::toUpper(_('Off')), 'null');
                 foreach ($result_segment as $row_segment) {
 
                     echo $form->showDropdownOption($row_segment->id, $row_segment->name, $segid);
 
                 }
+                echo $filter_toolbar->keepOption('segid', array_column($result_segment, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1149,13 +1221,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY r.name
                 ORDER BY r.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('rid', '', '', '', '');
+                echo $form->showDropdownTop('rid', _('Registrar'), '', '', '');
                 echo $form->showDropdownOption('', _('Registrar') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_registrar as $row_registrar) {
 
                     echo $form->showDropdownOption($row_registrar->id, $row_registrar->name, $rid);
 
                 }
+                echo $filter_toolbar->keepOption('rid', array_column($result_registrar, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1256,13 +1329,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY r.name, o.name, ra.username
                 ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
 
-                echo $form->showDropdownTop('raid', '', '', '', '');
+                echo $form->showDropdownTop('raid', _('Registrar Account'), '', '', '');
                 echo $form->showDropdownOption('', _('Registrar Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_account as $row_account) {
 
                     echo $form->showDropdownOption($row_account->ra_id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $raid);
 
                 }
+                echo $filter_toolbar->keepOption('raid', array_column($result_account, 'ra_id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1366,13 +1440,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY dns.name
                 ORDER BY dns.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('dnsid', '', '', '', '');
+                echo $form->showDropdownTop('dnsid', _('DNS Profile'), '', '', '');
                 echo $form->showDropdownOption('', _('DNS Profile') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_dns as $row_dns) {
 
                     echo $form->showDropdownOption($row_dns->id, $row_dns->name, $dnsid);
 
                 }
+                echo $filter_toolbar->keepOption('dnsid', array_column($result_dns, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1476,25 +1551,22 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY ip.name
                 ORDER BY ip.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('ipid', '', '', '', '');
+                echo $form->showDropdownTop('ipid', _('IP Address'), '', '', '');
                 echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_ip as $row_ip) {
 
                     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $ipid);
 
                 }
+                echo $filter_toolbar->keepOption('ipid', array_column($result_ip, 'id'));
                 echo $form->showDropdownBottom(''); ?>
 
-                <?php echo $form->showInputText('search_for', _('Keyword Search'), '', $_SESSION['s_search_for'], '100', '', '', '', ''); ?><?php
+                <?php // The session keeps the keyword HTML-escaped, so it's decoded once here (the field escapes it again), and Apply sends it back unchanged
+                echo $form->showInputText('search_for', _('Keyword Search'), '', DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']), '100', '', '', '', ''); ?><?php
                 echo $form->showInputHidden('sort_by', $sort_by);
                 echo $form->showInputHidden('begin', '0');
                 echo $form->showInputHidden('num', '1');
                 echo $form->showInputHidden('numBegin', '1');
-                echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
-
-                <a href="<?php echo $web_root; ?>/domains/"><?php echo $layout->showButton('button', _('Reset Filters')); ?></a>
-            </div> <!-- col-6 -->
-            <div class="col-6"><?php
                 // WEB HOSTING PROVIDER
                 if ($is_active == "0") {
                     $is_active_string = " AND d.active = '0' ";
@@ -1595,13 +1667,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY h.name
                 ORDER BY h.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('whid', '', '', '', '');
+                echo $form->showDropdownTop('whid', _('Web Hosting Provider'), '', '', '');
                 echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_hosting as $row_hosting) {
 
                     echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $whid);
 
                 }
+                echo $filter_toolbar->keepOption('whid', array_column($result_hosting, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1705,13 +1778,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY c.name
                 ORDER BY c.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('pcid', '', '', '', '');
+                echo $form->showDropdownTop('pcid', _('Category'), '', '', '');
                 echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_category as $row_category) {
 
                     echo $form->showDropdownOption($row_category->id, $row_category->name, $pcid);
 
                 }
+                echo $filter_toolbar->keepOption('pcid', array_column($result_category, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1815,13 +1889,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY o.name
                 ORDER BY o.name asc")->fetchAll();
 
-                echo $form->showDropdownTop('oid', '', '', '', '');
+                echo $form->showDropdownTop('oid', _('Owner'), '', '', '');
                 echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_owner as $row_owner) {
 
                     echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
 
                 }
+                echo $filter_toolbar->keepOption('oid', array_column($result_owner, 'id'));
                 echo $form->showDropdownBottom('');
 
 
@@ -1924,13 +1999,14 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY tld 
                 ORDER BY tld asc")->fetchAll();
 
-                echo $form->showDropdownTop('tld', '', '', '', '');
+                echo $form->showDropdownTop('tld', _('TLD'), '', '', '');
                 echo $form->showDropdownOption('', _('TLD') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
                 foreach ($result_tld as $row_tld) {
 
                     echo $form->showDropdownOption($row_tld->tld, $row_tld->tld, $tld);
 
                 }
+                echo $filter_toolbar->keepOption('tld', array_column($result_tld, 'tld'));
                 echo $form->showDropdownBottom('');
 
 
@@ -2009,7 +2085,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 GROUP BY active
                 ORDER BY active asc")->fetchAll();
 
-                echo $form->showDropdownTop('is_active', '', '', '', '');
+                echo $form->showDropdownTop('is_active', _('Status'), '', '', '');
                 echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
                 foreach ($result_active as $row_active) {
 
@@ -2053,12 +2129,13 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
                 }
                 echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
+                echo $filter_toolbar->keepOption('is_active', array_merge(array('LIVE', 'ALL'), array_map('strval', array_column($result_active, 'active'))));
                 echo $form->showDropdownBottom('');
 
                 if ($_SESSION['s_system_large_mode'] == '1') {
 
                     // NUMBER OF DOMAINS TO DISPLAY
-                    echo $form->showDropdownTop('result_limit', '', '', '', '');
+                    echo $form->showDropdownTop('result_limit', _('Results Per Page'), '', '', '');
 
                     if ($_SESSION['s_number_of_domains'] != "10" && $_SESSION['s_number_of_domains'] != "50" && $_SESSION['s_number_of_domains'] != "100" && $_SESSION['s_number_of_domains'] != "500" && $_SESSION['s_number_of_domains'] != "1000" && $_SESSION['s_number_of_domains'] != "1000000") {
 
@@ -2078,15 +2155,17 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } ?>
 
                 <?php
-                echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
+                echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
+
+                <div class="d-flex flex-wrap gap-2 domainmod-filter-actions">
+                    <?php echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
+                    <a class="btn btn-outline-secondary" href="<?php echo htmlspecialchars($web_root . '/domains/index.php', ENT_QUOTES, 'UTF-8'); ?>"><?php echo _('Reset Filters'); ?></a>
+                </div><?php
 
                 echo $form->showFormBottom(''); ?>
-            </div> <!-- col-6 -->
-        </div> <!-- row --><?php
-        echo $layout->expandableBoxBottom(); ?>
+        </div><?php
 
-    </div>
-    <!-- /.box --><?php
+    echo $filter_toolbar->panelBottom($filter_expanded);
 
 }
 
@@ -2149,7 +2228,8 @@ if ($result) {
     $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
     $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
-    $layout->addPageAction(_('Export'), 'index.php?' . $_SERVER['QUERY_STRING'] . '&export_data=1', 'bi-download'); ?>
+    // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
+    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download'); ?>
 
     <?php if ($segid !== 0) { ?>
         <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
