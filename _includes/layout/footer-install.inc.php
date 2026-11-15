@@ -20,9 +20,6 @@
  */
 ?>
     </div>
-    <div class="col-4">
-        &nbsp;
-    </div>
 </div>
 <!-- /.row -->
 <?php

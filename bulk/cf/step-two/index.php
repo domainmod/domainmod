@@ -255,6 +255,7 @@ $breadcrumb_text = _('Update Custom Domain Field');
 $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
 ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->stepIndicator(array(_('Custom Field'), _('Domains and Value')), 2, _('Bulk Updater steps')); ?>
 <?php
 $done = $done ?? '';
 if ($done != '1') {

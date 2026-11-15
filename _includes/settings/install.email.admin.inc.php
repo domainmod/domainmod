@@ -24,3 +24,4 @@ $page_title = _('Administrator Email Address');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.email.admin";
+$install_step = 5;

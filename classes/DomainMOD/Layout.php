@@ -222,6 +222,53 @@ class Layout
         echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }
 
+    /*
+     * A multi-step flow's progress (the installer, the Domain Queue's API add, and the Bulk Updater's custom field
+     * update): a numbered row of steps, with the steps already done ticked, the current one highlighted, and the ones
+     * still to come plain. $steps are the translated step names in order, $current is the current step's number
+     * (1-based), and $label is the translated name of the flow for screen readers. The steps aren't links, since moving
+     * between them out of order would skip their checks, and screen readers hear each step's position and state.
+     */
+    // $urls optionally gives each step's address, in the same order as $steps: the steps already done then link back to
+    // their page, so a multi-step flow that keeps its answers (such as the installer) can go back to any earlier step
+    public function stepIndicator($steps, $current, $label, $urls = array())
+    {
+        $steps = array_values($steps);
+        $urls = array_values($urls);
+        $total = count($steps);
+        $current = (int) $current;
+
+        ob_start(); ?>
+
+        <nav class="domainmod-steps" aria-label="<?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>">
+            <ol><?php
+            foreach ($steps as $index => $name) {
+                $number = $index + 1;
+                if ($number < $current) {
+                    $state = 'is-done';
+                    $prefix = sprintf(_('Step %1$s of %2$s, done:'), $number, $total);
+                } elseif ($number === $current) {
+                    $state = 'is-current';
+                    $prefix = sprintf(_('Step %1$s of %2$s, current:'), $number, $total);
+                } else {
+                    $state = '';
+                    $prefix = sprintf(_('Step %1$s of %2$s:'), $number, $total);
+                } ?>
+                <li class="domainmod-step<?php echo $state !== '' ? ' ' . $state : ''; ?>"<?php if ($state === 'is-current') echo ' aria-current="step"'; ?>><?php
+                    $url = ($state === 'is-done' && isset($urls[$index]) && $urls[$index] !== '') ? $urls[$index] : '';
+                    if ($url !== '') { ?><a class="domainmod-step-link" href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>"><?php } ?>
+                    <span class="domainmod-step-number" aria-hidden="true"><?php if ($state === 'is-done') { ?><i class="bi bi-check-lg"></i><?php } else { echo $number; } ?></span>
+                    <span class="visually-hidden"><?php echo htmlspecialchars($prefix, ENT_QUOTES, 'UTF-8'); ?> </span>
+                    <span class="domainmod-step-name"><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></span><?php
+                    if ($url !== '') { ?></a><?php } ?>
+                </li><?php
+            } ?>
+            </ol>
+        </nav><?php
+
+        return ob_get_clean();
+    }
+
     public function modalButton($name)
     {
         ob_start(); ?>

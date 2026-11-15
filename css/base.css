@@ -837,3 +837,190 @@ div.dt-container > div.bottom {
         box-shadow: 0 0 0 .3rem var(--bs-success-border-subtle);
     }
 }
+/* The step indicator on multi-step flows (Layout::stepIndicator()): numbered circles joined by a thin line, the steps
+   already done ticked in the success colour, the current one in the main colour, and the ones still to come as an
+   outline in the secondary text colour, which has enough contrast for a meaningful outline in both colour modes (the
+   border colour is too faint). In narrow containers only the current step keeps its name beside the circles. */
+.domainmod-steps {
+    --domainmod-step-size: 2rem;
+    --domainmod-step-done-color: #fff;
+    margin-bottom: 1rem;
+}
+[data-bs-theme="dark"] .domainmod-steps {
+    /* Nord's green is light, so the tick on it is dark */
+    --domainmod-step-done-color: #2e3440;
+    /* The brand red is too dark against the Nord page for the current circle's edge, so its ring is a light red */
+    --domainmod-step-current-ring: #e6adb2;
+}
+.domainmod-steps ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.domainmod-step {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--bs-secondary-color);
+}
+.domainmod-step + .domainmod-step::before {
+    content: "";
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background-color: var(--bs-secondary-color);
+}
+.domainmod-step-number {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--domainmod-step-size);
+    height: var(--domainmod-step-size);
+    border: 2px solid var(--bs-secondary-color);
+    border-radius: 50%;
+    font-size: .875rem;
+    font-weight: 600;
+    line-height: 1;
+}
+.domainmod-step.is-done .domainmod-step-number {
+    color: var(--domainmod-step-done-color);
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+.domainmod-step.is-current {
+    color: var(--bs-emphasis-color);
+    font-weight: 600;
+}
+.domainmod-step.is-current .domainmod-step-number {
+    color: #fff;
+    background-color: var(--bs-primary);
+    border-color: var(--domainmod-step-current-ring, var(--bs-primary));
+}
+.domainmod-steps {
+    container-type: inline-size;
+}
+/* A step already done that links back to its page (Layout::stepIndicator() with step addresses): the whole step is the
+   link, in the step's own colours, and its circle gains a ring on hover and focus */
+.domainmod-step-link {
+    display: flex;
+    align-items: center;
+    gap: inherit;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 1rem;
+}
+.domainmod-step-link:hover .domainmod-step-number,
+.domainmod-step-link:focus-visible .domainmod-step-number {
+    box-shadow: 0 0 0 .2rem rgba(var(--bs-success-rgb), .4);
+}
+.domainmod-step-link:hover .domainmod-step-name {
+    text-decoration: underline;
+}
+.domainmod-step-link:focus-visible {
+    outline: 2px solid var(--bs-focus-ring-color, currentColor);
+    outline-offset: 2px;
+}
+/* More room under the installer's steps, so they don't crowd the page title below them */
+.domainmod-install-column .domainmod-steps {
+    margin-bottom: 1.75rem;
+}
+/* In the installer's column the steps span its full width, the joining lines sharing the room left over, so the row
+   lines up with the text under it on both sides instead of stopping short under the centred logo */
+.domainmod-install-column .domainmod-step + .domainmod-step,
+.domainmod-install-column .domainmod-step + .domainmod-step::before {
+    flex-grow: 1;
+}
+/* Any narrow container (a phone, or the installer's column), where every step's name wouldn't fit */
+@container (max-width: 40rem) {
+    /* One row: a long current step name wraps onto a second line beside its circle rather than pushing circles down */
+    .domainmod-steps ol {
+        --domainmod-step-size: 1.625rem;
+        flex-wrap: nowrap;
+        gap: .25rem;
+    }
+    .domainmod-step {
+        flex-shrink: 0;
+        gap: .25rem;
+    }
+    .domainmod-step.is-current {
+        flex-shrink: 1;
+        min-width: 0;
+        line-height: 1.15;
+    }
+    /* A long word in the name breaks, as a last resort, instead of overlapping the next circles */
+    .domainmod-step.is-current .domainmod-step-name {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+    .domainmod-step + .domainmod-step::before {
+        width: .625rem;
+    }
+    /* Hidden from view only, so screen readers still hear every step's name (as Bootstrap's .visually-hidden) */
+    .domainmod-step:not(.is-current) .domainmod-step-name {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+}
+/* The narrowest spaces (a small phone): the joining lines go, so the current step's name has room */
+/* In the installer the current step's name sits halfway between its circle and the next, with a shorter line on each
+   side of it, in place of the one line that would run from the name to the next circle */
+.domainmod-install-column .domainmod-step.is-current {
+    /* A double share of the spare room, split between its three lines, so each is a little shorter than the rest */
+    flex-grow: 2;
+}
+.domainmod-install-column .domainmod-step.is-current .domainmod-step-name {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    gap: .5rem;
+}
+.domainmod-install-column .domainmod-step.is-current:not(:last-child) .domainmod-step-name::before,
+.domainmod-install-column .domainmod-step.is-current:not(:last-child) .domainmod-step-name::after {
+    content: "";
+    /* The lines don't shrink, so a long name wraps rather than overlapping the next circles */
+    flex: 1 0 .625rem;
+    height: 2px;
+    background-color: var(--bs-secondary-color);
+}
+.domainmod-install-column .domainmod-step.is-current + .domainmod-step {
+    flex-grow: 0;
+}
+/* On the last step there's no line after the name, so the step takes an ordinary share of the spare room, all of it
+   going to the line before its circle, and the name ends at the column's edge */
+.domainmod-install-column .domainmod-step.is-current:last-child {
+    flex-grow: 1;
+}
+.domainmod-install-column .domainmod-step.is-current:last-child .domainmod-step-name {
+    flex-grow: 0;
+}
+.domainmod-install-column .domainmod-step.is-current + .domainmod-step::before {
+    display: none;
+}
+@container (max-width: 22rem) {
+    .domainmod-step + .domainmod-step::before,
+    .domainmod-install-column .domainmod-step.is-current .domainmod-step-name::before,
+    .domainmod-install-column .domainmod-step.is-current .domainmod-step-name::after {
+        display: none;
+    }
+    /* Without the lines, the installer's circles spread evenly across the column and a long name may wrap */
+    .domainmod-install-column .domainmod-steps ol {
+        justify-content: space-between;
+    }
+    .domainmod-install-column .domainmod-step.is-current,
+    .domainmod-install-column .domainmod-step.is-current:last-child,
+    .domainmod-install-column .domainmod-step + .domainmod-step {
+        flex-grow: 0;
+    }
+}

@@ -24,3 +24,4 @@ $page_title = _('Select Your Time Zone');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.timezone";
+$install_step = 4;

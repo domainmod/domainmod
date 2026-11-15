@@ -24,3 +24,4 @@ $page_title = _('Select Your Language');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.language";
+$install_step = 1;

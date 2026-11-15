@@ -412,6 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->stepIndicator(array(_('Registrar Account'), _('Domains')), 2, _('Domain Queue steps')); ?>
 <?php
 if ($new_raid !== 0) { ?>
 

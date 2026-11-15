@@ -24,3 +24,4 @@ $page_title = _('Select Your Currency');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.currency";
+$install_step = 3;

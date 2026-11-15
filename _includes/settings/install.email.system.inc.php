@@ -24,3 +24,4 @@ $page_title = _('System Email Address');
 $breadcrumb = "";
 $software_section = "install";
 $slug = "install.email.system";
+$install_step = 6;

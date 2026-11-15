@@ -19,11 +19,10 @@
  *
  */
 ?>
-<div class="row">
-    <div class="col-4">
-        &nbsp;
-    </div>
-    <div class="col-4">
+<?php // One centred column: narrow on a desktop, and the phone's width on a phone (mx-0, since the row sits outside a
+      // container and its negative margins would otherwise make the page scroll sideways) ?>
+<div class="row justify-content-center mx-0">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 domainmod-install-column">
         <BR><BR><BR>
         <div class="login-logo">
             <a href="<?php echo WEB_ROOT; ?>/install/"><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
@@ -51,6 +50,14 @@
 
         require_once DIR_INC . '/layout/table-maintenance.inc.php';
         ?>
+        <?php
+        // The installer's steps, on the pages that are one (each page's settings file sets $install_step)
+        if (isset($install_step)) {
+            $install_steps = array(_('Language'), _('Software Requirements'), _('Currency'), _('Time Zone'), _('Administrator Email'), _('System Email'));
+            // Each step keeps its answer in the session, so the steps already done link back to their page
+            $install_step_urls = array(WEB_ROOT . '/install/language/', WEB_ROOT . '/install/requirements/', WEB_ROOT . '/install/currency/', WEB_ROOT . '/install/timezone/', WEB_ROOT . '/install/email-admin/', WEB_ROOT . '/install/email-system/');
+            echo $layout->stepIndicator($install_steps, $install_step, _('Installation steps'), $install_step_urls);
+        } ?>
             <h3><?php echo $page_title; ?></h3>
         <?php
         $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';

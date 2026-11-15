@@ -70,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->stepIndicator(array(_('Registrar Account'), _('Domains')), 1, _('Domain Queue steps')); ?>
 <strong><?php echo _('Domain Queue & API Prerequisites'); ?></strong><BR>
 <?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?>
 <ol>
