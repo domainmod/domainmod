@@ -133,17 +133,34 @@ if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateForma
 
 }
 
-// The keyword and date range the list uses. An export request carries its own (Export's link writes them out, see the
-// page actions below), so filters another tab saved in the session can't end up in the file, and the session is left
-// as it is.
+// The keyword and date range the list uses. An export reads them from its own request when its link carries them
+// (FilterToolbar::exportUrl() always does), without touching the session, so filters another tab saved there can't end
+// up in the file. An older export link without them falls back to the session, as before.
+$list_search_for = $_SESSION['s_search_for_ssl'];
+$list_start_date = $_SESSION['s_start_date'];
+$list_end_date = $_SESSION['s_end_date'];
+
 if ($export_data === 1) {
-    $list_search_for = $search_for;
-    $list_start_date = $new_start_date !== '' ? $new_start_date : 'YYYY-MM-DD';
-    $list_end_date = $new_end_date !== '' ? $new_end_date : 'YYYY-MM-DD';
-} else {
-    $list_search_for = $_SESSION['s_search_for_ssl'];
-    $list_start_date = $_SESSION['s_start_date'];
-    $list_end_date = $_SESSION['s_end_date'];
+
+    if (array_key_exists('search_for', $_GET)) $list_search_for = $search_for;
+
+    if (array_key_exists('daterange', $_GET)) {
+
+        // The same test the list uses when it saves a range, so the export matches the list exactly
+        if ($new_start_date != '' && $new_start_date != 'YYYY-MM-DD') {
+
+            $list_start_date = $new_start_date;
+            $list_end_date = $new_end_date;
+
+        } else {
+
+            $list_start_date = 'YYYY-MM-DD';
+            $list_end_date = 'YYYY-MM-DD';
+
+        }
+
+    }
+
 }
 
 // Anything else (including translated values in links from older versions) falls back to the default
@@ -684,24 +701,60 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
 
 $result = $pdo->query($sql)->fetchAll();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == 1) {
-    $box_type = 'expanded';
-    $box_icon = 'minus';
-} else {
-    $box_type = 'collapsed';
-    $box_icon = 'plus';
+// The status names, as the status menu shows them, so the menu and the status chip always match. Any other stored value
+// shows as its number in both.
+$status_names = array('0' => _('Expired'), '1' => _('Active'), '3' => _('Pending (Renewal)'), '4' => _('Pending (Other)'),
+    '5' => _('Pending (Registration)'),
+    'LIVE' => _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')',
+    'ALL' => DomainMOD\Format::toUpper(_('All')));
+
+/*
+ * The filter toolbar's state (DomainMOD\FilterToolbar, shared with the Domains list): every active filter with its
+ * plain-text name for its chip. Each id filter's name is read with one small query, only when that filter is on, and an
+ * id that no longer exists still gets a chip. The SSL list has no Large Mode, so nothing else is carried.
+ */
+$filter_toolbar = new DomainMOD\FilterToolbar('ssl-filters', $web_root . '/ssl/index.php', $web_root . '/ssl/index.php');
+$filter_name = function ($sql, $id) use ($pdo) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue('id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $name = $stmt->fetchColumn();
+    $stmt->closeCursor();
+    return $name === false ? DomainMOD\FilterToolbar::notFound() : DomainMOD\FilterToolbar::decode($name);
+};
+if ($did !== 0) $filter_toolbar->addFilter('did', $did, 0, $filter_name("SELECT domain FROM domains WHERE id = :id", $did), _('Domain'));
+if ($sslpid !== 0) $filter_toolbar->addFilter('sslpid', $sslpid, 0, $filter_name("SELECT `name` FROM ssl_providers WHERE id = :id", $sslpid), _('SSL Provider'));
+if ($sslpaid !== 0) $filter_toolbar->addFilter('sslpaid', $sslpaid, 0, $filter_name("
+    SELECT CONCAT(sslp.name, ', ', o.name, ' (', sslpa.username, ')')
+    FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
+    WHERE sslpa.ssl_provider_id = sslp.id
+      AND sslpa.owner_id = o.id
+      AND sslpa.id = :id", $sslpaid), _('SSL Provider Account'));
+if ($ssltid !== 0) $filter_toolbar->addFilter('ssltid', $ssltid, 0, $filter_name("SELECT type FROM ssl_cert_types WHERE id = :id", $ssltid), _('SSL Type'));
+if ($sslipid !== 0) $filter_toolbar->addFilter('sslipid', $sslipid, 0, $filter_name("SELECT CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id = :id", $sslipid), _('IP Address'));
+if ($sslpcid !== 0) $filter_toolbar->addFilter('sslpcid', $sslpcid, 0, $filter_name("SELECT `name` FROM categories WHERE id = :id", $sslpcid), _('Category'));
+if ($oid !== 0) $filter_toolbar->addFilter('oid', $oid, 0, $filter_name("SELECT `name` FROM owners WHERE id = :id", $oid), _('Owner'));
+$filter_toolbar->addFilter('is_active', $is_active, 'LIVE', $status_names[$is_active] ?? $is_active, _('Status'));
+if ($list_search_for != '') {
+    $filter_keyword = DomainMOD\FilterToolbar::decode($list_search_for);
+    $filter_toolbar->addFilter('search_for', $filter_keyword, '', '"' . $filter_keyword . '"', _('Keyword Search'));
+}
+if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
+    $filter_toolbar->addFilter('daterange', $list_start_date . ' - ' . $list_end_date, '',
+        sprintf(_('Expiring: %1$s to %2$s'), $list_start_date, $list_end_date));
 }
 
-if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') { ?>
+if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
-<div class="box box-default box-solid"><?php
+    // The no-JavaScript page (expand=1) draws the form as a card under the toolbar instead of in the side panel
+    $filter_expanded = ($expand === 1);
 
-    echo $layout->expandableBoxTop(_('Advanced Filtering'), './', 'reset');
+    echo $filter_toolbar->toolbar($filter_expanded);
+    echo $filter_toolbar->panelTop($filter_expanded);
 
     echo $form->showFormTop(''); ?>
 
-    <div class="row">
-        <div class="col-6"><?php
+    <div><?php
             // DOMAIN
             if ($is_active == "0") {
                 $is_active_string = " AND sslc.active = '0' ";
@@ -789,13 +842,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY d.domain
                 ORDER BY d.domain asc")->fetchAll();
 
-            echo $form->showDropdownTop('did', '', '', '', '');
+            echo $form->showDropdownTop('did', _('Domain'), '', '', '');
             echo $form->showDropdownOption('', _('Domain') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_domain as $row_domain) {
 
                 echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $did);
 
             }
+            echo $filter_toolbar->keepOption('did', array_column($result_domain, 'id'));
             echo $form->showDropdownBottom('');
 
 
@@ -886,13 +940,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslp.name
                 ORDER BY sslp.name asc")->fetchAll();
 
-            echo $form->showDropdownTop('sslpid', '', '', '', '');
+            echo $form->showDropdownTop('sslpid', _('SSL Provider'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_ssl_provider as $row_ssl_provider) {
 
                 echo $form->showDropdownOption($row_ssl_provider->id, $row_ssl_provider->name, $sslpid);
 
             }
+            echo $filter_toolbar->keepOption('sslpid', array_column($result_ssl_provider, 'id'));
             echo $form->showDropdownBottom('');
 
 
@@ -985,13 +1040,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslp.name, o.name, sslpa.username
                 ORDER BY sslp.name asc, o.name asc, sslpa.username asc")->fetchAll();
 
-            echo $form->showDropdownTop('sslpaid', '', '', '', '');
+            echo $form->showDropdownTop('sslpaid', _('SSL Provider Account'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Provider Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_account as $row_account) {
 
                 echo $form->showDropdownOption($row_account->sslpa_id, $row_account->sslp_name . ', ' . $row_account->owner_name . ' (' . $row_account->username . ')', $sslpaid);
 
             }
+            echo $filter_toolbar->keepOption('sslpaid', array_column($result_account, 'sslpa_id'));
             echo $form->showDropdownBottom('');
 
 
@@ -1082,20 +1138,17 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslcf.type
                 ORDER BY sslcf.type asc")->fetchAll();
 
-            echo $form->showDropdownTop('ssltid', '', '', '', '');
+            echo $form->showDropdownTop('ssltid', _('SSL Type'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_type as $row_type) {
 
                 echo $form->showDropdownOption($row_type->type_id, $row_type->type, $ssltid);
 
             }
+            echo $filter_toolbar->keepOption('ssltid', array_column($result_type, 'type_id'));
             echo $form->showDropdownBottom(''); ?>
 
-            <?php echo $form->showInputText('search_for', _('Keyword Search'), '', $_SESSION['s_search_for_ssl'], '100', '', '', '', '');
-            echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
-            <a href="<?php echo $web_root; ?>/ssl/"><?php echo $layout->showButton('button', _('Reset Filters')); ?></a>
-        </div> <!-- col-6 -->
-        <div class="col-6"><?php
+            <?php echo $form->showInputText('search_for', _('Keyword Search'), '', DomainMOD\FilterToolbar::decode($_SESSION['s_search_for_ssl']), '100', '', '', '', ''); ?><?php
 
             // IP ADDRESS
             if ($is_active == "0") {
@@ -1184,13 +1237,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY ip.name, ip.ip
                 ORDER BY ip.name, ip.ip")->fetchAll();
 
-            echo $form->showDropdownTop('sslipid', '', '', '', '');
+            echo $form->showDropdownTop('sslipid', _('IP Address'), '', '', '');
             echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_ip as $row_ip) {
 
                 echo $form->showDropdownOption($row_ip->ip_id, $row_ip->ip_name . ' (' . $row_ip->ip . ')', $sslipid);
 
             }
+            echo $filter_toolbar->keepOption('sslipid', array_column($result_ip, 'ip_id'));
             echo $form->showDropdownBottom('');
 
 
@@ -1281,13 +1335,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                GROUP BY c.name
                ORDER BY c.name")->fetchAll();
 
-            echo $form->showDropdownTop('sslpcid', '', '', '', '');
+            echo $form->showDropdownTop('sslpcid', _('Category'), '', '', '');
             echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_cat as $row_cat) {
 
                 echo $form->showDropdownOption($row_cat->cat_id, $row_cat->cat_name, $sslpcid);
 
             }
+            echo $filter_toolbar->keepOption('sslpcid', array_column($result_cat, 'cat_id'));
             echo $form->showDropdownBottom('');
 
 
@@ -1378,13 +1433,14 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY o.name
                 ORDER BY o.name asc")->fetchAll();
 
-            echo $form->showDropdownTop('oid', '', '', '', '');
+            echo $form->showDropdownTop('oid', _('Owner'), '', '', '');
             echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
             foreach ($result_owner as $row_owner) {
 
                 echo $form->showDropdownOption($row_owner->id, $row_owner->name, $oid);
 
             }
+            echo $filter_toolbar->keepOption('oid', array_column($result_owner, 'id'));
             echo $form->showDropdownBottom('');
 
 
@@ -1479,23 +1535,13 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY sslc.active
                 ORDER BY sslc.active asc")->fetchAll();
 
-            echo $form->showDropdownTop('is_active', '', '', '', '');
+            echo $form->showDropdownTop('is_active', _('Status'), '', '', '');
             echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', 'LIVE');
             foreach ($result_active as $row_active) {
 
                 $display_text = $row_active->active;
 
-                if ($row_active->active == "0") {
-                    $display_text = "Expired";
-                } elseif ($row_active->active == "1") {
-                    $display_text = "Active";
-                } elseif ($row_active->active == "3") {
-                    $display_text = "Pending (Renewal)";
-                } elseif ($row_active->active == "4") {
-                    $display_text = "Pending (Other)";
-                } elseif ($row_active->active == "5") {
-                    $display_text = "Pending (Registration)";
-                }
+                if (isset($status_names[(string) $row_active->active])) $display_text = $status_names[(string) $row_active->active];
 
                 /* TODO: This needs to be fixed, but it's going to be a very big refactoring job, and this is the best temporary band-aid solution. */
                 /*
@@ -1519,41 +1565,34 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             }
             echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
+            echo $filter_toolbar->keepOption('is_active', array_merge(array('LIVE', 'ALL'), array_map('strval', array_column($result_active, 'active'))));
             echo $form->showDropdownBottom('');
 
-            echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
+            echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
+
+            <div class="d-flex flex-wrap gap-2 domainmod-filter-actions">
+                <?php echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
+                <a class="btn btn-outline-secondary" href="<?php echo htmlspecialchars($web_root . '/ssl/index.php', ENT_QUOTES, 'UTF-8'); ?>"><?php echo _('Reset Filters'); ?></a>
+            </div><?php
 
             echo $form->showFormBottom(''); ?>
-        </div> <!-- col-6 -->
-    </div> <!-- row --><?php
-    echo $layout->expandableBoxBottom(); ?>
+    </div><?php
 
-</div>
-<!-- /.box --><?php
+    echo $filter_toolbar->panelBottom($filter_expanded);
 
 }
 
 if ($result) {
 
     /*
-     * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link is built from the
-     * filters the list actually used, since the Advanced Filtering form posts them and they'd otherwise never reach
-     * the export. Each filter that differs from its default is written out (so an inactive-only list keeps
-     * is_active=0), and the keyword and date range always are, empty when off. The keyword was HTML-escaped when it was
-     * read, so it's decoded once here and escaped again when the export request reads it.
+     * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link carries the filters
+     * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()), since the filter form posts
+     * them and they'd otherwise never reach the export. Each active filter is written out (so an inactive-only list
+     * keeps is_active=0), and the keyword and date range always are, empty when off.
      */
-    $export_filters = array();
-    foreach (array('oid' => $oid, 'did' => $did, 'sslpid' => $sslpid, 'sslpaid' => $sslpaid, 'ssltid' => $ssltid, 'sslipid' => $sslipid, 'sslpcid' => $sslpcid) as $filter_key => $filter_value) {
-        if ($filter_value !== 0) $export_filters[$filter_key] = $filter_value;
-    }
-    if ($is_active !== 'LIVE') $export_filters['is_active'] = $is_active;
-    $export_filters['search_for'] = html_entity_decode($list_search_for, ENT_QUOTES, 'UTF-8');
-    $export_filters['daterange'] = ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') ? $list_start_date . ' - ' . $list_end_date : '';
-    $export_filters['export_data'] = 1;
-
     $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
-    $layout->addPageAction(_('Export'), 'index.php?' . http_build_query($export_filters), 'bi-download'); ?>
+    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download'); ?>
 
     <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
     <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($result)); ?><BR><BR><?php

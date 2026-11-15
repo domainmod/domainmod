@@ -524,7 +524,7 @@ class Layout
      * heading (h2 by default, under the page's h1, or 3 for a box under an h2 section). The button is tied to the box's
      * body (aria-controls), says whether it's open (aria-expanded, kept up to date by the footer script on AdminLTE's
      * expanded and collapsed events), and is named "Show or hide" followed by the box's title, so each box's button
-     * says which box it opens. A link after the title (such as Advanced Filtering's reset) isn't part of that name.
+     * says which box it opens. A link after the title isn't part of that name.
      */
     public function expandableBoxTop($title, $url, $url_text, $heading_level = 2)
     {

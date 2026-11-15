@@ -22,7 +22,7 @@
 namespace DomainMOD;
 
 /*
- * A list's filter toolbar (the Domains list, and the SSL list next): a Filters button with a count of the active
+ * A list's filter toolbar (the Domains and SSL lists): a Filters button with a count of the active
  * filters, one removable chip per active filter, and Clear all, with every filter in a Bootstrap offcanvas side panel.
  * Without JavaScript the Filters button reloads the page with expand=1, and the form is drawn as a normal card instead.
  *

@@ -1423,9 +1423,8 @@ div.dt-container > div.bottom {
 /* Accessibility fixes (design item 5). Links inside running text are underlined, since their colour alone doesn't stand
    out enough from the text around them (WCAG 1.4.1). Links that are already set apart are left alone: anything with a
    class (buttons, nav links, tiles, DataTables controls), and links in tables, navigation, breadcrumbs, card footers,
-   menus, and the landing pages' link lists. Advanced Filtering's [reset] link sits in a card header, so it's named. */
-.app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a),
-.card-header .card-title .card-tools > a:not([class]) {
+   menus, and the landing pages' link lists. */
+.app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a) {
     text-decoration: underline;
 }
 /* Light mode: inline code and the outline secondary buttons in darker shades, since Bootstrap's pink code text and grey
@@ -1556,11 +1555,11 @@ html.domainmod-toasts-compact {
     transform: none;
 }
 
-/* The filter toolbar (DomainMOD\FilterToolbar, on the Domains list): each active filter as a chip that removes it, in
-   the theme's secondary background with a border in the secondary text colour (well over 3:1 in both colour modes),
-   and the filters in a Bootstrap offcanvas panel, 420px wide and full width on phones. Logical properties throughout, so
-   right-to-left languages mirror it, and the panel's padding is trimmed on the smallest phones so the date calendar
-   fits. */
+/* The filter toolbar (DomainMOD\FilterToolbar, on the Domains and SSL lists): each active filter as a chip that
+   removes it, in the theme's secondary background with a border in the secondary text colour (well over 3:1 in both
+   colour modes), and the filters in a Bootstrap offcanvas panel, 420px wide and full width on phones. Logical
+   properties throughout, so right-to-left languages mirror it, and the panel's padding is trimmed on the smallest
+   phones so the date calendar fits. */
 .domainmod-filter-chip {
     display: inline-flex;
     align-items: center;
