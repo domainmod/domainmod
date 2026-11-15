@@ -44,8 +44,10 @@ $pdo = $deeb->cnxx;
 
 $new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
 $new_password_confirmation = isset($_POST['new_password_confirmation']) ? $sanitize->text($_POST['new_password_confirmation']) : '';
+// As typed, since that's what's checked and hashed
+$typed_password = $unsanitize->text($new_password);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation && !$user->passwordTooShort($unsanitize->text($new_password))) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation && !$user->passwordHasUnusableCharacter($typed_password) && !$user->passwordTooShort($typed_password) && !$user->passwordTooLong($typed_password)) {
 
     $stmt = $pdo->prepare("
         SELECT id
@@ -74,35 +76,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     } else {
 
-        $temp_password = $unsanitize->text($new_password);
+        // password_hash() fails on a password it can't take, which the checks above should already have refused
+        try {
+            $new_hash = $user->generateHash($typed_password);
+        } catch (\ValueError $e) {
+            $new_hash = '';
+        }
 
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET `password` = :temp_password,
-                new_password = '0',
-                update_time = :timestamp
-            WHERE id = :user_id
-              AND email_address = :email_address");
-        $stmt->bindValue('temp_password', $user->generateLegacyHash($temp_password), PDO::PARAM_STR);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-        $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
-        $stmt->execute();
+        if (!is_string($new_hash) || $new_hash === '') {
 
-        $_SESSION['s_message_success'] .= _('Password changed') . '<BR>';
-
-        if ($_SESSION['s_running_login_checks'] == '1') {
-
-            header('Location: ../../checks.php');
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), $user->passwordUnusableMessage());
 
         } else {
 
-            header('Location: index.php');
+            $stmt = $pdo->prepare("
+                UPDATE users
+                SET `password` = :new_hash,
+                    new_password = '0',
+                    update_time = :timestamp
+                WHERE id = :user_id
+                  AND email_address = :email_address");
+            $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_STR);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->bindValue('email_address', $_SESSION['s_email_address'], PDO::PARAM_STR);
+            $stmt->execute();
+
+            $_SESSION['s_message_success'] .= _('Password changed') . '<BR>';
+
+            if (($_SESSION['s_running_login_checks'] ?? '') == '1') {
+
+                header('Location: ../../checks.php');
+
+            } else {
+
+                header('Location: index.php');
+
+            }
+            exit;
 
         }
-        exit;
-
 
     }
 
@@ -120,9 +134,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
             $form->addFieldError(array('new_password', 'new_password_confirmation'), _("Your passwords didn't match"));
 
-        } else {
+        } elseif ($user->passwordHasUnusableCharacter($typed_password)) {
+
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), $user->passwordUnusableMessage());
+
+        } elseif ($user->passwordTooShort($typed_password)) {
 
             $form->addFieldError(array('new_password', 'new_password_confirmation'), $user->passwordTooShortMessage());
+
+        } else {
+
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), $user->passwordTooLongMessage());
 
         }
 

@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
             $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
             $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-            $stmt->bindValue('new_password', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
+            $stmt->bindValue('new_password', $user->generateHash($new_password), PDO::PARAM_STR);
             $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
             $bind_timestamp = $time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);

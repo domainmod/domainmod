@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
     $_SESSION['s_read_only'] = '1';
 
-    // Check to see if the user's password is using the old md5 hashing
+    // Check to see if the user's password is still stored in the older format (the one MySQL's PASSWORD() made)
     $stmt = $pdo->prepare("
         SELECT id
         FROM users
@@ -75,10 +75,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
     $result = $stmt->fetch();
     $stmt->closeCursor();
 
-    // Update the stored password to use stronger hashing than md5
+    // Move the stored password to the current format. password_hash() can't take a NUL byte, so a password with one
+    // keeps its older hash, and the sign-in fails below instead of with a server error.
     if ($result) {
 
-        $new_hashed_password = $user->generateHash($new_password);
+        try {
+            $new_hashed_password = $user->generateHash($new_password);
+        } catch (\ValueError $e) {
+            $new_hashed_password = '';
+        }
+
+    }
+
+    if ($result && is_string($new_hashed_password) && $new_hashed_password !== '') {
 
         $stmt = $pdo->prepare("
             UPDATE `users`
@@ -103,7 +112,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
     $stmt->execute();
     $stored_hash = $stmt->fetchColumn();
 
-    if (password_verify($new_password, $stored_hash)) {
+    if (is_string($stored_hash) && password_verify($new_password, $stored_hash)) {
+
+        // Rehash a password stored with an older algorithm or a lower cost than this PHP's default (PHP 8.4 raised
+        // bcrypt's from 10 to 12). password_needs_rehash() is also true for a higher cost, such as a cost 12 hash on
+        // PHP 8.3, so a hash is never replaced with a weaker one. A typed password with a NUL byte can pass
+        // password_verify() but can't be hashed, so it keeps its stored hash.
+        if (password_needs_rehash($stored_hash, PASSWORD_DEFAULT)) {
+
+            try {
+                $rehashed_password = $user->generateHash($new_password);
+            } catch (\ValueError $e) {
+                $rehashed_password = '';
+            }
+
+            if (is_string($rehashed_password) && $rehashed_password !== '') {
+
+                $stored_info = password_get_info($stored_hash);
+                $rehashed_info = password_get_info($rehashed_password);
+                $stored_is_as_strong = $stored_info['algo'] === PASSWORD_BCRYPT && $rehashed_info['algo'] === PASSWORD_BCRYPT
+                    && ($stored_info['options']['cost'] ?? 0) >= ($rehashed_info['options']['cost'] ?? 0);
+
+                if (!$stored_is_as_strong) {
+
+                    // Only if the stored hash hasn't changed since it was read, such as a sign-in from another browser
+                    $stmt = $pdo->prepare("
+                        UPDATE `users`
+                        SET password = :rehashed_password
+                        WHERE username = :new_username
+                          AND `password` = :stored_hash
+                          AND active = '1'");
+                    $stmt->bindValue('rehashed_password', $rehashed_password, PDO::PARAM_STR);
+                    $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+                    $stmt->bindValue('stored_hash', $stored_hash, PDO::PARAM_STR);
+                    $stmt->execute();
+
+                    if ($stmt->rowCount() === 1) {
+
+                        $stored_hash = $rehashed_password;
+
+                    } else {
+
+                        // Another sign-in changed it first, so the session gets the hash that's stored now
+                        $stmt = $pdo->prepare("
+                            SELECT `password`
+                            FROM users
+                            WHERE username = :new_username
+                              AND active = '1'");
+                        $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
+                        $stmt->execute();
+                        $current_hash = $stmt->fetchColumn();
+
+                        if (is_string($current_hash) && password_verify($new_password, $current_hash)) {
+                            $stored_hash = $current_hash;
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
 
         $_SESSION['s_user_id'] = $user->getUserId($new_username);
         $_SESSION['s_username'] = $new_username;

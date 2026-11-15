@@ -98,7 +98,7 @@ if ($new_username != '') {
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_password', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $user->generateHash($new_password), PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);

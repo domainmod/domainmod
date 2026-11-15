@@ -101,18 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($new_password !== $new_password_confirmation) {
         $new_hash = '';
         $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), _("The passwords didn't match"));
-    } elseif (strpos($new_password, "\0") !== false) {
+    } elseif ($user->passwordHasUnusableCharacter($new_password)) {
         // password_hash() can't take a NUL byte, so it's refused here rather than failing below
         $new_hash = '';
-        $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), _("The password contains a character that can't be used"));
+        $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), $user->passwordUnusableMessage());
     } elseif ($user->passwordTooShort($new_password)) {
         $new_hash = '';
         $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), $user->passwordTooShortMessage());
-    } elseif (strlen($new_password) > 72) {
-        // Passwords are hashed with bcrypt, which uses only the first 72 bytes (fewer characters when some take more than
-        // one byte), so a longer one is refused rather than cut short
+    } elseif ($user->passwordTooLong($new_password)) {
         $new_hash = '';
-        $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), _('The password is too long'));
+        $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), $user->passwordTooLongMessage());
     } else {
         try {
             $new_hash = $user->generateHash($new_password);
@@ -121,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         if (!is_string($new_hash) || $new_hash === '') {
             $new_hash = '';
-            $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), _("The password contains a character that can't be used"));
+            $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), $user->passwordUnusableMessage());
         }
     }
 

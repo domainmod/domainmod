@@ -99,6 +99,34 @@ class User
         return sprintf(_('Use at least %s characters.'), self::MIN_PASSWORD_LENGTH);
     }
 
+    // The longest password people can choose, in bytes. Passwords are hashed with bcrypt, which uses only the first 72
+    // bytes (fewer characters when some take more than one byte), so a longer one is refused rather than cut short.
+    const MAX_PASSWORD_BYTES = 72;
+
+    // Whether a password someone has typed (as typed, before any escaping) is longer than the maximum, in bytes
+    public function passwordTooLong($password)
+    {
+        return strlen((string) $password) > self::MAX_PASSWORD_BYTES;
+    }
+
+    // The message for a password that's too long, in one place so every form says the same thing
+    public function passwordTooLongMessage()
+    {
+        return _('The password is too long');
+    }
+
+    // Whether a password someone has typed contains a NUL byte, which password_hash() can't take
+    public function passwordHasUnusableCharacter($password)
+    {
+        return strpos((string) $password, "\0") !== false;
+    }
+
+    // The message for a password with a character that can't be used, in one place so every form says the same thing
+    public function passwordUnusableMessage()
+    {
+        return _("The password contains a character that can't be used");
+    }
+
     public function generatePassword($password_length = 72)
     {
         $character_pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -126,7 +154,8 @@ class User
 
     // The older password format (the one MySQL's PASSWORD() made): '*' and the upper case SHA1 of the password's binary
     // SHA1, the same as CONCAT('*', UPPER(SHA1(UNHEX(SHA1(x))))) in SQL. It's built here because MySQL 9 removed
-    // SHA1(). New and reset passwords start in this format and move to generateHash() at the next sign-in.
+    // SHA1(). Passwords are no longer saved in this format. It's used only at sign-in, to recognise a password saved
+    // in it and move it to generateHash().
     public function generateLegacyHash($password)
     {
         return '*' . strtoupper(sha1(sha1($password, true)));
