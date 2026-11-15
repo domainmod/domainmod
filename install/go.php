@@ -31,7 +31,6 @@ $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/install/go/index.php');
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
-$user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -45,9 +44,6 @@ $csrf->check(WEB_ROOT . '/install/');
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
-// Admin
-$temp_admin_first_name = _('Domain');
-$temp_admin_last_name = _('Administrator');
 
 // Assets
 $temp_default_category = _('[no category]');
@@ -77,6 +73,12 @@ $installation_timezone = $_SESSION['s_installation_timezone'] ?? '';
 $installation_currency = $_SESSION['s_installation_currency'] ?? '';
 
 $system->installCheck();
+
+// Every step's answer must be here (the Ready to Install step checks too), so nothing installs with one missing
+if ($system->installFirstMissingStep() !== '') {
+    header('Location: ' . WEB_ROOT . '/install/ready/');
+    exit;
+}
 
 try {
 
@@ -130,18 +132,23 @@ try {
 
     $stmt = $pdo->prepare("
         INSERT INTO `users`
-        (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`,
-         `insert_time`)
+        (`first_name`, `last_name`, `username`, `email_address`, `password`, `new_password`, `admin`, `read_only`,
+         `creation_type_id`, `insert_time`)
         VALUES
-        (:new_first_name, :new_last_name, 'admin', :new_admin_email, :admin_password,
-         '1', '0', :creation_type_id_installation, :timestamp)");
-    $stmt->bindValue('new_first_name', $temp_admin_first_name, PDO::PARAM_STR);
-    $stmt->bindValue('new_last_name', $temp_admin_last_name, PDO::PARAM_STR);
-    $stmt->bindValue('new_admin_email', $_SESSION['new_admin_email'], PDO::PARAM_STR);
-    $stmt->bindValue('admin_password', $user->generateLegacyHash('admin'), PDO::PARAM_STR);
+        (:new_first_name, :new_last_name, :new_username, :new_admin_email, :admin_password,
+         '0', '1', '0', :creation_type_id_installation, :timestamp)");
+    // The administrator account from the Administrator Account step, with the password already hashed there, so
+    // there's no default password and no forced change at first sign-in (new_password is 0)
+    $stmt->bindValue('new_first_name', $_SESSION['s_installation_admin_first_name'], PDO::PARAM_STR);
+    $stmt->bindValue('new_last_name', $_SESSION['s_installation_admin_last_name'], PDO::PARAM_STR);
+    $stmt->bindValue('new_username', $_SESSION['s_installation_admin_username'], PDO::PARAM_STR);
+    $stmt->bindValue('new_admin_email', $_SESSION['s_installation_admin_email'], PDO::PARAM_STR);
+    $stmt->bindValue('admin_password', $_SESSION['s_installation_admin_hash'], PDO::PARAM_STR);
     $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
     $stmt->execute();
+    // The new administrator's id, for their settings below (the username is now whatever they chose)
+    $temp_user_id = $pdo->lastInsertId('id');
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `user_settings` (
@@ -192,11 +199,6 @@ try {
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
-
-    $temp_user_id = $pdo->query("
-        SELECT id
-        FROM users
-        WHERE username = 'admin'")->fetchColumn();
 
    $stmt = $pdo->prepare("
         INSERT INTO user_settings
@@ -1288,7 +1290,12 @@ try {
     unset($_SESSION['s_message_danger']);
 
     unset($_SESSION['new_system_email']);
-    unset($_SESSION['new_admin_email']);
+    unset($_SESSION['s_installation_admin_first_name']);
+    unset($_SESSION['s_installation_admin_last_name']);
+    unset($_SESSION['s_installation_admin_username']);
+    unset($_SESSION['s_installation_admin_email']);
+    unset($_SESSION['s_installation_admin_hash']);
+    unset($_SESSION['s_installation_reached']);
     unset($_SESSION['s_installation_mode']);
 
     $goal->installation();
@@ -1296,7 +1303,7 @@ try {
     if ($pdo->InTransaction()) $pdo->commit();
 
     $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-    $_SESSION['s_message_success'] .= sprintf(_('%s has been successfully installed and you should now delete the %s folder'), SOFTWARE_TITLE, '/install/') . "<BR><BR>" . sprintf(_("The default username and password are %s, and you'll be prompted to change the password after logging in"), '"admin"') . "<BR>";
+    $_SESSION['s_message_success'] .= sprintf(_('%s has been installed. Sign in with the administrator account you created.'), SOFTWARE_TITLE) . "<BR>";
 
     header("Location: ../");
     exit;

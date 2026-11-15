@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings/install.email.admin.inc.php
+ * /_includes/settings/install.administrator.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Administrator Email Address');
+$page_title = _('Administrator Account');
 $breadcrumb = "";
 $software_section = "install";
-$slug = "install.email.admin";
+$slug = "install.administrator";
 $install_step = 5;

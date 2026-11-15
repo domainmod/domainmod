@@ -41,15 +41,13 @@ $system->installCheck();
 
 $_SESSION['new_system_email'] = $_SESSION['new_system_email'] ?? '';
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_system_email']) {
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
-    $new_system_email1 = $_SESSION['new_system_email'];
-    $new_system_email2 = $_SESSION['new_system_email'];
+    $new_system_email = $unsanitize->text($_SESSION['new_system_email']);
 
 } else {
 
-    $new_system_email1 = isset($_POST['new_system_email1']) ? $sanitize->text($_POST['new_system_email1']) : '';
-    $new_system_email2 = isset($_POST['new_system_email2']) ? $sanitize->text($_POST['new_system_email2']) : '';
+    $new_system_email = trim((string) ($_POST['new_system_email'] ?? ''));
 
 }
 
@@ -59,24 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $csrf = new DomainMOD\Csrf();
     $csrf->check($_SERVER['REQUEST_URI'] ?? '');
 
-    if ($new_system_email1 != '' && ($new_system_email1 === $new_system_email2)) {
+    if ($new_system_email === '') {
 
-        $_SESSION['new_system_email'] = $new_system_email1;
+        $form->addFieldError('new_system_email', _('Enter the system email address'));
 
-        header("Location: ../go.php?" . $csrf->query());
-        exit;
+    } elseif (filter_var($new_system_email, FILTER_VALIDATE_EMAIL) === false || preg_match('/[\x{10000}-\x{10FFFF}]/u', $new_system_email)) {
+
+        $form->addFieldError('new_system_email', _('Enter a valid email address'));
+
+    } elseif (mb_strlen($sanitize->text($new_system_email), 'UTF-8') > 100) {
+        // The limit is the database column's, so it's checked on the address as it'll be stored (see DomainMOD\Sanitize)
+
+        $form->addFieldError('new_system_email', sprintf(_('This can be at most %s characters long'), 100));
 
     } else {
 
-        if ($new_system_email1 === '' && $new_system_email2 === '') {
+        $_SESSION['new_system_email'] = $sanitize->text($new_system_email);
 
-            $form->addFieldError(array('new_system_email1', 'new_system_email2'), _('Please enter and confirm the system email address'));
-
-        } else {
-
-            $form->addFieldError(array('new_system_email1', 'new_system_email2'), _("The system email addresses didn't match"));
-
-        }
+        header("Location: ../ready/");
+        exit;
 
     }
 
@@ -99,13 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_system_email1', _('Enter Email'), '', $unsanitize->text($new_system_email1), '100', '', '', '', '', '1');
-echo $form->showInputText('new_system_email2', _('Confirm Email'), '', $unsanitize->text($new_system_email2), '100', '', '', '', '');
-?>
-<BR>
-<a href="../email-admin/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
-<?php
-echo $form->showSubmitButton(_('Proceed With Installation'), '', '');
+echo $form->showInputText('new_system_email', _('Email Address') . ' (100)', '', $new_system_email, '100', '', '1', '', '', '1');
+$install_back_url = WEB_ROOT . '/install/administrator/';
+$install_next_label = sprintf(_('Next: %s'), _('Ready to Install'));
+require DIR_INC . '/layout/install-buttons.inc.php';
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>

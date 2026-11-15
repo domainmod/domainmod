@@ -54,7 +54,8 @@ if ($_SESSION['s_installation_mode'] === 1) {
 
 }
 
-$new_username = $_POST['new_username'] ?? '';
+// Only a plain string counts (a crafted request could send an array, which the form below can't print back)
+$new_username = is_string($_POST['new_username'] ?? null) ? $_POST['new_username'] : '';
 $new_password = $_POST['new_password'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
@@ -180,7 +181,7 @@ $new_password = "";
 
         <form action="" method="post">
             <div class="input-group has-validation mb-3">
-                <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="Username" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" maxlength="20"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
+                <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="Username" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" value="<?php echo htmlspecialchars($new_username, ENT_QUOTES, 'UTF-8'); // kept after a mistake, so only the password needs typing again ?>" maxlength="30"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                 <?php echo $form->errorFeedback('new_username'); ?>
             </div>
             <div class="input-group has-validation mb-3">

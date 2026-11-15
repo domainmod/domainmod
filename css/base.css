@@ -1244,3 +1244,18 @@ div.dt-container > div.bottom {
 .domainmod-csv-importer ul {
     padding-inline-start: 1.25rem;
 }
+
+/* The installer's Back and Next buttons (_includes/layout/install-buttons.inc.php): Back on the start side and Next on
+   the end side, with the same space above them on every step. On the Ready to Install step's summary, each row ends with
+   a small Change link after its value. */
+.domainmod-install-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 1.5rem;
+}
+.domainmod-install-summary-change {
+    font-size: .875em;
+}

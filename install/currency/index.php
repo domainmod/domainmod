@@ -247,11 +247,9 @@ echo $form->showDropdownOption('ZMK', 'Zambian Kwacha', $selected_currency);
 echo $form->showDropdownOption('ZMW', 'Zambian Kwacha', $selected_currency);
 echo $form->showDropdownOption('ZWD', 'Zimbabwe Dollar', $selected_currency);
 echo $form->showDropdownBottom('');
-?>
-<BR>
-<a href="../requirements/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
-<?php
-echo $form->showSubmitButton(_('Next Step'), '', '');
+$install_back_url = WEB_ROOT . '/install/requirements/';
+$install_next_label = sprintf(_('Next: %s'), _('Time Zone'));
+require DIR_INC . '/layout/install-buttons.inc.php';
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>

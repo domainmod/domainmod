@@ -52,9 +52,12 @@ $system->installCheck();
 <?php echo sprintf(_("The first thing we need to do is check to see if your web server meets %s's requirements."), SOFTWARE_TITLE); ?><BR>
 <BR>
 <?php echo $system->requirementsChecklist(true); ?>
-<BR>
-<a href="../language/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
-<a href="<?php echo WEB_ROOT; ?>/install/currency/"><?php echo $layout->showButton('button', _('Next Step')); ?></a>
+<?php
+$install_back_url = WEB_ROOT . '/install/language/';
+$install_next_label = sprintf(_('Next: %s'), _('Currency'));
+$install_next_url = WEB_ROOT . '/install/currency/';
+require DIR_INC . '/layout/install-buttons.inc.php';
+?>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>
 </body>
 </html>

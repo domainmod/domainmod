@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['s_installation_timezone'] = $sanitize->text($_POST['new_timezone']);
 
-    header("Location: ../email-admin/");
+    header("Location: ../administrator/");
     exit;
 
 }
@@ -590,11 +590,9 @@ echo $form->showDropdownOption('US/Pacific-New', 'US/Pacific-New', $_SESSION['s_
 echo $form->showDropdownOption('US/Samoa', 'US/Samoa', $_SESSION['s_installation_timezone']);
 echo $form->showDropdownOption('Zulu', 'Zulu', $_SESSION['s_installation_timezone']);
 echo $form->showDropdownBottom('');
-?>
-<BR>
-<a href="../currency/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
-<?php
-echo $form->showSubmitButton(_('Next Step'), '', '');
+$install_back_url = WEB_ROOT . '/install/currency/';
+$install_next_label = sprintf(_('Next: %s'), _('Administrator Account'));
+require DIR_INC . '/layout/install-buttons.inc.php';
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>

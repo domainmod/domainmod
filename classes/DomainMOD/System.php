@@ -532,11 +532,35 @@ class System
         }
     }
 
+    /*
+     * The installer's first step whose answer isn't in the session yet, as its address, or '' when every answer is there.
+     * The Ready to Install step and install/go.php use it, so nothing installs with an answer missing (such as when
+     * someone opens the last step directly, or their session has expired).
+     */
+    public function installFirstMissingStep()
+    {
+        $steps = array(
+            'language' => array('s_installation_language'),
+            'currency' => array('s_installation_currency'),
+            'timezone' => array('s_installation_timezone'),
+            'administrator' => array('s_installation_admin_first_name', 's_installation_admin_last_name',
+                's_installation_admin_username', 's_installation_admin_email', 's_installation_admin_hash'),
+            'email-system' => array('new_system_email'));
+
+        foreach ($steps as $step => $keys) {
+            foreach ($keys as $key) {
+                if ((string) ($_SESSION[$key] ?? '') === '') return WEB_ROOT . '/install/' . $step . '/';
+            }
+        }
+
+        return '';
+    }
+
     public function installCheck()
     {
         if ($this->installMode() === 0) {
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= sprintf(_('%s is already installed'), SOFTWARE_TITLE) . "<BR><BR>" . sprintf(_('You should delete the %s folder'), '/install/') . "<BR>";
+            $_SESSION['s_message_danger'] .= sprintf(_('%s is already installed'), SOFTWARE_TITLE) . "<BR>";
             header('Location: ' . WEB_ROOT . '/');
             exit;
         }
