@@ -196,9 +196,9 @@ $range_string = $filter_parts['range_string'];
 $tld_string = $filter_parts['tld_string'];
 $search_string = $filter_parts['search_string'];
 
-// Export and the Raw List come out in the list's default order, the expiry date and then the domain (the id keeps
-// domains that tie on both in the same order each time)
-$sql = $domain_list->selectSql() . $domain_list->fromSql() . "
+// Export and the Raw List come out in the list's default order (DomainList::EXPORT_ORDER_SQL). The Raw List also keeps
+// the query without its order, so it can add the table's search box when its link carries one (see raw.php).
+$raw_list_sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $is_active_string
           $segid_string
           $pcid_string
@@ -210,10 +210,11 @@ $sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $raid_string
           $range_string
           $tld_string
-          $search_string
-          ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC";
+          $search_string";
+$sql = $raw_list_sql . DomainMOD\DomainList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_sql'] = $sql;
+$_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
@@ -307,7 +308,42 @@ if ($segid !== 0) {
 
 if ($export_data == 1) {
 
-    $result = $pdo->query($sql)->fetchAll();
+    // The table's search box, when the link carries it (js/domain-list.js adds it), so the export holds the rows the
+    // table shows. An older link without it exports what the filters match, as before.
+    $table_search_for = $_GET['dt_search'] ?? '';
+    $table_search = $domain_list->tableSearchSql($table_search_for, $_GET['dt_layout'] ?? '',
+        DomainMOD\DomainListColumns::sessionCopy($_SESSION));
+
+    // The display settings changed after the table was drawn, so its search can't be matched: back to the list, with
+    // its filters, to search again
+    if ($table_search['stale']) {
+
+        $_SESSION['s_message_danger'] .= _('Your display settings have changed since the list was loaded. Please search the list again.') . '<BR>';
+        $back_query = http_build_query(array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout'))));
+        header('Location: index.php' . ($back_query !== '' ? '?' . $back_query : ''));
+        exit;
+
+    }
+
+    $stmt = $pdo->prepare($raw_list_sql . $table_search['sql'] . DomainMOD\DomainList::EXPORT_ORDER_SQL);
+    $stmt->execute($table_search['params']);
+    $result = $stmt->fetchAll();
+
+    // With a table search, the export's count and total cost are for the rows it holds, and the domains the search
+    // leaves out count as filtered in a segment's results
+    $table_search_excluded = 0;
+    if ($table_search['sql'] !== '') {
+
+        $table_search_excluded = $total_rows - count($result);
+        $total_rows = count($result);
+
+        $stmt = $pdo->prepare("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql
+            . $table_search['sql']);
+        $stmt->execute($table_search['params']);
+        $grand_total = $currency->format($stmt->fetchColumn(), $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+    }
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile(_('domain_results'), strtotime($time->stamp()));
@@ -384,7 +420,7 @@ if ($export_data == 1) {
               AND filtered = '1'");
         $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
         $stmt->execute();
-        $totalrows_filtered = $stmt->fetchColumn();
+        $totalrows_filtered = $stmt->fetchColumn() + $table_search_excluded;
 
         if ($segid !== 0) {
 
@@ -455,6 +491,16 @@ if ($export_data == 1) {
         $row_contents = array(
             _('Keyword Search') . ':',
             $filter_search_for
+        );
+        $export->writeRow($export_file, $row_contents);
+
+    }
+
+    if ($table_search['sql'] !== '') {
+
+        $row_contents = array(
+            _('Table Search') . ':',
+            $export->protectFormula($table_search_for)
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -2016,9 +2062,10 @@ if ($result) {
     $layout->setPageAddAction(_('Add Domain'), 'add.php');
     $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
     $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
-    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
+    // Both keep their ids, since js/domain-list.js adds the table's search box to their links (dt_search)
+    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
-    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download'); ?>
+    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'domain-list-export')); ?>
 
     <?php if ($segid !== 0) { ?>
         <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
@@ -2060,6 +2107,11 @@ if ($result) {
                 'paging' => sprintf(_('Pages of %s'), _('Domains')),
             ),
             'signinUrl' => $web_root . '/',
+            // The links that follow the search box (by id), and what each carries with it (see raw.php)
+            'searchLinks' => array(
+                'domain-list-raw' => array('dt_layout' => $list_columns->layoutKey(), 'dt_list' => DomainMOD\DomainList::savedListKey($raw_list_sql)),
+                'domain-list-export' => array('dt_layout' => $list_columns->layoutKey()),
+            ),
         );
         $today = $time->timeBasic(); // for marking past expiry dates ?>
 

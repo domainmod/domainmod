@@ -22,10 +22,12 @@
  * The Domains list's table in DataTables' server-side mode (see domains/index.php and domains/list-data.php). The page
  * prints the first page itself, so the table starts with deferLoading and makes no request until the user sorts,
  * searches, or changes page. The table's data-domainmod-list attribute carries the endpoint's address (with the list's
- * whole state), the columns, the counts, the page, its size, and the messages. This script:
+ * whole state), the columns, the counts, the page, its size, the messages, and the links that follow the search box.
+ * This script:
  * - removes the no-JavaScript pager, since DataTables pages the table from here on, starting on the same page,
  * - starts the tooltips on each draw's new rows and on a phone's opened child rows,
  * - moves back to the last page when a page has emptied (domains deleted while the table was open),
+ * - keeps the search box's search in the Export and Raw List links, so they hold the rows the table shows,
  * - shows one message above the table when a request fails: the session has ended (with a sign-in link), Display
  *   Settings changed in another tab (with a reload link), or the usual "That didn't work" message. Returning false
  *   from DataTables' xhr event skips its own alert, and the processing indicator is turned off.
@@ -128,8 +130,44 @@ function domainmodDomainList(selector) {
     var paging = table.closest('.dt-container') ? table.closest('.dt-container').querySelector('nav') : null;
     if (paging && messages.paging) paging.setAttribute('aria-label', messages.paging);
 
+    /*
+     * Export and the Raw List follow the search box: after each draw, their links carry the search the rows on screen
+     * came from as dt_search, with the values that tie it to this table (config.searchLinks, by link id: the column
+     * layout as dt_layout, so a change to Display Settings since is caught, as the endpoint catches it, and for the Raw
+     * List the saved list it's for as dt_list), or leave them all out when there's no search. A request that fails
+     * doesn't draw, so the links keep the search of the rows still showing. Only these two links change, so the chips,
+     * Clear all, and the page's own address (and bookmarks of it) never carry it.
+     */
+    var search_links = Object.keys(config.searchLinks || {}).map(function (id) {
+        return {link: document.getElementById(id), extra: config.searchLinks[id] || {}};
+    }).filter(function (item) {
+        return item.link !== null;
+    });
+    var followSearch = function () {
+        var params = api.ajax.params();
+        var value = params && params.search && typeof params.search.value === 'string' ? params.search.value : '';
+        search_links.forEach(function (item) {
+            var url = new URL(item.link.href, window.location.href);
+            if ((url.searchParams.get('dt_search') || '') === value) return;
+            if (value === '') {
+                url.searchParams.delete('dt_search');
+            } else {
+                url.searchParams.set('dt_search', value);
+            }
+            Object.keys(item.extra).forEach(function (key) {
+                if (value === '') {
+                    url.searchParams.delete(key);
+                } else {
+                    url.searchParams.set(key, item.extra[key]);
+                }
+            });
+            item.link.href = url.href;
+        });
+    };
+
     var moving_back = false;
     api.on('draw', function () {
+        followSearch();
         startTooltips();
         var info = api.page.info();
         if (!moving_back && info.recordsDisplay > 0 && info.start >= info.recordsDisplay) {

@@ -40,6 +40,10 @@ class DomainList
     const MAX_SEARCH_LENGTH = 200;
     const MAX_SEARCH_WORDS = 10;
 
+    // Export and the Raw List's order: the expiry date, then the domain (the id keeps domains that tie on both in the
+    // same order each time)
+    const EXPORT_ORDER_SQL = ' ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC';
+
     const VALID_IS_ACTIVE = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 
     private $pdo;
@@ -336,6 +340,34 @@ class DomainList
         }
 
         return array('sql' => $sql, 'params' => $params);
+    }
+
+    /*
+     * The search box's conditions for Export and the Raw List, which get the box's text and the table's column layout
+     * in their links (dt_search and dt_layout, kept up to date by js/domain-list.js), so they hold the rows the table
+     * shows. The words are split and matched exactly as the data endpoint does, against the columns the session's
+     * display settings show ($settings from DomainListColumns::sessionCopy()). Text that isn't a single value, or is
+     * over the limits, adds no conditions, as the table never shows rows for it. Returns searchSql()'s array, plus
+     * 'stale', true (with no conditions) when Display Settings or the custom fields have changed since the table was
+     * drawn, so the search would no longer match the same columns.
+     */
+    public function tableSearchSql($text, $layout, array $settings)
+    {
+        $tokens = is_string($text) ? self::searchTokens($text) : false;
+        if (!$tokens) return array('sql' => '', 'params' => array(), 'stale' => false);
+
+        $columns = new DomainListColumns($settings, $this->dfd_columns);
+        if (!is_string($layout) || $layout !== $columns->layoutKey()) {
+            return array('sql' => '', 'params' => array(), 'stale' => true);
+        }
+
+        return $this->searchSql($tokens, $columns->searchExpressions()) + array('stale' => false);
+    }
+
+    // A short key for the Raw List's saved query, so a search from one tab is never run on a list another tab saved since
+    public static function savedListKey($sql)
+    {
+        return substr(sha1((string) $sql), 0, 12);
     }
 
     /*

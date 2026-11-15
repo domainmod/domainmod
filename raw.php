@@ -61,7 +61,44 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 <?php
 // The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
 unset($_SESSION['s_raw_list_query']);
-$result = isset($_SESSION['s_raw_list_sql']) ? $pdo->query($_SESSION['s_raw_list_sql'])->fetchAll() : array();
+// The Domains list's link carries the table's search box when it holds a search (dt_search, with dt_layout and dt_list,
+// added by js/domain-list.js), so the list matches the rows the table shows. It's only run on the saved list the link
+// was made for, with the same columns, never on one another tab has saved since (or on the SSL list).
+$table_search = array('sql' => '', 'params' => array(), 'stale' => false);
+if (($_GET['dt_search'] ?? '') !== '') {
+
+    if ($_SESSION['s_raw_list_type'] == 'domains' && isset($_SESSION['s_raw_list_unordered_sql'])
+        && ($_GET['dt_list'] ?? '') === DomainMOD\DomainList::savedListKey($_SESSION['s_raw_list_unordered_sql'])) {
+
+        $domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0,
+            (new DomainMOD\CustomField())->getCustomFieldsSql('domain_fields', 'dfd'));
+        $table_search = $domain_list->tableSearchSql($_GET['dt_search'], $_GET['dt_layout'] ?? '',
+            DomainMOD\DomainListColumns::sessionCopy($_SESSION));
+
+    } else {
+
+        $table_search['stale'] = true;
+
+    }
+
+}
+
+if ($table_search['stale']) {
+
+    echo htmlspecialchars(_('The Domains list has changed since you searched it. Please reload the list and search again.'), ENT_QUOTES, 'UTF-8') . "<BR>";
+    $result = array();
+
+} elseif ($table_search['sql'] !== '') {
+
+    $stmt = $pdo->prepare($_SESSION['s_raw_list_unordered_sql'] . $table_search['sql'] . DomainMOD\DomainList::EXPORT_ORDER_SQL);
+    $stmt->execute($table_search['params']);
+    $result = $stmt->fetchAll();
+
+} else {
+
+    $result = isset($_SESSION['s_raw_list_sql']) ? $pdo->query($_SESSION['s_raw_list_sql'])->fetchAll() : array();
+
+}
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
 
