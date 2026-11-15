@@ -200,9 +200,9 @@ try {
 
    $stmt = $pdo->prepare("
         INSERT INTO user_settings
-        (user_id, default_currency, expiration_emails, insert_time)
+        (user_id, default_currency, expiration_emails, dark_mode, insert_time)
         VALUES
-        (:temp_user_id, :installation_currency, '1', :timestamp)");
+        (:temp_user_id, :installation_currency, '1', '2', :timestamp)");
     $stmt->bindValue('temp_user_id', $temp_user_id, PDO::PARAM_INT);
     $stmt->bindValue('installation_currency', $installation_currency, PDO::PARAM_STR);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);

@@ -133,12 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                  default_ssl_provider,
                  default_ssl_provider_account,
                  default_ssl_type,
+                 dark_mode,
                  insert_time)
                  VALUES
                  (:user_id, 'USD', :default_category_domains, :default_category_ssl, :default_dns, :default_host,
                   :default_ip_address_domains, :default_ip_address_ssl, :default_owner_domains, :default_owner_ssl,
                   :default_registrar, :default_registrar_account, :default_ssl_provider, :default_ssl_provider_account,
-                  :default_ssl_type, :insert_time)");
+                  :default_ssl_type, '2', :insert_time)");
             $stmt->bindValue('user_id', $temp_user_id, PDO::PARAM_INT);
             $stmt->bindValue('default_category_domains', $_SESSION['s_system_default_category_domains'], PDO::PARAM_INT);
             $stmt->bindValue('default_category_ssl', $_SESSION['s_system_default_category_ssl'], PDO::PARAM_INT);
