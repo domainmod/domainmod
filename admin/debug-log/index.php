@@ -87,7 +87,7 @@ if ($export_data === 1) {
                 $export->protectFormula($row->message),
                 $export->protectFormula($row->extra),
                 $export->protectFormula($row->url),
-                $row->insert_time
+                $time->toUserTimezone($row->insert_time)
             );
             $export->writeRow($export_file, $row_contents);
 
