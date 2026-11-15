@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-echo $form->showDropdownTop('new_currency', '', '', '', '');
+echo $form->showDropdownTop('new_currency', _('Currency'), '', '', '', true);
 echo $form->showDropdownOption('AFN', 'Afghanistan Afghani', $_SESSION['s_installation_currency']);
 echo $form->showDropdownOption('ALL', 'Albania Lek', $_SESSION['s_installation_currency']);
 echo $form->showDropdownOption('DZD', 'Algerian Dinar', $_SESSION['s_installation_currency']);

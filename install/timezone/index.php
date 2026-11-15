@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-echo $form->showDropdownTop('new_timezone', '', '', '', '');
+echo $form->showDropdownTop('new_timezone', _('Time Zone'), '', '', '', true);
 echo $form->showDropdownOption('Africa/Abidjan', 'Africa/Abidjan', $_SESSION['s_installation_timezone']);
 echo $form->showDropdownOption('Africa/Accra', 'Africa/Accra', $_SESSION['s_installation_timezone']);
 echo $form->showDropdownOption('Africa/Addis_Ababa', 'Africa/Addis_Ababa', $_SESSION['s_installation_timezone']);
