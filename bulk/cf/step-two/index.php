@@ -272,6 +272,7 @@ $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
 <?php echo $layout->stepIndicator(array(_('Custom Field'), _('Domains and Value')), 2, _('Bulk Updater steps')); ?>
 <?php
 $done = $done ?? '';
+$submission_failed = $submission_failed ?? 0;
 if ($done != '1') {
     echo '<div class="domainmod-intro">' . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '</div>';
 } ?>
