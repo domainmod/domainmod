@@ -45,7 +45,7 @@ $pdo = $deeb->cnxx;
 $new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
 $new_password_confirmation = isset($_POST['new_password_confirmation']) ? $sanitize->text($_POST['new_password_confirmation']) : '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation && !$user->passwordTooShort($unsanitize->text($new_password))) {
 
     $stmt = $pdo->prepare("
         SELECT id
@@ -116,9 +116,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
             $form->addFieldError(array('new_password', 'new_password_confirmation'), _('Your passwords were left blank'));
 
-        } else {
+        } elseif ($new_password != $new_password_confirmation) {
 
             $form->addFieldError(array('new_password', 'new_password_confirmation'), _("Your passwords didn't match"));
+
+        } else {
+
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), $user->passwordTooShortMessage());
 
         }
 
@@ -136,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_password', _('New Password') . ' (72)', '', '', '72', '1', '1', '', '', '1');
+echo $form->showInputText('new_password', _('New Password') . ' (72)', $user->passwordLengthHint(), '', '72', '1', '1', '', '', '1');
 echo $form->showInputText('new_password_confirmation', _('Confirm New Password') . ' (72)', '', '', '72', '1', '1', '', '');
 echo $form->showSubmitButton(_('Change Password'), '', '');
 echo $form->showFormBottom('');

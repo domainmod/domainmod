@@ -105,6 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // password_hash() can't take a NUL byte, so it's refused here rather than failing below
         $new_hash = '';
         $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), _("The password contains a character that can't be used"));
+    } elseif ($user->passwordTooShort($new_password)) {
+        $new_hash = '';
+        $form->addFieldError(array('new_admin_password', 'new_admin_password_confirmation'), $user->passwordTooShortMessage());
     } elseif (strlen($new_password) > 72) {
         // Passwords are hashed with bcrypt, which uses only the first 72 bytes (fewer characters when some take more than
         // one byte), so a longer one is refused rather than cut short
@@ -157,7 +160,7 @@ echo $form->showInputText('new_admin_first_name', _('First Name') . ' (50)', '',
 echo $form->showInputText('new_admin_last_name', _('Last Name') . ' (50)', '', $values['last_name'], '50', '', '1', '', '');
 echo $form->showInputText('new_admin_username', _('Username') . ' (30)', '', $values['username'], '30', '', '1', '', '');
 echo $form->showInputText('new_admin_email', _('Email Address') . ' (100)', '', $values['email'], '100', '', '1', '', '');
-$password_note = $has_saved_password ? _("Leave the password fields empty to keep the password you've already entered.") : '';
+$password_note = $has_saved_password ? $user->passwordLengthHint() . ' ' . _("Leave the password fields empty to keep the password you've already entered.") : $user->passwordLengthHint();
 echo $form->showInputText('new_admin_password', _('Password') . ' (72)', $password_note, '', '72', '1', $has_saved_password ? '' : '1', '', '');
 echo $form->showInputText('new_admin_password_confirmation', _('Confirm Password') . ' (72)', '', '', '72', '1', $has_saved_password ? '' : '1', '', '');
 $install_back_url = WEB_ROOT . '/install/timezone/';

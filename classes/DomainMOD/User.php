@@ -77,6 +77,28 @@ class User
         return $result->first_name . ' ' . $result->last_name;
     }
 
+    // The shortest password people can choose when they set or change one. Existing passwords aren't checked, so nobody
+    // with a shorter one is locked out.
+    const MIN_PASSWORD_LENGTH = 8;
+
+    // Whether a password someone has typed (as typed, before any escaping) is shorter than the minimum, in characters
+    public function passwordTooShort($password)
+    {
+        return mb_strlen((string) $password, 'UTF-8') < self::MIN_PASSWORD_LENGTH;
+    }
+
+    // The message for a password that's too short, in one place so every form says the same thing
+    public function passwordTooShortMessage()
+    {
+        return sprintf(_('The password must be at least %s characters long'), self::MIN_PASSWORD_LENGTH);
+    }
+
+    // The hint shown under a password field
+    public function passwordLengthHint()
+    {
+        return sprintf(_('Use at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+    }
+
     public function generatePassword($password_length = 72)
     {
         $character_pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
