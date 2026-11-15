@@ -23,8 +23,10 @@
 // the same time could add a domain twice. The form is sent as normal, so it works the same without JavaScript.
 // The button comes back if the page is shown again from the browser's back-forward cache, if Escape stops the upload,
 // or if another file is chosen (such as after stopping it with the browser's Stop button).
+// A status line outside the form (role="status") announces "Importing…" to screen readers, and is cleared on reset.
 document.querySelectorAll('form.domainmod-csv-importer-form').forEach(function (form) {
     var sent = false;
+    var status = document.getElementById('domainmod-csv-importer-status');
     var button = form.querySelector('button[type="submit"]');
     var button_html = button ? button.innerHTML : '';
     var reset = function () {
@@ -36,6 +38,7 @@ document.querySelectorAll('form.domainmod-csv-importer-form').forEach(function (
             button.removeAttribute('aria-disabled');
         }
         form.removeAttribute('aria-busy');
+        if (status) status.textContent = '';
     };
     window.addEventListener('pageshow', function (event) {
         if (event.persisted) reset();
@@ -60,5 +63,6 @@ document.querySelectorAll('form.domainmod-csv-importer-form').forEach(function (
         button.classList.add('disabled');
         button.setAttribute('aria-disabled', 'true');
         form.setAttribute('aria-busy', 'true');
+        if (status) status.textContent = form.getAttribute('data-busy-text') || '';
     });
 });

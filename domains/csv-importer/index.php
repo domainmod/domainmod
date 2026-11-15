@@ -157,6 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="card card-outline card-secondary h-100 mb-0">
             <div class="card-body">
                 <h2 class="h5 domainmod-csv-importer-step"><span class="domainmod-csv-importer-number" aria-hidden="true">2</span><span class="visually-hidden"><?php echo sprintf(_('Step %1$s of %2$s:'), 2, 2); ?> </span><?php echo _('Import Your File'); ?></h2>
+                <?php // The Import button shows a spinner while the file uploads (js/csv-importer.js), and the status line
+                      // below tells screen readers it has started ?>
+                <div class="visually-hidden" role="status" id="domainmod-csv-importer-status"></div>
                 <form enctype="multipart/form-data" action="" method="post" class="domainmod-csv-importer-form" data-busy-text="<?php echo htmlspecialchars(_('Importing…'), ENT_QUOTES, 'UTF-8'); ?>">
                     <?php echo $form->showCsrfField(); ?>
                     <label class="form-label" for="domainmod-csv-file"><?php echo _('CSV File'); ?></label>
