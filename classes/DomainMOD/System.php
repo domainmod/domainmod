@@ -62,11 +62,9 @@ class System
         $req_html_long .= '<STRONG>' . _('Server Software') . '</STRONG><BR>';
 
         // PHP
-        $software = 'PHP 8.2-8.5';
-        $min_php_version = '8.2';
-        $installed_php_version = phpversion();
+        $software = $this->reqPhpText();
 
-        if (version_compare($installed_php_version, $min_php_version, '>=')) {
+        if ($this->reqPhpPasses()) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -81,23 +79,9 @@ class System
         }
 
         // DATABASE (MariaDB or MySQL)
-        $software = 'MariaDB (10.4-12.3) or MySQL (5.7-9.7)';
+        $software = $this->reqDbText();
 
-        if ($this->deeb->getDbType() == 'MariaDB') {
-
-            $min_db_version = '10.4';
-
-        } elseif ($this->deeb->getDbType() == 'MySQL') {
-
-            $min_db_version = '5.7';
-
-        } else {
-
-            $min_db_version = '0';
-
-        }
-
-        if (version_compare($this->deeb->getDbVersion(), $min_db_version, '>=')) {
+        if ($this->reqDbPasses()) {
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
@@ -123,13 +107,7 @@ class System
         $req_html_short .= '<BR><STRONG>' . _('PHP Extensions') . ':</STRONG> ';
         $req_html_long .= '<BR><STRONG>' . _('PHP Extensions') . '</STRONG><BR>';
 
-        $extensions = array('pdo_mysql' => 'PDO',
-                            'curl' => 'cURL',
-                            'openssl' => 'OpenSSL',
-                            'gettext' => 'gettext',
-                            'mysqli' => 'MySQLi');
-
-        foreach ($extensions as $key => $value) {
+        foreach ($this->reqExtensionList() as $key => $value) {
 
             if (extension_loaded($key)) {
 
@@ -160,9 +138,7 @@ class System
         $req_html_short .= '<BR><STRONG>' . _('PHP Settings') . ':</STRONG> ';
         $req_html_long .= '<BR><STRONG>' . _('PHP Settings') . '</STRONG><BR>';
 
-        $settings = array('allow_url_fopen');
-
-        foreach ($settings as $value) {
+        foreach ($this->reqSettingList() as $value) {
 
             if (ini_get($value)) {
 
@@ -184,6 +160,185 @@ class System
         $req_html_short = substr($req_html_short, 0, -2);
 
         return array($req_text, $req_html_short, $req_html_long);
+    }
+
+    /*
+     * The requirements themselves, shared by the plain-text and HTML lists above and by the checklist below
+     */
+    public function reqPhpText()
+    {
+        return 'PHP 8.2-8.5';
+    }
+
+    public function reqPhpPasses()
+    {
+        return version_compare(phpversion(), '8.2', '>=');
+    }
+
+    public function reqDbText()
+    {
+        return 'MariaDB (10.4-12.3) or MySQL (5.7-9.7)';
+    }
+
+    // The lowest version of the database DomainMOD is running on that it supports
+    public function reqDbMinimum()
+    {
+        if ($this->deeb->getDbType() == 'MariaDB') {
+
+            return '10.4';
+
+        } elseif ($this->deeb->getDbType() == 'MySQL') {
+
+            return '5.7';
+
+        } else {
+
+            return '0';
+
+        }
+    }
+
+    public function reqDbPasses()
+    {
+        return version_compare($this->deeb->getDbVersion(), $this->reqDbMinimum(), '>=');
+    }
+
+    // The PHP extensions, each with the name people know it by
+    public function reqExtensionList()
+    {
+        return array('pdo_mysql' => 'PDO',
+                     'curl' => 'cURL',
+                     'openssl' => 'OpenSSL',
+                     'gettext' => 'gettext',
+                     'mysqli' => 'MySQLi');
+    }
+
+    public function reqSettingList()
+    {
+        return array('allow_url_fopen');
+    }
+
+    /*
+     * Every requirement as a row for the checklist (requirementsChecklist()): its group, name, whether it's met, its
+     * status words, and a note (the version this server has, or what DomainMOD uses it for), plus how to fix it
+     */
+    public function getRequirementChecks()
+    {
+        $db_type = $this->deeb->getDbType();
+        $checks = array();
+
+        $checks[] = array('group' => 'software',
+                          'name' => $this->reqPhpText(),
+                          'ok' => $this->reqPhpPasses(),
+                          'status' => array(_('Pass'), _('Fail')),
+                          'note' => sprintf(_('You have %s'), phpversion()),
+                          'fix' => sprintf(_('Ask your host to upgrade PHP to version %s or newer.'), '8.2'));
+
+        $checks[] = array('group' => 'software',
+                          'name' => $this->reqDbText(),
+                          'ok' => $this->reqDbPasses(),
+                          'status' => array(_('Pass'), _('Fail')),
+                          'note' => sprintf(_('You have %s'), $db_type . ' ' . $this->deeb->getDbVersion()),
+                          'fix' => sprintf(_('Ask your host to upgrade %1$s to version %2$s or newer.'), $db_type, $this->reqDbMinimum()));
+
+        // What DomainMOD uses each extension for, from where the code relies on it
+        $uses = array('pdo_mysql' => _('Needed for everything DomainMOD stores'),
+                      'curl' => _('Needed for registrar, RDAP, and Data Warehouse lookups'),
+                      'openssl' => _('Needed for secure connections'),
+                      'gettext' => _('Needed to show DomainMOD in your language'),
+                      'mysqli' => _('Needed to restore a backup'));
+
+        foreach ($this->reqExtensionList() as $key => $value) {
+
+            $checks[] = array('group' => 'extensions',
+                              'name' => $value,
+                              'ok' => extension_loaded($key),
+                              'status' => array(_('Enabled'), _('Disabled')),
+                              'note' => $uses[$key] ?? '',
+                              'fix' => sprintf(_('Ask your host to enable the %s PHP extension.'), $key));
+
+        }
+
+        $uses = array('allow_url_fopen' => _('Used to check for new versions, with cURL as a fallback'));
+
+        foreach ($this->reqSettingList() as $value) {
+
+            $checks[] = array('group' => 'settings',
+                              'name' => $value,
+                              'ok' => (bool) ini_get($value),
+                              'status' => array(_('Enabled'), _('Disabled')),
+                              'note' => $uses[$value] ?? '',
+                              'fix' => sprintf(_('Ask your host to turn on %s in PHP\'s settings.'), $value));
+
+        }
+
+        return $checks;
+    }
+
+    /*
+     * The requirements as a checklist: a summary line first, then the full list, always shown, so people can see each
+     * check was made. When something isn't met, what needs attention (and how to fix it) comes first.
+     * $on_installer adds the line telling people they can carry on.
+     */
+    public function requirementsChecklist($on_installer = false)
+    {
+        $checks = $this->getRequirementChecks();
+        $total = count($checks);
+        $failed = array_values(array_filter($checks, function ($check) { return !$check['ok']; }));
+        $failed_count = count($failed);
+
+        $groups = array('attention' => array(_('Needs attention'), $failed),
+                        'software' => array(_('Server Software'), array()),
+                        'extensions' => array(_('PHP Extensions'), array()),
+                        'settings' => array(_('PHP Settings'), array()));
+
+        foreach ($checks as $check) {
+            if ($check['ok']) $groups[$check['group']][1][] = $check;
+        }
+
+        ob_start(); ?>
+
+        <div class="domainmod-requirements">
+            <div class="domainmod-requirements-summary <?php echo $failed_count === 0 ? 'is-met' : 'is-not-met'; ?>"><?php
+                if ($failed_count === 0) { ?>
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                    <div><strong><?php echo sprintf(ngettext('Your server meets all %s requirements.', 'Your server meets all %s requirements.', $total), number_format($total)); ?></strong><?php
+                    if ($on_installer) echo ' ' . _("You're ready to continue."); ?></div><?php
+                } else { ?>
+                    <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+                    <div><strong><?php echo sprintf(ngettext('%1$s of %2$s requirements isn\'t met.', '%1$s of %2$s requirements aren\'t met.', $failed_count), number_format($failed_count), number_format($total)); ?></strong>
+                    <?php echo $on_installer ? ngettext("You can still install, but some features might not work until it's fixed.", "You can still install, but some features might not work until they're fixed.", $failed_count) : ngettext("Some features might not work until it's fixed.", "Some features might not work until they're fixed.", $failed_count); ?></div><?php
+                } ?>
+            </div>
+            <div class="domainmod-requirements-list"><?php
+                foreach ($groups as $key => $group) {
+                    list($label, $rows) = $group;
+                    if (!$rows) continue; ?>
+                    <div class="domainmod-requirements-group<?php echo $key === 'attention' ? ' is-attention' : ''; ?>" id="domainmod-requirements-<?php echo $key; ?>"><?php echo $label; ?></div>
+                    <ul class="domainmod-requirements-rows" aria-labelledby="domainmod-requirements-<?php echo $key; ?>"><?php
+                    foreach ($rows as $row) { ?>
+                        <li class="<?php echo $row['ok'] ? 'is-met' : 'is-not-met'; ?>">
+                            <i class="bi <?php echo $row['ok'] ? 'bi-check-circle-fill' : 'bi-x-circle-fill'; ?>" aria-hidden="true"></i>
+                            <div>
+                                <span class="domainmod-requirements-name"><?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="visually-hidden">: <?php echo $row['ok'] ? $row['status'][0] : $row['status'][1]; ?>.</span><?php
+                                if ($row['note'] !== '') { ?>
+                                <span class="domainmod-requirements-note"><?php echo htmlspecialchars($row['note'], ENT_QUOTES, 'UTF-8'); ?><?php
+                                    // A full stop for screen readers, so the note and the fix after it aren't read as one sentence
+                                    if (!$row['ok']) { ?><span class="visually-hidden">.</span><?php } ?></span><?php
+                                }
+                                if (!$row['ok']) { ?>
+                                <span class="domainmod-requirements-fix"><?php echo htmlspecialchars($row['fix'], ENT_QUOTES, 'UTF-8'); ?></span><?php
+                                } ?>
+                            </div>
+                        </li><?php
+                    } ?>
+                    </ul><?php
+                } ?>
+            </div>
+        </div><?php
+
+        return ob_get_clean();
     }
 
     public function installMode()

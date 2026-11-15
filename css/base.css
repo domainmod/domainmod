@@ -1036,3 +1036,116 @@ div.dt-container > div.bottom {
     /* About the width of the old space, so the gaps between buttons stay the same */
     margin-inline-end: .2em;
 }
+
+/* The requirements checklist (System::requirementsChecklist()), on the installer and the System Information page: a
+   summary line, then the full list, always shown. Each row has a tick or a cross (with the status in words for screen
+   readers), a note, and when it isn't met, how to fix it. */
+.domainmod-requirements {
+    max-width: 48rem;
+    margin-bottom: 1rem;
+}
+.domainmod-requirements-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: .625rem;
+    padding: .625rem .875rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid;
+    border-radius: var(--bs-border-radius);
+}
+.domainmod-requirements-summary > .bi {
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+.domainmod-requirements-summary.is-met {
+    color: var(--bs-success-text-emphasis);
+    background-color: var(--bs-success-bg-subtle);
+    border-color: var(--bs-success-border-subtle);
+}
+.domainmod-requirements-summary.is-not-met {
+    color: var(--bs-danger-text-emphasis);
+    background-color: var(--bs-danger-bg-subtle);
+    border-color: var(--bs-danger-border-subtle);
+}
+.domainmod-requirements-list {
+    overflow: hidden;
+    background-color: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+.domainmod-requirements-group {
+    padding: .25rem .875rem;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-secondary-bg);
+}
+.domainmod-requirements-group + .domainmod-requirements-rows,
+.domainmod-requirements-rows + .domainmod-requirements-group {
+    border-top: 1px solid var(--bs-border-color);
+}
+.domainmod-requirements-group.is-attention {
+    color: var(--bs-danger-text-emphasis);
+}
+.domainmod-requirements-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.domainmod-requirements-rows > li {
+    display: flex;
+    align-items: flex-start;
+    gap: .625rem;
+    padding: .3125rem .875rem;
+}
+.domainmod-requirements-rows > li + li {
+    border-top: 1px solid var(--bs-border-color);
+}
+.domainmod-requirements-rows > li > .bi {
+    line-height: 1.5;
+}
+.domainmod-requirements-rows > li.is-met > .bi {
+    color: var(--bs-success-text-emphasis);
+}
+.domainmod-requirements-rows > li.is-not-met > .bi {
+    color: var(--bs-danger-text-emphasis);
+}
+.domainmod-requirements-note,
+.domainmod-requirements-fix {
+    font-size: .875em;
+}
+/* The note sits on the same line as the name, at the far end of the row, so each check takes one line (it wraps under
+   the name when there isn't room). A fix for a failed check stays on its own line. */
+.domainmod-requirements-rows > li > div {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 1rem;
+    min-width: 0;
+}
+.domainmod-requirements-note {
+    margin-inline-start: auto;
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+.domainmod-requirements-fix {
+    flex-basis: 100%;
+}
+.domainmod-requirements-name {
+    font-weight: 600;
+}
+
+/* The System Information page's details (admin/info), in the requirements checklist's grouped list: a name, and its
+   value at the far end of the row, which wraps anywhere, since some values (the server's OS) are one long string */
+.domainmod-system-info-value {
+    margin-inline-start: auto;
+    min-width: 0;
+    text-align: end;
+    overflow-wrap: anywhere;
+}
+.domainmod-system-info .domainmod-requirements-fix {
+    font-style: italic;
+}

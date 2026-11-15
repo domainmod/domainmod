@@ -48,15 +48,6 @@ $pdo = $deeb->cnxx;
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<strong><?php echo SOFTWARE_TITLE; ?> <?php echo _('Version'); ?>:</strong> <?php echo SOFTWARE_VERSION; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
-<strong><?php echo _('Local IP Address'); ?>:</strong> <?php echo $_SERVER['SERVER_ADDR']; ?><BR>
-<strong><?php echo _('Remote IP Address'); ?>:</strong> <?php echo $system->getIpRemotely(); ?><BR>
-<strong><?php echo _('Web Server OS'); ?>:</strong> <?php echo php_uname(); ?><BR>
-<strong><?php echo _('Web Server Software'); ?>:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
-<strong><?php echo _('PHP Version'); ?>:</strong> <?php echo phpversion(); ?><BR>
-<strong><?php echo _('PHP Error Log Location'); ?>:</strong> <?php echo ini_get('error_log'); ?><BR>
-<strong><?php echo _('MySQL Version'); ?>:</strong> <?php echo $pdo->query('select version()')->fetchColumn(); ?><BR>
-<strong><?php echo _('MySQL Mode'); ?>:</strong> <?php echo $pdo->query('select @@sql_mode')->fetchColumn(); ?><BR>
 <?php
 $connection_status = $deeb->getConnectionStatus();
 if ($connection_status === 'encrypted (certificate checked)') {
@@ -68,18 +59,53 @@ if ($connection_status === 'encrypted (certificate checked)') {
 }
 // A connection to the same machine doesn't cross the network, so it doesn't need the advice
 $connection_is_local = in_array(strtolower(DB_HOSTNAME), array('localhost', '127.0.0.1', '::1'), true);
-?>
-<strong><?php echo _('Database Connection'); ?>:</strong> <?php echo $connection_text; ?><BR>
-<?php if ($connection_status !== 'encrypted (certificate checked)' && !$connection_is_local) { ?>
-<em><?php echo sprintf(_('This connection isn\'t protected from an attacker on the network. If your database is on a different server, add %s to config.inc.php to encrypt the connection and check the server\'s certificate.'), '<code>$dbsslmode = \'verify\';</code>'); ?></em><BR>
-<?php } ?>
-<BR>
-<?php
-list($null, $requirements, $null) = $system->getRequirements();
-echo $requirements;
-?>
+$connection_advice = ($connection_status !== 'encrypted (certificate checked)' && !$connection_is_local)
+    ? sprintf(_('This connection isn\'t protected from an attacker on the network. If your database is on a different server, add %s to config.inc.php to encrypt the connection and check the server\'s certificate.'), '<code>$dbsslmode = \'verify\';</code>')
+      . ' ' . sprintf(_('See %sEncrypted Database Connections%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/database-encryption/">', '</a>')
+    : '';
 
-
+// The system details, in the same grouped list as the requirements below them: each group's rows show a name and its
+// value. Values come from the server, so they're escaped, apart from the version's emphasis and the advice's code.
+$esc = function ($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); };
+$info_groups = array(
+    array(SOFTWARE_TITLE, array(
+        array(_('Version'), $esc(SOFTWARE_VERSION) . ' (<em>' . $esc($_SESSION['s_system_db_version']) . '</em>)'))),
+    array(_('Web Server'), array(
+        array(_('Local IP Address'), $esc($_SERVER['SERVER_ADDR'] ?? '')),
+        array(_('Remote IP Address'), $esc($system->getIpRemotely())),
+        array(_('Web Server OS'), $esc(php_uname())),
+        array(_('Web Server Software'), $esc($_SERVER['SERVER_SOFTWARE'] ?? '')))),
+    array('PHP', array(
+        array(_('PHP Version'), $esc(phpversion())),
+        array(_('PHP Error Log Location'), $esc(ini_get('error_log'))))),
+    array(_('Database'), array(
+        array(_('MySQL Version'), $esc($pdo->query('select version()')->fetchColumn())),
+        array(_('MySQL Mode'), $esc($pdo->query('select @@sql_mode')->fetchColumn())),
+        array(_('Database Connection'), $esc($connection_text), $connection_advice))));
+?>
+<div class="domainmod-requirements domainmod-system-info">
+    <div class="domainmod-requirements-list"><?php
+    foreach ($info_groups as $group_index => $group) {
+        list($group_label, $rows) = $group; ?>
+        <div class="domainmod-requirements-group" id="domainmod-system-info-<?php echo $group_index; ?>"><?php echo $esc($group_label); ?></div>
+        <ul class="domainmod-requirements-rows" aria-labelledby="domainmod-system-info-<?php echo $group_index; ?>"><?php
+        foreach ($rows as $row) { ?>
+            <li>
+                <div>
+                    <span class="domainmod-requirements-name"><?php echo $esc($row[0]); ?><span class="visually-hidden">:</span></span>
+                    <span class="domainmod-system-info-value"><?php echo $row[1]; ?></span><?php
+                    if (!empty($row[2])) { ?>
+                    <span class="domainmod-requirements-fix"><?php echo $row[2]; ?></span><?php
+                    } ?>
+                </div>
+            </li><?php
+        } ?>
+        </ul><?php
+    } ?>
+    </div>
+</div>
+<h2 class="h5 mt-4 mb-3"><?php echo _('Software Requirements'); ?></h2>
+<?php echo $system->requirementsChecklist(); ?>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

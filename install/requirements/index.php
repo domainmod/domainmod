@@ -49,17 +49,10 @@ $system->installCheck();
 </head>
 <?php echo $layout->bodyTag('install'); ?>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
-<?php echo _("The first thing we need to do is check to see if your web server meets the software's requirements."); ?><BR>
+<?php echo sprintf(_("The first thing we need to do is check to see if your web server meets %s's requirements."), SOFTWARE_TITLE); ?><BR>
 <BR>
-<?php echo sprintf(_("All of the below items should say %s or %s. If they don't, you still may be able to install %s, but certain features might not work completely."), $layout->highlightText('green', _('Pass')), $layout->highlightText('green', _('Enabled')), SOFTWARE_TITLE); ?><BR>
+<?php echo $system->requirementsChecklist(true); ?>
 <BR>
-<?php echo sprintf(_('If any of the items say %s or %s, we recommend you install and/or update the appropriate software so that all of the requirements are met.'), $layout->highlightText('red', _('Fail')), $layout->highlightText('red', _('Disabled'))); ?><BR>
-<BR>
-<?php
-list($null, $null, $requirements) = $system->getRequirements();
-echo $requirements;
-echo "<BR>";
-?>
 <a href="../language/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
 <a href="<?php echo WEB_ROOT; ?>/install/currency/"><?php echo $layout->showButton('button', _('Next Step')); ?></a>
 <?php require_once DIR_INC . '/layout/footer-install.inc.php'; ?>
