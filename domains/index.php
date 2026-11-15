@@ -381,15 +381,15 @@ if ($export_data == 1) {
     if ($segid == 0) {
 
         $row_contents = array(
-            _('Total Cost') . ':',
-            $grand_total,
-            $_SESSION['s_default_currency']
+            _('Number of Domains') . ':',
+            $total_rows
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            _('Number of Domains') . ':',
-            $total_rows
+            _('Total Cost') . ':',
+            $grand_total,
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -2143,13 +2143,8 @@ if ($result) {
         <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
         <BR><BR>
     <?php } else { ?>
-        <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
-
-        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-            <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
-        <?php } else { ?>
-            <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
-        <?php } ?>
+        <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
+        <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR><BR>
 
     <?php }
 

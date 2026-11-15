@@ -335,15 +335,15 @@ if ($export_data == 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        _('Total Cost') . ':',
-        $grand_total,
-        $_SESSION['s_default_currency']
+        _('Number of SSL Certs') . ':',
+        $total_rows
     );
     $export->writeRow($export_file, $row_contents);
 
     $row_contents = array(
-        _('Number of SSL Certs') . ':',
-        $total_rows
+        _('Total Cost') . ':',
+        $grand_total,
+        $_SESSION['s_default_currency']
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -1594,8 +1594,8 @@ if ($result) {
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download'); ?>
 
-    <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($result)); ?><BR><BR><?php
+    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($result)); ?><BR>
+    <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
 
     if ($total_rows) { ?>
 

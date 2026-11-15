@@ -164,15 +164,15 @@ if ($submission_failed != '1' && $total_rows > 0) {
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            _('Total Cost') . ':',
-            $grand_total,
-            $_SESSION['s_default_currency']
+            _('Number of SSL Certs') . ':',
+            $number_of_certs_total
         );
         $export->writeRow($export_file, $row_contents);
 
         $row_contents = array(
-            _('Number of SSL Certs') . ':',
-            $number_of_certs_total
+            _('Total Cost') . ':',
+            $grand_total,
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 

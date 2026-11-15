@@ -29,14 +29,14 @@
 
 <?php } ?>
 
-<strong><?php echo _('Total Cost'); ?>:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
-
 <?php if ($report_section == 'domains') { ?>
 
-    <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo $number_of_domains_total; ?><BR>
+    <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format((int) $number_of_domains_total); ?><BR>
 
 <?php } elseif ($report_section == 'ssl') { ?>
 
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo $number_of_certs_total; ?><BR>
+    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format((int) $number_of_certs_total); ?><BR>
 
-<?php }
+<?php } ?>
+
+<strong><?php echo _('Total Cost'); ?>:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
