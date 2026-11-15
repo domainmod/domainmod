@@ -45,3 +45,5 @@ $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
 <!-- Tom Select, for the menus you can search (Form::showDropdownTop() with $searchable) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/js/tom-select.complete.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl('js/search-select.js'); ?>"></script>
+<!-- Pre-selects the browser's time zone on the installer's time zone step (after the searchable menus) -->
+<script src="<?php echo $layout->assetUrl('js/timezone-guess.js'); ?>"></script>

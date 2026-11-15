@@ -70,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
+// With no time zone chosen yet, js/timezone-guess.js pre-selects the browser's own, when it's on the list
+if ($_SESSION['s_installation_timezone'] === '') echo '<div hidden data-domainmod-guess-timezone="new_timezone"></div>';
 echo $form->showDropdownTop('new_timezone', _('Time Zone'), '', '', '', true, true);
 echo $form->showDropdownOption('Africa/Abidjan', 'Africa/Abidjan', $_SESSION['s_installation_timezone']);
 echo $form->showDropdownOption('Africa/Accra', 'Africa/Accra', $_SESSION['s_installation_timezone']);
