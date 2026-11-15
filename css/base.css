@@ -1124,6 +1124,11 @@ div.dt-container > div.bottom {
     max-width: 48rem;
 }
 
+/* The installed app's offline page (offline.php): its few lines kept to a readable width in the middle of the screen */
+.domainmod-offline {
+    max-width: 28rem;
+}
+
 /* The Dashboard's Getting Started checklist (Dashboard::gettingStarted()), on a new install: a card at the forms' width,
    a native progress bar (Bootstrap's needs an inline style, which the CSP blocks), and an ordered list of steps with
    the step indicator's circles: done steps ticked in the success colour with the title struck through, the next one's

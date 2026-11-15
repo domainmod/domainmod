@@ -31,6 +31,18 @@
 <!-- Sets the colour mode before anything is drawn, so it has to come before the stylesheets -->
 <script src="<?php echo $layout->assetUrl('js/colour-mode-init.js'); ?>"></script>
 <link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>
+<!-- The installable web app: its manifest, icons, title bar colours, and the service worker that gives it an offline
+     page (registered by a script file, so no inline script is needed under the strict CSP) -->
+<link rel="manifest" href="<?php echo $web_root; ?>/manifest.php">
+<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $web_root; ?>/images/icons/icon-32.png">
+<link rel="apple-touch-icon" href="<?php echo $web_root; ?>/images/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="<?php echo SOFTWARE_TITLE; ?>">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2e3440" media="(prefers-color-scheme: dark)">
+<meta name="domainmod-service-worker" content="<?php echo WEB_ROOT; ?>/service-worker.php">
+<script src="<?php echo $layout->assetUrl('js/service-worker-register.js'); ?>"></script>
 <?php require_once DIR_ROOT . '/css/detect-and-include-datatables-css.inc.php'; ?>
 <!-- Font: Source Sans 3 -->
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/source-sans-3/source-sans-3.css'); ?>">

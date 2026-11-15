@@ -34,13 +34,13 @@ if (isset($disable_csp) && $disable_csp === 0) {
     // script-src-elem = script-src / stype-src-elem = style-src
     if ($browser_name === 'firefox' || $browser_name === 'safari' || $browser_name === 'seamonkey') {
 
-        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; script-src 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
     // PRIMARY CSP HEADER
     // chrome, chromium, opera, all other browers minus firefox, safari, and seamonkey
     } else {
 
-        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
+        $csp_header = "Content-Security-Policy: default-src 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; script-src 'none'; script-src-elem 'self' 'nonce-" . CURRENT_NONCE . "'; style-src 'none'; style-src-elem 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none';";
 
     }
 
