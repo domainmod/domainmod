@@ -58,8 +58,9 @@
 <!-- DataTables, with Bootstrap 5 styling -->
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/css/dataTables.bootstrap5.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/css/responsive.bootstrap5.min.css'); ?>">
-<!-- Custom DomainMOD styles -->
-<link rel="stylesheet" href="<?php echo $layout->assetUrl('css/base.css'); ?>">
+<!-- Custom DomainMOD styles. The id is AdminLTE's: when people ask for reduced motion, its script inserts a style tag
+     with that id unless one is already on the page, and the CSP blocks the tag, so its rules are in base.css instead -->
+<link rel="stylesheet" href="<?php echo $layout->assetUrl('css/base.css'); ?>" id="adminlte-reduce-motion">
 <?php
 $full_filename = DIR_INC . '/layout/head-tags.DEMO.inc.php';
 

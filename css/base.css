@@ -368,6 +368,15 @@ a[aria-busy="true"] {
     pointer-events: none;
     opacity: .65;
 }
+/* AdminLTE's reduced motion rules (its own style tag is skipped, since the CSP blocks it: see head-tags.inc.php):
+   animations and transitions finish at once */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 /* The charts' colours (js/charts.js reads them, since Chart.js draws on a canvas and can't use CSS directly): a
    nine-colour palette (a doughnut's slices use the first five, since it has at most five groups, bars use the first,
    a price comparison's cheapest bars the green third, and the stacked counts the green, red, and amber), a grey for a
