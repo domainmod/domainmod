@@ -27,3 +27,127 @@ $software_section_logo = "fa-bar-chart";
 $slug = "reporting-dw-potential-problems";
 $report_section = 'dw';
 $report_filename = 'potential-problems.php';
+$datatable_class = 'table table-striped dt-responsive cell-border compact';
+// The servers' figures (a short list, in the page's order), then the three problem lists, which are paged like the
+// Domains list and can be sorted by any column
+$datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
+                          "paging": false,
+                          "lengthChange": false,
+                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
+                          "searching": false,
+                          "info": false,
+                          "autoWidth": true,
+                          "bAutoWidth": false,
+                          "responsive": {
+                               details: {
+                                         type: "column"
+                                        }
+                                        },
+                          "columnDefs": [ {
+                                           className: "control",
+                                           orderable: false,
+                                           targets:   0
+                                           } ],
+                          "ordering": false,
+                          "bSortClasses": false,
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
+                      });
+
+                      var oldStart_no_zone = 0;
+                      $(\'#' . $slug . '-no-zone\').DataTable({
+                          "paging": true,
+                          "lengthChange": true,
+                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "searching": true,
+                          "info": true,
+                          "autoWidth": true,
+                          "bAutoWidth": false,
+                          "responsive": {
+                               details: {
+                                         type: "column"
+                                        }
+                                        },
+                          "columnDefs": [ {
+                                           className: "control",
+                                           orderable: false,
+                                           targets:   0
+                                           } ],
+                          "ordering": true,
+                          "order": [[ 1, "asc" ]],
+                          "bSortClasses": false,
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            var start = new DataTable.Api(settings).page.info().start;
+                            if ( start != oldStart_no_zone ) {
+                                var targetOffset = $("#' . $slug . '-no-zone").offset().top;
+                                $("html,body").animate({scrollTop: targetOffset}, 0);
+                                oldStart_no_zone = start;
+                            }
+                          }
+                      });
+
+                      var oldStart_no_account = 0;
+                      $(\'#' . $slug . '-no-account\').DataTable({
+                          "paging": true,
+                          "lengthChange": true,
+                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "searching": true,
+                          "info": true,
+                          "autoWidth": true,
+                          "bAutoWidth": false,
+                          "responsive": {
+                               details: {
+                                         type: "column"
+                                        }
+                                        },
+                          "columnDefs": [ {
+                                           className: "control",
+                                           orderable: false,
+                                           targets:   0
+                                           } ],
+                          "ordering": true,
+                          "order": [[ 1, "asc" ]],
+                          "bSortClasses": false,
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            var start = new DataTable.Api(settings).page.info().start;
+                            if ( start != oldStart_no_account ) {
+                                var targetOffset = $("#' . $slug . '-no-account").offset().top;
+                                $("html,body").animate({scrollTop: targetOffset}, 0);
+                                oldStart_no_account = start;
+                            }
+                          }
+                      });
+
+                      var oldStart_suspended = 0;
+                      $(\'#' . $slug . '-suspended\').DataTable({
+                          "paging": true,
+                          "lengthChange": true,
+                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "searching": true,
+                          "info": true,
+                          "autoWidth": true,
+                          "bAutoWidth": false,
+                          "responsive": {
+                               details: {
+                                         type: "column"
+                                        }
+                                        },
+                          "columnDefs": [ {
+                                           className: "control",
+                                           orderable: false,
+                                           targets:   0
+                                           } ],
+                          "ordering": true,
+                          "order": [[ 1, "asc" ]],
+                          "bSortClasses": false,
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            var start = new DataTable.Api(settings).page.info().start;
+                            if ( start != oldStart_suspended ) {
+                                var targetOffset = $("#' . $slug . '-suspended").offset().top;
+                                $("html,body").animate({scrollTop: targetOffset}, 0);
+                                oldStart_suspended = start;
+                            }
+                          }
+                      });';

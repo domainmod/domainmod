@@ -90,20 +90,19 @@ class Conversion
         }
     }
 
-    // The currencies in use (by domain or SSL fees) that a user has no conversion rate for
+    // The currencies any domain or SSL fee uses (whether or not an asset uses that fee yet, so the fee comparisons can
+    // convert every fee) that a user has no conversion rate for
     public function missingRates($user_id)
     {
         $stmt = $this->deeb->cnxx->prepare("
             SELECT c.id, c.currency
             FROM currencies AS c
             WHERE c.id IN
-            (  SELECT f.currency_id
-               FROM fees AS f, domains AS d
-               WHERE f.id = d.fee_id
+            (  SELECT currency_id
+               FROM fees
                UNION
-               SELECT f.currency_id
-               FROM ssl_fees AS f, ssl_certs AS sslc
-               WHERE f.id = sslc.fee_id
+               SELECT currency_id
+               FROM ssl_fees
             )
               AND NOT EXISTS (
                 SELECT 1
@@ -166,21 +165,21 @@ class Conversion
         return $result_message;
     }
 
+    // The currencies any domain or SSL fee uses, whether or not an asset uses that fee yet, so the rates the fee
+    // comparisons need are refreshed with the rest
     public function getActiveCurrencies()
     {
         $result = $this->deeb->cnxx->query("
             SELECT id, currency
             FROM
             (  SELECT c.id, c.currency
-               FROM currencies AS c, fees AS f, domains AS d
+               FROM currencies AS c, fees AS f
                WHERE c.id = f.currency_id
-                 AND f.id = d.fee_id
                GROUP BY c.currency
                UNION
                SELECT c.id, c.currency
-               FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
+               FROM currencies AS c, ssl_fees AS f
                WHERE c.id = f.currency_id
-                 AND f.id = sslc.fee_id
                GROUP BY c.currency
             ) AS temp
             GROUP BY currency")->fetchAll();

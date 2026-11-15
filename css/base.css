@@ -311,8 +311,9 @@ a[aria-busy="true"] {
     opacity: .65;
 }
 /* The charts' colours (js/charts.js reads them, since Chart.js draws on a canvas and can't use CSS directly): a
-   nine-colour palette (a doughnut's slices use the first five, since it has at most five groups, and bars use the
-   first), a grey for a bar chart's "Other" bar, plus the text, grid, and slice border colours, for each colour mode */
+   nine-colour palette (a doughnut's slices use the first five, since it has at most five groups, bars use the first,
+   a price comparison's cheapest bars the green third, and the stacked counts the green, red, and amber), a grey for a
+   bar chart's "Other" bar, plus the text, grid, and slice border colours, for each colour mode */
 :root,
 [data-bs-theme="light"] {
     --domainmod-chart-1: #2563eb;
@@ -355,8 +356,8 @@ a[aria-busy="true"] {
         height: 260px;
     }
 }
-/* A cost report's horizontal bar chart is as tall as its bars need (up to 15 plus "Other"), so each bar keeps the same
-   thickness however many there are */
+/* A horizontal bar chart is as tall as its bars need (up to 30, such as a cost report's 15 plus "Other" or a price
+   comparison's registrars), so each bar keeps the same thickness however many there are */
 .domainmod-chart.domainmod-chart-bars-1 {
     height: 92px;
 }
@@ -404,4 +405,54 @@ a[aria-busy="true"] {
 }
 .domainmod-chart.domainmod-chart-bars-16 {
     height: 572px;
+}
+.domainmod-chart.domainmod-chart-bars-17 {
+    height: 604px;
+}
+.domainmod-chart.domainmod-chart-bars-18 {
+    height: 636px;
+}
+.domainmod-chart.domainmod-chart-bars-19 {
+    height: 668px;
+}
+.domainmod-chart.domainmod-chart-bars-20 {
+    height: 700px;
+}
+.domainmod-chart.domainmod-chart-bars-21 {
+    height: 732px;
+}
+.domainmod-chart.domainmod-chart-bars-22 {
+    height: 764px;
+}
+.domainmod-chart.domainmod-chart-bars-23 {
+    height: 796px;
+}
+.domainmod-chart.domainmod-chart-bars-24 {
+    height: 828px;
+}
+.domainmod-chart.domainmod-chart-bars-25 {
+    height: 860px;
+}
+.domainmod-chart.domainmod-chart-bars-26 {
+    height: 892px;
+}
+.domainmod-chart.domainmod-chart-bars-27 {
+    height: 924px;
+}
+.domainmod-chart.domainmod-chart-bars-28 {
+    height: 956px;
+}
+.domainmod-chart.domainmod-chart-bars-29 {
+    height: 988px;
+}
+.domainmod-chart.domainmod-chart-bars-30 {
+    height: 1020px;
+}
+/* DataTables' controls above a table (page length, info, and search) and below it (info and paging) get some space
+   from the table, which DataTables 2's Bootstrap 5 styling leaves at none */
+div.dt-container > div.top {
+    margin-bottom: 0.75rem;
+}
+div.dt-container > div.bottom {
+    margin-top: 0.75rem;
 }

@@ -31,6 +31,8 @@ $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
+$dashboard = new DomainMOD\Dashboard();
+$chart = new DomainMOD\Chart();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -39,36 +41,79 @@ require_once DIR_INC . '/settings/reporting-dw-potential-problems.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
+// The Reporting index links here with ?generate=1. Everything shows with or without it, so it's still accepted.
 $generate = $_GET['generate'] ?? 0;
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
 // the Data Warehouse tables only exist once it has been built
-$account_list_raw = $zone_list_raw = $suspended_list_raw = '';
 $dwaccounts = new DomainMOD\DwAccounts();
 $dwzones = new DomainMOD\DwZones();
 $dw_built = $dwaccounts->checkForAccountTable() && $dwzones->checkForZoneTable();
 
+// Each problem's rows, with the server's name, and the domain's id in DomainMOD when it has the domain (the Data
+// Warehouse stores domains the same way as the domains table, so they match exactly)
 $result_accounts_without_a_dns_zone = !$dw_built ? array() : $pdo->query("
-    SELECT domain
-    FROM dw_accounts
-    WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
-    ORDER BY domain")->fetchAll();
-$sql_accounts_without_a_dns_zone = "";
+    SELECT a.domain, a.user, s.name AS server_name,
+        (SELECT MIN(d.id) FROM domains AS d WHERE d.domain = a.domain) AS domain_id
+    FROM dw_accounts AS a
+    LEFT JOIN dw_servers AS s ON a.server_id = s.id
+    WHERE a.domain NOT IN (SELECT domain FROM dw_dns_zones)
+    ORDER BY a.domain")->fetchAll();
 $temp_accounts_without_a_dns_zone = count($result_accounts_without_a_dns_zone);
 
 $result_dns_zones_without_an_account = !$dw_built ? array() : $pdo->query("
-    SELECT domain
-    FROM dw_dns_zones
-    WHERE domain NOT IN (SELECT domain FROM dw_accounts)
-    ORDER BY domain")->fetchAll();
+    SELECT z.domain, z.zonefile, s.name AS server_name,
+        (SELECT MIN(d.id) FROM domains AS d WHERE d.domain = z.domain) AS domain_id
+    FROM dw_dns_zones AS z
+    LEFT JOIN dw_servers AS s ON z.server_id = s.id
+    WHERE z.domain NOT IN (SELECT domain FROM dw_accounts)
+    ORDER BY z.domain")->fetchAll();
 $temp_dns_zones_without_an_account = count($result_dns_zones_without_an_account);
 
 $result_suspended_accounts = !$dw_built ? array() : $pdo->query("
-    SELECT domain
-    FROM dw_accounts
-    WHERE suspended = '1'
-    ORDER BY domain")->fetchAll();
+    SELECT a.domain, a.user, a.suspendreason, a.suspendtime, s.name AS server_name,
+        (SELECT MIN(d.id) FROM domains AS d WHERE d.domain = a.domain) AS domain_id
+    FROM dw_accounts AS a
+    LEFT JOIN dw_servers AS s ON a.server_id = s.id
+    WHERE a.suspended = '1'
+    ORDER BY a.domain")->fetchAll();
 $temp_suspended_accounts = count($result_suspended_accounts);
+
+// Each server's accounts split three ways that don't overlap (suspended, no DNS zone but not suspended, and the rest
+// healthy), plus its DNS zones without an account, which aren't accounts and so aren't part of the bar
+$result_servers = !$dw_built ? array() : $pdo->query("
+    SELECT s.id, s.name,
+        (SELECT COUNT(*) FROM dw_accounts AS a WHERE a.server_id = s.id) AS accounts,
+        (SELECT COUNT(*) FROM dw_accounts AS a WHERE a.server_id = s.id AND a.suspended = '1') AS suspended,
+        (SELECT COUNT(*) FROM dw_accounts AS a WHERE a.server_id = s.id AND a.suspended != '1'
+           AND a.domain NOT IN (SELECT domain FROM dw_dns_zones)) AS no_zone,
+        (SELECT COUNT(*) FROM dw_dns_zones AS z WHERE z.server_id = s.id
+           AND z.domain NOT IN (SELECT domain FROM dw_accounts)) AS no_account
+    FROM dw_servers AS s
+    ORDER BY s.name")->fetchAll();
+foreach ($result_servers as $server) {
+    $server->healthy = (int) $server->accounts - (int) $server->suspended - (int) $server->no_zone;
+}
+
+$has_problems = $temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0;
+
+// A Data Warehouse value for the page: server names are stored escaped already, and everything else as WHM sent it
+$escape = function ($value) {
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+};
+
+// The domain, linking to its DomainMOD edit page when DomainMOD has it, otherwise with a "Not in DomainMOD" badge
+$domain_cell = function ($row) use ($escape, $layout) {
+    if ($row->domain_id) {
+        return '<a href="' . WEB_ROOT . '/domains/edit.php?did=' . (int) $row->domain_id . '">' . $escape($row->domain) . '</a>';
+    }
+    return $escape($row->domain) . ' ' . $layout->statusBadge(_('Not in DomainMOD'), _('This domain is on the server, but DomainMOD doesn\'t have it'), 'secondary');
+};
+
+// WHM sends the suspension time as a Unix timestamp, and 0 when there isn't one
+$suspended_when = function ($row) {
+    return (int) $row->suspendtime > 0 ? date("Y M jS", (int) $row->suspendtime) : '';
+};
 
 if ($export_data === 1) {
 
@@ -81,55 +126,27 @@ if ($export_data === 1) {
 
     $export->writeBlankRow($export_file);
 
-    if ($temp_accounts_without_a_dns_zone == 0) {
+    foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
 
-        $accounts_without_a_dns_zone_flag = 1;
-
-    } else {
-
-        foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
-
-            $row_contents = array(sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone), $row_accounts_without_a_dns_zone->domain);
-            $export->writeRow($export_file, $row_contents);
-
-        }
+        $row_contents = array(sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone), $row_accounts_without_a_dns_zone->domain);
+        $export->writeRow($export_file, $row_contents);
 
     }
 
-    if ($temp_dns_zones_without_an_account == 0) {
+    foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
 
-        $dns_zones_without_an_account_flag = 1;
-
-    } else {
-
-        foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
-
-            $row_contents = array(sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account), $row_dns_zones_without_an_account->domain);
-            $export->writeRow($export_file, $row_contents);
-
-        }
+        $row_contents = array(sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account), $row_dns_zones_without_an_account->domain);
+        $export->writeRow($export_file, $row_contents);
 
     }
 
-    if ($temp_suspended_accounts == 0) {
+    foreach ($result_suspended_accounts as $row_suspended_accounts) {
 
-        $suspended_accounts_flag = 1;
-
-    } else {
-
-        foreach ($result_suspended_accounts as $row_suspended_accounts) {
-
-            $row_contents = array(sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts), $row_suspended_accounts->domain);
-            $export->writeRow($export_file, $row_contents);
-
-        }
+        $row_contents = array(sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts), $row_suspended_accounts->domain);
+        $export->writeRow($export_file, $row_contents);
 
     }
     $export->closeFile($export_file);
-
-} else {
-
-    $total_rows = '0';
 
 }
 ?>
@@ -141,115 +158,181 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
+<?php
+if (!$dw_built) {
 
-    <BR><a href="<?php echo $report_filename; ?>?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
-    <BR><BR><?php
-}
-
-if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) {
-
-    if ($generate == 1) {
-
-        if ($temp_accounts_without_a_dns_zone == 0) {
-
-            $accounts_without_a_dns_zone_flag = 1;
-
-        } else { ?>
-
-            <strong><?php echo sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone); ?></strong><BR><?php
-
-            foreach ($result_accounts_without_a_dns_zone as $row_accounts_without_a_dns_zone) {
-
-                $account_list_raw .= htmlspecialchars($row_accounts_without_a_dns_zone->domain, ENT_QUOTES, 'UTF-8') . ", ";
-
-            }
-
-            $account_list = substr($account_list_raw, 0, -2);
-
-            if ($account_list != '') {
-
-                echo $account_list;
-
-            } else {
-
-                echo "n/a";
-
-            }
-
-            echo "<BR><BR>";
-
-        }
-
-        if ($temp_dns_zones_without_an_account == 0) {
-
-            $dns_zones_without_an_account_flag = 1;
-
-        } else { ?>
-
-            <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
-
-            foreach ($result_dns_zones_without_an_account as $row_dns_zones_without_an_account) {
-
-                $zone_list_raw .= htmlspecialchars($row_dns_zones_without_an_account->domain, ENT_QUOTES, 'UTF-8') . ", ";
-
-            }
-
-            $zone_list = substr($zone_list_raw, 0, -2);
-
-            if ($zone_list != '') {
-
-                echo $zone_list;
-
-            } else {
-
-                echo "n/a";
-
-            }
-
-            echo "<BR><BR>";
-
-        }
-
-        if ($temp_suspended_accounts == 0) {
-
-            $suspended_accounts_flag = 1;
-
-        } else { ?>
-
-            <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
-
-            foreach ($result_suspended_accounts as $row_suspended_accounts) {
-
-                $suspended_list_raw .= htmlspecialchars($row_suspended_accounts->domain, ENT_QUOTES, 'UTF-8') . ", ";
-
-            }
-
-            $suspended_list = substr($suspended_list_raw, 0, -2);
-
-            if ($suspended_list != '') {
-
-                echo $suspended_list;
-
-            } else {
-
-                echo "n/a";
-
-            }
-
-        }
-    }
-
-} elseif (!$dw_built) {
-
-    echo '<BR>' . _('The Data Warehouse hasn\'t been built yet, so there\'s nothing to report.') . '<BR><BR>';
+    echo $layout->calloutTop() . _('The Data Warehouse hasn\'t been built yet, so there\'s nothing to report.') . $layout->calloutBottom();
 
 } else {
 
-    echo '<BR>' . _('No results.') . '<BR><BR>';
+    if ($has_problems) { ?>
+
+        <a href="<?php echo $report_filename; ?>?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
+        <BR><BR><?php
+
+    } ?>
+
+    <div class="row"><?php
+        echo $dashboard->displayPanel(_('Accounts without a DNS Zone'), $temp_accounts_without_a_dns_zone, 'warning', 'bi-diagram-2', '/reporting/dw/potential-problems.php?generate=1#no-zone', _('DW Potential Problems'));
+        echo $dashboard->displayPanel(_('DNS Zones without an Account'), $temp_dns_zones_without_an_account, 'warning', 'bi-question-diamond', '/reporting/dw/potential-problems.php?generate=1#no-account', _('DW Potential Problems'));
+        echo $dashboard->displayPanel(_('Suspended Accounts'), $temp_suspended_accounts, 'danger', 'bi-pause-circle', '/reporting/dw/potential-problems.php?generate=1#suspended', _('DW Potential Problems')); ?>
+    </div><?php
+
+    if (!$has_problems) { ?>
+
+        <div class="callout callout-success mt-4"><?php echo _('No problems found. Every account has a DNS zone, every DNS zone has an account, and no accounts are suspended.'); ?></div><?php
+
+    }
+
+    if ($result_servers) {
+
+        ob_start(); ?>
+
+        <table id="<?php echo $slug; ?>-servers" class="<?php echo $datatable_class; ?> mt-3">
+            <thead>
+            <tr>
+                <th width="20px"></th>
+                <th><?php echo _('Server'); ?></th>
+                <th><?php echo _('Accounts'); ?></th>
+                <th><?php echo _('Healthy'); ?></th>
+                <th><?php echo _('No DNS Zone'); ?></th>
+                <th><?php echo _('Suspended'); ?></th>
+                <th><?php echo _('DNS Zones without an Account'); ?></th>
+            </tr>
+            </thead>
+            <tbody><?php
+            foreach ($result_servers as $server) { ?>
+
+                <tr>
+                    <td></td>
+                    <td><?php echo $server->name; ?></td>
+                    <td><?php echo number_format((int) $server->accounts); ?></td>
+                    <td><?php echo number_format($server->healthy); ?></td>
+                    <td><?php echo number_format((int) $server->no_zone); ?></td>
+                    <td><?php echo number_format((int) $server->suspended); ?></td>
+                    <td><?php echo number_format((int) $server->no_account); ?></td>
+                </tr><?php
+
+            } ?>
+
+            </tbody>
+        </table><?php
+
+        $servers_table = ob_get_clean();
+
+        echo $chart->stackedBars('dw-server-health-chart', _('Accounts by Server'),
+            array_map(function ($server) { return $server->name; }, $result_servers),
+            array(
+                array('name' => _('Healthy'), 'values' => array_column($result_servers, 'healthy'), 'colour' => '3'),
+                array('name' => _('No DNS Zone'), 'values' => array_map('intval', array_column($result_servers, 'no_zone')), 'colour' => '4'),
+                array('name' => _('Suspended'), 'values' => array_map('intval', array_column($result_servers, 'suspended')), 'colour' => '2')),
+            $servers_table);
+
+    }
+
+    if ($temp_accounts_without_a_dns_zone != 0) { ?>
+
+        <div class="row mt-4" id="no-zone">
+            <?php echo $layout->contentBoxTop(sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone), '12'); ?>
+            <table id="<?php echo $slug; ?>-no-zone" class="<?php echo $datatable_class; ?>">
+                <thead>
+                <tr>
+                    <th width="20px"></th>
+                    <th><?php echo _('Domain'); ?></th>
+                    <th><?php echo _('Server'); ?></th>
+                    <th><?php echo _('cPanel User'); ?></th>
+                </tr>
+                </thead>
+                <tbody><?php
+                foreach ($result_accounts_without_a_dns_zone as $row) { ?>
+
+                    <tr>
+                        <td></td>
+                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                        <td><?php echo $row->server_name; ?></td>
+                        <td><?php echo $escape($row->user); ?></td>
+                    </tr><?php
+
+                } ?>
+
+                </tbody>
+            </table>
+            <?php echo $layout->contentBoxBottom(); ?>
+        </div><?php
+
+    }
+
+    if ($temp_dns_zones_without_an_account != 0) { ?>
+
+        <div class="row mt-4" id="no-account">
+            <?php echo $layout->contentBoxTop(sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account), '12'); ?>
+            <table id="<?php echo $slug; ?>-no-account" class="<?php echo $datatable_class; ?>">
+                <thead>
+                <tr>
+                    <th width="20px"></th>
+                    <th><?php echo _('Domain'); ?></th>
+                    <th><?php echo _('Server'); ?></th>
+                    <th><?php echo _('Zone File'); ?></th>
+                </tr>
+                </thead>
+                <tbody><?php
+                foreach ($result_dns_zones_without_an_account as $row) { ?>
+
+                    <tr>
+                        <td></td>
+                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                        <td><?php echo $row->server_name; ?></td>
+                        <td><?php echo $escape($row->zonefile); ?></td>
+                    </tr><?php
+
+                } ?>
+
+                </tbody>
+            </table>
+            <?php echo $layout->contentBoxBottom(); ?>
+        </div><?php
+
+    }
+
+    if ($temp_suspended_accounts != 0) { ?>
+
+        <div class="row mt-4" id="suspended">
+            <?php echo $layout->contentBoxTop(sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts), '12'); ?>
+            <table id="<?php echo $slug; ?>-suspended" class="<?php echo $datatable_class; ?>">
+                <thead>
+                <tr>
+                    <th width="20px"></th>
+                    <th><?php echo _('Domain'); ?></th>
+                    <th><?php echo _('Server'); ?></th>
+                    <th><?php echo _('cPanel User'); ?></th>
+                    <th><?php echo _('Reason'); ?></th>
+                    <th><?php echo _('Suspended'); ?></th>
+                </tr>
+                </thead>
+                <tbody><?php
+                foreach ($result_suspended_accounts as $row) { ?>
+
+                    <tr>
+                        <td></td>
+                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                        <td><?php echo $row->server_name; ?></td>
+                        <td><?php echo $escape($row->user); ?></td>
+                        <td><?php echo $escape($row->suspendreason); ?></td>
+                        <td data-order="<?php echo (int) $row->suspendtime; ?>"><?php echo $suspended_when($row); ?></td>
+                    </tr><?php
+
+                } ?>
+
+                </tbody>
+            </table>
+            <?php echo $layout->contentBoxBottom(); ?>
+        </div><?php
+
+    }
 
 }
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
 </body>
 </html>

@@ -96,10 +96,19 @@ $cost_text = function ($row) use ($money) {
     return $money($row->converted_cost);
 };
 
+// The days left as a number (negative once overdue), and a cost as a number (no fee or no rate sort first), so the
+// list's columns sort by value
+$days_left = function ($row) use ($today) {
+    return (int) round((strtotime($row->expiry_date) - strtotime($today)) / 86400);
+};
+$cost_order = function ($row) {
+    return !$row->has_fee || !$row->has_rate ? -1 : round((float) $row->converted_cost, 2);
+};
+
 // Days from today to the expiry date, or "Overdue" once it's passed
-$days_left_text = function ($row) use ($today) {
-    $days_left = (int) round((strtotime($row->expiry_date) - strtotime($today)) / 86400);
-    return $days_left < 0 ? _('Overdue') : number_format($days_left);
+$days_left_text = function ($row) use ($days_left) {
+    $left = $days_left($row);
+    return $left < 0 ? _('Overdue') : number_format($left);
 };
 
 $yes_no = function ($value) {
@@ -204,7 +213,7 @@ if ($rows) {
 
 } ?>
 
-<h4 class="mt-4" id="domain-list"><?php echo $window_title; ?></h4>
+<h4 class="mt-5" id="domain-list"><?php echo $window_title; ?></h4>
 
 <div class="mb-3">
 <div class="btn-group" role="group" aria-label="<?php echo htmlspecialchars(_('Window'), ENT_QUOTES, 'UTF-8'); ?>"><?php
@@ -246,13 +255,13 @@ if ($list) { ?>
             <tr>
                 <td></td>
                 <td><a href="<?php echo WEB_ROOT; ?>/domains/edit.php?did=<?php echo (int) $row->id; ?>"><?php echo $row->domain; ?></a></td>
-                <td><?php echo $row->expiry_date; ?></td>
-                <td><?php echo $days_left_text($row); ?></td>
+                <td data-order="<?php echo $row->expiry_date; ?>"><?php echo $row->expiry_date; ?></td>
+                <td data-order="<?php echo $days_left($row); ?>"><?php echo $days_left_text($row); ?></td>
                 <td><?php echo $row->registrar_name; ?></td>
                 <td><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</td>
                 <td><?php echo $yes_no($row->autorenew); ?></td>
                 <td><?php echo $yes_no($row->privacy); ?></td>
-                <td><?php echo $cost_text($row); ?></td>
+                <td data-order="<?php echo $cost_order($row); ?>"><?php echo $cost_text($row); ?></td>
             </tr><?php
 
         } ?>

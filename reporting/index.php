@@ -61,6 +61,7 @@ $report = $_REQUEST['report'] ?? '';
     <a href='domains/cost-by-registrar.php'><?php echo _('Cost by Registrar'); ?></a><BR>
     <a href='domains/cost-by-tld.php'><?php echo _('Cost by TLD'); ?></a><BR>
     <a href='domains/cost-by-host.php'><?php echo _('Cost by Web Host'); ?></a><BR>
+    <a href='domains/tld-pricing.php'><?php echo _('TLD Pricing'); ?></a><BR>
     <a href='domains/registrar-fees.php?all=0'><?php echo _('Registrar Fees'); ?></a>
     <?php echo $layout->contentBoxBottom(); ?>
 

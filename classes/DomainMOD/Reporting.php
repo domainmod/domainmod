@@ -168,6 +168,189 @@ class Reporting
         return ob_get_clean();
     }
 
+    /*
+     * Every registrar fee and every live domain, with their amounts converted to the user's currency, for TLD Pricing.
+     * A fee whose currency has no rate for the user is kept with has_rate 0, so the page can say how many were left
+     * out. Each fee row gains its yearly price for each price type (the fee plus the misc fee) and its privacy fee, and
+     * each domain its current yearly cost (its own fee's renewal and misc fees, plus privacy when privacy is on), as
+     * Maintenance's fee update works out total_cost.
+     */
+    public function tldPrices()
+    {
+        $pdo = Database::getInstance()->cnxx;
+        $user_id = (int) ($_SESSION['s_user_id'] ?? 0);
+
+        $stmt = $pdo->prepare("
+            SELECT f.id AS fee_id, f.registrar_id, r.name AS registrar_name, f.tld, f.initial_fee, f.renewal_fee,
+                f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, (cc.id IS NOT NULL) AS has_rate,
+                cc.conversion
+            FROM fees AS f
+            JOIN registrars AS r ON f.registrar_id = r.id
+            JOIN currencies AS c ON f.currency_id = c.id
+            LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
+            ORDER BY f.tld, r.name");
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $fees = $stmt->fetchAll();
+
+        foreach ($fees as $fee) {
+            $conversion = (float) $fee->conversion;
+            $fee->price = array(
+                'renewal' => ((float) $fee->renewal_fee + (float) $fee->misc_fee) * $conversion,
+                'initial' => ((float) $fee->initial_fee + (float) $fee->misc_fee) * $conversion,
+                'transfer' => ((float) $fee->transfer_fee + (float) $fee->misc_fee) * $conversion);
+            $fee->converted = array(
+                'renewal' => (float) $fee->renewal_fee * $conversion,
+                'initial' => (float) $fee->initial_fee * $conversion,
+                'transfer' => (float) $fee->transfer_fee * $conversion,
+                'privacy' => (float) $fee->privacy_fee * $conversion,
+                'misc' => (float) $fee->misc_fee * $conversion);
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT d.id, d.domain, d.tld, d.registrar_id, r.name AS registrar_name, d.privacy,
+                (f.id IS NOT NULL) AS has_fee, (cc.id IS NOT NULL) AS has_rate,
+                (f.renewal_fee + f.misc_fee + IF(d.privacy = '1', f.privacy_fee, 0)) * cc.conversion AS current_cost
+            FROM domains AS d
+            LEFT JOIN registrars AS r ON d.registrar_id = r.id
+            LEFT JOIN fees AS f ON d.fee_id = f.id
+            LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
+            WHERE d.active NOT IN ('0', '10')
+            ORDER BY d.domain");
+        $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $domains = $stmt->fetchAll();
+
+        return array('fees' => $fees, 'domains' => $domains);
+    }
+
+    /*
+     * TLD Pricing's overview from tldPrices(): one row per TLD that has at least one fee with a rate, with its fees
+     * (cheapest first by renewal price), the cheapest and most expensive registrars (ties share), the spread, how many
+     * registrars have a fee for it, and how many of the user's live domains use it. Sorted by domains, most first, then
+     * by TLD. Also returns how many fees were left out for having no rate.
+     */
+    public function tldOverview($prices)
+    {
+        $by_tld = array();
+        $left_out = 0;
+        foreach ($prices['fees'] as $fee) {
+            if (!$fee->has_rate) {
+                $left_out++;
+                continue;
+            }
+            $by_tld[$fee->tld][] = $fee;
+        }
+
+        $domain_counts = array();
+        foreach ($prices['domains'] as $domain) {
+            $domain_counts[$domain->tld] = ($domain_counts[$domain->tld] ?? 0) + 1;
+        }
+
+        $rows = array();
+        foreach ($by_tld as $tld => $fees) {
+            $rows[] = $this->tldRow((string) $tld, $fees, $domain_counts[$tld] ?? 0, 'renewal');
+        }
+
+        usort($rows, function ($a, $b) {
+            if ($a['domains'] !== $b['domains']) return $b['domains'] - $a['domains'];
+            return strcmp($a['tld'], $b['tld']);
+        });
+
+        return array('rows' => $rows, 'left_out' => $left_out);
+    }
+
+    /*
+     * One TLD's fees ranked by a price type (renewal, initial, or transfer), cheapest first: the fees, the cheapest and
+     * most expensive fees (ties share, compared to the cent), the spread, and the number of registrars
+     */
+    public function tldRow($tld, $fees, $domain_count, $price_type)
+    {
+        usort($fees, function ($a, $b) use ($price_type) {
+            $difference = round($a->price[$price_type], 2) <=> round($b->price[$price_type], 2);
+            return $difference !== 0 ? $difference : strcmp($a->registrar_name, $b->registrar_name);
+        });
+
+        $low = round($fees[0]->price[$price_type], 2);
+        $high = round($fees[count($fees) - 1]->price[$price_type], 2);
+        $cheapest = $most_expensive = array();
+        $registrars = array();
+        foreach ($fees as $index => $fee) {
+            if (round($fee->price[$price_type], 2) == $low) $cheapest[] = $index;
+            if (round($fee->price[$price_type], 2) == $high) $most_expensive[] = $index;
+            $registrars[$fee->registrar_id] = true;
+        }
+
+        return array(
+            'tld' => $tld,
+            'fees' => $fees,
+            'cheapest' => $cheapest,
+            'most_expensive' => $most_expensive,
+            'low' => $low,
+            'high' => $high,
+            'spread' => $high - $low,
+            'registrars' => count($registrars),
+            'domains' => $domain_count);
+    }
+
+    /*
+     * TLD Pricing's possible savings from tldPrices(): every live domain on a TLD with fees (with rates) at two or more
+     * registrars where another registrar's full yearly cost for that domain (renewal and misc, plus privacy when the
+     * domain has privacy on) is lower than its current cost. The destination is the registrar with the lowest full cost
+     * for that domain (ties: the first by name), worked out per domain. Sorted by saving, largest first. Also returns
+     * how many domains on those TLDs were left out because their own fee is missing or has no rate.
+     */
+    public function tldSavings($prices)
+    {
+        $by_tld = array();
+        foreach ($prices['fees'] as $fee) {
+            if ($fee->has_rate) $by_tld[$fee->tld][] = $fee;
+        }
+        $compared = array();
+        foreach ($by_tld as $tld => $fees) {
+            $registrars = array();
+            foreach ($fees as $fee) $registrars[$fee->registrar_id] = true;
+            if (count($registrars) >= 2) $compared[$tld] = $fees;
+        }
+
+        $rows = array();
+        $left_out = 0;
+        foreach ($prices['domains'] as $domain) {
+            if (!isset($compared[$domain->tld])) continue;
+            if (!$domain->has_fee || !$domain->has_rate) {
+                $left_out++;
+                continue;
+            }
+            $current = round((float) $domain->current_cost, 2);
+            $best = null;
+            $best_cost = null;
+            foreach ($compared[$domain->tld] as $fee) {
+                if ((int) $fee->registrar_id === (int) $domain->registrar_id) continue;
+                $cost = round($fee->price['renewal'] + ($domain->privacy == '1' ? $fee->converted['privacy'] : 0), 2);
+                if ($best === null || $cost < $best_cost
+                    || ($cost == $best_cost && strcmp($fee->registrar_name, $best->registrar_name) < 0)) {
+                    $best = $fee;
+                    $best_cost = $cost;
+                }
+            }
+            if ($best !== null && $best_cost < $current) {
+                $rows[] = array(
+                    'domain' => $domain,
+                    'current' => $current,
+                    'destination' => $best,
+                    'destination_cost' => $best_cost,
+                    'saving' => $current - $best_cost);
+            }
+        }
+
+        usort($rows, function ($a, $b) {
+            $difference = round($b['saving'], 2) <=> round($a['saving'], 2);
+            return $difference !== 0 ? $difference : strcmp($a['domain']->domain, $b['domain']->domain);
+        });
+
+        return array('rows' => $rows, 'left_out' => $left_out, 'tlds_compared' => count($compared));
+    }
+
     // A month's name (1 to 12), translated, as the Cost by Month reports show it
     public function monthName($month)
     {

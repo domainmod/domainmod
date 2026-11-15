@@ -30,11 +30,11 @@ $report_filename = 'at-risk.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '\').DataTable({
-                          "paging": false,
+                          "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
-                          "searching": false,
-                          "info": false,
+                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "searching": true,
+                          "info": true,
                           "autoWidth": true,
                           "bAutoWidth": false,
                           "responsive": {
@@ -47,8 +47,8 @@ $datatable_options = 'var oldStart = 0;
                                            orderable: false,
                                            targets:   0
                                            } ],
-                          "ordering": false,
-                          "order": [[ 1, "asc" ]],
+                          "ordering": true,
+                          "order": [[ 3, "asc" ]],
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {

@@ -30,11 +30,11 @@ $report_filename = 'cost-by-domain.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'var oldStart = 0;
                       $(\'#' . $slug . '\').DataTable({
-                          "paging": false,
+                          "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
-                          "searching": false,
-                          "info": false,
+                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "searching": true,
+                          "info": true,
                           "autoWidth": true,
                           "bAutoWidth": false,
                           "responsive": {

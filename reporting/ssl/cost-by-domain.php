@@ -226,6 +226,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         foreach ($result as $row) {
 
             $per_cert = $row->total_cost / $row->number_of_certs;
+            // The amounts as numbers, so their columns sort by value
+            $per_cert_order = round($per_cert, 2);
+            $total_cost_order = round((float) $row->total_cost, 2);
 
             $per_cert = $currency->format($per_cert, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
@@ -234,9 +237,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
             <tr>
                 <td></td>
                 <td><?php echo $row->domain; ?></td>
-                <td><?php echo $row->total_cost; ?></td>
-                <td><a href="../../ssl/index.php?did=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
-                <td><?php echo $per_cert; ?></td>
+                <td data-order="<?php echo $total_cost_order; ?>"><?php echo $row->total_cost; ?></td>
+                <td data-order="<?php echo (int) $row->number_of_certs; ?>"><a href="../../ssl/index.php?did=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
+                <td data-order="<?php echo $per_cert_order; ?>"><?php echo $per_cert; ?></td>
             </tr><?php
 
         } ?>
