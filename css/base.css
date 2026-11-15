@@ -66,7 +66,7 @@ html {
 [data-bs-theme="dark"] .domainmod-css-logo-background-colour .logo-xl {
     box-sizing: content-box;
     padding: .15rem .5rem;
-    background-color: #d6d9dc;
+    background-color: #d8dee9;
     border-radius: .4rem;
 }
 /* The small logo in the collapsed sidebar, centred and sized to fit it. AdminLTE places it for a wider sidebar, which
@@ -128,7 +128,7 @@ html {
 /* DomainMOD's own page numbers (Large Mode) keep the text colour in dark mode */
 [data-bs-theme="dark"] .pagination_menu_block a,
 [data-bs-theme="dark"] .pagination_menu_block a:hover {
-    color: #e3e3e3;
+    color: #d8dee9;
 }
 /* The current section in the sidebar menu is shown in DomainMOD's main colour, as before */
 .app-sidebar .sidebar-menu > .nav-item > .nav-link.active {
@@ -138,13 +138,14 @@ html {
 /* The large logo on the sign-in, installer, and bare pages has dark lettering, so in dark mode it sits on the same
    light background as the sidebar's logo */
 [data-bs-theme="dark"] .login-logo img {
-    background-color: #f1f1f1;
+    background-color: #d8dee9;
     border-radius: .5rem;
     padding: .5rem 1rem;
 }
 /* Links stay blue with no underline, as before. data-lte-primary="danger" would turn them red, so they're set back
    here (with the same selectors AdminLTE's colours use, so these win), a shade darker than Bootstrap's blue so they
-   pass WCAG AA on the light grey page, and lighter in dark mode so they're easy to read. */
+   pass WCAG AA on the light grey page, and in dark mode a lightened Nord Frost, which passes on the cards and on
+   striped table rows. */
 [data-lte-primary] {
     --bs-link-color: #0b5ed7;
     --bs-link-color-rgb: 11, 94, 215;
@@ -153,10 +154,10 @@ html {
 }
 [data-bs-theme="dark"][data-lte-primary],
 [data-bs-theme="dark"] [data-lte-primary] {
-    --bs-link-color: #6ea8fe;
-    --bs-link-color-rgb: 110, 168, 254;
-    --bs-link-hover-color: #9ec5fe;
-    --bs-link-hover-color-rgb: 158, 197, 254;
+    --bs-link-color: #93c7d5;
+    --bs-link-color-rgb: 147, 199, 213;
+    --bs-link-hover-color: #b5d9e3;
+    --bs-link-hover-color-rgb: 181, 217, 227;
 }
 a {
     text-decoration: none;
@@ -187,12 +188,12 @@ a:hover {
     color: var(--bs-danger-text-emphasis);
     font-weight: 600;
 }
-/* The red and green highlights, lighter in dark mode so they're readable */
+/* The red and green highlights, lighter Nord red and green in dark mode so they're readable */
 [data-bs-theme="dark"] .domainmod-css-text-highlight-red {
-    color: #ff6b6b;
+    color: #e6adb2;
 }
 [data-bs-theme="dark"] .domainmod-css-text-highlight-green {
-    color: #5cd68a;
+    color: #adc79a;
 }
 /* On/off switches a little larger than Bootstrap's, so they're easy to see and click next to the compact text */
 .form-switch .form-check-input {
@@ -330,20 +331,22 @@ a[aria-busy="true"] {
     --domainmod-chart-grid: rgba(0, 0, 0, .1);
     --domainmod-chart-border: #ffffff;
 }
+/* Dark mode's chart colours come from the Nord palette (Frost and Aurora, a few lightened so every slice and bar has
+   at least 3:1 contrast against the card) */
 [data-bs-theme="dark"] {
-    --domainmod-chart-1: #60a5fa;
-    --domainmod-chart-2: #f87171;
-    --domainmod-chart-3: #4ade80;
-    --domainmod-chart-4: #fbbf24;
-    --domainmod-chart-5: #a78bfa;
-    --domainmod-chart-6: #22d3ee;
-    --domainmod-chart-7: #f472b6;
-    --domainmod-chart-8: #a3e635;
-    --domainmod-chart-9: #d6a76b;
-    --domainmod-chart-other: #64748b;
-    --domainmod-chart-text: #dee2e6;
-    --domainmod-chart-grid: rgba(255, 255, 255, .12);
-    --domainmod-chart-border: #212529;
+    --domainmod-chart-1: #88c0d0;
+    --domainmod-chart-2: #d98e95;
+    --domainmod-chart-3: #a3be8c;
+    --domainmod-chart-4: #ebcb8b;
+    --domainmod-chart-5: #c4a3bf;
+    --domainmod-chart-6: #8fbcbb;
+    --domainmod-chart-7: #d9a08a;
+    --domainmod-chart-8: #a3b8d4;
+    --domainmod-chart-9: #e5e9f0;
+    --domainmod-chart-other: #8a95ab;
+    --domainmod-chart-text: #d8dee9;
+    --domainmod-chart-grid: rgba(216, 222, 233, .12);
+    --domainmod-chart-border: #3b4252;
 }
 /* A chart's drawing area. Chart.js sizes the canvas to fill it, so the height is set here (no inline styles under the
    CSP), smaller on narrow screens. */
@@ -492,4 +495,186 @@ div.dt-container > div.bottom {
    still has over 3:1 contrast on white */
 [data-bs-theme="light"] .domainmod-status-icon.text-warning-emphasis {
     color: #997404 !important;
+}
+/* Dark mode in the Nord palette (nordtheme.com): Polar Night (#2E3440, #3B4252, #434C5E, #4C566A) for the
+   backgrounds and borders, Snow Storm (#D8DEE9, #E5E9F0, #ECEFF4) for the text, Frost for links and info, and Aurora
+   for the status colours. A few Aurora shades are lightened (red to #D98E95 for icons and #E6ADB2 for text) so they
+   keep at least 3:1 (icons) or 4.5:1 (text) contrast on the cards and on striped table rows. DomainMOD's main colour,
+   which AdminLTE takes from Bootstrap's red (data-lte-primary="danger"), is a calmer brand red, #B8434E, which keeps
+   white text at 5.3:1. Bootstrap's secondary grey is a light Polar Night blue-grey (#B5BDCD), so .text-secondary text
+   keeps 4.5:1 on the page, the cards, and striped rows. */
+[data-bs-theme="dark"],
+[data-bs-theme="dark"][data-lte-primary] {
+    --bs-body-bg: #3b4252;
+    --bs-body-bg-rgb: 59, 66, 82;
+    --bs-tertiary-bg: #2e3440;
+    --bs-tertiary-bg-rgb: 46, 52, 64;
+    --bs-secondary-bg: #434c5e;
+    --bs-secondary-bg-rgb: 67, 76, 94;
+    --bs-body-color: #d8dee9;
+    --bs-body-color-rgb: 216, 222, 233;
+    --bs-emphasis-color: #eceff4;
+    --bs-emphasis-color-rgb: 236, 239, 244;
+    --bs-secondary-color: rgba(216, 222, 233, 0.75);
+    --bs-secondary-color-rgb: 216, 222, 233;
+    --bs-tertiary-color: rgba(216, 222, 233, 0.5);
+    --bs-tertiary-color-rgb: 216, 222, 233;
+    --bs-heading-color: #eceff4;
+    --bs-border-color: #4c566a;
+    --bs-border-color-translucent: rgba(216, 222, 233, 0.15);
+    --bs-primary: #b8434e;
+    --bs-primary-rgb: 184, 67, 78;
+    --bs-danger: #d98e95;
+    --bs-danger-rgb: 217, 142, 149;
+    --bs-warning: #ebcb8b;
+    --bs-warning-rgb: 235, 203, 139;
+    --bs-success: #a3be8c;
+    --bs-success-rgb: 163, 190, 140;
+    --bs-info: #88c0d0;
+    --bs-info-rgb: 136, 192, 208;
+    --bs-secondary: #b5bdcd;
+    --bs-secondary-rgb: 181, 189, 205;
+    --bs-primary-text-emphasis: #e6adb2;
+    --bs-danger-text-emphasis: #e6adb2;
+    --bs-warning-text-emphasis: #ebcb8b;
+    --bs-success-text-emphasis: #adc79a;
+    --bs-info-text-emphasis: #93c7d5;
+    --bs-secondary-text-emphasis: #d8dee9;
+    --bs-primary-bg-subtle: #4a3a42;
+    --bs-danger-bg-subtle: #4a3a42;
+    --bs-warning-bg-subtle: #4a4638;
+    --bs-success-bg-subtle: #3d4a3e;
+    --bs-info-bg-subtle: #374a52;
+    --bs-secondary-bg-subtle: #434c5e;
+    --bs-primary-border-subtle: #8f4950;
+    --bs-danger-border-subtle: #8f4950;
+    --bs-warning-border-subtle: #a89160;
+    --bs-success-border-subtle: #768a65;
+    --bs-info-border-subtle: #5f8a96;
+    --bs-secondary-border-subtle: #616e88;
+    --bs-focus-ring-color: rgba(136, 192, 208, 0.75);
+    --bs-form-valid-color: #adc79a;
+    --bs-form-valid-border-color: #a3be8c;
+    --bs-form-invalid-color: #e6adb2;
+    --bs-form-invalid-border-color: #d98e95;
+    --lte-primary-hover: #a23b45;
+    --lte-primary-hover-border: #a23b45;
+    --lte-primary-active: #8f343d;
+    --lte-primary-active-border: #8f343d;
+}
+/* The sidebar, the header, and the sign-in and installer pages' background in the darkest Polar Night */
+[data-bs-theme="dark"] .app-sidebar.bg-body-secondary,
+[data-bs-theme="dark"] .app-header.bg-body,
+[data-bs-theme="dark"] body.bg-body-secondary {
+    background-color: #2e3440 !important;
+}
+[data-bs-theme="dark"] .app-sidebar {
+    --lte-sidebar-color: #d8dee9;
+    --lte-sidebar-submenu-color: #d8dee9;
+    --lte-sidebar-hover-bg: rgba(216, 222, 233, 0.08);
+    --lte-sidebar-menu-active-bg: rgba(216, 222, 233, 0.08);
+    --lte-sidebar-submenu-hover-bg: rgba(216, 222, 233, 0.08);
+    --lte-sidebar-submenu-active-bg: rgba(216, 222, 233, 0.08);
+}
+/* Form fields a step darker than the card they sit on, with a border that has 3:1 contrast against the card, and
+   a Frost border and focus ring (75% opaque, still over 3:1) when focused. Tom Select draws its border on the wrapper
+   (its Bootstrap styling removes the inner control's), so the wrapper gets the same colours. */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .ts-control,
+[data-bs-theme="dark"] .ts-wrapper.single .ts-control,
+[data-bs-theme="dark"] .ts-dropdown {
+    background-color: #2e3440;
+    border-color: #8a95ab;
+}
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus,
+[data-bs-theme="dark"] .ts-wrapper.form-select.focus,
+[data-bs-theme="dark"] .ts-wrapper.form-control.focus {
+    border-color: #88c0d0;
+    box-shadow: 0 0 0 .25rem var(--bs-focus-ring-color);
+}
+/* Checkboxes, radio buttons, and switches: the same 3:1 border, a lighter red border round the brand red when
+   checked (so the checked control still stands out from the card), and the Frost focus ring. The data-lte-primary
+   selectors outweigh AdminLTE's own red focus ring. */
+[data-bs-theme="dark"] .form-check-input {
+    border-color: #8a95ab;
+}
+[data-bs-theme="dark"][data-lte-primary] .form-check-input:checked {
+    border-color: #d98e95;
+}
+[data-bs-theme="dark"][data-lte-primary] .form-check-input:focus {
+    border-color: #88c0d0;
+    box-shadow: 0 0 0 .25rem var(--bs-focus-ring-color);
+}
+/* The current sidebar section and Tom Select's highlighted option and chosen items get a thin lighter red edge round
+   the brand red, so the highlight stands out from the dark background */
+[data-bs-theme="dark"] .app-sidebar .sidebar-menu > .nav-item > .nav-link.active,
+[data-bs-theme="dark"] .ts-dropdown .active,
+[data-bs-theme="dark"] .ts-wrapper.multi .ts-control > div.active {
+    box-shadow: inset 0 0 0 1px #d98e95;
+}
+/* The date picker's chosen days get the same lighter red border round the brand red, so they stand out from the
+   calendar */
+[data-bs-theme="dark"] .flatpickr-day.selected,
+[data-bs-theme="dark"] .flatpickr-day.startRange,
+[data-bs-theme="dark"] .flatpickr-day.endRange {
+    border-color: #d98e95;
+}
+/* Buttons in the brand red, a shade darker on hover and when pressed. Their text stays white. */
+[data-bs-theme="dark"] .btn-danger,
+[data-bs-theme="dark"] .btn-primary {
+    --bs-btn-bg: #b8434e;
+    --bs-btn-border-color: #b8434e;
+    --bs-btn-hover-bg: #a23b45;
+    --bs-btn-hover-border-color: #a23b45;
+    --bs-btn-active-bg: #8f343d;
+    --bs-btn-active-border-color: #8f343d;
+    --bs-btn-disabled-bg: #b8434e;
+    --bs-btn-disabled-border-color: #b8434e;
+    --bs-btn-color: #ffffff;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-focus-shadow-rgb: 136, 192, 208;
+    --bs-btn-focus-box-shadow: 0 0 0 .25rem var(--bs-focus-ring-color);
+}
+/* Solid badges: red with white text, and Nord's yellow, green, and Frost with dark Polar Night text */
+[data-bs-theme="dark"] .text-bg-danger,
+[data-bs-theme="dark"] .text-bg-primary {
+    background-color: #b8434e !important;
+    color: #ffffff !important;
+}
+[data-bs-theme="dark"] .text-bg-warning {
+    background-color: #ebcb8b !important;
+    color: #2e3440 !important;
+}
+[data-bs-theme="dark"] .text-bg-success {
+    background-color: #a3be8c !important;
+    color: #2e3440 !important;
+}
+[data-bs-theme="dark"] .text-bg-info {
+    background-color: #88c0d0 !important;
+    color: #2e3440 !important;
+}
+[data-bs-theme="dark"] .text-bg-secondary {
+    background-color: #4c566a !important;
+    color: #eceff4 !important;
+}
+/* Outline cards' coloured tops: the brand red for DomainMOD's own cards, and Nord's colours for the rest */
+[data-bs-theme="dark"] .card-outline.card-danger,
+[data-bs-theme="dark"] .card-outline.card-primary {
+    border-top-color: #b8434e;
+}
+[data-bs-theme="dark"] .card-outline.card-warning {
+    border-top-color: #ebcb8b;
+}
+[data-bs-theme="dark"] .card-outline.card-success {
+    border-top-color: #a3be8c;
+}
+[data-bs-theme="dark"] .card-outline.card-info {
+    border-top-color: #88c0d0;
+}
+[data-bs-theme="dark"] .card-outline.card-secondary {
+    border-top-color: #8a95ab;
 }
