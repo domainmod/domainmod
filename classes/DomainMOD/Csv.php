@@ -69,7 +69,9 @@ class Csv
         $handle = fopen($filename, "r");
         $count = 0;
 
-        while (($row = fgetcsv($handle)) !== false) {
+        // Standard CSV (RFC 4180), as Export writes it: quotes are escaped by doubling them, with no backslash escape
+        // character.
+        while (($row = fgetcsv($handle, null, ',', '"', '')) !== false) {
 
             if ($count !== 0 && !$this->isBlankRow($row)) {
 
@@ -191,7 +193,8 @@ class Csv
         $handle = fopen($filename, "r");
         $row_number = 0;
 
-        while (($row = fgetcsv($handle)) !== false) {
+        // Read the same way as parse().
+        while (($row = fgetcsv($handle, null, ',', '"', '')) !== false) {
 
             $row_number++;
             if ($this->isBlankRow($row)) continue;
