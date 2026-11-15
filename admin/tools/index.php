@@ -49,7 +49,8 @@ $pdo = $deeb->cnxx;
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <?php echo $layout->contentBoxTop(_('Tools'), '3'); ?>
-<a href="send-test-email.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo _("Send Test Email"); ?></a><BR>
+<div id="domainmod-tools-result" data-domainmod-focus></div>
+<?php echo $layout->htmxTaskLink('send-test-email.php?' . (new DomainMOD\Csrf())->query(), _('Send Test Email'), '#domainmod-tools-result', 'innerHTML', 'domainmod-tools-working-1') . $layout->htmxSpinner('domainmod-tools-working-1'); ?><BR>
 <?php echo _("If you want to ensure that your installation is able to send email successfully, click this link and a test email will be sent to") . " <strong>" . $_SESSION['s_email_address'] . "</strong>"; ?>.
 <?php echo $layout->contentBoxBottom(); ?>
 

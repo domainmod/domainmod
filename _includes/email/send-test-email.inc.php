@@ -97,4 +97,4 @@ $message_text .= $email_address_sig . "\n";
 $message_text .= "\n---\n\n";
 $message_text .= _("You've received this notification because someone requested a test email be sent from your account.") . "\n\n";
 
-$email->send(_('DomainMOD Test Email'), $to_address, $subject, $message_html, $message_text);
+$email_sent = $email->send(_('DomainMOD Test Email'), $to_address, $subject, $message_html, $message_text);

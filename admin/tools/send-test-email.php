@@ -45,7 +45,21 @@ $username = $_SESSION['s_username'];
 $email_address = $_SESSION['s_email_address'];
 require_once DIR_INC . '/email/send-test-email.inc.php';
 
-$_SESSION['s_message_success'] .= _("Test Email Sent!") . "<BR>";
+if ($email_sent ?? false) { // set by send-test-email.inc.php
+
+    $_SESSION['s_message_success'] .= _("Test Email Sent!") . "<BR>";
+
+} else {
+
+    $_SESSION['s_message_danger'] .= _("The test email couldn't be sent. Please check your email settings and try again.") . "<BR>";
+
+}
+
+// An htmx request gets just the result message, shown in the Tools card, instead of a redirect
+if ($system->isHtmxRequest()) {
+    echo $system->htmxTaskResult();
+    exit;
+}
 
 header("Location: index.php");
 exit;

@@ -44,16 +44,17 @@ class Email
         list($this->first_name, $this->last_name, $this->email_address) = $this->getEmailSignature();
     }
 
+    // Returns whether the email was handed off successfully (to the SMTP server, or to PHP's mail())
     public function send($email_title, $to_address, $subject, $message_html, $message_text)
     {
         if ($this->use_smtp == '1') {
 
             $smtp = new Smtp();
-            $smtp->send($email_title, $to_address, $this->from_address, $subject, $message_html, $message_text);
+            return $smtp->send($email_title, $to_address, $this->from_address, $subject, $message_html, $message_text);
 
         } else {
 
-            $this->intPhpMail($email_title, $to_address, $subject, $message_html);
+            return $this->intPhpMail($email_title, $to_address, $subject, $message_html);
 
         }
     }
