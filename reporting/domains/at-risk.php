@@ -189,10 +189,17 @@ if ($list) { ?>
 } ?>
 <BR><BR>
 
+<?php
+// The tiles count reasons, and a domain can have more than one, so a line first gives the number of domains behind them
+$total_at_risk = count($at_risk);
+$expiring_at_risk = $total_at_risk - $counts['overdue'];
+echo '<p>' . sprintf(ngettext('%1$s at-risk domain: %2$s overdue and %3$s expiring in the next %4$s days.', '%1$s at-risk domains: %2$s overdue and %3$s expiring in the next %4$s days.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']), number_format($expiring_at_risk), number_format($risk_days));
+if (array_sum($counts) > $total_at_risk) echo ' ' . _('A domain can have more than one reason, so the tiles can add up to more.');
+echo '</p>'; ?>
 <div class="row"><?php
+    echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Auto Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Privacy Off (%s days)'), $risk_days), $counts['privacy'], 'secondary', 'bi-incognito', '/reporting/domains/at-risk.php?show=privacy#domain-list', _('At-Risk Domains'));
-    echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains')); ?>
 </div>
 
