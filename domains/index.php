@@ -2694,6 +2694,7 @@ if ($result) {
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php';  //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/filter-auto-apply.js'); ?>"></script>
 <?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
 <script src="<?php echo $layout->assetUrl('js/domain-list.js'); ?>"></script>
 <?php } ?>

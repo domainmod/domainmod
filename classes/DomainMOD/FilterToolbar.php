@@ -25,6 +25,7 @@ namespace DomainMOD;
  * A list's filter toolbar (the Domains and SSL lists): a Filters button with a count of the active
  * filters, one removable chip per active filter, and Clear all, with every filter in a Bootstrap offcanvas side panel.
  * Without JavaScript the Filters button reloads the page with expand=1, and the form is drawn as a normal card instead.
+ * With it, a change in the panel applies at once and the panel opens again after the reload (js/filter-auto-apply.js).
  *
  * Each list adds its filters with addFilter() (a request key, its current value, the value that means "no filter", and
  * the chip's text), and any controls that every link must carry without being chips (the Domains list's Large Mode

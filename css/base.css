@@ -1605,3 +1605,9 @@ html.domainmod-toasts-compact {
         padding-inline: .5rem;
     }
 }
+/* The panel opening again after a filter applied from it (js/filter-auto-apply.js) appears at once, with its backdrop,
+   rather than sliding in a second time */
+.domainmod-filter-reopening .domainmod-filter-panel,
+.domainmod-filter-reopening .offcanvas-backdrop {
+    transition: none;
+}
