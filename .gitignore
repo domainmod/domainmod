@@ -8,3 +8,5 @@
 domainmod.log
 error_log
 robots.txt
+/tests/phpunit.phar
+/tests/.phpunit.cache/

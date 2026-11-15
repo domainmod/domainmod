@@ -8,7 +8,7 @@
 
 ## How it was tested
 
-<!-- DomainMOD version, PHP version, database (MariaDB or MySQL, and version), and the steps you followed. -->
+<!-- DomainMOD version, PHP version, database (MariaDB or MySQL, and version), and the steps you followed. Say whether you ran the tests (see "Running the Tests" in CONTRIBUTING.md), and which tests you added or changed, if any. -->
 
 ## AI use
 

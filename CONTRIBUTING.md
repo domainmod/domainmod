@@ -14,6 +14,19 @@ The rating uses the [AI Code Rating](https://aicoderating.com/spec/) scales. The
 
 The second character must be accurate, since it feeds DomainMOD's own rating; the other two help us decide how closely to review. For example, `B0a` is from an experienced developer (B) whose pull request has no AI-written code, and `C3b` is from a capable developer (C) where AI wrote most of the changed code and they read all of it. Pick the first character for yourself, separately from the other two, and don't copy DomainMOD's own rating. Please don't include an `ACR.md` file; the project keeps its own.
 
+## Running the Tests
+
+DomainMOD's automated tests are in the `tests/` folder and use [PHPUnit](https://phpunit.de/). To run them, you need PHP 8.2 or newer on the command line with the extensions listed in the [README](README.md), plus `dom`, `mbstring`, and `xml`, and `curl` to download PHPUnit. From the repository root:
+
+```
+bash tests/get-phpunit.sh
+php tests/phpunit.phar -c tests/phpunit.xml.dist
+```
+
+The first command downloads the version of PHPUnit the tests are written for, checks its SHA-256 checksum, and saves it as `tests/phpunit.phar`, which git ignores. A warning, notice, deprecation, or risky test fails the run, the same as a failed test.
+
+Please make sure the tests pass before submitting a pull request, and add or update tests for the code you change wherever it can be tested. If your pull request fixes a bug, include a test that fails without the fix and passes with it.
+
 ## Questions, Problems & Feature Requests
 
 Please use the [DomainMOD Support Portal](https://support.domainmod.org) for questions, problems using DomainMOD, and feature requests (including new registrar integrations). Feature requests live only in the Support Portal, so other users can vote on them.
