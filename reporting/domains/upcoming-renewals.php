@@ -192,11 +192,10 @@ if ($export_data === 1 && $list) {
 <?php echo _('What your domains will cost to renew over the next year, month by month, and which ones expire soon. Each renewal is counted as one year at its renewal fee, plus privacy and any other fees, in your currency. Expired and sold domains are left out.'); ?>
 <?php echo $layout->calloutBottom(); ?>
 
-<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a>&nbsp;&nbsp;<?php
-if ($list) { ?>
-    <a href="<?php echo $report_filename; ?>?export_data=1&days=<?php echo $days; ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
-} ?>
-<BR><BR>
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
+if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?export_data=1&days=' . $days, 'bi-download'); ?>
 
 <div class="row"><?php
     foreach ($windows as $window_days => $window) {

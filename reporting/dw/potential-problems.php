@@ -165,10 +165,10 @@ if (!$dw_built) {
 
 } else {
 
-    if ($has_problems) { ?>
+    if ($has_problems) {
 
-        <a href="<?php echo $report_filename; ?>?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
-        <BR><BR><?php
+        // The page's actions, drawn in the page header (see Layout::renderPageActions())
+        $layout->addPageAction(_('Export'), $report_filename . '?export_data=1', 'bi-download');
 
     } ?>
 

@@ -160,8 +160,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Categories'), SOFTWARE_TITLE); ?></div>
 <BR>
-<a href="add/category.php"><?php echo $layout->showButton('button', _('Add Category')); ?></a>
-<a href="categories.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add Category'), 'add/category.php');
+$layout->addPageAction(_('Export'), 'categories.php?export_data=1', 'bi-download');
 
 if ($result) {
 

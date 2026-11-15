@@ -233,9 +233,10 @@ if (!$result) {
 
     }
 
-} else { ?>
+} else {
 
-    <a href="list-accounts.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->addPageAction(_('Export'), 'list-accounts.php?export_data=1', 'bi-download');
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 

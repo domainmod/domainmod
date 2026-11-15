@@ -20,6 +20,16 @@
  *
  */
 ?>
+<?php
+// The page's actions go into the header's marker, now that the page has declared them all (see header.inc.php)
+if (isset($domainmod_page_actions_buffer) && ob_get_level() === $domainmod_page_actions_buffer) {
+    $domainmod_page_html = ob_get_clean();
+    $domainmod_marker_at = strpos($domainmod_page_html, DomainMOD\Layout::PAGE_ACTIONS_MARKER);
+    if ($domainmod_marker_at !== false) {
+        $domainmod_page_html = substr_replace($domainmod_page_html, $layout->renderPageActions(), $domainmod_marker_at, strlen(DomainMOD\Layout::PAGE_ACTIONS_MARKER));
+    }
+    echo $domainmod_page_html;
+} ?>
             </div>
             <!-- /.container-fluid -->
         </div>

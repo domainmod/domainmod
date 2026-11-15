@@ -549,25 +549,16 @@ if ($queue_rdap_available) {
 
 <?php echo sprintf(_('See the %sDomain Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></div>
 <BR>
-<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
-<?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
+if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
-if ($_SESSION['s_domains_in_queue'] == '1') { ?>
-<a href="index.php?clear=1"><?php echo $layout->showButton('button', _('Clear Completed')); ?></a>
-<?php } ?>
-<a href="intro.php"><?php echo $layout->showButton('button', _('More Info')); ?></a>
-<?php
 $_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
-if ($_SESSION['s_domains_in_list_queue'] == '1') { ?>
-<a href="index.php?s=lists&export_data=1"><?php echo $layout->showButton('button', _('Export Lists')); ?></a>
-<?php } ?>
-<?php
-$_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
-if ($_SESSION['s_domains_in_queue'] == '1') { ?>
-<a href="index.php?s=domains&export_data=1"><?php echo $layout->showButton('button', _('Export Domains')); ?></a>
-<?php } ?>
-<BR><BR>
+if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Clear Completed'), 'index.php?clear=1', 'bi-check2-all');
+$layout->addPageAction(_('More Info'), 'intro.php', 'bi-info-circle');
+if ($_SESSION['s_domains_in_list_queue'] == '1') $layout->addPageAction(_('Export Lists'), 'index.php?s=lists&export_data=1', 'bi-download');
+if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Export Domains'), 'index.php?s=domains&export_data=1', 'bi-download'); ?>
 <?php
 if (!$result_lists) {
 

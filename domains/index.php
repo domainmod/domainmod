@@ -2142,19 +2142,20 @@ if ($segid !== 0) {
 
 }
 
-if ($result) { ?>
+if ($result) {
 
-    <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
-    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
-    <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a>
-    <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', _('Raw List')); ?></a>
-    <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->setPageAddAction(_('Add Domain'), 'add.php');
+    $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
+    $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
+    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
+    $layout->addPageAction(_('Export'), 'index.php?' . $_SERVER['QUERY_STRING'] . '&export_data=1', 'bi-download'); ?>
 
     <?php if ($segid !== 0) { ?>
-        <BR><BR><strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
+        <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
         <BR><BR>
     <?php } else { ?>
-        <BR><BR><strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
+        <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
 
         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
             <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
@@ -2568,11 +2569,11 @@ if ($result) { ?>
     $ready_for_domains = $ready_for_domains ?? 0;
 
     // With no domains at all, the "No domains yet" empty state above already offers the ways to add them
-    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1') { ?>
+    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1') {
 
-        <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
-        <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
-        <a href="<?php echo $web_root; ?>/domains/csv-importer/"><?php echo $layout->showButton('button', _('CSV Importer')); ?></a><BR><BR><?php
+        $layout->setPageAddAction(_('Add Domain'), 'add.php');
+        $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
+        $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
 
     }
 

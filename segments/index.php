@@ -213,8 +213,10 @@ if ($export_data === 1) {
 <BR>
 <?php echo sprintf(_("Segment filters will tell you which domains match with domains that are saved in %s, as well as which domains don't match, and you can easily view and export the results."), SOFTWARE_TITLE); ?>
 <?php echo $layout->calloutBottom(); ?>
-<a href="add.php"><?php echo $layout->showButton('button', _('Add Segment')); ?></a>
-<a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add Segment'), 'add.php');
+$layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download');
 
 $has_existing_segments = $pdo->query("
     SELECT id

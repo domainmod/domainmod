@@ -147,8 +147,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Certificate Providers'), SOFTWARE_TITLE); ?></div>
 <BR>
-<a href="add/ssl-provider.php"><?php echo $layout->showButton('button', _('Add SSL Provider')); ?></a>
-<a href="ssl-providers.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add SSL Provider'), 'add/ssl-provider.php');
+$layout->addPageAction(_('Export'), 'ssl-providers.php?export_data=1', 'bi-download');
 
 if ($result) {
 

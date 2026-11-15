@@ -151,17 +151,20 @@ $search_for = $search_for ?? '';
 
     <!-- Main content area -->
     <main class="app-main" id="main">
-        <!-- Page header -->
+        <!-- Page header --><?php
+        // Everything from here to the footer is held back, so the page's actions, which a page can declare after this
+        // point, can be drawn in the header (the footer swaps the marker for them, see Layout::renderPageActions())
+        ob_start();
+        $domainmod_page_actions_buffer = ob_get_level(); ?>
         <div class="app-content-header">
 
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h1 class="mb-0 fs-3"><?php echo $page_title; ?></h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <?php  require_once DIR_INC . '/layout/breadcrumbs.inc.php'; ?>
-                    </div>
+                <div class="domainmod-page-breadcrumb d-flex justify-content-sm-end">
+                    <?php  require_once DIR_INC . '/layout/breadcrumbs.inc.php'; ?>
+                </div>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h1 class="mb-0 fs-3"><?php echo $page_title; ?></h1>
+                    <?php echo DomainMOD\Layout::PAGE_ACTIONS_MARKER; ?>
                 </div>
             </div>
 

@@ -174,8 +174,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Provider Accounts'), SOFTWARE_TITLE); ?></div>
 <BR>
-<a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', _('Add SSL Account')); ?></a>
-<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add SSL Account'), 'add/ssl-provider-account.php');
+$layout->addPageAction(_('Export'), 'ssl-accounts.php?export_data=1&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&oid=' . $oid, 'bi-download');
 
 if ($result) {
 

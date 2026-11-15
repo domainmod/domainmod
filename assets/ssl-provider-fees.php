@@ -112,8 +112,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.</div>
 <BR>
-<a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', _('Add Fee')); ?></a>
-<a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add Fee'), 'add/ssl-provider-fee.php?sslpid=' . urlencode($sslpid));
+$layout->addPageAction(_('Export'), 'ssl-provider-fees.php?sslpid=' . urlencode($sslpid) . '&export_data=1', 'bi-download');
 
 $stmt2 = $pdo->prepare("
     SELECT sslct.id, sslct.type

@@ -233,11 +233,11 @@ if ($export_data === 1 && $overview['rows']) {
 <?php echo $prices_note; ?>
 <?php echo $layout->calloutBottom(); ?>
 
-<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a>&nbsp;&nbsp;<?php
-if ($overview['rows']) { ?>
-    <a id="tld-pricing-export" href="<?php echo $report_filename; ?>?<?php echo htmlspecialchars($query_string(array('export_data' => 1)), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
-} ?>
-<BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+// Export keeps its id, since the in-place comparison below swaps it for one with the new filters (hx-select-oob)
+$layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
+if ($overview['rows']) $layout->addPageAction(_('Export Report'), $report_filename . '?' . $query_string(array('export_data' => 1)), 'bi-download', array('id' => 'tld-pricing-export'));
 
 if (!$overview['rows']) {
 

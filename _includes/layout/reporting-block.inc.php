@@ -18,14 +18,12 @@
  * http://www.gnu.org/licenses/.
  *
  */
-//@formatter:off ?>
-
-    <a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a>&nbsp;&nbsp;<?php
-
-    if ($total_rows > 0 && $total_rows != '') { ?>
-        <a href="<?php echo $report_filename; ?>?export_data=1&daterange=<?php echo $daterange; ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
+//@formatter:off
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
+    if ($total_rows > 0 && $total_rows != '') {
+        $layout->addPageAction(_('Export Report'), $report_filename . '?export_data=1&daterange=' . urlencode(html_entity_decode($daterange, ENT_QUOTES, 'UTF-8')), 'bi-download');
     } ?>
-    <BR><BR>
 
     <?php echo $form->showFormTop(''); ?>
 

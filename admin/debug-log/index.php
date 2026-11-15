@@ -119,10 +119,11 @@ if (!$result) {
 
     }
 
-} else { ?>
+} else {
 
-    <a href="../maintenance/clear-log.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Clear Debug Log')); ?></a>
-    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->addPageAction(_('Clear Debug Log'), '../maintenance/clear-log.php?' . (new DomainMOD\Csrf())->query(), 'bi-trash');
+    $layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download'); ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>

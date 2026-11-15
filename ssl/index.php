@@ -133,6 +133,19 @@ if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateForma
 
 }
 
+// The keyword and date range the list uses. An export request carries its own (Export's link writes them out, see the
+// page actions below), so filters another tab saved in the session can't end up in the file, and the session is left
+// as it is.
+if ($export_data === 1) {
+    $list_search_for = $search_for;
+    $list_start_date = $new_start_date !== '' ? $new_start_date : 'YYYY-MM-DD';
+    $list_end_date = $new_end_date !== '' ? $new_end_date : 'YYYY-MM-DD';
+} else {
+    $list_search_for = $_SESSION['s_search_for_ssl'];
+    $list_start_date = $_SESSION['s_start_date'];
+    $list_end_date = $_SESSION['s_end_date'];
+}
+
 // Anything else (including translated values in links from older versions) falls back to the default
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
@@ -187,15 +200,15 @@ if ($sslpcid !== 0) {
 } else {
     $sslpcid_string = "";
 }
-if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-    $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND sslc.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
+if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
+    $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($list_start_date) . " AND sslc.expiry_date <= " . $pdo->quote($list_end_date) . ")";
 } else {
     $range_string = "";
 }
 // certificate names are stored HTML-encoded (as the search term is), so they're compared as they are; only the domain
 // side of the search is decoded and normalised
-if ($_SESSION['s_search_for_ssl'] != "") {
-    $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
+if ($list_search_for != "") {
+    $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $list_search_for . '%') . ")";
 } else {
     $search_string = "";
 }
@@ -324,11 +337,11 @@ if ($export_data == 1) {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if ($_SESSION['s_search_for_ssl'] != "") {
+    if ($list_search_for != "") {
 
         $row_contents = array(
             _('Keyword Search') . ':',
-            $_SESSION['s_search_for_ssl']
+            $list_search_for
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -369,14 +382,15 @@ if ($export_data == 1) {
               AND sslpa.id = :sslpaid");
         $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
         $stmt->execute();
-        $result = $stmt->fetch();
+        // Its own variable, so the certificates in $result are still there for the rows below
+        $account_heading = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        if ($account_heading) {
 
             $row_contents = array(
                 _('SSL Provider Account') . ':',
-                $result->ssl_provider_name . " - " . $result->owner_name . " - " . $result->username
+                $account_heading->ssl_provider_name . " - " . $account_heading->owner_name . " - " . $account_heading->username
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -434,11 +448,11 @@ if ($export_data == 1) {
 
     }
 
-    if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
+    if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
 
         $row_contents = array(
             _('Expiry Date Range') . ':',
-            $_SESSION['s_start_date']  . " to " . $_SESSION['s_end_date']
+            $list_start_date  . " to " . $list_end_date
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -1519,13 +1533,29 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
 }
 
-if ($result) { ?>
+if ($result) {
 
-    <a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a>
-    <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', _('Raw List')); ?></a>
-    <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a>
+    /*
+     * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link is built from the
+     * filters the list actually used, since the Advanced Filtering form posts them and they'd otherwise never reach
+     * the export. Each filter that differs from its default is written out (so an inactive-only list keeps
+     * is_active=0), and the keyword and date range always are, empty when off. The keyword was HTML-escaped when it was
+     * read, so it's decoded once here and escaped again when the export request reads it.
+     */
+    $export_filters = array();
+    foreach (array('oid' => $oid, 'did' => $did, 'sslpid' => $sslpid, 'sslpaid' => $sslpaid, 'ssltid' => $ssltid, 'sslipid' => $sslipid, 'sslpcid' => $sslpcid) as $filter_key => $filter_value) {
+        if ($filter_value !== 0) $export_filters[$filter_key] = $filter_value;
+    }
+    if ($is_active !== 'LIVE') $export_filters['is_active'] = $is_active;
+    $export_filters['search_for'] = html_entity_decode($list_search_for, ENT_QUOTES, 'UTF-8');
+    $export_filters['daterange'] = ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') ? $list_start_date . ' - ' . $list_end_date : '';
+    $export_filters['export_data'] = 1;
 
-    <BR><BR><strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
+    $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
+    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
+    $layout->addPageAction(_('Export'), 'index.php?' . http_build_query($export_filters), 'bi-download'); ?>
+
+    <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
     <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($result)); ?><BR><BR><?php
 
     if ($total_rows) { ?>
@@ -1743,9 +1773,9 @@ if ($result) { ?>
     $ready_for_ssl_certs = $ready_for_ssl_certs ?? 0;
 
     // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button
-    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') { ?>
+    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') {
 
-        <BR><a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php
+        $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
 
     }
 

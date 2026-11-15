@@ -126,11 +126,13 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="add-server.php"><?php echo $layout->showButton('button', _('Add Web Server')); ?></a>
 <?php
-if ($result) { ?>
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add Web Server'), 'add-server.php');
 
-    <a href="servers.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
+if ($result) {
+
+    $layout->addPageAction(_('Export'), 'servers.php?export_data=1', 'bi-download'); ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>

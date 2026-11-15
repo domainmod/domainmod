@@ -123,10 +123,11 @@ if (!$result) {
 
     echo $layout->emptyState('bi-input-cursor-text', _('No custom SSL fields yet'), _('Custom fields let you track your own details for each SSL certificate.'), '/admin/ssl-fields/add.php', _('Add Custom Field'));
 
-} else { ?>
+} else {
 
-    <a href="add.php"><?php echo $layout->showButton('button', _('Add Custom Field')); ?></a>
-    <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR>
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->setPageAddAction(_('Add Custom Field'), 'add.php');
+    $layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download'); ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>

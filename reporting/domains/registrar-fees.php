@@ -191,11 +191,11 @@ if ($total_rows > 0) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php if ($total_rows > 0) { //@formatter:off ?>
-    <a href="registrar-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><BR><BR>
-<?php } //@formatter:on ?>
-
-<a href="registrar-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<a href="registrar-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a><BR><BR>
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('View All'), 'registrar-fees.php?all=1', 'bi-list-ul');
+$layout->addPageAction(_('Active Only'), 'registrar-fees.php?all=0', 'bi-funnel');
+if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.php?export_data=1&all=' . urlencode($all), 'bi-download'); ?>
 
 <?php if ($total_rows > 0) { ?>
 

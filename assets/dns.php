@@ -180,8 +180,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('DNS Profiles'), SOFTWARE_TITLE); ?></div>
 <BR>
-<a href="add/dns.php"><?php echo $layout->showButton('button', _('Add DNS Profile')); ?></a>
-<a href="dns.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add DNS Profile'), 'add/dns.php');
+$layout->addPageAction(_('Export'), 'dns.php?export_data=1', 'bi-download');
 
 if ($result) {
 

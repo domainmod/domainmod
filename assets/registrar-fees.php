@@ -115,8 +115,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/registrar.php?rid=<?php echo urlencode($rid); ?>"><?php echo $registrar_name; ?></a>.</div>
 <BR>
-<a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', _('Add Fee')); ?></a>
-<a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add Fee'), 'add/registrar-fee.php?rid=' . urlencode($rid));
+$layout->addPageAction(_('Export'), 'registrar-fees.php?rid=' . urlencode($rid) . '&export_data=1', 'bi-download');
 
 $stmt2 = $pdo->prepare("
     SELECT tld

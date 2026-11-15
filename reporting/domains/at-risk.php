@@ -183,11 +183,10 @@ if ($export_data === 1 && $list) {
 <?php echo _('Privacy off is sometimes deliberate, since some TLDs don\'t offer it, so this is a list to check rather than a list of mistakes.'); ?>
 <?php echo $layout->calloutBottom(); ?>
 
-<a href="<?php echo $report_filename; ?>"><?php echo $layout->showButton('button', _('View Full Report')); ?></a>&nbsp;&nbsp;<?php
-if ($list) { ?>
-    <a href="<?php echo $report_filename; ?>?export_data=1&show=<?php echo $show; ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
-} ?>
-<BR><BR>
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
+if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?export_data=1&show=' . $show, 'bi-download'); ?>
 
 <?php
 // The tiles count reasons, and a domain can have more than one, so a line first gives the number of domains behind them

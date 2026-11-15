@@ -1388,3 +1388,14 @@ div.dt-container > div.bottom {
     --bs-btn-active-bg: #565e64;
     --bs-btn-active-border-color: #565e64;
 }
+
+/* The page header (header.inc.php): the breadcrumb on its own small line above the title, and the page's actions
+   (Layout::renderPageActions()) on the title's line, at the end, dropping under the title on phones */
+.domainmod-page-breadcrumb .breadcrumb {
+    font-size: .8125rem;
+}
+@media (max-width: 575.98px) {
+    .domainmod-page-actions {
+        width: 100%;
+    }
+}

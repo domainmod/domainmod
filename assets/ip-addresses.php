@@ -162,8 +162,10 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('IP Addresses'), SOFTWARE_TITLE); ?></div>
 <BR>
-<a href="add/ip-address.php"><?php echo $layout->showButton('button', _('Add IP Address')); ?></a>
-<a href="ip-addresses.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->setPageAddAction(_('Add IP Address'), 'add/ip-address.php');
+$layout->addPageAction(_('Export'), 'ip-addresses.php?export_data=1', 'bi-download');
 
 if ($result) {
 

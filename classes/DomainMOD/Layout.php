@@ -26,6 +26,16 @@ class Layout
     // How many expandable boxes this page has drawn, for their unique ids (see expandableBoxTop())
     private static $expandable_box_count = 0;
 
+    // The page's actions, drawn in the page header beside the title (see addPageAction() and renderPageActions()).
+    // They're static, so it doesn't matter which Layout object a page or an include declares them on.
+    private static $page_actions = array();
+    private static $page_add_action = null;
+    private static $page_add_menu = array();
+
+    // Where the header leaves room for the page's actions. The footer swaps it for renderPageActions(), so a page can
+    // declare its actions after the header is drawn, once it knows whether they apply (such as Export only with rows).
+    const PAGE_ACTIONS_MARKER = '<!--domainmod-page-actions-->';
+
 
     public function pageTitle($page_title)
     {
@@ -38,6 +48,76 @@ class Layout
         // the button would underline on hover
         ob_start(); ?><button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger domainmod-css-button"><?php echo $button_text; ?></button><?php
         return ob_get_clean();
+    }
+
+    /*
+     * A page action, drawn in the page header as an outline button with an icon ($icon is a Bootstrap Icons class,
+     * such as 'bi-download'). $label is plain translated text and $url a plain URL (not HTML-escaped), both escaped
+     * when drawn. $options can set a 'target' (such as '_blank'), a 'rel', and an 'id'.
+     */
+    public function addPageAction($label, $url, $icon, $options = array())
+    {
+        self::$page_actions[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => $options);
+    }
+
+    // The page's main add action, the one red button in the page header. A second call replaces the first.
+    public function setPageAddAction($label, $url, $icon = 'bi-plus-lg')
+    {
+        self::$page_add_action = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => array());
+    }
+
+    /*
+     * Another way to add, shown in the Add button's dropdown. Without a main add action it's drawn as an outline
+     * button instead.
+     */
+    public function addPageAddMenuItem($label, $url, $icon)
+    {
+        self::$page_add_menu[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => array());
+    }
+
+    // One action as a link styled as a button (or as a dropdown item), with its label and URL escaped once
+    private function pageActionLink($action, $class)
+    {
+        $escape = function ($value) {
+            return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        };
+        $attributes = ' class="' . $class . '" href="' . $escape($action['url']) . '"';
+        foreach (array('target', 'rel', 'id') as $name) {
+            if (!empty($action['options'][$name])) $attributes .= ' ' . $name . '="' . $escape($action['options'][$name]) . '"';
+        }
+        return '<a' . $attributes . '><i class="bi ' . $escape($action['icon']) . ' me-1" aria-hidden="true"></i>' . $escape($action['label']) . '</a>';
+    }
+
+    /*
+     * The page's actions for the page header: the outline buttons first, then the red Add button last, as a split
+     * button with a dropdown when there are other ways to add. Empty when the page has none.
+     */
+    public function renderPageActions()
+    {
+        $outline = 'btn btn-outline-secondary btn-sm';
+        $items = array();
+        foreach (self::$page_actions as $action) {
+            $items[] = $this->pageActionLink($action, $outline);
+        }
+        if (self::$page_add_action === null) {
+            foreach (self::$page_add_menu as $action) {
+                $items[] = $this->pageActionLink($action, $outline);
+            }
+        } elseif (!self::$page_add_menu) {
+            $items[] = $this->pageActionLink(self::$page_add_action, 'btn btn-danger btn-sm');
+        } else {
+            $menu = '';
+            foreach (self::$page_add_menu as $action) {
+                $menu .= '<li>' . $this->pageActionLink($action, 'dropdown-item') . '</li>';
+            }
+            $items[] = '<div class="btn-group">' . $this->pageActionLink(self::$page_add_action, 'btn btn-danger btn-sm')
+                . '<button type="button" class="btn btn-danger btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">'
+                . '<span class="visually-hidden">' . htmlspecialchars(_('More ways to add'), ENT_QUOTES, 'UTF-8') . '</span></button>'
+                . '<ul class="dropdown-menu dropdown-menu-end">' . $menu . '</ul></div>';
+        }
+        if (!$items) return '';
+        return '<div class="domainmod-page-actions d-flex flex-wrap align-items-center gap-2" role="group" aria-label="'
+            . htmlspecialchars(_('Page actions'), ENT_QUOTES, 'UTF-8') . '">' . implode('', $items) . '</div>';
     }
 
     public function highlightText($colour, $text_to_display)
