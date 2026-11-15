@@ -25,8 +25,7 @@ $breadcrumb = _('Edit');
 $software_section = "domains";
 $slug = "domains-edit";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
-$datatable_options = 'var oldStart = 0;
-                      $(\'#' . $slug . '-account\').DataTable({
+$datatable_options = 'domainmodTable(\'#' . $slug . '-account\', {
                           "paging": false,
                           "lengthChange": true,
                           "lengthMenu": [ [50, 75, 100, -1], [50, 75, 100, "All"] ],
@@ -47,18 +46,10 @@ $datatable_options = 'var oldStart = 0;
                           "ordering": false,
                           "order": [[ 1, "asc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                          "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
-                            if ( start != oldStart ) {
-                                var targetOffset = $("#' . $slug . '").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart = start;
-                            }
-                          }
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
                       });
 
-                      $(\'#' . $slug . '-zone\').DataTable({
+                      domainmodTable(\'#' . $slug . '-zone\', {
                           "paging": false,
                           "lengthChange": true,
                           "lengthMenu": [ [50, 75, 100, -1], [50, 75, 100, "All"] ],
@@ -79,13 +70,5 @@ $datatable_options = 'var oldStart = 0;
                           "ordering": false,
                           "order": [[ 1, "asc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                          "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
-                            if ( start != oldStart ) {
-                                var targetOffset = $("#' . $slug . '").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart = start;
-                            }
-                          }
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
                       });';

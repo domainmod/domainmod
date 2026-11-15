@@ -29,7 +29,7 @@ $report_filename = 'potential-problems.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 // The servers' figures (a short list, in the page's order), then the three problem lists, which are paged like the
 // Domains list and can be sorted by any column
-$datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
+$datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                           "paging": false,
                           "lengthChange": false,
                           "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
@@ -50,10 +50,9 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "ordering": false,
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
-                      });
+                      }, { scrollOnPage: false });
 
-                      var oldStart_no_zone = 0;
-                      $(\'#' . $slug . '-no-zone\').DataTable({
+                      domainmodTable(\'#' . $slug . '-no-zone\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -76,19 +75,13 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
-                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Accounts without a DNS Zone')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
-                            if ( start != oldStart_no_zone ) {
-                                var targetOffset = $("#' . $slug . '-no-zone").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart_no_zone = start;
-                            }
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Accounts without a DNS Zone')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
                       });
 
-                      var oldStart_no_account = 0;
-                      $(\'#' . $slug . '-no-account\').DataTable({
+                      domainmodTable(\'#' . $slug . '-no-account\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -111,19 +104,13 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
-                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('DNS Zones without an Account')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
-                            if ( start != oldStart_no_account ) {
-                                var targetOffset = $("#' . $slug . '-no-account").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart_no_account = start;
-                            }
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('DNS Zones without an Account')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
                       });
 
-                      var oldStart_suspended = 0;
-                      $(\'#' . $slug . '-suspended\').DataTable({
+                      domainmodTable(\'#' . $slug . '-suspended\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -146,13 +133,8 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
-                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Suspended Accounts')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
-                            if ( start != oldStart_suspended ) {
-                                var targetOffset = $("#' . $slug . '-suspended").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart_suspended = start;
-                            }
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Suspended Accounts')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
                       });';

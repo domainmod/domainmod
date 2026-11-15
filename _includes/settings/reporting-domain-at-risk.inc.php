@@ -27,8 +27,7 @@ $slug = "reporting-domain-at-risk";
 $report_section = 'domains';
 $report_filename = 'at-risk.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
-$datatable_options = 'var oldStart = 0;
-                      $(\'#' . $slug . '\').DataTable({
+$datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -49,13 +48,5 @@ $datatable_options = 'var oldStart = 0;
                           "ordering": true,
                           "order": [[ 3, "asc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                          "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
-                            if ( start != oldStart ) {
-                                var targetOffset = $("#' . $slug . '").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart = start;
-                            }
-                          }
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
                       });';

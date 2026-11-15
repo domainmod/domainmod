@@ -61,17 +61,17 @@ if (file_exists($full_filename)) {
 
 }
 ?>
-<!-- jQuery -->
-<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/jquery/jquery.min.js'); ?>"></script>
 <!-- Bootstrap 5 (with Popper) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
 <!-- Tom Select (the multiple choice menus) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/js/tom-select.complete.min.js'); ?>"></script>
-<!-- DataTables (after jQuery, so it adds itself as a jQuery plugin), with Bootstrap 5 styling and Responsive -->
+<!-- DataTables, with Bootstrap 5 styling and Responsive -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.bootstrap5.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/dataTables.responsive.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables-responsive/js/responsive.bootstrap5.min.js'); ?>"></script>
+<!-- Starts each list's DataTable (after DataTables), see domainmodTable() -->
+<script src="<?php echo $layout->assetUrl('js/datatables.js'); ?>"></script>
 <!-- htmx, for tasks that run in place (its settings are in head-tags.inc.php) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/htmx/htmx.min.js'); ?>"></script>
 <!-- AdminLTE App (after Bootstrap) -->
@@ -81,7 +81,8 @@ if (file_exists($full_filename)) {
 <!-- Page messages: the screen reader announcements, the toasts, and where focus goes when one is closed (after Bootstrap) -->
 <script src="<?php echo $layout->assetUrl('js/messages.js'); ?>"></script>
 <script nonce="<?php echo CURRENT_NONCE; ?>">
-    $(function () {
+    // Runs once the page is ready. The script sits at the end of the page, so that's usually straight away.
+    var domainmodStart = function () {
 
         // Tooltips, such as on the lists' status badges (see Layout::statusBadge()). Each opens on hover or focus, stays
         // open while the pointer is over it or the tooltip itself, and Escape closes it. The badge's aria-label already
@@ -213,5 +214,10 @@ if (file_exists($full_filename)) {
 
         <?php echo $datatable_options ?? ''; ?>
 
-    });
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', domainmodStart);
+    } else {
+        domainmodStart();
+    }
 </script>

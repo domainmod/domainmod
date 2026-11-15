@@ -30,8 +30,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 // The overview and the savings, paged and sortable like the Domains list, each opening in the page's own order (most
 // domains first, and largest saving first). The selected TLD's registrars are a short, plain table that the
 // comparison swaps in place.
-$datatable_options = 'var oldStart_overview = 0;
-                      $(\'#' . $slug . '-overview\').DataTable({
+$datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -54,19 +53,13 @@ $datatable_options = 'var oldStart_overview = 0;
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
-                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('TLDs')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
-                            if ( start != oldStart_overview ) {
-                                var targetOffset = $("#' . $slug . '-overview").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart_overview = start;
-                            }
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('TLDs')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
                       });
 
-                      var oldStart_savings = 0;
-                      $(\'#' . $slug . '-savings\').DataTable({
+                      domainmodTable(\'#' . $slug . '-savings\', {
                           "paging": true,
                           "lengthChange": true,
                           "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -89,13 +82,8 @@ $datatable_options = 'var oldStart_overview = 0;
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            var start = new DataTable.Api(settings).page.info().start;
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
-                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Possible Savings')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
-                            if ( start != oldStart_savings ) {
-                                var targetOffset = $("#' . $slug . '-savings").offset().top;
-                                $("html,body").animate({scrollTop: targetOffset}, 0);
-                                oldStart_savings = start;
-                            }
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Possible Savings')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
                       });';

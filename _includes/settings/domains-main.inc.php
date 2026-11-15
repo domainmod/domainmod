@@ -33,8 +33,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 
 if ($_SESSION['s_system_large_mode'] != '1') {
 
-    $datatable_options = 'var oldStart = 0;
-                          $(\'#' . $slug . '\').DataTable({
+    $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                               "paging": true,
                               "lengthChange": true,
                               "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
@@ -55,15 +54,7 @@ if ($_SESSION['s_system_large_mode'] != '1') {
                               "ordering": true,
                               "order": [[ ' . $default_sort_by . ', "asc" ]],
                               "bSortClasses": false,
-                              "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
-                              "drawCallback": function (settings) {
-                                var start = new DataTable.Api(settings).page.info().start;
-                                if ( start != oldStart ) {
-                                    var targetOffset = $("#' . $slug . '").offset().top;
-                                    $("html,body").animate({scrollTop: targetOffset}, 0);
-                                    oldStart = start;
-                                }
-                              }
+                              "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
                           });';
 
 }

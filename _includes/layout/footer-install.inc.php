@@ -34,8 +34,6 @@ if (file_exists($full_filename)) {
 }
 $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
 ?>
-<!-- jQuery -->
-<script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/jquery/jquery.min.js'); ?>"></script>
 <!-- Bootstrap 5 (with Popper) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
 <!-- AdminLTE App (after Bootstrap), which follows the system's colour mode in Auto -->
