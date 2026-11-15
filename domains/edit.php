@@ -117,6 +117,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
     $refresh = new DomainMOD\DomainRefresh();
+
+    // The Refresh button at the top of the page runs in place (htmx, see js/domain-refresh.js): it answers with the
+    // result message and, after a refresh that worked, the saved values of the fields Refresh owns, so the page can
+    // update them in the form. Without JavaScript it's a normal post, handled below.
+    if ($system->isHtmxRequest()) {
+
+        $refresh_values = function ($pdo, $did) {
+            $stmt = $pdo->prepare("
+                SELECT d.expiry_date, d.dns_id, dns.name AS dns_name, d.privacy, d.autorenew, d.notes
+                FROM domains AS d
+                LEFT JOIN dns ON d.dns_id = dns.id
+                WHERE d.id = :did");
+            $stmt->bindValue('did', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch();
+            $stmt->closeCursor();
+            return $row;
+        };
+
+        $before = $refresh_values($pdo, $did);
+        list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
+
+        header('X-DomainMOD-Result: 1');
+        echo '<div tabindex="-1" data-domainmod-focus>';
+
+        if ($refreshed) {
+
+            echo $system->showMessageSuccess(implode('<BR>', $refresh_lines));
+            $after = $refresh_values($pdo, $did);
+
+            if ($after) {
+
+                $values = array(
+                    'expiry_date' => (string) $after->expiry_date,
+                    'dns_id' => (int) $after->dns_id,
+                    'dns_name' => html_entity_decode((string) $after->dns_name, ENT_QUOTES, 'UTF-8'),
+                    'privacy' => (int) $after->privacy,
+                    'autorenew' => (int) $after->autorenew,
+                    // Notes are stored escaped, so they're unescaped the same way the notes field shows them
+                    'notes' => $unsanitize->text($after->notes));
+
+                $changed = array();
+                foreach (array('expiry_date', 'dns_id', 'privacy', 'autorenew', 'notes') as $field) {
+                    if (!$before || (string) $before->$field !== (string) $after->$field) $changed[] = $field;
+                }
+                $values['changed'] = $changed;
+
+                $json = json_encode($values, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE);
+                echo '<div id="domainmod-refresh-data" hidden data-values="' . htmlspecialchars($json, ENT_QUOTES, 'UTF-8') . '"></div>';
+
+            }
+
+        } else {
+
+            echo $system->showMessageDanger(implode('<BR>', $refresh_lines));
+
+        }
+
+        echo '</div>';
+        exit;
+
+    }
+
     list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
 
     if ($refreshed) {
@@ -504,6 +567,61 @@ if ($del === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+// Refresh, at the top of the page in its own small form (read-only users can't change data, so they don't see it).
+// It runs in place with htmx (see js/domain-refresh.js), and without JavaScript it's a normal post.
+if (($_SESSION['s_read_only'] ?? '') != '1') {
+
+    $refresh = new DomainMOD\DomainRefresh();
+    $refresh_api_name = $refresh->registrarApiName($did);
+
+    if ($refresh_api_name !== '') {
+
+        $refresh_source = sprintf(_('Updates the expiry date, DNS servers, WHOIS privacy, and auto renewal from your %s API.'), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
+        $refresh_details = sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto renewal status using your %s API, and update them here."), $refresh_api_name) . ' ' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.") . ' ' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+
+    } else {
+
+        $refresh_source = _('Updates the expiry date and DNS servers from public RDAP and WHOIS data.');
+        $refresh_details = _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto renewal status aren't available this way, so they're left as they are.");
+
+    } ?>
+
+    <div class="domainmod-refresh-row d-flex flex-wrap align-items-center justify-content-end gap-2">
+        <span class="text-body-secondary small"><?php echo $refresh_source; ?></span>
+        <form method="post" class="d-inline-flex align-items-center" hx-post="edit.php?did=<?php echo $did; ?>" hx-target="#domainmod-refresh-result" hx-swap="innerHTML" hx-indicator="#domainmod-refresh-spinner" hx-disabled-elt="find button" hx-sync="this:drop" data-domainmod-refresh>
+            <?php echo $form->showCsrfField(); ?>
+            <?php echo $form->showInputHidden('refresh_domain', '1'); ?>
+            <?php echo $form->showInputHidden('did', $did); ?>
+            <button type="submit" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($refresh_details, ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <?php echo _('Refresh'); ?></button>
+            <?php echo $layout->htmxSpinner('domainmod-refresh-spinner'); ?>
+        </form>
+    </div>
+    <div id="domainmod-refresh-result" class="domainmod-refresh-result"></div>
+
+    <?php // Asks before a refresh replaces fields the user has changed but not saved (see js/domain-refresh.js) ?>
+    <div class="modal fade" id="domainmod-refresh-confirm" tabindex="-1" aria-labelledby="domainmod-refresh-confirm-title" aria-hidden="true" data-message="<?php echo htmlspecialchars(_("You've changed %s but haven't saved. Refreshing saves the looked-up details straight away and replaces what you typed in those fields."), ENT_QUOTES, 'UTF-8'); ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="domainmod-refresh-confirm-title"><?php echo _('Unsaved Changes'); ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo _('Close'); ?>"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0" data-domainmod-refresh-message></p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo _('Cancel'); ?></button>
+                    <button type="button" class="btn btn-danger" data-domainmod-refresh-anyway><?php echo _('Refresh anyway'); ?></button>
+                </div>
+            </div>
+        </div>
+    </div><?php
+
+    // A page shown again after a failed Save holds the user's unsaved values, not the saved ones
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') echo '<div hidden data-domainmod-refresh-unsaved></div>';
+
+}
+
 echo $form->showFormTop('');
 echo '<strong>' . _('Domain') . '</strong><BR>';
 echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '<BR><BR>';
@@ -711,35 +829,6 @@ echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-// Refresh Domain, in its own form (read-only users can't change data, so they don't see it).
-if (($_SESSION['s_read_only'] ?? '') != '1') {
-
-    $refresh = new DomainMOD\DomainRefresh();
-    $refresh_api_name = $refresh->registrarApiName($did); ?>
-
-    <BR><h3><?php echo _('Refresh Domain'); ?></h3><?php
-
-    if ($refresh_api_name !== '') {
-
-        echo sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto renewal status using your %s API, and update them here."), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
-        echo '&nbsp;' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.");
-        echo '&nbsp;' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
-
-    } else {
-
-        echo _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto renewal status aren't available this way, so they're left as they are.");
-
-    } ?>
-    <BR><BR><?php
-
-    echo $form->showFormTop('');
-    echo $form->showInputHidden('refresh_domain', '1');
-    echo $form->showInputHidden('did', $did);
-    echo $form->showSubmitButton(_('Refresh Domain'), '', '');
-    echo $form->showFormBottom('');
-
-}
-
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);
 
@@ -844,5 +933,6 @@ $layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1',
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/domain-refresh.js'); ?>"></script>
 </body>
 </html>

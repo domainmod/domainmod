@@ -797,3 +797,43 @@ div.dt-container > div.bottom {
     border-color: var(--bs-form-invalid-border-color);
     box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
 }
+/* The domain edit page's in-place Refresh (js/domain-refresh.js): the button row at the top, lined up with the form
+   below it, and a short highlight on each field the refresh changed, fading back to normal (shown without the fade
+   for users who prefer reduced motion) */
+.domainmod-refresh-row {
+    max-width: 48rem;
+    margin-bottom: .5rem;
+}
+.domainmod-refresh-result {
+    max-width: 48rem;
+}
+@keyframes domainmod-refreshed {
+    from {
+        background-color: var(--bs-success-bg-subtle);
+        border-color: var(--bs-success-border-subtle);
+    }
+}
+@keyframes domainmod-refreshed-switch {
+    from {
+        box-shadow: 0 0 0 .3rem var(--bs-success-border-subtle);
+    }
+}
+.form-control.domainmod-refreshed,
+.form-select.domainmod-refreshed {
+    animation: domainmod-refreshed 2s ease-out;
+}
+.form-check-input.domainmod-refreshed {
+    animation: domainmod-refreshed-switch 2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .form-control.domainmod-refreshed,
+    .form-select.domainmod-refreshed {
+        animation: none;
+        background-color: var(--bs-success-bg-subtle);
+        border-color: var(--bs-success-border-subtle);
+    }
+    .form-check-input.domainmod-refreshed {
+        animation: none;
+        box-shadow: 0 0 0 .3rem var(--bs-success-border-subtle);
+    }
+}
