@@ -43,9 +43,10 @@ class Reporting
      * The live domains (not Expired or Sold) expiring before $end_date (YYYY-MM-DD, not included), overdue ones
      * included, for Upcoming Renewals, At-Risk Domains, and the Dashboard. Fees and conversion rates are left joins, so
      * a domain with no fee, or whose fee's currency has no rate for the user, is still listed: its converted_cost is
-     * null, and has_fee and has_rate say why. Sorted by expiry date.
+     * null, and has_fee and has_rate say why. Sorted by expiry date. $start_date (YYYY-MM-DD, included) limits the rows
+     * to those expiring on or after it, for the Renewal Calendar's month. Left empty, there's no lower bound.
      */
-    public function renewalDomains($end_date)
+    public function renewalDomains($end_date, $start_date = '')
     {
         $pdo = Database::getInstance()->cnxx;
 
@@ -60,10 +61,12 @@ class Reporting
             LEFT JOIN fees AS f ON d.fee_id = f.id
             LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
             WHERE d.active NOT IN ('0', '10')
-              AND d.expiry_date < :end_date
+              AND d.expiry_date < :end_date" . ($start_date !== '' ? "
+              AND d.expiry_date >= :start_date" : "") . "
             ORDER BY d.expiry_date, d.domain");
         $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
         $stmt->bindValue('end_date', $end_date, \PDO::PARAM_STR);
+        if ($start_date !== '') $stmt->bindValue('start_date', $start_date, \PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -74,9 +77,10 @@ class Reporting
      * ones included, for SSL Upcoming Renewals and SSL At-Risk Certificates: the SSL twin of renewalDomains(). Each row
      * also carries its domain's id, name, expiry date, and status, for the At-Risk report's domain checks. Fees and
      * conversion rates are left joins, so a certificate with no fee, or whose fee's currency has no rate for the user,
-     * is still listed with has_fee and has_rate saying why. Sorted by expiry date.
+     * is still listed with has_fee and has_rate saying why. Sorted by expiry date. $start_date (YYYY-MM-DD, included)
+     * limits the rows to those expiring on or after it, as renewalDomains() does.
      */
-    public function renewalCerts($end_date)
+    public function renewalCerts($end_date, $start_date = '')
     {
         $pdo = Database::getInstance()->cnxx;
 
@@ -94,10 +98,12 @@ class Reporting
             LEFT JOIN ssl_fees AS f ON sslc.fee_id = f.id
             LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
             WHERE sslc.active NOT IN ('0', '10')
-              AND sslc.expiry_date < :end_date
+              AND sslc.expiry_date < :end_date" . ($start_date !== '' ? "
+              AND sslc.expiry_date >= :start_date" : "") . "
             ORDER BY sslc.expiry_date, sslc.name");
         $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
         $stmt->bindValue('end_date', $end_date, \PDO::PARAM_STR);
+        if ($start_date !== '') $stmt->bindValue('start_date', $start_date, \PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -424,6 +430,27 @@ class Reporting
         });
 
         return array('rows' => $rows, 'left_out' => $left_out, 'tlds_compared' => count($compared));
+    }
+
+    /*
+     * The Renewal Calendar's weeks for $month (YYYY-MM): one array of seven dates (YYYY-MM-DD) per week, Sunday first,
+     * with null for the days before the month starts and after it ends, so every week is a full row
+     */
+    public function calendarWeeks($month)
+    {
+        $day = new \DateTime($month . '-01');
+        $days_in_month = (int) $day->format('t');
+        $week = array_fill(0, (int) $day->format('w'), null);
+        $weeks = array();
+        for ($i = 1; $i <= $days_in_month; $i++) {
+            $week[] = $month . '-' . sprintf('%02d', $i);
+            if (count($week) === 7) {
+                $weeks[] = $week;
+                $week = array();
+            }
+        }
+        if ($week) $weeks[] = array_pad($week, 7, null);
+        return $weeks;
     }
 
     // A month's name (1 to 12), translated, as the Cost by Month reports show it

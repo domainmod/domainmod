@@ -49,20 +49,22 @@ $report = $_REQUEST['report'] ?? '';
 <?php echo $layout->calloutTop(); ?>
 <?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>'); ?>
 <?php echo $layout->calloutBottom(); ?>
-<h2 class="visually-hidden"><?php echo _('Featured Reports'); ?></h2>
+<h2 class="h5 mb-3"><?php echo _('Renewals'); ?></h2>
 <div class="row g-3"><?php
+    echo $layout->landingTile('/reporting/renewal-calendar.php', _('Renewal Calendar'), _('What expires on each day, domains and SSL together'), 'bi-calendar3', 'info');
     echo $layout->landingTile('/reporting/domains/upcoming-renewals.php', _('Upcoming Renewals'), _('What renewals will cost, month by month'), 'bi-calendar-event', 'danger');
+    echo $layout->landingTile('/reporting/ssl/upcoming-renewals.php', _('SSL Upcoming Renewals'), _('What SSL renewals will cost, month by month'), 'bi-calendar-event', 'danger');
+    echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Pricing'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success'); ?>
+</div>
+<h2 class="h5 mt-4 mb-3"><?php echo _('Needs Attention'); ?></h2>
+<div class="row g-3"><?php
     echo $layout->landingTile('/reporting/domains/at-risk.php', _('At-Risk Domains'), sprintf(_('Expiring in the next %s days without auto renewal or privacy'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-exclamation-triangle', 'warning');
-    echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Pricing'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success');
+    echo $layout->landingTile('/reporting/ssl/at-risk.php', _('SSL At-Risk Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning');
     // To show this tile to admins only (as the sidebar's Data Warehouse section is), wrap it in
     // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }
     echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info'); ?>
 </div>
-<div class="row g-3 mt-1"><?php
-    echo $layout->landingTile('/reporting/ssl/upcoming-renewals.php', _('SSL Upcoming Renewals'), _('What SSL renewals will cost, month by month'), 'bi-calendar-event', 'danger');
-    echo $layout->landingTile('/reporting/ssl/at-risk.php', _('SSL At-Risk Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning'); ?>
-</div>
-<div class="row g-3 mt-1"><?php
+<div class="row g-3 mt-4"><?php
     echo $layout->landingLinks(_('Domain Costs'), array(
         array('/reporting/domains/cost-by-category.php', _('Category'), _('Domain Cost by Category')),
         array('/reporting/domains/cost-by-dns.php', _('DNS Profile'), _('Domain Cost by DNS Profile')),

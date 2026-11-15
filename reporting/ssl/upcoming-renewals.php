@@ -217,6 +217,7 @@ if ($rows) {
         <a href="<?php echo $report_filename; ?>?days=<?php echo $window_days; ?>#cert-list" class="btn btn-sm <?php echo $window_days === $days ? 'btn-danger' : 'btn-outline-secondary'; ?>"<?php echo $window_days === $days ? ' aria-current="true"' : ''; ?>><?php echo sprintf(_('%s Days'), $window_days); ?></a><?php
     } ?>
 </div>
+<a href="<?php echo WEB_ROOT; ?>/reporting/renewal-calendar.php?show=ssl" class="ms-2 small"><i class="bi bi-calendar3" aria-hidden="true"></i> <?php echo _('See them on a calendar'); ?></a>
 </div>
 
 <?php

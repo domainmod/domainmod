@@ -1030,6 +1030,59 @@ div.dt-container > div.bottom {
     }
 }
 
+/* The Renewal Calendar (reporting/renewal-calendar.php): a month as a table of seven equal columns, each day's number
+   at the top left of its cell, today outlined in the emphasis colour (well over 3:1 against the cell in both colour
+   modes, where the brand red isn't in the Nord dark mode), and the days outside the month on the tertiary background
+   so they recede. Bootstrap's own colour variables carry it into the Nord dark mode. */
+.domainmod-calendar {
+    table-layout: fixed;
+}
+.domainmod-calendar th {
+    text-align: center;
+}
+.domainmod-calendar th abbr {
+    text-decoration: none;
+    cursor: default;
+}
+.domainmod-calendar td {
+    vertical-align: top;
+    padding: .375rem .5rem;
+}
+.domainmod-calendar-cell {
+    min-height: 6.5rem;
+}
+.domainmod-calendar-day {
+    display: inline-block;
+    margin-inline-end: .25rem;
+    font-weight: 600;
+}
+/* Bootstrap's table cells set their own background and inset shadow, so these name the cell to win over them */
+.domainmod-calendar td.domainmod-calendar-today {
+    box-shadow: inset 0 0 0 2px var(--bs-emphasis-color);
+}
+.domainmod-calendar td.domainmod-calendar-outside {
+    --bs-table-bg: var(--bs-tertiary-bg);
+}
+/* Long names are cut short with an ellipsis (the full name is in the link's title), since the columns are narrow */
+.domainmod-calendar li.text-truncate {
+    max-width: 100%;
+}
+/* The list under the calendar: one table per day, with the same column widths in each, so the days line up */
+.domainmod-calendar-list {
+    table-layout: fixed;
+    min-width: 40rem;
+}
+/* A long name breaks onto the next line rather than running into the next column */
+.domainmod-calendar-list th,
+.domainmod-calendar-list td {
+    overflow-wrap: anywhere;
+}
+/* The month arrows point the other way in right-to-left languages */
+[dir="rtl"] .domainmod-calendar-arrow {
+    display: inline-block;
+    transform: scaleX(-1);
+}
+
 /* The gap after each button from Layout::showButton(), which used to be a trailing non-breaking space (a link wrapped
    around the button underlined it on hover). A logical margin, so it's on the correct side in right-to-left languages. */
 .domainmod-css-button {
