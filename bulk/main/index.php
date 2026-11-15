@@ -128,13 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 // Every action apart from Add Domains changes existing domains, so stop before any of them is touched
                 list($missing_to_display, $missing_count) = $missing;
-                $missing_message = sprintf(ngettext("%s domain on your list isn't in %s:", "%s domains on your list aren't in %s:", $missing_count), number_format($missing_count), SOFTWARE_TITLE) . ' ' . implode(', ', $missing_to_display) . '.';
-                if (($missing_count - count($missing_to_display)) == 1) {
-                    $missing_message .= ' ' . sprintf(_('Plus %s other'), number_format($missing_count - count($missing_to_display))) . '.';
-                } elseif (($missing_count - count($missing_to_display)) > 1) {
-                    $missing_message .= ' ' . sprintf(_('Plus %s others'), number_format($missing_count - count($missing_to_display))) . '.';
-                }
-                $form->addFieldError('raw_domain_list', $missing_message);
+                $form->addFieldError('raw_domain_list', $domain->missingDomainsMessage($missing_to_display, $missing_count));
                 $submission_failed = 1;
 
             } else {

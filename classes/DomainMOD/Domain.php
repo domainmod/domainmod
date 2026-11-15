@@ -106,6 +106,22 @@ class Domain
     }
 
     /*
+     * The field error for a domain list with domains that aren't in DomainMOD, from findMissingDomains()' results: how
+     * many are missing, the ones to show, and how many others there are. Shared by the Bulk Updater pages.
+     */
+    public function missingDomainsMessage($missing_to_display, $missing_count)
+    {
+        $missing_message = sprintf(ngettext("%s domain on your list isn't in %s:", "%s domains on your list aren't in %s:", $missing_count), number_format($missing_count), SOFTWARE_TITLE) . ' ' . implode(', ', $missing_to_display) . '.';
+        if (($missing_count - count($missing_to_display)) == 1) {
+            $missing_message .= ' ' . sprintf(_('Plus %s other'), number_format($missing_count - count($missing_to_display))) . '.';
+        } elseif (($missing_count - count($missing_to_display)) > 1) {
+            $missing_message .= ' ' . sprintf(_('Plus %s others'), number_format($missing_count - count($missing_to_display))) . '.';
+        }
+
+        return $missing_message;
+    }
+
+    /*
      * A domain name (or TLD) in punycode, the form registrars, DNS, and WHM expect, or '' if it isn't a valid name.
      * Used for anything that leaves DomainMOD, and for validation.
      */

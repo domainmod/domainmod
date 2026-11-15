@@ -113,17 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
             list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_array);
 
-            // How many of the listed domains are in DomainMOD, so a list of domains it doesn't have is refused here
-            // instead of failing further down
-            $found_domains = 0;
+            // The listed domains that aren't in DomainMOD, so the update stops before any domain is changed if there are
+            // any, as in the main Bulk Updater
+            $missing_to_display = array();
+            $missing_count = 0;
             if ($invalid_domains != 1 && $domain_array) {
-                $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                $stmt = $pdo->prepare("SELECT COUNT(*) FROM domains WHERE domain IN (" . $in_list . ")");
-                $stmt->execute(array_values($domain_array));
-                $found_domains = (int) $stmt->fetchColumn();
+                list($missing_to_display, $missing_count) = $domain->findMissingDomains($domain_array);
             }
 
-            if ($raw_domain_list == "" || $invalid_domains == 1 || $found_domains == 0) {
+            if ($raw_domain_list == "" || $invalid_domains == 1 || !$domain_array || $missing_count > 0) {
 
                 if ($invalid_domains == 1) {
 
@@ -146,9 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     }
 
-                } elseif ($found_domains == 0 && $domain_array) {
+                } elseif ($missing_count > 0) {
 
-                    $form->addFieldError('raw_domain_list', _('None of the domains on your list are in DomainMOD'));
+                    $form->addFieldError('raw_domain_list', $domain->missingDomainsMessage($missing_to_display, $missing_count));
 
                 } else {
 
