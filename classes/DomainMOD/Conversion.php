@@ -28,6 +28,8 @@ class Conversion
     public $log;
     public $time;
 
+    const RATE_RETRY_AFTER = 3600; // after a failed rate lookup for a missing currency, wait an hour before trying again.
+
     public function __construct()
     {
         $this->currency = new Currency();
@@ -42,7 +44,7 @@ class Conversion
      * A user only gets rates for the currencies in use when they're added, edit fees, or the conversion task runs, so
      * a user added before any domains existed, or a currency someone else started using, left them with none.
      * Only missing rates are added (existing ones are left alone), and a currency whose rate can't be fetched is
-     * skipped, so it's tried again on the next page load rather than saved as a wrong rate
+     * skipped rather than saved as a wrong rate. It's tried again on a page load once RATE_RETRY_AFTER has passed.
      */
     public function ensureRates($user_id, $default_currency)
     {
@@ -66,9 +68,27 @@ class Conversion
 
             foreach ($this->missingRates($user_id) as $row) {
 
-                $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency);
+                $failed_file = '';
+
+                if ($row->currency == $default_currency) {
+
+                    $conversion_rate = 1;
+
+                } else {
+
+                    // A currency the rate service couldn't price is left alone for a while, so a fee in a currency it
+                    // has no rate for doesn't cause a lookup (and the lookup's PHP warning) on every page load.
+                    $failed_file = $this->failedRateFile($row->currency, $default_currency);
+                    $failed_age = is_readable($failed_file) ? time() - (int) @filemtime($failed_file) : -1;
+                    if ($failed_age >= 0 && $failed_age < self::RATE_RETRY_AFTER) continue; // A marker dated in the future (from a clock that was ahead) counts as expired.
+
+                    $conversion_rate = $this->getConvRate($row->currency, $default_currency);
+
+                }
 
                 if (!is_numeric($conversion_rate) || (float) $conversion_rate <= 0) {
+
+                    if ($failed_file !== '') @touch($failed_file);
 
                     $log_message = 'Unable to get a conversion rate for a missing user currency';
                     $log_extra = array('User ID' => $user_id, 'Currency' => $row->currency, 'Default Currency' => $default_currency);
@@ -76,6 +96,8 @@ class Conversion
                     continue;
 
                 }
+
+                if ($failed_file !== '' && is_file($failed_file)) @unlink($failed_file);
 
                 $this->updateConversionRate($conversion_rate, '0', $row->id, $user_id);
 
@@ -88,6 +110,15 @@ class Conversion
             $release->execute();
 
         }
+    }
+
+    // The file that marks a failed rate lookup for a currency pair. It's named after the rate service too, so choosing a
+    // different service tries again straight away.
+    public function failedRateFile($from_currency, $to_currency)
+    {
+        $parts = array($_SESSION['s_system_currency_converter'] ?? '', $from_currency, $to_currency);
+        $parts = array_map(function ($part) { return strtolower(preg_replace('/[^A-Za-z0-9-]/', '', (string) $part)); }, $parts);
+        return DIR_TEMP . '/conversion-rate-' . implode('_', $parts) . '.failed';
     }
 
     // The currencies any domain or SSL fee uses (whether or not an asset uses that fee yet, so the fee comparisons can
