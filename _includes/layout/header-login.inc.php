@@ -21,7 +21,7 @@
 ?>
 <div class="login-box">
   <div class="login-logo">
-      <a href='./'><img src="<?php echo $web_root; ?>/images/logo-lg.png"></a>
+      <a href='./'><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
   </div>
   <!-- /.login-logo -->
     <?php

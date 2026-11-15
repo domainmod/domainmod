@@ -26,7 +26,7 @@
     <div class="col-12 col-lg-4">
     <BR><BR><BR>
     <div class="login-logo">
-        <img src="<?php echo $web_root; ?>/images/logo-lg.png">
+        <span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span>
     </div>
     <!-- /.login-logo -->
     <BR>

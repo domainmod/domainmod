@@ -152,12 +152,28 @@ html {
     background-color: var(--bs-primary);
     color: #fff;
 }
-/* The large logo on the sign-in, installer, and bare pages has dark lettering, so in dark mode it sits on the same
-   light background as the sidebar's logo */
-[data-bs-theme="dark"] .login-logo img {
-    background-color: #d8dee9;
-    border-radius: .5rem;
-    padding: .5rem 1rem;
+/* The large logo on the sign-in, installer, and bare pages, drawn like the sidebar's logo in dark mode (Greg's
+   choice, 2026-11-14): the lettering in a soft off-white with a CSS filter, and the red icon kept in colour by a second
+   copy of the image cropped to the icon (the left 14% of the image) and laid over it. Light mode shows the image as
+   it is. */
+.domainmod-login-logo {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+.domainmod-login-logo-icon {
+    display: none;
+}
+[data-bs-theme="dark"] .domainmod-login-logo-image {
+    filter: brightness(0) invert(.88);
+    clip-path: inset(0 0 0 14%);
+}
+[data-bs-theme="dark"] .domainmod-login-logo-icon {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    clip-path: inset(0 86% 0 0);
 }
 /* Links stay blue with no underline, as before. data-lte-primary="danger" would turn them red, so they're set back
    here (with the same selectors AdminLTE's colours use, so these win), a shade darker than Bootstrap's blue so they

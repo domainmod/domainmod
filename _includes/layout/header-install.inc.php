@@ -26,7 +26,7 @@
     <div class="col-4">
         <BR><BR><BR>
         <div class="login-logo">
-            <a href="<?php echo WEB_ROOT; ?>/install/"><img src="<?php echo $web_root; ?>/images/logo-lg.png"></a>
+            <a href="<?php echo WEB_ROOT; ?>/install/"><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
         </div>
         <!-- /.login-logo -->
         <BR>
