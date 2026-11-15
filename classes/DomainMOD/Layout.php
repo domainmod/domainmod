@@ -193,6 +193,50 @@ class Layout
         return ob_get_clean();
     }
 
+    /*
+     * A list's plain pager for when JavaScript is off (the Domains list, see domains/index.php): Previous, the page
+     * numbers around the current one with the first and last, and Next, as start and length links. $base_url already
+     * carries the list's whole state as a query string (it never relies on the session), and $label names the pages for
+     * screen readers. The list's script removes it when DataTables takes over the paging. Large Mode keeps its own
+     * pageBrowser() until it retires.
+     */
+    public function listPager($total, $start, $length, $base_url, $label)
+    {
+        $total = (int) $total;
+        $length = max(1, (int) $length);
+        $pages = (int) ceil($total / $length);
+        if ($pages <= 1) return '';
+
+        $current = (int) floor(max(0, (int) $start) / $length) + 1;
+        $link = function ($page) use ($base_url, $length) {
+            $separator = strpos($base_url, '?') === false ? '?' : '&';
+            return htmlspecialchars($base_url . $separator . http_build_query(array('start' => ($page - 1) * $length,
+                'length' => $length)), ENT_QUOTES, 'UTF-8');
+        };
+        $item = function ($page, $text, $is_current = false) use ($link) {
+            if ($is_current) {
+                return '<li class="page-item active"><a class="page-link" href="' . $link($page) . '" aria-current="page">' . $text . '</a></li>';
+            }
+            return '<li class="page-item"><a class="page-link" href="' . $link($page) . '">' . $text . '</a></li>';
+        };
+        $gap = '<li class="page-item disabled"><span class="page-link">&hellip;</span></li>';
+
+        $html = '<nav class="domainmod-list-pager" aria-label="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '"><ul class="pagination pagination-sm flex-wrap">';
+        if ($current > 1) $html .= $item($current - 1, htmlspecialchars(_('Previous'), ENT_QUOTES, 'UTF-8'));
+
+        $from = max(1, $current - 2);
+        $to = min($pages, $current + 2);
+        if ($from > 1) $html .= $item(1, number_format(1)) . ($from > 2 ? $gap : '');
+        for ($page = $from; $page <= $to; $page++) {
+            $html .= $item($page, number_format($page), $page === $current);
+        }
+        if ($to < $pages) $html .= ($to < $pages - 1 ? $gap : '') . $item($pages, number_format($pages));
+
+        if ($current < $pages) $html .= $item($current + 1, htmlspecialchars(_('Next'), ENT_QUOTES, 'UTF-8'));
+
+        return $html . '</ul></nav>';
+    }
+
     public function pageBrowser($parameters)
     {
         list($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num) = $parameters;

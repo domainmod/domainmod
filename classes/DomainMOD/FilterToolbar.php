@@ -115,17 +115,23 @@ class FilterToolbar
     }
 
     /*
-     * The export address for the current state. It always carries $keyword_key and $range_key, empty when they're off,
-     * so the export reads them from its own request rather than the session, and another tab's filters can't leak in.
+     * The list's address for the current state, always carrying $keyword_key and $range_key, empty when they're off, so
+     * whatever reads it (an export, the no-JavaScript pager, or the list's data endpoint) takes them from its own
+     * request rather than the session, and another tab's filters can't leak in. $extra is added after them.
      */
+    public function stateUrl($keyword_key = 'search_for', $range_key = 'daterange', array $extra = array())
+    {
+        $blanks = array();
+        if (!$this->isActive($keyword_key)) $blanks[$keyword_key] = '';
+        if (!$this->isActive($range_key)) $blanks[$range_key] = '';
+
+        return $this->url(array(), array_merge($blanks, $extra));
+    }
+
+    // The export address for the current state (see stateUrl())
     public function exportUrl($keyword_key = 'search_for', $range_key = 'daterange')
     {
-        $extra = array();
-        if (!$this->isActive($keyword_key)) $extra[$keyword_key] = '';
-        if (!$this->isActive($range_key)) $extra[$range_key] = '';
-        $extra['export_data'] = 1;
-
-        return $this->url(array(), $extra);
+        return $this->stateUrl($keyword_key, $range_key, array('export_data' => 1));
     }
 
     /*

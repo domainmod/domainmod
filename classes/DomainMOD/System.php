@@ -501,35 +501,48 @@ class System
 
     public function authCheck()
     {
-        if (($_SESSION['s_is_logged_in'] ?? 0) != 1) {
+        $result = $this->authCheckResult();
+        if ($result === 'signed_out') {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
             $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
             header('Location: ' . WEB_ROOT . '/');
             exit;
-        } else {
-            $pdo = $this->deeb->cnxx;
-            // The colour mode comes along too, so a change saved in another browser shows on this one's next page
-            $stmt = $pdo->prepare("
-                SELECT u.`password`, us.dark_mode
-                FROM users AS u
-                LEFT JOIN user_settings AS us ON us.user_id = u.id
-                WHERE u.username = :new_username
-                  AND u.active = '1'");
-            $stmt->bindValue('new_username', $_SESSION['s_username'] ?? '', \PDO::PARAM_STR);
-            $stmt->execute();
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stored_hash = $result === false ? false : $result['password'];
-            // An incomplete session, or a user who's gone or inactive, is logged out too
-            $session_hash = $_SESSION['s_stored_hash'] ?? '';
-            if ($session_hash === '' || $stored_hash === false || $session_hash != $stored_hash) {
-                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
-                header('Location: ' . WEB_ROOT . '/logout.php');
-                exit;
-            }
-            if ($result['dark_mode'] !== null) $_SESSION['s_dark_mode'] = (int) $result['dark_mode'];
+        } elseif ($result === 'invalid') {
+            $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+            $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
+            header('Location: ' . WEB_ROOT . '/logout.php');
+            exit;
         }
+    }
+
+    /*
+     * authCheck()'s checks without its redirects, for a script that answers in JSON (such as domains/list-data.php):
+     * 'valid', 'signed_out' (no signed-in session), or 'invalid' (an incomplete session, or a user who's gone, inactive,
+     * or whose password has changed). A valid session's colour mode is refreshed, as authCheck() always has.
+     */
+    public function authCheckResult()
+    {
+        if (($_SESSION['s_is_logged_in'] ?? 0) != 1) return 'signed_out';
+
+        $pdo = $this->deeb->cnxx;
+        // The colour mode comes along too, so a change saved in another browser shows on this one's next page
+        $stmt = $pdo->prepare("
+            SELECT u.`password`, us.dark_mode
+            FROM users AS u
+            LEFT JOIN user_settings AS us ON us.user_id = u.id
+            WHERE u.username = :new_username
+              AND u.active = '1'");
+        $stmt->bindValue('new_username', $_SESSION['s_username'] ?? '', \PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $stored_hash = $result === false ? false : $result['password'];
+        // An incomplete session, or a user who's gone or inactive, is logged out too
+        $session_hash = $_SESSION['s_stored_hash'] ?? '';
+        if ($session_hash === '' || $stored_hash === false || $session_hash != $stored_hash) return 'invalid';
+        if ($result['dark_mode'] !== null) $_SESSION['s_dark_mode'] = (int) $result['dark_mode'];
+
+        return 'valid';
     }
 
     /*

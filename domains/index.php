@@ -49,19 +49,9 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
-/*
- * The keyword search as an SQL condition on a domain column. The term is quoted by PDO rather than pasted into the
- * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
- * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
- * was typed, so casing rules can't send both to the wrong spelling.
- */
+// The keyword search as an SQL condition on a domain column (see DomainList::keywordCondition())
 $domain_search_condition = function ($column, $term) use ($pdo) {
-    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
-    $lower = mb_strtolower($term, 'UTF-8');
-    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
-    $idn = DomainMOD\Domain::normalize($term);
-    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
-    return '(' . implode(' OR ', $conditions) . ')';
+    return DomainMOD\DomainList::keywordCondition($pdo, $column, $term);
 };
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
@@ -215,92 +205,25 @@ if ($tld && $tld != '') {
 
 }
 
-if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
-} elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' ";
-} elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' ";
-} elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' ";
-} elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' ";
-} elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' ";
-} elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' ";
-} elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' ";
-} elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' ";
-} elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' ";
-} elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' ";
-} elseif ($is_active == 'LIVE') { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-} elseif ($is_active == 'ALL') { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
-} else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
-}
-
-if ($segid !== 0) {
-
-    $temp_segment = $segment->getSegment($segid);
-
-    $segid_string = " AND d.domain IN ($temp_segment)";
-
-} else {
-
-    $segid_string = "";
-}
-
-if ($pcid !== 0) {
-    $pcid_string = " AND d.cat_id = '$pcid' ";
-} else {
-    $pcid_string = "";
-}
-
-if ($oid !== 0) {
-    $oid_string = " AND o.id = '$oid' ";
-} else {
-    $oid_string = "";
-}
-
-if ($dnsid !== 0) {
-    $dnsid_string = " AND dns.id = '$dnsid' ";
-} else {
-    $dnsid_string = "";
-}
-
-if ($ipid !== 0) {
-    $ipid_string = " AND ip.id = '$ipid' ";
-} else {
-    $ipid_string = "";
-}
-
-if ($whid !== 0) {
-    $whid_string = " AND h.id = '$whid' ";
-} else {
-    $whid_string = "";
-}
-
-if ($rid !== 0) {
-    $rid_string = " AND r.id = '$rid' ";
-} else {
-    $rid_string = "";
-}
-
-if ($raid !== 0) {
-    $raid_string = " AND d.account_id = '$raid' ";
-} else {
-    $raid_string = "";
-}
-
-if ($tld != "") {
-    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
-} else {
-    $tld_string = "";
-}
-
-if ($filter_start_date != '' && $filter_start_date != 'YYYY-MM-DD') {
-    $range_string = " AND (d.expiry_date >= " . $pdo->quote($filter_start_date) . " AND d.expiry_date <= " . $pdo->quote($filter_end_date) . ")";
-} else {
-    $range_string = "";
-}
-
-if ($filter_search_for != "") {
-    $search_string = " AND " . $domain_search_condition('d.domain', $filter_search_for) . " ";
-} else {
-    $search_string = "";
-}
+// The list's filters as SQL, from the same class as the list's data endpoint (domains/list-data.php), so the first
+// page, the pages fetched afterwards, the counts, Export, and the Raw List all agree
+$dfd_columns = $customField->getCustomFieldsSql('domain_fields', 'dfd');
+$domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_columns);
+$list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid, 'rid' => $rid,
+    'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active);
+$filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date);
+$is_active_string = $filter_parts['is_active_string'];
+$segid_string = $filter_parts['segid_string'];
+$pcid_string = $filter_parts['pcid_string'];
+$oid_string = $filter_parts['oid_string'];
+$dnsid_string = $filter_parts['dnsid_string'];
+$ipid_string = $filter_parts['ipid_string'];
+$whid_string = $filter_parts['whid_string'];
+$rid_string = $filter_parts['rid_string'];
+$raid_string = $filter_parts['raid_string'];
+$range_string = $filter_parts['range_string'];
+$tld_string = $filter_parts['tld_string'];
+$search_string = $filter_parts['search_string'];
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
@@ -336,22 +259,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 }
 
-$dfd_columns = $customField->getCustomFieldsSql('domain_fields', 'dfd');
-
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
-        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
-        WHERE d.account_id = ra.id
-          AND ra.registrar_id = r.id
-          AND ra.owner_id = o.id
-          AND d.cat_id = cat.id
-          AND d.fee_id = f.id
-          AND d.dns_id = dns.id
-          AND d.ip_id = ip.id
-          AND d.hosting_id = h.id
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND d.id = dfd.domain_id
-          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+$sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $is_active_string
           $segid_string
           $pcid_string
@@ -374,36 +282,10 @@ $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_strin
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
-// This query is identical to the main query, except that it only does a count
-$total_rows = $pdo->query("
-    SELECT count(*)
-    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
-    WHERE d.account_id = ra.id
-      AND ra.registrar_id = r.id
-      AND ra.owner_id = o.id
-      AND d.cat_id = cat.id
-      AND d.fee_id = f.id
-      AND d.dns_id = dns.id
-      AND d.ip_id = ip.id
-      AND d.hosting_id = h.id
-      AND f.currency_id = c.id
-      AND c.id = cc.currency_id
-      AND d.id = dfd.domain_id
-      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-      $is_active_string
-      $segid_string
-      $pcid_string
-      $oid_string
-      $dnsid_string
-      $ipid_string
-      $whid_string
-      $rid_string
-      $raid_string
-      $range_string
-      $tld_string
-      $search_string
-      $sort_by_string")->fetchColumn();
+// How many domains the filters match (the same joins and filters as the main query)
+$total_rows = $domain_list->count($list_filter_sql);
 
+// The total leaves out the custom field join the list uses, as it always has (a known quirk, kept for now)
 $grand_total = $pdo->query("
     SELECT SUM(d.total_cost * cc.conversion)
     FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
@@ -436,16 +318,8 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 
 if ($segid !== 0) {
 
-    $result = $pdo->query($sql)->fetchAll();
-
-    $active_domains = "'";
-    foreach ($result as $row) {
-
-        $active_domains .= $row->domain . "', '";
-
-    }
-    $active_domains .= "'";
-    $active_domains = substr($active_domains, 0, -4);
+    // The segment's flags follow the whole filtered list, not the page shown, so only the domains are read here
+    $active_domains = $pdo->query("SELECT d.domain" . $domain_list->fromSql() . $list_filter_sql)->fetchAll(PDO::FETCH_COLUMN);
 
     $stmt = $pdo->prepare("
         UPDATE segment_data
@@ -457,12 +331,25 @@ if ($segid !== 0) {
 
     if ($active_domains) {
 
+        $active_domains = implode(', ', array_map(array($pdo, 'quote'), $active_domains));
+
         $stmt = $pdo->prepare("
             UPDATE segment_data
             SET filtered = '1'
             WHERE active = '1'
               AND segment_id = :segid
               AND domain NOT IN (" . $active_domains . ")");
+        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+        $stmt->execute();
+
+    } else {
+
+        // None of the segment's domains are left by the other filters, so every one of them is filtered out
+        $stmt = $pdo->prepare("
+            UPDATE segment_data
+            SET filtered = '1'
+            WHERE active = '1'
+              AND segment_id = :segid");
         $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -1019,6 +906,20 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 }
 
+/*
+ * Server-side processing (outside Large Mode): the page prints one page of rows, in the default order, and DataTables
+ * fetches the others from domains/list-data.php (see js/domain-list.js). The page and its size come from the address
+ * (the no-JavaScript pager's links), checked as the endpoint checks them, and a page past the end (an old link, after
+ * domains were deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own
+ * paging does.
+ */
+$list_columns = new DomainMOD\DomainListColumns(DomainMOD\DomainListColumns::sessionCopy($_SESSION), $dfd_columns);
+$list_page_sizes = DomainMOD\DomainList::pageSizes($_SESSION['s_number_of_domains']);
+$list_length = DomainMOD\DomainList::checkedLength($_GET['length'] ?? '', $list_page_sizes);
+$list_start = DomainMOD\DomainList::checkedStart($_GET['start'] ?? 0);
+$list_start -= $list_start % $list_length;
+if ($list_start >= $total_rows) $list_start = $total_rows > 0 ? (int) (floor(($total_rows - 1) / $list_length) * $list_length) : 0;
+
 if ($_SESSION['s_system_large_mode'] == '1') {
 
     $temp_numbegin = max(0, (int) ($_REQUEST['numBegin'] ?? 0));
@@ -1029,9 +930,15 @@ if ($_SESSION['s_system_large_mode'] == '1') {
     $navigate = $layout->pageBrowser($parameters);
     $sql = $sql . $navigate[0];
 
-}
+    $result = $pdo->query($sql)->fetchAll();
 
-$result = $pdo->query($sql)->fetchAll();
+} else {
+
+    $result = $total_rows > 0 ? $domain_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
+        DomainMOD\DomainList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
+        $list_length) : array();
+
+}
 
 if ($segid !== 0) {
 
@@ -2204,7 +2111,7 @@ if ($segid !== 0) {
     <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
         <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
     <?php } else { ?>
-        <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format(count($result)); ?><BR><BR>
+        <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
     <?php } ?>
 
     <?php if ($totalrows_inactive > 0) { ?>
@@ -2241,13 +2148,77 @@ if ($result) {
         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
             <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
         <?php } else { ?>
-            <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format(count($result)); ?><BR><BR>
+            <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
         <?php } ?>
 
     <?php }
 
-    if ($total_rows) {
+    if ($total_rows && $_SESSION['s_system_large_mode'] != '1') {
 
+        /*
+         * Server-side processing (see js/domain-list.js): the columns and cells come from DomainListColumns, as the
+         * endpoint's do, and the table carries what the script needs, the endpoint's address with the list's whole state
+         * (so another tab's filters can't change this tab's rows), the columns, the counts, the page, and its size.
+         */
+        $list_state_url = $filter_toolbar->stateUrl();
+        $list_query = (string) parse_url($list_state_url, PHP_URL_QUERY);
+        $list_data_url = $web_root . '/domains/list-data.php?' . ($list_query !== '' ? $list_query . '&' : '')
+            . http_build_query(array('layout' => $list_columns->layoutKey()));
+        $list_config = array(
+            'url' => $list_data_url,
+            'columns' => array_map(function ($column) {
+                return array('orderable' => (bool) $column['sort'], 'control' => $column['key'] === 'control');
+            }, $list_columns->columns()),
+            'order' => $list_columns->defaultOrder(),
+            'start' => $list_start,
+            'length' => $list_length,
+            'sizes' => $list_page_sizes['sizes'],
+            'total' => $total_rows,
+            'messages' => array(
+                'error' => _("That didn't work. Please reload the page and try again."),
+                'signin' => _('Your session has ended. Please sign in again.'),
+                'signinLink' => _('Sign In'),
+                'reload' => _('Your display settings have changed. Reload the page to see them.'),
+                'reloadLink' => _('Reload'),
+                'close' => _('Close'),
+                'paging' => sprintf(_('Pages of %s'), _('Domains')),
+            ),
+            'signinUrl' => $web_root . '/',
+        );
+        $today = $time->timeBasic(); // for marking past expiry dates ?>
+
+        <div id="<?php echo $slug; ?>-message"></div>
+        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>" data-domainmod-list="<?php echo htmlspecialchars(json_encode($list_config), ENT_QUOTES, 'UTF-8'); ?>">
+            <thead>
+            <tr>
+                <?php foreach ($list_columns->columns() as $column) {
+                    if ($column['key'] === 'control') { ?>
+                        <th width="20px"></th>
+                    <?php } elseif ($column['key'] === 'domain') { ?>
+                        <th class="all"><?php echo $column['title']; ?></th>
+                    <?php } else { ?>
+                        <th><?php echo $column['title']; ?></th>
+                    <?php }
+                } ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($result as $row) { ?>
+                <tr>
+                    <?php foreach ($list_columns->cells($row, $today) as $cell) { ?>
+                        <td><?php echo $cell; ?></td>
+                    <?php } ?>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+        <?php echo $layout->listPager($total_rows, $list_start, $list_length, $list_state_url, sprintf(_('Pages of %s'), _('Domains'))); ?>
+        <BR><?php
+
+    } elseif ($total_rows) {
+
+        // Large Mode keeps its own table, sort links, and paging until it retires (its normal-mode branches below no
+        // longer run, and go with it)
         if ($_SESSION['s_system_large_mode'] == '1') {
             require DIR_INC . '/layout/pagination-large-mode.inc.php';
         } ?>
@@ -2723,5 +2694,8 @@ if ($result) {
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php';  //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
+<?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
+<script src="<?php echo $layout->assetUrl('js/domain-list.js'); ?>"></script>
+<?php } ?>
 </body>
 </html>

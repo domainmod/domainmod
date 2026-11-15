@@ -25,36 +25,13 @@ $breadcrumb = _('Domains');
 $software_section = "domains";
 $slug = "domains-main";
 
-// If the expiry date is visible sort by it, otherwise sort by the domain
-$_SESSION['s_display_domain_expiry_date'] == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
-
 // The table looks the same in large mode, which only leaves out the DataTables script.
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 
+// Outside large mode the list uses server-side processing: domains/index.php prints the first page, with the table's
+// settings in its data-domainmod-list attribute, and js/domain-list.js starts DataTables from them.
 if ($_SESSION['s_system_large_mode'] != '1') {
 
-    $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
-                              "paging": true,
-                              "lengthChange": true,
-                              "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
-                              "searching": true,
-                              "info": true,
-                              "autoWidth": true,
-                              "bAutoWidth": false,
-                              "responsive": {
-                                   details: {
-                                             type: "column"
-                                            }
-                                            },
-                              "columnDefs": [ {
-                                               className: "control",
-                                               orderable: false,
-                                               targets:   0
-                                               } ],
-                              "ordering": true,
-                              "order": [[ ' . $default_sort_by . ', "asc" ]],
-                              "bSortClasses": false,
-                              "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
-                          });';
+    $datatable_options = 'domainmodDomainList(\'#' . $slug . '\');';
 
 }
