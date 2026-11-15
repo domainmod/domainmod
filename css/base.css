@@ -91,6 +91,18 @@ html {
 .domainmod-css-search-field .form-control {
     padding-left: 2.125rem;
 }
+/* The menu filter's funnel icon, placed like the search button but only decorative (the field filters as you type) */
+.domainmod-css-search-icon {
+    position: absolute;
+    top: 50%;
+    left: .75rem;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    color: var(--lte-search-field-icon-color);
+    pointer-events: none;
+    transform: translateY(-50%);
+}
 .domainmod-css-search-submit {
     position: absolute;
     top: 50%;
@@ -203,6 +215,16 @@ a:hover {
 /* On/off switches a little larger than Bootstrap's, so they're easy to see and click next to the compact text */
 .form-switch .form-check-input {
     font-size: 1.25rem;
+}
+/* The larger switch's own offset (2.5em) is measured at its larger size, so the wrapper's padding matches it, or the
+   switch would stick out past the left edge of the fields above it */
+.form-switch {
+    padding-left: 3.125rem;
+}
+/* Forms stop at a comfortable reading width instead of stretching across wide screens (the shared form wrapper,
+   Form::showFormTop(), adds the class) */
+.domainmod-form {
+    max-width: 48rem;
 }
 /* Flatpickr's calendar in DomainMOD's colours: chosen days in the main colour, and dark mode from Bootstrap's own
    colour variables (Flatpickr doesn't follow data-bs-theme by itself) */

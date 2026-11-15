@@ -133,7 +133,10 @@ $search_for = $search_for ?? '';
             <!-- Menu filter (AdminLTE's sidebar search, which narrows the menu below as you type) -->
             <div class="sidebar-search" role="search">
                 <label for="sidebar-search-input" class="visually-hidden"><?php echo _('Filter the Menu'); ?></label>
-                <input type="search" id="sidebar-search-input" class="form-control form-control-sm" placeholder="<?php echo _('Filter the Menu'); ?>" autocomplete="off" data-lte-toggle="sidebar-search" data-lte-target="#navigation">
+                <div class="domainmod-css-search-field">
+                    <input type="search" id="sidebar-search-input" class="form-control form-control-sm" placeholder="<?php echo _('Filter the Menu'); ?>" autocomplete="off" data-lte-toggle="sidebar-search" data-lte-target="#navigation">
+                    <span class="domainmod-css-search-icon" aria-hidden="true"><i class="bi bi-funnel"></i></span>
+                </div>
                 <p class="fs-7 text-secondary mt-2 mb-0" data-lte-search-empty role="status" hidden><?php echo _('No matching pages.'); ?></p>
             </div>
 

@@ -104,7 +104,7 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <form method="post">
+            <form method="post" class="domainmod-form">
                 <?php echo $this->showCsrfField(); ?>
                 <div class="mb-3"><?php
         return ob_get_clean();
