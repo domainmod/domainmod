@@ -570,7 +570,7 @@ if (!$result_lists) {
     <table id="<?php echo $slug; ?>-lists" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Registrar Account'); ?></th>
             <th><?php echo _('Domain Count'); ?></th>
@@ -668,7 +668,7 @@ if (!$result_domains) {
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Domain'); ?></th>
             <th><?php echo _('Registrar Account'); ?></th>

@@ -46,7 +46,12 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "ordering": true,
                           "order": [[ 5, "desc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Domain List Queue')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
+                          }
                       });
                       
                       domainmodTable(\'#' . $slug . '-domains\', {
@@ -69,5 +74,10 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                                            } ],
                           "ordering": true,
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Domain Queue')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
+                          }
                       });';
