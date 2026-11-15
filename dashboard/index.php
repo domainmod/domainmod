@@ -60,6 +60,44 @@ $at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->t
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// Totals, as one line under the page title (Greg's choice, 2026-11-14), so the action cards come first
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_live_domains = (int) $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active NOT IN ('0', '10')")->fetchColumn();
+
+$total_live_ssl = (int) $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs
+    WHERE active NOT IN ('0', '10')")->fetchColumn();
+
+$total_sold_domains = (int) $pdo->query("
+    SELECT count(*)
+    FROM domains
+    WHERE active = '10'")->fetchColumn();
+
+$totals = array();
+$totals[] = array('/domains/index.php?is_active=LIVE', 'bi-globe2', number_format($total_live_domains), _('Domains'));
+$totals[] = array('/ssl/index.php?is_active=LIVE', 'bi-shield-lock', number_format($total_live_ssl), _('SSL Certificates'));
+if ($total_sold_domains) {
+    $totals[] = array('/domains/index.php?is_active=10', 'bi-cart', number_format($total_sold_domains), _('Sold Domains'));
+} ?>
+<div class="card domainmod-dashboard-totals d-inline-block mw-100 mb-0">
+    <div class="d-flex flex-column flex-sm-row"><?php
+        foreach ($totals as $total) { ?>
+            <div class="domainmod-dashboard-total position-relative d-flex align-items-center gap-3 px-4 py-2">
+                <i class="bi <?php echo $total[1]; ?> fs-4" aria-hidden="true"></i>
+                <div>
+                    <div class="fs-5 fw-semibold lh-1"><?php echo $total[2]; ?></div>
+                    <a href="<?php echo WEB_ROOT . $total[0]; ?>" class="stretched-link text-body-secondary link-underline-opacity-0 small"><?php echo $total[3]; ?></a>
+                </div>
+            </div><?php
+        } ?>
+    </div>
+</div>
+<?php
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Expiration Panels
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 $expiration_days = $pdo->query("
@@ -87,7 +125,7 @@ if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
 
     <?php $section = sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?>
     <div class="row">
-        <h4 class="mt-3"><?php echo $section; ?></h4>
+        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -149,7 +187,7 @@ if ($total_count) { ?>
 
     <?php $section = _('Pending Domains'); ?>
     <div class="row">
-        <h4 class="mt-3"><?php echo $section; ?></h4>
+        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -228,7 +266,7 @@ if ($total_count) { ?>
 
     <?php $section = _('Pending SSL Certificates'); ?>
     <div class="row">
-        <h4 class="mt-3"><?php echo $section; ?></h4>
+        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -304,7 +342,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     <?php $section = _('Domain Queue'); ?>
     <div class="row">
-        <h4 class="mt-3"><?php echo $section; ?></h4>
+        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
     </div>
 
     <div class="row">
@@ -339,55 +377,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     </div><?php
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// System Totals
-////////////////////////////////////////////////////////////////////////////////////////////////////
 ?>
-<?php $section = _('Totals'); ?>
-<div class="row">
-    <h4 class="mt-3"><?php echo $section; ?></h4>
-</div>
-
-<div class="row">
-
-    <?php
-    //////////////////////////////////////////////////
-    // Active Domains
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM domains
-        WHERE active NOT IN ('0', '10')")->fetchColumn();
-
-    echo $dashboard->displayPanel(_('Domains'), $total_count, 'secondary', 'bi-globe2', '/domains/index.php?is_active=LIVE', $section);
-
-    //////////////////////////////////////////////////
-    // Active SSL Certificates
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM ssl_certs
-        WHERE active NOT IN ('0', '10')")->fetchColumn();
-
-    echo $dashboard->displayPanel(_('SSL Certificates'), $total_count, 'secondary', 'bi-shield-lock', '/ssl/index.php?is_active=LIVE', $section);
-
-    //////////////////////////////////////////////////
-    // Sold Domains
-    //////////////////////////////////////////////////
-    $total_count = $pdo->query("
-        SELECT count(*)
-        FROM domains
-        WHERE active = '10'")->fetchColumn();
-
-    if ($total_count) {
-
-        echo $dashboard->displayPanel(_('Sold Domains'), $total_count, 'secondary', 'bi-cart', '/domains/index.php?is_active=10', $section);
-
-    } ?>
-
-</div>
-
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Renewal Costs, Next 12 Months (the same bars as Upcoming Renewals, with its figures as a table under the chart)
@@ -407,7 +397,13 @@ if ($renewal_rows) {
 
     $after = ob_get_clean(); ?>
 
-    <?php echo $chart->bar('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'), array_column($renewal_months, 'cost'), !empty($renewal_months[0]['overdue']), $after);
+    <div class="row">
+        <h4 class="mt-4 pt-2"><?php echo _('Renewal Costs, Next 12 Months'); ?></h4>
+    </div>
+    <?php echo $chart->bar('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'), array_column($renewal_months, 'cost'), !empty($renewal_months[0]['overdue']), $after, false);
+
+    // The chart's card ends the page, so the footer skips its usual gap above it
+    $footer_no_gap = true;
 
 }
 ?>

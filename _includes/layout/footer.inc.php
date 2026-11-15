@@ -1,4 +1,4 @@
-<BR><BR>
+<?php if (empty($footer_no_gap)) { ?><BR><BR><?php } ?>
 <?php
 /**
  * /_includes/layout/footer.inc.php

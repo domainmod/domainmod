@@ -95,14 +95,16 @@ class Chart
     /*
      * A bar chart, one bar per label, such as a month. With $first_is_overdue, the first bar is drawn in the warning
      * colour, for Upcoming Renewals' Overdue bar. $after is HTML shown in the card under the chart, such as a link.
+     * Without $card_title, the card has no header, for a page that puts the title in a section heading above it (the
+     * title still names the chart for screen readers).
      */
-    public function bar($id, $title, $labels, $values, $first_is_overdue = false, $after = '')
+    public function bar($id, $title, $labels, $values, $first_is_overdue = false, $after = '', $card_title = true)
     {
         $labels = array_values($labels);
         $values = array_map('floatval', array_values($values));
         if (!$values) return '';
 
-        return $this->card($id, 'bar', $title, $labels, $values, $first_is_overdue, false, $after);
+        return $this->card($id, 'bar', $title, $labels, $values, $first_is_overdue, false, $after, array('card_title' => $card_title));
     }
 
     /*
@@ -175,8 +177,9 @@ class Chart
 
         ob_start(); ?>
 
-        <div class="row mt-4">
-            <?php echo $this->layout->contentBoxTop(htmlspecialchars($title, ENT_QUOTES, 'UTF-8'), '12'); ?>
+        <?php $card_title = !isset($extra['card_title']) || $extra['card_title']; ?>
+        <div class="row<?php echo $card_title ? ' mt-4' : ''; ?>">
+            <?php echo $this->layout->contentBoxTop($card_title ? htmlspecialchars($title, ENT_QUOTES, 'UTF-8') : '', '12'); ?>
             <div class="domainmod-chart<?php echo $bars ? ' domainmod-chart-bars-' . $bars : ''; ?>">
                 <canvas id="<?php echo $id; ?>" data-domainmod-chart="<?php echo htmlspecialchars($json, ENT_QUOTES, 'UTF-8'); ?>" role="img" aria-label="<?php echo htmlspecialchars($aria_label, ENT_QUOTES, 'UTF-8'); ?>"></canvas>
             </div>

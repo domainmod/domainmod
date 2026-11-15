@@ -109,11 +109,13 @@ $search_for = $search_for ?? '';
     <!-- Sidebar (it collapses to icons only, and AdminLTE remembers that in the browser) -->
     <aside class="app-sidebar bg-body-secondary shadow" data-enable-persistence="true">
 
-        <!-- Brand logo (on a light background in both colour modes, since the logo is dark) -->
+        <!-- Brand logo (on a light background in light mode. Dark mode draws the lettering light, see base.css) -->
         <div class="sidebar-brand domainmod-css-logo-background-colour">
             <a href="<?php echo $web_root; ?>/" class="brand-link logo-switch">
                 <img src="<?php echo $web_root; ?>/images/logo-mini.png" alt="DomainMOD Logo Mini" class="brand-image-xl logo-xs">
-                <img src="<?php echo $web_root; ?>/images/logo.png" alt="DomainMOD Logo" class="brand-image-xs logo-xl">
+                <img src="<?php echo $web_root; ?>/images/logo.png" alt="DomainMOD Logo" class="brand-image-xs logo-xl domainmod-logo-image">
+                <!-- Dark mode only: the same image again, cropped to the red icon and laid over the off-white logo -->
+                <img src="<?php echo $web_root; ?>/images/logo.png" alt="" class="brand-image-xs logo-xl domainmod-logo-icon">
             </a>
         </div>
 

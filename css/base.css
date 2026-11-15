@@ -49,31 +49,36 @@ html {
 .app-header {
     border-bottom: 0;
 }
+/* The top bar is as tall as the sidebar's logo area (3.5rem), with its items centred, so both have the same room above
+   them. Compact mode otherwise caps it at 2.75rem. */
+.compact-mode .app-header {
+    max-height: none;
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
 /* The full logo, centred in the sidebar's logo area. It's positioned within the whole sidebar, so its top is half the
-   compact brand area's height (2.75rem), and AdminLTE's small upward nudge is undone so it sits exactly in the
+   logo area's height (3.5rem), and AdminLTE's small upward nudge is undone so it sits exactly in the
    middle. The selector matches AdminLTE's own in strength, so this file's later rule wins. */
+.sidebar-brand.domainmod-css-logo-background-colour {
+    /* Taller than compact mode's usual 2.75rem, so the logo has room above and below it (the top bar matches it) */
+    height: 3.5rem;
+}
 .sidebar-brand.domainmod-css-logo-background-colour .logo-xl {
-    top: 1.375rem;
+    top: 1.75rem;
     left: 50%;
     margin-top: 0;
     transform: translate(-50%, -50%);
 }
-/* In dark mode the logo area takes the sidebar's colour, and only the logo sits on a small light tile (its lettering
-   is dark). The padding sits outside AdminLTE's height limit, so the logo keeps its size. */
+/* In dark mode the logo area takes the sidebar's colour (the logo's dark mode treatment is with the Nord rules below) */
 [data-bs-theme="dark"] .domainmod-css-logo-background-colour {
     background-color: transparent;
 }
-[data-bs-theme="dark"] .domainmod-css-logo-background-colour .logo-xl {
-    box-sizing: content-box;
-    padding: .15rem .5rem;
-    background-color: #d8dee9;
-    border-radius: .4rem;
-}
 /* The small logo in the collapsed sidebar, centred and sized to fit it. AdminLTE places it for a wider sidebar, which
-   crops it in the compact one. It's positioned within the whole sidebar, so its top is half the compact brand area's
-   height (2.75rem). */
+   crops it in the compact one. It's positioned within the whole sidebar, so its top is half the logo area's height
+   (3.5rem). */
 .sidebar-mini.sidebar-collapse .app-sidebar .logo-xs.brand-image-xl {
-    top: 1.375rem;
+    top: 1.75rem;
     left: 50%;
     max-height: 2rem;
     transform: translate(-50%, -50%);
@@ -677,4 +682,49 @@ div.dt-container > div.bottom {
 }
 [data-bs-theme="dark"] .card-outline.card-secondary {
     border-top-color: #8a95ab;
+}
+/* The Dashboard's totals, one card split into a cell per total, with a divider between cells (beside each other on
+   wider screens, stacked on phones). The whole cell is the link. */
+.domainmod-dashboard-total + .domainmod-dashboard-total {
+    border-top: 1px solid var(--bs-border-color);
+}
+@media (min-width: 576px) {
+    .domainmod-dashboard-total + .domainmod-dashboard-total {
+        border-top: 0;
+        border-left: 1px solid var(--bs-border-color);
+    }
+}
+.domainmod-dashboard-total .bi {
+    color: var(--bs-info-text-emphasis);
+}
+.domainmod-dashboard-total:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+.domainmod-dashboard-total:focus-within {
+    outline: 2px solid var(--bs-focus-ring-color, var(--bs-primary));
+    outline-offset: -2px;
+}
+/* Dark mode's logo (Greg's choice, 2026-11-14): the logo's lettering drawn in a soft off-white (#e0e0e0, close to
+   Nord's Snow Storm) with a CSS filter, and
+   its red icon kept in colour by a second copy of the image cropped to the icon (the left 14% of the image) and laid
+   exactly over it. There's no light tile behind it. Light mode keeps the image as it is. */
+.domainmod-logo-icon {
+    display: none;
+}
+[data-bs-theme="dark"] .domainmod-css-logo-background-colour .domainmod-logo-image {
+    padding: 0;
+    background-color: transparent;
+    filter: brightness(0) invert(.88);
+    clip-path: inset(0 0 0 14%);
+}
+[data-bs-theme="dark"] .domainmod-css-logo-background-colour .domainmod-logo-icon {
+    display: block;
+    clip-path: inset(0 86% 0 0);
+}
+/* The sidebar's domain search sits close under the logo area */
+.app-sidebar .sidebar-wrapper {
+    padding-top: .25rem;
+}
+.sidebar-wrapper .sidebar-search {
+    padding-top: 0;
 }

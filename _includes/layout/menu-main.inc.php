@@ -20,9 +20,8 @@
  */
 ?>
 
-<nav class="mt-2" aria-label="<?php echo _('Main Menu'); ?>">
+<nav class="mt-3" aria-label="<?php echo _('Main Menu'); ?>">
     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false" id="navigation">
-        <li class="nav-header"><?php echo _('NAVIGATION') ?></li>
         <li class="nav-item">
             <a href="<?php echo $web_root; ?>/" class="nav-link<?php if ($software_section == "dashboard") echo " active"; ?>" aria-label="<?php echo _('Dashboard'); ?>">
                 <i class="nav-icon bi bi-speedometer2"></i>
