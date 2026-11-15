@@ -40,6 +40,8 @@ $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
 <!-- Follows the system's colour mode when AdminLTE can't (after AdminLTE) -->
 <script src="<?php echo $layout->assetUrl('js/colour-mode-save.js'); ?>"></script>
+<!-- The step indicator's tooltips (after Bootstrap) -->
+<script src="<?php echo $layout->assetUrl('js/step-tooltips.js'); ?>"></script>
 <!-- Tom Select, for the menus you can search (Form::showDropdownTop() with $searchable) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/js/tom-select.complete.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl('js/search-select.js'); ?>"></script>

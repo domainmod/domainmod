@@ -918,6 +918,11 @@ div.dt-container > div.bottom {
 .domainmod-step-link:focus-visible .domainmod-step-number {
     box-shadow: 0 0 0 .2rem rgba(var(--bs-success-rgb), .4);
 }
+/* The furthest step reached (after going back) is an outline, not a green circle, so its ring is in the outline's colour */
+.domainmod-step.is-reached .domainmod-step-link:hover .domainmod-step-number,
+.domainmod-step.is-reached .domainmod-step-link:focus-visible .domainmod-step-number {
+    box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--bs-secondary-color) 40%, transparent);
+}
 .domainmod-step-link:hover .domainmod-step-name {
     text-decoration: underline;
 }

@@ -232,13 +232,17 @@ class Layout
      * between them out of order would skip their checks, and screen readers hear each step's position and state.
      */
     // $urls optionally gives each step's address, in the same order as $steps: the steps already done then link back to
-    // their page, so a multi-step flow that keeps its answers (such as the installer) can go back to any earlier step
-    public function stepIndicator($steps, $current, $label, $urls = array())
+    // their page, so a multi-step flow that keeps its answers (such as the installer) can go back to any earlier step.
+    // $reached is the furthest step reached so far. After going back, the steps already done after the current one stay
+    // ticked and linked, and the furthest step stays numbered and linked, so people can go forward again without redoing
+    // them.
+    public function stepIndicator($steps, $current, $label, $urls = array(), $reached = 0)
     {
         $steps = array_values($steps);
         $urls = array_values($urls);
         $total = count($steps);
         $current = (int) $current;
+        $reached = max((int) $reached, $current);
 
         ob_start(); ?>
 
@@ -246,19 +250,24 @@ class Layout
             <ol><?php
             foreach ($steps as $index => $name) {
                 $number = $index + 1;
-                if ($number < $current) {
+                if ($number < $current || ($number > $current && $number < $reached)) {
                     $state = 'is-done';
                     $prefix = sprintf(_('Step %1$s of %2$s, done:'), $number, $total);
                 } elseif ($number === $current) {
                     $state = 'is-current';
                     $prefix = sprintf(_('Step %1$s of %2$s, current:'), $number, $total);
+                } elseif ($number === $reached) {
+                    // The furthest step reached, after going back: not done yet, but it can be returned to
+                    $state = 'is-reached';
+                    $prefix = sprintf(_('Step %1$s of %2$s:'), $number, $total);
                 } else {
                     $state = '';
                     $prefix = sprintf(_('Step %1$s of %2$s:'), $number, $total);
                 } ?>
                 <li class="domainmod-step<?php echo $state !== '' ? ' ' . $state : ''; ?>"<?php if ($state === 'is-current') echo ' aria-current="step"'; ?>><?php
-                    $url = ($state === 'is-done' && isset($urls[$index]) && $urls[$index] !== '') ? $urls[$index] : '';
-                    if ($url !== '') { ?><a class="domainmod-step-link" href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>"><?php } ?>
+                    $url = (($state === 'is-done' || $state === 'is-reached') && isset($urls[$index]) && $urls[$index] !== '') ? $urls[$index] : '';
+                    // A step that links names where it goes in a tooltip, since on narrow screens only the current step shows its name
+                    if ($url !== '') { ?><a class="domainmod-step-link" href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>"><?php } ?>
                     <span class="domainmod-step-number" aria-hidden="true"><?php if ($state === 'is-done') { ?><i class="bi bi-check-lg"></i><?php } else { echo $number; } ?></span>
                     <span class="visually-hidden"><?php echo htmlspecialchars($prefix, ENT_QUOTES, 'UTF-8'); ?> </span>
                     <span class="domainmod-step-name"><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></span><?php

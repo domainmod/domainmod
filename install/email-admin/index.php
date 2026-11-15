@@ -39,8 +39,19 @@ require_once DIR_INC . '/settings/install.email.admin.inc.php';
 $system->loginCheck();
 $system->installCheck();
 
-$new_admin_email1 = isset($_POST['new_admin_email1']) ? $sanitize->text($_POST['new_admin_email1']) : '';
-$new_admin_email2 = isset($_POST['new_admin_email2']) ? $sanitize->text($_POST['new_admin_email2']) : '';
+$_SESSION['new_admin_email'] = $_SESSION['new_admin_email'] ?? '';
+
+if ($_SERVER['REQUEST_METHOD'] != 'POST' && $_SESSION['new_admin_email']) {
+
+    $new_admin_email1 = $_SESSION['new_admin_email'];
+    $new_admin_email2 = $_SESSION['new_admin_email'];
+
+} else {
+
+    $new_admin_email1 = isset($_POST['new_admin_email1']) ? $sanitize->text($_POST['new_admin_email1']) : '';
+    $new_admin_email2 = isset($_POST['new_admin_email2']) ? $sanitize->text($_POST['new_admin_email2']) : '';
+
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -91,6 +102,7 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_admin_email1', _('Enter Email'), '', $unsanitize->text($new_admin_email1), '100', '', '', '', '', '1');
 echo $form->showInputText('new_admin_email2', _('Confirm Email'), '', $unsanitize->text($new_admin_email2), '100', '', '', '', '');
 ?>
+<BR>
 <a href="../timezone/"><?php echo $layout->showButton('button', _('Go Back')); ?></a>
 <?php
 echo $form->showSubmitButton(_('Next Step'), '', '');

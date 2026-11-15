@@ -177,13 +177,15 @@ class Form
      * The start of a menu with its label. A mistake recorded for it with addFieldError() marks it, and shows under it
      * when showDropdownBottom() is given the same name. $searchable lets people type to narrow a long menu
      * (js/search-select.js, with Tom Select), and carries the translated message for a search that finds nothing.
+     * $hide_label keeps the label for screen readers only, for a menu whose page heading already names it, and adds
+     * a little room above the menu in its place.
      */
-    public function showDropdownTop($name, $text_to_display, $subtext, $required, $before, $searchable = false)
+    public function showDropdownTop($name, $text_to_display, $subtext, $required, $before, $searchable = false, $hide_label = false)
     {
         ob_start();
             echo $before; ?>
-            <div class="mb-3">
-                <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+            <div class="mb-3<?php echo $hide_label ? ' mt-3' : ''; ?>"><?php // Room under the heading that names the menu, in place of the label ?>
+                <label class="form-label<?php echo $hide_label ? ' visually-hidden' : ''; ?>" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <select class="form-select<?php echo $searchable ? ' domainmod-search-select' : ''; ?><?php echo $this->errorClass($name); ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?><?php if ($searchable) echo ' data-no-results="' . htmlspecialchars(_('No results.'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php
         return ob_get_clean();

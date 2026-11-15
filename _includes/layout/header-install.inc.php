@@ -56,7 +56,9 @@
             $install_steps = array(_('Language'), _('Software Requirements'), _('Currency'), _('Time Zone'), _('Administrator Email'), _('System Email'));
             // Each step keeps its answer in the session, so the steps already done link back to their page
             $install_step_urls = array(WEB_ROOT . '/install/language/', WEB_ROOT . '/install/requirements/', WEB_ROOT . '/install/currency/', WEB_ROOT . '/install/timezone/', WEB_ROOT . '/install/email-admin/', WEB_ROOT . '/install/email-system/');
-            echo $layout->stepIndicator($install_steps, $install_step, _('Installation steps'), $install_step_urls);
+            // The furthest step reached, so going back to an earlier step keeps the later ones clickable
+            $_SESSION['s_installation_reached'] = max((int) ($_SESSION['s_installation_reached'] ?? 0), (int) $install_step);
+            echo $layout->stepIndicator($install_steps, $install_step, _('Installation steps'), $install_step_urls, $_SESSION['s_installation_reached']);
         } ?>
             <h3><?php echo $page_title; ?></h3>
         <?php
