@@ -656,14 +656,15 @@ if ($export_data == 1) {
               AND ra.id = :raid");
         $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
         $stmt->execute();
-        $result = $stmt->fetch();
+        // Its own variable, so the domains in $result are still there for the rows below
+        $result_account = $stmt->fetch();
         $stmt->closeCursor();
 
-        if ($result) {
+        if ($result_account) {
 
             $row_contents = array(
                 _('Registrar Account') . ':',
-                $result->registrar_name . " - " . $result->owner_name . " - " . $result->username
+                $result_account->registrar_name . " - " . $result_account->owner_name . " - " . $result_account->username
             );
             $export->writeRow($export_file, $row_contents);
 
