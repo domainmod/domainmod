@@ -460,6 +460,15 @@ a[aria-busy="true"] {
    from the table, which DataTables 2's Bootstrap 5 styling leaves at none */
 div.dt-container > div.top {
     margin-bottom: 0.75rem;
+    /* The page length, the "Showing…" line, and the search on one line: length and info on the left, search on the
+       right, all centred vertically (they wrap on narrow screens) */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem 1.5rem;
+}
+div.dt-container > div.top > .dt-search {
+    margin-left: auto;
 }
 div.dt-container > div.bottom {
     margin-top: 0.75rem;
