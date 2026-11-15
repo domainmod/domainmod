@@ -152,9 +152,9 @@ if ($result2) { ?>
 
 }
 
-if (!$result) { ?>
+if (!$result) {
 
-    <BR><?php echo _("You don't currently have any fees associated with this domain registrar."); ?> <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo _('Click here to add one'); ?></a>.<?php
+    echo $layout->emptyState('bi-cash-coin', _('No fees for this registrar yet'), sprintf(_('Add a fee for each TLD so %s can work out costs.'), SOFTWARE_TITLE));
 
 } else { ?>
 

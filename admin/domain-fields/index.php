@@ -124,7 +124,7 @@ if ($export_data === 1) {
 
 if (!$result) {
 
-    echo sprintf(_("It appears as though you haven't created any Custom Domain Fields yet. %sClick here%s to add one."), '<a href="add.php">', '</a>');
+    echo $layout->emptyState('bi-input-cursor-text', _('No custom domain fields yet'), _('Custom fields let you track your own details for each domain.'), '/admin/domain-fields/add.php', _('Add Custom Field'));
 
 } else { ?>
 

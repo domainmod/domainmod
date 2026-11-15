@@ -177,8 +177,11 @@ if ($export_data === 1) {
 <a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', _('Add SSL Account')); ?></a>
 <a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
-if ($result) { ?>
+if ($result) {
 
+    // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
+    $shown = 0;
+    ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -200,7 +203,9 @@ if ($result) { ?>
                 WHERE account_id = '" . $row->sslpaid . "'
                   AND active NOT IN ('0')")->fetchColumn();
 
-            if ($total_certs >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
+            if ($total_certs >= 1 || $_SESSION['s_display_inactive_assets'] == '1') {
+
+                $shown++; ?>
 
                 <tr>
                 <td></td>
@@ -239,6 +244,17 @@ if ($result) { ?>
 
     <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Reseller'); ?><BR><BR><?php
 
+    if ($shown === 0) {
+
+        ob_end_clean();
+        echo $layout->emptyState('bi-eye-slash', _('No SSL provider accounts are in use'), _('Unused SSL provider accounts are hidden. You can show them in Display Settings.'), '', '', '/settings/display/', _('Display Settings'));
+
+    } else {
+
+        ob_end_flush();
+
+    }
+
 } else {
 
     $result = $pdo->query("
@@ -246,13 +262,18 @@ if ($result) { ?>
         FROM ssl_providers
         LIMIT 1")->fetchAll();
 
-    if (!$result) { ?>
+    if (!$result) {
 
-        <BR><?php echo _('Before adding an SSL Provider Account you must add at least one SSL Provider.'); ?> <a href="add/ssl-provider.php"><?php echo _('Click here to add an SSL Provider'); ?></a>.<BR><?php
+        echo $layout->emptyState('bi-shield-check', _('Add an SSL provider first'), _('SSL provider accounts belong to an SSL provider.'), '/assets/add/ssl-provider.php', _('Add SSL Provider'));
 
-    } else { ?>
+    } elseif (($sslpid !== 0 || $sslpaid !== 0 || $oid !== 0) && $pdo->query("SELECT id FROM ssl_accounts LIMIT 1")->fetchColumn()) {
 
-        <BR><?php echo _("You don't currently have any SSL Provider Accounts."); ?> <a href="add/ssl-provider-account.php"><?php echo _('Click here to add one'); ?></a>.<BR><?php
+        // Opened from a link that filters the list (such as one SSL provider's accounts), and nothing matches
+        echo $layout->emptyState('bi-search', _('No SSL provider accounts match'), _('Try changing or clearing the filters.'), '', '', '/assets/ssl-accounts.php', _('Show all SSL provider accounts'));
+
+    } else {
+
+        echo $layout->emptyState('bi-person-badge', _('No SSL provider accounts yet'), _('Add the accounts you hold at your SSL providers.'));
 
     }
 

@@ -338,6 +338,12 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_sql'] = $sql;
 
+// The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
+$list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
+    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string;
+$list_has_range = $range_string != '';
+$list_has_search = $search_string != '';
+
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
     SELECT count(*)
@@ -955,49 +961,25 @@ if ($_SESSION['s_has_domain'] == '0') {
 
 }
 
-if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
-
-    $go_text1 = ' [<a href="' . $web_root . '/queue/intro.php">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
-    $go_text2 = ' [<a href="' . $web_root . '/bulk/">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
-    $go_text3 = ' [<a href="' . $web_root . '/domains/add.php">' . DomainMOD\Format::toLower(_('Go')) . '</a>]';
-
-} else {
-
-    $go_text1 = '';
-    $go_text2 = '';
-    $go_text3 = '';
-
-}
-
-$subtext1 = sprintf(_('Before you can start adding domains to %s you need to add at least one domain registrar and a domain registrar account.'), SOFTWARE_TITLE);
-
-$subtext2 = sprintf(_('Please see the %sFirst Run%s section of the User Guide for more detailed information.'), '<a target=\'_blank\' href=\'' . $web_root . '/docs/userguide/first-run/\'>', '</a>');
+// Before anything exists, the list walks a new user through the order things are added in: a registrar, then an
+// account at it, then domains, one step at a time (Layout::emptyState())
+$first_run_link = sprintf(_('See %sFirst Run%s in the User Guide for more.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/first-run/">', '</a>');
 
 if ($_SESSION['s_has_registrar'] != '1') {
-    echo "<strong>0</strong> " . _('Domain Registrars found') . "<BR><BR>";
-    echo $subtext1 . '<BR><BR>';
-    echo $subtext2 . '<BR><BR>';
-    echo "<a href=\"../assets/add/registrar.php\">" . _('Click here to add a Domain Registrar') . " &raquo;</a><BR>";
-    echo "or";
-    echo "<BR>";
-    echo "<a href=\"../domains/csv-importer/\">" . _('You can also import your domain data using our CSV Importer') . " &raquo;</a><BR>";
+
+    echo $layout->emptyState('bi-building', _('Add a registrar first'), _('Domains belong to a registrar account, so start by adding the registrar you use.') . ' ' . $first_run_link, '/assets/add/registrar.php', _('Add Registrar'), '/domains/csv-importer/', _('Import from a CSV file instead'), 2, true, true);
+
 }
 
 if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
-    echo '<strong>0</strong> ' . _('Domain Registrar Accounts found') . '<BR><BR>';
-    echo $subtext1 . '<BR><BR>';
-    echo $subtext2 . '<BR><BR>';
-    echo '<a href="../assets/add/registrar-account.php">' . _('Click here to add a Domain Registrar Account') . ' &raquo;</a><BR>';
+
+    echo $layout->emptyState('bi-person-badge', _('Add a registrar account next'), _('Add the account you hold at that registrar.') . ' ' . $first_run_link, '/assets/add/registrar-account.php', _('Add Registrar Account'));
+
 }
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
-    echo "<strong>0</strong> " . _('Domains found') . "<BR><BR>";
-    echo sprintf(
-          _('Add a domain %smanually%s, add domains using the %sDomain Queue%s, or see the %sAdding Domains%s section of the User Guide for more options.'),
-          '<a href="add.php">', '</a>',
-          '<a href="' . $web_root . '/queue/intro.php">', '</a>',
-          '<a target="_blank" href="../docs/userguide/adding-domains/">', '</a>');
+    echo $layout->emptyState('bi-globe2', _('No domains yet'), sprintf(_('Add your first domain, or let %s import them from your registrar.'), SOFTWARE_TITLE) . ' ' . sprintf(_('See %sAdding Domains%s in the User Guide for more ways.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/adding-domains/">', '</a>'), '/domains/add.php', _('Add Domain'), '/queue/intro.php', _('Add Domains Automatically'), 2, true, true);
     $ready_for_domains = 1;
 
 } elseif ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
@@ -2585,11 +2567,8 @@ if ($result) { ?>
 
     $ready_for_domains = $ready_for_domains ?? 0;
 
-    if ($ready_for_domains === 1) {
-
-        if ($_SESSION['s_has_domain'] != "1") {
-            echo "<BR><BR>";
-        }?>
+    // With no domains at all, the "No domains yet" empty state above already offers the ways to add them
+    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1') { ?>
 
         <a href="add.php"><?php echo $layout->showButton('button', _('Add Domain')); ?></a>
         <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', _('Add Domains Automatically')); ?></a>
@@ -2599,7 +2578,63 @@ if ($result) { ?>
 
     if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
-        echo _('Your search returned zero results.');
+        // Domains exist but none are listed. Which empty state shows depends on why (see the empty states plan).
+        $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $whid !== 0
+            || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE';
+
+        // The list only shows domains that have a fee (it joins the fees to work out costs), so these counts leave
+        // the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
+        $domains_without_fee_join = "
+            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+            WHERE d.account_id = ra.id
+              AND ra.registrar_id = r.id
+              AND ra.owner_id = o.id
+              AND d.cat_id = cat.id
+              AND d.dns_id = dns.id
+              AND d.ip_id = ip.id
+              AND d.hosting_id = h.id
+              AND d.id = dfd.domain_id";
+
+        if ($_SESSION['s_system_large_mode'] == '1' && $total_rows > 0) {
+
+            // A bookmarked page beyond the end of the list. The link back writes every filter out, including the
+            // keyword and date range kept in the session, since Large Mode's own paging links rely on numBegin to keep
+            // them.
+            $first_page_query = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid,
+                'rid' => $rid, 'raid' => $raid, 'tld' => $tld, 'segid' => $segid, 'is_active' => $is_active,
+                'result_limit' => $result_limit, 'sort_by' => $sort_by, 'search_for' => $_SESSION['s_search_for']);
+            if ($list_has_range) $first_page_query['daterange'] = $_SESSION['s_start_date'] . ' - ' . $_SESSION['s_end_date'];
+            echo $layout->emptyState('bi-arrow-left-circle', _('That page is past the end of the list'), _('There are fewer domains than when this page was linked.'), '', '', '/domains/index.php?' . http_build_query($first_page_query), _('Go to the first page'));
+
+        } elseif (!$domain_filters_active) {
+
+            $live_domains = (int) $pdo->query("SELECT count(*) FROM domains WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')")->fetchColumn();
+
+            if ($live_domains === 0) {
+
+                echo $layout->emptyState('bi-archive', _('No live domains'), _('Your domains are all expired, sold, or inactive.'), '', '', '/domains/index.php?is_active=ALL', _('Show all domains'));
+
+            } else {
+
+                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/registrar-fees-missing.php', _('Add the missing fees'));
+
+            }
+
+        } else {
+
+            $filtered_domains = (int) $pdo->query("SELECT count(*)" . $domains_without_fee_join . $list_filter_sql)->fetchColumn();
+
+            if ($filtered_domains > 0) {
+
+                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/registrar-fees-missing.php', _('Add the missing fees'));
+
+            } else {
+
+                echo $layout->emptyState('bi-search', _('No domains match your filters'), _('Try changing or clearing the filters.'), '', '', '/domains/index.php', _('Clear filters'));
+
+            }
+
+        }
 
     }
 

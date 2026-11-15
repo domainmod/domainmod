@@ -54,7 +54,13 @@ $result = $pdo->query("
       AND d.fee_id = '0'
     GROUP BY r.name
     ORDER BY r.name ASC")->fetchAll();
-?>
+
+// When nothing is missing, that's good news rather than an empty table
+if (!$result) {
+
+    echo $layout->emptyState('bi-check-circle', _('No missing fees'), _('Every domain has a fee, so its costs can be worked out.'));
+
+} else { ?>
 <?php echo _('The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees as soon as possible.'); ?><BR>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
     <thead>
@@ -99,7 +105,9 @@ $result = $pdo->query("
     } ?>
 
     </tbody>
-</table>
+</table><?php
+
+} ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

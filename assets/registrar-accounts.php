@@ -211,8 +211,11 @@ if ($export_data === 1) {
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', _('Add Registrar Account')); ?></a>
 <a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
-if ($result) { ?>
+if ($result) {
 
+    // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
+    $shown = 0;
+    ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -234,7 +237,9 @@ if ($result) { ?>
                 WHERE account_id = '" . $row->raid . "'
                   AND active NOT IN ('0', '10')")->fetchColumn();
 
-            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
+            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') {
+
+                $shown++; ?>
 
                 <tr>
                 <td></td>
@@ -273,6 +278,17 @@ if ($result) { ?>
 
     <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Reseller'); ?><BR><BR><?php
 
+    if ($shown === 0) {
+
+        ob_end_clean();
+        echo $layout->emptyState('bi-eye-slash', _('No registrar accounts are in use'), _('Unused registrar accounts are hidden. You can show them in Display Settings.'), '', '', '/settings/display/', _('Display Settings'));
+
+    } else {
+
+        ob_end_flush();
+
+    }
+
 } else {
 
     $result = $pdo->query("
@@ -280,13 +296,18 @@ if ($result) { ?>
         FROM registrars
         LIMIT 1")->fetchAll();
 
-    if (!$result) { ?>
+    if (!$result) {
 
-        <BR><?php echo _('Before adding a Registrar Account you must add at least one Registrar.'); ?> <a href="add/registrar.php"><?php echo _('Click here to add a Registrar'); ?></a>.<BR><?php
+        echo $layout->emptyState('bi-building', _('Add a registrar first'), _('Registrar accounts belong to a registrar.'), '/assets/add/registrar.php', _('Add Registrar'));
 
-    } else { ?>
+    } elseif (($rid !== 0 || $raid !== 0 || $oid !== 0) && $pdo->query("SELECT id FROM registrar_accounts LIMIT 1")->fetchColumn()) {
 
-        <BR><?php echo _("You don't currently have any Registrar Accounts."); ?> <a href="add/registrar-account.php"><?php echo _('Click here to add one'); ?></a>.<BR><?php
+        // Opened from a link that filters the list (such as one registrar's accounts), and nothing matches
+        echo $layout->emptyState('bi-search', _('No registrar accounts match'), _('Try changing or clearing the filters.'), '', '', '/assets/registrar-accounts.php', _('Show all registrar accounts'));
+
+    } else {
+
+        echo $layout->emptyState('bi-person-badge', _('No registrar accounts yet'), _('Add the accounts you hold at your registrars.'));
 
     }
 

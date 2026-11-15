@@ -121,8 +121,7 @@ if ($export_data === 1) {
 
 if (!$result) {
 
-    echo _("It appears as though you haven't created any Custom SSL Fields yet.");
-    echo '&nbsp;'; echo sprintf(_('%sClick here%s to add one.'), '<a href="add.php">', '</a>');
+    echo $layout->emptyState('bi-input-cursor-text', _('No custom SSL fields yet'), _('Custom fields let you track your own details for each SSL certificate.'), '/admin/ssl-fields/add.php', _('Add Custom Field'));
 
 } else { ?>
 

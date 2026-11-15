@@ -221,9 +221,9 @@ $has_existing_segments = $pdo->query("
     FROM segments
     LIMIT 1")->fetchColumn();
 
-if (!$has_existing_segments) { ?>
+if (!$has_existing_segments) {
 
-    <?php echo _("You don't currently have any Segments."); ?> <a href="add.php"><?php echo _('Click here to add one'); ?></a>.<BR><BR><?php
+    echo $layout->emptyState('bi-funnel', _('No segments yet'), _('A segment is a saved list of domains you can filter the Domains list by.'));
 
 } else { ?>
 

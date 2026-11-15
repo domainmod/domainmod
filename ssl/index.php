@@ -231,6 +231,12 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
 $_SESSION['s_raw_list_sql'] = $sql;
 
+// The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
+$list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_string . $sslpaid_string . $ssltid_string
+    . $sslipid_string . $sslpcid_string . $range_string . $search_string;
+$list_has_range = $range_string != '';
+$list_has_search = $search_string != '';
+
 // This query is identical to the main query, except that it only does a count
 $total_rows = $pdo->query("
     SELECT count(*)
@@ -630,30 +636,30 @@ if ($_SESSION['s_has_ssl_cert'] == '0') {
 
 }
 
-$subtext1 = _('Before you can start adding SSL certificates to DomainMOD you need to add at least one SSL provider, an SSL provider account, and a domain.');
-
+// Before anything exists, the list walks a new user through the order things are added in: an SSL provider, then an
+// account at it, then a domain, then certificates, one step at a time (Layout::emptyState())
 if ($_SESSION['s_has_ssl_provider'] != '1') {
-    echo "<strong>0</strong> " . _('SSL Providers found') . "<BR><BR>";
-    echo $subtext1 . '<BR><BR>';
-    echo "<a href=\"../assets/add/ssl-provider.php\">" . _('Click here to add an SSL Provider') . " &raquo;</a><BR>";
+
+    echo $layout->emptyState('bi-shield-check', _('Add an SSL provider first'), _('SSL certificates belong to an SSL provider account, so start by adding the company you buy them from.'), '/assets/add/ssl-provider.php', _('Add SSL Provider'));
+
 }
 
 if ($_SESSION['s_has_ssl_account'] != '1' && $_SESSION['s_has_ssl_provider'] == '1') {
-    echo "<strong>0</strong> " . _('SSL Provider Accounts found') . "<BR><BR>";
-    echo $subtext1 . '<BR><BR>';
-    echo "<a href=\"../assets/add/ssl-provider-account.php\">" . _('Click here to add an SSL Provider Account') . " &raquo;</a><BR>";
+
+    echo $layout->emptyState('bi-person-badge', _('Add an SSL provider account next'), _('Add the account you hold at that SSL provider.'), '/assets/add/ssl-provider-account.php', _('Add SSL Account'));
+
 }
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
-    echo "<strong>0</strong> " . _('Domains found') . "<BR><BR>";
-    echo $subtext1 . '<BR><BR>';
-    echo "<a href=\"../domains/\">" . _('Click here to add a Domain') . " &raquo;</a><BR>";
+
+    // Adding a domain may need a registrar and an account first, so this goes to the Domains list, which guides that
+    echo $layout->emptyState('bi-globe2', _('Add a domain first'), _('Each SSL certificate belongs to a domain, so add the domain it covers.'), '/domains/', _('Go to Domains'), '', '', 2, false);
+
 }
 
 if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
-    echo "<strong>0</strong> " . _('SSL Certificates found') . "<BR><BR>";
-    echo "<a href=\"add.php\">" . _('Click here to add an SSL Certificate') . " &raquo;</a><BR>";
+    echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Cert'));
     $ready_for_ssl_certs = 1;
 
 } elseif ($_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
@@ -1735,11 +1741,9 @@ if ($result) { ?>
 } else {
 
     $ready_for_ssl_certs = $ready_for_ssl_certs ?? 0;
-    if ($ready_for_ssl_certs === 1) {
 
-        if ($_SESSION['s_has_ssl_cert'] != '1') {
-            echo "<BR><BR>";
-        } ?>
+    // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button
+    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') { ?>
 
         <BR><a href="add.php"><?php echo $layout->showButton('button', _('Add SSL Cert')); ?></a><BR><BR><?php
 
@@ -1747,7 +1751,53 @@ if ($result) { ?>
 
     if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
-        echo _('Your search returned zero results.');
+        // Certificates exist but none are listed. Which empty state shows depends on why (see the empty states plan).
+        $ssl_filters_active = $oid !== 0 || $did !== 0 || $sslpid !== 0 || $sslpaid !== 0 || $ssltid !== 0 || $sslipid !== 0
+            || $sslpcid !== 0 || $list_has_range || $list_has_search || $is_active != 'LIVE';
+
+        // The list only shows certificates that have a fee (it joins the fees to work out costs), so these counts
+        // leave the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
+        $ssl_without_fee_join = "
+            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, domains AS d,
+                 ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
+            WHERE sslc.account_id = sslpa.id
+              AND sslpa.ssl_provider_id = sslp.id
+              AND sslpa.owner_id = o.id
+              AND sslc.domain_id = d.id
+              AND sslc.type_id = sslcf.id
+              AND sslc.ip_id = ip.id
+              AND sslc.cat_id = cat.id
+              AND sslc.id = sslfd.ssl_id";
+
+        if (!$ssl_filters_active) {
+
+            $live_certs = (int) $pdo->query("SELECT count(*) FROM ssl_certs WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')")->fetchColumn();
+
+            if ($live_certs === 0) {
+
+                echo $layout->emptyState('bi-archive', _('No live SSL certificates'), _('Your SSL certificates are all expired or inactive.'), '', '', '/ssl/index.php?is_active=ALL', _('Show all SSL certificates'));
+
+            } else {
+
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/ssl-provider-fees-missing.php', _('Add the missing fees'));
+
+            }
+
+        } else {
+
+            $filtered_certs = (int) $pdo->query("SELECT count(*)" . $ssl_without_fee_join . $list_filter_sql)->fetchColumn();
+
+            if ($filtered_certs > 0) {
+
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/ssl-provider-fees-missing.php', _('Add the missing fees'));
+
+            } else {
+
+                echo $layout->emptyState('bi-search', _('No SSL certificates match your filters'), _('Try changing or clearing the filters.'), '', '', '/ssl/index.php', _('Clear filters'));
+
+            }
+
+        }
 
     }
 

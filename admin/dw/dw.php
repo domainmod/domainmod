@@ -145,6 +145,12 @@ if (!$result) {
 <a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a>&nbsp;&nbsp;<?php
 if ($has_servers == 1) { ?><a href="rebuild.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
+if ($has_servers == 0) {
+
+    echo $layout->emptyState('bi-database', _('No servers in the Data Warehouse yet'), _('Add a WHM server to import its accounts, DNS zones, and records.'), '/admin/dw/add-server.php', _('Add Web Server'), '/admin/dw/intro.php', _('What is the Data Warehouse?'));
+
+}
+
 // the Data Warehouse tables only exist once it has been built
 $dwaccounts_check = new DomainMOD\DwAccounts();
 $dwzones_check = new DomainMOD\DwZones();
@@ -274,11 +280,8 @@ if ($no_results_build_info !== 1) { ?>
     <BR><BR><h3><?php echo _('Build Information'); ?></h3>
     <table id="<?php echo $slug; ?>-build" class="<?php echo $datatable_class; ?>"><?php
 
-    if ($result_count == 0) {
-
-        echo "<BR>" . _("You don't currently have any servers set up in your Data Warehouse.") . " <a href=\"add-server.php\">" . _('Click here to add one') . "</a>.";
-
-    } else {
+    // With no servers there's no build information, so this section is skipped and the empty state above shows
+    if ($result_count != 0) {
 
         if ($result->build_start_time_overall != '1970-01-01 00:00:00' &&
             $result->build_end_time_overall != '1970-01-01 00:00:00') {

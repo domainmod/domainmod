@@ -159,8 +159,11 @@ if ($export_data === 1) {
 <a href="add/registrar.php"><?php echo $layout->showButton('button', _('Add Registrar')); ?></a>
 <a href="registrars.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 
-if ($result > 0) { ?>
+if ($result) {
 
+    // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
+    $shown = 0;
+    ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -187,7 +190,9 @@ if ($result > 0) { ?>
                 WHERE active NOT IN ('0', '10')
                   AND registrar_id = '" . $row->rid . "'")->fetchColumn();
 
-            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
+            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') {
+
+                $shown++; ?>
 
                 <tr>
                 <td></td>
@@ -234,9 +239,20 @@ if ($result > 0) { ?>
 
     <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)<BR><BR><?php
 
-} else { ?>
+    if ($shown === 0) {
 
-    <BR><?php echo _("You don't currently have any Domain Registrars."); ?> <a href="add/registrar.php"><?php echo _('Click here to add one'); ?></a>.<?php
+        ob_end_clean();
+        echo $layout->emptyState('bi-eye-slash', _('No registrars are in use'), _('Unused registrars are hidden. You can show them in Display Settings.'), '', '', '/settings/display/', _('Display Settings'));
+
+    } else {
+
+        ob_end_flush();
+
+    }
+
+} else {
+
+    echo $layout->emptyState('bi-building', _('No registrars yet'), _('Add the registrars where your domains are registered.'));
 
 } ?>
 <?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>

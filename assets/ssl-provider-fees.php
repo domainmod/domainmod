@@ -151,9 +151,9 @@ if ($result2) { ?>
 
 }
 
-if (!$result) { ?>
+if (!$result) {
 
-    <BR><?php echo _("You don't currently have any fees associated with this SSL provider."); ?> <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo _('Click here to add one'); ?></a>.<?php
+    echo $layout->emptyState('bi-cash-coin', _('No fees for this SSL provider yet'), sprintf(_('Add a fee for each certificate type so %s can work out costs.'), SOFTWARE_TITLE));
 
 } else { ?>
 

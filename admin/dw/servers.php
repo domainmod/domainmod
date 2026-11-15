@@ -197,6 +197,10 @@ if ($result) { ?>
     </tbody>
     </table><?php
 
+} else {
+
+    echo $layout->emptyState('bi-database', _('No servers in the Data Warehouse yet'), _('Add a WHM server to import its accounts, DNS zones, and records.'), '', '', '/admin/dw/intro.php', _('What is the Data Warehouse?'));
+
 }
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

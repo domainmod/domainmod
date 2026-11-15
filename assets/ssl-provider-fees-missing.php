@@ -55,7 +55,14 @@ $result = $pdo->query("
     GROUP BY sp.name
     ORDER BY sp.name ASC")->fetchAll();
 
-echo _('The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees as soon as possible.');
+// When nothing is missing, that's good news rather than an empty table
+if (!$result) {
+
+    echo $layout->emptyState('bi-check-circle', _('No missing fees'), _('Every SSL certificate has a fee, so its costs can be worked out.'));
+
+} else {
+
+    echo _('The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees as soon as possible.');
 ?>
 <BR>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
@@ -102,7 +109,9 @@ echo _('The following SSL Certificates are missing fees. In order to ensure your
     } ?>
 
     </tbody>
-</table>
+</table><?php
+
+} ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

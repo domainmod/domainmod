@@ -853,6 +853,13 @@ if (!$result_domains) {
 
         </tbody>
     </table><?php
+}
+
+// With both queues empty, the page says so. Its actions are already in the button row above, so it repeats none
+if (!$result_lists && !$result_domains) {
+
+    echo $layout->emptyState('bi-inbox', _('The Domain Queue is empty'), sprintf(_('Domains you add automatically wait here while %s looks up their details.'), SOFTWARE_TITLE));
+
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>

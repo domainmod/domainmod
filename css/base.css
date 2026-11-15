@@ -1083,6 +1083,20 @@ div.dt-container > div.bottom {
     transform: scaleX(-1);
 }
 
+/* A list's empty state (Layout::emptyState()): a panel at the same width as the forms, left-aligned like the rest of
+   the page, with the icon, title, text, and actions starting at its left edge */
+.domainmod-empty-state {
+    max-width: 48rem;
+    margin-block: 1rem;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+.domainmod-empty-state-text {
+    max-width: 36rem;
+}
+
 /* The gap after each button from Layout::showButton(), which used to be a trailing non-breaking space (a link wrapped
    around the button underlined it on hover). A logical margin, so it's on the correct side in right-to-left languages. */
 .domainmod-css-button {

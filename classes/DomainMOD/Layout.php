@@ -225,6 +225,51 @@ class Layout
     }
 
     /*
+     * A list's empty state: a large icon, a title, one line of text, and the main action as a button, with an optional
+     * secondary link (another way in, or help). It's used when nothing exists yet, when filters or a search hide
+     * everything, and the like. $title and $text are already translated, and are trusted HTML, so callers escape
+     * anything that isn't theirs ($text may hold a link to the User Guide). The URLs and labels are escaped here, and a
+     * URL starting with "/" is taken from the application root (WEB_ROOT). Read-only users can't add or change anything,
+     * so an action marked as changing data ($action_changes_data, $secondary_changes_data) is left out for them, while
+     * navigation and help links always show. $heading_level is the title's heading (2 under the page's h1, or 3 or 4
+     * where the empty state follows an h2 or h3), and the title looks the same at any level. The icon is decorative.
+     * Callers leave out an action or link the page already shows above the empty state, so nothing appears twice.
+     */
+    public function emptyState($icon, $title, $text, $action_url = '', $action_label = '', $secondary_url = '',
+                               $secondary_label = '', $heading_level = 2, $action_changes_data = true,
+                               $secondary_changes_data = false)
+    {
+        $read_only = (($_SESSION['s_read_only'] ?? '') == '1');
+        $heading_level = max(2, min(6, (int) $heading_level));
+        $url = function ($address) {
+            if (strpos($address, '/') === 0) $address = WEB_ROOT . $address;
+            return htmlspecialchars($address, ENT_QUOTES, 'UTF-8');
+        };
+        $show_action = $action_url !== '' && $action_label !== '' && !($read_only && $action_changes_data);
+        $show_secondary = $secondary_url !== '' && $secondary_label !== '' && !($read_only && $secondary_changes_data);
+
+        ob_start(); ?>
+
+        <div class="domainmod-empty-state">
+            <i class="bi <?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?> fs-2 text-body-secondary" aria-hidden="true"></i>
+            <h<?php echo $heading_level; ?> class="h5 mt-2"><?php echo $title; ?></h<?php echo $heading_level; ?>>
+            <p class="domainmod-empty-state-text text-body-secondary"><?php echo $text; ?></p><?php
+            if ($show_action || $show_secondary) { ?>
+            <div class="d-flex flex-wrap align-items-center gap-3"><?php
+                if ($show_action) { ?>
+                <a class="btn btn-danger" href="<?php echo $url($action_url); ?>"><?php echo htmlspecialchars($action_label, ENT_QUOTES, 'UTF-8'); ?></a><?php
+                }
+                if ($show_secondary) { ?>
+                <a href="<?php echo $url($secondary_url); ?>"><?php echo htmlspecialchars($secondary_label, ENT_QUOTES, 'UTF-8'); ?></a><?php
+                } ?>
+            </div><?php
+            } ?>
+        </div><?php
+
+        return ob_get_clean();
+    }
+
+    /*
      * A multi-step flow's progress (the installer, the Domain Queue's API add, and the Bulk Updater's custom field
      * update): a numbered row of steps, with the steps already done ticked, the current one highlighted, and the ones
      * still to come plain. $steps are the translated step names in order, $current is the current step's number

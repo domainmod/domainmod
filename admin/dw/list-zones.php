@@ -239,7 +239,30 @@ if ($export_data === 1) {
 <?php
 if (!$result) {
 
-    echo _('Your search returned 0 results.');
+    // Why the list is empty decides what shows: nothing chosen yet, a domain with no match, or none at all
+    $dw_view_all = (($_SESSION['s_dw_view_all'] ?? '') == '1');
+
+    if (!$dw_view_all && $dw_server_id === 0) {
+
+        echo $layout->emptyState('bi-database', _('Choose what to view'), _('Pick a server, or View All, on the Data Warehouse page.'), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
+
+    } elseif ($domain != '' && !$dw_view_all) {
+
+        echo $layout->emptyState('bi-search', _('No DNS zones for this domain on this server'), _('It may be on another server.'), '', '', '/admin/dw/dw.php', _('View all servers'));
+
+    } elseif ($domain != '') {
+
+        echo $layout->emptyState('bi-search', _('No DNS zones for this domain'), _('No DNS zones for this domain were found in the Data Warehouse.'), '', '', '/admin/dw/list-zones.php', _('Show all DNS zones'));
+
+    } elseif (!$dw_view_all) {
+
+        echo $layout->emptyState('bi-hdd-stack', _('No DNS zones on this server'), _('Rebuild the Data Warehouse to import them.'), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
+
+    } else {
+
+        echo $layout->emptyState('bi-hdd-stack', _('No DNS zones in the Data Warehouse'), _('Rebuild the Data Warehouse to import them.'), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
+
+    }
 
 } else { ?>
 
