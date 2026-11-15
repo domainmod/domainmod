@@ -157,6 +157,10 @@ if ($export_data === 1) {
 
 }
 
+// The filter box shows the range the list uses, so a range that was ignored (one that isn't a real date range)
+// leaves it empty rather than showing text the list didn't apply.
+$daterange = $filter_start_date != 'YYYY-MM-DD' ? $filter_start_date . ' - ' . $filter_end_date : '';
+
 // Anything else (including translated values in links from older versions) falls back to the default
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
