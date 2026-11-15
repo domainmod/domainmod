@@ -92,6 +92,90 @@
         return data.format === 'count' ? Number(value).toLocaleString('en-US', {maximumFractionDigits: 0}) : money(value, data.currency);
     }
 
+    // A short amount for a bar label that doesn't fit, such as $1.2k or $3.4M, in the user's currency format
+    function shortMoney(value, currency) {
+        var abs = Math.abs(Number(value));
+        var number;
+        if (abs >= 1000000) number = (value / 1000000).toLocaleString('en-US', {maximumFractionDigits: 1}) + 'M';
+        else if (abs >= 1000) number = (value / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + 'k';
+        else number = Number(value).toLocaleString('en-US', {maximumFractionDigits: 0});
+        var space = currency.space === '1' ? ' ' : '';
+        return currency.order === '1' ? number + space + currency.symbol : currency.symbol + space + number;
+    }
+
+    /*
+     * Each month's total above its bar, on the monthly cost charts (Cost by Month, Upcoming Renewals, and the
+     * Dashboard), so the amount can be read without tracing it to the axis. When the full amounts don't fit over
+     * their bars, the whole chart uses short amounts (such as $1.2k), then a smaller size, and a label that would still
+     * run into another is left off, so labels never overlap. Bars with no total get no label. The labels are
+     * only drawn on the canvas, since the table under each chart gives every figure to screen readers.
+     */
+    var barTotals = {
+        id: 'domainmodBarTotals',
+        afterDatasetsDraw: function (chart, args, plugin_options) {
+            var data = plugin_options.data;
+            var meta = chart.getDatasetMeta(0);
+            if (!data || !meta || !meta.data.length) return;
+            var ctx = chart.ctx;
+            var area = chart.chartArea;
+            var family = Chart.defaults.font.family;
+            var drawn = [];
+            ctx.save();
+            ctx.fillStyle = colour('text');
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            // One style for the whole chart, so the labels match: the full amounts if every one fits over its bar,
+            // otherwise the short amounts, then the short amounts in a smaller size (on a phone)
+            var slot = area.width / meta.data.length;
+            var styles = [[money, 11], [shortMoney, 11], [shortMoney, 9]];
+            var style = styles[styles.length - 1];
+            for (var i = 0; i < styles.length; i++) {
+                ctx.font = '600 ' + styles[i][1] + 'px ' + family;
+                var widest = 0;
+                data.values.forEach(function (value) {
+                    if (Number(value) !== 0) widest = Math.max(widest, ctx.measureText(styles[i][0](value, data.currency)).width);
+                });
+                if (widest <= slot - 4) {
+                    style = styles[i];
+                    break;
+                }
+            }
+            ctx.font = '600 ' + style[1] + 'px ' + family;
+            meta.data.forEach(function (bar, index) {
+                var value = Number(data.values[index]);
+                if (!value) return;
+                var label = style[0](value, data.currency);
+                var half = ctx.measureText(label).width / 2;
+                // Above a bar that goes up, and below one that goes down (a month whose credits outweigh its costs)
+                var box = {left: bar.x - half, right: bar.x + half};
+                if (value > 0) {
+                    box.bottom = Math.max(bar.y - 3, area.top + style[1]);
+                    box.top = box.bottom - style[1];
+                } else {
+                    box.top = Math.min(bar.y + 3, area.bottom - style[1]);
+                    box.bottom = box.top + style[1];
+                }
+                // Left off if it would still run into a label already drawn (labels over bars of different heights
+                // can sit side by side), into another bar, or past the chart's edge
+                if (box.left < area.left - 4 || box.right > area.right + 4) return;
+                var clash = drawn.some(function (other) {
+                    return box.left < other.right + 3 && box.right > other.left - 3 && box.top < other.bottom && box.bottom > other.top;
+                }) || meta.data.some(function (other, other_index) {
+                    // Or over a taller neighbour's bar, where it would be hard to read
+                    if (other_index === index) return false;
+                    var props = other.getProps(['x', 'y', 'width', 'base'], true);
+                    var bar_top = Math.min(props.y, props.base);
+                    var bar_bottom = Math.max(props.y, props.base);
+                    return box.left < props.x + props.width / 2 && box.right > props.x - props.width / 2 && box.bottom > bar_top && box.top < bar_bottom;
+                });
+                if (clash) return;
+                ctx.fillText(label, bar.x, box.bottom);
+                drawn.push(box);
+            });
+            ctx.restore();
+        }
+    };
+
     // A bar's name on the axis, shortened when it's long (the tooltip shows it in full)
     var MAX_LABEL = 28;
     function shortLabel(label) {
@@ -158,10 +242,14 @@
             };
             return common;
         }
+        // The monthly totals above the bars need room over the tallest one
+        common.plugins.domainmodBarTotals = {data: data};
+        common.layout = {padding: {top: 6}};
         common.scales = {
             x: {ticks: {color: text}, grid: {color: grid}},
             y: {
                 beginAtZero: true,
+                grace: '10%',
                 ticks: {
                     color: text,
                     callback: function (value) {
@@ -189,7 +277,8 @@
                 labels: data.labels,
                 datasets: datasets(data)
             },
-            options: options(data)
+            options: options(data),
+            plugins: data.type === 'bar' ? [barTotals] : []
         });
         // Charts whose canvas an htmx swap took off the page are let go, so a recolour skips them
         charts = charts.filter(function (item) {
