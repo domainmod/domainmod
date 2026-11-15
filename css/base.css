@@ -1428,10 +1428,13 @@ div.dt-container > div.bottom {
 .app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a) {
     text-decoration: underline;
 }
-/* Light mode: inline code and the outline secondary buttons in darker shades, since Bootstrap's pink code text and grey
-   button text fall just short of 4.5:1 on the light grey page (WCAG 1.4.3). The Nord dark mode keeps its own colours. */
+/* Light mode: inline code, field error messages, and the outline secondary buttons in darker shades, since Bootstrap's
+   pink code text, red error text, and grey button text fall just short of 4.5:1 on the light grey page (WCAG 1.4.3).
+   The error red is Bootstrap's own next shade down, and the invalid field's border keeps Bootstrap's red. The Nord
+   dark mode keeps its own colours. */
 [data-bs-theme="light"] {
     --bs-code-color: #a61e5f;
+    --bs-form-invalid-color: #b02a37;
 }
 [data-bs-theme="light"] .btn-outline-secondary {
     --bs-btn-color: #565e64;
