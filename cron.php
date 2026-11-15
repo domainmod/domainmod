@@ -59,6 +59,9 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
 
 } elseif (DEMO_INSTALLATION == false) {
 
+    // Every run counts, even one with nothing due, so administrators are warned when cron.php stops running.
+    $schedule->recordCronRun();
+
     // A task's running flag is only cleared when it isn't really running (see Scheduler::clearStoppedTasks()).
     $schedule->clearStoppedTasks();
 

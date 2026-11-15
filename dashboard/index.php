@@ -34,8 +34,10 @@ $dashboard = new DomainMOD\Dashboard();
 $reporting = new DomainMOD\Reporting();
 $currency = new DomainMOD\Currency();
 $chart = new DomainMOD\Chart();
+$schedule = new DomainMOD\Scheduler();
 
 require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/config-demo.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 require_once DIR_INC . '/settings/dashboard-main.inc.php';
 
@@ -80,6 +82,9 @@ $total_sold_domains = (int) $pdo->query("
 // On an install with no domains yet, the Getting Started checklist takes the totals' place, since they'd only be zeros
 // (Greg's choice, 2026-11-15)
 $show_getting_started = $dashboard->showGettingStarted();
+
+// Administrators are warned when cron.php has stopped running (or, once there are domains, has never run)
+echo $schedule->healthAlert('dashboard', $show_getting_started);
 
 $totals = array();
 $totals[] = array('/domains/index.php?is_active=LIVE', 'bi-globe2', number_format($total_live_domains), _('Domains'));

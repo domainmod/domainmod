@@ -49,6 +49,7 @@ $pdo = $deeb->cnxx;
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $schedule->healthAlert('scheduler'); ?>
 <div class="domainmod-intro">
 <p><?php echo sprintf(_('The Task Scheduler allows you to run various system jobs at specified times, which helps keep your %s installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.'), SOFTWARE_TITLE); ?></p>
 <p><?php echo sprintf(_('In order to use the Task Scheduler you must set up a cron/scheduled job on your web server to execute the file %scron.php%s, which is located in the root folder of your %s installation.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?>
@@ -60,7 +61,13 @@ echo ' ' . str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text
 <p><?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?>
 <?php echo ' ' . sprintf(_('To stop anyone else from running cron.php, you can give it a key in config.inc.php. See the %sUser Guide%s for details.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?></p>
 </div>
-<?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
+<?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR><?php
+
+// Left out when the time can't be read (such as while the database upgrade is waiting), rather than showing "Never"
+$cron_last_run = $schedule->getCronLastRun();
+if ($cron_last_run !== null) { ?>
+<?php echo _('Last run of cron.php'); ?>: <strong><?php echo $time->toUserTimezone($cron_last_run, 'Y-m-d H:i', _('Never')); ?></strong><BR><?php
+} ?>
 <BR>
 <?php
 $result = $pdo->query("

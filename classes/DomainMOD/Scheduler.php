@@ -23,6 +23,12 @@ namespace DomainMOD;
 
 class Scheduler
 {
+    /*
+     * How long cron.php can go without running before administrators are warned (see healthState()). It should run every
+     * 10 minutes, but some hosts only allow hourly cron jobs, so two hours keeps the warning from coming and going.
+     */
+    const CRON_STALE_SECONDS = 7200;
+
     public $deeb;
     public $time;
 
@@ -264,40 +270,181 @@ class Scheduler
     }
 
     /*
-     * Whether the scheduled task (cron.php) looks set up, for the Dashboard's Getting Started checklist. cron.php and the
-     * Task Scheduler's Run Now both finish a task the same way, so this can't tell them apart: it's true when the Domain
-     * Queue task is active and ran in the last 30 minutes (it runs every 5 minutes on a working schedule), or, when that
-     * task is inactive, when any active task ran in the last 25 hours. A fresh install's tasks have never run
-     * (1970-01-01).
+     * Whether the scheduled task (cron.php) is set up and running, for the Dashboard's Getting Started checklist: true
+     * only when cron.php itself has run recently (see healthState()), so a Run Now on the Task Scheduler page doesn't
+     * count. An install whose tasks are all disabled leaves the step unticked, since the step is about setting it up.
      */
     public function hasRunRecently()
     {
-        $pdo = $this->deeb->cnxx;
-        $now = strtotime($this->time->stamp() . ' UTC');
+        return $this->healthState() === 'ok';
+    }
 
-        $stmt = $pdo->prepare("
-            SELECT last_run, active
-            FROM scheduler
-            WHERE slug = 'domain-queue'");
-        $stmt->execute();
-        $queue_task = $stmt->fetch();
-        $stmt->closeCursor();
+    /*
+     * Records a run of cron.php (once per run, whether or not a task is due), so the Task Scheduler's health can be
+     * checked (see healthState()). Run Now doesn't call it. A failed write never stops the tasks: it's logged instead.
+     */
+    public function recordCronRun()
+    {
+        try {
 
-        if ($queue_task && $queue_task->active == '1') {
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE settings
+                SET cron_last_run = :cron_last_run");
+            $stmt->bindValue('cron_last_run', $this->time->stamp(), \PDO::PARAM_STR);
+            $stmt->execute();
 
-            return strtotime($queue_task->last_run . ' UTC') >= $now - 30 * 60;
+        } catch (\Throwable $e) {
+
+            $this->logCronProblem('The run of cron.php could not be recorded', $e);
+
+        }
+    }
+
+    /*
+     * When cron.php last ran (UTC, 1970-01-01 if it never has), or null when it can't be read: while the database upgrade
+     * is waiting (new code can arrive before the column it reads), or when the read fails. Nothing else reads the column.
+     */
+    public function getCronLastRun()
+    {
+        try {
+
+            if ($this->getDbVersion() !== SOFTWARE_VERSION) return null;
+
+            $last_run = $this->deeb->cnxx->query("
+                SELECT cron_last_run
+                FROM settings")->fetchColumn();
+
+            return ($last_run === false || $last_run === null) ? null : (string) $last_run;
+
+        } catch (\Throwable $e) {
+
+            $this->logCronProblem('The last run of cron.php could not be read', $e);
+            return null;
+
+        }
+    }
+
+    /*
+     * The Task Scheduler's health, for the warnings on the Dashboard and the Task Scheduler page: 'ok', 'never' (cron.php
+     * has never run), 'stale' (it hasn't run for more than CRON_STALE_SECONDS), or 'off' (no task is active, a demo
+     * install, the database upgrade is waiting, or the time couldn't be read), when there's nothing to warn about.
+     */
+    public function healthState()
+    {
+        return $this->healthDetails()[0];
+    }
+
+    // The health state and cron.php's last run (UTC), read once for both
+    protected function healthDetails()
+    {
+        if (defined('DEMO_INSTALLATION') && DEMO_INSTALLATION == true) return array('off', null);
+
+        $last_run = $this->getCronLastRun();
+        if ($last_run === null) return array('off', null);
+
+        try {
+
+            $any_active = (int) $this->deeb->cnxx->query("
+                SELECT COUNT(*)
+                FROM scheduler
+                WHERE active = '1'")->fetchColumn() > 0;
+
+        } catch (\Throwable $e) {
+
+            $this->logCronProblem('The Task Scheduler\'s tasks could not be read', $e);
+            return array('off', null);
 
         }
 
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*)
-            FROM scheduler
-            WHERE active = '1'
-              AND last_run >= :since");
-        $stmt->bindValue('since', gmdate('Y-m-d H:i:s', $now - 25 * 3600), \PDO::PARAM_STR);
-        $stmt->execute();
+        return array(self::cronHealth($last_run, strtotime($this->time->stamp() . ' UTC'), $any_active), $last_run);
+    }
 
-        return (int) $stmt->fetchColumn() > 0;
+    /*
+     * The health state from cron.php's last run ($last_run, UTC), the time now ($now, a Unix timestamp), and whether any
+     * task is active. A run exactly CRON_STALE_SECONDS ago still counts as ok.
+     */
+    public static function cronHealth($last_run, $now, $any_active)
+    {
+        if (!$any_active || $last_run === null) return 'off';
+        if (Time::isUnset($last_run)) return 'never';
+
+        $last_run_time = strtotime($last_run . ' UTC');
+        if ($last_run_time === false) return 'never';
+
+        return ($now - $last_run_time > self::CRON_STALE_SECONDS) ? 'stale' : 'ok';
+    }
+
+    /*
+     * The warning for administrators when cron.php isn't running, as a slim alert, or '' when there's nothing to show.
+     * $page is 'dashboard' or 'scheduler'. On the Dashboard, a never-run Task Scheduler is left to the Getting Started
+     * checklist while it's showing ($getting_started), since its own step says the same. On the Task Scheduler page,
+     * where it's set up, a never-run one gets an info alert rather than a warning.
+     */
+    public function healthAlert($page, $getting_started = false)
+    {
+        if (($_SESSION['s_is_admin'] ?? 0) !== 1) return '';
+
+        list($state, $last_run) = $this->healthDetails();
+        $system = new System();
+        $guide_link = '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">';
+
+        if ($state === 'stale') {
+
+            $message = sprintf(_("The Task Scheduler hasn't run since %s, so expiry emails aren't being sent and the Domain Queue isn't being processed. Check that the cron job for cron.php is still running every 10 minutes, and that its address includes the key if you've given cron.php one. See the %sUser Guide%s for how to set it up."),
+                $this->time->toUserTimezone($last_run, 'Y-m-d H:i'), $guide_link, '</a>');
+
+            if ($page === 'dashboard') {
+
+                $message .= ' ' . sprintf(_('To stop using the Task Scheduler, disable its tasks on the %sTask Scheduler%s page.'),
+                    '<a href="' . WEB_ROOT . '/admin/scheduler/">', '</a>');
+
+            }
+
+            return $system->showMaintenanceTable($message);
+
+        } elseif ($state === 'never' && !($page === 'dashboard' && $getting_started)) {
+
+            $message = sprintf(_("The Task Scheduler hasn't run yet. Set up a cron job that runs cron.php every 10 minutes, so %s can send expiry emails and work through the Domain Queue. See the %sUser Guide%s for how to set it up."),
+                SOFTWARE_TITLE, $guide_link, '</a>');
+
+            return ($page === 'scheduler') ? $system->showMessageInfo($message) : $system->showMaintenanceTable($message);
+
+        }
+
+        return '';
+    }
+
+    // The database's version, so the column isn't read before the upgrade that adds it (System::getDbVersion())
+    protected function getDbVersion()
+    {
+        return (new System())->getDbVersion();
+    }
+
+    /*
+     * Logs a problem with the Task Scheduler's health record. Logging writes to the same database, which may be what
+     * failed, so a failed log write goes to PHP's own error log instead, and nothing here can stop a page or cron.php.
+     */
+    protected function logCronProblem($message, $e)
+    {
+        try {
+
+            $this->getLog()->error($message, array('Error' => $e->getMessage()));
+
+        } catch (\Throwable $log_e) {
+
+            $this->fallbackLog('DomainMOD: ' . $message . ': ' . $e->getMessage());
+
+        }
+    }
+
+    protected function getLog()
+    {
+        return new Log('class.scheduler');
+    }
+
+    protected function fallbackLog($message)
+    {
+        error_log($message);
     }
 
     public function getTask($task_id)
