@@ -209,7 +209,7 @@ if ($rows) {
 
 } ?>
 
-<h4 class="mt-5" id="cert-list"><?php echo $window_title; ?></h4>
+<h2 class="h4 mt-5" id="cert-list"><?php echo $window_title; ?></h2>
 
 <div class="mb-3">
 <div class="btn-group" role="group" aria-label="<?php echo htmlspecialchars(_('Window'), ENT_QUOTES, 'UTF-8'); ?>"><?php

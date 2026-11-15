@@ -242,12 +242,12 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Account'); ?></th>
             <th><?php echo _('Data'); ?></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
         </tr>
         </thead>
         <tbody><?php

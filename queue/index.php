@@ -575,7 +575,7 @@ if (!$result_lists) {
 
 } else { ?>
 
-    <h3><?php echo _('Domain List Queue'); ?></h3>
+    <h2 class="h3"><?php echo _('Domain List Queue'); ?></h2>
     <table id="<?php echo $slug; ?>-lists" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -673,7 +673,7 @@ if (!$result_domains) {
 
 } else { ?>
 
-    <h3<?php echo $result_lists ? ' class="mt-5"' : ''; ?>><?php echo _('Domain Queue'); ?></h3>
+    <h2 class="h3<?php echo $result_lists ? ' mt-5' : ''; ?>"><?php echo _('Domain Queue'); ?></h2>
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>

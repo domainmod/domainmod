@@ -198,6 +198,10 @@ a {
 a:hover {
     text-decoration: underline;
 }
+/* Links drawn as buttons keep Bootstrap's look on hover, rather than underlining their icon and text as one */
+a.btn:hover {
+    text-decoration: none;
+}
 /* Links in the footer's sentence and in page introductions (callouts) are underlined, since their colour is too
    close to the text around them to tell them apart */
 .app-footer a,
@@ -1248,7 +1252,8 @@ div.dt-container > div.bottom {
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
-    color: var(--bs-secondary-color);
+    /* The body colour, since the secondary text colour is too faint on this background in the Nord dark mode */
+    color: var(--bs-body-color);
     background-color: var(--bs-secondary-bg);
 }
 .domainmod-requirements-group + .domainmod-requirements-rows,
@@ -1360,4 +1365,26 @@ div.dt-container > div.bottom {
 }
 .domainmod-install-summary-change {
     font-size: .875em;
+}
+
+/* Accessibility fixes (design item 5). Links inside running text are underlined, since their colour alone doesn't stand
+   out enough from the text around them (WCAG 1.4.1). Links that are already set apart are left alone: anything with a
+   class (buttons, nav links, tiles, DataTables controls), and links in tables, navigation, breadcrumbs, card footers,
+   menus, and the landing pages' link lists. Advanced Filtering's [reset] link sits in a card header, so it's named. */
+.app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a),
+.card-header .card-title .card-tools > a:not([class]) {
+    text-decoration: underline;
+}
+/* Light mode: inline code and the outline secondary buttons in darker shades, since Bootstrap's pink code text and grey
+   button text fall just short of 4.5:1 on the light grey page (WCAG 1.4.3). The Nord dark mode keeps its own colours. */
+[data-bs-theme="light"] {
+    --bs-code-color: #a61e5f;
+}
+[data-bs-theme="light"] .btn-outline-secondary {
+    --bs-btn-color: #565e64;
+    --bs-btn-border-color: #565e64;
+    --bs-btn-hover-bg: #565e64;
+    --bs-btn-hover-border-color: #565e64;
+    --bs-btn-active-bg: #565e64;
+    --bs-btn-active-border-color: #565e64;
 }

@@ -126,14 +126,14 @@ echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular ba
 <?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?>
 </div>
 
-<h3><?php echo _('Backup'); ?></h3>
+<h2 class="h3"><?php echo _('Backup'); ?></h2>
 <?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>
 <a href="download/"><?php echo $layout->showButton('button', _('Backup Entire Database')); ?></a>
 
-<BR><BR><h3><?php echo _('Restore'); ?></h3>
+<BR><BR><h2 class="h3"><?php echo _('Restore'); ?></h2>
 <form enctype="multipart/form-data" action="" method="post">
 <?php echo $form->showCsrfField(); ?>
-    <?php echo _('Database Restore File'); ?>: domainmod-backup.sql <input type="file" name="file"><BR>
+    <label for="domainmod-restore-file"><?php echo _('Database Restore File'); ?>: domainmod-backup.sql</label> <input type="file" name="file" id="domainmod-restore-file"><BR>
     <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
     <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
     <?php echo ("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?><BR>

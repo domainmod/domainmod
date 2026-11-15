@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 if ($action == '') {
 
     echo $form->showFormTop('');
-    echo $form->showDropdownTop('action', '', '', '', '');
+    echo $form->showDropdownTop('action', _('Choose Action'), '', '', '', false, true);
     echo $form->showDropdownOption('', _('Choose Action'), $action);
     echo $form->showDropdownOption('AD', _('Add Domains'), $action);
     echo $form->showDropdownOption('AN', _('Add A Note'), $action);

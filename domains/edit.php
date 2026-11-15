@@ -751,7 +751,7 @@ $result = $pdo->query("
 
 if ($result) { ?>
 
-    <h3><?php echo _('Custom Fields'); ?></h3><?php
+    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
 
     $count = 0;
 
@@ -836,13 +836,13 @@ $dw_has_zones = $dwzones->checkForZones($new_domain);
 
 if ($dw_has_accounts === 1 || $dw_has_zones === 1) { ?>
 
-    <BR><BR><h3><?php echo sprintf(_('Data Warehouse Information for %s'), htmlentities($new_domain, ENT_QUOTES, 'UTF-8')); ?></h3><?php
+    <BR><BR><h2 class="h3"><?php echo sprintf(_('Data Warehouse Information for %s'), htmlentities($new_domain, ENT_QUOTES, 'UTF-8')); ?></h2><?php
 
 }
 
 if ($dw_has_accounts === 1) { ?>
 
-    <?php echo $layout->expandableBoxTop(_('Accounts'), '', '', 4); ?><?php
+    <?php echo $layout->expandableBoxTop(_('Accounts'), '', '', 3); ?><?php
 
     $stmt = $pdo->prepare("
         SELECT s.id, s.name
@@ -859,12 +859,12 @@ if ($dw_has_accounts === 1) { ?>
 <table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"></th>
+        <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
         <th><?php echo _('Server'); ?></th>
         <th><?php echo _('Data'); ?></th>
-        <th></th>
-        <th></th>
-        <th></th>
+        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
     </tr>
     </thead>
     <tbody><?php
@@ -889,7 +889,7 @@ if ($dw_has_accounts === 1) { ?>
 
 if ($dw_has_zones === 1) { ?>
 
-    <?php echo $layout->expandableBoxTop(_('DNS Zones & Records'), '', '', 4); ?><?php
+    <?php echo $layout->expandableBoxTop(_('DNS Zones & Records'), '', '', 3); ?><?php
 
     $stmt = $pdo->prepare("
         SELECT s.id AS dw_server_id, s.name
@@ -906,7 +906,7 @@ if ($dw_has_zones === 1) { ?>
 <table id="<?php echo $slug; ?>-zone" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"></th>
+        <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
         <th><?php echo _('Server'); ?></th>
         <th><?php echo _('Data'); ?></th>
     </tr>

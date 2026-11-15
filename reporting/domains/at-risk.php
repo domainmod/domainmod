@@ -203,7 +203,7 @@ echo '</p>'; ?>
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains')); ?>
 </div>
 
-<h4 class="mt-4" id="domain-list"><?php echo $show === 'all' ? _('All At-Risk Domains') : $reasons[$show][0]; ?></h4><?php
+<h2 class="h4 mt-4" id="domain-list"><?php echo $show === 'all' ? _('All At-Risk Domains') : $reasons[$show][0]; ?></h2><?php
 
 if ($show !== 'all') { ?>
     <a href="<?php echo $report_filename; ?>#domain-list"><?php echo _('Show all at-risk domains'); ?></a><BR><BR><?php

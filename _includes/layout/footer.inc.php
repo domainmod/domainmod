@@ -101,6 +101,15 @@ if (file_exists($full_filename)) {
             });
         };
         startTooltips(document);
+
+        // The expandable boxes' buttons (see Layout::expandableBoxTop()) say whether their box is open, following
+        // AdminLTE's card widget, which dispatches these events on the card when it opens or closes
+        ['expanded.lte.card-widget', 'collapsed.lte.card-widget'].forEach(function (event_name) {
+            document.addEventListener(event_name, function (event) {
+                var button = event.target.querySelector('[data-lte-toggle="card-collapse"][aria-expanded]');
+                if (button) button.setAttribute('aria-expanded', event_name.indexOf('expanded') === 0 ? 'true' : 'false');
+            });
+        });
         document.addEventListener('htmx:load', function (event) {
             startTooltips(event.detail.elt);
         });
@@ -116,7 +125,15 @@ if (file_exists($full_filename)) {
         // no placeholder, since the label above each one already names it. Tom Select hides the real menu, so a mistake
         // marked on it (Form::addFieldError()) is copied to the box people type in, for screen readers.
         document.querySelectorAll('select.domainmod-multiple-select').forEach(function (select) {
+            // Tom Select hides the real menu and builds its own, and moves the label's "for" to its own box, so the label
+            // is found first, then names both menus
+            var label = document.querySelector('label[for="' + select.id + '"]');
             var tom_select = new TomSelect(select, {plugins: ['remove_button']});
+            if (label) {
+                if (!label.id) label.id = select.id + '-label';
+                select.setAttribute('aria-labelledby', label.id);
+                tom_select.control_input.setAttribute('aria-labelledby', label.id);
+            }
             ['aria-invalid', 'aria-describedby'].forEach(function (attribute) {
                 if (select.hasAttribute(attribute)) tom_select.control_input.setAttribute(attribute, select.getAttribute(attribute));
             });

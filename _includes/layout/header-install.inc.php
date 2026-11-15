@@ -21,8 +21,10 @@
 ?>
 <?php // One centred column: narrow on a desktop, and the phone's width on a phone (mx-0, since the row sits outside a
       // container and its negative margins would otherwise make the page scroll sideways) ?>
+<?php echo $layout->skipLinks(false); ?>
 <div class="row justify-content-center mx-0">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 domainmod-install-column">
+        <main id="main">
         <BR><BR><BR>
         <div class="login-logo">
             <a href="<?php echo WEB_ROOT; ?>/install/"><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
@@ -60,7 +62,7 @@
             $_SESSION['s_installation_reached'] = max((int) ($_SESSION['s_installation_reached'] ?? 0), (int) $install_step);
             echo $layout->stepIndicator($install_steps, $install_step, _('Installation steps'), $install_step_urls, $_SESSION['s_installation_reached']);
         } ?>
-            <h3><?php echo $page_title; ?></h3>
+            <h1 class="h3"><?php echo $page_title; ?></h1>
         <?php
         $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
 

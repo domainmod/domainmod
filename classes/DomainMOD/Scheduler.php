@@ -387,7 +387,7 @@ class Scheduler
                     <BR>
                     <form name="edit_task_form" method="post" action="update.php">
                         <?php echo $form->showCsrfField(); ?>
-                        <?php echo _('Set Run Time'); ?>: <select name="new_hour" title="Task Time">
+                        <label for="domainmod-task-hour-<?php echo (int) $task->id; ?>"><?php echo _('Set Run Time'); ?>:</label> <select name="new_hour" id="domainmod-task-hour-<?php echo (int) $task->id; ?>">
                             <?php echo $this->hourSelect($hour); ?>
                         </select><BR>
                         <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php

@@ -53,7 +53,7 @@ $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
 <div class="card card-outline card-danger">
     <div class="card-header">
-        <h3 class="card-title"><i class="bi bi-info-circle text-danger" aria-hidden="true"></i> <?php echo $_SESSION['s_notice_page_title']; ?></h3>
+        <h2 class="card-title"><i class="bi bi-info-circle text-danger" aria-hidden="true"></i> <?php echo $_SESSION['s_notice_page_title']; ?></h2>
     </div>
     <div class="card-body"><?php echo $_SESSION['s_notice']; ?></div>
 </div>

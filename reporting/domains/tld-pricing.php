@@ -254,7 +254,7 @@ if (!$overview['rows']) {
         echo $dashboard->displayPanel(_('TLDs Compared'), $savings['tlds_compared'], 'secondary', 'bi-tags', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#overview', _('TLD Pricing')); ?>
     </div>
 
-    <h4 class="mt-4" id="overview"><?php echo _('TLDs'); ?></h4><?php
+    <h2 class="h4 mt-4" id="overview"><?php echo _('TLDs'); ?></h2><?php
 
     if ($overview['left_out'] > 0) { ?>
         <p class="small text-body-secondary"><?php echo sprintf(ngettext('%s fee is left out, since its currency has no conversion rate for you.', '%s fees are left out, since their currency has no conversion rate for you.', $overview['left_out']), number_format($overview['left_out'])); ?></p><?php
@@ -296,7 +296,7 @@ if (!$overview['rows']) {
         </tbody>
     </table>
 
-    <h4 class="mt-5" id="tld-view"><?php echo _('Compare a TLD'); ?></h4><?php
+    <h2 class="h4 mt-5" id="tld-view"><?php echo _('Compare a TLD'); ?></h2><?php
 
     // The comparison updates in place with htmx: the picker and the price links fetch this page and swap in just this
     // section, keeping the scroll position, and the address bar follows. Without JavaScript they load the page as
@@ -333,9 +333,9 @@ if (!$overview['rows']) {
         echo $chart->priceBars('tld-pricing-chart', sprintf(_('%1$s Price by Registrar for .%2$s'), $price_names[$price_type], html_entity_decode($selected['tld'], ENT_QUOTES, 'UTF-8')),
             array_map(function ($fee) { return $fee->registrar_name; }, $selected['fees']),
             array_map(function ($fee) use ($price_type) { return round($fee->price[$price_type], 2); }, $selected['fees']),
-            $selected['cheapest']); ?>
+            $selected['cheapest'], '', 3); ?>
 
-        <table class="table table-sm table-striped mt-3">
+        <div class="table-responsive"><table class="table table-sm table-striped mt-3">
             <thead>
             <tr>
                 <th scope="col"><?php echo _('Registrar'); ?></th>
@@ -374,7 +374,7 @@ if (!$overview['rows']) {
             } ?>
 
             </tbody>
-        </table><?php
+        </table></div><?php
 
         if ($selected['registrars'] < 2) { ?>
             <p class="small text-body-secondary"><?php echo _('Only one of your registrars has a fee for this TLD, so there\'s nothing to compare it with.'); ?></p><?php
@@ -384,7 +384,7 @@ if (!$overview['rows']) {
 
     </div>
 
-    <h4 class="mt-5" id="savings"><?php echo _('Possible Savings'); ?></h4><?php
+    <h2 class="h4 mt-5" id="savings"><?php echo _('Possible Savings'); ?></h2><?php
 
     if ($savings['rows']) { ?>
 

@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<h3><?php echo _('Domain Defaults'); ?></h3><?php
+<h2 class="h3"><?php echo _('Domain Defaults'); ?></h2><?php
 
 echo $form->showFormTop('');
 
@@ -219,7 +219,7 @@ foreach ($result as $row) {
 echo $form->showDropdownBottom('<BR>'); ?>
 
 
-<h3>SSL Defaults</h3><?php
+<h2 class="h3"><?php echo _('SSL Defaults'); ?></h2><?php
 
 echo $form->showDropdownTop('new_default_ssl_provider', _('Default SSL Provider'), '', '', '');
 $result = $pdo->query("

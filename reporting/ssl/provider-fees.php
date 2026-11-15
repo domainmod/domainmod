@@ -285,7 +285,7 @@ if ($total_rows > 0) {
 <?php } //@formatter:on ?>
 <a href="provider-fees.php?all=1"><?php echo $layout->showButton('button', _('View All')); ?></a>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<a href="provider-fees.php?all=0"><?php echo $layout->showButton('button', _('Active Only')); ?></a><BR><BR>
 
-<h4 id="comparison"><?php echo _('Compare Providers'); ?></h4>
+<h2 class="h4" id="comparison"><?php echo _('Compare Providers'); ?></h2>
 
 <?php // The comparison updates in place with htmx (the picker fetches this page and swaps in just this section, keeping
       // the scroll position, and the address bar follows), and without JavaScript it loads the page as usual ?>
@@ -315,7 +315,7 @@ if ($compared) { ?>
 
     ob_start(); ?>
 
-    <table class="table table-sm table-striped mt-3 mb-0">
+    <div class="table-responsive"><table class="table table-sm table-striped mt-3 mb-0">
         <thead>
         <tr>
             <th scope="col"><?php echo _('Provider'); ?></th>
@@ -342,7 +342,7 @@ if ($compared) { ?>
         } ?>
 
         </tbody>
-    </table>
+    </table></div>
     <p class="small text-body-secondary mt-2 mb-0"><?php echo _('The yearly price is each provider\'s renewal fee plus its misc fee, in your currency, with the renewal and misc fees in the fee\'s own currency. The comparison includes every fee you\'ve entered for this type, whether or not a certificate uses it.'); ?></p><?php
 
     $after = ob_get_clean();
@@ -350,7 +350,7 @@ if ($compared) { ?>
     echo $chart->priceBars('ssl-fee-comparison-chart', sprintf(_('Yearly Price by Provider for %s'), html_entity_decode($type_names[$type_id], ENT_QUOTES, 'UTF-8')),
         array_map(function ($fee) { return $fee->ssl_provider; }, $compared),
         array_map(function ($fee) { return round((float) $fee->yearly_price, 2); }, $compared),
-        $highlight, $after); ?>
+        $highlight, $after, 3); ?>
     <BR><?php
 
 } else { ?>

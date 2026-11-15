@@ -508,7 +508,7 @@ $result = $pdo->query("
 
 if ($result) { ?>
 
-    <h3><?php echo _('Custom Fields'); ?></h3><?php
+    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
 
     $field_array = array();
 

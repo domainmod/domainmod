@@ -204,11 +204,11 @@ if ($is_the_build_finished == 1) {
 
     if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
-        <BR><BR><h3><?php echo _('View Data'); ?></h3>
+        <BR><BR><h2 class="h3"><?php echo _('View Data'); ?></h2>
         <?php
 
         echo $form->showFormTop('');
-        echo $form->showDropdownTop('dropdown_selection', '', '', '', '');
+        echo $form->showDropdownTop('dropdown_selection', _('View Data'), '', '', '', false, true);
 
         if ($temp_total_accounts != 0) {
 
@@ -277,7 +277,7 @@ if (!$result) {
 $no_results_build_info = $no_results_build_info ?? 0;
 if ($no_results_build_info !== 1) { ?>
 
-    <BR><BR><h3><?php echo _('Build Information'); ?></h3>
+    <BR><BR><h2 class="h3"><?php echo _('Build Information'); ?></h2>
     <table id="<?php echo $slug; ?>-build" class="<?php echo $datatable_class; ?>"><?php
 
     // With no servers there's no build information, so this section is skipped and the empty state above shows
@@ -545,7 +545,7 @@ if ($result) {
         $temp_dw_dns_records != 0
     ) { ?>
 
-        <h3 class="mt-5"><?php echo _('Data Warehouse Totals'); ?></h3>
+        <h2 class="h3 mt-5"><?php echo _('Data Warehouse Totals'); ?></h2>
 
         <table id="<?php echo $slug; ?>-totals" class="<?php echo $datatable_class; ?>">
             <thead>

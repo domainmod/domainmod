@@ -19,11 +19,13 @@
  *
  */
 ?>
-<div class="row">
+<?php echo $layout->skipLinks(false); ?>
+<div class="row mx-0"><?php // mx-0: the row sits outside a container, so its negative margins would make the page scroll sideways ?>
     <div class="d-none d-lg-block col-lg-4">
         &nbsp;
     </div>
     <div class="col-12 col-lg-4">
+    <main id="main">
     <BR><BR><BR>
     <div class="login-logo">
         <span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span>
@@ -51,7 +53,7 @@
 
     require_once DIR_INC . '/layout/table-maintenance.inc.php';
     ?>
-    <h3><?php echo $page_title; ?></h3>
+    <h1 class="h3"><?php echo $page_title; ?></h1>
 <?php
 $full_filename = DIR_INC . '/layout/header.DEMO.inc.php';
 

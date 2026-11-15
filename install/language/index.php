@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo _("We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."); ?><BR>
 <?php
 echo $form->showFormTop('');
-echo $form->showDropdownTop('new_language', '', '', '', '');
+echo $form->showDropdownTop('new_language', _('Language'), '', '', '', false, true);
 foreach ($installer_language_names as $language_code => $language_name) {
     echo $form->showDropdownOption($language_code, $language_name, $selected_language);
 }

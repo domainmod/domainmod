@@ -133,7 +133,7 @@ if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
 
     <?php $section = sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?>
     <div class="row">
-        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
     </div>
 
     <div class="row">
@@ -195,7 +195,7 @@ if ($total_count) { ?>
 
     <?php $section = _('Pending Domains'); ?>
     <div class="row">
-        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
     </div>
 
     <div class="row">
@@ -274,7 +274,7 @@ if ($total_count) { ?>
 
     <?php $section = _('Pending SSL Certificates'); ?>
     <div class="row">
-        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
     </div>
 
     <div class="row">
@@ -350,7 +350,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     <?php $section = _('Domain Queue'); ?>
     <div class="row">
-        <h4 class="mt-4 pt-2"><?php echo $section; ?></h4>
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
     </div>
 
     <div class="row">
@@ -406,7 +406,7 @@ if ($renewal_rows) {
     $after = ob_get_clean(); ?>
 
     <div class="row">
-        <h4 class="mt-4 pt-2"><?php echo _('Renewal Costs, Next 12 Months'); ?></h4>
+        <h2 class="h4 mt-4 pt-2"><?php echo _('Renewal Costs, Next 12 Months'); ?></h2>
     </div>
     <?php echo $chart->bar('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'), array_column($renewal_months, 'cost'), !empty($renewal_months[0]['overdue']), $after, false);
 

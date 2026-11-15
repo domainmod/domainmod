@@ -55,6 +55,8 @@ $datatable_options = 'var oldStart_overview = 0;
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             var start = new DataTable.Api(settings).page.info().start;
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('TLDs')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                             if ( start != oldStart_overview ) {
                                 var targetOffset = $("#' . $slug . '-overview").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);
@@ -88,6 +90,8 @@ $datatable_options = 'var oldStart_overview = 0;
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             var start = new DataTable.Api(settings).page.info().start;
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Possible Savings')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                             if ( start != oldStart_savings ) {
                                 var targetOffset = $("#' . $slug . '-savings").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);

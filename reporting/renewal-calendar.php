@@ -236,7 +236,7 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
 <div id="renewal-calendar">
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-        <h3 class="mb-0"><?php echo $month_label; ?></h3>
+        <h2 class="h3 mb-0"><?php echo $month_label; ?></h2>
         <nav class="d-flex flex-wrap gap-2" aria-label="<?php echo htmlspecialchars(_('Month'), ENT_QUOTES, 'UTF-8'); ?>"><?php
             if ($month > '2000-01') {
                 echo $htmx_link($page_url($previous_month, $show), '<i class="bi bi-chevron-left domainmod-calendar-arrow" aria-hidden="true"></i> ' . _('Previous Month') . '<span class="visually-hidden">, ' . $month_label_of($previous_month) . '</span>', 'btn btn-sm btn-outline-secondary');
@@ -324,13 +324,13 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
         </tbody>
     </table>
 
-    <h4 class="mt-4" id="renewal-list"><?php echo sprintf(_('Renewals in %s'), $month_label); ?></h4>
+    <h2 class="h4 mt-4" id="renewal-list"><?php echo sprintf(_('Renewals in %s'), $month_label); ?></h2>
     <p class="small text-body-secondary d-md-none"><?php echo _('The calendar shows on wider screens.'); ?></p><?php
 
     if ($items) {
         foreach ($days as $date => $day) { ?>
-            <h5 class="mt-3" id="renewals-<?php echo $date; ?>"><?php echo $date . ', ' . $weekday_of($date); ?><?php
-                if ($date < $today) { ?> <span class="badge text-bg-danger fs-6 align-middle"><?php echo _('Overdue'); ?></span><?php } ?></h5>
+            <h3 class="h5 mt-3" id="renewals-<?php echo $date; ?>"><?php echo $date . ', ' . $weekday_of($date); ?><?php
+                if ($date < $today) { ?> <span class="badge text-bg-danger fs-6 align-middle"><?php echo _('Overdue'); ?></span><?php } ?></h3>
             <div class="table-responsive">
             <table class="table table-striped table-sm domainmod-calendar-list">
                 <thead>

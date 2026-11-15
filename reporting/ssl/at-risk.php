@@ -198,7 +198,7 @@ echo '</p>'; ?>
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/ssl/at-risk.php?show=nofee#cert-list', _('SSL At-Risk Certificates')); ?>
 </div>
 
-<h4 class="mt-4" id="cert-list"><?php echo $show === 'all' ? _('All At-Risk SSL Certificates') : $reasons[$show][0]; ?></h4><?php
+<h2 class="h4 mt-4" id="cert-list"><?php echo $show === 'all' ? _('All At-Risk SSL Certificates') : $reasons[$show][0]; ?></h2><?php
 
 if ($show !== 'all') { ?>
     <a href="<?php echo $report_filename; ?>#cert-list"><?php echo _('Show all at-risk SSL certificates'); ?></a><BR><BR><?php

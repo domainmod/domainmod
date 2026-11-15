@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class Layout
 {
+    // How many expandable boxes this page has drawn, for their unique ids (see expandableBoxTop())
+    private static $expandable_box_count = 0;
+
 
     public function pageTitle($page_title)
     {
@@ -194,11 +197,11 @@ class Layout
      * A page's delete action in its own "Danger Zone" section at the bottom of the page: a heading, then a box with a
      * soft red tint and a thin red border, with what the delete does on the left and a DELETE button on the right
      * (under the text on phones), which opens the same confirmation modal as deleteButton(). $action and $description
-     * are already translated, and $description is already escaped for the page. $heading_level matches the page's
-     * other section headings (3 where the page has h3 sections, 2 where the Danger Zone is its only one), and the
-     * heading looks the same at either level. The section stops at the same width as the forms (.domainmod-form).
+     * are already translated, and $description is already escaped for the page. $heading_level is 2 by default, a
+     * section of its own under the page's h1, or 3 where it sits inside an h2 section, and the heading looks the same at
+     * either level. The section stops at the same width as the forms (.domainmod-form).
      */
-    public function dangerZone($item_type, $item_name, $url, $action, $description, $heading_level = 3)
+    public function dangerZone($item_type, $item_name, $url, $action, $description, $heading_level = 2)
     {
         // Deleting changes data, so the link carries the session's security token (see DomainMOD\Csrf).
         $csrf = new Csrf();
@@ -365,27 +368,37 @@ class Layout
         return ob_get_clean();
     }
 
-    // $heading_level sets the title's heading (h3 by default), so a box under an h3 can use h4
-    public function expandableBoxTop($title, $url, $url_text, $heading_level = 3)
+    /*
+     * A box that starts collapsed, opened and closed with the button beside its title. $heading_level sets the title's
+     * heading (h2 by default, under the page's h1, or 3 for a box under an h2 section). The button is tied to the box's
+     * body (aria-controls), says whether it's open (aria-expanded, kept up to date by the footer script on AdminLTE's
+     * expanded and collapsed events), and is named "Show or hide" followed by the box's title, so each box's button
+     * says which box it opens. A link after the title (such as Advanced Filtering's reset) isn't part of that name.
+     */
+    public function expandableBoxTop($title, $url, $url_text, $heading_level = 2)
     {
-        $heading_level = (int) $heading_level;
+        $heading_level = max(2, min(6, (int) $heading_level));
+        // Ids unique on the page, for the button's name and the body it opens
+        self::$expandable_box_count++;
+        $box_id = 'domainmod-box-' . self::$expandable_box_count;
         ob_start(); ?>
 
         <div class="card card-outline card-danger collapsed-card">
             <div class="card-header">
                 <h<?php echo $heading_level; ?> class="card-title">
                     <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" aria-label="<?php echo _('Show or hide'); ?>">
-                            <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
-                            <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" aria-controls="<?php echo $box_id; ?>-body" aria-expanded="false" aria-labelledby="<?php echo $box_id; ?>-action <?php echo $box_id; ?>-title" id="<?php echo $box_id; ?>-action-button">
+                            <span class="visually-hidden" id="<?php echo $box_id; ?>-action"><?php echo _('Show or hide'); ?></span>
+                            <i data-lte-icon="expand" class="bi bi-plus-lg" aria-hidden="true"></i>
+                            <i data-lte-icon="collapse" class="bi bi-dash-lg" aria-hidden="true"></i>
                         </button>&nbsp;&nbsp;
-                        <?php echo $title; ?><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
+                        <span id="<?php echo $box_id; ?>-title"><?php echo $title; ?></span><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
                     </div>
                 </h<?php echo $heading_level; ?>>
                 <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body"><?php
+            <div class="card-body" id="<?php echo $box_id; ?>-body"><?php
 
         return ob_get_clean();
 
@@ -404,15 +417,17 @@ class Layout
 
     }
 
-    public function contentBoxTop($title, $width)
+    // $heading_level is the title's heading: 2 by default, under the page's h1, or 3 for a box inside an h2 section
+    public function contentBoxTop($title, $width, $heading_level = 2)
     {
+        $heading_level = max(2, min(6, (int) $heading_level));
         ob_start(); ?>
 
             <div class="col-md-<?php echo $width; ?>">
                 <div class="card card-outline card-danger">
                     <?php if ($title != '') { ?>
                         <div class="card-header">
-                            <h3 class="card-title"><?php echo $title; ?></h3>
+                            <h<?php echo $heading_level; ?> class="card-title"><?php echo $title; ?></h<?php echo $heading_level; ?>>
                         </div>
                     <?php } ?>
                     <div class="card-body"><?php
@@ -531,6 +546,20 @@ class Layout
         if ($type === 'install') return '<body class="bg-body-secondary">' . "\n";
         if ($type === 'raw') return '<body class="bg-body">' . "\n";
         return '<body class="layout-fixed sidebar-expand-lg sidebar-mini compact-mode nav-indent bg-body-tertiary">' . "\n";
+    }
+
+    /*
+     * The skip links at the top of the page, drawn here so they're translated. AdminLTE adds its own English ones only
+     * when a page has none. $with_navigation adds "Skip to navigation" (to the sidebar menu), which only the main
+     * layout has, so the sign-in, bare, and installer layouts leave it out rather than point at nothing.
+     */
+    public function skipLinks($with_navigation = true)
+    {
+        $links = '<div class="skip-links"><a href="#main" class="skip-link">' . htmlspecialchars(_('Skip to main content'), ENT_QUOTES, 'UTF-8') . '</a>';
+        if ($with_navigation) {
+            $links .= '<a href="#navigation" class="skip-link">' . htmlspecialchars(_('Skip to navigation'), ENT_QUOTES, 'UTF-8') . '</a>';
+        }
+        return $links . '</div>' . "\n";
     }
 
     /*

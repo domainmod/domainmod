@@ -19,11 +19,15 @@
  *
  */
 ?>
+<?php echo $layout->skipLinks(false); ?>
 <div class="login-box">
+  <main id="main">
   <div class="login-logo">
       <a href='./'><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
   </div>
   <!-- /.login-logo -->
+  <?php // The page's heading for screen readers (the sign-in page has no title of its own, so it's "Sign In") ?>
+  <h1 class="visually-hidden"><?php echo ($page_title ?? '') != '' ? $page_title : _('Sign In'); ?></h1>
     <?php
 
     $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';

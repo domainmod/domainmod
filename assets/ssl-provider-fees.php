@@ -129,7 +129,7 @@ $result2 = $stmt2->fetchAll();
 
 if ($result2) { ?>
 
-    <h4><?php echo _('Missing SSL Type Fees'); ?></h4><?php
+    <h2 class="h4"><?php echo _('Missing SSL Type Fees'); ?></h2><?php
 
     $temp_all_missing_fees = '';
     $count = 0;

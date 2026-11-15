@@ -19,6 +19,7 @@
  *
  */
 ?>
+  </main>
 </div>
 <!-- /.login-box -->
 <?php

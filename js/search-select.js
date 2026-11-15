@@ -47,6 +47,9 @@ var searchSelectHighlight = function (tom_select) {
     });
 };
 document.querySelectorAll('select.domainmod-search-select').forEach(function (select) {
+    // Tom Select moves the label's "for" to its own box, so the label is found first, then names the hidden real menu
+    // as well as Tom Select's box (below)
+    var label = document.querySelector('label[for="' + select.id + '"]');
     var tom_select = new TomSelect(select, {
         maxOptions: null,
         highlight: false,
@@ -73,4 +76,9 @@ document.querySelectorAll('select.domainmod-search-select').forEach(function (se
     tom_select.hook('after', 'refreshOptions', function () {
         searchSelectHighlight(tom_select);
     });
+    if (label) {
+        if (!label.id) label.id = select.id + '-label';
+        select.setAttribute('aria-labelledby', label.id);
+        tom_select.control_input.setAttribute('aria-labelledby', label.id);
+    }
 });

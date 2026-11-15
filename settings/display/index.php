@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
 <?php echo $form->showFormTop(''); ?>
 
-<h3><?php echo _('Main Domain Page'); ?></h3><?php
+<h2 class="h3"><?php echo _('Main Domain Page'); ?></h2><?php
 
 if ($new_number_of_domains !== 0) {
     $temp_number_of_domains = $new_number_of_domains;
@@ -323,7 +323,7 @@ foreach ($_SESSION['s_cdf_data'] as $field) {
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
-<h3><?php echo _('Main SSL Certificate Page'); ?></h3><?php
+<h2 class="h3"><?php echo _('Main SSL Certificate Page'); ?></h2><?php
 
 if ($new_number_of_ssl_certs !== 0) {
     $temp_number_of_ssl_certs = $new_number_of_ssl_certs;
@@ -359,13 +359,13 @@ foreach ($_SESSION['s_csf_data'] as $field) {
 echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
-<h3><?php echo _('Asset Management Pages'); ?></h3>
+<h2 class="h3"><?php echo _('Asset Management Pages'); ?></h2>
 <?php echo $form->showCheckbox('new_display_inactive_assets', '1', _('Display inactive Assets'), '', $new_display_inactive_assets, '', '<BR>'); ?>
 
-<h3><?php echo _('Data Warehouse'); ?></h3>
+<h2 class="h3"><?php echo _('Data Warehouse'); ?></h2>
 <?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>
 
-<h3><?php echo _('Miscellaneous'); ?></h3>
+<h2 class="h3"><?php echo _('Miscellaneous'); ?></h2>
 
 <?php
 echo $form->showDropdownTop('new_dark_mode', _('Color Mode'), '', '', '');

@@ -74,7 +74,7 @@ echo $form->showFormTop('');
 
 if ($field_id == '0') {
 
-    echo $form->showDropdownTop('field_id', '', '', '', '');
+    echo $form->showDropdownTop('field_id', _('Custom Domain Field'), '', '', '', false, true);
     echo $form->showDropdownOption('', _('Choose the Custom Field to Edit'), '');
 
     $result = $pdo->query("

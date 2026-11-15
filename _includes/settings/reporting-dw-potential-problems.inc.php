@@ -77,6 +77,8 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             var start = new DataTable.Api(settings).page.info().start;
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Accounts without a DNS Zone')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                             if ( start != oldStart_no_zone ) {
                                 var targetOffset = $("#' . $slug . '-no-zone").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);
@@ -110,6 +112,8 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             var start = new DataTable.Api(settings).page.info().start;
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('DNS Zones without an Account')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                             if ( start != oldStart_no_account ) {
                                 var targetOffset = $("#' . $slug . '-no-account").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);
@@ -143,6 +147,8 @@ $datatable_options = '$(\'#' . $slug . '-servers\').DataTable({
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             var start = new DataTable.Api(settings).page.info().start;
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            $(new DataTable.Api(settings).table().container()).find(".dt-paging nav").attr("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Suspended Accounts')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                             if ( start != oldStart_suspended ) {
                                 var targetOffset = $("#' . $slug . '-suspended").offset().top;
                                 $("html,body").animate({scrollTop: targetOffset}, 0);

@@ -23,6 +23,7 @@
 <?php
 $search_for = $search_for ?? '';
 ?>
+<?php echo $layout->skipLinks(); ?>
 <div class="app-wrapper">
 
     <!-- Header -->
@@ -122,7 +123,7 @@ $search_for = $search_for ?? '';
         <div class="sidebar-wrapper">
 
             <!-- Domain search, styled like the menu filter below it, with the search button inside the field -->
-            <form class="sidebar-search" role="search" action="<?php echo $web_root; ?>/domains/index.php">
+            <form class="sidebar-search" role="search" aria-label="<?php echo _('Domain Search'); ?>" action="<?php echo $web_root; ?>/domains/index.php">
                 <label for="sidebar-domain-search-input" class="visually-hidden"><?php echo _('Domain Search'); ?></label>
                 <div class="domainmod-css-search-field">
                     <input type="search" id="sidebar-domain-search-input" name="search_for" class="form-control form-control-sm" placeholder="<?php echo _('Domain Search'); ?>" autocomplete="off"<?php if ($search_for && $search_for != '') echo ' value="' . $search_for . '"'; ?>>
@@ -131,7 +132,7 @@ $search_for = $search_for ?? '';
             </form>
 
             <!-- Menu filter (AdminLTE's sidebar search, which narrows the menu below as you type) -->
-            <div class="sidebar-search" role="search">
+            <div class="sidebar-search" role="search" aria-label="<?php echo _('Filter the Menu'); ?>">
                 <label for="sidebar-search-input" class="visually-hidden"><?php echo _('Filter the Menu'); ?></label>
                 <div class="domainmod-css-search-field">
                     <input type="search" id="sidebar-search-input" class="form-control form-control-sm" placeholder="<?php echo _('Filter the Menu'); ?>" autocomplete="off" data-lte-toggle="sidebar-search" data-lte-target="#navigation">
@@ -149,7 +150,7 @@ $search_for = $search_for ?? '';
     </aside>
 
     <!-- Main content area -->
-    <main class="app-main">
+    <main class="app-main" id="main">
         <!-- Page header -->
         <div class="app-content-header">
 

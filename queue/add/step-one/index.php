@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
 echo $form->showFormTop('');
 
-echo $form->showDropdownTop('new_raid', '', '', '', '');
+echo $form->showDropdownTop('new_raid', _('Registrar Account'), '', '', '', false, true);
 
 $result_account = $pdo->query("
     SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
