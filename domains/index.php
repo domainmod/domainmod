@@ -715,6 +715,11 @@ if ($export_data == 1) {
 
     $export->writeRow($export_file, $row_contents);
 
+    // Each custom field's type, by field name
+    $dfd_types = $pdo->query("
+        SELECT field_name, type_id
+        FROM domain_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
+
     foreach ($result as $row) {
 
         $temp_initial_fee = $row->initial_fee * $row->conversion;
@@ -822,7 +827,16 @@ if ($export_data == 1) {
 
             foreach ($dfd_columns_array as $column) {
 
-                $row_contents[$count++] = $row->{$column};
+                // An empty Date or Time Stamp field is blank, as the list shows it
+                if (in_array($dfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+
+                    $row_contents[$count++] = '';
+
+                } else {
+
+                    $row_contents[$count++] = $row->{$column};
+
+                }
 
             }
 

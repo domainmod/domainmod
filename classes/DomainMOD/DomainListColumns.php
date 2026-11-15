@@ -292,9 +292,9 @@ class DomainListColumns
                 } elseif ($field['type_id'] == '2') { // Text
                     return $layout->customFieldText($value);
                 } elseif ($field['type_id'] == '4') { // Date
-                    return $value == '1970-01-01' ? '' : $layout->customFieldText($value);
+                    return Time::isUnset($value) ? '' : $layout->customFieldText($value);
                 } elseif ($field['type_id'] == '5') { // Time Stamp
-                    return $value == '1970-01-01 00:00:00' ? '' : $layout->customFieldText($value);
+                    return Time::isUnset($value) ? '' : $layout->customFieldText($value);
                 } elseif ($field['type_id'] == '6') { // URL
                     return $value != '' ? $layout->customFieldLink($value) : '';
                 }

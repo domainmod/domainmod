@@ -227,10 +227,14 @@ if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.
             $new_registrar = $row->registrar;
             $new_tld = $row->tld;
 
-            if ($row->update_time == '1970-01-01 00:00:00') {
+            if (DomainMOD\Time::isUnset($row->update_time)) {
                 $row->update_time = $row->insert_time;
             }
-            $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
+            if (DomainMOD\Time::isUnset($row->update_time)) {
+                $last_updated = '';
+            } else {
+                $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
+            }
 
             if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 

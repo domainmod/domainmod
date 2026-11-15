@@ -131,15 +131,31 @@ class Time
         return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + $years));
     }
 
-    public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s')
+    // Whether a stored date or time was never set: empty, the column default (1970-01-01), or a zero date that older
+    // installs can hold. It tests the stored UTC value, never a converted one, so a real time near 1970 still shows.
+    public static function isUnset($value)
     {
+        if ($value === null) return true;
+
+        return in_array(trim((string) $value), array('', '1970-01-01 00:00:00', '1970-01-01', '0000-00-00 00:00:00',
+            '0000-00-00'), true);
+    }
+
+    // A stored UTC time in the user's time zone, or $unset if the time was never set
+    public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s', $unset = '')
+    {
+        if (self::isUnset($input_time)) return $unset;
+
         $date = new \DateTime($input_time, new \DateTimeZone('UTC'));
         $date->setTimezone(self::zone($_SESSION['s_default_timezone'] ?? 'UTC'));
         return $date->format($format);
     }
 
-    public function toUtcTimezone($input_time, $format = 'Y-m-d H:i:s')
+    // A time in the user's time zone as UTC, or $unset if the time was never set
+    public function toUtcTimezone($input_time, $format = 'Y-m-d H:i:s', $unset = '')
     {
+        if (self::isUnset($input_time)) return $unset;
+
         $date = new \DateTime($input_time, self::zone($_SESSION['s_default_timezone'] ?? 'UTC'));
         $date->setTimezone(new \DateTimeZone('UTC'));
         return $date->format($format);

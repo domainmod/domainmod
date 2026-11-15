@@ -159,20 +159,10 @@ if (!$result) {
                 <a href="edit.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
             </td>
             <td>
-                <a href="edit.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->insert_time); ?></a>
+                <a href="edit.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->insert_time, 'Y-m-d H:i:s', '-'); ?></a>
             </td>
-            <td><?php
-
-                if ($row->update_time != '1970-01-01 00:00:00') {
-
-                    $temp_update_time = $time->toUserTimezone($row->update_time);
-
-                } else {
-
-                    $temp_update_time = '-';
-
-                } ?>
-                <a href="edit.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
+            <td>
+                <a href="edit.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->update_time, 'Y-m-d H:i:s', '-'); ?></a>
             </td>
             </tr><?php
 

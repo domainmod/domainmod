@@ -328,25 +328,9 @@ if ($no_results_build_info !== 1) { ?>
 
         }
 
-        if ($result->build_start_time_overall == '1970-01-01 00:00:00') {
+        $temp_build_start_time_overall = $time->toUserTimezone($result->build_start_time_overall, 'M jS @ g:i:sa', "-");
 
-            $temp_build_start_time_overall = "-";
-
-        } else {
-
-            $temp_build_start_time_overall = $time->toUserTimezone($result->build_start_time_overall, 'M jS @ g:i:sa');
-
-        }
-
-        if ($result->build_end_time_overall == '1970-01-01 00:00:00') {
-
-            $temp_build_end_time_overall = "-";
-
-        } else {
-
-            $temp_build_end_time_overall = $time->toUserTimezone($result->build_end_time_overall, 'M jS @ g:i:sa');
-
-        }
+        $temp_build_end_time_overall = $time->toUserTimezone($result->build_end_time_overall, 'M jS @ g:i:sa', "-");
 
         if ($result->build_time_overall <= 0) {
 
@@ -442,25 +426,9 @@ if ($no_results_build_info !== 1) { ?>
 
             }
 
-            if ($row->build_start_time == '1970-01-01 00:00:00') {
+            $temp_build_start_time = $time->toUserTimezone($row->build_start_time, 'M jS @ g:i:sa', "-");
 
-                $temp_build_start_time = "-";
-
-            } else {
-
-                $temp_build_start_time = $time->toUserTimezone($row->build_start_time, 'M jS @ g:i:sa');
-
-            }
-
-            if ($row->build_end_time == '1970-01-01 00:00:00') {
-
-                $temp_build_end_time = "-";
-
-            } else {
-
-                $temp_build_end_time = $time->toUserTimezone($row->build_end_time, 'M jS @ g:i:sa');
-
-            }
+            $temp_build_end_time = $time->toUserTimezone($row->build_end_time, 'M jS @ g:i:sa', "-");
 
             if ($row->build_time <= 0) {
 

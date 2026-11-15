@@ -363,22 +363,12 @@ class Scheduler
 
                 <strong><?php echo _('Status'); ?>:</strong> <?php echo $this->createActive($task->active, $task->id); ?><BR><?php
 
-                if ($task->last_run != '1970-01-01 00:00:00') {
-                    $last_run = $this->time->toUserTimezone($this->getDateOutput($task->last_run));
-                } else {
-                    $last_run = '-';
-
-                } ?>
+                $last_run = $this->time->toUserTimezone($task->last_run, 'Y-m-d H:i:s', '-'); ?>
 
                 <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $task->last_duration; ?><BR><?php
 
                 $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
-                if ($task->next_run != '1970-01-01 00:00:00') {
-                    $next_run = $this->time->toUserTimezone($this->getDateOutput($task->next_run));
-                } else {
-                    $next_run = '-';
-
-                } ?>
+                $next_run = $this->time->toUserTimezone($task->next_run, 'Y-m-d H:i:s', '-'); ?>
 
                 <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
 

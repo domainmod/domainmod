@@ -634,18 +634,8 @@ if (!$result_lists) {
                 }
                 echo $to_display; ?>
             </td>
-            <td><?php
-
-                if ($row_lists->insert_time != '1970-01-01 00:00:00') {
-
-                    $to_display = $time->toUserTimezone($row_lists->insert_time);
-
-                } else {
-
-                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
-
-                }
-                echo $to_display; ?>
+            <td>
+                <?php echo $time->toUserTimezone($row_lists->insert_time, 'Y-m-d H:i:s', '[' . DomainMOD\Format::toLower(_('Unknown')) . ']'); ?>
             </td>
             <td>
                 <a href="index.php?dell=1&list_id=<?php echo $row_lists->id; ?>" title="<?php echo _('Delete'); ?>" aria-label="<?php echo _('Delete'); ?>"><i class="bi bi-x-lg"></i></a>
@@ -819,17 +809,8 @@ if (!$result_domains) {
                 }
                 echo $to_display; ?>
             </td>
-            <td><?php
-                if ($row_domains->insert_time != '1970-01-01 00:00:00') {
-
-                    $to_display = $time->toUserTimezone($row_domains->insert_time);
-
-                } else {
-
-                    $to_display = '[' . DomainMOD\Format::toLower(_('Unknown')) . ']';
-
-                }
-                echo $to_display; ?>
+            <td>
+                <?php echo $time->toUserTimezone($row_domains->insert_time, 'Y-m-d H:i:s', '[' . DomainMOD\Format::toLower(_('Unknown')) . ']'); ?>
             </td>
             <td><?php
                 if ($queue_fix_available && $row_domains->finished == '1' && $row_domains->invalid_domain === 1

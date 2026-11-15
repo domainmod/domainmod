@@ -561,6 +561,11 @@ if ($export_data == 1) {
 
     $export->writeRow($export_file, $row_contents);
 
+    // Each custom field's type, by field name
+    $sslfd_types = $pdo->query("
+        SELECT field_name, type_id
+        FROM ssl_cert_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
+
     foreach ($result as $row) {
 
         $temp_initial_fee = $row->initial_fee * $row->conversion;
@@ -638,7 +643,16 @@ if ($export_data == 1) {
 
             foreach ($sslfd_columns_array as $column) {
 
-                $row_contents[$count++] = $row->{$column};
+                // An empty Date or Time Stamp field is blank, as the list shows it
+                if (in_array($sslfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+
+                    $row_contents[$count++] = '';
+
+                } else {
+
+                    $row_contents[$count++] = $row->{$column};
+
+                }
 
             }
 
@@ -1764,7 +1778,7 @@ if ($result) {
 
                             } elseif ($field['type_id'] == 4) { // Date
 
-                                if ($row->{$field['field']} == '1970-01-01') {
+                                if (DomainMOD\Time::isUnset($row->{$field['field']})) {
 
                                     echo '';
 
@@ -1776,7 +1790,7 @@ if ($result) {
 
                             } elseif ($field['type_id'] == 5) { // Time Stamp
 
-                                if ($row->{$field['field']} == '1970-01-01 00:00:00') {
+                                if (DomainMOD\Time::isUnset($row->{$field['field']})) {
 
                                     echo '';
 

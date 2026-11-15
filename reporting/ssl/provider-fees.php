@@ -394,10 +394,14 @@ if ($fees_left_out > 0) { ?>
             $new_ssl_provider = $row->ssl_provider;
             $new_type = $row->type;
 
-            if ($row->update_time == '1970-01-01 00:00:00') {
+            if (DomainMOD\Time::isUnset($row->update_time)) {
                 $row->update_time = $row->insert_time;
             }
-            $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
+            if (DomainMOD\Time::isUnset($row->update_time)) {
+                $last_updated = '';
+            } else {
+                $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
+            }
 
             if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
 

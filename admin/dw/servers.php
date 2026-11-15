@@ -164,33 +164,11 @@ if ($result) {
             <td>
                 <?php echo $row->username; ?>
             </td>
-            <td><?php
-
-                if ($row->insert_time != '1970-01-01 00:00:00') {
-
-                    $temp_time = $time->toUserTimezone($row->insert_time);
-
-                } else {
-
-                    $temp_time = '-';
-
-                }
-
-                echo $temp_time; ?>
+            <td>
+                <?php echo $time->toUserTimezone($row->insert_time, 'Y-m-d H:i:s', '-'); ?>
             </td>
-            <td><?php
-
-                if ($row->update_time != '1970-01-01 00:00:00') {
-
-                    $temp_time = $time->toUserTimezone($row->update_time);
-
-                } else {
-
-                    $temp_time = '-';
-
-                }
-
-                echo $temp_time; ?>
+            <td>
+                <?php echo $time->toUserTimezone($row->update_time, 'Y-m-d H:i:s', '-'); ?>
             </td>
         </tr><?php
 
