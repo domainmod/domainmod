@@ -197,8 +197,7 @@ class Layout
      * A list's plain pager for when JavaScript is off (the Domains list, see domains/index.php): Previous, the page
      * numbers around the current one with the first and last, and Next, as start and length links. $base_url already
      * carries the list's whole state as a query string (it never relies on the session), and $label names the pages for
-     * screen readers. The list's script removes it when DataTables takes over the paging. Large Mode keeps its own
-     * pageBrowser() until it retires.
+     * screen readers. The list's script removes it when DataTables takes over the paging.
      */
     public function listPager($total, $start, $length, $base_url, $label)
     {
@@ -235,77 +234,6 @@ class Layout
         if ($current < $pages) $html .= $item($current + 1, htmlspecialchars(_('Next'), ENT_QUOTES, 'UTF-8'));
 
         return $html . '</ul></nav>';
-    }
-
-    public function pageBrowser($parameters)
-    {
-        list($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num) = $parameters;
-        $larrow = "&nbsp;&laquo; Prev &nbsp;";
-        $rarrow = "&nbsp;Next &raquo;&nbsp;";
-        $wholePiece = "<B>Page:</B> ";
-        if ($totalrows > 0) {
-            $numSoFar = 1;
-            $cycle = ceil($totalrows / $amm);
-            if (!isset($numBegin) || $numBegin < 1) {
-                $numBegin = 1;
-                $num = 1;
-            }
-            $minus = $numBegin - 1;
-            $start = $minus * $amm;
-            if (!isset($begin)) {
-                $begin = $start;
-            }
-            $preBegin = $numBegin - $numLimit;
-            $preVBegin = $start - $amm;
-            $preRedBegin = $numBegin - 1;
-            if ($start > 0 || $numBegin > 1) {
-                $wholePiece .= "<a href='?num=" . $preRedBegin
-                    . "&numBegin=" . $preBegin
-                    . "&begin=" . $preVBegin
-                    . $queryStr . "'>"
-                    . $larrow . "</a>\n";
-            }
-            for ($i = $numBegin; $i <= $cycle; $i++) {
-                if ($numSoFar == $numLimit + 1) {
-                    $piece = "<a href='?numBegin=" . $i
-                        . "&num=" . $i
-                        . "&begin=" . $start
-                        . $queryStr . "'>"
-                        . $rarrow . "</a>\n";
-                    $wholePiece .= $piece;
-                    break;
-                }
-                $piece = "<a href='?begin=" . $start
-                    . "&num=" . $i
-                    . "&numBegin=" . $numBegin
-                    . $queryStr
-                    . "'>";
-                if ($num == $i) {
-                    $piece .= "</a><b>$i</b><a>";
-                } else {
-                    $piece .= "$i";
-                }
-                $piece .= "</a>\n";
-                $start = $start + $amm;
-                $numSoFar++;
-                $wholePiece .= $piece;
-            }
-            $wholePiece .= "\n";
-            $wheBeg = $begin + 1;
-            $wheEnd = $begin + $amm;
-            $wheToWhe = "<b>" . number_format($wheBeg) . "</b>-<b>";
-            if ($totalrows <= $wheEnd) {
-                $wheToWhe .= $totalrows . "</b>";
-            } else {
-                $wheToWhe .= number_format($wheEnd) . "</b>";
-            }
-            $sqlprod = " LIMIT " . $begin . ", " . $amm;
-        } else {
-            $wholePiece = "";
-            $wheToWhe = "<b>0</b> - <b>0</b>";
-            $sqlprod = "";
-        }
-        return array($sqlprod, $wheToWhe, $wholePiece);
     }
 
     public function deleteButton($item_type, $item_name, $url)

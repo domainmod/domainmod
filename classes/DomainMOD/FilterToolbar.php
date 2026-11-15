@@ -28,9 +28,8 @@ namespace DomainMOD;
  * With it, a change in the panel applies at once and the panel opens again after the reload (js/filter-auto-apply.js).
  *
  * Each list adds its filters with addFilter() (a request key, its current value, the value that means "no filter", and
- * the chip's text), and any controls that every link must carry without being chips (the Domains list's Large Mode
- * results per page and sort order) with addCarried(). The class makes every URL from that state with
- * http_build_query(), never carrying paging keys or from_dropdown, so removing a chip starts the list at its first page.
+ * the chip's text). The class makes every URL from that state with http_build_query(), never carrying paging keys or
+ * from_dropdown, so removing a chip starts the list at its first page.
  * Chip text is plain text: names read from the database are decoded once with decode() (they're stored HTML-escaped),
  * and escaped once here when they're printed.
  */
@@ -40,7 +39,6 @@ class FilterToolbar
     private $base_url;
     private $reset_url;
     private $filters = array();
-    private $carried = array();
 
     // $panel_id is the panel's id (such as domain-filters), $base_url the list's address (filters are added as a query
     // string), and $reset_url the address that clears every filter
@@ -81,13 +79,6 @@ class FilterToolbar
         );
     }
 
-    // A control that every link carries but that's never a chip and never counts as a filter
-    public function addCarried($key, $value)
-    {
-        if ($value === null || (string) $value === '') return;
-        $this->carried[$key] = (string) $value;
-    }
-
     public function isActive($key)
     {
         return isset($this->filters[$key]);
@@ -104,9 +95,6 @@ class FilterToolbar
         $query = array();
         foreach ($this->filters as $key => $filter) {
             if (!in_array($key, $without, true)) $query[$key] = $filter['value'];
-        }
-        foreach ($this->carried as $key => $value) {
-            if (!in_array($key, $without, true)) $query[$key] = $value;
         }
         foreach ($extra as $key => $value) {
             $query[$key] = $value;

@@ -26,7 +26,7 @@ namespace DomainMOD;
  * data endpoint (domains/list-data.php) sends, so the two can't differ. The columns follow the user's Display Settings
  * and custom fields, given as a copy of the session values ($settings), so the endpoint can let go of the session
  * early. The cells are built exactly as the list has always drawn them, with the same escaping (values from the
- * database are stored sanitized). Large Mode keeps its own table code in the page until it retires.
+ * database are stored sanitized).
  */
 class DomainListColumns
 {

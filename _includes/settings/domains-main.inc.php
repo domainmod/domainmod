@@ -25,13 +25,8 @@ $breadcrumb = _('Domains');
 $software_section = "domains";
 $slug = "domains-main";
 
-// The table looks the same in large mode, which only leaves out the DataTables script.
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 
-// Outside large mode the list uses server-side processing: domains/index.php prints the first page, with the table's
-// settings in its data-domainmod-list attribute, and js/domain-list.js starts DataTables from them.
-if ($_SESSION['s_system_large_mode'] != '1') {
-
-    $datatable_options = 'domainmodDomainList(\'#' . $slug . '\');';
-
-}
+// The list uses server-side processing: domains/index.php prints the first page, with the table's settings in its
+// data-domainmod-list attribute, and js/domain-list.js starts DataTables from them.
+$datatable_options = 'domainmodDomainList(\'#' . $slug . '\');';

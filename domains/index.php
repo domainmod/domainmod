@@ -72,18 +72,6 @@ $daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterang
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
-if ($_SESSION['s_system_large_mode'] == '1') {
-
-    // These go into the query's LIMIT and the page links, so they must be whole numbers. An unknown sort falls back
-    // to the default below.
-    $result_limit = isset($_REQUEST['result_limit']) && (int) $_REQUEST['result_limit'] > 0 ? (int) $_REQUEST['result_limit'] : '';
-    $sort_by = isset($_REQUEST['sort_by']) && preg_match('/^[a-z]{1,3}_[ad]$/', (string) $_REQUEST['sort_by']) ? $_REQUEST['sort_by'] : '';
-    $numBegin = isset($_REQUEST['numBegin']) ? max(0, (int) $_REQUEST['numBegin']) : '';
-    $begin = isset($_REQUEST['begin']) ? max(0, (int) $_REQUEST['begin']) : '';
-    $num = isset($_REQUEST['num']) ? max(0, (int) $_REQUEST['num']) : '';
-
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $from_dropdown = 0;
@@ -100,17 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($export_data !== 1) {
 
-    $numBegin = $numBegin ?? '';
-
     if ($from_dropdown !== 1) {
 
         if ($search_for != "") {
 
             $_SESSION['s_search_for'] = $search_for;
-
-        } elseif ($numBegin != "" && $_SESSION['s_system_large_mode'] == '1') {
-
-            // $_SESSION['s_search_for'] = $_SESSION['s_search_for'];
 
         } else {
 
@@ -122,11 +104,6 @@ if ($export_data !== 1) {
 
             $_SESSION['s_start_date'] = $new_start_date;
             $_SESSION['s_end_date'] = $new_end_date;
-
-        } elseif ($numBegin != "" && $_SESSION['s_system_large_mode'] == '1') {
-
-            // $_SESSION['s_start_date'] = $_SESSION['s_start_date'];
-            // $_SESSION['s_end_date'] = $_SESSION['s_end_date'];
 
         } else {
 
@@ -180,12 +157,6 @@ if ($export_data === 1) {
 
 }
 
-if ($_SESSION['s_system_large_mode'] == '1') {
-
-    if ($result_limit == "") $result_limit = $_SESSION['s_number_of_domains'];
-
-}
-
 // Anything else (including translated values in links from older versions) falls back to the default
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
@@ -225,40 +196,8 @@ $range_string = $filter_parts['range_string'];
 $tld_string = $filter_parts['tld_string'];
 $search_string = $filter_parts['search_string'];
 
-if ($_SESSION['s_system_large_mode'] == '1') {
-
-    if ($sort_by == "") $sort_by = "ed_a";
-
-    if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc ";
-    } elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY d.expiry_date desc, d.domain asc ";
-    } elseif ($sort_by == "pc_a") { $sort_by_string = " ORDER BY cat.name asc ";
-    } elseif ($sort_by == "pc_d") { $sort_by_string = " ORDER BY cat.name desc ";
-    } elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc ";
-    } elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc ";
-    } elseif ($sort_by == "df_a") { $sort_by_string = " ORDER BY d.total_cost asc ";
-    } elseif ($sort_by == "df_d") { $sort_by_string = " ORDER BY d.total_cost desc ";
-    } elseif ($sort_by == "dns_a") { $sort_by_string = " ORDER BY dns.name asc ";
-    } elseif ($sort_by == "dns_d") { $sort_by_string = " ORDER BY dns.name desc ";
-    } elseif ($sort_by == "tld_a") { $sort_by_string = " ORDER BY d.tld asc ";
-    } elseif ($sort_by == "tld_d") { $sort_by_string = " ORDER BY d.tld desc ";
-    } elseif ($sort_by == "ip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc";
-    } elseif ($sort_by == "ip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc";
-    } elseif ($sort_by == "wh_a") { $sort_by_string = " ORDER BY h.name asc";
-    } elseif ($sort_by == "wh_d") { $sort_by_string = " ORDER BY h.name desc";
-    } elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain asc ";
-    } elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain asc ";
-    } elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc ";
-    } elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc ";
-    } elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc ";
-    } elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc ";
-    } else { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
-
-} else {
-
-    $sort_by_string = '';
-
-}
-
+// Export and the Raw List come out in the list's default order, the expiry date and then the domain (the id keeps
+// domains that tie on both in the same order each time)
 $sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $is_active_string
           $segid_string
@@ -272,7 +211,7 @@ $sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $range_string
           $tld_string
           $search_string
-          $sort_by_string";
+          ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC";
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_sql'] = $sql;
 
@@ -907,11 +846,10 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 }
 
 /*
- * Server-side processing (outside Large Mode): the page prints one page of rows, in the default order, and DataTables
- * fetches the others from domains/list-data.php (see js/domain-list.js). The page and its size come from the address
- * (the no-JavaScript pager's links), checked as the endpoint checks them, and a page past the end (an old link, after
- * domains were deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own
- * paging does.
+ * Server-side processing: the page prints one page of rows, in the default order, and DataTables fetches the others
+ * from domains/list-data.php (see js/domain-list.js). The page and its size come from the address (the no-JavaScript
+ * pager's links), checked as the endpoint checks them, and a page past the end (an old link, after domains were
+ * deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own paging does.
  */
 $list_columns = new DomainMOD\DomainListColumns(DomainMOD\DomainListColumns::sessionCopy($_SESSION), $dfd_columns);
 $list_page_sizes = DomainMOD\DomainList::pageSizes($_SESSION['s_number_of_domains']);
@@ -920,36 +858,13 @@ $list_start = DomainMOD\DomainList::checkedStart($_GET['start'] ?? 0);
 $list_start -= $list_start % $list_length;
 if ($list_start >= $total_rows) $list_start = $total_rows > 0 ? (int) (floor(($total_rows - 1) / $list_length) * $list_length) : 0;
 
-if ($_SESSION['s_system_large_mode'] == '1') {
-
-    $temp_numbegin = max(0, (int) ($_REQUEST['numBegin'] ?? 0));
-    $temp_begin = max(0, (int) ($_REQUEST['begin'] ?? 0));
-    $temp_num = max(0, (int) ($_REQUEST['num'] ?? 0));
-
-    $parameters = array($total_rows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $temp_numbegin, $temp_begin, $temp_num);
-    $navigate = $layout->pageBrowser($parameters);
-    $sql = $sql . $navigate[0];
-
-    $result = $pdo->query($sql)->fetchAll();
-
-} else {
-
-    $result = $total_rows > 0 ? $domain_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
-        DomainMOD\DomainList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
-        $list_length) : array();
-
-}
+$result = $total_rows > 0 ? $domain_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
+    DomainMOD\DomainList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
+    $list_length) : array();
 
 if ($segid !== 0) {
 
     $number_of_domains = $segment->getNumberOfDomains($segid);
-
-}
-
-if ($_SESSION['s_system_large_mode'] != '1') {
-
-    $result_limit = '';
-    $sort_by = '';
 
 }
 
@@ -960,9 +875,9 @@ $status_names = array('0' => _('Expired'), '1' => _('Active'), '2' => _('Pending
     'ALL' => DomainMOD\Format::toUpper(_('All')));
 
 /*
- * The filter toolbar's state (DomainMOD\FilterToolbar): every active filter with its plain-text name for its chip, and
- * in Large Mode the results per page and sort order, which every link carries without being chips. Each id filter's
- * name is read with one small query, only when that filter is on, and an id that no longer exists still gets a chip.
+ * The filter toolbar's state (DomainMOD\FilterToolbar): every active filter with its plain-text name for its chip.
+ * Each id filter's name is read with one small query, only when that filter is on, and an id that no longer exists
+ * still gets a chip.
  */
 $filter_toolbar = new DomainMOD\FilterToolbar('domain-filters', $web_root . '/domains/index.php', $web_root . '/domains/index.php');
 $filter_name = function ($sql, $id) use ($pdo) {
@@ -995,10 +910,6 @@ if ($_SESSION['s_search_for'] != '') {
 if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
     $filter_toolbar->addFilter('daterange', $_SESSION['s_start_date'] . ' - ' . $_SESSION['s_end_date'], '',
         sprintf(_('Expiring: %1$s to %2$s'), $_SESSION['s_start_date'], $_SESSION['s_end_date']));
-}
-if ($_SESSION['s_system_large_mode'] == '1') {
-    $filter_toolbar->addCarried('result_limit', $result_limit);
-    $filter_toolbar->addCarried('sort_by', $sort_by);
 }
 
 if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
@@ -1471,10 +1382,6 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
                 <?php // The session keeps the keyword HTML-escaped, so it's decoded once here (the field escapes it again), and Apply sends it back unchanged
                 echo $form->showInputText('search_for', _('Keyword Search'), '', DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']), '100', '', '', '', ''); ?><?php
-                echo $form->showInputHidden('sort_by', $sort_by);
-                echo $form->showInputHidden('begin', '0');
-                echo $form->showInputHidden('num', '1');
-                echo $form->showInputHidden('numBegin', '1');
                 // WEB HOSTING PROVIDER
                 if ($is_active == "0") {
                     $is_active_string = " AND d.active = '0' ";
@@ -2038,29 +1945,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 }
                 echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
                 echo $filter_toolbar->keepOption('is_active', array_merge(array('LIVE', 'ALL'), array_map('strval', array_column($result_active, 'active'))));
-                echo $form->showDropdownBottom('');
-
-                if ($_SESSION['s_system_large_mode'] == '1') {
-
-                    // NUMBER OF DOMAINS TO DISPLAY
-                    echo $form->showDropdownTop('result_limit', _('Results Per Page'), '', '', '');
-
-                    if ($_SESSION['s_number_of_domains'] != "10" && $_SESSION['s_number_of_domains'] != "50" && $_SESSION['s_number_of_domains'] != "100" && $_SESSION['s_number_of_domains'] != "500" && $_SESSION['s_number_of_domains'] != "1000" && $_SESSION['s_number_of_domains'] != "1000000") {
-
-                        echo $form->showDropdownOption($result_limit, $_SESSION['s_number_of_domains'], $_SESSION['s_number_of_domains']);
-
-                    }
-
-                    echo $form->showDropdownOption($result_limit, '10', '10');
-                    echo $form->showDropdownOption($result_limit, '50', '50');
-                    echo $form->showDropdownOption($result_limit, '100', '100');
-                    echo $form->showDropdownOption($result_limit, '500', '500');
-                    echo $form->showDropdownOption($result_limit, '1,000', '1000');
-                    echo $form->showDropdownOption($result_limit, DomainMOD\Format::toUpper(_('All')), '1000000');
-
-                    echo $form->showDropdownBottom('');
-
-                } ?>
+                echo $form->showDropdownBottom(''); ?>
 
                 <?php
                 echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
@@ -2108,11 +1993,7 @@ if ($segid !== 0) {
     ?>
     <strong><?php echo _('Domains in Segment'); ?>:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 
-    <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-        <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
-    <?php } else { ?>
-        <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
-    <?php } ?>
+    <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
 
     <?php if ($totalrows_inactive > 0) { ?>
         <strong><?php echo _('Matching But Inactive Domains'); ?>:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
@@ -2148,7 +2029,7 @@ if ($result) {
 
     <?php }
 
-    if ($total_rows && $_SESSION['s_system_large_mode'] != '1') {
+    if ($total_rows) {
 
         /*
          * Server-side processing (see js/domain-list.js): the columns and cells come from DomainListColumns, as the
@@ -2210,405 +2091,6 @@ if ($result) {
         <?php echo $layout->listPager($total_rows, $list_start, $list_length, $list_state_url, sprintf(_('Pages of %s'), _('Domains'))); ?>
         <BR><?php
 
-    } elseif ($total_rows) {
-
-        // Large Mode keeps its own table, sort links, and paging until it retires (its normal-mode branches below no
-        // longer run, and go with it)
-        if ($_SESSION['s_system_large_mode'] == '1') {
-            require DIR_INC . '/layout/pagination-large-mode.inc.php';
-        } ?>
-
-        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
-            <thead>
-            <tr>
-                <?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
-                    <th width="20px"></th>
-                <?php } ?>
-
-                <th class="all">
-                    <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                        echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date); ?>&segid=<?php
-                        echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active); ?>&result_limit=<?php
-                        echo urlencode($result_limit); ?>&sort_by=<?php
-                        if ($sort_by == "dn_a") {
-                            echo "dn_d";
-                        } else {
-                            echo "dn_a";
-                        } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Domain'); ?></a>
-                    <?php } else { ?>
-                            <?php echo _('Domain'); ?>
-                    <?php } ?>
-                </th>
-                <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
-                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
-                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                            echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
-                            echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "ed_a") {
-                                echo "ed_d";
-                            } else {
-                                echo "ed_a";
-                            }
-                            ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Expiry'); ?></a>
-                        <?php } else { ?>
-                            <?php echo _('Expiry'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
-                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
-                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                            echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
-                            echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit);
-                            ?>&sort_by=<?php
-                            if ($sort_by == "df_a") {
-                                echo "df_d";
-                            } else {
-                                echo "df_a";
-                            }
-                            ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Fee'); ?> (<?php echo $_SESSION['s_default_currency']; ?>)</a>
-                        <?php } else { ?>
-                                <?php echo _('Fee'); ?> (<?php echo $_SESSION['s_default_currency']; ?>)
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                        echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
-                        echo urlencode($new_end_date); ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
-                        echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                        if ($sort_by == "tld_a") {
-                            echo "tld_d";
-                        } else {
-                            echo "tld_a";
-                        } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('TLD'); ?></a>
-                    <?php } else { ?>
-                            <?php echo _('TLD'); ?>
-                    <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "r_a") {
-                                echo "r_d";
-                            } else {
-                                echo "r_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Registrar'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('Registrar'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "ra_a") {
-                                echo "ra_d";
-                            } else {
-                                echo "ra_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Account'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('Account'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "dns_a") {
-                                echo "dns_d";
-                            } else {
-                                echo "dns_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('DNS'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('DNS'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "ip_a") {
-                                echo "ip_d";
-                            } else {
-                                echo "ip_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('IP'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('IP'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "wh_a") {
-                                echo "wh_d";
-                            } else {
-                                echo "wh_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Host'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('Host'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "pc_a") {
-                                echo "pc_d";
-                            } else {
-                                echo "pc_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Category'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('Category'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
-                    <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                        <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
-                            if ($sort_by == "o_a") {
-                                echo "o_d";
-                            } else {
-                                echo "o_a";
-                            } ?>&from_dropdown=1" class="domainmod-css-color-black"><?php echo _('Owner'); ?></a>
-                        <?php } else { ?>
-                                <?php echo _('Owner'); ?>
-                        <?php } ?>
-                    </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_cdf_data']) {
-
-                    foreach ($_SESSION['s_cdf_data'] as $field) {
-
-                        if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
-
-                            <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-
-                                <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-
-                                    <span class="domainmod-css-color-black"><?php echo $field['name']; ?></span>
-
-                                <?php } else { ?>
-
-                                    <?php echo $field['name']; ?>
-
-                                <?php } ?>
-
-                            </th><?php
-
-                        }
-
-                    }
-
-                } ?>
-            </tr>
-            </thead>
-            <tbody>
-            <?php $today = $time->timeBasic(); // for marking past expiry dates below ?>
-            <?php foreach ($result as $row) { ?>
-                <tr>
-
-                    <?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
-                        <td></td>
-                    <?php } ?>
-
-                    <td>
-                        <?php if ($row->active == "0") {
-                            echo $layout->statusBadge('x', _('Inactive Domain'), 'secondary', 'bi-pause-circle') . "&nbsp;";
-                        } elseif ($row->active == "2") {
-                            echo $layout->statusBadge(_('Pending Transfer Characters'), _('Pending (Transfer)'), 'warning', 'bi-arrow-left-right') . "&nbsp;";
-                        } elseif ($row->active == "3") {
-                            echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning', 'bi-arrow-repeat') . "&nbsp;";
-                        } elseif ($row->active == "4") {
-                            echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning', 'bi-three-dots') . "&nbsp;";
-                        } elseif ($row->active == "5") {
-                            echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning', 'bi-plus-circle') . "&nbsp;";
-                        } elseif ($row->active == "10") {
-                            echo $layout->statusBadge(_('Pending Sold Characters'), _('Sold'), 'success', 'bi-tag') . "&nbsp;";
-                        }
-                        ?>
-                        <a href="edit.php?did=<?php echo $row->id; ?>"><?php echo $row->domain; ?></a><?php if ($row->privacy == "1") {
-                            echo "&nbsp;" . $layout->statusBadge(_('Private WHOIS Characters'), _('Private WHOIS Registration'), 'muted', 'bi-shield-lock-fill');
-                        } ?>
-                    </td>
-                    <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="edit.php?did=<?php echo $row->id; ?>"<?php if (!in_array($row->active, array('0', '10')) && $row->expiry_date < $today) echo ' class="domainmod-css-expired" data-bs-toggle="tooltip" data-bs-title="' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '" aria-label="' . $row->expiry_date . ', ' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php echo $row->expiry_date; ?></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>">
-                                <?php
-                                $converted_total_cost = $row->total_cost * $row->conversion;
-                                $temp_output_amount = $currency->format($converted_total_cost,
-                                    $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-                                    $_SESSION['s_default_currency_symbol_space']);
-                                echo htmlentities($temp_output_amount, ENT_QUOTES, 'UTF-8');
-                                ?>
-                            </a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>"><bdi dir="ltr">.<?php echo $row->tld; ?></bdi></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>,
-                            <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
-                            (<a href="../assets/edit/registrar-account.php?raid=<?php echo $row->ra_id; ?>"><?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/dns.php?dnsid=<?php echo $row->dnsid; ?>"><?php echo $row->dns_name; ?></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/ip-address.php?ipid=<?php echo $row->ipid; ?>"><?php echo $row->ip_name; ?>
-                                (<?php echo $row->ip; ?>)</a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/host.php?whid=<?php echo $row->whid; ?>"><?php echo $row->wh_name; ?></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/category.php?pcid=<?php echo $row->pcid; ?>"><?php echo $row->category_name; ?></a>
-                        </td>
-                    <?php } ?>
-                    <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
-                        <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
-                        </td>
-                    <?php } ?>
-
-                    <?php if ($_SESSION['s_cdf_data']) {
-
-                        foreach ($_SESSION['s_cdf_data'] as $field) {
-
-                            if ($field['value'] == '1' && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
-
-                            <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>><?php
-
-                                if ($field['type_id'] == '1') { // Check Box
-
-                                    echo ($row->{$field['field']} == '1' ? 'Yes' : 'No');
-
-                                } elseif ($field['type_id'] == '2') { // Text
-
-                                    echo $layout->customFieldText($row->{$field['field']});
-
-                                } elseif ($field['type_id'] == '4') { // Date
-
-                                    if ($row->{$field['field']} == '1970-01-01') {
-
-                                        echo '';
-
-                                    } else {
-
-                                        echo $layout->customFieldText($row->{$field['field']});
-
-                                    }
-
-                                } elseif ($field['type_id'] == '5') { // Time Stamp
-
-                                    if ($row->{$field['field']} == '1970-01-01 00:00:00') {
-
-                                        echo '';
-
-                                    } else {
-
-                                        echo $layout->customFieldText($row->{$field['field']});
-
-                                    }
-
-                                } elseif ($field['type_id'] == '6') { // URL
-
-                                    if ($row->{$field['field']} != '') {
-
-                                        echo $layout->customFieldLink($row->{$field['field']});
-
-                                    }
-
-                                } ?>
-
-                            </td><?php
-
-                            }
-
-                        }
-
-                    } ?>
-
-                </tr>
-            <?php } ?>
-        </tbody>
-        </table><BR><?php
-
-    }
-
-    if ($_SESSION['s_system_large_mode'] == '1') {
-
-        require DIR_INC . '/layout/pagination-large-mode.inc.php';
     }
 
 } else {
@@ -2643,18 +2125,7 @@ if ($result) {
               AND d.hosting_id = h.id
               AND d.id = dfd.domain_id";
 
-        if ($_SESSION['s_system_large_mode'] == '1' && $total_rows > 0) {
-
-            // A bookmarked page beyond the end of the list. The link back writes every filter out, including the
-            // keyword and date range kept in the session, since Large Mode's own paging links rely on numBegin to keep
-            // them.
-            $first_page_query = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid,
-                'rid' => $rid, 'raid' => $raid, 'tld' => $tld, 'segid' => $segid, 'is_active' => $is_active,
-                'result_limit' => $result_limit, 'sort_by' => $sort_by, 'search_for' => $_SESSION['s_search_for']);
-            if ($list_has_range) $first_page_query['daterange'] = $_SESSION['s_start_date'] . ' - ' . $_SESSION['s_end_date'];
-            echo $layout->emptyState('bi-arrow-left-circle', _('That page is past the end of the list'), _('There are fewer domains than when this page was linked.'), '', '', '/domains/index.php?' . http_build_query($first_page_query), _('Go to the first page'));
-
-        } elseif (!$domain_filters_active) {
+        if (!$domain_filters_active) {
 
             $live_domains = (int) $pdo->query("SELECT count(*) FROM domains WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')")->fetchColumn();
 
@@ -2690,8 +2161,6 @@ if ($result) {
 <?php require_once DIR_INC . '/layout/footer.inc.php';  //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
 <script src="<?php echo $layout->assetUrl('js/filter-auto-apply.js'); ?>"></script>
-<?php if ($_SESSION['s_system_large_mode'] != '1') { ?>
 <script src="<?php echo $layout->assetUrl('js/domain-list.js'); ?>"></script>
-<?php } ?>
 </body>
 </html>

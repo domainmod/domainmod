@@ -711,7 +711,7 @@ $status_names = array('0' => _('Expired'), '1' => _('Active'), '3' => _('Pending
 /*
  * The filter toolbar's state (DomainMOD\FilterToolbar, shared with the Domains list): every active filter with its
  * plain-text name for its chip. Each id filter's name is read with one small query, only when that filter is on, and an
- * id that no longer exists still gets a chip. The SSL list has no Large Mode, so nothing else is carried.
+ * id that no longer exists still gets a chip.
  */
 $filter_toolbar = new DomainMOD\FilterToolbar('ssl-filters', $web_root . '/ssl/index.php', $web_root . '/ssl/index.php');
 $filter_name = function ($sql, $id) use ($pdo) {

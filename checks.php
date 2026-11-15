@@ -95,7 +95,6 @@ $result = $login->getSystemSettings();
 $_SESSION['s_system_full_url'] = $result->full_url;
 $_SESSION['s_system_upgrade_available'] = $result->upgrade_available;
 $_SESSION['s_system_email_address'] = $result->email_address;
-$_SESSION['s_system_large_mode'] = $result->large_mode;
 $_SESSION['s_system_default_category_domains'] = $result->default_category_domains;
 $_SESSION['s_system_default_category_ssl'] = $result->default_category_ssl;
 $_SESSION['s_system_default_dns'] = $result->default_dns;

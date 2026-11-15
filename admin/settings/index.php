@@ -48,7 +48,6 @@ $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST
 $new_expiration_days = (int) ($_POST['new_expiration_days'] ?? 0);
 $new_email_signature = (int) ($_POST['new_email_signature'] ?? 0);
 $new_currency_converter = isset($_POST['new_currency_converter']) ? $sanitize->text($_POST['new_currency_converter']) : '';
-$new_large_mode = (int) ($_POST['new_large_mode'] ?? 0);
 $new_use_smtp = (int) ($_POST['new_use_smtp'] ?? 0);
 $new_smtp_server = isset($_POST['new_smtp_server']) ? $sanitize->text($_POST['new_smtp_server']) : '';
 $new_smtp_protocol = $_POST['new_smtp_protocol'] ?? '';
@@ -65,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
         UPDATE settings
         SET full_url = :new_full_url,
             email_address = :new_email_address,
-            large_mode = :new_large_mode,
             use_smtp = :new_use_smtp,
             smtp_server = :new_smtp_server,
             smtp_protocol = :new_smtp_protocol,
@@ -81,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
             update_time = :timestamp");
     $stmt->bindValue('new_full_url', $new_full_url, PDO::PARAM_STR);
     $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
-    $stmt->bindValue('new_large_mode', $new_large_mode, PDO::PARAM_INT);
     $stmt->bindValue('new_use_smtp', $new_use_smtp, PDO::PARAM_INT);
     $stmt->bindValue('new_smtp_server', $new_smtp_server, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_protocol', $new_smtp_protocol, PDO::PARAM_STR);
@@ -100,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 
     $_SESSION['s_system_full_url'] = $new_full_url;
     $_SESSION['s_system_email_address'] = $new_email_address;
-    $_SESSION['s_system_large_mode'] = $new_large_mode;
     $_SESSION['s_system_expiration_days'] = $new_expiration_days;
     $_SESSION['s_system_email_signature'] = $new_email_signature;
     $_SESSION['s_system_currency_converter'] = $new_currency_converter;
@@ -122,9 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     } else {
 
         $stmt = $pdo->prepare("
-            SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
-                smtp_email_address, smtp_username, smtp_password, expiration_days, email_signature, currency_converter,
-                debug_mode, local_php_log
+            SELECT full_url, email_address, use_smtp, smtp_server, smtp_protocol, smtp_port, smtp_email_address,
+                smtp_username, smtp_password, expiration_days, email_signature, currency_converter, debug_mode,
+                local_php_log
             FROM settings");
         $stmt->execute();
         $result = $stmt->fetch();
@@ -134,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 
             $new_full_url = $result->full_url;
             $new_email_address = $result->email_address;
-            $new_large_mode = $result->large_mode;
             $new_use_smtp = $result->use_smtp;
             $new_smtp_server = $result->smtp_server;
             $new_smtp_protocol = $result->smtp_protocol;
@@ -181,8 +176,6 @@ echo $form->showDropdownBottom('');
 echo $form->showDropdownTop('new_currency_converter', _('Currency Converter'), _("Although it doesn't happen often, sometimes currency converters can experience downtime. If this happens, and your conversions aren't working properly, try a different source."), '', '');
 echo $form->showDropdownOption('fcra', _('Free Currency Rates API'), $new_currency_converter);
 echo $form->showDropdownBottom('');
-
-echo $form->showSwitch(_('Large Mode') . '', _('If you have a very large database and your main Domains page is loading slowly, enabling Large Mode should fix the issue, at the cost of losing some of the advanced filtering and mobile functionality.'), 'new_large_mode', $new_large_mode, '', '<BR><BR>');
 
 echo $form->showSwitch(_('Debugging Mode') . '', sprintf(_("Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."), SOFTWARE_TITLE), 'new_debug_mode', $new_debug_mode, '', '<BR><BR>');
 
