@@ -221,15 +221,15 @@ class DomainList
     }
 
     /*
-     * The page sizes the list offers, and the default one: the user's preference (only when it's from 1 to 500, as
-     * Display Settings accepts any whole number), then 50, 75, 100, 250, and 500. There's no "All", so no request can
-     * fetch the whole table.
+     * The page sizes the list offers, and the default one: the user's preference (capped at 500, and 50 when it's not
+     * a whole number from 1, as Display Settings accepts any whole number), then 50, 75, 100, 250, and 500. There's no
+     * "All", so no request can fetch the whole table.
      */
     public static function pageSizes($preference)
     {
-        $preference = filter_var($preference, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1,
-            'max_range' => self::MAX_PAGE_SIZE)));
+        $preference = filter_var($preference, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
         if ($preference === false) $preference = 50;
+        $preference = min($preference, self::MAX_PAGE_SIZE);
 
         $sizes = array($preference);
         foreach (array(50, 75, 100, 250, 500) as $size) {
