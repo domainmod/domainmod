@@ -64,6 +64,7 @@ class SchedulerHealthTest extends TestCase
 
     public function testRecordsTheRunInUtc()
     {
+        define('SOFTWARE_VERSION', '4.26.0');
         $statement = $this->createMock(\PDOStatement::class);
         $statement->expects($this->once())->method('bindValue')
             ->with('cron_last_run', $this->matchesRegularExpression('/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/'), \PDO::PARAM_STR);
@@ -81,6 +82,7 @@ class SchedulerHealthTest extends TestCase
 
     public function testAFailedWriteIsLoggedAndDoesNotStopCron()
     {
+        define('SOFTWARE_VERSION', '4.26.0');
         $scheduler = $this->scheduler($this->failingPdo());
         $scheduler->recordCronRun();
 
@@ -90,6 +92,7 @@ class SchedulerHealthTest extends TestCase
 
     public function testAFailedWriteWithAFailingLogGoesToPhpsErrorLog()
     {
+        define('SOFTWARE_VERSION', '4.26.0');
         $scheduler = $this->scheduler($this->failingPdo(), true);
         $scheduler->recordCronRun();
 
@@ -115,6 +118,68 @@ class SchedulerHealthTest extends TestCase
         $this->assertNull($scheduler->getCronLastRun());
         $this->assertSame('off', $scheduler->healthState());
         $this->assertSame(array(), $scheduler->logged);
+    }
+
+    public function testDoesNotRecordTheRunWhileTheUpgradeIsWaiting()
+    {
+        define('SOFTWARE_VERSION', '4.26.0');
+        $pdo = $this->createMock(\PDO::class);
+        $pdo->expects($this->never())->method('prepare');
+        $scheduler = $this->scheduler($pdo, false, '4.25.0');
+        $scheduler->recordCronRun();
+
+        $this->assertSame(array(), $scheduler->logged);
+        $this->assertSame(array(), $scheduler->fallback);
+    }
+
+    // Before the version bump, the code and the database are both at the older version, and the column isn't there yet
+    public function testLeavesTheColumnAloneBeforeTheUpdateThatAddsIt()
+    {
+        define('SOFTWARE_VERSION', '4.25.0');
+        define('DEMO_INSTALLATION', false);
+        $pdo = $this->createMock(\PDO::class);
+        $pdo->expects($this->never())->method('query');
+        $pdo->expects($this->never())->method('prepare');
+        $scheduler = $this->scheduler($pdo, false, '4.25.0');
+
+        $this->assertNull($scheduler->getCronLastRun());
+        $this->assertSame('off', $scheduler->healthState());
+        $scheduler->recordCronRun();
+        $this->assertSame(array(), $scheduler->logged);
+        $this->assertSame(array(), $scheduler->fallback);
+    }
+
+    public function testReadsTheLastRunInALaterVersion()
+    {
+        define('SOFTWARE_VERSION', '4.27.0');
+        $scheduler = $this->scheduler($this->pdoReturning(array('2026-11-15 23:50:00')), false, '4.27.0');
+
+        $this->assertSame('2026-11-15 23:50:00', $scheduler->getCronLastRun());
+    }
+
+    public static function versionCases()
+    {
+        return array(
+            'the release before' => array('4.25.0', false),
+            'a two-digit patch before' => array('4.25.10', false),
+            'the release that adds it' => array('4.26.0', true),
+            'a patch after' => array('4.26.01', true),
+            'a later major version' => array('5.0.0', true),
+            'empty' => array('', false),
+            'no version read' => array(false, false),
+            'null' => array(null, false),
+        );
+    }
+
+    #[DataProvider('versionCases')]
+    public function testKnowsWhichDatabaseVersionsHaveTheColumn($db_version, $expected)
+    {
+        $this->assertSame($expected, Scheduler::hasCronLastRun($db_version));
+    }
+
+    public function testTheColumnArrivesIn4260()
+    {
+        $this->assertSame('4.26.0', Scheduler::CRON_LAST_RUN_DB_VERSION);
     }
 
     public function testAFailedReadShowsNothing()

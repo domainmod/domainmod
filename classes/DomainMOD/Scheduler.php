@@ -29,6 +29,9 @@ class Scheduler
      */
     const CRON_STALE_SECONDS = 7200;
 
+    // The database version whose update adds settings.cron_last_run, the record of cron.php's last run
+    const CRON_LAST_RUN_DB_VERSION = '4.26.0';
+
     public $deeb;
     public $time;
 
@@ -287,6 +290,8 @@ class Scheduler
     {
         try {
 
+            if (!$this->canUseCronLastRun()) return;
+
             $stmt = $this->deeb->cnxx->prepare("
                 UPDATE settings
                 SET cron_last_run = :cron_last_run");
@@ -301,14 +306,14 @@ class Scheduler
     }
 
     /*
-     * When cron.php last ran (UTC, 1970-01-01 if it never has), or null when it can't be read: while the database upgrade
-     * is waiting (new code can arrive before the column it reads), or when the read fails. Nothing else reads the column.
+     * When cron.php last ran (UTC, 1970-01-01 if it never has), or null when it can't be read: before the database update
+     * that adds the column (see canUseCronLastRun()), or when the read fails. Nothing else reads the column.
      */
     public function getCronLastRun()
     {
         try {
 
-            if ($this->getDbVersion() !== SOFTWARE_VERSION) return null;
+            if (!$this->canUseCronLastRun()) return null;
 
             $last_run = $this->deeb->cnxx->query("
                 SELECT cron_last_run
@@ -414,7 +419,25 @@ class Scheduler
         return '';
     }
 
-    // The database's version, so the column isn't read before the upgrade that adds it (System::getDbVersion())
+    /*
+     * Whether a database at this version has settings.cron_last_run. New code can arrive before the database update that
+     * adds the column (and, before the version bump, SOFTWARE_VERSION is still the older version too), so the column is
+     * used only once the database itself is at that version or later.
+     */
+    public static function hasCronLastRun($db_version)
+    {
+        return is_string($db_version) && $db_version !== ''
+            && version_compare($db_version, self::CRON_LAST_RUN_DB_VERSION, '>=');
+    }
+
+    // Whether the column can be read and written now: the database has it, and no database upgrade is waiting
+    protected function canUseCronLastRun()
+    {
+        $db_version = $this->getDbVersion();
+        return $db_version === SOFTWARE_VERSION && self::hasCronLastRun($db_version);
+    }
+
+    // The database's version, so the column isn't used before the update that adds it (System::getDbVersion())
     protected function getDbVersion()
     {
         return (new System())->getDbVersion();
