@@ -211,6 +211,13 @@ a:hover {
 a.btn:hover {
     text-decoration: none;
 }
+/* The sidebar menu underlines only an item's words on hover, not its icon */
+.app-sidebar .sidebar-menu .nav-link:hover {
+    text-decoration: none;
+}
+.app-sidebar .sidebar-menu .nav-link:hover > p {
+    text-decoration: underline;
+}
 /* Links in the footer's sentence and in page introductions (callouts) are underlined, since their colour is too
    close to the text around them to tell them apart */
 .app-footer a,
