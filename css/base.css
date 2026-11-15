@@ -1024,3 +1024,10 @@ div.dt-container > div.bottom {
         flex-grow: 0;
     }
 }
+
+/* The gap after each button from Layout::showButton(), which used to be a trailing non-breaking space (a link wrapped
+   around the button underlined it on hover). A logical margin, so it's on the correct side in right-to-left languages. */
+.domainmod-css-button {
+    /* About the width of the old space, so the gaps between buttons stay the same */
+    margin-inline-end: .2em;
+}

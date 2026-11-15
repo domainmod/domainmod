@@ -126,7 +126,8 @@ class System
         $extensions = array('pdo_mysql' => 'PDO',
                             'curl' => 'cURL',
                             'openssl' => 'OpenSSL',
-                            'gettext' => 'gettext');
+                            'gettext' => 'gettext',
+                            'mysqli' => 'MySQLi');
 
         foreach ($extensions as $key => $value) {
 

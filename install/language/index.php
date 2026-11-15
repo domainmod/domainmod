@@ -68,15 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $layout->bodyTag('install'); ?>
 <?php require_once DIR_INC . '/layout/header-install.inc.php'; ?>
 <?php echo _("We've tried our best to automatically determine your language, but if for some reason we were wrong, please select it below."); ?><BR>
-<BR>
-<?php echo sprintf(_("Multilingual support is very new, so please bear with us while we get new languages added. And also while we fix our auto-generated translations, some of which are probably pretty bad."), '<strong>', '</strong>'); ?><BR>
 <?php
 echo $form->showFormTop('');
 echo $form->showDropdownTop('new_language', '', '', '', '');
 echo $form->showDropdownOption('ar_SA.UTF-8', 'عربي', $_ENV['LANG']);
 echo $form->showDropdownOption('bn_BD.UTF-8', 'বাংলা', $_ENV['LANG']);
 echo $form->showDropdownOption('zh_CN.UTF-8', '中文（简体）', $_ENV['LANG']);
-echo $form->showDropdownOption('zh_TW.UTF-8', '中文（繁體）)', $_ENV['LANG']);
+echo $form->showDropdownOption('zh_TW.UTF-8', '中文（繁體）', $_ENV['LANG']);
 echo $form->showDropdownOption('de_DE.UTF-8', 'Deutsch', $_ENV['LANG']);
 echo $form->showDropdownOption('en_CA.UTF-8', 'English (CA)', $_ENV['LANG']);
 echo $form->showDropdownOption('en_US.UTF-8', 'English (US)', $_ENV['LANG']);

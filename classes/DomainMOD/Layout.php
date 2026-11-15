@@ -31,7 +31,9 @@ class Layout
 
     public function showButton($button_type, $button_text)
     {
-        ob_start(); ?><button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger domainmod-css-button"><?php echo $button_text; ?></button>&nbsp;<?php
+        // The gap after the button is a margin (css/base.css) rather than a trailing space, which a link wrapped around
+        // the button would underline on hover
+        ob_start(); ?><button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger domainmod-css-button"><?php echo $button_text; ?></button><?php
         return ob_get_clean();
     }
 
@@ -308,13 +310,15 @@ class Layout
         return ob_get_clean();
     }
 
-    public function expandableBoxTop($title, $url, $url_text)
+    // $heading_level sets the title's heading (h3 by default), so a box under an h3 can use h4
+    public function expandableBoxTop($title, $url, $url_text, $heading_level = 3)
     {
+        $heading_level = (int) $heading_level;
         ob_start(); ?>
 
         <div class="card card-outline card-danger collapsed-card">
             <div class="card-header">
-                <h3 class="card-title">
+                <h<?php echo $heading_level; ?> class="card-title">
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" aria-label="<?php echo _('Show or hide'); ?>">
                             <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
@@ -322,7 +326,7 @@ class Layout
                         </button>&nbsp;&nbsp;
                         <?php echo $title; ?><?php if ($url != '') { ?>&nbsp;&nbsp;[<a href='<?php echo $url; ?>'><?php echo $url_text; ?></a>]<?php } ?>
                     </div>
-                </h3>
+                </h<?php echo $heading_level; ?>>
                 <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
