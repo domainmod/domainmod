@@ -23,7 +23,7 @@ namespace DomainMOD;
 
 class Reporting
 {
-    const AT_RISK_DAYS = 30; // At-Risk Domains always looks this far ahead, separately from the Expiration Days setting
+    const AT_RISK_DAYS = 30; // The At-Risk reports always look this far ahead, separately from the Expiration Days setting
 
     public function getRangeString($column, $new_start_date, $new_end_date)
     {
@@ -62,6 +62,40 @@ class Reporting
             WHERE d.active NOT IN ('0', '10')
               AND d.expiry_date < :end_date
             ORDER BY d.expiry_date, d.domain");
+        $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
+        $stmt->bindValue('end_date', $end_date, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /*
+     * The live SSL certificates (not Expired or status 10) expiring before $end_date (YYYY-MM-DD, not included), overdue
+     * ones included, for SSL Upcoming Renewals and SSL At-Risk Certificates: the SSL twin of renewalDomains(). Each row
+     * also carries its domain's id, name, expiry date, and status, for the At-Risk report's domain checks. Fees and
+     * conversion rates are left joins, so a certificate with no fee, or whose fee's currency has no rate for the user,
+     * is still listed with has_fee and has_rate saying why. Sorted by expiry date.
+     */
+    public function renewalCerts($end_date)
+    {
+        $pdo = Database::getInstance()->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT sslc.id, sslc.name, sslc.expiry_date, sslp.name AS provider_name, o.name AS owner_name,
+                sslpa.username, sslcf.type, d.id AS domain_id, d.domain, d.expiry_date AS domain_expiry_date,
+                d.active AS domain_active, (f.id IS NOT NULL) AS has_fee, (cc.id IS NOT NULL) AS has_rate,
+                sslc.total_cost * cc.conversion AS converted_cost
+            FROM ssl_certs AS sslc
+            LEFT JOIN ssl_providers AS sslp ON sslc.ssl_provider_id = sslp.id
+            LEFT JOIN ssl_accounts AS sslpa ON sslc.account_id = sslpa.id
+            LEFT JOIN owners AS o ON sslc.owner_id = o.id
+            LEFT JOIN ssl_cert_types AS sslcf ON sslc.type_id = sslcf.id
+            LEFT JOIN domains AS d ON sslc.domain_id = d.id
+            LEFT JOIN ssl_fees AS f ON sslc.fee_id = f.id
+            LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
+            WHERE sslc.active NOT IN ('0', '10')
+              AND sslc.expiry_date < :end_date
+            ORDER BY sslc.expiry_date, sslc.name");
         $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
         $stmt->bindValue('end_date', $end_date, \PDO::PARAM_STR);
         $stmt->execute();
@@ -132,10 +166,46 @@ class Reporting
     }
 
     /*
-     * The renewal chart's figures as a table (from renewalMonths()), for screen readers and people without JavaScript:
-     * each bar's label, its number of domains, and its cost, noting any domains left out of the cost
+     * The SSL At-Risk Certificates from renewalCerts() rows: every certificate that's overdue or expires from $today
+     * through $risk_end (the next 30 days). DomainMOD doesn't record whether a certificate renews itself, so every
+     * certificate in the window is listed. Each row gains its reasons: overdue, expiring (only when not overdue),
+     * domain (with domain_problem naming what's wrong with its domain), and nofee.
      */
-    public function renewalMonthsTable($months)
+    public function atRiskCerts($rows, $today, $risk_end)
+    {
+        $listed = array();
+        foreach ($rows as $row) {
+            if ($row->expiry_date > $risk_end) continue;
+            $reasons = array();
+            if ($row->expiry_date < $today) {
+                $reasons[] = 'overdue';
+            } else {
+                $reasons[] = 'expiring';
+            }
+            $row->domain_problem = '';
+            if ($row->domain_id === null) {
+                $row->domain_problem = 'missing';
+            } elseif ($row->domain_active == '0') {
+                $row->domain_problem = 'inactive';
+            } elseif ($row->domain_expiry_date < $today) {
+                $row->domain_problem = 'expired';
+            } elseif ($row->domain_expiry_date < $row->expiry_date) {
+                $row->domain_problem = 'first';
+            }
+            if ($row->domain_problem != '') $reasons[] = 'domain';
+            if (!$row->has_fee || !$row->has_rate) $reasons[] = 'nofee';
+            $row->reasons = $reasons;
+            $listed[] = $row;
+        }
+        return $listed;
+    }
+
+    /*
+     * The renewal chart's figures as a table (from renewalMonths()), for screen readers and people without JavaScript:
+     * each bar's label, its number of domains (or SSL certificates, when $item is 'certs'), and its cost, noting any
+     * left out of the cost
+     */
+    public function renewalMonthsTable($months, $item = 'domains')
     {
         $currency = new Currency();
         ob_start(); ?>
@@ -144,7 +214,7 @@ class Reporting
             <thead>
             <tr>
                 <th scope="col"><?php echo _('Month'); ?></th>
-                <th scope="col" class="text-end"><?php echo _('Domains'); ?></th>
+                <th scope="col" class="text-end"><?php echo $item == 'certs' ? _('SSL Certificates') : _('Domains'); ?></th>
                 <th scope="col" class="text-end"><?php echo _('Renewal Cost'); ?></th>
             </tr>
             </thead>
@@ -156,7 +226,12 @@ class Reporting
                     <td class="text-end"><?php echo number_format($month['count']); ?></td>
                     <td class="text-end"><?php echo $currency->format($month['cost'], $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?><?php
                     if ($month['missing'] > 0) { ?>
-                        <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s domain has no fee or rate', '%s domains have no fee or rate', $month['missing']), number_format($month['missing'])); ?></span><?php
+                        <br><span class="small text-body-secondary"><?php
+                        if ($item == 'certs') {
+                            echo sprintf(ngettext('%s SSL certificate has no fee or rate', '%s SSL certificates have no fee or rate', $month['missing']), number_format($month['missing']));
+                        } else {
+                            echo sprintf(ngettext('%s domain has no fee or rate', '%s domains have no fee or rate', $month['missing']), number_format($month['missing']));
+                        } ?></span><?php
                     } ?></td>
                 </tr><?php
 

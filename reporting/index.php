@@ -58,7 +58,10 @@ $report = $_REQUEST['report'] ?? '';
     // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }
     echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info'); ?>
 </div>
-<?php // Round 3's SSL report tiles (SSL Upcoming Renewals and SSL At-Risk Certificates) go in a second row here ?>
+<div class="row g-3 mt-1"><?php
+    echo $layout->landingTile('/reporting/ssl/upcoming-renewals.php', _('SSL Upcoming Renewals'), _('What SSL renewals will cost, month by month'), 'bi-calendar-event', 'danger');
+    echo $layout->landingTile('/reporting/ssl/at-risk.php', _('SSL At-Risk Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning'); ?>
+</div>
 <div class="row g-3 mt-1"><?php
     echo $layout->landingLinks(_('Domain Costs'), array(
         array('/reporting/domains/cost-by-category.php', _('Category'), _('Domain Cost by Category')),
