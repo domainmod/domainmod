@@ -319,6 +319,32 @@ class Layout
     }
 
     /*
+     * A titled card that groups some of an edit form's fields (the edit domain and SSL certificate pages): a section
+     * named by its heading, with the fields in two columns on wider screens and one on phones. $body is the fields'
+     * markup, already built, so a card whose fields aren't drawn (a menu whose lookup table is empty) is left out
+     * entirely rather than shown empty. $title is already translated and is escaped here. $id names the section's
+     * heading. $heading_level is 2 by default, a section under the page's h1, and the title looks the same at any level.
+     */
+    public function formSection($title, $id, $body, $heading_level = 2)
+    {
+        if (trim($body) === '') return '';
+        $heading_level = max(2, min(6, (int) $heading_level));
+        $heading_id = 'domainmod-section-' . preg_replace('/[^a-z0-9-]/', '-', strtolower($id));
+
+        ob_start(); ?>
+
+        <section class="card domainmod-form-section" aria-labelledby="<?php echo $heading_id; ?>">
+            <div class="card-header">
+                <h<?php echo $heading_level; ?> class="card-title h5 mb-0" id="<?php echo $heading_id; ?>"><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h<?php echo $heading_level; ?>>
+            </div>
+            <div class="card-body domainmod-form-section-grid"><?php echo $body; ?>
+            </div>
+        </section><?php
+
+        return ob_get_clean();
+    }
+
+    /*
      * A page's delete action in its own "Danger Zone" section at the bottom of the page: a heading, then a box with a
      * soft red tint and a thin red border, with what the delete does on the left and a DELETE button on the right
      * (under the text on phones), which opens the same confirmation modal as deleteButton(). $action and $description

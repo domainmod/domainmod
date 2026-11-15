@@ -627,7 +627,43 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
 
 echo $form->showFormTop('');
 echo '<div class="mb-3 fs-4 fw-semibold lh-sm text-break">' . htmlentities($new_domain, ENT_QUOTES, 'UTF-8') . '</div>';
+// The fields in titled cards (Greg's choice "C", 2026-11-14). Each card's fields are built first, so a card whose
+// menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is a
+// matter of moving its lines between these blocks.
+ob_start();
 echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name ASC")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
+
+    }
+
+    echo $form->showDropdownBottom('', 'new_cat_id');
+
+}
+
+echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('10', _('Sold'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
+echo $form->showDropdownBottom('');
+
+echo $layout->formSection(_('Details'), 'details', ob_get_clean());
+
+ob_start();
 echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $result = $pdo->query("
@@ -651,6 +687,12 @@ if ($result) {
 
 }
 
+// Each switch is one grid item, with the same spacing as the other fields
+echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
+echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
+echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
+
+ob_start();
 $result = $pdo->query("
     SELECT id, `name`
     FROM dns
@@ -707,54 +749,25 @@ if ($result) {
 
 }
 
-$result = $pdo->query("
-    SELECT id, `name`
-    FROM categories
-    ORDER BY name ASC")->fetchAll();
+echo $layout->formSection(_('Hosting'), 'hosting', ob_get_clean());
 
-if ($result) {
-
-    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
-
-    }
-
-    echo $form->showDropdownBottom('', 'new_cat_id');
-
-}
-
-echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
-echo $form->showDropdownOption('1', _('Active'), $new_active);
-echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
-echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
-echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
-echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
-echo $form->showDropdownOption('10', _('Sold'), $new_active);
-echo $form->showDropdownOption('0', _('Expired'), $new_active);
-echo $form->showDropdownBottom('');
-
-echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
-
-echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
-
+ob_start();
 if ($new_notes != '') {
     $subtext = '[<a target="_blank" href="notes.php?did=' . $did . '">' . DomainMOD\Format::toLower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
 
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
+
+ob_start();
 $result = $pdo->query("
     SELECT field_name
     FROM domain_fields
     ORDER BY type_id, `name`")->fetchAll();
 
-if ($result) { ?>
-
-    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
+if ($result) {
 
     $count = 0;
 
@@ -803,7 +816,7 @@ if ($result) { ?>
 
             } elseif ($row->type_id == "3") { // Text Area
 
-                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '', '');
+                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '<div class="domainmod-span-all">', '</div>');
 
             } elseif ($row->type_id == "4") { // Date
 
@@ -824,6 +837,8 @@ if ($result) { ?>
     }
 
 }
+
+echo $layout->formSection(_('Custom Fields'), 'custom-fields', ob_get_clean());
 
 echo $form->showInputHidden('did', $did);
 echo $form->showInputHidden('new_domain', $new_domain);

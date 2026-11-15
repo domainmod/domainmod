@@ -1220,6 +1220,42 @@ div.dt-container > div.bottom {
     white-space: nowrap;
 }
 
+/* The edit domain and SSL certificate pages' titled cards (Layout::formSection()): each card at the forms' width, its
+   fields in two columns from tablet width up and one on phones, the notes and other text areas across both columns.
+   Grid placement follows the page's direction, so the columns swap by themselves in right-to-left languages. */
+.domainmod-form-section {
+    margin-block-end: 1rem;
+}
+/* WebKit on phones widened the page by a few dozen pixels from inside the card (a menu's width settling after load), so
+   on phones the card clips sideways only. Phones use the native date field, and on wider screens the date picker,
+   which opens inside the card, isn't clipped. */
+@media (max-width: 767.98px) {
+    .domainmod-form-section {
+        overflow-x: clip;
+    }
+}
+.domainmod-form-section-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    column-gap: 1.5rem;
+    /* Every field keeps its own bottom margin, so the card body drops its bottom padding instead, and a last row of two
+       fields ends the same distance from the card's edge as a last row of one */
+    padding-block-end: 0;
+}
+@media (min-width: 768px) {
+    .domainmod-form-section-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+.domainmod-span-all {
+    grid-column: 1 / -1;
+}
+/* A grid item can shrink below its content's width, so a menu with a long option (a long domain name) stays inside its
+   column instead of pushing the card wider */
+.domainmod-form-section-grid > * {
+    min-width: 0;
+}
+
 /* The gap after each button from Layout::showButton(), which used to be a trailing non-breaking space (a link wrapped
    around the button underlined it on hover). A logical margin, so it's on the correct side in right-to-left languages. */
 .domainmod-css-button {

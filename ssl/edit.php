@@ -438,8 +438,11 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
+// The fields in titled cards, the same way as the edit domain page. Each card's fields are built first, so a card
+// whose menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is
+// a matter of moving its lines between these blocks.
+ob_start();
 echo $form->showInputText('new_name', _('Host') . ' / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -464,6 +467,36 @@ if ($result) {
 
 }
 
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY `name`")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
+
+    }
+
+    echo $form->showDropdownBottom('', 'new_cat_id');
+
+}
+
+echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
+echo $form->showDropdownBottom('');
+
+echo $layout->formSection(_('Details'), 'details', ob_get_clean());
+
+ob_start();
 $result = $pdo->query("
     SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
     FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
@@ -503,6 +536,10 @@ if ($result) {
     echo $form->showDropdownBottom('', 'new_type_id');
 }
 
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $layout->formSection(_('Certificate'), 'certificate', ob_get_clean());
+
+ob_start();
 $result = $pdo->query("
     SELECT id, ip, `name`
     FROM ip_addresses
@@ -521,48 +558,25 @@ if ($result) {
     echo $form->showDropdownBottom('', 'new_ip_id');
 }
 
-$result = $pdo->query("
-    SELECT id, `name`
-    FROM categories
-    ORDER BY `name`")->fetchAll();
+echo $layout->formSection(_('Hosting'), 'hosting', ob_get_clean());
 
-if ($result) {
-
-    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
-
-    }
-
-    echo $form->showDropdownBottom('', 'new_cat_id');
-
-}
-
-echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
-echo $form->showDropdownOption('1', _('Active'), $new_active);
-echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
-echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
-echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
-echo $form->showDropdownOption('0', _('Expired'), $new_active);
-echo $form->showDropdownBottom('');
-
+ob_start();
 if ($new_notes != '') {
     $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . DomainMOD\Format::toLower(_('View Full Notes')) . '</a>]';
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
 
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
+
+ob_start();
 $result = $pdo->query("
     SELECT field_name
     FROM ssl_cert_fields
     ORDER BY type_id, `name`")->fetchAll();
 
-if ($result) { ?>
-
-    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
+if ($result) {
 
     $count = 0;
 
@@ -611,7 +625,7 @@ if ($result) { ?>
 
             } elseif ($row->type_id == "3") { // Text Area
 
-                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '', '');
+                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '<div class="domainmod-span-all">', '</div>');
 
             } elseif ($row->type_id == "4") { // Date
 
@@ -632,6 +646,8 @@ if ($result) { ?>
     }
 
 }
+
+echo $layout->formSection(_('Custom Fields'), 'custom-fields', ob_get_clean());
 
 echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton(_('Save'), '', '');
