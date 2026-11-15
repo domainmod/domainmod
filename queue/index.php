@@ -673,7 +673,7 @@ if (!$result_domains) {
 
 } else { ?>
 
-    <h3><?php echo _('Domain Queue'); ?></h3>
+    <h3<?php echo $result_lists ? ' class="mt-5"' : ''; ?>><?php echo _('Domain Queue'); ?></h3>
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>

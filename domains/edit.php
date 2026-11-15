@@ -800,7 +800,7 @@ if ($dw_has_accounts === 1) { ?>
 
 if ($dw_has_zones === 1) { ?>
 
-    <h4><?php echo _('DNS Zones & Records'); ?></h4><?php
+    <h4<?php echo $dw_has_accounts === 1 ? ' class="mt-5"' : ''; ?>><?php echo _('DNS Zones & Records'); ?></h4><?php
 
     $stmt = $pdo->prepare("
         SELECT s.id AS dw_server_id, s.name
