@@ -1202,3 +1202,31 @@ div.dt-container > div.bottom {
 .domainmod-system-info .domainmod-requirements-fix {
     font-style: italic;
 }
+
+/* The CSV Importer (domains/csv-importer/): two numbered cards, side by side on wider screens and stacked on phones,
+   with the page's text kept to a readable width */
+.domainmod-csv-importer {
+    max-width: 60rem;
+}
+.domainmod-csv-importer-step {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    margin-bottom: .75rem;
+}
+.domainmod-csv-importer-number {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    font-size: .875rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: var(--bs-primary);
+}
+.domainmod-csv-importer ul {
+    padding-inline-start: 1.25rem;
+}

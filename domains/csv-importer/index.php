@@ -129,27 +129,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<?php echo $layout->calloutTop(); ?>
-<?php
-echo sprintf(_('This page allows you to import all of your domain data into %s using a CSV template.'), SOFTWARE_TITLE);
-echo '&nbsp;'; echo _('This is a very new feature (i.e. experimental), but all testing so far has gone incredibly well, and I\'ve personally imported many test CSV files with 100% accuracy.'); ?>&nbsp;<?php echo sprintf(_('It\'s recommended that you perform a full backup of your existing %s database before attempting a CSV Import, just in case something goes wrong and you need to recover.'), SOFTWARE_TITLE); ?><BR>
-<BR><?php echo _('For more information on how to use the CSV Importer, please see our'); ?>&nbsp;<a href="https://domainmod.org/docs/userguide/csv-importer/"><?php echo _('User Guide'); ?></a>.
-<?php echo $layout->calloutBottom(); ?>
-
-<h3><?php echo _('Download CSV Template'); ?></h3>
-<a href='../../import-template-sample.csv'><?php echo _('Click here'); ?></a> <?php echo _('to download the CSV Import Template.'); ?> <?php echo sprintf(_('You can import as little or as much domain information as you want.')); ?>&nbsp;<?php echo sprintf(_('Technically you can fill in nothing but a list of domains, and it will import just fine, but DomainMOD will need to create a bunch of generic assets for you. It\'s ok though, even if you go this route it\'s pretty easy to update the information that %s creates for you.'), SOFTWARE_TITLE); ?>
-<BR><BR><?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo _('The columns in the CSV Import Template must remain as-is. If there are not the exact number of columns, or the columns are not in the correct order, the import will fail.'); ?>
-
-<BR><BR><h3><?php echo _('Import CSV Template'); ?></h3>
-<form enctype="multipart/form-data" action="" method="post">
-<?php echo $form->showCsrfField(); ?>
-    <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Note')) . ': '); ?><?php echo sprintf(_('This will only insert <strong>new</strong> domains into your %s database, existing domains will be skipped.'), SOFTWARE_TITLE); ?><BR><BR>
-    <input type="file" name="file"><BR><BR>
-    <?php echo _('Please be patient when submitting your CSV file. Depending on the amount of data, it may take a minute to process.'); ?><BR>
-    <BR>
-    <?php echo $layout->showButton('submit', _('Import CSV File')); ?>
-</form>
-<BR>
+<div class="domainmod-csv-importer">
+<p><?php echo _('Add domains in bulk from a spreadsheet. Fill in the template, then import it.'); ?> <?php echo sprintf(_('See %sCSV Importer%s in the User Guide.'), '<a href="https://domainmod.org/docs/userguide/csv-importer/">', '</a>'); ?></p>
+<div class="callout callout-warning">
+    <strong><?php echo _('Back up first.'); ?></strong> <?php
+    // Only administrators can take a backup, so others are pointed to one instead of a page they can't open
+    if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) {
+        echo sprintf(_('An import adds many records at once, so take a %sbackup%s before you start.'), '<a href="' . WEB_ROOT . '/admin/backup/">', '</a>');
+    } else {
+        echo _('An import adds many records at once, so ask an administrator to take a backup before you start.');
+    } ?>
+</div>
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <div class="card card-outline card-secondary h-100 mb-0">
+            <div class="card-body">
+                <h2 class="h5 domainmod-csv-importer-step"><span class="domainmod-csv-importer-number" aria-hidden="true">1</span><span class="visually-hidden"><?php echo sprintf(_('Step %1$s of %2$s:'), 1, 2); ?> </span><?php echo _('Download the Template'); ?></h2>
+                <ul>
+                    <li><?php echo sprintf(_('Fill in as much or as little as you like. A list of domain names on its own works, and %s creates the rest for you to edit later.'), SOFTWARE_TITLE); ?></li>
+                    <li><?php echo _('Keep the columns as they are, in the same order.'); ?></li>
+                </ul>
+                <a href="../../import-template-sample.csv" class="btn btn-outline-secondary"><i class="bi bi-download" aria-hidden="true"></i> <?php echo _('Download Template'); ?></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card card-outline card-secondary h-100 mb-0">
+            <div class="card-body">
+                <h2 class="h5 domainmod-csv-importer-step"><span class="domainmod-csv-importer-number" aria-hidden="true">2</span><span class="visually-hidden"><?php echo sprintf(_('Step %1$s of %2$s:'), 2, 2); ?> </span><?php echo _('Import Your File'); ?></h2>
+                <form enctype="multipart/form-data" action="" method="post" class="domainmod-csv-importer-form" data-busy-text="<?php echo htmlspecialchars(_('Importing…'), ENT_QUOTES, 'UTF-8'); ?>">
+                    <?php echo $form->showCsrfField(); ?>
+                    <label class="form-label" for="domainmod-csv-file"><?php echo _('CSV File'); ?></label>
+                    <input type="file" class="form-control mb-2" name="file" id="domainmod-csv-file" accept=".csv,text/csv" aria-describedby="domainmod-csv-file-help">
+                    <p class="small text-body-secondary" id="domainmod-csv-file-help"><?php echo sprintf(_('Only new domains are added. Domains already in %s are skipped.'), SOFTWARE_TITLE); ?> <?php echo _('A large file can take a minute.'); ?></p>
+                    <?php echo $layout->showButton('submit', '<i class="bi bi-upload" aria-hidden="true"></i> ' . _('Import CSV File')); ?>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/csv-importer.js'); ?>"></script>
 </body>
 </html>
