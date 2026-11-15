@@ -32,11 +32,16 @@ class Form
     // Whether the first field with a mistake has already been given the focus on this page
     public static $error_focus_used = false;
 
+    // The fields whose mistakes have been shown under them (see errorFeedback()), so showFormBottom() can show the rest
+    public static $field_errors_shown = array();
+
     /*
      * Records a mistake in a field ($names is one field name, or several when one message covers more than one field,
-     * such as two blank passwords), so the field shows it under itself, and adds the message to the page's error message
-     * at the top once, as the pages did before. $replace sets the top message to just this one, for the pages that
-     * replace it rather than add to it.
+     * such as two blank passwords), so the field shows it under itself. Each message shows once, under its field, so the
+     * page's error message at the top gets one line saying how many fields are marked ("Fix the 3 fields marked
+     * below."), kept first and updated as more fields are added. Messages that aren't about a field stay in the top
+     * message after it. $replace sets the top message to just the summary, for the pages that replace it rather than
+     * add to it.
      */
     public function addFieldError($names, $message, $replace = false)
     {
@@ -44,11 +49,20 @@ class Form
             self::$field_errors[$name][] = $message;
         }
 
+        $count = count(self::$field_errors);
+        $summary = sprintf(ngettext('Fix the field marked below.', 'Fix the %s fields marked below.', $count), number_format($count)) . '<BR>';
+
         if ($replace) {
-            $_SESSION['s_message_danger'] = $message;
+            $_SESSION['s_message_danger'] = $summary;
         } else {
-            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . $message . '<BR>';
+            // The earlier summary comes out wherever it is, and the new one goes first. The last one is kept in the
+            // session alongside the message, so one left over from an earlier request comes out too.
+            $current = $_SESSION['s_message_danger'] ?? '';
+            $previous = $_SESSION['s_field_error_summary'] ?? '';
+            if ($previous !== '') $current = str_replace($previous, '', $current);
+            $_SESSION['s_message_danger'] = $summary . $current;
         }
+        $_SESSION['s_field_error_summary'] = $summary;
     }
 
     // A field's id, made from its name, for its label's "for" and its error message
@@ -92,6 +106,7 @@ class Form
     {
         if (empty(self::$field_errors[$name])) return '';
 
+        self::$field_errors_shown[$name] = true;
         $id = $id != '' ? $id : $this->fieldId($name);
         $messages = array_map(function ($message) {
             return htmlspecialchars(strip_tags($message), ENT_QUOTES, 'UTF-8', false);
@@ -117,9 +132,29 @@ class Form
         return $csrf->field();
     }
 
+    /*
+     * The end of a form. The top of the page only says how many fields have mistakes (see addFieldError()), so any
+     * mistake whose field wasn't drawn with its message (such as a menu left out because it has nothing to choose
+     * from) is spelled out here instead, at the bottom of the form.
+     */
     public function showFormBottom($after)
     {
-        ob_start(); ?>
+        $unshown = array();
+        foreach (self::$field_errors as $name => $messages) {
+            if (empty(self::$field_errors_shown[$name])) {
+                foreach ($messages as $message) {
+                    $unshown[] = htmlspecialchars(strip_tags($message), ENT_QUOTES, 'UTF-8', false);
+                }
+                // Shown now, so a second form on the page doesn't repeat it
+                self::$field_errors_shown[$name] = true;
+            }
+        }
+        $unshown = array_unique($unshown);
+
+        ob_start();
+                if ($unshown) { ?>
+                <div class="alert alert-danger mt-3" role="alert"><?php echo implode('<br>', $unshown); ?></div><?php
+                } ?>
                 </div>
             </form><?php
             echo $after;

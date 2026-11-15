@@ -1833,8 +1833,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 }
 
-                $done = "1";
-                $new_data_unformatted = implode(", ", $domain_array);
+                // A failed action redraws the form with its fields marked, rather than ending with only a Go Back button
+                if (($submission_failed ?? 0) != 1) {
+                    $done = "1";
+                    $new_data_unformatted = implode(", ", $domain_array);
+                }
 
             }
 
