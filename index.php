@@ -181,16 +181,10 @@ $new_password = "";
         <form action="" method="post">
             <div class="input-group has-validation mb-3">
                 <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="Username" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" maxlength="20"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
-                <span class="input-group-text">
-                    <i class="bi bi-person-fill"></i>
-                </span>
                 <?php echo $form->errorFeedback('new_username'); ?>
             </div>
             <div class="input-group has-validation mb-3">
                 <input type="password" class="form-control<?php echo $form->errorClass('new_password'); ?>" placeholder="Password" name="new_password" id="<?php echo $form->fieldId('new_password'); ?>" maxlength="72"<?php echo $form->errorAttributes('new_password'); ?>>
-                <span class="input-group-text">
-                    <i class="bi bi-lock-fill"></i>
-                </span>
                 <?php echo $form->errorFeedback('new_password'); ?>
             </div>
             <div class="row">
