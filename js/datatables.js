@@ -26,6 +26,41 @@
 //   doesn't move anything. Pass {scrollOnPage: false} as the third argument for a table that shouldn't jump.
 // - A drawCallback in the options still runs first, on every draw.
 // It returns the table's DataTables API instance.
+// In right-to-left languages, Currency::format() isolates each amount as left-to-right text with U+2066 and U+2069
+// around it, so it keeps its order on screen. DataTables doesn't count the mark as part of a number, so on those pages an amount column
+// gets its own type: the marks are taken out, then DataTables' own formatted number checks and sorting are used, and
+// the column is styled as numeric, as it is in left-to-right languages.
+(function () {
+    if (document.documentElement.getAttribute('dir') !== 'rtl') return;
+    if (typeof DataTable === 'undefined' || typeof DataTable.type !== 'function') return;
+    var plain = DataTable.type('num-fmt');
+    var html = DataTable.type('html-num-fmt');
+    if (!plain || !html || !plain.detect || !html.detect || !html.order) return;
+    var unmark = function (data) {
+        return typeof data === 'string' ? data.replace(/[\u2066\u2069]/g, '') : data;
+    };
+    var isAmount = function (check, data, settings) {
+        var value = unmark(data);
+        return !!(plain.detect[check](value, settings) || html.detect[check](value, settings));
+    };
+    DataTable.type('domainmod-amount', {
+        className: 'dt-type-numeric',
+        detect: {
+            allOf: function (data, settings) {
+                return isAmount('allOf', data, settings);
+            },
+            oneOf: function (data, settings) {
+                return typeof data === 'string' && data.indexOf('\u2066') !== -1 && isAmount('oneOf', data, settings);
+            }
+        },
+        order: {
+            pre: function (data, settings) {
+                return html.order.pre(unmark(data), settings);
+            }
+        }
+    });
+}());
+
 function domainmodTable(selector, options, settings) {
     var table = document.querySelector(selector);
     if (!table) return null;

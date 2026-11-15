@@ -607,13 +607,50 @@ class Layout
      */
     public function htmlTag()
     {
-        // The page's language for browsers and screen readers, from DomainMOD's language code (en_US.UTF-8 is en-US).
-        // Before sign-in it can be the server's locale, such as C.UTF-8, which isn't a language, so that's English.
+        return '<html lang="' . $this->languageTag() . '" dir="' . ($this->isRtl() ? 'rtl' : 'ltr') . '" data-bs-theme="' . $this->colourMode() . '" data-lte-primary="danger">' . "\n";
+    }
+
+    /*
+     * The page's language for browsers and screen readers, from DomainMOD's language code (en_US.UTF-8 is en-US). Before
+     * sign-in it can be the server's locale, such as C.UTF-8, which isn't a language, so that's English.
+     */
+    public function languageTag()
+    {
         $language = 'en';
         if (preg_match('/^([a-z]{2,3})_([A-Z]{2})/', DEFAULT_LANGUAGE, $parts)) {
             $language = $parts[1] . '-' . $parts[2];
         }
-        return '<html lang="' . $language . '" data-bs-theme="' . $this->colourMode() . '" data-lte-primary="danger">' . "\n";
+        return $language;
+    }
+
+    // An email's opening <html> tag, with the same language and direction as the pages, so a mail client lays out an
+    // Arabic, Persian, or Urdu email right to left
+    public function emailHtmlTag()
+    {
+        return '<html lang="' . $this->languageTag() . '" dir="' . ($this->isRtl() ? 'rtl' : 'ltr') . '">';
+    }
+
+    /*
+     * Whether the page's language is written right to left (Arabic, Persian, and Urdu today, plus Hebrew and Pashto so a
+     * future translation in either needs no extra work). It's the one place the direction is decided: htmlTag() writes
+     * it as the page's dir attribute, head-tags.inc.php and offline.php load the mirrored stylesheets from it, and the
+     * CSS and scripts read the dir attribute.
+     */
+    public function isRtl()
+    {
+        $language = defined('DEFAULT_LANGUAGE') ? (string) DEFAULT_LANGUAGE : '';
+        return in_array(strtolower(substr($language, 0, 2)), array('ar', 'fa', 'ur', 'he', 'ps'), true);
+    }
+
+    /*
+     * A left-to-right value (a domain, email address, date, IP address, or money amount) placed inside translated text,
+     * isolated so a right-to-left page keeps its characters in order (example.com doesn't become com.example, and a
+     * currency symbol stays on its side). $text is plain text, and is escaped here. In left-to-right languages the
+     * isolation changes nothing.
+     */
+    public function ltr($text)
+    {
+        return '<bdi dir="ltr">' . htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8') . '</bdi>';
     }
 
     /*

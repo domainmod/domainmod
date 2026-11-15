@@ -65,6 +65,20 @@ class Form
         $_SESSION['s_field_error_summary'] = $summary;
     }
 
+    /*
+     * A field's dir attribute, so values that are always written left to right (domains, URLs, email and IP
+     * addresses, DNS servers, user names and passwords, API keys, ports, and dates) type and read left to right on a
+     * right-to-left page. $dir ('ltr', 'rtl', or 'auto') is the caller's choice, and when it's empty the field's name
+     * decides, so every form gets it without changes. Nothing is added for other fields, which follow the page.
+     */
+    public function dirAttribute($name, $dir = '', $is_password = false)
+    {
+        if ($dir === '' && ($is_password || preg_match('/(domain|_url$|email|_ip[0-9]*$|^new_ip|rdns|dns[0-9]+$|username|password|api_|account_id|reseller_id|_port$|smtp_server|_tld$|_hash$|^datepick$|^daterange$)/', $name))) {
+            $dir = 'ltr';
+        }
+        return in_array($dir, array('ltr', 'rtl', 'auto'), true) ? ' dir="' . $dir . '"' : '';
+    }
+
     // A field's id, made from its name, for its label's "for" and its error message
     public function fieldId($name)
     {
@@ -169,14 +183,14 @@ class Form
      * submit, so the focus doesn't skip past the message. A mistake recorded for the field with addFieldError() shows
      * under it, and the first such field on the page gets the focus instead.
      */
-    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '')
+    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '', $dir = '')
     {
         ob_start();
             echo $before; ?>
             <div class="mb-3">
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"
+                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_password == '1'); ?>
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
                 <?php echo $this->errorFeedback($name); ?>
             </div><?php
@@ -187,7 +201,7 @@ class Form
     /*
      * A text area with its label. $autofocus ('1') and mistakes recorded with addFieldError() work as in showInputText().
      */
-    public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after, $autofocus = '')
+    public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after, $autofocus = '', $dir = '')
     {
         ob_start();
             echo $before; ?>
@@ -195,7 +209,7 @@ class Form
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, false); ?><?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
                 <?php echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;

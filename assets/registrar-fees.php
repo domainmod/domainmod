@@ -181,7 +181,7 @@ if (!$result) {
             <tr>
             <td></td>
             <td>
-                .<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a>
+                <bdi dir="ltr">.<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a></bdi>
             </td>
             <td><?php
                 if ($row->initial_fee > 0) {

@@ -2452,7 +2452,7 @@ if ($result) {
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                         <td<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' class="domainmod-css-padding-left"'; } ?>>
-                            <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>">.<?php echo $row->tld; ?></a>
+                            <a href="../assets/edit/registrar-fee.php?rid=<?php echo $row->r_id; ?>&fee_id=<?php echo $row->f_id; ?>"><bdi dir="ltr">.<?php echo $row->tld; ?></bdi></a>
                         </td>
                     <?php } ?>
                     <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>

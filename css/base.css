@@ -19,7 +19,9 @@ html {
     color: #007a29;
 }
 .domainmod-css-padding-left {
-    padding-left: 10px;
+    /* A logical property, so the padding is on the start side in right-to-left languages too (the name stays, since
+       pages use it) */
+    padding-inline-start: 10px;
 }
 .domainmod-css-normal-font-weight {
     font-weight: normal;
@@ -67,6 +69,9 @@ html {
 .sidebar-brand.domainmod-css-logo-background-colour .logo-xl {
     top: 1.75rem;
     left: 50%;
+    /* AdminLTE's right-to-left build places these images with right offsets, which would compete with left: 50%. The
+       logo is centred, so it stays physical. */
+    right: auto;
     margin-top: 0;
     transform: translate(-50%, -50%);
 }
@@ -80,6 +85,7 @@ html {
 .sidebar-mini.sidebar-collapse .app-sidebar .logo-xs.brand-image-xl {
     top: 1.75rem;
     left: 50%;
+    right: auto;
     max-height: 2rem;
     transform: translate(-50%, -50%);
 }
@@ -89,13 +95,13 @@ html {
     position: relative;
 }
 .domainmod-css-search-field .form-control {
-    padding-left: 2.125rem;
+    padding-inline-start: 2.125rem;
 }
 /* The menu filter's funnel icon, placed like the search button but only decorative (the field filters as you type) */
 .domainmod-css-search-icon {
     position: absolute;
     top: 50%;
-    left: .75rem;
+    inset-inline-start: .75rem;
     display: flex;
     align-items: center;
     line-height: 1;
@@ -106,7 +112,7 @@ html {
 .domainmod-css-search-submit {
     position: absolute;
     top: 50%;
-    left: .75rem;
+    inset-inline-start: .75rem;
     display: flex;
     align-items: center;
     padding: 0;
@@ -172,7 +178,10 @@ html {
     display: block;
     position: absolute;
     top: 0;
+    /* Physical, like the crops: the logo image isn't mirrored in right-to-left languages, so its icon stays on the
+       image's left */
     left: 0;
+    right: auto;
     clip-path: inset(0 86% 0 0);
 }
 /* Links stay blue with no underline, as before. data-lte-primary="danger" would turn them red, so they're set back
@@ -239,7 +248,7 @@ a.btn:hover {
 /* The larger switch's own offset (2.5em) is measured at its larger size, so the wrapper's padding matches it, or the
    switch would stick out past the left edge of the fields above it */
 .form-switch {
-    padding-left: 3.125rem;
+    padding-inline-start: 3.125rem;
 }
 /* Forms stop at a comfortable reading width instead of stretching across wide screens (the shared form wrapper,
    Form::showFormTop(), adds the class), and an edit page's Danger Zone (Layout::dangerZone()) stops at the same width,
@@ -338,6 +347,10 @@ a.btn:hover {
 }
 .ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
     border-left-color: var(--bs-border-color);
+}
+/* Tom Select puts the remove button's divider on the other side in right-to-left languages (it adds .rtl itself) */
+.ts-wrapper.plugin-remove_button.rtl .item .remove {
+    border-right-color: var(--bs-border-color);
 }
 /* The focus ring in DomainMOD's main colour, like the other fields (the menu's border is on its wrapper) */
 .ts-wrapper.form-select.focus {
@@ -513,7 +526,8 @@ div.dt-container > div.top {
     gap: .5rem 1.5rem;
 }
 div.dt-container > div.top > .dt-search {
-    margin-left: auto;
+    /* Logical, so the search goes to the far end (the left) in right-to-left languages */
+    margin-inline-start: auto;
 }
 div.dt-container > div.bottom {
     margin-top: 0.75rem;
@@ -543,7 +557,7 @@ div.dt-container > div.bottom {
 }
 .domainmod-status-icon .bi-shield-lock-fill {
     font-size: 0.85em;
-    margin-left: 0.2rem;
+    margin-inline-start: 0.2rem;
 }
 /* In light mode the grey privacy shield is lightened, so it stays quiet but keeps over 3:1 contrast on white, striped,
    and hovered rows */
@@ -745,7 +759,7 @@ div.dt-container > div.bottom {
 @media (min-width: 576px) {
     .domainmod-dashboard-total + .domainmod-dashboard-total {
         border-top: 0;
-        border-left: 1px solid var(--bs-border-color);
+        border-inline-start: 1px solid var(--bs-border-color);
     }
 }
 .domainmod-dashboard-total .bi {
@@ -1081,11 +1095,6 @@ div.dt-container > div.bottom {
 .domainmod-calendar-list th,
 .domainmod-calendar-list td {
     overflow-wrap: anywhere;
-}
-/* The month arrows point the other way in right-to-left languages */
-[dir="rtl"] .domainmod-calendar-arrow {
-    display: inline-block;
-    transform: scaleX(-1);
 }
 
 /* A list's empty state (Layout::emptyState()): a panel at the same width as the forms, left-aligned like the rest of
@@ -1483,4 +1492,23 @@ html.domainmod-toasts-compact {
     outline-offset: 2px;
     border-radius: var(--bs-border-radius-sm);
     color: var(--bs-body-color);
+}
+
+/* Right-to-left languages (Layout::isRtl(), with AdminLTE's mirrored stylesheets). Icons that point a direction are
+   flipped, so "next" still points forward: the View links' arrows, Back and Next, the calendar's and paging's chevrons,
+   and Logout. The flip is on the glyph (::before), so a rotation on the icon itself (the sidebar's sub-menu arrows)
+   still works. Logos, ticks, the shield, the renew arrows, and other icons that don't mean a direction aren't flipped. */
+[dir="rtl"] .bi-arrow-right::before,
+[dir="rtl"] .bi-arrow-left::before,
+[dir="rtl"] .bi-arrow-right-circle::before,
+[dir="rtl"] .bi-arrow-left-circle::before,
+[dir="rtl"] .bi-chevron-right::before,
+[dir="rtl"] .bi-chevron-left::before,
+[dir="rtl"] .bi-box-arrow-right::before {
+    display: inline-block;
+    transform: scaleX(-1);
+}
+/* AdminLTE's right-to-left build already turns the sidebar's sub-menu arrows round, so they aren't flipped again */
+[dir="rtl"] .nav-arrow::before {
+    transform: none;
 }

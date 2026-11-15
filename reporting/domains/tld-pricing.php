@@ -278,7 +278,7 @@ if (!$overview['rows']) {
 
             <tr>
                 <td></td>
-                <td><a href="<?php echo $report_filename; ?>?<?php echo htmlspecialchars(http_build_query(array('tld' => $row['tld'], 'price' => $price_type)), ENT_QUOTES, 'UTF-8'); ?>#tld-view">.<?php echo $row['tld']; ?></a></td>
+                <td><a href="<?php echo $report_filename; ?>?<?php echo htmlspecialchars(http_build_query(array('tld' => $row['tld'], 'price' => $price_type)), ENT_QUOTES, 'UTF-8'); ?>#tld-view"><bdi dir="ltr">.<?php echo $row['tld']; ?></bdi></a></td>
                 <td data-order="<?php echo (int) $row['domains']; ?>"><?php echo number_format($row['domains']); ?></td>
                 <td data-order="<?php echo $row['low']; ?>"><?php echo $registrar_names($row, $row['cheapest']); ?> (<?php echo $money($row['low']); ?>)</td>
                 <td data-order="<?php echo $row['high']; ?>"><?php
@@ -411,7 +411,7 @@ if (!$overview['rows']) {
                 <tr>
                     <td></td>
                     <td><a href="<?php echo WEB_ROOT; ?>/domains/edit.php?did=<?php echo (int) $row['domain']->id; ?>"><?php echo $row['domain']->domain; ?></a></td>
-                    <td>.<?php echo $row['domain']->tld; ?></td>
+                    <td><bdi dir="ltr">.<?php echo $row['domain']->tld; ?></bdi></td>
                     <td><?php echo $row['domain']->registrar_name; ?></td>
                     <td data-order="<?php echo round($row['current'], 2); ?>"><?php echo $money($row['current']); ?></td>
                     <td><?php echo $row['destination']->registrar_name; ?></td>

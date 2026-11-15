@@ -240,7 +240,7 @@ if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.
                         <?php echo $row->registrar; ?>
                     </td>
                     <td>
-                        .<?php echo $row->tld; ?>
+                        <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
                     </td>
                     <td><?php
                         $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -303,7 +303,7 @@ if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.
                     <td></td>
                     <td>&nbsp;</td>
                     <td>
-                       .<?php echo $row->tld; ?>
+                       <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
                     </td>
                     <td>
                         <?php

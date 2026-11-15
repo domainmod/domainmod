@@ -374,7 +374,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (10)', $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (10)', $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '', '', 'ltr');
 
             }
 
@@ -395,7 +395,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (19)', $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (19)', $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '', '', 'ltr');
 
             }
 
@@ -414,7 +414,7 @@ if ($done != '1') {
 
         foreach ($result as $row) {
 
-            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '', '', 'ltr');
 
         }
 

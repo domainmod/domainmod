@@ -231,7 +231,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
             <tr>
                 <td></td>
-                <td>.<?php echo $row->tld; ?></td>
+                <td><bdi dir="ltr">.<?php echo $row->tld; ?></bdi></td>
                 <td><?php echo $row->total_cost; ?></td>
                 <td><a href="../../domains/index.php?tld=<?php echo $row->tld; ?>"><?php echo $row->number_of_domains; ?></a></td>
                 <td><?php echo $per_domain; ?></td>

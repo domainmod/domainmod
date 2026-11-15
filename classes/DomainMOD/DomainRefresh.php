@@ -106,7 +106,8 @@ class DomainRefresh
             return array(false, array($missing), array('summary' => $missing, 'reasons' => array(), 'changes' => array(), 'notes' => array()));
         }
 
-        $domain_html = $this->html($row->domain);
+        // Kept left to right inside the translated sentences below, for right-to-left languages
+        $domain_html = (new Layout())->ltr($row->domain);
 
         $wait = $this->throttle((int) $row->id);
         if ($wait !== '') return array(false, array($wait), array('summary' => $wait, 'reasons' => array(), 'changes' => array(), 'notes' => array()));

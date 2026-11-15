@@ -278,7 +278,7 @@ class Email
     public function messageTopHtml($subject)
     {
         ob_start(); ?>
-        <html>
+        <?php echo (new Layout())->emailHtmlTag(); ?>
         <head><title><?php echo $subject; ?></title></head>
         <body bgcolor="#FFFFFF">
         <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">

@@ -239,13 +239,13 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
         <h2 class="h3 mb-0"><?php echo $month_label; ?></h2>
         <nav class="d-flex flex-wrap gap-2" aria-label="<?php echo htmlspecialchars(_('Month'), ENT_QUOTES, 'UTF-8'); ?>"><?php
             if ($month > '2000-01') {
-                echo $htmx_link($page_url($previous_month, $show), '<i class="bi bi-chevron-left domainmod-calendar-arrow" aria-hidden="true"></i> ' . _('Previous Month') . '<span class="visually-hidden">, ' . $month_label_of($previous_month) . '</span>', 'btn btn-sm btn-outline-secondary');
+                echo $htmx_link($page_url($previous_month, $show), '<i class="bi bi-chevron-left" aria-hidden="true"></i> ' . _('Previous Month') . '<span class="visually-hidden">, ' . $month_label_of($previous_month) . '</span>', 'btn btn-sm btn-outline-secondary');
             }
             if ($month !== substr($today, 0, 7)) {
                 echo $htmx_link($page_url(substr($today, 0, 7), $show), _('This Month'), 'btn btn-sm btn-outline-secondary');
             }
             if ($month < '2099-12') {
-                echo $htmx_link($page_url($next_month, $show), _('Next Month') . '<span class="visually-hidden">, ' . $month_label_of($next_month) . '</span> <i class="bi bi-chevron-right domainmod-calendar-arrow" aria-hidden="true"></i>', 'btn btn-sm btn-outline-secondary');
+                echo $htmx_link($page_url($next_month, $show), _('Next Month') . '<span class="visually-hidden">, ' . $month_label_of($next_month) . '</span> <i class="bi bi-chevron-right" aria-hidden="true"></i>', 'btn btn-sm btn-outline-secondary');
             } ?>
         </nav>
     </div>

@@ -46,6 +46,11 @@ class Export
      */
     public function writeRow($open_file, $row_contents)
     {
+        // Without the left-to-right isolation marks Currency::format() adds to amounts in right-to-left languages, which
+        // only matter on screen
+        $row_contents = array_map(function ($value) {
+            return is_string($value) ? str_replace(array("\u{2066}", "\u{2069}"), '', $value) : $value;
+        }, $row_contents);
         fputcsv($open_file, $row_contents, ',', '"', '');
     }
 

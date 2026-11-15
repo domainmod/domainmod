@@ -33,7 +33,7 @@ $headline = $subject;
 
 $message_html = $message_html ?? '';
 $message_html .= "
-<html>
+" . (new DomainMOD\Layout())->emailHtmlTag() . "
 <head><title>" . $headline . "</title></head>
 <body bgcolor=\"#FFFFFF\">
 <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">

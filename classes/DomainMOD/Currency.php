@@ -45,6 +45,14 @@ class Currency
             $formatted_output = $symbol . number_format($amount, 2, '.', ',');
         }
 
+        // In right-to-left languages the amount is isolated as left-to-right text (Unicode's U+2066 and U+2069 around
+        // it), so a page keeps its characters in order: the currency symbol, even one written in Arabic script, and a
+        // minus sign stay on their configured side in table cells and sentences. Export::writeRow() takes the marks out
+        // again, so exported files are as before.
+        if ((new Layout())->isRtl()) {
+            $formatted_output = "\u{2066}" . $formatted_output . "\u{2069}";
+        }
+
         return $formatted_output;
     }
 

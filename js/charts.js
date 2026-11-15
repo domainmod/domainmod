@@ -31,6 +31,9 @@
     if (typeof Chart === 'undefined') return;
 
     var root = document.documentElement;
+    // Right-to-left languages (Layout::isRtl() sets the page's dir): legends and tooltips read right to left, bars run
+    // from the right, and the value axis sits on the right
+    var rtl = root.getAttribute('dir') === 'rtl';
     var reduce_motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     var charts = [];
 
@@ -87,6 +90,12 @@
         }];
     }
 
+    // An amount placed among right-to-left text (an axis label or a tooltip) kept in its own left-to-right order, so its
+    // currency symbol and minus sign stay on their configured side, with Unicode's left-to-right isolate marks
+    function isolate(text) {
+        return rtl ? '\u2066' + text + '\u2069' : text;
+    }
+
     // A value as the chart shows it: a whole number for counts, and otherwise an amount in the user's currency
     function amount(value, data) {
         return data.format === 'count' ? Number(value).toLocaleString('en-US', {maximumFractionDigits: 0}) : money(value, data.currency);
@@ -122,6 +131,8 @@
             var drawn = [];
             ctx.save();
             ctx.fillStyle = colour('text');
+            // Amounts are drawn left to right in every language, so the symbol stays on its configured side
+            ctx.direction = 'ltr';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             // One style for the whole chart, so the labels match: the full amounts if every one fits over its bar,
@@ -192,10 +203,14 @@
                     var horizontal = data.type === 'hbar' || data.type === 'pricebar' || data.type === 'stacked';
                     var value = data.type === 'doughnut' ? context.parsed : (horizontal ? context.parsed.x : context.parsed.y);
                     var prefix = data.type === 'stacked' ? context.dataset.label + ': ' : '';
-                    return ' ' + prefix + amount(value, data);
+                    return ' ' + prefix + isolate(amount(value, data));
                 }
             }
         };
+        if (rtl) {
+            tooltip.rtl = true;
+            tooltip.textDirection = 'rtl';
+        }
         var common = {
             responsive: true,
             maintainAspectRatio: false,
@@ -204,12 +219,17 @@
         };
         if (data.type === 'doughnut') {
             common.plugins.legend = {
-                position: window.innerWidth < 576 ? 'bottom' : 'right',
+                // Beside the chart on the reading side's far end (the left in right-to-left languages)
+                position: window.innerWidth < 576 ? 'bottom' : (rtl ? 'left' : 'right'),
+                rtl: rtl,
+                textDirection: rtl ? 'rtl' : 'ltr',
                 labels: {color: text}
             };
             return common;
         }
-        common.plugins.legend = data.type === 'stacked' ? {position: 'top', labels: {color: text}} : {display: false};
+        common.plugins.legend = data.type === 'stacked'
+            ? {position: 'top', rtl: rtl, textDirection: rtl ? 'rtl' : 'ltr', labels: {color: text}}
+            : {display: false};
         // A cost report's bar chart, a price comparison, and stacked counts run sideways, one row per group, so long
         // names have room
         if (data.type === 'hbar' || data.type === 'pricebar' || data.type === 'stacked') {
@@ -218,18 +238,22 @@
             common.scales = {
                 x: {
                     beginAtZero: true,
+                    // Bars grow from the right in right-to-left languages
+                    reverse: rtl,
                     stacked: stacked,
                     ticks: {
                         color: text,
                         precision: stacked ? 0 : undefined,
                         callback: function (value) {
-                            return amount(value, data);
+                            return isolate(amount(value, data));
                         }
                     },
                     grid: {color: grid}
                 },
                 y: {
                     stacked: stacked,
+                    // The group names on the right in right-to-left languages
+                    position: rtl ? 'right' : 'left',
                     ticks: {
                         color: text,
                         autoSkip: false,
@@ -246,14 +270,17 @@
         common.plugins.domainmodBarTotals = {data: data};
         common.layout = {padding: {top: 6}};
         common.scales = {
-            x: {ticks: {color: text}, grid: {color: grid}},
+            // The months run right to left in right-to-left languages, so the earliest is on the right, and the
+            // amounts axis moves to the right
+            x: {reverse: rtl, ticks: {color: text}, grid: {color: grid}},
             y: {
                 beginAtZero: true,
                 grace: '10%',
+                position: rtl ? 'right' : 'left',
                 ticks: {
                     color: text,
                     callback: function (value) {
-                        return money(value, data.currency);
+                        return isolate(money(value, data.currency));
                     }
                 },
                 grid: {color: grid}
@@ -274,7 +301,11 @@
         var chart = new Chart(canvas, {
             type: data.type === 'doughnut' ? 'doughnut' : 'bar',
             data: {
-                labels: data.labels,
+                // In right-to-left languages each name takes its direction from its own first letter (Unicode's first
+                // strong isolate), so a left-to-right name such as .co.uk keeps its order beside right-to-left ones
+                labels: rtl ? data.labels.map(function (label) {
+                    return '\u2068' + label + '\u2069';
+                }) : data.labels,
                 datasets: datasets(data)
             },
             options: options(data),

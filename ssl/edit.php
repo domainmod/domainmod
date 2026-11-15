@@ -615,15 +615,15 @@ if ($result) { ?>
 
             } elseif ($row->type_id == "4") { // Date
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '10', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '10', '', '', '', '', '', 'ltr');
 
             } elseif ($row->type_id == "5") { // Time Stamp
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '19', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '19', '', '', '', '', '', 'ltr');
 
             } elseif ($row->type_id == "6") { // URL
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '', '', '', 'ltr');
 
             }
 
