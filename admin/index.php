@@ -44,17 +44,28 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="<?php echo $web_root; ?>/admin/settings/"><?php echo _('System Settings'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/defaults/"><?php echo _('System Defaults'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/users/"><?php echo _('Users'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/domain-fields/"><?php echo _('Custom Domain Fields'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/ssl-fields/"><?php echo _('Custom SSL Fields'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/scheduler/"><?php echo _('Task Scheduler'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/maintenance/"><?php echo _('Maintenance'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/tools/"><?php echo _('Tools'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/backup/"><?php echo _('Backup & Restore'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/debug-log/"><?php echo _('Debug Log'); ?></a><BR><BR>
-<a href="<?php echo $web_root; ?>/admin/info/"><?php echo _('System Information'); ?></a><BR>
+<h2 class="h5 mt-2"><?php echo _('System'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/admin/settings/', _('System Settings'), _('The URL, email, expiry days, and system options'), 'bi-sliders', 'secondary');
+    echo $layout->landingTile('/admin/defaults/', _('System Defaults'), _('The default assets for new domains and SSL certificates'), 'bi-ui-checks', 'secondary');
+    echo $layout->landingTile('/admin/users/', _('Users'), _('Add, edit, and remove users'), 'bi-people', 'secondary');
+    echo $layout->landingTile('/admin/domain-fields/', _('Custom Domain Fields'), _('Your own fields on domains'), 'bi-input-cursor-text', 'secondary');
+    echo $layout->landingTile('/admin/ssl-fields/', _('Custom SSL Fields'), _('Your own fields on SSL certificates'), 'bi-input-cursor', 'secondary'); ?>
+</div>
+
+<h2 class="h5 mt-4"><?php echo _('Tasks'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/admin/scheduler/', _('Task Scheduler'), _('Scheduled tasks, when they run, and Run Now'), 'bi-clock-history', 'secondary');
+    echo $layout->landingTile('/admin/maintenance/', _('Maintenance'), _('Clear the queues and the debug log'), 'bi-tools', 'secondary');
+    echo $layout->landingTile('/admin/backup/', _('Backup & Restore'), _('Back up the database, or restore a backup'), 'bi-archive', 'secondary'); ?>
+</div>
+
+<h2 class="h5 mt-4"><?php echo _('Diagnostics'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/admin/tools/', _('Tools'), _('Send a test email to check that email works'), 'bi-wrench-adjustable', 'secondary');
+    echo $layout->landingTile('/admin/debug-log/', _('Debug Log'), _('What DomainMOD logged while debugging was on'), 'bi-journal-text', 'secondary');
+    echo $layout->landingTile('/admin/info/', _('System Information'), _('PHP, MySQL, and server details for support'), 'bi-info-circle', 'secondary'); ?>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

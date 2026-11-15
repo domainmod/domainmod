@@ -49,53 +49,36 @@ $report = $_REQUEST['report'] ?? '';
 <?php echo $layout->calloutTop(); ?>
 <?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>'); ?>
 <?php echo $layout->calloutBottom(); ?>
-<div class="row">
-    <?php echo $layout->contentBoxTop(_('Domain Reports'), '3'); ?>
-    <a href='domains/upcoming-renewals.php'><?php echo _('Upcoming Renewals'); ?></a><BR>
-    <a href='domains/at-risk.php'><?php echo sprintf(_('At-Risk Domains (Next %s Days)'), DomainMOD\Reporting::AT_RISK_DAYS); ?></a><BR>
-    <a href='domains/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>
-    <a href='domains/cost-by-dns.php'><?php echo _('Cost by DNS Profile'); ?></a><BR>
-    <a href='domains/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a><BR>
-    <a href='domains/cost-by-month.php'><?php echo _('Cost by Month'); ?></a><BR>
-    <a href='domains/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a><BR>
-    <a href='domains/cost-by-registrar.php'><?php echo _('Cost by Registrar'); ?></a><BR>
-    <a href='domains/cost-by-tld.php'><?php echo _('Cost by TLD'); ?></a><BR>
-    <a href='domains/cost-by-host.php'><?php echo _('Cost by Web Host'); ?></a><BR>
-    <a href='domains/tld-pricing.php'><?php echo _('TLD Pricing'); ?></a><BR>
-    <a href='domains/registrar-fees.php?all=0'><?php echo _('Registrar Fees'); ?></a>
-    <?php echo $layout->contentBoxBottom(); ?>
-
-    <?php echo $layout->contentBoxTop(_('SSL Certificate Reports'), '3'); ?>
-    <a href='ssl/cost-by-category.php'><?php echo _('Cost by Category'); ?></a><BR>
-    <a href='ssl/cost-by-domain.php'><?php echo _('Cost by Domain'); ?></a><BR>
-    <a href='ssl/cost-by-ip-address.php'><?php echo _('Cost by IP Address'); ?></a><BR>
-    <a href='ssl/cost-by-month.php'><?php echo _('Cost by Month'); ?></a><BR>
-    <a href='ssl/cost-by-owner.php'><?php echo _('Cost by Owner'); ?></a><BR>
-    <a href='ssl/cost-by-provider.php'><?php echo _('Cost by Provider'); ?></a><BR>
-    <a href='ssl/cost-by-type.php'><?php echo _('Cost by Type'); ?></a><BR>
-    <a href='ssl/provider-fees.php?all=0'><?php echo _('Provider Fees'); ?></a><BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;
-    <?php echo $layout->contentBoxBottom(); ?>
-
-    <?php echo $layout->contentBoxTop(_('Data Warehouse Reports'), '3'); ?>
-    <a href='dw/potential-problems.php?generate=1'><?php echo _('Potential Problems'); ?></a><BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;<BR>
-    &nbsp;
-    <?php echo $layout->contentBoxBottom(); ?>
-
-    <div class="col-md-3">
-        &nbsp;
-    </div>
+<h2 class="visually-hidden"><?php echo _('Featured Reports'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/reporting/domains/upcoming-renewals.php', _('Upcoming Renewals'), _('What renewals will cost, month by month'), 'bi-calendar-event', 'danger');
+    echo $layout->landingTile('/reporting/domains/at-risk.php', _('At-Risk Domains'), sprintf(_('Expiring in the next %s days without auto renewal or privacy'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-exclamation-triangle', 'warning');
+    echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Pricing'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success');
+    // To show this tile to admins only (as the sidebar's Data Warehouse section is), wrap it in
+    // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }
+    echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info'); ?>
+</div>
+<?php // Round 3's SSL report tiles (SSL Upcoming Renewals and SSL At-Risk Certificates) go in a second row here ?>
+<div class="row g-3 mt-1"><?php
+    echo $layout->landingLinks(_('Domain Costs'), array(
+        array('/reporting/domains/cost-by-category.php', _('Category'), _('Domain Cost by Category')),
+        array('/reporting/domains/cost-by-dns.php', _('DNS Profile'), _('Domain Cost by DNS Profile')),
+        array('/reporting/domains/cost-by-ip-address.php', _('IP Address'), _('Domain Cost by IP Address')),
+        array('/reporting/domains/cost-by-month.php', _('Month'), _('Domain Cost by Month')),
+        array('/reporting/domains/cost-by-owner.php', _('Owner'), _('Domain Cost by Owner')),
+        array('/reporting/domains/cost-by-registrar.php', _('Registrar'), _('Domain Cost by Registrar')),
+        array('/reporting/domains/cost-by-tld.php', _('TLD'), _('Domain Cost by TLD')),
+        array('/reporting/domains/cost-by-host.php', _('Web Host'), _('Domain Cost by Web Host')),
+        array('/reporting/domains/registrar-fees.php?all=0', _('Registrar Fees'), _('Registrar Fees'))));
+    echo $layout->landingLinks(_('SSL Costs'), array(
+        array('/reporting/ssl/cost-by-category.php', _('Category'), _('SSL Cost by Category')),
+        array('/reporting/ssl/cost-by-domain.php', _('Domain'), _('SSL Cost by Domain')),
+        array('/reporting/ssl/cost-by-ip-address.php', _('IP Address'), _('SSL Cost by IP Address')),
+        array('/reporting/ssl/cost-by-month.php', _('Month'), _('SSL Cost by Month')),
+        array('/reporting/ssl/cost-by-owner.php', _('Owner'), _('SSL Cost by Owner')),
+        array('/reporting/ssl/cost-by-provider.php', _('Provider'), _('SSL Cost by Provider')),
+        array('/reporting/ssl/cost-by-type.php', _('Type'), _('SSL Cost by Type')),
+        array('/reporting/ssl/provider-fees.php?all=0', _('Provider Fees'), _('Provider Fees')))); ?>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

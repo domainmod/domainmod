@@ -286,6 +286,61 @@ class Layout
         return ob_get_clean();
 
     }
+
+    /*
+     * One tile on a section's landing page (Reporting, Assets, Administration, and Settings): an outline card with an
+     * icon, the page's name as its one link (stretched over the whole card, so the card is clickable), a line saying
+     * what's there, and an optional detail line (such as Assets' counts). $url is a path under WEB_ROOT, $icon is a
+     * Bootstrap Icons class, $colour is a Bootstrap colour, and $heading is the title's heading level (3 under a
+     * group's heading, 2 on a page without groups). The text is escaped here, so callers pass plain translated text.
+     */
+    public function landingTile($url, $title, $description, $icon, $colour = 'danger', $detail = '', $heading = 3)
+    {
+        $heading = (int) $heading;
+        ob_start(); ?>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card card-outline card-<?php echo $colour; ?> h-100 mb-0 domainmod-landing-tile">
+                <div class="card-body">
+                    <i class="bi <?php echo $icon; ?> fs-3 text-<?php echo $colour; ?>" aria-hidden="true"></i>
+                    <h<?php echo $heading; ?> class="h6 mt-2 mb-1"><a href="<?php echo WEB_ROOT . $url; ?>" class="stretched-link link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></a></h<?php echo $heading; ?>>
+                    <div class="small text-body-secondary"><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></div><?php
+                    if ($detail != '') { ?>
+                        <div class="small fw-semibold mt-1"><?php echo htmlspecialchars($detail, ENT_QUOTES, 'UTF-8'); ?></div><?php
+                    } ?>
+                </div>
+            </div>
+        </div><?php
+
+        return ob_get_clean();
+    }
+
+    /*
+     * A compact card on a landing page: a group's title and its links as small buttons in a list. Each $links entry is
+     * array(url, short label, full name): the button shows the short label (such as "Category", since the card's title
+     * says what it's a list of), and screen readers hear the full name instead (such as "Domain Cost by Category"), so
+     * the links still make sense read out on their own. $url is a path under WEB_ROOT, and the text is escaped here.
+     */
+    public function landingLinks($title, $links)
+    {
+        ob_start(); ?>
+
+        <div class="col-12 col-lg-6">
+            <div class="card card-outline card-secondary h-100 mb-0">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <ul class="list-inline mb-0"><?php
+                        foreach ($links as $link) { ?>
+                            <li class="list-inline-item mb-2"><a href="<?php echo WEB_ROOT . $link[0]; ?>" class="btn btn-sm btn-outline-secondary"><span aria-hidden="true"><?php echo htmlspecialchars($link[1], ENT_QUOTES, 'UTF-8'); ?></span><span class="visually-hidden"><?php echo htmlspecialchars($link[2], ENT_QUOTES, 'UTF-8'); ?></span></a></li><?php
+                        } ?>
+                    </ul>
+                </div>
+            </div>
+        </div><?php
+
+        return ob_get_clean();
+    }
+
     /*
      * The colour mode to show: the signed-in user's saved choice (0 Light, 1 Dark, 2 Auto), or Auto when nobody's signed
      * in (the sign-in and password reset pages, and the installer).

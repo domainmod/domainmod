@@ -456,3 +456,20 @@ div.dt-container > div.top {
 div.dt-container > div.bottom {
     margin-top: 0.75rem;
 }
+/* The landing pages' tiles (Layout::landingTile()): the whole card is one link, so hovering deepens its border and
+   keyboard focus rings the whole card, not only the title */
+.domainmod-landing-tile {
+    transition: border-color 0.15s ease-in-out;
+}
+.domainmod-landing-tile:hover {
+    border-color: var(--bs-secondary-color);
+}
+.domainmod-landing-tile:focus-within {
+    outline: 2px solid var(--bs-focus-ring-color);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .domainmod-landing-tile {
+        transition: none;
+    }
+}

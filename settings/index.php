@@ -43,10 +43,12 @@ $system->authCheck();
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="display/"><?php echo _('Display Settings'); ?></a><BR><BR>
-<a href="defaults/"><?php echo _('User Defaults'); ?></a><BR><BR>
-<a href="profile/"><?php echo _('User Profile'); ?></a><BR><BR>
-<a href="password/"><?php echo _('Change Password'); ?></a><BR>
+<div class="row g-3 mt-1"><?php
+    echo $layout->landingTile('/settings/display/', _('Display Settings'), _('Columns, colour mode, and how lists look'), 'bi-display', 'secondary', '', 2);
+    echo $layout->landingTile('/settings/defaults/', _('User Defaults'), _('Your default assets for new domains and SSL certificates'), 'bi-person-gear', 'secondary', '', 2);
+    echo $layout->landingTile('/settings/profile/', _('User Profile'), _('Your name, email, language, currency, and time zone'), 'bi-person-circle', 'secondary', '', 2);
+    echo $layout->landingTile('/settings/password/', _('Change Password'), _('Change the password you sign in with'), 'bi-key', 'secondary', '', 2); ?>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
