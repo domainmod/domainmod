@@ -229,33 +229,8 @@ $list_has_search = $search_string != '';
 // How many domains the filters match (the same joins and filters as the main query)
 $total_rows = $domain_list->count($list_filter_sql);
 
-// The total leaves out the custom field join the list uses, as it always has (a known quirk, kept for now)
-$grand_total = $pdo->query("
-    SELECT SUM(d.total_cost * cc.conversion)
-    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
-    WHERE d.account_id = ra.id
-      AND ra.registrar_id = r.id
-      AND ra.owner_id = o.id
-      AND d.cat_id = cat.id
-      AND d.fee_id = f.id
-      AND d.dns_id = dns.id
-      AND d.ip_id = ip.id
-      AND d.hosting_id = h.id
-      AND f.currency_id = c.id
-      AND c.id = cc.currency_id
-      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-      $is_active_string
-      $segid_string
-      $pcid_string
-      $oid_string
-      $dnsid_string
-      $ipid_string
-      $whid_string
-      $rid_string
-      $raid_string
-      $range_string
-      $tld_string
-      $search_string")->fetchColumn();
+// The total covers exactly the listed domains (the same joins and filters as the list and Export)
+$grand_total = $pdo->query("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql)->fetchColumn();
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);

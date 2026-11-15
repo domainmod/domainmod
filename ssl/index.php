@@ -298,9 +298,10 @@ $total_rows = $pdo->query("
       $range_string
       $search_string")->fetchColumn();
 
+// The total covers exactly the listed certificates (the same joins and filters as the list and the count above)
 $grand_total = $pdo->query("
     SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
-    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
     WHERE sslc.account_id = sslpa.id
       AND sslpa.ssl_provider_id = sslp.id
       AND sslpa.owner_id = o.id
@@ -311,6 +312,7 @@ $grand_total = $pdo->query("
       AND sslc.type_id = sslcf.id
       AND sslc.ip_id = ip.id
       AND sslc.cat_id = cat.id
+      AND sslc.id = sslfd.ssl_id
       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
       $is_active_string
       $oid_string
