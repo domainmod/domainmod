@@ -78,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:temp_password))))),
+            SET `password` = :temp_password,
                 new_password = '0',
                 update_time = :timestamp
             WHERE id = :user_id
               AND email_address = :email_address");
-        $stmt->bindValue('temp_password', $temp_password, PDO::PARAM_STR);
+        $stmt->bindValue('temp_password', $user->generateLegacyHash($temp_password), PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);

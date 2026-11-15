@@ -102,6 +102,14 @@ class User
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    // The older password format (the one MySQL's PASSWORD() made): '*' and the upper case SHA1 of the password's binary
+    // SHA1, the same as CONCAT('*', UPPER(SHA1(UNHEX(SHA1(x))))) in SQL. It's built here because MySQL 9 removed
+    // SHA1(). New and reset passwords start in this format and move to generateHash() at the next sign-in.
+    public function generateLegacyHash($password)
+    {
+        return '*' . strtoupper(sha1(sha1($password, true)));
+    }
+
     public function setDarkMode()
     {
         $stmt = $this->deeb->cnxx->prepare("

@@ -103,12 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                 INSERT INTO users
                 (first_name, last_name, username, email_address, `password`, created_by, insert_time)
                 VALUES
-                (:first_name, :last_name, :username, :email_address, CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))), :created_by, :insert_time)");
+                (:first_name, :last_name, :username, :email_address, :new_password, :created_by, :insert_time)");
             $stmt->bindValue('first_name', $new_first_name, PDO::PARAM_STR);
             $stmt->bindValue('last_name', $new_last_name, PDO::PARAM_STR);
             $stmt->bindValue('username', $new_username, PDO::PARAM_STR);
             $stmt->bindValue('email_address', $new_email_address, PDO::PARAM_STR);
-            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            $stmt->bindValue('new_password', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
             $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
             $bind_timestamp = $time->stamp();
             $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);

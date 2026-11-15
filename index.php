@@ -66,10 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         SELECT id
         FROM users
         WHERE username = :new_username
-          AND `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password)))))
+          AND `password` = :legacy_hash
           AND active = '1'");
     $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-    $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+    $stmt->bindValue('legacy_hash', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->closeCursor();
@@ -83,11 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             UPDATE `users`
             SET password = :new_hashed_password
             WHERE username = :new_username
-              AND `password` = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password)))))
+              AND `password` = :legacy_hash
               AND active = '1'");
         $stmt->bindValue('new_hashed_password', $new_hashed_password, PDO::PARAM_STR);
         $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('legacy_hash', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
         $stmt->execute();
 
     }

@@ -93,12 +93,12 @@ if ($new_username != '') {
 
         $stmt = $pdo->prepare("
             UPDATE users
-            SET password = CONCAT('*', UPPER(SHA1(UNHEX(SHA1(:new_password))))),
+            SET password = :new_password,
                 new_password = '1',
                 update_time = :timestamp
             WHERE username = :username
               AND email_address = :email_address");
-        $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+        $stmt->bindValue('new_password', $user->generateLegacyHash($new_password), PDO::PARAM_STR);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('username', $result->username, PDO::PARAM_STR);

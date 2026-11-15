@@ -31,6 +31,7 @@ $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/install/go/index.php');
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
+$user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -132,11 +133,12 @@ try {
         (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`,
          `insert_time`)
         VALUES
-        (:new_first_name, :new_last_name, 'admin', :new_admin_email, CONCAT('*', UPPER(SHA1(UNHEX(SHA1('admin'))))),
+        (:new_first_name, :new_last_name, 'admin', :new_admin_email, :admin_password,
          '1', '0', :creation_type_id_installation, :timestamp)");
     $stmt->bindValue('new_first_name', $temp_admin_first_name, PDO::PARAM_STR);
     $stmt->bindValue('new_last_name', $temp_admin_last_name, PDO::PARAM_STR);
     $stmt->bindValue('new_admin_email', $_SESSION['new_admin_email'], PDO::PARAM_STR);
+    $stmt->bindValue('admin_password', $user->generateLegacyHash('admin'), PDO::PARAM_STR);
     $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
     $stmt->execute();
