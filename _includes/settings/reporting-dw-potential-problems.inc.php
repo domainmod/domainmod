@@ -55,7 +55,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-zone\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -84,7 +84,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-account\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -113,7 +113,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-suspended\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_domains'] . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,

@@ -26,13 +26,13 @@ $software_section = "ssl";
 $slug = "ssl-main";
 
 // If the expiry date is visible sort by it, otherwise sort by the SSL certificate name
-$_SESSION['s_display_ssl_expiry_date'] == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
+($_SESSION['s_display_ssl_expiry_date'] ?? '') == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
 
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . $_SESSION['s_number_of_ssl_certs'] . ', 50, 75, 100, -1], [' . $_SESSION['s_number_of_ssl_certs'] . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, "All"] ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
