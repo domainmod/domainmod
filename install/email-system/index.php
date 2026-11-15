@@ -70,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_system_email1 === '' && $new_system_email2 === '') {
 
-            $_SESSION['s_message_danger'] .= _('Please enter and confirm the system email address') . '<BR>';
+            $form->addFieldError(array('new_system_email1', 'new_system_email2'), _('Please enter and confirm the system email address'));
 
         } else {
 
-            $_SESSION['s_message_danger'] .= _("The system email addresses didn't match") . '<BR>';
+            $form->addFieldError(array('new_system_email1', 'new_system_email2'), _("The system email addresses didn't match"));
 
         }
 

@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_registrar)) $_SESSION['s_message_danger'] .= _('Enter the registrar name') . '<BR>';
+        if (!$validate->text($new_registrar)) $form->addFieldError('new_registrar', _('Enter the registrar name'));
 
     }
 

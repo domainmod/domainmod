@@ -289,39 +289,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the SSL certificate name') . '<BR>';
+            $form->addFieldError('new_name', _('Enter the SSL certificate name'));
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
+            $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
         }
 
         if ($new_domain_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the domain') . '<BR>';
+            $form->addFieldError('new_domain_id', _('Choose the domain'));
 
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider Account') . '<BR>';
+            $form->addFieldError('new_account_id', _('Choose the SSL Provider Account'));
 
         }
 
         if ($new_type_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the SSL Type') . '<BR>';
+            $form->addFieldError('new_type_id', _('Choose the SSL Type'));
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
+            $form->addFieldError('new_ip_id', _('Choose the IP Address'));
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
+            $form->addFieldError('new_cat_id', _('Choose the Category'));
 
         }
 
@@ -460,7 +460,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_domain_id');
 
 }
 
@@ -481,7 +481,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_account_id');
 
 }
 
@@ -500,7 +500,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_type_id');
 }
 
 $result = $pdo->query("
@@ -518,7 +518,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_ip_id');
 }
 
 $result = $pdo->query("
@@ -536,7 +536,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_cat_id');
 
 }
 

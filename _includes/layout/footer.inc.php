@@ -113,9 +113,13 @@ if (file_exists($full_filename)) {
         });
 
         // The multiple choice menus (see Form::showMultipleSelectTop()), each with a button to remove a choice. They have
-        // no placeholder, since the label above each one already names it.
+        // no placeholder, since the label above each one already names it. Tom Select hides the real menu, so a mistake
+        // marked on it (Form::addFieldError()) is copied to the box people type in, for screen readers.
         document.querySelectorAll('select.domainmod-multiple-select').forEach(function (select) {
-            new TomSelect(select, {plugins: ['remove_button']});
+            var tom_select = new TomSelect(select, {plugins: ['remove_button']});
+            ['aria-invalid', 'aria-describedby'].forEach(function (attribute) {
+                if (select.hasAttribute(attribute)) tom_select.control_input.setAttribute(attribute, select.getAttribute(attribute));
+            });
         });
 
         // htmx tasks (see Layout::htmxTaskLink() and DomainQueue::processingNotice()). A real result carries the

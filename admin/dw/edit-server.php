@@ -64,22 +64,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ) {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= _('Enter a display name for the server') . '<BR>';
+            $form->addFieldError('new_name', _('Enter a display name for the server'));
         }
         if ($new_host == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the hostname') . '<BR>';
+            $form->addFieldError('new_host', _('Enter the hostname'));
         }
         if ($new_protocol == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the protocol') . '<BR>';
+            $form->addFieldError('new_protocol', _('Enter the protocol'));
         }
         if ($new_port === 0) {
-            $_SESSION['s_message_danger'] .= _('Enter the port') . '<BR>';
+            $form->addFieldError('new_port', _('Enter the port'));
         }
         if ($new_username == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
+            $form->addFieldError('new_username', _('Enter the username'));
         }
         if ($new_api_token == "" && $new_hash == "") {
-            $_SESSION['s_message_danger'] .= _('Enter either the API token or remote access key/hash') . '<BR>';
+            $form->addFieldError(array('new_api_token', 'new_hash'), _('Enter either the API token or remote access key/hash'));
         }
 
     } else {
@@ -217,7 +217,7 @@ echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the ho
 echo $form->showDropdownTop('new_protocol', _('Protocol') . ' (5)', _('Enter the protocol you connect with.'), '1', '');
 echo $form->showDropdownOption('https', _('Secured (https)'), $new_protocol);
 echo $form->showDropdownOption('http', _('Unsecured (http)'), $new_protocol);
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_protocol');
 echo $form->showInputText('new_port', _('Port') . ' (5)', _('Enter the port that you connect to (usually 2086 or 2087).'), $new_port, '5', '', '1', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', _('Enter the username for your WHM installation.'), $unsanitize->text($new_username), '100', '', '1', '', '');
 ?>

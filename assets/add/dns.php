@@ -128,10 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$validate->text($new_name)) {
-            $_SESSION['s_message_danger'] .= _('Enter a name for the DNS Profile') . '<BR>';
+            $form->addFieldError('new_name', _('Enter a name for the DNS Profile'));
         }
         if (!$validate->text($new_dns1) || !$validate->text($new_dns2)) {
-            $_SESSION['s_message_danger'] .= _('Enter at least two DNS servers') . '<BR>';
+            $form->addFieldError(array('new_dns1', 'new_dns2'), _('Enter at least two DNS servers'));
         }
 
     }

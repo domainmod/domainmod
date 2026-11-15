@@ -114,11 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         if ($new_password == "" && $new_password_confirmation == "") {
 
-            $_SESSION['s_message_danger'] .= _('Your passwords were left blank') . '<BR>';
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), _('Your passwords were left blank'));
 
         } else {
 
-            $_SESSION['s_message_danger'] .= _("Your passwords didn't match") . '<BR>';
+            $form->addFieldError(array('new_password', 'new_password_confirmation'), _("Your passwords didn't match"));
 
         }
 

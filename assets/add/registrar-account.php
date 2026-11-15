@@ -108,17 +108,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the owner') . '<BR>';
+            $form->addFieldError('new_owner_id', _('Choose the owner'));
 
         }
 
         if ($new_registrar_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the registrar') . '<BR>';
+            $form->addFieldError('new_registrar_id', _('Choose the registrar'));
 
         }
 
-        if (!$validate->text($new_username)) { $_SESSION['s_message_danger'] .= _('Enter a username') . '<BR>'; }
+        if (!$validate->text($new_username)) { $form->addFieldError('new_username', _('Enter a username')); }
 
     }
 
@@ -148,7 +148,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $to_compare);
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_registrar_id');
 
 echo $form->showDropdownTop('new_owner_id', _('Account Owner'), '', '1', '');
 if ($new_owner_id === 0) {
@@ -163,7 +163,7 @@ $result = $pdo->query("
 foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $to_compare);
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_owner_id');
 
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');

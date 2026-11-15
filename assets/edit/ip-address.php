@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= _('Enter a name for the IP Address') . '<BR>';
-        if (!$validate->text($new_ip)) $_SESSION['s_message_danger'] .= _('Enter the IP Address') . '<BR>';
+        if (!$validate->text($new_name)) $form->addFieldError('new_name', _('Enter a name for the IP Address'));
+        if (!$validate->text($new_ip)) $form->addFieldError('new_ip', _('Enter the IP Address'));
 
     }
 

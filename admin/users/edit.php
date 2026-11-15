@@ -254,10 +254,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_first_name == '') $_SESSION['s_message_danger'] .= _("Enter the user's first name") . '<BR>';
-        if ($new_last_name == '') $_SESSION['s_message_danger'] .= _("Enter the user's last name") . '<BR>';
-        if ($invalid_username == '1' || $new_username == '') $_SESSION['s_message_danger'] .= _('You have entered an invalid username') . '<BR>';
-        if ($invalid_email_address == '1' || $new_email_address == '') $_SESSION['s_message_danger'] .= _('You have entered an invalid email address') . '<BR>';
+        if ($new_first_name == '') $form->addFieldError('new_first_name', _("Enter the user's first name"));
+        if ($new_last_name == '') $form->addFieldError('new_last_name', _("Enter the user's last name"));
+        if ($invalid_username == '1' || $new_username == '') $form->addFieldError('new_username', _('You have entered an invalid username'));
+        if ($invalid_email_address == '1' || $new_email_address == '') $form->addFieldError('new_email_address', _('You have entered an invalid email address'));
 
     } else {
 

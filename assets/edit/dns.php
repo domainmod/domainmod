@@ -153,9 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_name)) $_SESSION['s_message_danger'] .= _('Enter a name for the DNS profile') . '<BR>';
-        if (!$validate->text($new_dns1)) $_SESSION['s_message_danger'] .= _('Enter the first DNS server') . '<BR>';
-        if (!$validate->text($new_dns2)) $_SESSION['s_message_danger'] .= _('Enter the second DNS server') . '<BR>';
+        if (!$validate->text($new_name)) $form->addFieldError('new_name', _('Enter a name for the DNS profile'));
+        if (!$validate->text($new_dns1)) $form->addFieldError('new_dns1', _('Enter the first DNS server'));
+        if (!$validate->text($new_dns2)) $form->addFieldError('new_dns2', _('Enter the second DNS server'));
 
     }
 

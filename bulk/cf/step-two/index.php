@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
         if ($raw_domain_list == "") {
 
-            $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
+            $form->addFieldError('raw_domain_list', _('Enter the list of domains to apply the action to'));
 
         } else {
 
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
+                    $form->addFieldError('raw_domain_list', _('Enter the list of domains to apply the action to'));
 
                 }
                 $submission_failed = 1;

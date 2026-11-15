@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= _('Enter the Type name') . '<BR>';
+        $form->addFieldError('new_type', _('Enter the Type name'));
 
     }
 

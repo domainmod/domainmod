@@ -171,10 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the Segment name') . '<BR>';
+            $form->addFieldError('new_name', _('Enter the Segment name'));
         }
         if ($raw_domain_list == "") {
-            $_SESSION['s_message_danger'] .= _('Enter the Segment') . '<BR>';
+            $form->addFieldError('raw_domain_list', _('Enter the Segment'));
         }
 
     }

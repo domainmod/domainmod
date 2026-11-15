@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == '') $_SESSION['s_message_danger'] .= _('Enter the display name') . '<BR>';
+        if ($new_name == '') $form->addFieldError('new_name', _('Enter the display name'));
 
     } else {
 

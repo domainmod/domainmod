@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
     if ($result_main) {
 
-        $_SESSION['s_message_danger'] .= _('The Database Field Name you entered already exists') . '<BR>';
+        $form->addFieldError('new_field_name', _('The Database Field Name you entered already exists'));
 
     } else {
 
@@ -157,9 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == '') $_SESSION['s_message_danger'] .= _('Enter the Display Name') . '<BR>';
-        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['s_message_danger'] .= _('The Database Field Name format is incorrect') . '<BR>';
-        if (!$valid_field_type) $_SESSION['s_message_danger'] .= _('Choose the Data Type') . '<BR>';
+        if ($new_name == '') $form->addFieldError('new_name', _('Enter the Display Name'));
+        if (!$custom_field->checkFieldFormat($new_field_name)) $form->addFieldError('new_field_name', _('The Database Field Name format is incorrect'));
+        if (!$valid_field_type) $form->addFieldError('new_field_type_id', _('Choose the Data Type'));
 
     }
 
@@ -193,7 +193,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_field_type_id');
 
 }
 

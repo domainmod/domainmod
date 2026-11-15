@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection != "") {
 
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && $dropdown_selection == "") {
 
-    $_SESSION['s_message_danger'] = _('Invalid selection, please try again');
+    $form->addFieldError('dropdown_selection', _('Invalid selection, please try again'), true);
 
 }
 ?>
@@ -240,7 +240,7 @@ if ($is_the_build_finished == 1) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'dropdown_selection');
         echo $form->showSubmitButton(_('View Data'), '', '');
         echo $form->showFormBottom('');
 

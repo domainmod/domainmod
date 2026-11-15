@@ -224,8 +224,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_number_of_domains === 0) $_SESSION['s_message_danger'] .= _('Enter the default number of domains to display') . '<BR>';
-        if ($new_number_of_ssl_certs === 0) $_SESSION['s_message_danger'] .= _('Enter the default number of SSL certificates to display') . '<BR>';
+        if ($new_number_of_domains === 0) $form->addFieldError('new_number_of_domains', _('Enter the default number of domains to display'));
+        if ($new_number_of_ssl_certs === 0) $form->addFieldError('new_number_of_ssl_certs', _('Enter the default number of SSL certificates to display'));
 
     } else {
 

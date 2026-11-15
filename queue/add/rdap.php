@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
     if ($raw_domain_list == '' || !$domain_array) {
 
-        $_SESSION['s_message_danger'] .= _('Enter the list of domains to add to the queue') . '<BR>';
+        $form->addFieldError('raw_domain_list', _('Enter the list of domains to add to the queue'));
 
     } elseif (count($domain_array) > $max_domains) {
 
-        $_SESSION['s_message_danger'] .= sprintf(_('You can add up to %s domains at a time. Please split your list and add it in parts.'), number_format($max_domains)) . '<BR>';
+        $form->addFieldError('raw_domain_list', sprintf(_('You can add up to %s domains at a time. Please split your list and add it in parts.'), number_format($max_domains)));
 
     } elseif ($invalid_domains == 1) {
 
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
     } elseif (!$owner_exists) {
 
-        $_SESSION['s_message_danger'] .= _('Choose the owner') . '<BR>';
+        $form->addFieldError('new_owner_id', _('Choose the owner'));
 
     } else {
 
@@ -168,7 +168,7 @@ if (!$rdap_api_registrar_id) {
     foreach ($result as $row) {
         echo $form->showDropdownOption($row->id, $row->name, $new_owner_id);
     }
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_owner_id');
 
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), '', $unsanitize->text($raw_domain_list), '1', '', '');
 

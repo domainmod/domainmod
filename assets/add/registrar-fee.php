@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_tld == '') {
 
-        if ($new_tld == '') $_SESSION['s_message_danger'] .= _('Enter the TLD') . '<BR>';
+        if ($new_tld == '') $form->addFieldError('new_tld', _('Enter the TLD'));
 
     } else {
 

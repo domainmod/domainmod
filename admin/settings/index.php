@@ -115,9 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_full_url == "") $_SESSION['s_message_danger'] .= sprintf(_('Enter the full URL of your %s installation'), SOFTWARE_TITLE) . '<BR>';
-        if ($new_email_address == "") $_SESSION['s_message_danger'] .= _('Enter the system email address') . '<BR>';
-        if ($new_expiration_days == "") $_SESSION['s_message_danger'] .= _('Enter the number of days to display in expiration emails') . '<BR>';
+        if ($new_full_url == "") $form->addFieldError('new_full_url', sprintf(_('Enter the full URL of your %s installation'), SOFTWARE_TITLE));
+        if ($new_email_address == "") $form->addFieldError('new_email_address', _('Enter the system email address'));
+        if ($new_expiration_days == "") $form->addFieldError('new_expiration_days', _('Enter the number of days to display in expiration emails'));
 
     } else {
 

@@ -728,3 +728,23 @@ div.dt-container > div.bottom {
 .sidebar-wrapper .sidebar-search {
     padding-top: 0;
 }
+/* Form mistakes on a Tom Select menu (Form::addFieldError()): Tom Select hides the real menu and copies its classes to
+   its own wrapper, so Bootstrap's red border for .is-invalid has to be given to Tom Select's control here. */
+.ts-wrapper.is-invalid .ts-control {
+    border-color: var(--bs-form-invalid-border-color);
+}
+.ts-wrapper.is-invalid.focus .ts-control {
+    border-color: var(--bs-form-invalid-border-color);
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
+}
+/* In dark mode the field rules above set every field's border, which would hide Bootstrap's red border on a field
+   with a mistake, so it's set again here, with a red focus ring when it's focused */
+[data-bs-theme="dark"] .form-control.is-invalid,
+[data-bs-theme="dark"] .form-select.is-invalid {
+    border-color: var(--bs-form-invalid-border-color);
+}
+[data-bs-theme="dark"] .form-control.is-invalid:focus,
+[data-bs-theme="dark"] .form-select.is-invalid:focus {
+    border-color: var(--bs-form-invalid-border-color);
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
+}

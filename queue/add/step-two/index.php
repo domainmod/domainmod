@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
-                if ($raw_domain_list == '') $_SESSION['s_message_danger'] .= _('Enter the list of domains to add to the queue') . '<BR>';
+                if ($raw_domain_list == '') $form->addFieldError('raw_domain_list', _('Enter the list of domains to add to the queue'));
 
             }
 
@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= _('Enter the list of domains to add to the queue') . '<BR>';
+                    $form->addFieldError('raw_domain_list', _('Enter the list of domains to add to the queue'));
 
                 }
                 $submission_failed = 1;

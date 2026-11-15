@@ -234,8 +234,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_message_danger'] .= _('Enter the Segment name') . '<BR>';
-        if ($raw_domain_list == "") $_SESSION['s_message_danger'] .= _('Enter the Segment') . '<BR>';
+        if ($new_name == "") $form->addFieldError('new_name', _('Enter the Segment name'));
+        if ($raw_domain_list == "") $form->addFieldError('raw_domain_list', _('Enter the Segment'));
 
     }
 

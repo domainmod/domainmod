@@ -394,36 +394,36 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
     } else {
 
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
+            $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
         }
 
         if ($new_account_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Registrar Account') . '<BR>';
+            $form->addFieldError('new_account_id', _('Choose the Registrar Account'));
 
         }
 
         if ($new_dns_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the DNS Profile') . '<BR>';
+            $form->addFieldError('new_dns_id', _('Choose the DNS Profile'));
 
         }
 
         if ($new_ip_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the IP Address') . '<BR>';
+            $form->addFieldError('new_ip_id', _('Choose the IP Address'));
 
         }
 
         if ($new_hosting_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Web Host') . '<BR>';
+            $form->addFieldError('new_hosting_id', _('Choose the Web Host'));
 
         }
 
         if ($new_cat_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Category') . '<BR>';
+            $form->addFieldError('new_cat_id', _('Choose the Category'));
 
         }
 
@@ -506,7 +506,7 @@ if (!$edited_creation_type_id) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_account_id');
 
     }
 
@@ -535,7 +535,7 @@ if (!$edited_creation_type_id) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_dns_id');
 
     }
 
@@ -564,7 +564,7 @@ if (!$edited_creation_type_id) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_ip_id');
 
     }
 
@@ -593,7 +593,7 @@ if (!$edited_creation_type_id) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_hosting_id');
 
     }
 
@@ -622,7 +622,7 @@ if (!$edited_creation_type_id) {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_cat_id');
     }
 
     echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');

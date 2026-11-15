@@ -151,18 +151,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Owner') . '<BR>';
+            $form->addFieldError('new_owner_id', _('Choose the Owner'));
 
         }
 
         if ($new_ssl_provider_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider') . '<BR>';
+            $form->addFieldError('new_ssl_provider_id', _('Choose the SSL Provider'));
 
         }
 
         if (!$validate->text($new_username)) {
-            $_SESSION['s_message_danger'] .= _('Enter a username') . '<BR>';
+            $form->addFieldError('new_username', _('Enter a username'));
         }
 
     }
@@ -290,7 +290,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_ssl_provider_id');
 
 }
 
@@ -309,7 +309,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_owner_id');
 
 }
 

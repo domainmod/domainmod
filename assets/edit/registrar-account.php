@@ -166,18 +166,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Owner') . '<BR>';
+            $form->addFieldError('new_owner_id', _('Choose the Owner'));
 
         }
 
         if ($new_registrar_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the Registrar') . '<BR>';
+            $form->addFieldError('new_registrar_id', _('Choose the Registrar'));
 
         }
 
         if (!$validate->text($new_username)) {
-            $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
+            $form->addFieldError('new_username', _('Enter the username'));
         }
 
     }
@@ -365,7 +365,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_registrar_id');
 
 }
 
@@ -384,7 +384,7 @@ if ($result) {
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_owner_id');
 
 }
 

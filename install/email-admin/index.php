@@ -59,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_admin_email1 === '' && $new_admin_email2 === '') {
 
-            $_SESSION['s_message_danger'] .= _('Please enter and confirm the administrator email address') . '<BR>';
+            $form->addFieldError(array('new_admin_email1', 'new_admin_email2'), _('Please enter and confirm the administrator email address'));
 
         } else {
 
-            $_SESSION['s_message_danger'] .= _("The administrator email addresses didn't match") . '<BR>';
+            $form->addFieldError(array('new_admin_email1', 'new_admin_email2'), _("The administrator email addresses didn't match"));
 
         }
 

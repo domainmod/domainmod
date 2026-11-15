@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_ssl_provider)) $_SESSION['s_message_danger'] .= _("Enter the SSL provider's name") . '<BR>';
+        if (!$validate->text($new_ssl_provider)) $form->addFieldError('new_ssl_provider', _("Enter the SSL provider's name"));
 
     }
 

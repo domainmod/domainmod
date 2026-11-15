@@ -207,9 +207,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_email_address == "") $_SESSION['s_message_danger'] .= _('Your email address could not be updated') . '<BR>';
-        if ($new_first_name == "") $_SESSION['s_message_danger'] .= _('Your first name could not be updated') . '<BR>';
-        if ($new_last_name == "") $_SESSION['s_message_danger'] .= _('Your last name could not be updated') . '<BR>';
+        if ($new_email_address == "") $form->addFieldError('new_email_address', _('Your email address could not be updated'));
+        if ($new_first_name == "") $form->addFieldError('new_first_name', _('Your first name could not be updated'));
+        if ($new_last_name == "") $form->addFieldError('new_last_name', _('Your last name could not be updated'));
 
     }
 

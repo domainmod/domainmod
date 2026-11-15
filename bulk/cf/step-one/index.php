@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
     if ($field_id == '') {
 
-        $_SESSION['s_message_danger'] = _('Invalid selection, please try again');
+        $form->addFieldError('field_id', _('Invalid selection, please try again'), true);
 
     } else {
 
@@ -88,7 +88,7 @@ if ($field_id == '0') {
 
     }
 
-    echo $form->showDropdownBottom(''); ?>
+    echo $form->showDropdownBottom('', 'field_id'); ?>
     <a href='../../'><?php echo $layout->showButton('button', _('Go Back'));
         echo '</a>&nbsp;&nbsp';
         echo $form->showSubmitButton(_('Next Step'), '', '');

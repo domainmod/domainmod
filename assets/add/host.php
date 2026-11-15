@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$validate->text($new_host)) $_SESSION['s_message_danger'] .= _("Enter the Web Host's name") . '<BR>';
+        if (!$validate->text($new_host)) $form->addFieldError('new_host', _("Enter the Web Host's name"));
 
     }
 

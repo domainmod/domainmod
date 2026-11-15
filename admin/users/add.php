@@ -88,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($existing_username === 1 || $existing_email_address === 1) {
 
-        if ($existing_username === 1) $_SESSION['s_message_danger'] .= _('A user with that username already exists') . '<BR>';
-        if ($existing_email_address === 1) $_SESSION['s_message_danger'] .= _('A user with that email address already exists') . '<BR>';
+        if ($existing_username === 1) $form->addFieldError('new_username', _('A user with that username already exists'));
+        if ($existing_email_address === 1) $form->addFieldError('new_email_address', _('A user with that email address already exists'));
 
     } else {
 
@@ -192,10 +192,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_first_name == '') $_SESSION['s_message_danger'] .= _("Enter the new user's first name") . '<BR>';
-        if ($new_last_name == '') $_SESSION['s_message_danger'] .= _("Enter the new user's last name") . '<BR>';
-        if ($new_username == '') $_SESSION['s_message_danger'] .= _("Enter the new user's username") . '<BR>';
-        if ($new_email_address == '') $_SESSION['s_message_danger'] .= _("Enter the new user's email address") . '<BR>';
+        if ($new_first_name == '') $form->addFieldError('new_first_name', _("Enter the new user's first name"));
+        if ($new_last_name == '') $form->addFieldError('new_last_name', _("Enter the new user's last name"));
+        if ($new_username == '') $form->addFieldError('new_username', _("Enter the new user's username"));
+        if ($new_email_address == '') $form->addFieldError('new_email_address', _("Enter the new user's email address"));
 
     }
 

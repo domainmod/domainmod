@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_type_id === 0) {
 
-        if ($new_type_id === 0) $_SESSION['s_message_danger'] .= _('Choose the SSL Type') . '<BR>';
+        if ($new_type_id === 0) $form->addFieldError('new_type_id', _('Choose the SSL Type'));
 
     } else {
 
@@ -192,7 +192,7 @@ foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->type, $new_type_id ?? $_SESSION['s_default_ssl_type']);
 
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_type_id');
 
 echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');

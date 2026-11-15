@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
         if ($action == '') {
 
-            $_SESSION['s_message_danger'] = _('Invalid selection, please try again');
+            $form->addFieldError('action', _('Invalid selection, please try again'), true);
 
         } else {
 
@@ -109,7 +109,7 @@ if ($action == '') {
     echo $form->showDropdownOption('CWH', _('Change Web Hosting Provider'), $action);
     echo $form->showDropdownOption('UCF', _('Update Custom Domain Field'), $action);
     echo $form->showDropdownOption('DD', _('Delete Domains'), $action);
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'action');
     echo $form->showSubmitButton(_('Next Step'), '', '');
     echo $form->showInputHidden('is_submitted', '1');
     echo $form->showFormBottom('');

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= _('Enter the SSL Type') . '<BR>';
+        $form->addFieldError('new_type', _('Enter the SSL Type'));
 
     }
 

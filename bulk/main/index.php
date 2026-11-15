@@ -76,11 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
     if ($raw_domain_list == "") {
 
-        $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
+        $form->addFieldError('raw_domain_list', _('Enter the list of domains to apply the action to'));
 
         if ($action == 'AN' && $new_notes == '') {
 
-            $_SESSION['s_message_danger'] .= _('Enter the new Note') . '<BR>';
+            $form->addFieldError('new_notes', _('Enter the new Note'));
 
         }
 
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
         if ($action == 'AN' && $new_notes == '') {
 
-            $_SESSION['s_message_danger'] .= _('Enter the new Note') . '<BR>';
+            $form->addFieldError('new_notes', _('Enter the new Note'));
 
         } else {
 
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 } else {
 
-                    $_SESSION['s_message_danger'] .= _('Enter the list of domains to apply the action to') . '<BR>';
+                    $form->addFieldError('raw_domain_list', _('Enter the list of domains to apply the action to'));
 
                 }
                 $submission_failed = 1;
@@ -187,12 +187,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                     if (!$date->checkDateFormat($new_expiry_date) || $new_pcid === 0 || $new_dnsid === 0 || $new_ipid === 0 || $new_whid === 0 || $new_raid === 0 || $has_existing_domains == '1') {
 
                         if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= sprintf(_('At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s).'), SOFTWARE_TITLE, '<BR><BR>') . '<BR>';
-                        if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_message_danger'] .= _('You have entered an invalid expiry date') . '<BR>';
-                        if ($new_pcid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Category')) . '<BR>';
-                        if ($new_dnsid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('DNS Profile')) . '<BR>';
-                        if ($new_ipid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('IP Address')) . '<BR>';
-                        if ($new_whid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Web Hosting Provider')) . '<BR>';
-                        if ($new_raid === 0) $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Registrar Account')) . '<BR>';
+                        if (!$date->checkDateFormat($new_expiry_date)) $form->addFieldError('datepick', _('You have entered an invalid expiry date'));
+                        if ($new_pcid === 0) $form->addFieldError('new_pcid', sprintf(_('Please choose the new %s'), _('Category')));
+                        if ($new_dnsid === 0) $form->addFieldError('new_dnsid', sprintf(_('Please choose the new %s'), _('DNS Profile')));
+                        if ($new_ipid === 0) $form->addFieldError('new_ipid', sprintf(_('Please choose the new %s'), _('IP Address')));
+                        if ($new_whid === 0) $form->addFieldError('new_whid', sprintf(_('Please choose the new %s'), _('Web Hosting Provider')));
+                        if ($new_raid === 0) $form->addFieldError('new_raid', sprintf(_('Please choose the new %s'), _('Registrar Account')));
 
                         $submission_failed = 1;
 
@@ -472,7 +472,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_pcid === 0) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Category')) . '<BR>';
+                        $form->addFieldError('new_pcid', sprintf(_('Please choose the new %s'), _('Category')));
                         $submission_failed = 1;
 
                     } else {
@@ -543,7 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_dnsid === 0) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('DNS Profile')) . '<BR>';
+                        $form->addFieldError('new_dnsid', sprintf(_('Please choose the new %s'), _('DNS Profile')));
                         $submission_failed = 1;
 
                     } else {
@@ -614,7 +614,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_ipid === 0) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('IP Address')) . '<BR>';
+                        $form->addFieldError('new_ipid', sprintf(_('Please choose the new %s'), _('IP Address')));
                         $submission_failed = 1;
 
                     } else {
@@ -685,7 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_notes == "") {
 
-                        $_SESSION['s_message_danger'] .= _('Enter the new Note') . '<BR>';
+                        $form->addFieldError('new_notes', _('Enter the new Note'));
                         $submission_failed = 1;
 
                     } else {
@@ -733,7 +733,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_raid === 0) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Registrar Account')) . '<BR>';
+                        $form->addFieldError('new_raid', sprintf(_('Please choose the new %s'), _('Registrar Account')));
                         $submission_failed = 1;
 
                     } else {
@@ -890,7 +890,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($new_whid === 0) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('Please choose the new %s'), _('Web Hosting Provider')) . '<BR>';
+                        $form->addFieldError('new_whid', sprintf(_('Please choose the new %s'), _('Web Hosting Provider')));
                         $submission_failed = 1;
 
                     } else {
@@ -1764,7 +1764,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if (!$date->checkDateFormat($new_expiry_date)) {
 
-                        $_SESSION['s_message_danger'] .= _('The expiry date you entered is invalid') . '<BR>';
+                        $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
                         $submission_failed = 1;
 
                     } else {
@@ -2074,7 +2074,7 @@ if ($done != "1") {
             echo $form->showDropdownOption($row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $temp_to_compare);
 
         }
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_raid');
 
         // DNS Profile
         echo $form->showDropdownTop('new_dnsid', _('DNS Profile'), '', '1', '');
@@ -2095,7 +2095,7 @@ if ($done != "1") {
             echo $form->showDropdownOption($row_dns->id, $row_dns->name, $temp_to_compare);
 
         }
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_dnsid');
 
         // IP Address
         echo $form->showDropdownTop('new_ipid', _('IP Address'), '', '1', '');
@@ -2116,7 +2116,7 @@ if ($done != "1") {
             echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $temp_to_compare);
 
         }
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_ipid');
 
         // Web Hosting Provider
         echo $form->showDropdownTop('new_whid', _('Web Hosting Provider'), '', '1', '');
@@ -2137,7 +2137,7 @@ if ($done != "1") {
             echo $form->showDropdownOption($row_host->id, $row_host->name, $temp_to_compare);
 
         }
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_whid');
 
         // Category
         echo $form->showDropdownTop('new_pcid', _('Category'), '', '1', '');
@@ -2158,7 +2158,7 @@ if ($done != "1") {
             echo $form->showDropdownOption($row_cat->id, $row_cat->name, $temp_to_compare);
 
         }
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_pcid');
 
         // Domain Status
         echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
@@ -2208,7 +2208,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_pcid');
 
     } elseif ($action == "CDNS") {
 
@@ -2232,7 +2232,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_dnsid');
 
     } elseif ($action == "CIP") {
 
@@ -2256,7 +2256,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_ipid');
 
     } elseif ($action == "CRA") {
 
@@ -2283,7 +2283,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_raid');
 
     } elseif ($action == "CWH") {
 
@@ -2307,7 +2307,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showDropdownBottom('');
+        echo $form->showDropdownBottom('', 'new_whid');
 
     } elseif ($action == "CED") {
 

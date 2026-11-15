@@ -185,7 +185,7 @@ if ($reset_id > 0 || $reset_token !== '') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-        $_SESSION['s_message_danger'] .= _('Enter your username or email address') . '<BR>';
+        $form->addFieldError('user_identifier', _('Enter your username or email address'));
 
     }
 
@@ -224,11 +224,12 @@ if ($reset_id > 0 || $reset_token !== '') {
             <p class="login-box-msg"><?php echo _('Username or Email Address'); ?></p>
 
             <form method="post">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Username or Email Address" maxlength="100" name="user_identifier"<?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
+                <div class="input-group has-validation mb-3">
+                    <input type="text" class="form-control<?php echo $form->errorClass('user_identifier'); ?>" placeholder="Username or Email Address" maxlength="100" name="user_identifier" id="<?php echo $form->fieldId('user_identifier'); ?>"<?php echo $form->errorAttributes('user_identifier'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                     <span class="input-group-text">
                         <i class="bi bi-person-fill"></i>
                     </span>
+                    <?php echo $form->errorFeedback('user_identifier'); ?>
                 </div>
                 <div class="row">
                     <div class="col-12">

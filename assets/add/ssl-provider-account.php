@@ -97,17 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_owner_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the owner') . '<BR>';
+            $form->addFieldError('new_owner_id', _('Choose the owner'));
 
         }
 
         if ($new_ssl_provider_id === 0) {
 
-            $_SESSION['s_message_danger'] .= _('Choose the SSL Provider') . '<BR>';
+            $form->addFieldError('new_ssl_provider_id', _('Choose the SSL Provider'));
 
         }
 
-        if (!$validate->text($new_username)) { $_SESSION['s_message_danger'] .= _('Enter a username') . '<BR>'; }
+        if (!$validate->text($new_username)) { $form->addFieldError('new_username', _('Enter a username')); }
 
     }
 
@@ -144,7 +144,7 @@ foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $to_compare);
 
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_ssl_provider_id');
 
 echo $form->showDropdownTop('new_owner_id', _('Account Owner'), '', '1', '');
 
@@ -166,7 +166,7 @@ foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $to_compare);
 
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_owner_id');
 
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');

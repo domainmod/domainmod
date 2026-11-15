@@ -23,6 +23,82 @@ namespace DomainMOD;
 
 class Form
 {
+    /*
+     * The form mistakes found while checking this request's POST, by field name, so each one can show under its field
+     * (see addFieldError()). It only lasts for the request, so nothing carries over a redirect.
+     */
+    public static $field_errors = array();
+
+    // Whether the first field with a mistake has already been given the focus on this page
+    public static $error_focus_used = false;
+
+    /*
+     * Records a mistake in a field ($names is one field name, or several when one message covers more than one field,
+     * such as two blank passwords), so the field shows it under itself, and adds the message to the page's error message
+     * at the top once, as the pages did before. $replace sets the top message to just this one, for the pages that
+     * replace it rather than add to it.
+     */
+    public function addFieldError($names, $message, $replace = false)
+    {
+        foreach ((array) $names as $name) {
+            self::$field_errors[$name][] = $message;
+        }
+
+        if ($replace) {
+            $_SESSION['s_message_danger'] = $message;
+        } else {
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . $message . '<BR>';
+        }
+    }
+
+    // A field's id, made from its name, for its label's "for" and its error message
+    public function fieldId($name)
+    {
+        return 'domainmod-field-' . preg_replace('/[^A-Za-z0-9_-]/', '-', $name);
+    }
+
+    // " is-invalid" when the field has a mistake, for the end of its class attribute, otherwise nothing
+    public function errorClass($name)
+    {
+        return empty(self::$field_errors[$name]) ? '' : ' is-invalid';
+    }
+
+    /*
+     * The attributes that tell screen readers a field has a mistake and where its message is, and, for the first such
+     * field on the page, the focus. Nothing when the field has no mistake.
+     */
+    public function errorAttributes($name, $id = '')
+    {
+        if (empty(self::$field_errors[$name])) return '';
+
+        $id = $id != '' ? $id : $this->fieldId($name);
+        $attributes = ' aria-invalid="true" aria-describedby="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '-error"';
+
+        if (!self::$error_focus_used) {
+            self::$error_focus_used = true;
+            $attributes .= ' autofocus';
+        }
+
+        return $attributes;
+    }
+
+    /*
+     * A field's mistakes, shown under it in Bootstrap's invalid style. It's only printed when there's a mistake, so it's
+     * always shown (d-block) rather than left to Bootstrap's rule, which only reaches a message that sits right after
+     * the field (a date picker or Tom Select wraps the field, so theirs wouldn't show). Nothing when the field has no
+     * mistake.
+     */
+    public function errorFeedback($name, $id = '')
+    {
+        if (empty(self::$field_errors[$name])) return '';
+
+        $id = $id != '' ? $id : $this->fieldId($name);
+        $messages = array_map(function ($message) {
+            return htmlspecialchars(strip_tags($message), ENT_QUOTES, 'UTF-8', false);
+        }, self::$field_errors[$name]);
+
+        return '<div class="invalid-feedback d-block" id="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '-error">' . implode('<br>', $messages) . '</div>';
+    }
 
     public function showFormTop($before)
     {
@@ -54,34 +130,37 @@ class Form
      * A text (or password) field with its label. $autofocus ('1') puts the cursor in it when the page loads, for the
      * first field of a page whose main job is entering something new (such as an Add page). It's left off when the page
      * is showing an error message (including one carried over from a redirect) or the form is shown again after a
-     * submit, so the focus doesn't skip past the message.
+     * submit, so the focus doesn't skip past the message. A mistake recorded for the field with addFieldError() shows
+     * under it, and the first such field on the page gets the focus instead.
      */
     public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '')
     {
         ob_start();
             echo $before; ?>
             <div class="mb-3">
-                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+                <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
-                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
+                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"
+                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
+                <?php echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
     }
 
     /*
-     * A text area with its label. $autofocus ('1') works as in showInputText().
+     * A text area with its label. $autofocus ('1') and mistakes recorded with addFieldError() work as in showInputText().
      */
     public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after, $autofocus = '')
     {
         ob_start();
             echo $before; ?>
             <div class="mb-3">
-                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+                <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>"<?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                <textarea class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php
+                    echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                <?php echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -94,21 +173,27 @@ class Form
         return ob_get_clean();
     }
 
+    /*
+     * The start of a menu with its label. A mistake recorded for it with addFieldError() marks it, and shows under it
+     * when showDropdownBottom() is given the same name.
+     */
     public function showDropdownTop($name, $text_to_display, $subtext, $required, $before)
     {
         ob_start();
             echo $before; ?>
             <div class="mb-3">
-                <label class="form-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
+                <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <select class="form-select" name="<?php echo $name; ?>"><?php
+                <select class="form-select<?php echo $this->errorClass($name); ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?>><?php
         return ob_get_clean();
     }
 
-    public function showDropdownBottom($after)
+    // The end of a menu. $name, the menu's name, shows its mistake under it.
+    public function showDropdownBottom($after, $name = '')
     {
         ob_start(); ?>
                 </select>
+                <?php if ($name != '') echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -127,14 +212,16 @@ class Form
             echo $before; ?>
             <div class="mb-3">
                 <label class="form-label" for="<?php echo $name; ?>"><?php echo $text_to_display; ?></label>
-                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="form-select domainmod-multiple-select" multiple="multiple"><?php
+                <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" class="form-select domainmod-multiple-select<?php echo $this->errorClass($name); ?>" multiple="multiple"<?php echo $this->errorAttributes($name, $name); ?>><?php
         return ob_get_clean();
     }
 
-    public function showMultipleSelectBottom($after)
+    // The end of a Tom Select menu. $name, the menu's name, shows its mistake under it.
+    public function showMultipleSelectBottom($after, $name = '')
     {
         ob_start(); ?>
                 </select>
+                <?php if ($name != '') echo $this->errorFeedback($name, $name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -157,8 +244,9 @@ class Form
             echo $before; ?>
                 <div class="mb-3">
                     <div class="form-check">
-                      <input name="<?php echo $name; ?>" class="form-check-input" type="checkbox" id="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?>>
+                      <input name="<?php echo $name; ?>" class="form-check-input<?php echo $this->errorClass($name); ?>" type="checkbox" id="<?php echo $name; ?>" value="<?php echo $value; ?>"<?php if ($value == $to_compare) echo " checked" ?><?php echo $this->errorAttributes($name, $name); ?>>
                       <label for="<?php echo $name; ?>" class="form-check-label"><?php echo $text_to_display; ?></label>
+                        <?php echo $this->errorFeedback($name, $name); ?>
                         <?php if ($subtext != '') echo '<BR>' . $subtext; ?>
                     </div>
                 </div><?php
@@ -211,7 +299,8 @@ class Form
             <strong><?php echo $text_to_display; ?></strong><BR>
             <?php if ($subtext != '') echo $subtext . '<BR>'; ?>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="1" aria-label="<?php echo htmlspecialchars(strip_tags($text_to_display), ENT_QUOTES, 'UTF-8'); ?>"<?php if ($value == '1') echo ' checked'; ?>>
+                <input class="form-check-input<?php echo $this->errorClass($name); ?>" type="checkbox" role="switch" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="1" aria-label="<?php echo htmlspecialchars(strip_tags($text_to_display), ENT_QUOTES, 'UTF-8'); ?>"<?php if ($value == '1') echo ' checked'; ?><?php echo $this->errorAttributes($name, $name); ?>>
+                <?php echo $this->errorFeedback($name, $name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
