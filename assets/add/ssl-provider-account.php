@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
 
         $_SESSION['s_message_success'] .= sprintf(_('SSL Account %s (%s, %s) added'),
-            $new_username, $assets->getSslProvider($new_ssl_provider_id), $assets->getOwner($new_owner_id));
+            $new_username, $assets->getSslProvider($new_ssl_provider_id), $assets->getOwner($new_owner_id)) . '<BR>';
 
         if ($_SESSION['s_has_ssl_account'] != '1') {
 

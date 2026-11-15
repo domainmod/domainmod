@@ -243,9 +243,10 @@ a.btn:hover {
 }
 /* Forms stop at a comfortable reading width instead of stretching across wide screens (the shared form wrapper,
    Form::showFormTop(), adds the class), and an edit page's Danger Zone (Layout::dangerZone()) stops at the same width,
-   so their right edges line up */
+   so their right edges line up, as do the page messages (System::slimMessage()) */
 .domainmod-form,
-.domainmod-danger-zone {
+.domainmod-danger-zone,
+.domainmod-message {
     max-width: 48rem;
 }
 /* Flatpickr's calendar in DomainMOD's colours: chosen days in the main colour, and dark mode from Bootstrap's own
@@ -1398,4 +1399,88 @@ div.dt-container > div.bottom {
     .domainmod-page-actions {
         width: 100%;
     }
+}
+
+/* Page messages (System::slimMessage() and js/messages.js): slim alerts with a leading icon, the text, and a close
+   button, and in the main layout a short success as a toast in the corner. The icon sits on the text's first line. */
+.domainmod-message-icon {
+    flex-shrink: 0;
+    line-height: inherit;
+}
+.domainmod-message-text {
+    flex: 1;
+    min-width: 0;
+}
+.domainmod-message.alert-dismissible {
+    padding-inline-end: 1rem;
+}
+.domainmod-message.alert-dismissible .btn-close {
+    position: static;
+    flex-shrink: 0;
+    padding: .5rem;
+    margin-block: -.25rem;
+    margin-inline-end: -.25rem;
+}
+/* Under the page title, a message gets the same space above it as the header leaves below it, rather than sitting
+   tight under the title with its own bottom margin doubling the gap before the page. */
+.app-content-header .domainmod-message {
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+.domainmod-message-why summary {
+    cursor: pointer;
+}
+/* A success that becomes a toast takes no space while the page loads, so nothing jumps. Without JavaScript the media
+   query doesn't match and it shows as a slim alert. */
+@media (scripting: enabled) {
+    .domainmod-toast-source {
+        display: none !important;
+    }
+}
+.domainmod-toasts {
+    z-index: 1090;
+}
+.domainmod-toast {
+    --bs-toast-bg: var(--bs-body-bg);
+    --bs-toast-color: var(--bs-body-color);
+    border-inline-start: 4px solid var(--bs-success);
+}
+.domainmod-toast .domainmod-message-icon {
+    color: var(--bs-success);
+}
+.domainmod-toast .btn-close {
+    flex-shrink: 0;
+}
+/* When neither corner is clear of the focused control, the toast becomes a thin bar across the top of the window, its
+   whole message wrapping as needed, and the page leaves room above a newly focused control */
+.domainmod-toasts.domainmod-toasts-compact {
+    inset-inline: 0;
+    width: auto;
+    padding: 0 !important;
+}
+.domainmod-toasts-compact .domainmod-toast {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+}
+.domainmod-toasts-compact .toast-body {
+    padding-block: .375rem;
+}
+html.domainmod-toasts-compact {
+    scroll-padding-top: 5.5rem;
+}
+/* The "Message closed" focus marker shows its words with a visible outline while it has focus. It's taken out of the
+   flow and lifted just above where it sits, so showing or hiding it never moves the page (a click on a control below it
+   would otherwise land somewhere else). */
+.domainmod-focus-marker:focus {
+    position: absolute !important;
+    z-index: 5;
+    transform: translateY(-100%);
+    display: inline-block;
+    padding: .125rem .375rem;
+    background-color: var(--bs-body-bg);
+    outline: 2px solid var(--bs-focus-ring-color, var(--bs-primary));
+    outline-offset: 2px;
+    border-radius: var(--bs-border-radius-sm);
+    color: var(--bs-body-color);
 }

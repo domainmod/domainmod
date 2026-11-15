@@ -99,12 +99,17 @@ class DomainRefresh
     public function refresh($domain_id, $user_id)
     {
         $row = $this->getDomainRow($domain_id, false);
-        if (!$row) return array(false, array(_('That domain no longer exists.')));
+        // Each return also gives the result in parts (a summary, reasons, changes, and notes), all translated and
+        // escaped, for the edit page's compact result (System::showMessageResult())
+        if (!$row) {
+            $missing = _('That domain no longer exists.');
+            return array(false, array($missing), array('summary' => $missing, 'reasons' => array(), 'changes' => array(), 'notes' => array()));
+        }
 
         $domain_html = $this->html($row->domain);
 
         $wait = $this->throttle((int) $row->id);
-        if ($wait !== '') return array(false, array($wait));
+        if ($wait !== '') return array(false, array($wait), array('summary' => $wait, 'reasons' => array(), 'changes' => array(), 'notes' => array()));
 
         $deadline = microtime(true) + self::DEADLINE;
         $source = '';
@@ -144,19 +149,22 @@ class DomainRefresh
 
             if ($details === null) {
 
-                return array(false, array_merge(array(sprintf(_("Domain %s couldn't be refreshed."), $domain_html)),
-                    $fallback_lines, array($error)));
+                $failed = sprintf(_("Domain %s couldn't be refreshed."), $domain_html);
+                return array(false, array_merge(array($failed), $fallback_lines, array($error)),
+                    array('summary' => $failed, 'reasons' => array($error), 'changes' => array(), 'notes' => $fallback_lines));
 
             }
 
         }
 
         // 3. Compare with the domain as it is now, and apply any changes.
-        list($success, $lines) = $this->apply($row, $user_id, $source, $details);
+        list($success, $lines, $parts) = $this->apply($row, $user_id, $source, $details);
 
         if (!$success) {
 
-            return array(false, array_merge(array(sprintf(_("Domain %s couldn't be refreshed."), $domain_html)), $lines));
+            $failed = sprintf(_("Domain %s couldn't be refreshed."), $domain_html);
+            return array(false, array_merge(array($failed), $lines),
+                array('summary' => $failed, 'reasons' => $parts['reasons'], 'changes' => array(), 'notes' => $fallback_lines));
 
         }
 
@@ -168,7 +176,9 @@ class DomainRefresh
             $first_line = sprintf(_('Domain %s refreshed using WHOIS.'), $domain_html);
         }
 
-        return array(true, array_merge(array($first_line), $fallback_lines, $lines));
+        return array(true, array_merge(array($first_line), $fallback_lines, $lines),
+            array('summary' => $first_line, 'reasons' => $parts['reasons'], 'changes' => $parts['changes'],
+                'notes' => array_merge($fallback_lines, $parts['notes'])));
     }
 
     // The name of the registrar API a refresh of this domain would try first, or '' when it would only use public
@@ -412,7 +422,8 @@ class DomainRefresh
             if (!$row) {
 
                 $pdo->rollback();
-                return array(false, array(_('That domain no longer exists.')));
+                $missing = _('That domain no longer exists.');
+                return array(false, array($missing), array('reasons' => array($missing), 'changes' => array(), 'notes' => array()));
 
             }
 
@@ -422,7 +433,8 @@ class DomainRefresh
                 || !hash_equals($this->credentialHash($before), $this->credentialHash($row))) {
 
                 $pdo->rollback();
-                return array(false, array(_('The domain changed while it was being refreshed. Please try again.')));
+                $changed = _('The domain changed while it was being refreshed. Please try again.');
+                return array(false, array($changed), array('reasons' => array($changed), 'changes' => array(), 'notes' => array()));
 
             }
 
@@ -488,7 +500,9 @@ class DomainRefresh
             if (empty($changes)) {
 
                 $pdo->rollback();
-                return array(true, array_merge(array(_('No changes were made.')), $notes_lines));
+                $no_changes = _('No changes were made.');
+                return array(true, array_merge(array($no_changes), $notes_lines),
+                    array('reasons' => array($no_changes), 'changes' => array(), 'notes' => $notes_lines));
 
             }
 
@@ -505,6 +519,7 @@ class DomainRefresh
             $notes = ((string) $row->notes === '') ? $note : $note . "\r\n\r\n" . $row->notes;
 
             $sql_fees = '';
+            $cost_lines = array();
             if ($new['privacy'] !== (int) $row->privacy) {
 
                 // This domain's fee and total cost only, as the edit page works them out.
@@ -513,7 +528,8 @@ class DomainRefresh
                     fee_id = :fee_id,
                     fee_fixed = :fee_fixed,
                     total_cost = :total_cost';
-                $changes[] = _("The domain's total cost was recalculated for the new WHOIS privacy setting.");
+                // A side effect rather than a field, so the compact result lists it with the notes
+                $cost_lines[] = _("The domain's total cost was recalculated for the new WHOIS privacy setting.");
 
             }
 
@@ -542,7 +558,8 @@ class DomainRefresh
 
             $pdo->commit();
 
-            return array(true, array_merge($changes, $notes_lines));
+            return array(true, array_merge($changes, $cost_lines, $notes_lines),
+                array('reasons' => array(), 'changes' => $changes, 'notes' => array_merge($notes_lines, $cost_lines)));
 
         } catch (\Throwable $e) {
 
@@ -552,7 +569,8 @@ class DomainRefresh
             $log_extra = array('Domain' => $before->domain, 'Error' => $e);
             $this->log->critical($log_message, $log_extra);
 
-            return array(false, array(_("The domain couldn't be updated. Please try again.")));
+            $not_updated = _("The domain couldn't be updated. Please try again.");
+            return array(false, array($not_updated), array('reasons' => array($not_updated), 'changes' => array(), 'notes' => array()));
 
         }
     }

@@ -24,7 +24,7 @@
 <?php echo $layout->skipLinks(false); ?>
 <div class="row justify-content-center mx-0">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 domainmod-install-column">
-        <main id="main">
+        <main id="main" data-domainmod-focus-home>
         <BR><BR><BR>
         <div class="login-logo">
             <a href="<?php echo WEB_ROOT; ?>/install/"><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
@@ -40,7 +40,7 @@
 
         $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
         if ($_SESSION['s_message_success'] != "") {
-            echo $system->showMessageSuccess($_SESSION['s_message_success']);
+            echo $system->showMessageSuccessInline($_SESSION['s_message_success']);
             $_SESSION['s_message_success'] = '';
         }
 

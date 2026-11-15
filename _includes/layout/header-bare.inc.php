@@ -25,7 +25,7 @@
         &nbsp;
     </div>
     <div class="col-12 col-lg-4">
-    <main id="main">
+    <main id="main" data-domainmod-focus-home>
     <BR><BR><BR>
     <div class="login-logo">
         <span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span>
@@ -41,7 +41,7 @@
 
     $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
     if ($_SESSION['s_message_success'] != "") {
-        echo $system->showMessageSuccess($_SESSION['s_message_success']);
+        echo $system->showMessageSuccessInline($_SESSION['s_message_success']);
         $_SESSION['s_message_success'] = '';
     }
 

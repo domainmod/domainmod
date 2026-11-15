@@ -47,7 +47,7 @@ $legacy_temp_files = $system->removeLegacyTempFiles();
 if (!empty($legacy_temp_files)) {
 
     $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files);
+    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files) . '<BR>';
 
 }
 
@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $log->critical($log_message, $log_extra);
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again.');
+                $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again.') . '<BR>';
 
             } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= _('Please choose a backup file to restore');
+                $_SESSION['s_message_danger'] .= _('Please choose a backup file to restore') . '<BR>';
 
             } else {
 

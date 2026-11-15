@@ -306,7 +306,7 @@ if ($compared) { ?>
     </form><?php
 
     ?>
-    <p class="small text-body-secondary" tabindex="-1" data-domainmod-focus><?php echo sprintf(_('Showing each provider\'s yearly price for %s.'), $type_names[$type_id]); ?></p><?php
+    <p class="small text-body-secondary" data-domainmod-focus><?php echo sprintf(_('Showing each provider\'s yearly price for %s.'), $type_names[$type_id]); ?></p><?php
 
     $low = round((float) $compared[0]->yearly_price, 2);
     $highlight = array();

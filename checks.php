@@ -86,7 +86,7 @@ if ($result->read_only == '0') $_SESSION['s_read_only'] = '0';
 if (!empty($legacy_temp_files) && ($_SESSION['s_is_admin'] ?? 0) === 1) {
 
     $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files);
+    $_SESSION['s_message_danger'] .= $system->getLegacyTempFilesWarning($legacy_temp_files) . '<BR>';
 
 }
 
@@ -194,7 +194,7 @@ if ($_SESSION['s_version_error'] != '1') {
         if ($_SESSION['s_is_admin'] === 1) {
 
             $_SESSION['s_message_info'] = $_SESSION['s_message_info'] ?? '';
-            $_SESSION['s_message_info'] .= $system->getUpgradeMessage();
+            $_SESSION['s_message_info'] .= $system->getUpgradeMessage() . '<BR>';
 
         }
 

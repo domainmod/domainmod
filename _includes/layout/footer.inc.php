@@ -49,6 +49,9 @@ if (isset($domainmod_page_actions_buffer) && ob_get_level() === $domainmod_page_
 </div>
 <!-- /.app-wrapper -->
 <?php $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"]; ?>
+<?php require DIR_INC . '/layout/messages-announcer.inc.php'; ?>
+<?php // Where a short success shows as a toast (js/messages.js). It isn't a live region: the announcer reads each toast. ?>
+<div class="toast-container position-fixed top-0 end-0 p-3 domainmod-toasts"></div>
 <?php
 $full_filename = DIR_INC . '/layout/footer.DEMO.inc.php';
 
@@ -75,6 +78,8 @@ if (file_exists($full_filename)) {
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
 <!-- Saves the colour mode choice to the user's account (after AdminLTE) -->
 <script src="<?php echo $layout->assetUrl('js/colour-mode-save.js'); ?>"></script>
+<!-- Page messages: the screen reader announcements, the toasts, and where focus goes when one is closed (after Bootstrap) -->
+<script src="<?php echo $layout->assetUrl('js/messages.js'); ?>"></script>
 <script nonce="<?php echo CURRENT_NONCE; ?>">
     $(function () {
 
@@ -153,11 +158,25 @@ if (file_exists($full_filename)) {
         // X-DomainMOD-Result header. Anything else, such as the sign-in page or the page a failed check redirected to,
         // isn't swapped in, and a message says it didn't work instead. A link is marked busy while its task runs.
         var htmx_error = <?php echo json_encode(_("That didn't work. Please reload the page and try again.")); ?>;
+        var htmx_error_close = <?php echo json_encode(_('Close')); ?>;
         var showHtmxError = function (element, target) {
+            // The same slim alert as the page messages (System::slimMessage()). It's added after the page loads, so its
+            // role="alert" is announced, and the shared announcer doesn't read it again.
             var alert = document.createElement('div');
-            alert.className = 'alert alert-danger';
+            alert.className = 'alert alert-danger alert-dismissible d-flex align-items-start gap-2 py-2 domainmod-message';
             alert.setAttribute('role', 'alert');
-            alert.textContent = htmx_error;
+            var icon = document.createElement('i');
+            icon.className = 'bi bi-exclamation-octagon-fill domainmod-message-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            var text = document.createElement('div');
+            text.className = 'domainmod-message-text';
+            text.textContent = htmx_error;
+            var close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'btn-close';
+            close.setAttribute('data-bs-dismiss', 'alert');
+            close.setAttribute('aria-label', htmx_error_close);
+            alert.append(icon, text, close);
             if (element.hasAttribute('hx-trigger') && element.getAttribute('hx-trigger').indexOf('every') === 0) {
                 // A polling notice: swap in a plain copy, which htmx stops polling, with the message after it
                 var copy = element.cloneNode(true);
@@ -185,20 +204,8 @@ if (file_exists($full_filename)) {
         document.addEventListener('htmx:afterRequest', function (event) {
             event.detail.elt.removeAttribute('aria-busy');
         });
-        // A result (such as Run Now's) is read out through a polite live region that's on the page from the start, since
-        // a region swapped in with its text isn't reliably announced. It takes the focus only when the swap took it away
-        // (Run Now replaces the link that had it), so it never pulls focus from somewhere someone has moved on to.
-        var htmx_announcer = document.createElement('div');
-        htmx_announcer.className = 'visually-hidden';
-        htmx_announcer.setAttribute('aria-live', 'polite');
-        document.body.appendChild(htmx_announcer);
-        document.addEventListener('htmx:afterSettle', function (event) {
-            var focus_lost = !document.activeElement || document.activeElement === document.body;
-            var result = event.detail.elt.querySelector('[data-domainmod-focus]');
-            if (!result) return;
-            htmx_announcer.textContent = result.textContent.replace(/\s+/g, ' ').trim();
-            if (focus_lost) result.focus();
-        });
+        // A result swapped in by htmx (maintenance, Run Now, Refresh, and the reports' comparisons) is read out once by
+        // the shared announcer, and focus is put back when the swap took it away. js/messages.js does both.
 
         // Every list's column headers cycle between ascending and descending, as before (DataTables 2 and later add a
         // third click that removes the sort)

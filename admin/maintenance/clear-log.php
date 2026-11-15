@@ -41,7 +41,7 @@ $pdo = $deeb->cnxx;
 
 $pdo->query("TRUNCATE log");
 
-$_SESSION['s_message_success'] .= _('Debug Log Cleared');
+$_SESSION['s_message_success'] .= _('Debug Log Cleared') . '<BR>';
 
 // An htmx request gets just the result message, shown in the task list's card, instead of a redirect
 if ($system->isHtmxRequest()) {

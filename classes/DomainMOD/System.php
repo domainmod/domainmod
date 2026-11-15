@@ -633,61 +633,104 @@ class System
         return $result;
     }
 
+    /*
+     * The page messages are slim, dismissible alerts at the form width: an icon, the message, and a close button, with
+     * no heading and no ARIA role (js/messages.js reads each one to screen readers once, through the footer's shared
+     * announcer). A short success becomes a toast in the main layout, so the page doesn't move (see js/messages.js).
+     */
     public function showMessageSuccess($result_message)
     {
-        ob_start(); ?>
-        <div class="alert alert-success alert-dismissible">
-        <?php /* ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        <?php */ ?>
-            <h4><i class="bi bi-check-circle-fill"></i> <?php echo _('Success'); ?></h4>
-            <?php echo $result_message; ?>
-        </div><?php
-        return ob_get_clean();
+        $result_message = $this->trimMessage($result_message);
+        $toast = $this->isShortMessage($result_message);
+        return $this->slimMessage('success', 'bi-check-circle-fill', $result_message,
+            $toast ? ' domainmod-toast-source' : '', $toast ? ' data-domainmod-toast' : '');
+    }
+
+    // A success that always stays in the page, for the sign-in, bare, and installer layouts, which have no toasts
+    public function showMessageSuccessInline($result_message)
+    {
+        return $this->slimMessage('success', 'bi-check-circle-fill', $this->trimMessage($result_message));
     }
 
     public function showMessageDanger($result_message)
     {
         self::$error_shown = true;
-        ob_start(); ?>
-        <div class="alert alert-danger alert-dismissible">
-            <h4><i class="bi bi-exclamation-circle-fill"></i> <?php echo _('Alert'); ?>!</h4>
-            <?php echo $result_message; ?>
-        </div><?php
-        return ob_get_clean();
+        return $this->slimMessage('danger', 'bi-exclamation-octagon-fill', $this->trimMessage($result_message));
     }
 
     public function showMessageInfo($result_message)
     {
-        ob_start(); ?>
-        <div class="alert alert-info alert-dismissible">
-        <?php /* ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        <?php */ ?>
-            <h4><i class="bi bi-info-circle-fill"></i> <?php echo _('Info'); ?></h4>
-            <?php echo $result_message; ?>
-        </div><?php
-        return ob_get_clean();
+        return $this->slimMessage('info', 'bi-info-circle-fill', $this->trimMessage($result_message));
     }
 
     public function showMaintenanceTable($result_message)
     {
-        ob_start(); ?>
-        <div class="alert alert-warning alert-dismissible">
-            <h4><i class="bi bi-exclamation-triangle-fill"></i> <?php echo _('Attention Required'); ?>!</h4>
-            <?php echo $result_message; ?>
-        </div><?php
-        return ob_get_clean();
+        return $this->slimMessage('warning', 'bi-exclamation-triangle-fill',
+            '<strong>' . _('Attention required:') . '</strong> ' . $this->trimMessage($result_message));
     }
 
     public function showDebugTable($result_message)
     {
+        return $this->slimMessage('info', 'bi-bug-fill', $this->trimMessage($result_message));
+    }
+
+    /*
+     * A result in parts (DomainRefresh::refresh()), $type being 'success' or 'danger': the bold summary, any reasons as
+     * plain lines, then the changes (a count sentence and a list), and any notes behind a "Why?" disclosure, so the
+     * reason something failed is always visible and only the background detail is tucked away. The parts are already
+     * translated and escaped. It stays in the page, never a toast.
+     */
+    public function showMessageResult($type, $parts)
+    {
+        if ($type === 'danger') self::$error_shown = true;
+        $changes = $parts['changes'] ?? array();
+        $notes = $parts['notes'] ?? array();
+        $html = '<strong>' . ($parts['summary'] ?? '') . '</strong>';
+        foreach ($parts['reasons'] ?? array() as $reason) {
+            $html .= '<div>' . $reason . '</div>';
+        }
+        if ($changes) {
+            $count = count($changes);
+            $html .= '<div>' . sprintf(ngettext('%s field changed.', '%s fields changed.', $count), number_format($count)) . '</div>';
+            $html .= '<ul class="mb-0">';
+            foreach ($changes as $change) {
+                $html .= '<li>' . $change . '</li>';
+            }
+            $html .= '</ul>';
+        }
+        if ($notes) {
+            $html .= '<details class="domainmod-message-why"><summary>' . htmlspecialchars(_('Why?'), ENT_QUOTES, 'UTF-8') . '</summary>';
+            $html .= '<div>' . implode('<br>', $notes) . '</div></details>';
+        }
+        return $this->slimMessage($type === 'danger' ? 'danger' : 'success',
+            $type === 'danger' ? 'bi-exclamation-octagon-fill' : 'bi-check-circle-fill', $html);
+    }
+
+    protected function slimMessage($type, $icon, $message, $extra_class = '', $extra_attributes = '')
+    {
         ob_start(); ?>
-        <div class="alert alert-info alert-dismissible">
-            <h4><i class="bi bi-info-circle-fill"></i> <?php echo _('Info'); ?></h4>
-            <?php echo $result_message; ?>
+        <div class="alert alert-<?php echo $type; ?> alert-dismissible d-flex align-items-start gap-2 py-2 domainmod-message<?php echo $extra_class; ?>"<?php echo $extra_attributes; ?>>
+            <i class="bi <?php echo $icon; ?> domainmod-message-icon" aria-hidden="true"></i>
+            <div class="domainmod-message-text"><?php echo $message; ?></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="<?php echo htmlspecialchars(_('Close'), ENT_QUOTES, 'UTF-8'); ?>"></button>
         </div><?php
         return ob_get_clean();
+    }
+
+    // The message without the <BR> tags and whitespace callers leave at its start and end, so the alert doesn't end
+    // with blank lines. Everything else, inner <BR> tags included, is left as it is.
+    protected function trimMessage($result_message)
+    {
+        return preg_replace('/^(?:\s|&nbsp;|<br\s*\/?>)+|(?:\s|&nbsp;|<br\s*\/?>)+$/i', '', (string) $result_message);
+    }
+
+    // A success short enough for a toast: one part (no inner <BR>), no link, and at most 100 characters of text
+    protected function isShortMessage($result_message)
+    {
+        if (preg_match('/<br\s*\/?>/i', $result_message) || stripos($result_message, '<a') !== false) return false;
+        $text = html_entity_decode(strip_tags($result_message), ENT_QUOTES, 'UTF-8');
+        $length = function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : preg_match_all('/./us', $text);
+        return $length > 0 && $length <= 100;
     }
 
     public function getCreationType($creation_type_id)

@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($has_api_support != '1' && $new_raid !== 0) {
 
                 $_SESSION['s_message_danger'] .= _("Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.") . '<BR><BR>' .
-                    sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . $temp_registrar_id . '">', '</a>');
+                    sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . $temp_registrar_id . '">', '</a>') . '<BR>';
 
             } else {
 

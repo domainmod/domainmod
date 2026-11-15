@@ -39,7 +39,7 @@ $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-$_SESSION['s_message_success'] .= $queue->clearProcessing();
+$_SESSION['s_message_success'] .= $queue->clearProcessing() . '<BR>';
 
 $queue->checkListQueue();
 $queue->checkDomainQueue();

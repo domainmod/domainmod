@@ -87,7 +87,7 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('System Cleanup Performed');
+                $_SESSION['s_message_success'] .= _('System Cleanup Performed') . '<BR>';
 
             } elseif ($result->slug == 'expiration-email') {
 
@@ -133,7 +133,7 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('Conversion Rates Updated');
+                $_SESSION['s_message_success'] .= _('Conversion Rates Updated') . '<BR>';
 
             } elseif ($result->slug == 'check-new-version') {
 
@@ -147,7 +147,7 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('New Version Check'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('No Upgrade Available');
+                $_SESSION['s_message_success'] .= _('No Upgrade Available') . '<BR>';
 
             } elseif ($result->slug == 'data-warehouse-build') {
 
@@ -162,7 +162,7 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('Build Data Warehouse'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('Data Warehouse Rebuilt');
+                $_SESSION['s_message_success'] .= _('Data Warehouse Rebuilt') . '<BR>';
 
             } elseif ($result->slug == 'domain-queue') {
 
@@ -178,7 +178,7 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('Domain Queue Processed');
+                $_SESSION['s_message_success'] .= _('Domain Queue Processed') . '<BR>';
 
             }
 
@@ -194,11 +194,11 @@ if (DEMO_INSTALLATION == false) {
 
     if (DEMO_INSTALLATION == true) {
 
-        $_SESSION['s_message_danger'] .= _('Tasks Disabled in Demo Mode');
+        $_SESSION['s_message_danger'] .= _('Tasks Disabled in Demo Mode') . '<BR>';
 
     } else {
 
-        $_SESSION['s_message_success'] .= _('Task Run');
+        $_SESSION['s_message_success'] .= _('Task Run') . '<BR>';
 
     }
 

@@ -21,7 +21,7 @@
 ?>
 <?php echo $layout->skipLinks(false); ?>
 <div class="login-box">
-  <main id="main">
+  <main id="main" data-domainmod-focus-home>
   <div class="login-logo">
       <a href='./'><span class="domainmod-login-logo"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="DomainMOD Logo" class="domainmod-login-logo-image"><img src="<?php echo $web_root; ?>/images/logo-lg.png" alt="" class="domainmod-login-logo-icon"></span></a>
   </div>
@@ -38,7 +38,7 @@
 
     $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
     if ($_SESSION['s_message_success'] != "") {
-        echo $system->showMessageSuccess($_SESSION['s_message_success']);
+        echo $system->showMessageSuccessInline($_SESSION['s_message_success']);
         $_SESSION['s_message_success'] = '';
     }
 

@@ -150,7 +150,7 @@ $search_for = $search_for ?? '';
     </aside>
 
     <!-- Main content area -->
-    <main class="app-main" id="main">
+    <main class="app-main" id="main" data-domainmod-focus-home>
         <!-- Page header --><?php
         // Everything from here to the footer is held back, so the page's actions, which a page can declare after this
         // point, can be drawn in the header (the footer swaps the marker for them, see Layout::renderPageActions())

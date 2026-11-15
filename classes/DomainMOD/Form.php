@@ -153,7 +153,8 @@ class Form
 
         ob_start();
                 if ($unshown) { ?>
-                <div class="alert alert-danger mt-3" role="alert"><?php echo implode('<br>', $unshown); ?></div><?php
+                <?php // The same slim alert as the page messages (System::slimMessage()), read once by js/messages.js ?>
+                <div class="alert alert-danger d-flex align-items-start gap-2 py-2 mt-3 domainmod-message"><i class="bi bi-exclamation-octagon-fill domainmod-message-icon" aria-hidden="true"></i><div class="domainmod-message-text"><?php echo implode('<br>', $unshown); ?></div></div><?php
                 } ?>
                 </div>
             </form><?php

@@ -39,7 +39,7 @@ $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? '');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
-$_SESSION['s_message_success'] .= $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+$_SESSION['s_message_success'] .= $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']) . '<BR>';
 
 // An htmx request gets just the result message, shown in the task list's card, instead of a redirect
 if ($system->isHtmxRequest()) {

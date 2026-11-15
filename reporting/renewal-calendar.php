@@ -250,7 +250,7 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
         </nav>
     </div>
 
-    <p class="small text-body-secondary" tabindex="-1" data-domainmod-focus><?php echo sprintf(ngettext('Showing %1$s: %2$s renewal.', 'Showing %1$s: %2$s renewals.', $total_count), $month_label, number_format($total_count)); ?></p>
+    <p class="small text-body-secondary" data-domainmod-focus><?php echo sprintf(ngettext('Showing %1$s: %2$s renewal.', 'Showing %1$s: %2$s renewals.', $total_count), $month_label, number_format($total_count)); ?></p>
 
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="btn-group" role="group" aria-label="<?php echo htmlspecialchars(_('Show'), ENT_QUOTES, 'UTF-8'); ?>"><?php

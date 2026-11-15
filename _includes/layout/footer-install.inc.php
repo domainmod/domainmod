@@ -23,6 +23,7 @@
     </div>
 </div>
 <!-- /.row -->
+<?php require DIR_INC . '/layout/messages-announcer.inc.php'; ?>
 <?php
 $full_filename = DIR_INC . '/layout/footer.DEMO.inc.php';
 
@@ -41,6 +42,8 @@ $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/dist/js/adminlte.min.js'); ?>"></script>
 <!-- Follows the system's colour mode when AdminLTE can't (after AdminLTE) -->
 <script src="<?php echo $layout->assetUrl('js/colour-mode-save.js'); ?>"></script>
+<!-- Page messages: the screen reader announcements, the toasts, and where focus goes when one is closed (after Bootstrap) -->
+<script src="<?php echo $layout->assetUrl('js/messages.js'); ?>"></script>
 <!-- The step indicator's tooltips (after Bootstrap) -->
 <script src="<?php echo $layout->assetUrl('js/step-tooltips.js'); ?>"></script>
 <!-- Tom Select, for the menus you can search (Form::showDropdownTop() with $searchable) -->

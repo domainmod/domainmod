@@ -323,7 +323,7 @@ class Scheduler
         // with htmx and replaces the task's details with the result (see taskCard()).
         $token = (new Csrf())->query();
         $layout = new Layout();
-        $run_now = $layout->htmxTaskLink('run.php?id=' . $task_id . '&' . $token, Format::toLower(_('Run Now')), '#domainmod-task-' . $task_id, 'outerHTML', 'domainmod-task-' . $task_id . '-working');
+        $run_now = $layout->htmxTaskLink('run.php?id=' . $task_id . '&' . $token, Format::toLower(_('Run Now')), '#domainmod-task-' . $task_id, 'outerHTML', 'domainmod-task-' . $task_id . '-working', ' data-domainmod-refocus');
         $spinner = $layout->htmxSpinner('domainmod-task-' . $task_id . '-working');
         $result = '<strong><span class=\'domainmod-css-text-highlight-green\'>' . _('Active') . '</span></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
             '\'>' . Format::toLower(_('Disable')) . '</a>] [' . $run_now . ']' . $spinner;
@@ -346,7 +346,7 @@ class Scheduler
         <div id="domainmod-task-<?php echo $task->id; ?>"><?php
 
             if ($messages != '') { ?>
-                <div tabindex="-1" data-domainmod-focus><?php echo $messages; ?></div><?php
+                <div data-domainmod-focus><?php echo $messages; ?></div><?php
             } ?>
 
             <div>

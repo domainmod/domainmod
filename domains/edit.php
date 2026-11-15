@@ -136,15 +136,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
             return $row;
         };
 
+        // A new refresh of this domain clears any result stored by an earlier one without JavaScript (below)
+        if ((int) ($_SESSION['s_refresh_result']['did'] ?? 0) === (int) $did) unset($_SESSION['s_refresh_result']);
+
         $before = $refresh_values($pdo, $did);
-        list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
+        list($refreshed, $refresh_lines, $refresh_parts) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
 
         header('X-DomainMOD-Result: 1');
-        echo '<div tabindex="-1" data-domainmod-focus>';
+        echo '<div data-domainmod-focus>';
+        // The compact result: a summary, any reasons, the changes, and the notes behind "Why?"
+        echo $system->showMessageResult($refreshed ? 'success' : 'danger', $refresh_parts);
 
         if ($refreshed) {
 
-            echo $system->showMessageSuccess(implode('<BR>', $refresh_lines));
             $after = $refresh_values($pdo, $did);
 
             if ($after) {
@@ -169,10 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
 
             }
 
-        } else {
-
-            echo $system->showMessageDanger(implode('<BR>', $refresh_lines));
-
         }
 
         echo '</div>';
@@ -180,13 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
 
     }
 
-    list($refreshed, $refresh_lines) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
+    list($refreshed, $refresh_lines, $refresh_parts) = $refresh->refresh($did, (int) $_SESSION['s_user_id']);
 
-    if ($refreshed) {
-        $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
-    } else {
-        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . implode('<BR>', $refresh_lines) . '<BR>';
-    }
+    // The result is shown under the Refresh button after the redirect, on this domain's page only (see below)
+    $_SESSION['s_refresh_result'] = array('did' => (int) $did, 'type' => $refreshed ? 'success' : 'danger', 'parts' => $refresh_parts);
 
     header('Location: edit.php?did=' . $did);
     exit;
@@ -375,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->commit();
 
-            $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain);
+            $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain) . '<BR>';
 
             header('Location: edit.php?did=' . $did);
             exit;
@@ -596,7 +593,13 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
             <?php echo $layout->htmxSpinner('domainmod-refresh-spinner'); ?>
         </form>
     </div>
-    <div id="domainmod-refresh-result" class="domainmod-refresh-result"></div>
+    <div id="domainmod-refresh-result" class="domainmod-refresh-result"><?php
+    // A result stored by a refresh without JavaScript, shown once, and only on the page of the domain it belongs to
+    $stored_refresh = $_SESSION['s_refresh_result'] ?? null;
+    if (is_array($stored_refresh) && (int) ($stored_refresh['did'] ?? 0) === (int) $did) {
+        echo '<div data-domainmod-focus>' . $system->showMessageResult($stored_refresh['type'] === 'danger' ? 'danger' : 'success', $stored_refresh['parts']) . '</div>';
+        unset($_SESSION['s_refresh_result']);
+    } ?></div>
 
     <?php // Asks before a refresh replaces fields the user has changed but not saved (see js/domain-refresh.js) ?>
     <div class="modal fade" id="domainmod-refresh-confirm" tabindex="-1" aria-labelledby="domainmod-refresh-confirm-title" aria-hidden="true" data-message="<?php echo htmlspecialchars(_("You've changed %s but haven't saved. Refreshing saves the looked-up details straight away and replaces what you typed in those fields."), ENT_QUOTES, 'UTF-8'); ?>">

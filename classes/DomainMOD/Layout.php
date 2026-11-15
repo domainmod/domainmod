@@ -174,11 +174,12 @@ class Layout
      * A link to a task that runs in place with htmx: the result replaces $target (with $swap, such as innerHTML or
      * outerHTML), and the spinner with $spinner_id (see htmxSpinner()) shows while it runs. A click while it's running is
      * dropped, not queued. Without JavaScript it's an ordinary link to the same page. $url must already carry the CSRF
-     * token.
+     * token. $attributes adds any extra attributes, already escaped, starting with a space (such as Run Now's
+     * data-domainmod-refocus, so focus comes back to the new link after its card is replaced).
      */
-    public function htmxTaskLink($url, $text, $target, $swap, $spinner_id)
+    public function htmxTaskLink($url, $text, $target, $swap, $spinner_id, $attributes = '')
     {
-        ob_start(); ?><a href="<?php echo $url; ?>" hx-get="<?php echo $url; ?>" hx-target="<?php echo $target; ?>" hx-swap="<?php echo $swap; ?>" hx-trigger="click queue:none" hx-indicator="#<?php echo $spinner_id; ?>"><?php echo $text; ?></a><?php
+        ob_start(); ?><a href="<?php echo $url; ?>" hx-get="<?php echo $url; ?>" hx-target="<?php echo $target; ?>" hx-swap="<?php echo $swap; ?>" hx-trigger="click queue:none" hx-indicator="#<?php echo $spinner_id; ?>"<?php echo $attributes; ?>><?php echo $text; ?></a><?php
         return ob_get_clean();
     }
 

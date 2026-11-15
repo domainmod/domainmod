@@ -328,7 +328,7 @@ if (!$overview['rows']) {
             }
             echo _('Price') . ': ' . implode(' | ', $links); ?>
         </p>
-        <p class="small text-body-secondary" tabindex="-1" data-domainmod-focus><?php echo sprintf(_('Showing each registrar\'s price for .%1$s: %2$s plus misc.'), $selected['tld'], $price_names[$price_type]); ?></p><?php
+        <p class="small text-body-secondary" data-domainmod-focus><?php echo sprintf(_('Showing each registrar\'s price for .%1$s: %2$s plus misc.'), $selected['tld'], $price_names[$price_type]); ?></p><?php
 
         echo $chart->priceBars('tld-pricing-chart', sprintf(_('%1$s Price by Registrar for .%2$s'), $price_names[$price_type], html_entity_decode($selected['tld'], ENT_QUOTES, 'UTF-8')),
             array_map(function ($fee) { return $fee->registrar_name; }, $selected['fees']),
