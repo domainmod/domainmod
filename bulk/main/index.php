@@ -1913,7 +1913,7 @@ if ($breadcrumb_text != '') {
 ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-echo _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '<BR>';
+echo '<div class="domainmod-intro">' . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '</div>';
 ?>
 <?php
     $done = $done ?? '';

@@ -193,7 +193,7 @@ if ($list) { ?>
 // The tiles count reasons, and a domain can have more than one, so a line first gives the number of domains behind them
 $total_at_risk = count($at_risk);
 $expiring_at_risk = $total_at_risk - $counts['overdue'];
-echo '<p>' . sprintf(ngettext('%1$s at-risk domain: %2$s overdue and %3$s expiring in the next %4$s days.', '%1$s at-risk domains: %2$s overdue and %3$s expiring in the next %4$s days.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']), number_format($expiring_at_risk), number_format($risk_days));
+echo '<p class="domainmod-intro">' . sprintf(ngettext('%1$s at-risk domain: %2$s overdue and %3$s expiring in the next %4$s days.', '%1$s at-risk domains: %2$s overdue and %3$s expiring in the next %4$s days.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']), number_format($expiring_at_risk), number_format($risk_days));
 if (array_sum($counts) > $total_at_risk) echo ' ' . _('A domain can have more than one reason, so the tiles can add up to more.');
 echo '</p>'; ?>
 <div class="row"><?php

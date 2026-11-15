@@ -154,7 +154,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrars'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrars'), SOFTWARE_TITLE); ?></div>
 <BR>
 <a href="add/registrar.php"><?php echo $layout->showButton('button', _('Add Registrar')); ?></a>
 <a href="registrars.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php

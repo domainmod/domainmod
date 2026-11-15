@@ -70,12 +70,13 @@ class Layout
     }
 
     /*
-     * A page's introduction (a few sentences explaining the page) in an AdminLTE callout box
+     * A page's introduction (a few sentences explaining the page) in an AdminLTE callout box, kept to the forms' width
+     * like every other page introduction (domainmod-intro)
      */
     public function calloutTop()
     {
         ob_start(); ?>
-<div class="callout callout-info"><?php
+<div class="callout callout-info domainmod-intro"><?php
         return ob_get_clean();
     }
 

@@ -206,7 +206,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrar Accounts'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrar Accounts'), SOFTWARE_TITLE); ?></div>
 <BR>
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', _('Add Registrar Account')); ?></a>
 <a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php

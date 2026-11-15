@@ -172,7 +172,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Provider Accounts'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Provider Accounts'), SOFTWARE_TITLE); ?></div>
 <BR>
 <a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', _('Add SSL Account')); ?></a>
 <a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php

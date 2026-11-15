@@ -536,18 +536,18 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     <?php echo $queue->processingNotice(); ?><BR><BR><?php
 
 } ?>
-<?php
+<div class="domainmod-intro"><?php
 if ($queue_rdap_available) {
 
-    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP or WHOIS instead."), SOFTWARE_TITLE) . '&nbsp;';
+    echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP or WHOIS instead."), SOFTWARE_TITLE) . ' ';
 
 } else {
 
-    echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . '&nbsp;';
+    echo sprintf(_("The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into %s."), SOFTWARE_TITLE) . ' ';
 
 } ?>
 
-<?php echo sprintf(_("For more information, please see the %sDomain Queue information page%s"), '<a href="intro.php">', '</a>') . '.'; ?><BR>
+<?php echo sprintf(_('See the %sDomain Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></div>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
 <?php if ($queue_rdap_available) { ?><a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>

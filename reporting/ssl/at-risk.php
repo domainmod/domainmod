@@ -185,9 +185,9 @@ if ($list) { ?>
 // The tiles count reasons, and a certificate can have more than one, so a line first gives the number behind them
 $total_at_risk = count($at_risk);
 if ($counts['overdue'] === 0) {
-    echo '<p>' . sprintf(ngettext('%s at-risk SSL certificate, not overdue.', '%s at-risk SSL certificates, none of them overdue.', $total_at_risk), number_format($total_at_risk));
+    echo '<p class="domainmod-intro">' . sprintf(ngettext('%s at-risk SSL certificate, not overdue.', '%s at-risk SSL certificates, none of them overdue.', $total_at_risk), number_format($total_at_risk));
 } else {
-    echo '<p>' . sprintf(ngettext('%1$s at-risk SSL certificate, %2$s overdue.', '%1$s at-risk SSL certificates, %2$s of them overdue.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']));
+    echo '<p class="domainmod-intro">' . sprintf(ngettext('%1$s at-risk SSL certificate, %2$s overdue.', '%1$s at-risk SSL certificates, %2$s of them overdue.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']));
 }
 if (array_sum($counts) > $total_at_risk) echo ' ' . _('A certificate can have more than one reason, so the tiles can add up to more.');
 echo '</p>'; ?>

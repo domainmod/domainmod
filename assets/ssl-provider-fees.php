@@ -110,7 +110,8 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.<BR><BR>
+<div class="domainmod-intro"><?php echo _('Below is a list of all the fees associated with'); ?> <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.</div>
+<BR>
 <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', _('Add Fee')); ?></a>
 <a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php
 

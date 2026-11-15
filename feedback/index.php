@@ -44,7 +44,7 @@ $system->authCheck();
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?><BR>
+<div class="domainmod-intro"><?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?><BR>
 <BR>
 <?php echo _("Questions, problems, and feature requests (including new registrar integrations) go in our Support Portal. Other users can vote on the requests that matter most to them, which helps us decide what to work on next."); ?><BR>
 <BR>
@@ -52,7 +52,7 @@ $system->authCheck();
 <BR>
 <?php echo _("The Support Portal also has a project Roadmap, built automatically from what users have submitted and where each item stands (Planned, In Progress, Completed, and so on), so you can see how development is progressing."); ?><BR>
 <BR>
-<?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?><BR>
+<?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?></div>
 <BR>
 <a target="_blank" href="https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new"><?php echo $layout->showButton('button', _('Submit Feedback')); ?></a>
 &nbsp;&nbsp;&nbsp;

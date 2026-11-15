@@ -138,7 +138,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Web Hosting Providers'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Web Hosting Providers'), SOFTWARE_TITLE); ?></div>
 <BR>
 <a href="add/host.php"><?php echo $layout->showButton('button', _('Add Hosting Provider')); ?></a>
 <a href="hosting.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php

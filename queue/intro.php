@@ -47,6 +47,7 @@ $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<div class="domainmod-intro">
 <?php
 if ($queue_rdap_available) {
 
@@ -87,6 +88,7 @@ $supported_registrars = substr($supported_registrars, 2);
 <a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
 <?php if ($queue_rdap_available) { ?>&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
 <BR><BR>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

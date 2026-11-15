@@ -113,10 +113,10 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom SSL Fields'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom SSL Fields'), SOFTWARE_TITLE); ?><BR>
 <BR>
 <?php echo sprintf(_('Custom SSL Fields help extend the functionality of %s by allowing the user to create their own data fields.'), SOFTWARE_TITLE); ?>
-<?php echo '&nbsp;'; echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.'); ?><BR>
+<?php echo '&nbsp;'; echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.'); ?></div>
 <BR><?php
 
 if (!$result) {

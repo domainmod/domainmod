@@ -117,12 +117,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
+<div class="domainmod-intro">
 <?php
 echo sprintf(_('This page enables you to perform complete backups and restores of your %s database.'), SOFTWARE_TITLE);
 echo '&nbsp;'; echo _('This allows you to export your entire system in a single file so that it can easily be backed up and restored.');
 echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?><BR>
 <BR>
-<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?><BR>
+<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?>
+</div>
 
 <h3><?php echo _('Backup'); ?></h3>
 <?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>

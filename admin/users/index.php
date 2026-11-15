@@ -156,7 +156,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo sprintf(_('Below is a list of all users that have access to %s.'), SOFTWARE_TITLE); ?><BR>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all users that have access to %s.'), SOFTWARE_TITLE); ?></div>
 <BR>
 <a href="add.php"><?php echo $layout->showButton('button', _('Add User')); ?></a>
 <a href="index.php?export_data=1"><?php echo $layout->showButton('button', _('Export')); ?></a><BR><BR><?php

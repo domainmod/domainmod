@@ -44,6 +44,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<div class="domainmod-intro">
 <a href="dw.php"><?php echo $layout->showButton('button', _('Proceed to the Data Warehouse')); ?></a><BR><BR>
 
 <?php echo sprintf(_('%s has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.'), SOFTWARE_TITLE); ?><BR>
@@ -72,6 +73,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <BR>
 <strong><?php echo _('DNS Records'); ?></strong><BR>
 <?php echo _('TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data'); ?><BR><BR>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

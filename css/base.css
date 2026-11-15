@@ -1097,6 +1097,12 @@ div.dt-container > div.bottom {
     max-width: 36rem;
 }
 
+/* A page's introduction (the sentences that open a list or tool page, and Layout::calloutTop()'s callouts): kept to the
+   same width as the forms and empty states, so long lines stay readable on wide screens and line up with what follows */
+.domainmod-intro {
+    max-width: 48rem;
+}
+
 /* The Dashboard's Getting Started checklist (Dashboard::gettingStarted()), on a new install: a card at the forms' width,
    a native progress bar (Bootstrap's needs an inline style, which the CSP blocks), and an ordered list of steps with
    the step indicator's circles: done steps ticked in the success colour with the title struck through, the next one's
