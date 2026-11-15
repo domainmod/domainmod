@@ -840,7 +840,7 @@ if ($dw_has_zones === 1) { ?>
     </table><?php
 }
 
-$layout->deleteButton(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1');
+$layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1', _('Delete this domain'), sprintf(_('This removes %s and its details from DomainMOD. It can only be deleted when no SSL certificates are linked to it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_domain, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'));
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

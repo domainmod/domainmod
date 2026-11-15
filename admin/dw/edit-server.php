@@ -231,7 +231,7 @@ echo $form->showInputHidden('new_dwsid', $dwsid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('Server'), $new_name, 'edit-server.php?dwsid=' . $dwsid . '&del=1');
+$layout->dangerZone(_('Server'), $new_name, 'edit-server.php?dwsid=' . $dwsid . '&del=1', _('Delete this server'), sprintf(_('This removes %s and its accounts, DNS zones, and records from the Data Warehouse. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

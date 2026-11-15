@@ -218,7 +218,7 @@ echo $form->showInputHidden('new_sslpid', $sslpid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('SSL Provider'), $new_ssl_provider, 'ssl-provider.php?sslpid=' . $sslpid . '&del=1');
+$layout->dangerZone(_('SSL Provider'), $new_ssl_provider, 'ssl-provider.php?sslpid=' . $sslpid . '&del=1', _('Delete this SSL provider'), sprintf(_('This removes %s and its fees. It can only be deleted when it has no accounts or SSL certificates. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_ssl_provider, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

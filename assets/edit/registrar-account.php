@@ -524,7 +524,7 @@ echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('Registrar Account'), $new_username, 'registrar-account.php?raid=' . $raid . '&del=1');
+$layout->dangerZone(_('Registrar Account'), $new_username, 'registrar-account.php?raid=' . $raid . '&del=1', _('Delete this registrar account'), sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_username, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

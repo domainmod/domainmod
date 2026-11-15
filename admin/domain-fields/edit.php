@@ -295,7 +295,7 @@ echo $form->showInputHidden('new_cdfid', $cdfid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('Custom Domain Field'), $new_name, 'edit.php?cdfid=' . $cdfid . '&del=1');
+$layout->dangerZone(_('Custom Domain Field'), $new_name, 'edit.php?cdfid=' . $cdfid . '&del=1', _('Delete this custom domain field'), sprintf(_('This removes %s and the value it holds for every domain. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>

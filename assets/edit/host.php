@@ -158,7 +158,7 @@ echo $form->showInputHidden('new_whid', $whid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('Web Host'), $new_host, 'host.php?whid=' . $whid . '&del=1');
+$layout->dangerZone(_('Web Host'), $new_host, 'host.php?whid=' . $whid . '&del=1', _('Delete this web host'), sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_host, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

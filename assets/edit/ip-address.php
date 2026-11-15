@@ -164,7 +164,7 @@ echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('IP Address'), $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1');
+$layout->dangerZone(_('IP Address'), $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1', _('Delete this IP address'), sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

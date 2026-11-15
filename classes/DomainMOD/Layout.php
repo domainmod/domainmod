@@ -187,6 +187,41 @@ class Layout
         echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }
 
+    /*
+     * A page's delete action in its own "Danger Zone" section at the bottom of the page: a heading, then a box with a
+     * soft red tint and a thin red border, with what the delete does on the left and a DELETE button on the right
+     * (under the text on phones), which opens the same confirmation modal as deleteButton(). $action and $description
+     * are already translated, and $description is already escaped for the page. $heading_level matches the page's
+     * other section headings (3 where the page has h3 sections, 2 where the Danger Zone is its only one), and the
+     * heading looks the same at either level. The section stops at the same width as the forms (.domainmod-form).
+     */
+    public function dangerZone($item_type, $item_name, $url, $action, $description, $heading_level = 3)
+    {
+        // Deleting changes data, so the link carries the session's security token (see DomainMOD\Csrf).
+        $csrf = new Csrf();
+        $url .= (strpos($url, '?') === false ? '?' : '&') . $csrf->query();
+
+        ob_start(); ?>
+
+        <?php $heading_level = $heading_level === 2 ? 2 : 3; ?>
+        <div class="domainmod-danger-zone">
+            <h<?php echo $heading_level; ?> class="h3 mt-5"><?php echo _('Danger Zone'); ?></h<?php echo $heading_level; ?>>
+            <?php // A soft red tint with a thin red border (Greg's choice, 2026-11-14), in both colour modes ?>
+            <div class="bg-danger-subtle border border-danger-subtle rounded-3 p-3">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                    <div>
+                        <strong class="d-block"><?php echo $action; ?></strong>
+                        <span class="text-body-secondary"><?php echo $description; ?></span>
+                    </div>
+                    <div class="flex-shrink-0"><?php echo $this->modalButton(Format::toUpper(_('Delete'))); ?></div>
+                </div>
+            </div>
+        </div><?php
+
+        echo ob_get_clean();
+        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
+    }
+
     public function modalButton($name)
     {
         ob_start(); ?>

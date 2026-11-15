@@ -463,7 +463,7 @@ echo $form->showFormBottom('');
 <a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR>
 <?php } ?>
 <?php
-$layout->deleteButton(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1'); ?>
+$layout->dangerZone(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1', _('Delete this user'), sprintf(_('This removes %s and their settings. It can\'t be undone. The admin user and your own account can\'t be deleted.'), '<strong>' . htmlentities(html_entity_decode($new_first_name . ' ' . $new_last_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2); ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

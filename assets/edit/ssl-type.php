@@ -154,7 +154,7 @@ echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('SSL Type'), $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1');
+$layout->dangerZone(_('SSL Type'), $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1', _('Delete this SSL type'), sprintf(_('This removes %s. It can only be deleted when no SSL certificates use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_type, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

@@ -230,7 +230,7 @@ echo $form->showInputHidden('new_oid', $oid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->deleteButton(_('Owner'), $new_owner, 'account-owner.php?oid=' . $oid . '&del=1');
+$layout->dangerZone(_('Owner'), $new_owner, 'account-owner.php?oid=' . $oid . '&del=1', _('Delete this owner'), sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, domains, or SSL certificates. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_owner, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

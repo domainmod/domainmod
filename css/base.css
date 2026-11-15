@@ -222,8 +222,10 @@ a:hover {
     padding-left: 3.125rem;
 }
 /* Forms stop at a comfortable reading width instead of stretching across wide screens (the shared form wrapper,
-   Form::showFormTop(), adds the class) */
-.domainmod-form {
+   Form::showFormTop(), adds the class), and an edit page's Danger Zone (Layout::dangerZone()) stops at the same width,
+   so their right edges line up */
+.domainmod-form,
+.domainmod-danger-zone {
     max-width: 48rem;
 }
 /* Flatpickr's calendar in DomainMOD's colours: chosen days in the main colour, and dark mode from Bootstrap's own
