@@ -263,6 +263,43 @@ class Scheduler
         return $result;
     }
 
+    /*
+     * Whether the scheduled task (cron.php) looks set up, for the Dashboard's Getting Started checklist. cron.php and the
+     * Task Scheduler's Run Now both finish a task the same way, so this can't tell them apart: it's true when the Domain
+     * Queue task is active and ran in the last 30 minutes (it runs every 5 minutes on a working schedule), or, when that
+     * task is inactive, when any active task ran in the last 25 hours. A fresh install's tasks have never run
+     * (1970-01-01).
+     */
+    public function hasRunRecently()
+    {
+        $pdo = $this->deeb->cnxx;
+        $now = strtotime($this->time->stamp() . ' UTC');
+
+        $stmt = $pdo->prepare("
+            SELECT last_run, active
+            FROM scheduler
+            WHERE slug = 'domain-queue'");
+        $stmt->execute();
+        $queue_task = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($queue_task && $queue_task->active == '1') {
+
+            return strtotime($queue_task->last_run . ' UTC') >= $now - 30 * 60;
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM scheduler
+            WHERE active = '1'
+              AND last_run >= :since");
+        $stmt->bindValue('since', gmdate('Y-m-d H:i:s', $now - 25 * 3600), \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
     public function getTask($task_id)
     {
         $pdo = $this->deeb->cnxx;

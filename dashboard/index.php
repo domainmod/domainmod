@@ -77,12 +77,17 @@ $total_sold_domains = (int) $pdo->query("
     FROM domains
     WHERE active = '10'")->fetchColumn();
 
+// On an install with no domains yet, the Getting Started checklist takes the totals' place, since they'd only be zeros
+// (Greg's choice, 2026-11-15)
+$show_getting_started = $dashboard->showGettingStarted();
+
 $totals = array();
 $totals[] = array('/domains/index.php?is_active=LIVE', 'bi-globe2', number_format($total_live_domains), _('Domains'));
 $totals[] = array('/ssl/index.php?is_active=LIVE', 'bi-shield-lock', number_format($total_live_ssl), _('SSL Certificates'));
 if ($total_sold_domains) {
     $totals[] = array('/domains/index.php?is_active=10', 'bi-cart', number_format($total_sold_domains), _('Sold Domains'));
-} ?>
+}
+if (!$show_getting_started) { ?>
 <div class="card domainmod-dashboard-totals d-inline-block mw-100 mb-0">
     <div class="d-flex flex-column flex-sm-row"><?php
         foreach ($totals as $total) { ?>
@@ -95,8 +100,11 @@ if ($total_sold_domains) {
             </div><?php
         } ?>
     </div>
-</div>
-<?php
+</div><?php
+} else {
+    // The Getting Started checklist, on an install with no domains yet
+    echo $dashboard->gettingStarted();
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Expiration Panels
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1097,6 +1097,102 @@ div.dt-container > div.bottom {
     max-width: 36rem;
 }
 
+/* The Dashboard's Getting Started checklist (Dashboard::gettingStarted()), on a new install: a card at the forms' width,
+   a native progress bar (Bootstrap's needs an inline style, which the CSP blocks), and an ordered list of steps with
+   the step indicator's circles: done steps ticked in the success colour with the title struck through, the next one's
+   circle in the emphasis colour, and the rest as outlines. Logical properties, so right-to-left languages mirror. */
+.domainmod-getting-started {
+    --domainmod-step-size: 2rem;
+    --domainmod-step-done-color: #fff;
+    max-width: 48rem;
+}
+[data-bs-theme="dark"] .domainmod-getting-started {
+    /* Nord's green is light, so the tick on it is dark */
+    --domainmod-step-done-color: #2e3440;
+}
+.domainmod-getting-started-progress {
+    display: block;
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    border: 0;
+    border-radius: 3px;
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-success);
+    overflow: hidden;
+}
+.domainmod-getting-started-progress::-webkit-progress-bar {
+    background-color: var(--bs-secondary-bg);
+    border-radius: 3px;
+}
+.domainmod-getting-started-progress::-webkit-progress-value {
+    background-color: var(--bs-success);
+    border-radius: 3px;
+}
+.domainmod-getting-started-progress::-moz-progress-bar {
+    background-color: var(--bs-success);
+    border-radius: 3px;
+}
+.domainmod-getting-started-steps {
+    margin: 0 0 .75rem;
+    padding: 0;
+    list-style: none;
+}
+.domainmod-getting-started-step {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: .5rem .75rem;
+    padding-block: .625rem;
+    border-top: 1px solid var(--bs-border-color);
+}
+.domainmod-getting-started-step:first-child {
+    border-top: 0;
+}
+.domainmod-getting-started-step .domainmod-step-number {
+    color: var(--bs-secondary-color);
+}
+.domainmod-getting-started-step.is-done .domainmod-step-number {
+    color: var(--domainmod-step-done-color);
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+.domainmod-getting-started-step.is-next .domainmod-step-number {
+    color: var(--bs-emphasis-color);
+    border-color: var(--bs-emphasis-color);
+}
+.domainmod-getting-started-text {
+    flex: 1 1 14rem;
+    min-width: 0;
+    padding-block-start: .25rem;
+}
+.domainmod-getting-started-title {
+    display: block;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+.domainmod-getting-started-step.is-done .domainmod-getting-started-title {
+    font-weight: 400;
+    color: var(--bs-secondary-color);
+    text-decoration: line-through;
+}
+.domainmod-getting-started-explanation {
+    display: block;
+    font-size: .875em;
+    color: var(--bs-secondary-color);
+}
+.domainmod-getting-started-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1rem;
+    margin-block-start: .25rem;
+    font-size: .875em;
+}
+.domainmod-getting-started-button {
+    align-self: center;
+    white-space: nowrap;
+}
+
 /* The gap after each button from Layout::showButton(), which used to be a trailing non-breaking space (a link wrapped
    around the button underlined it on hover). A logical margin, so it's on the correct side in right-to-left languages. */
 .domainmod-css-button {

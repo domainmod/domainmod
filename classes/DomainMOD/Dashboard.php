@@ -78,4 +78,112 @@ class Dashboard
         return $this->displayPanel($title, $count, 'danger', 'bi-calendar-event', $url, $section);
     }
 
+    /*
+     * Whether to show the Getting Started checklist: only on an install with no domains in any status, since sold and
+     * inactive domains show a user has clearly got started. Once a domain exists the checklist is gone for everyone.
+     */
+    public function showGettingStarted()
+    {
+        $pdo = Database::getInstance()->cnxx;
+        return (int) $pdo->query("SELECT COUNT(*) FROM domains")->fetchColumn() === 0;
+    }
+
+    /*
+     * The Getting Started checklist for a new install: the steps to get DomainMOD tracking domains, each worked out from
+     * the database on every load, so it's never out of date. Done steps are ticked and keep their row without a button,
+     * the first step still to do has the main (red) button, and later ones have outline buttons. The scheduled task step
+     * is for administrators only (the Task Scheduler is admin-only), and read-only users see the steps without buttons,
+     * since they can't add anything. The circles look like the step indicator's (Layout::stepIndicator()), but this is a
+     * list of tasks, not a flow, so it isn't a nav. A "Hide this checklist" link comes with the 4.26.0 database update.
+     */
+    public function gettingStarted()
+    {
+        $pdo = Database::getInstance()->cnxx;
+        $is_admin = (($_SESSION['s_is_admin'] ?? 0) === 1);
+        $read_only = (($_SESSION['s_read_only'] ?? '') == '1');
+        $esc = function ($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); };
+
+        $has_registrar = (int) $pdo->query("SELECT COUNT(*) FROM registrars")->fetchColumn() > 0;
+        $has_account = (int) $pdo->query("SELECT COUNT(*) FROM registrar_accounts")->fetchColumn() > 0;
+        $queue_waiting = (int) $pdo->query("
+            SELECT COUNT(*)
+            FROM domain_queue
+            WHERE finished != '1'")->fetchColumn() > 0;
+
+        if ($queue_waiting) {
+            $domains_text = sprintf(_('Your Domain Queue has domains waiting. See the %sDomain Queue%s for their progress.'), '<a href="' . WEB_ROOT . '/queue/">', '</a>');
+        } else {
+            $domains_text = $esc(sprintf(_('Add them one at a time, let %s fetch them from your registrar, or import a CSV file.'), SOFTWARE_TITLE));
+        }
+
+        // Each step: done, title, explanation (HTML), the button (URL and label), and extra links (URL and label)
+        $steps = array(
+            array(true, sprintf(_('Install %s'), SOFTWARE_TITLE), '', '', '', array()),
+            array($has_registrar, _('Add your registrar'),
+                $esc(_('Your registrar is the company your domains are registered with, such as Namecheap or GoDaddy.')),
+                '/assets/add/registrar.php', _('Add Registrar'), array()),
+            array($has_account, _('Add your registrar account'),
+                $esc(sprintf(_('With its API details, %s can fetch your domains and their expiry dates for you.'), SOFTWARE_TITLE)),
+                '/assets/add/registrar-account.php', _('Add Registrar Account'), array()),
+            array(false, _('Add your domains'), $domains_text, '/domains/add.php', _('Add Domain'),
+                array(array('/queue/intro.php', _('Add Domains Automatically')),
+                      array('/domains/csv-importer/', _('CSV Importer')))));
+        if ($is_admin) {
+            $steps[] = array((new Scheduler())->hasRunRecently(), _('Set up the scheduled task'),
+                $esc(_('The scheduled task sends expiry emails, works through the Domain Queue, updates currency conversion rates, and checks for new versions for you.')),
+                '/admin/scheduler/', _('Task Scheduler'),
+                array(array('https://domainmod.org/docs/userguide/getting-started/#cron-job', _('How to set up the scheduled task'), true)));
+        }
+
+        $total = count($steps);
+        $done = count(array_filter($steps, function ($step) { return $step[0]; }));
+        $next_found = false;
+
+        ob_start(); ?>
+
+        <div class="card card-outline card-danger domainmod-getting-started mb-0">
+            <div class="card-body">
+                <h2 class="h5"><?php echo $esc(_('Getting Started')); ?></h2>
+                <p class="mb-2"><?php echo $esc(sprintf(_('Follow these steps to get %s tracking your domains. Each one ticks itself off as you go.'), SOFTWARE_TITLE)); ?></p><?php
+                if ($read_only) { ?>
+                <p class="mb-2 text-body-secondary"><?php echo $esc(_('Your account is read-only, so another user who can make changes needs to add these.')); ?></p><?php
+                } ?>
+                <p class="small mb-1" id="domainmod-getting-started-progress"><?php echo $esc(sprintf(ngettext('%1$s of %2$s steps is done.', '%1$s of %2$s steps are done.', $done), number_format($done), number_format($total))); ?></p>
+                <progress class="domainmod-getting-started-progress mb-3" value="<?php echo $done; ?>" max="<?php echo $total; ?>" aria-labelledby="domainmod-getting-started-progress"></progress>
+                <ol class="domainmod-getting-started-steps"><?php
+                foreach ($steps as $index => $step) {
+                    list($is_done, $title, $text, $url, $label, $links) = $step;
+                    $is_next = !$is_done && !$next_found;
+                    if ($is_next) $next_found = true; ?>
+                    <li class="domainmod-getting-started-step<?php echo $is_done ? ' is-done' : ($is_next ? ' is-next' : ''); ?>">
+                        <span class="domainmod-step-number" aria-hidden="true"><?php if ($is_done) { ?><i class="bi bi-check-lg"></i><?php } else { echo $index + 1; } ?></span>
+                        <div class="domainmod-getting-started-text">
+                            <span class="visually-hidden"><?php echo $esc(sprintf($is_done ? _('Done: %s') : _('To do: %s'), $title)); ?></span>
+                            <span class="domainmod-getting-started-title" aria-hidden="true"><?php echo $esc($title); ?></span><?php
+                            if (!$is_done && $text !== '') { ?>
+                            <span class="domainmod-getting-started-explanation"><?php echo $text; ?></span><?php
+                            }
+                            if (!$is_done && !$read_only && $links) { ?>
+                            <span class="domainmod-getting-started-links"><?php
+                                foreach ($links as $link) {
+                                    $href = strpos($link[0], 'http') === 0 ? $link[0] : WEB_ROOT . $link[0]; ?>
+                                <a href="<?php echo $esc($href); ?>"<?php if (!empty($link[2])) echo ' target="_blank"'; ?>><?php echo $esc($link[1]); ?></a><?php
+                                } ?>
+                            </span><?php
+                            } ?>
+                        </div><?php
+                        if (!$is_done && !$read_only && $url !== '') { ?>
+                        <a class="btn btn-sm <?php echo $is_next ? 'btn-danger' : 'btn-outline-secondary'; ?> domainmod-getting-started-button" href="<?php echo $esc(WEB_ROOT . $url); ?>"><?php echo $esc($label); ?></a><?php
+                        } ?>
+                    </li><?php
+                } ?>
+                </ol>
+                <p class="mb-1 small"><?php echo sprintf(_('Tracking SSL certificates too? The %sSSL Certificates%s page walks you through it.'), '<a href="' . WEB_ROOT . '/ssl/">', '</a>'); ?></p>
+                <p class="mb-0 small"><?php echo sprintf(_('See %sFirst Run%s in the User Guide for more.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/first-run/">', '</a>'); ?></p>
+            </div>
+        </div><?php
+
+        return ob_get_clean();
+    }
+
 } //@formatter:on
