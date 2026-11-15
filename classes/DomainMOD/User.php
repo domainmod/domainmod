@@ -176,4 +176,132 @@ class User
         return;
     }
 
+    // The database version whose update adds user_settings.display_getting_started, the Getting Started checklist's
+    // per-user hide setting
+    const GETTING_STARTED_DB_VERSION = '4.26.0';
+
+    /*
+     * Whether a database at this version has the Getting Started hide setting. New code can arrive before the database
+     * update that adds the column (and, before the version bump, SOFTWARE_VERSION is still the older version too), so
+     * the column is used only once the database itself is at that version or later.
+     */
+    public static function hasGettingStartedSetting($db_version)
+    {
+        return is_string($db_version) && $db_version !== ''
+            && version_compare($db_version, self::GETTING_STARTED_DB_VERSION, '>=');
+    }
+
+    // Whether a stored or session value shows the Getting Started checklist: only an explicit 0 hides it, so a missing
+    // value (before the database update, or a session from before it) leaves the checklist showing
+    public static function showsGettingStarted($value)
+    {
+        return $value === null || (string) $value !== '0';
+    }
+
+    // Whether the Getting Started checklist can be hidden yet (see hasGettingStartedSetting()). A failed check counts as
+    // no, so the checklist shows without its Hide link.
+    public function canHideGettingStarted()
+    {
+        try {
+
+            return self::hasGettingStartedSetting($this->getDbVersion());
+
+        } catch (\Throwable $e) {
+
+            $this->logSettingProblem('The database version could not be read', $e);
+            return false;
+
+        }
+    }
+
+    /*
+     * Whether this user shows the Getting Started checklist (1) or has hidden it (0), or null when the setting can't be
+     * read: before the database update that adds it, or when the read fails.
+     */
+    public function getGettingStartedDisplay($user_id)
+    {
+        if (!$this->canHideGettingStarted()) return null;
+
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT display_getting_started
+                FROM user_settings
+                WHERE user_id = :user_id");
+            $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $value = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            return ($value === false || $value === null) ? null : (self::showsGettingStarted($value) ? 1 : 0);
+
+        } catch (\Throwable $e) {
+
+            $this->logSettingProblem('The Getting Started setting could not be read', $e);
+            return null;
+
+        }
+    }
+
+    /*
+     * Saves whether this user shows the Getting Started checklist (1) or hides it (0). Returns whether it was saved: false
+     * before the database update that adds the setting, or when the write fails.
+     */
+    public function setGettingStartedDisplay($user_id, $display)
+    {
+        if (!$this->canHideGettingStarted()) return false;
+
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE user_settings
+                SET display_getting_started = :display_getting_started,
+                    update_time = :update_time
+                WHERE user_id = :user_id");
+            $stmt->bindValue('display_getting_started', $display ? 1 : 0, \PDO::PARAM_INT);
+            $stmt->bindValue('update_time', $this->time->stamp(), \PDO::PARAM_STR);
+            $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            return true;
+
+        } catch (\Throwable $e) {
+
+            $this->logSettingProblem('The Getting Started setting could not be saved', $e);
+            return false;
+
+        }
+    }
+
+    // The database's version (System::getDbVersion())
+    protected function getDbVersion()
+    {
+        return (new System())->getDbVersion();
+    }
+
+    /*
+     * Logs a problem with a user setting, in debug mode only (Log does nothing otherwise), so a failing read on every
+     * Dashboard view never fills a log. Logging writes to the same database, which may be what failed, so a failed log
+     * write is dropped rather than stopping the page.
+     */
+    protected function logSettingProblem($message, $e)
+    {
+        if (!defined('DEBUG_MODE') || DEBUG_MODE != 1) return;
+
+        try {
+
+            $this->getLog()->error($message, array('Error' => $e->getMessage()));
+
+        } catch (\Throwable $log_e) {
+
+            return;
+
+        }
+    }
+
+    protected function getLog()
+    {
+        return new Log('class.user');
+    }
+
 } //@formatter:on

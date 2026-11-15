@@ -50,6 +50,10 @@ $custom_ssl_fields = (array) ($_POST['custom_ssl_fields'] ?? array(''));
 $ssl_column_options = (array) ($_POST['ssl_column_options'] ?? array(''));
 $new_display_inactive_assets = (int) ($_POST['new_display_inactive_assets'] ?? 0);
 $new_display_dw_intro_page = (int) ($_POST['new_display_dw_intro_page'] ?? 0);
+// The Getting Started checklist's setting, saved only when the form offered it (from the 4.26.0 database update on), so
+// a form loaded before that update can't hide the checklist by leaving the box out
+$getting_started_offered = ($_POST['getting_started_offered'] ?? '') === '1';
+$new_display_getting_started = (int) ($_POST['new_display_getting_started'] ?? 0) === 1 ? 1 : 0;
 // The colour mode: 0 Light, 1 Dark, or 2 Auto (which follows the system setting)
 $new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 2);
 if (!in_array($new_dark_mode, array(0, 1, 2), true)) $new_dark_mode = 2;
@@ -215,6 +219,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     $user->setDarkMode();
 
+    if ($getting_started_offered && $user->setGettingStartedDisplay($_SESSION['s_user_id'], $new_display_getting_started)) {
+
+        $_SESSION['s_display_getting_started'] = $new_display_getting_started;
+
+    }
+
     $_SESSION['s_message_success'] .= _('Display Settings updated') . '<BR>';
 
     header("Location: index.php");
@@ -270,6 +280,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
             $new_display_dw_intro_page = $result->display_dw_intro_page;
 
         }
+
+        $new_display_getting_started = $user->getGettingStartedDisplay($_SESSION['s_user_id']) ?? 1;
 
     }
 
@@ -364,6 +376,12 @@ echo $form->showMultipleSelectBottom('<BR>');
 
 <h2 class="h3"><?php echo _('Data Warehouse'); ?></h2>
 <?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>
+<?php if ($user->canHideGettingStarted()) { ?>
+
+<h2 class="h3"><?php echo _('Dashboard'); ?></h2>
+<?php echo $form->showInputHidden('getting_started_offered', '1'); ?>
+<?php echo $form->showCheckbox('new_display_getting_started', '1', _('Show the Getting Started checklist on the Dashboard'), _('It appears only until the first domain is added.'), $new_display_getting_started, '', '<BR>'); ?>
+<?php } ?>
 
 <h2 class="h3"><?php echo _('Miscellaneous'); ?></h2>
 

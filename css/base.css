@@ -1220,6 +1220,12 @@ div.dt-container > div.bottom {
     align-self: center;
     white-space: nowrap;
 }
+/* The "Hide this checklist" button looks like the links above it: the same small text, lined up with them (no border) */
+.domainmod-getting-started-hide {
+    --bs-btn-font-size: .875em;
+    --bs-btn-border-width: 0;
+    text-align: start;
+}
 
 /* The edit domain and SSL certificate pages' titled cards (Layout::formSection()): each card at the forms' width, its
    fields in two columns from tablet width up and one on phones, the notes and other text areas across both columns.

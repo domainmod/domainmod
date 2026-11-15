@@ -36,6 +36,7 @@ $time = new DomainMOD\Time();
 $upgrade = new DomainMOD\Upgrade();
 $currency = new DomainMOD\Currency();
 $custom_field = new DomainMOD\CustomField();
+$user = new DomainMOD\User();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -157,6 +158,8 @@ $_SESSION['s_display_ssl_fee'] = $result->display_ssl_fee;
 $_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
 $_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
 $_SESSION['s_dark_mode'] = (int) $result->dark_mode;
+// Read on its own, since the database update that adds it can come after this code (shown when it can't be read)
+$_SESSION['s_display_getting_started'] = $user->getGettingStartedDisplay($_SESSION['s_user_id']) ?? 1;
 
 // Load Custom Domain Field Data
 $_SESSION['s_cdf_data'] = $custom_field->getCDFData();

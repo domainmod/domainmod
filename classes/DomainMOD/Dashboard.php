@@ -80,10 +80,13 @@ class Dashboard
 
     /*
      * Whether to show the Getting Started checklist: only on an install with no domains in any status, since sold and
-     * inactive domains show a user has clearly got started. Once a domain exists the checklist is gone for everyone.
+     * inactive domains show a user has clearly got started, and only while the signed-in user hasn't hidden it (from
+     * the 4.26.0 database update on, loaded at sign-in). Once a domain exists the checklist is gone for everyone.
      */
     public function showGettingStarted()
     {
+        if (!User::showsGettingStarted($_SESSION['s_display_getting_started'] ?? null)) return false;
+
         $pdo = Database::getInstance()->cnxx;
         return (int) $pdo->query("SELECT COUNT(*) FROM domains")->fetchColumn() === 0;
     }
@@ -94,7 +97,10 @@ class Dashboard
      * the first step still to do has the main (red) button, and later ones have outline buttons. The scheduled task step
      * is for administrators only (the Task Scheduler is admin-only), and read-only users see the steps without buttons,
      * since they can't add anything. The circles look like the step indicator's (Layout::stepIndicator()), but this is a
-     * list of tasks, not a flow, so it isn't a nav. A "Hide this checklist" link comes with the 4.26.0 database update.
+     * list of tasks, not a flow, so it isn't a nav. Once the database has the per-user setting (the 4.26.0 update), a
+     * "Hide this checklist" button posts to settings/toggles/getting-started/, a plain form so it works without
+     * JavaScript, and Display Settings brings the checklist back. Read-only users can hide it too, since it's their own
+     * display choice, not a change to anyone's data.
      */
     public function gettingStarted()
     {
@@ -179,7 +185,13 @@ class Dashboard
                 } ?>
                 </ol>
                 <p class="mb-1 small"><?php echo sprintf(_('Tracking SSL certificates too? The %sSSL Certificates%s page walks you through it.'), '<a href="' . WEB_ROOT . '/ssl/">', '</a>'); ?></p>
-                <p class="mb-0 small"><?php echo sprintf(_('See %sFirst Run%s in the User Guide for more.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/first-run/">', '</a>'); ?></p>
+                <p class="mb-0 small"><?php echo sprintf(_('See %sFirst Run%s in the User Guide for more.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/first-run/">', '</a>'); ?></p><?php
+                if ((new User())->canHideGettingStarted()) { ?>
+                <form method="post" action="<?php echo $esc(WEB_ROOT . '/settings/toggles/getting-started/'); ?>" class="mt-2 mb-0">
+                    <?php echo (new Csrf())->field(); ?>
+                    <button type="submit" class="btn btn-link p-0 align-baseline domainmod-getting-started-hide"><?php echo $esc(_('Hide this checklist')); ?></button>
+                </form><?php
+                } ?>
             </div>
         </div><?php
 
