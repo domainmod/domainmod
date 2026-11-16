@@ -986,10 +986,14 @@ table.dataTable > thead > tr > th.control {
         min-width: 0;
         line-height: 1.15;
     }
-    /* A long word in the name breaks, as a last resort, instead of overlapping the next circles */
+    /* A long word in the name breaks, as a last resort, instead of overlapping the next circles ("anywhere" rather than
+       "break-word", since only "anywhere" lets the installer's name, a flex box, shrink below its longest word). A
+       wrapped name keeps the width it was given, so its lines are centred in it, the spare room split evenly on each
+       side rather than left as a gap before the next circle. */
     .domainmod-step.is-current .domainmod-step-name {
         min-width: 0;
-        overflow-wrap: break-word;
+        overflow-wrap: anywhere;
+        text-align: center;
     }
     .domainmod-step + .domainmod-step::before {
         width: .625rem;
@@ -1007,7 +1011,6 @@ table.dataTable > thead > tr > th.control {
         border: 0 !important;
     }
 }
-/* The narrowest spaces (a small phone): the joining lines go, so the current step's name has room */
 /* In the installer the current step's name sits halfway between its circle and the next, with a shorter line on each
    side of it, in place of the one line that would run from the name to the next circle */
 .domainmod-install-column .domainmod-step.is-current {
@@ -1042,13 +1045,20 @@ table.dataTable > thead > tr > th.control {
 .domainmod-install-column .domainmod-step.is-current + .domainmod-step::before {
     display: none;
 }
+/* The narrowest spaces (a small phone): the joining lines go, so the current step's name has room */
 @container (max-width: 22rem) {
-    .domainmod-step + .domainmod-step::before,
+    .domainmod-step + .domainmod-step::before {
+        display: none;
+    }
+}
+/* The installer's seven steps need more room for their lines, so on any phone they go there too, and the circles spread
+   evenly across the column, a long name wrapping between them */
+@container (max-width: 26rem) {
+    .domainmod-install-column .domainmod-step + .domainmod-step::before,
     .domainmod-install-column .domainmod-step.is-current .domainmod-step-name::before,
     .domainmod-install-column .domainmod-step.is-current .domainmod-step-name::after {
         display: none;
     }
-    /* Without the lines, the installer's circles spread evenly across the column and a long name may wrap */
     .domainmod-install-column .domainmod-steps ol {
         justify-content: space-between;
     }
