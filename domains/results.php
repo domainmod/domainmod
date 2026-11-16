@@ -53,20 +53,33 @@ if (!in_array($type, array('inactive', 'filtered', 'missing'), true)) {
 
 }
 
-if ($type == "inactive") {
-    $page_title = _('Segments') . ' - ' . _('Inactive Domains');
-} elseif ($type == "filtered") {
-    $page_title = _('Segments') . ' - ' . _('Filtered Domains');
-} elseif ($type == "missing") {
-    $page_title = _('Segments') . ' - ' . _('Missing Domains');
+require_once DIR_INC . '/settings/domains-results.inc.php';
+
+// A segment that's been deleted (or a changed link) has no results, so it goes back to the segments with a message
+$stmt = $pdo->prepare("
+    SELECT `name`
+    FROM segments
+    WHERE id = :segid");
+$stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+$stmt->execute();
+$segment_name = $stmt->fetchColumn();
+$stmt->closeCursor();
+
+if ($segment_name === false) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That segment no longer exists.') . '<BR>';
+    header("Location: ../segments/");
+    exit;
+
 }
 
-$software_section = "segments";
+// The name is stored escaped, so it's ready to draw (the breadcrumb and the introduction)
+$segment_name_html = $segment_name;
 
 if ($type == "inactive") {
 
     $stmt = $pdo->prepare("
-        SELECT d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+        SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
         WHERE d.account_id = ra.id
           AND ra.registrar_id = r.id
@@ -90,7 +103,7 @@ if ($type == "inactive") {
 } elseif ($type == "filtered") {
 
     $stmt = $pdo->prepare("
-        SELECT d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+        SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
         WHERE d.account_id = ra.id
           AND ra.registrar_id = r.id
@@ -302,36 +315,67 @@ if ($export_data === 1) {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <?php echo $layout->bodyTag(); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-$page_align = 'left';
-require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<?php
-$segment = new DomainMOD\Segment();
-$segment_name = $segment->getName($segid);
+if (!$result) {
 
-if ($type == "inactive") {
-    echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they are currently marked as inactive.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
-} elseif ($type == "filtered") {
-    echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they were filtered out based on your search criteria.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
-} elseif ($type == "missing") {
-    echo sprintf(_('The below domains are in the segment %s, and they are not in your %s database.'), '<strong>' . $segment_name . '</strong>', SOFTWARE_TITLE) . '<BR><BR>';
+    // TRANSLATORS: Shown when a segment's list of inactive, filtered, or missing domains is empty. %s is the segment's name.
+    echo $layout->emptyState('bi-funnel', _('No domains to show'), sprintf(_('None of the domains in the segment %s are in this list right now.'), '<strong>' . $segment_name_html . '</strong>'));
+
+} else {
+
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->addPageAction(_('Export Results'), 'results.php?type=' . $type . '&segid=' . $segid . '&export_data=1', 'bi-download');
+
+    // The status names, as the Domains list shows them
+    $status_names = array('0' => _('Expired'), '1' => _('Active'), '2' => _('Pending (Transfer)'),
+        '3' => _('Pending (Renewal)'), '4' => _('Pending (Other)'), '5' => _('Pending (Registration)'), '10' => _('Sold')); ?>
+
+    <p class="domainmod-intro"><?php
+    if ($type == "inactive") {
+        echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they are currently marked as inactive.'), '<strong>' . $segment_name_html . '</strong>', SOFTWARE_TITLE);
+    } elseif ($type == "filtered") {
+        echo sprintf(_('The below domains are in the segment %s, and they are stored in your %s database, but they were filtered out based on your search criteria.'), '<strong>' . $segment_name_html . '</strong>', SOFTWARE_TITLE);
+    } elseif ($type == "missing") {
+        echo sprintf(_('The below domains are in the segment %s, and they are not in your %s database.'), '<strong>' . $segment_name_html . '</strong>', SOFTWARE_TITLE);
+    } ?>
+    </p>
+
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th></th>
+            <th><?php echo _('Domain'); ?></th><?php
+            if ($type != "missing") { ?>
+            <th><?php echo _('Status'); ?></th>
+            <th><?php echo _('Expiry Date'); ?></th>
+            <th><?php echo _('Registrar'); ?></th><?php
+            } ?>
+        </tr>
+        </thead>
+        <tbody><?php
+
+        foreach ($result as $row) { ?>
+
+            <tr>
+                <td></td><?php
+                if ($type == "missing") { ?>
+                <td><?php echo $layout->ltr($row->domain); ?></td><?php
+                } else { ?>
+                <td><a href="edit.php?did=<?php echo (int) $row->id; ?>"><?php echo $layout->ltr($row->domain); ?></a></td>
+                <td><?php echo htmlspecialchars($status_names[(string) $row->active] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo $layout->ltr($row->expiry_date); ?></td>
+                <td><?php echo $row->registrar_name; ?></td><?php
+                } ?>
+            </tr><?php
+
+        } ?>
+
+        </tbody>
+    </table><?php
+
 }
 ?>
-<?php
-if ($type == "inactive") {
-    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
-} elseif ($type == "filtered") {
-    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
-} elseif ($type == "missing") {
-    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">" . DomainMOD\Format::toUpper(_('Export Results')) . "</a>]<BR><BR>";
-}
-
-foreach ($result as $row) {
-
-    echo $row->domain . "<BR>";
-
-}
-?>
-<?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

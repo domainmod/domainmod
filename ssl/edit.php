@@ -562,7 +562,9 @@ echo $layout->formSection(_('Hosting'), 'hosting', ob_get_clean());
 
 ob_start();
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . DomainMOD\Format::toLower(_('View Full Notes')) . '</a>]';
+    // Opens the notes on their own page, in a new tab
+    $subtext = '<a target="_blank" href="notes.php?sslcid=' . $sslcid . '">' . _('View Full Notes')
+        . '<i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i></a>';
 } else {
     $subtext = '';
 }

@@ -2029,23 +2029,24 @@ if ($segid !== 0) {
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
     $totalrows_filtered = $stmt->fetchColumn();
-    ?>
-    <strong><?php echo _('Domains in Segment'); ?>:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 
-    <strong><?php echo _('Matching Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR><BR>
-
-    <?php if ($totalrows_inactive > 0) { ?>
-        <strong><?php echo _('Matching But Inactive Domains'); ?>:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
-            target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
-    <?php } ?>
-    <?php if ($totalrows_filtered > 0) { ?>
-        <strong><?php echo _('Matching But Filtered Domains'); ?>:</strong> <?php echo number_format($totalrows_filtered); ?> [<a
-            target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
-    <?php } ?>
-    <?php if ($totalrows_missing > 0) { ?>
-        <strong><?php echo _('Missing Domains'); ?>:</strong> <?php echo number_format($totalrows_missing); ?> [<a
-            target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>"><?php echo DomainMOD\Format::toLower(_('View')); ?></a>]<BR><BR>
-    <?php }
+    // The segment's summary as facts, with a link to each of its three results lists (domains/results.php) that has any
+    $segment_facts = array(
+        array('label' => _('Domains in Segment'), 'value' => number_format($number_of_domains)),
+        array('label' => _('Matching Domains'), 'value' => number_format($total_rows)));
+    if ($result) {
+        $segment_facts[] = array('label' => _('Total Cost'), 'value' => $grand_total . ' ' . $_SESSION['s_default_currency'],
+            'ltr' => true);
+    }
+    foreach (array('inactive' => array(_('Matching But Inactive Domains'), $totalrows_inactive),
+                 'filtered' => array(_('Matching But Filtered Domains'), $totalrows_filtered),
+                 'missing' => array(_('Missing Domains'), $totalrows_missing)) as $results_type => $results_fact) {
+        if ($results_fact[1] > 0) {
+            $segment_facts[] = array('label' => $results_fact[0], 'value' => number_format($results_fact[1]),
+                'url' => 'results.php?type=' . $results_type . '&segid=' . $segid, 'link_label' => _('View'));
+        }
+    }
+    echo $layout->factList($segment_facts);
 
 }
 
@@ -2060,10 +2061,8 @@ if ($result) {
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'domain-list-export')); ?>
 
-    <?php if ($segid !== 0) { ?>
-        <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
-        <BR><BR>
-    <?php } else { ?>
+    <?php // With a segment, the Total Cost is in the segment's summary above
+    if ($segid === 0) { ?>
         <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
         <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR><BR>
 

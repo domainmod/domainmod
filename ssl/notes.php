@@ -29,6 +29,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -47,37 +48,50 @@ $stmt->execute();
 $result = $stmt->fetch();
 $stmt->closeCursor();
 
+// The name and notes are stored escaped, so they're unescaped here and escaped once when drawn
 if (!$result) {
 
     // the record was deleted, or the link was changed
-    $new_name = '';
-    $new_notes = _('This record no longer exists.');
+    $page_title = _('Notes');
+    $new_notes = '';
 
 } else {
 
-    $new_name = $result->name;
-    $new_notes = $result->notes;
+    $new_name = $unsanitize->text($result->name);
+    $new_notes = trim($unsanitize->text((string) $result->notes));
+    // TRANSLATORS: The heading of the page that shows a domain's or SSL certificate's notes. %s is the domain, or the certificate's host or label.
+    $page_title = sprintf(_('Notes for %s'), $layout->ltr($new_name));
 
 }
 
-$page_title = sprintf(_('SSL Certificate Notes (%s)'), $new_name);
 $software_section = "ssl-certs";
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
-    <title><?php echo $layout->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle(strip_tags($page_title)); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php
 $page_align = 'left';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<strong><?php echo sprintf(_('Notes For %s'), $new_name); ?></strong><BR>
-<BR>
 <?php
-$format = new DomainMOD\Format();
-echo $format->replaceBreaks($new_notes);
+if (!$result) {
+
+    echo $layout->emptyState('bi-question-circle', _('This record no longer exists.'), _('It may have been deleted.'));
+
+} elseif ($new_notes === '') {
+
+    echo $layout->emptyState('bi-journal', _('No notes yet'), _('Notes you add when editing this SSL certificate show here.'));
+
+} else { ?>
+
+    <div class="card mb-5">
+        <div class="card-body" dir="auto"><?php echo nl2br(htmlspecialchars($new_notes, ENT_QUOTES, 'UTF-8'), false); ?></div>
+    </div><?php
+
+}
 ?>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>
