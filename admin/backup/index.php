@@ -118,29 +118,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
 <div class="domainmod-intro">
-<?php
-echo sprintf(_('This page enables you to perform complete backups and restores of your %s database.'), SOFTWARE_TITLE);
-echo '&nbsp;'; echo _('This allows you to export your entire system in a single file so that it can easily be backed up and restored.');
-echo '&nbsp;'; echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?><BR>
-<BR>
-<?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?>
+<p><?php
+echo sprintf(_('This page enables you to perform complete backups and restores of your %s database.'), SOFTWARE_TITLE) . ' ';
+echo _('This allows you to export your entire system in a single file so that it can easily be backed up and restored.') . ' ';
+echo sprintf(_('This is helpful if you want to perform regular backups of your data, you need to move %s to a new server, or if you want to change your installation method.'), SOFTWARE_TITLE); ?></p>
+<p><?php echo _('This process backs up the data saved in your database. If you also want to save your database connection information, you should back up your /_includes/config.inc.php file.'); ?></p>
 </div>
 
-<h2 class="h3"><?php echo _('Backup'); ?></h2>
-<?php echo _('Database Backup File'); ?>: domainmod-backup.sql<BR>
-<a href="download/"><?php echo $layout->showButton('button', _('Backup Entire Database')); ?></a>
+<?php
+// Back up and restore in titled cards at the forms' width, like the edit pages (Layout::formSection()). The card body
+// is a two-column grid on wider screens, so each item spans both columns.
+ob_start(); ?>
+<dl class="domainmod-span-all mb-3">
+    <dt><?php echo _('Database Backup File'); ?></dt>
+    <dd class="mb-0"><?php echo $layout->ltr('domainmod-backup.sql'); ?></dd>
+</dl>
+<div class="domainmod-span-all mb-3"><a href="download/"><?php echo $layout->showButton('button', _('Backup Entire Database')); ?></a></div><?php
+echo '<div class="domainmod-form">' . $layout->formSection(_('Back Up'), 'backup', ob_get_clean()) . '</div>';
 
-<BR><BR><h2 class="h3"><?php echo _('Restore'); ?></h2>
-<form enctype="multipart/form-data" action="" method="post">
+ob_start(); ?>
+<div class="domainmod-span-all mb-3">
+    <label class="form-label" for="domainmod-restore-file"><?php echo _('Database Restore File'); ?></label>
+    <input type="file" class="form-control" name="file" id="domainmod-restore-file" accept=".sql" aria-describedby="domainmod-restore-warning domainmod-restore-help">
+    <p class="form-text mb-0" id="domainmod-restore-help"><?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to log in using the accounts in the data you restored."); ?></p>
+</div>
+<div class="domainmod-span-all alert alert-danger d-flex align-items-start gap-2 py-2" id="domainmod-restore-warning">
+    <i class="bi bi-exclamation-triangle-fill domainmod-message-icon" aria-hidden="true"></i>
+    <div class="domainmod-message-text"><strong><?php echo _('Warning'); ?>:</strong> <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?> <?php echo _("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?></div>
+</div>
+<div class="domainmod-span-all mb-3"><?php echo $layout->showButton('submit', _('Restore Entire Database')); ?></div><?php
+$restore_fields = ob_get_clean(); ?>
+<form enctype="multipart/form-data" action="" method="post" class="domainmod-form">
 <?php echo $form->showCsrfField(); ?>
-    <label for="domainmod-restore-file"><?php echo _('Database Restore File'); ?>: domainmod-backup.sql</label> <input type="file" name="file" id="domainmod-restore-file"><BR>
-    <?php echo $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning')) . ': '); ?>
-    <?php echo sprintf(_('This will completely delete all of the data in your current %s database.'), SOFTWARE_TITLE); ?>
-    <?php echo ("Your current database will be replaced with the data in the domainmod-backup.sql file that you're restoring."); ?><BR>
-    <?php echo _("After restoring a database you'll be automatically logged out, at which point you'll be able to log in using the accounts in the data you restored."); ?><BR>
-    <?php echo $layout->showButton('submit', _('Restore Entire Database')); ?>
+<?php echo $layout->formSection(_('Restore'), 'restore', $restore_fields); ?>
 </form>
-<BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>
