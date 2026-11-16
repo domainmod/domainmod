@@ -61,43 +61,25 @@ echo ' ' . str_replace($emphasized_text, "<em>$emphasized_text</em>", $full_text
 <p><?php echo sprintf(_('Using the Task Scheduler is optional, but %shighly%s recommended.'), '<em>', '</em>'); ?>
 <?php echo ' ' . sprintf(_('To stop anyone else from running cron.php, you can give it a key in config.inc.php. See the %sUser Guide%s for details.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?></p>
 </div>
-<?php echo _('Current Timestamp'); ?>: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR><?php
-
-// Left out when the time can't be read (such as while the database upgrade is waiting), rather than showing "Never"
-$cron_last_run = $schedule->getCronLastRun();
-if ($cron_last_run !== null) { ?>
-<?php echo _('Last run of cron.php'); ?>: <strong><?php echo $time->toUserTimezone($cron_last_run, 'Y-m-d H:i', _('Never')); ?></strong><BR><?php
-} ?>
-<BR>
 <?php
+// The time now, and cron.php's last run, which is left out when the time can't be read (such as while the database
+// upgrade is waiting), rather than showing "Never"
+$facts = array(array('label' => _('Current Timestamp'), 'value' => $time->toUserTimezone($time->stamp()), 'ltr' => true));
+$cron_last_run = $schedule->getCronLastRun();
+if ($cron_last_run !== null) {
+    $facts[] = array('label' => _('Last run of cron.php'), 'value' => $time->toUserTimezone($cron_last_run, 'Y-m-d H:i', _('Never')), 'ltr' => !DomainMOD\Time::isUnset($cron_last_run));
+}
+echo $layout->factList($facts);
+
 $result = $pdo->query("
-        SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active
+        SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active, slug
         FROM scheduler
-        ORDER BY sort_order ASC")->fetchAll();
-
-
-$count = 1;
-
-foreach ($result as $box) {
-
-    if ($count == 1 || $count == 4) { ?>
-
-        <div class="row"> <?php
-
+        ORDER BY sort_order ASC")->fetchAll(); ?>
+<div class="row g-3"><?php
+    foreach ($result as $task) {
+        echo $schedule->taskCard($task);
     } ?>
-
-    <?php echo $layout->contentBoxTop($box->name, '4'); ?>
-    <?php echo $schedule->taskCard($box); ?><?php
-    echo $layout->contentBoxBottom();
-
-    if ($count == 3 || $count == 6) { ?>
-
-            </div><?php // end the row div
-    }
-
-    $count++;
-
-} ?>
+</div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

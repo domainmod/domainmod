@@ -475,7 +475,7 @@ class Scheduler
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active
+            SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active, slug
             FROM scheduler
             WHERE id = :task_id
             ORDER BY sort_order ASC");
@@ -487,76 +487,167 @@ class Scheduler
         return $result;
     }
 
-    public function createActive($active, $task_id)
+    /*
+     * A task's name or description ($field is 'name' or 'description') in the viewer's language, found by its slug. The
+     * stored name and description are in English (or the installer's language), so they're only shown for a task this
+     * list doesn't know, as plain text. They stay in the database as they are.
+     */
+    public static function taskText($slug, $field, $stored)
     {
-        // These links change data, so they carry the session's security token (see Csrf). Run Now runs the task in place
-        // with htmx and replaces the task's details with the result (see taskCard()).
-        $token = (new Csrf())->query();
-        $layout = new Layout();
-        $run_now = $layout->htmxTaskLink('run.php?id=' . $task_id . '&' . $token, Format::toLower(_('Run Now')), '#domainmod-task-' . $task_id, 'outerHTML', 'domainmod-task-' . $task_id . '-working', ' data-domainmod-refocus');
-        $spinner = $layout->htmxSpinner('domainmod-task-' . $task_id . '-working');
-        $result = '<strong><span class=\'domainmod-css-text-highlight-green\'>' . _('Active') . '</span></strong> [<a href=\'update.php?a=d&id=' . $task_id . '&' . $token .
-            '\'>' . Format::toLower(_('Disable')) . '</a>] [' . $run_now . ']' . $spinner;
-        if ($active == '0') {
-            $result = '<strong><span class=\'domainmod-css-text-highlight-red\'>' . _('Inactive') . '</span></strong> [<a href=\'update.php?a=e&id=' . $task_id . '&' . $token .
-                '\'>' . Format::toLower(_('Enable')) . '</a>] [' . $run_now . ']' . $spinner;
-        }
-        return $result;
+        $texts = array(
+            'domain-queue' => array(
+                'name' => _('Domain Queue Processing'),
+                /* TRANSLATORS: %s is the software's name, DomainMOD */
+                'description' => sprintf(_('Retrieves information for the domains in the Domain Queue and adds them to %s.'), SOFTWARE_TITLE)),
+            'expiration-email' => array(
+                'name' => _('Send Expiration Email'),
+                'description' => _("Emails everyone who's subscribed about upcoming domain and SSL certificate expirations. Users can subscribe in their User Profile, and administrators can set the From address and the number of days the email covers in System Settings.")),
+            'update-conversion-rates' => array(
+                'name' => _('Update Conversion Rates'),
+                /* TRANSLATORS: %s is the software's name, DomainMOD */
+                'description' => sprintf(_("Retrieves the current currency conversion rates and updates every user's costs, which keeps the financial information in %s accurate. Users can set their currency in their User Profile."), SOFTWARE_TITLE)),
+            'cleanup' => array(
+                'name' => _('System Cleanup'),
+                'description' => _('Converts domains to lowercase, checks that every TLD is correct, and records the status of each domain in your segments, which keeps segment filtering up to date. It also checks the domain, SSL certificate, and fee data against each other, and deletes unused fees.')),
+            'check-new-version' => array(
+                'name' => _('Check For New Version'),
+                /* TRANSLATORS: %s is the software's name, DomainMOD */
+                'description' => sprintf(_('Checks whether a newer version of %s is available to download.'), SOFTWARE_TITLE)),
+            'data-warehouse-build' => array(
+                'name' => _('Data Warehouse Build'),
+                'description' => _('Rebuilds the Data Warehouse, so it has the latest information from your servers.')),
+        );
+
+        if (isset($texts[$slug][$field])) return $texts[$slug][$field];
+
+        // The stored description can hold line breaks and emphasis, which become plain text here
+        $text = preg_replace('/<br\s*\/?>/i', ' ', (string) $stored);
+        $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return trim(preg_replace('/\s+/u', ' ', $text));
+    }
+
+    // How often a task runs (the stored interval, in English) in the viewer's language, or as stored if it's unknown
+    public static function intervalText($stored)
+    {
+        $intervals = array(
+            'Every 5 Minutes' => _('Every 5 Minutes'),
+            'Daily' => _('Daily'),
+        );
+
+        return $intervals[$stored] ?? (string) $stored;
     }
 
     /*
-     * A task's details on the Task Scheduler page, inside its card: the description, when it runs, its status and links,
-     * its last and next run, and the run time form for daily tasks. Run Now (run.php) sends this back after an htmx run,
-     * with the run's result messages in $messages, which take the keyboard focus so they're announced.
+     * A stored duration as plain text: getTimeDifference() saves it as HTML for the page it was first shown on (such as
+     * ' (<em>2m 3s</em>)'), so this gives '2m 3s', or '' when there's none. Stored rows aren't rewritten.
+     */
+    public static function durationText($stored)
+    {
+        $text = trim(html_entity_decode(strip_tags((string) $stored), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        if (substr($text, 0, 1) === '(' && substr($text, -1) === ')') $text = trim(substr($text, 1, -1));
+        return $text;
+    }
+
+    /*
+     * A task's buttons, for the foot of its card: Disable (or Enable), and Run Now, which runs the task in place with htmx
+     * and replaces the whole card with the result (see taskCard()), with the spinner that shows while it runs. These
+     * links change data, so they carry the session's security token (see Csrf).
+     */
+    public function createActive($active, $task_id)
+    {
+        $task_id = (int) $task_id;
+        $token = (new Csrf())->query();
+        $layout = new Layout();
+
+        if ($active == '0') {
+            $toggle = $layout->linkButton('update.php?a=e&id=' . $task_id . '&' . $token, _('Enable'), 'secondary', 'bi-toggle-off');
+        } else {
+            $toggle = $layout->linkButton('update.php?a=d&id=' . $task_id . '&' . $token, _('Disable'), 'secondary', 'bi-toggle-on');
+        }
+
+        // The same look as linkButton(), with htmx's attributes, which linkButton() doesn't take
+        $run_now = $layout->htmxTaskLink(htmlspecialchars('run.php?id=' . $task_id . '&' . $token, ENT_QUOTES, 'UTF-8'),
+            '<i class="bi bi-play-fill me-1" aria-hidden="true"></i>' . htmlspecialchars(_('Run Now'), ENT_QUOTES, 'UTF-8'),
+            '#domainmod-task-' . $task_id, 'outerHTML', 'domainmod-task-' . $task_id . '-working',
+            ' class="btn btn-outline-secondary domainmod-css-button" data-domainmod-refocus');
+        $spinner = $layout->htmxSpinner('domainmod-task-' . $task_id . '-working');
+
+        // btn-group-sm makes the buttons Bootstrap's small size
+        return '<div class="d-flex flex-wrap align-items-center gap-2 btn-group-sm">' . $toggle . $run_now . $spinner . '</div>';
+    }
+
+    /*
+     * A task's card on the Task Scheduler page, in its column of the page's grid: its name and status, the description,
+     * when it runs, its last and next run as facts, the run time form for an active daily task, and its buttons. Run Now
+     * (run.php) sends the whole card back after an htmx run, with the run's result messages in $messages, which take
+     * the keyboard focus so they're announced.
      */
     public function taskCard($task, $messages = '')
     {
+        $layout = new Layout();
         $form = new Form();
+        $task_id = (int) $task->id;
+        $slug = $task->slug ?? '';
+        $name = self::taskText($slug, 'name', $task->name);
+
+        if ($task->active == '1') {
+            $badge = $layout->statusBadge(htmlspecialchars(_('Active'), ENT_QUOTES, 'UTF-8'), _('This task runs on its schedule.'), 'success');
+        } else {
+            $badge = $layout->statusBadge(htmlspecialchars(_('Inactive'), ENT_QUOTES, 'UTF-8'), _("This task doesn't run on its schedule, but Run Now still runs it."), 'secondary');
+        }
+
+        // A daily task's time is shown in its own time zone, which may not be the viewer's.
+        $daily_time = $this->getDailyTime($task->expression);
+        $facts = array(array('label' => _('Runs'), 'value' => self::intervalText($task->interval)));
+        if ($daily_time !== null) {
+            $facts[] = array('label' => _('Run Time'), 'value' => sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . $this->getZone($task->timezone)->getName() . ')', 'ltr' => true);
+        }
+        $facts[] = array('label' => _('Last Run'), 'value' => $this->time->toUserTimezone($task->last_run, 'Y-m-d H:i:s', _('Never')), 'ltr' => !Time::isUnset($task->last_run));
+        if (!Time::isUnset($task->last_run)) {
+            $facts[] = array('label' => _('Duration'), 'value' => self::durationText($task->last_duration), 'ltr' => true);
+        }
+        $facts[] = array('label' => _('Next Run'), 'value' => $this->time->toUserTimezone($task->next_run, 'Y-m-d H:i:s', '-'), 'ltr' => true);
+
         ob_start(); ?>
-        <div id="domainmod-task-<?php echo $task->id; ?>"><?php
+        <div class="col-12 col-md-6 col-xxl-4" id="domainmod-task-<?php echo $task_id; ?>">
+            <div class="card card-outline card-danger h-100 mb-0">
+                <div class="card-header"><?php // The card header's clearfix would be a flex item, so the flex box is inside it ?>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <h2 class="card-title m-0"><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></h2>
+                        <?php echo $badge; ?>
+                    </div>
+                </div>
+                <div class="card-body"><?php
 
-            if ($messages != '') { ?>
-                <div data-domainmod-focus><?php echo $messages; ?></div><?php
-            } ?>
+                    if ($messages != '') { ?>
+                        <div data-domainmod-focus><?php echo $messages; ?></div><?php
+                    } ?>
 
-            <div>
-                <?php echo $task->description ?>
-            </div>
-            <div>
-                <BR><strong><?php echo _('Runs'); ?>:</strong> <?php echo $task->interval; ?><BR><?php
+                    <p><?php echo htmlspecialchars(self::taskText($slug, 'description', $task->description), ENT_QUOTES, 'UTF-8'); ?></p>
+                    <?php echo $layout->factList($facts); ?><?php
 
-                // A daily task's time is shown in its own time zone, which may not be the viewer's.
-                $daily_time = $this->getDailyTime($task->expression);
-                if ($daily_time !== null) { ?>
-                    <strong><?php echo _('Run Time'); ?>:</strong> <?php echo sprintf('%02d:%02d', $daily_time[0], $daily_time[1]) . ' (' . htmlentities($this->getZone($task->timezone)->getName(), ENT_QUOTES, 'UTF-8') . ')'; ?><BR><?php
-                } ?>
+                    if ($task->interval == 'Daily' && $task->active == '1') {
+                        $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
+                        $field_id = 'domainmod-task-hour-' . $task_id; ?>
+                        <form name="edit_task_form" method="post" action="update.php">
+                            <?php echo $form->showCsrfField(); ?>
+                            <label class="form-label" for="<?php echo $field_id; ?>"><?php echo _('Set Run Time'); ?></label>
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <select class="form-select w-auto" name="new_hour" id="<?php echo $field_id; ?>" aria-describedby="<?php echo $field_id; ?>-help">
+                                    <?php echo $this->hourSelect($hour); ?>
+                                </select><?php
+                                echo $form->showInputHidden('a', 'u');
+                                echo $form->showInputHidden('id', $task_id);
+                                echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
+                            </div>
+                            <div class="form-text" id="<?php echo $field_id; ?>-help"><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></div>
+                        </form><?php
+                    } ?>
 
-                <strong><?php echo _('Status'); ?>:</strong> <?php echo $this->createActive($task->active, $task->id); ?><BR><?php
-
-                $last_run = $this->time->toUserTimezone($task->last_run, 'Y-m-d H:i:s', '-'); ?>
-
-                <strong><?php echo _('Last Run'); ?>:</strong> <?php echo $last_run; ?><?php echo $task->last_duration; ?><BR><?php
-
-                $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
-                $next_run = $this->time->toUserTimezone($task->next_run, 'Y-m-d H:i:s', '-'); ?>
-
-                <strong><?php echo _('Next Run'); ?>:</strong> <?php echo $next_run; ?><BR><?php
-
-                if ($task->interval == 'Daily' && $task->active == '1') { ?>
-
-                    <BR>
-                    <form name="edit_task_form" method="post" action="update.php">
-                        <?php echo $form->showCsrfField(); ?>
-                        <label for="domainmod-task-hour-<?php echo (int) $task->id; ?>"><?php echo _('Set Run Time'); ?>:</label> <select name="new_hour" id="domainmod-task-hour-<?php echo (int) $task->id; ?>">
-                            <?php echo $this->hourSelect($hour); ?>
-                        </select><BR>
-                        <em><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></em><BR><BR><?php
-                        echo $form->showInputHidden('a', 'u');
-                        echo $form->showInputHidden('id', $task->id);
-                        echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
-                    </form><?php
-                } ?>
-
+                </div>
+                <div class="card-footer">
+                    <?php echo $this->createActive($task->active, $task_id); ?>
+                </div>
             </div>
         </div><?php
         return ob_get_clean();
@@ -571,18 +662,16 @@ class Scheduler
         }
     }
 
+    // The run time menu's hours, with the task's current hour chosen
     public function hourSelect($hour)
     {
-        $hours = array('00' => '00:00', '01' => '01:00', '02' => '02:00', '03' => '03:00', '04' => '04:00',
-                       '05' => '05:00', '06' => '06:00', '07' => '07:00', '08' => '08:00', '09' => '09:00',
-                       '10' => '10:00', '11' => '11:00', '12' => '12:00', '13' => '13:00', '14' => '14:00',
-                       '15' => '15:00', '16' => '16:00', '17' => '17:00', '18' => '18:00', '19' => '19:00',
-                       '20' => '20:00', '21' => '21:00', '22' => '22:00', '23' => '23:00');
-        ob_start();
-        foreach ($hours as $key => $value) { ?>
-            <option value="<?php echo $key; ?>"<?php if ($hour == $key) echo ' selected'; ?>><?php echo $value; ?></option><?php
+        $form = new Form();
+        $options = '';
+        for ($i = 0; $i < 24; $i++) {
+            $key = sprintf('%02d', $i);
+            $options .= $form->showDropdownOption($key, $key . ':00', $hour);
         }
-        return ob_get_clean();
+        return $options;
     }
 
 } //@formatter:on
