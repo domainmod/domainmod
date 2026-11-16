@@ -103,71 +103,76 @@ class Dynadot
 
     public function getFullInfo($api_key, $domain)
     {
-        $expiration_date = '';
-        $dns_servers = array();
-        $privacy_status = '';
-        $autorenewal_status = '';
-
         $api_url = $this->getApiUrl($api_key, 'info', $domain);
         $api_results = $this->apiCall($api_url);
-        $array_results = $this->convertToArray($api_results);
+        $full_info = $this->parseFullInfo($api_results);
 
         // confirm that the api call was successful
-        if ($array_results[0]["DomainInfoHeader"]["Status"] == 'success') {
-
-            // get expiration date
-            $expiry_result = $array_results[0]["DomainInfoContent"]["Domain"]["Expiration"];
-            $expiration_date = $this->processExpiry($expiry_result);
-
-            // get dns servers
-            $dns_result = $array_results[0]["DomainInfoContent"]["Domain"]["NameServerSettings"]["NameServers"]["NameServer"];
-            $dns_servers = $this->processDns($dns_result);
-
-            // get privacy status
-            $privacy_result = $array_results[0]["DomainInfoContent"]["Domain"]["Privacy"];
-            $privacy_status = $this->processPrivacy($privacy_result);
-
-            // get auto renewal status
-            $autorenewal_result = $array_results[0]["DomainInfoContent"]["Domain"]["RenewOption"];
-            $autorenewal_status = $this->processAutorenew($autorenewal_result);
-
-        } else {
+        if ($full_info === null) {
 
             $log_message = 'Unable to get domain details';
             $log_extra = array('Domain' => $domain, 'API Key' => $this->format->obfusc($api_key));
             $this->log->error($log_message, $log_extra);
 
+            return array('', array(), '', '');
+
         }
+
+        return $full_info;
+    }
+
+    // The details in a domain_info response, as array($expiration_date, $dns_servers, $privacy_status,
+    // $autorenewal_status), or null if the call failed. A field that's missing or isn't in the expected form counts as
+    // having no value: Dynadot leaves out NameServers when the domain uses forwarding, parking, or Dynadot's own DNS
+    public function parseFullInfo($api_results)
+    {
+        $array_results = RegistrarResponse::parseXml($api_results);
+
+        if (RegistrarResponse::get($array_results, 0, 'DomainInfoHeader', 'Status') !== 'success') return null;
+
+        $domain_info = RegistrarResponse::get($array_results, 0, 'DomainInfoContent', 'Domain');
+
+        // get expiration date
+        $expiration_date = $this->processExpiry(RegistrarResponse::get($domain_info, 'Expiration'));
+
+        // get dns servers
+        $dns_result = RegistrarResponse::get($domain_info, 'NameServerSettings', 'NameServers', 'NameServer');
+        $dns_servers = $this->processDns($dns_result);
+
+        // get privacy status
+        $privacy_result = RegistrarResponse::text(RegistrarResponse::get($domain_info, 'Privacy'));
+        $privacy_status = $this->processPrivacy($privacy_result);
+
+        // get auto renewal status
+        $autorenewal_result = RegistrarResponse::text(RegistrarResponse::get($domain_info, 'RenewOption'));
+        $autorenewal_status = $this->processAutorenew($autorenewal_result);
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
 
-    public function convertToArray($api_result)
-    {
-        $xml = simplexml_load_string($api_result);
-        $json = json_encode((array($xml)), true);
-        return json_decode($json, true);
-    }
-
+    // Dynadot gives the expiry date in milliseconds since the epoch, and anything else is no date ('')
     public function processExpiry($expiry_result)
     {
+        $expiry_result = RegistrarResponse::text($expiry_result);
+        if (!ctype_digit($expiry_result) || strlen($expiry_result) < 4) return '';
         $expiry_formatted = substr($expiry_result, 0, -3);
-        return gmdate("Y-m-d", $expiry_formatted);
+        return gmdate("Y-m-d", (int) $expiry_formatted);
     }
 
     public function processDns($dns_result)
     {
         $servers = array();
 
-        foreach ($dns_result as $server) {
+        // one NameServer converts to a single record instead of a list of one, and none (null) to no records
+        foreach (RegistrarResponse::toXmlList($dns_result) as $server) {
 
-            $servers[] = $server['ServerName'];
+            $servers[] = RegistrarResponse::text(RegistrarResponse::get($server, 'ServerName'));
 
         }
 
-        if (!empty($servers)) {
-            $dns_servers = array_filter($servers);
-        } else {
+        $dns_servers = array_filter($servers);
+
+        if (empty($dns_servers)) {
             $dns_servers[0] = 'no.dns-servers.1';
             $dns_servers[1] = 'no.dns-servers.2';
         }
