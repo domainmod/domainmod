@@ -53,8 +53,18 @@ document.querySelectorAll('select.domainmod-search-select').forEach(function (se
     var tom_select = new TomSelect(select, {
         maxOptions: null,
         highlight: false,
-        // The translated message from the page (Form::showDropdownTop()), in place of Tom Select's English one
         render: {
+            // Each option in the open list takes its direction from its own text (dir="auto"), so in a right-to-left
+            // language a left-to-right name, such as a currency or time zone, starts at the left and wraps the same
+            // way it reads. The chosen one in the box keeps Tom Select's own layout: its right-to-left padding leaves
+            // no room beside the arrow for text that starts at the left.
+            option: function (data) {
+                var option = document.createElement('div');
+                option.dir = 'auto';
+                option.textContent = data.text;
+                return option;
+            },
+            // The translated message from the page (Form::showDropdownTop()), in place of Tom Select's English one
             no_results: function () {
                 var message = document.createElement('div');
                 message.className = 'no-results';

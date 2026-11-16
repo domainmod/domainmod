@@ -252,10 +252,12 @@ class Form
         return ob_get_clean();
     }
 
+    // Each option takes its direction from its own text (dir="auto"), so in a right-to-left language a long
+    // left-to-right name, such as a registrar account, is cut at its end in the closed menu rather than its start.
     public function showDropdownOption($value, $text_to_display, $to_compare)
     {
         ob_start(); ?>
-            <option value="<?php echo $value ?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo $text_to_display; ?></option><?php
+            <option value="<?php echo $value ?>" dir="auto"<?php if ($value == $to_compare) echo " selected" ?>><?php echo $text_to_display; ?></option><?php
         return ob_get_clean();
     }
 

@@ -59,28 +59,33 @@ if ($connection_status === 'encrypted (certificate checked)') {
 }
 // A connection to the same machine doesn't cross the network, so it doesn't need the advice
 $connection_is_local = in_array(strtolower(DB_HOSTNAME), array('localhost', '127.0.0.1', '::1'), true);
+// The config line is left-to-right code, so it's isolated (as Layout::ltr() does) and kept on one line, which keeps it
+// readable in a right-to-left language.
 $connection_advice = ($connection_status !== 'encrypted (certificate checked)' && !$connection_is_local)
-    ? sprintf(_('This connection isn\'t protected from an attacker on the network. If your database is on a different server, add %s to config.inc.php to encrypt the connection and check the server\'s certificate.'), '<code>$dbsslmode = \'verify\';</code>')
+    ? sprintf(_('This connection isn\'t protected from an attacker on the network. If your database is on a different server, add %s to config.inc.php to encrypt the connection and check the server\'s certificate.'), '<bdi dir="ltr" class="text-nowrap"><code>$dbsslmode = \'verify\';</code></bdi>')
       . ' ' . sprintf(_('See %sEncrypted Database Connections%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/database-encryption/">', '</a>')
     : '';
 
 // The system details, in the same grouped list as the requirements below them: each group's rows show a name and its
 // value. Values come from the server, so they're escaped, apart from the version's emphasis and the advice's code.
+// Left-to-right values (versions, addresses, paths, and the MySQL mode) are isolated with Layout::ltr(), so in a
+// right-to-left language they keep their own order, rather than reading as "(4.25.0) 4.25.0". The version row builds
+// the same <bdi> by hand to keep its emphasis. The connection status is translated text, so it isn't isolated.
 $esc = function ($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); };
 $info_groups = array(
     array(SOFTWARE_TITLE, array(
-        array(_('Version'), $esc(SOFTWARE_VERSION) . ' (<em>' . $esc($_SESSION['s_system_db_version']) . '</em>)'))),
+        array(_('Version'), '<bdi dir="ltr">' . $esc(SOFTWARE_VERSION) . ' (<em>' . $esc($_SESSION['s_system_db_version']) . '</em>)</bdi>'))),
     array(_('Web Server'), array(
-        array(_('Local IP Address'), $esc($_SERVER['SERVER_ADDR'] ?? '')),
-        array(_('Remote IP Address'), $esc($system->getIpRemotely())),
-        array(_('Web Server OS'), $esc(php_uname())),
-        array(_('Web Server Software'), $esc($_SERVER['SERVER_SOFTWARE'] ?? '')))),
+        array(_('Local IP Address'), $layout->ltr($_SERVER['SERVER_ADDR'] ?? '')),
+        array(_('Remote IP Address'), $layout->ltr($system->getIpRemotely())),
+        array(_('Web Server OS'), $layout->ltr(php_uname())),
+        array(_('Web Server Software'), $layout->ltr($_SERVER['SERVER_SOFTWARE'] ?? '')))),
     array('PHP', array(
-        array(_('PHP Version'), $esc(phpversion())),
-        array(_('PHP Error Log Location'), $esc(ini_get('error_log'))))),
+        array(_('PHP Version'), $layout->ltr(phpversion())),
+        array(_('PHP Error Log Location'), $layout->ltr(ini_get('error_log'))))),
     array(_('Database'), array(
-        array(_('MySQL Version'), $esc($pdo->query('select version()')->fetchColumn())),
-        array(_('MySQL Mode'), $esc($pdo->query('select @@sql_mode')->fetchColumn())),
+        array(_('MySQL Version'), $layout->ltr($pdo->query('select version()')->fetchColumn())),
+        array(_('MySQL Mode'), $layout->ltr($pdo->query('select @@sql_mode')->fetchColumn())),
         array(_('Database Connection'), $esc($connection_text), $connection_advice))));
 ?>
 <div class="domainmod-requirements domainmod-system-info">
