@@ -308,11 +308,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
+// The fields in titled cards, the same way as the edit SSL certificate page. Each card's fields are built first, so a
+// card with nothing in it is left out rather than drawn empty. Moving a field to another card is a matter of moving its
+// lines between these blocks.
+ob_start();
 echo $form->showInputText('new_name', _('Host') . ' / ' . _('Label') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '', '1');
-if ($new_expiry_date == '') {
-    $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
-}
-echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain
@@ -327,12 +327,47 @@ echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '1', '');
 
 foreach ($result as $row) {
 
-    echo $form->showDropdownOption($row->id, $row->domain, '');
+    echo $form->showDropdownOption($row->id, $row->domain, $new_domain_id);
 
 }
 
 echo $form->showDropdownBottom('', 'new_domain_id');
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_cat_id;
+
+} else {
+
+    $to_compare = $_SESSION['s_system_default_category_ssl'];
+
+}
+
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY `name`")->fetchAll();
+
+echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
+
+foreach ($result as $row) {
+
+    echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+
+}
+echo $form->showDropdownBottom('', 'new_cat_id');
+
+echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
+echo $form->showDropdownBottom('');
+
+echo $layout->formSection(_('Details'), 'details', ob_get_clean());
+
+ob_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $to_compare = $new_account_id;
@@ -385,6 +420,13 @@ foreach ($result as $row) {
 
 echo $form->showDropdownBottom('', 'new_type_id');
 
+if ($new_expiry_date == '') {
+    $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
+}
+echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
+echo $layout->formSection(_('Certificate'), 'certificate', ob_get_clean());
+
+ob_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $to_compare = $new_ip_id;
@@ -409,49 +451,20 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('', 'new_ip_id');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+echo $layout->formSection(_('Hosting'), 'hosting', ob_get_clean());
 
-    $to_compare = $new_cat_id;
-
-} else {
-
-    $to_compare = $_SESSION['s_system_default_category_ssl'];
-
-}
-
-$result = $pdo->query("
-    SELECT id, `name`
-    FROM categories
-    ORDER BY `name`")->fetchAll();
-
-echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
-
-foreach ($result as $row) {
-
-    echo $form->showDropdownOption($row->id, $row->name, $to_compare);
-
-}
-echo $form->showDropdownBottom('', 'new_cat_id');
-
-echo $form->showDropdownTop('new_active', _('Certificate Status'), '', '', '');
-echo $form->showDropdownOption('1', _('Active'), $new_active);
-echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
-echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
-echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
-echo $form->showDropdownOption('0', _('Expired'), $new_active);
-echo $form->showDropdownBottom('');
-
+ob_start();
 $subtext = $subtext ?? '';
-echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), $subtext, $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
 
+ob_start();
 $result = $pdo->query("
     SELECT field_name
     FROM ssl_cert_fields
     ORDER BY type_id ASC, `name`")->fetchAll();
 
-if ($result) { ?>
-
-    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
+if ($result) {
 
     $field_array = array();
 
@@ -486,7 +499,7 @@ if ($result) { ?>
 
                 } elseif ($row->type_id == "3") { // Text Area
 
-                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
+                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '<div class="domainmod-span-all">', '</div>');
 
                 } elseif ($row->type_id == "4") { // Date
 
@@ -508,9 +521,9 @@ if ($result) { ?>
 
     }
 
-    echo "<BR>";
-
 }
+
+echo $layout->formSection(_('Custom Fields'), 'custom-fields', ob_get_clean());
 
 echo $form->showSubmitButton(_('Add SSL Certificate'), '', '');
 echo $form->showFormBottom('');

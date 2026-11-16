@@ -273,7 +273,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$domain->checkFormat($new_domain)) {
+        if ($new_domain === '') {
+            $form->addFieldError('new_domain', _('Enter the domain'));
+        } elseif (!$domain->checkFormat($new_domain)) {
             $form->addFieldError('new_domain', _('The domain format is incorrect'));
         }
 
@@ -332,8 +334,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
+// The fields in titled cards, the same way as the edit domain page. Each card's fields are built first, so a card
+// whose menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is
+// a matter of moving its lines between these blocks.
+ob_start();
 echo $form->showInputText('new_domain', _('Domain') . ' (255)', '', $unsanitize->text($new_domain), '255', '', '1', '', '', '1');
 echo $form->showInputText('new_function', _('Function') . ' (255)', '', $unsanitize->text($new_function), '255', '', '', '', '');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_cat_id;
+
+} else {
+
+    $to_compare = $_SESSION['s_default_category_domains'];
+
+}
+
+$result = $pdo->query("
+    SELECT id, `name`
+    FROM categories
+    ORDER BY name ASC")->fetchAll();
+
+if ($result) {
+
+    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('', 'new_cat_id');
+}
+
+echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
+echo $form->showDropdownOption('1', _('Active'), $new_active);
+echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
+echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
+echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
+echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
+echo $form->showDropdownOption('10', _('Sold'), $new_active);
+echo $form->showDropdownOption('0', _('Expired'), $new_active);
+echo $form->showDropdownBottom('');
+
+echo $layout->formSection(_('Details'), 'details', ob_get_clean());
+
+ob_start();
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
@@ -370,6 +418,12 @@ if ($result) {
 
 }
 
+// Each switch is one grid item, with the same spacing as the other fields
+echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
+echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
+echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
+
+ob_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $to_compare = $new_dns_id;
@@ -411,8 +465,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $result = $pdo->query("
     SELECT id, `name`, ip
-     FROM ip_addresses
-     ORDER BY `name` ASC, ip ASC")->fetchAll();
+    FROM ip_addresses
+    ORDER BY `name` ASC, ip ASC")->fetchAll();
 
 if ($result) {
 
@@ -420,7 +474,7 @@ if ($result) {
 
     foreach ($result as $row) {
 
-        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ' )', $to_compare);
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $to_compare);
 
     }
 
@@ -457,58 +511,19 @@ if ($result) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+echo $layout->formSection(_('Hosting'), 'hosting', ob_get_clean());
 
-    $to_compare = $new_cat_id;
+ob_start();
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
 
-} else {
-
-    $to_compare = $_SESSION['s_default_category_domains'];
-
-}
-
-$result = $pdo->query("
-    SELECT id, `name`
-    FROM categories
-    ORDER BY name ASC")->fetchAll();
-
-if ($result) {
-
-    echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $to_compare);
-
-    }
-
-    echo $form->showDropdownBottom('', 'new_cat_id');
-}
-
-echo $form->showDropdownTop('new_active', _('Domain Status'), '', '', '');
-echo $form->showDropdownOption('1', _('Active'), $new_active);
-echo $form->showDropdownOption('5', _('Pending (Registration)'), $new_active);
-echo $form->showDropdownOption('3', _('Pending (Renewal)'), $new_active);
-echo $form->showDropdownOption('2', _('Pending (Transfer)'), $new_active);
-echo $form->showDropdownOption('4', _('Pending (Other)'), $new_active);
-echo $form->showDropdownOption('10', _('Sold'), $new_active);
-echo $form->showDropdownOption('0', _('Expired'), $new_active);
-echo $form->showDropdownBottom('');
-
-echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
-
-echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
-
-echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
-
+ob_start();
 $result = $pdo->query("
     SELECT field_name
     FROM domain_fields
     ORDER BY type_id ASC, `name` ASC")->fetchAll();
 
-if ($result) { ?>
-
-    <h2 class="h3"><?php echo _('Custom Fields'); ?></h2><?php
+if ($result) {
 
     $field_array = array();
 
@@ -543,7 +558,7 @@ if ($result) { ?>
 
                 } elseif ($row->type_id == "3") { // Text Area
 
-                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '', '');
+                    echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '<div class="domainmod-span-all">', '</div>');
 
                 } elseif ($row->type_id == "4") { // Date
 
@@ -566,6 +581,8 @@ if ($result) { ?>
     }
 
 }
+
+echo $layout->formSection(_('Custom Fields'), 'custom-fields', ob_get_clean());
 
 echo $form->showSubmitButton(_('Add Domain'), '', '');
 echo $form->showFormBottom('');
