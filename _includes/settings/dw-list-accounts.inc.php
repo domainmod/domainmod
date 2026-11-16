@@ -24,6 +24,11 @@ if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
 
     $page_title = _('Listing All Server Accounts');
 
+} elseif ((int) ($_SESSION['s_dw_server_id'] ?? 0) === 0) {
+
+    // No server chosen on the Data Warehouse page yet (the page was opened directly), so there's no name to show.
+    $page_title = _('Server Accounts');
+
 } else {
 
     $page_title = sprintf(_('Listing Server Accounts on %s (%s)'), $_SESSION['s_dw_server_name'] ?? '', $_SESSION['s_dw_server_host'] ?? '');
