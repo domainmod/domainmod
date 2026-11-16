@@ -535,6 +535,11 @@ div.dt-container > div.top > .dt-search {
 div.dt-container > div.bottom {
     margin-top: 0.75rem;
 }
+/* The column with Responsive's show and hide control (columnDefs' "control" class) stays narrow, just wide enough for
+   its arrow, so the lists' header cells don't need a width attribute */
+table.dataTable > thead > tr > th.control {
+    width: 20px;
+}
 /* The landing pages' tiles (Layout::landingTile()): the whole card is one link, so hovering deepens its border and
    keyboard focus rings the whole card, not only the title */
 .domainmod-landing-tile {
@@ -1112,6 +1117,29 @@ div.dt-container > div.bottom {
 }
 .domainmod-empty-state-text {
     max-width: 36rem;
+}
+
+/* Read-only facts (Layout::factList()): each label above its value on phones, and beside it from the sm breakpoint
+   (in a column as wide as the longest label), unless the list is stacked for a narrow place such as a table cell.
+   The grid follows the page's direction, so the labels sit on the right in right-to-left languages. */
+.domainmod-facts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 1rem;
+}
+.domainmod-facts > dt {
+    font-weight: 600;
+}
+.domainmod-facts > dd {
+    margin-bottom: .5rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+@media (min-width: 576px) {
+    .domainmod-facts:not(.domainmod-facts-stacked) {
+        grid-template-columns: max-content minmax(0, 1fr);
+        column-gap: 1.5rem;
+    }
 }
 
 /* A page's introduction (the sentences that open a list or tool page, and Layout::calloutTop()'s callouts): kept to the

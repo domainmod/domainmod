@@ -54,6 +54,13 @@ class Layout
      * A page action, drawn in the page header as an outline button with an icon ($icon is a Bootstrap Icons class,
      * such as 'bi-download'). $label is plain translated text and $url a plain URL (not HTML-escaped), both escaped
      * when drawn. $options can set a 'target' (such as '_blank'), a 'rel', and an 'id'.
+     *
+     * For an action that changes data straight away (such as Clear Debug Log), $options can also set 'confirm': the
+     * action is then a button that opens a confirmation (see modal()), and only its Yes button follows $url, which
+     * must already carry the CSRF token. 'confirm' is the question as plain translated text, or an array with the
+     * question as 'message' and, optionally, the confirmation's 'title' and its Yes 'button' (both the action's label
+     * when left out), all escaped when drawn. A confirmed action stays on the page, so 'target' and 'rel' don't apply
+     * to it.
      */
     public function addPageAction($label, $url, $icon, $options = array())
     {
@@ -85,7 +92,36 @@ class Layout
         foreach (array('target', 'rel', 'id') as $name) {
             if (!empty($action['options'][$name])) $attributes .= ' ' . $name . '="' . $escape($action['options'][$name]) . '"';
         }
-        return '<a' . $attributes . '><i class="bi ' . $escape($action['icon']) . ' me-1" aria-hidden="true"></i>' . $escape($action['label']) . '</a>';
+        $icon = $action['icon'] !== '' ? '<i class="bi ' . $escape($action['icon']) . ' me-1" aria-hidden="true"></i>' : '';
+        return '<a' . $attributes . '>' . $icon . $escape($action['label']) . '</a>';
+    }
+
+    /*
+     * A page action with a confirmation (see addPageAction()): the outline button that opens it, and the confirmation
+     * itself, returned separately so the confirmation can go after the actions' group. $number makes its id unique.
+     */
+    private function pageActionConfirm($action, $number, $class)
+    {
+        $escape = function ($value) {
+            return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        };
+        $confirm = $action['options']['confirm'];
+        if (!is_array($confirm)) $confirm = array('message' => $confirm);
+        $modal_id = 'domainmod-confirm-' . (int) $number;
+
+        $attributes = ' type="button" class="' . $class . '" data-bs-toggle="modal" data-bs-target="#' . $modal_id . '"';
+        if (!empty($action['options']['id'])) $attributes .= ' id="' . $escape($action['options']['id']) . '"';
+        $icon = $action['icon'] !== '' ? '<i class="bi ' . $escape($action['icon']) . ' me-1" aria-hidden="true"></i>' : '';
+        $button = '<button' . $attributes . '>' . $icon . $escape($action['label']) . '</button>';
+
+        $title = isset($confirm['title']) && $confirm['title'] !== '' ? $confirm['title'] : $action['label'];
+        $yes = isset($confirm['button']) && $confirm['button'] !== '' ? $confirm['button'] : $action['label'];
+        // Without a question the title is shown instead, so the confirmation never falls back to asking about a delete
+        $message = isset($confirm['message']) && $confirm['message'] !== '' ? $confirm['message'] : $title;
+        $modal = $this->modal($escape($title), '', $escape($action['url']), Format::toUpper(_('Cancel')),
+            $escape(Format::toUpper($yes)), $escape($message), $modal_id);
+
+        return array($button, $modal);
     }
 
     /*
@@ -96,8 +132,14 @@ class Layout
     {
         $outline = 'btn btn-outline-secondary btn-sm';
         $items = array();
-        foreach (self::$page_actions as $action) {
-            $items[] = $this->pageActionLink($action, $outline);
+        $confirmations = '';
+        foreach (self::$page_actions as $index => $action) {
+            if (empty($action['options']['confirm'])) {
+                $items[] = $this->pageActionLink($action, $outline);
+            } else {
+                list($items[], $modal) = $this->pageActionConfirm($action, $index + 1, $outline);
+                $confirmations .= $modal;
+            }
         }
         if (self::$page_add_action === null) {
             foreach (self::$page_add_menu as $action) {
@@ -117,7 +159,56 @@ class Layout
         }
         if (!$items) return '';
         return '<div class="domainmod-page-actions d-flex flex-wrap align-items-center gap-2" role="group" aria-label="'
-            . htmlspecialchars(_('Page actions'), ENT_QUOTES, 'UTF-8') . '">' . implode('', $items) . '</div>';
+            . htmlspecialchars(_('Page actions'), ENT_QUOTES, 'UTF-8') . '">' . implode('', $items) . '</div>' . $confirmations;
+    }
+
+    /*
+     * A link styled as a button, for a button in a page's body that goes somewhere (such as Go Back), rather than a
+     * button inside a link. $variant is 'secondary' (an outline button, the usual) or 'primary' (the one solid red
+     * button, for a page's main way forward). $label is plain translated text and $url a plain URL (not HTML-escaped),
+     * both escaped here. $icon is an optional Bootstrap Icons class (such as 'bi-arrow-left'). $options can set a
+     * 'target' (such as '_blank'), a 'rel', and an 'id'. Form buttons that submit stay showButton().
+     */
+    public function linkButton($url, $label, $variant = 'secondary', $icon = '', $options = array())
+    {
+        $class = $variant === 'primary' ? 'btn btn-danger' : 'btn btn-outline-secondary';
+        return $this->pageActionLink(array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => $options),
+            $class . ' domainmod-css-button');
+    }
+
+    /*
+     * Read-only facts (such as a fee's details, or a report's date range) as a list of labels and their values, with
+     * each label beside its value on wider screens and above it on phones, or always above it when $stacked is true
+     * (in a narrow place, such as a table cell). Each of $pairs is an array with:
+     *   'label'      the label, plain translated text
+     *   'value'      the value, plain text
+     *   'ltr'        true for a left-to-right value (a domain, date, IP address, or amount), isolated with ltr() so it
+     *                keeps its order on right-to-left pages
+     *   'url'        an optional link after the value, a plain URL (not HTML-escaped)
+     *   'link_label' the link's text, plain translated text
+     * Everything is escaped here, so no value is ever drawn as HTML. A pair with no value and no link is left out, and
+     * a list with nothing in it is empty.
+     */
+    public function factList($pairs, $stacked = false)
+    {
+        $escape = function ($value) {
+            return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        };
+        $items = '';
+        foreach ($pairs as $pair) {
+            $value = (string) ($pair['value'] ?? '');
+            $url = (string) ($pair['url'] ?? '');
+            $link_label = (string) ($pair['link_label'] ?? '');
+            $has_link = $url !== '' && $link_label !== '';
+            if ($value === '' && !$has_link) continue;
+
+            $parts = array();
+            if ($value !== '') $parts[] = !empty($pair['ltr']) ? $this->ltr($value) : $escape($value);
+            if ($has_link) $parts[] = '<a href="' . $escape($url) . '">' . $escape($link_label) . '</a>';
+            $items .= '<dt>' . $escape($pair['label'] ?? '') . '</dt><dd>' . implode(' ', $parts) . '</dd>';
+        }
+        if ($items === '') return '';
+        return '<dl class="domainmod-facts' . ($stacked ? ' domainmod-facts-stacked' : '') . '">' . $items . '</dl>';
     }
 
     public function highlightText($colour, $text_to_display)
@@ -419,19 +510,27 @@ class Layout
         return ob_get_clean();
     }
 
-    public function modal($title, $item_name, $url, $left_button, $right_button)
+    /*
+     * A confirmation, opened by a button whose data-bs-target is its id (see modalButton()). By default it asks whether
+     * to delete $item_name, with the id myModal. $message replaces that question with another (such as one for a page
+     * action, see addPageAction()), and $id gives the confirmation another id, so a page can have more than one. The
+     * title, item name, message, and button labels are HTML, so callers escape anything that isn't theirs, and $url is
+     * drawn as given.
+     */
+    public function modal($title, $item_name, $url, $left_button, $right_button, $message = '', $id = 'myModal')
     {
+        $id = htmlspecialchars((string) $id, ENT_QUOTES, 'UTF-8');
         ob_start(); ?>
 
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalTitle" aria-hidden="true">
+            <div class="modal fade" id="<?php echo $id; ?>" tabindex="-1" aria-labelledby="<?php echo $id; ?>Title" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="myModalTitle"><?php echo $title; ?></h4>
+                            <h4 class="modal-title" id="<?php echo $id; ?>Title"><?php echo $title; ?></h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo _('Close'); ?>"></button>
                         </div>
                         <div class="modal-body">
-                            <p><?php echo sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?></p>
+                            <p><?php echo $message !== '' ? $message : sprintf(_('Are you sure you want to delete %s'), '<strong>' . $item_name . '</strong>') . '?'; ?></p>
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $left_button; ?></button>
