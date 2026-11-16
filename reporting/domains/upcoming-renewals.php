@@ -271,7 +271,13 @@ if ($list) { ?>
 
 } else {
 
-    echo _('No results.') . '<BR>';
+    // Nothing in the chosen window, with a link to the 90-day window when it has domains
+    $longer_url = $days < 90 && $windows[90]['count'] > 0 ? '/reporting/domains/' . $report_filename . '?days=90#domain-list' : '';
+    // TRANSLATORS: Shown under the Upcoming Renewals report's list when it's empty. %s is the number of days (30, 60, or 90).
+    $empty_text = sprintf(_('No live domains are overdue or expire in the next %s days.'), $days);
+    // TRANSLATORS: A link under an empty Upcoming Renewals list. %s is 90, the longest window.
+    $longer_label = sprintf(_('Show the next %s days'), 90);
+    echo $layout->emptyState('bi-calendar-check', _('No domains to renew'), $empty_text, '', '', $longer_url, $longer_label, 3);
 
 }
 ?>

@@ -27,6 +27,12 @@ $slug = "reporting-dw-potential-problems";
 $report_section = 'dw';
 $report_filename = 'potential-problems.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
+// The list opens at the user's number of domains per page, and the page-length menu lists that number once,
+// in order with the others
+$page_length = (int) ($_SESSION['s_number_of_domains'] ?? 0);
+if ($page_length < 1) $page_length = 50;
+$length_menu = array_unique(array($page_length, 50, 75, 100));
+sort($length_menu);
 // The servers' figures (a short list, in the page's order), then the three problem lists, which are paged like the
 // Domains list and can be sorted by any column
 $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
@@ -55,7 +61,8 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-zone\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -84,7 +91,8 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-account\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -113,7 +121,8 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-suspended\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,

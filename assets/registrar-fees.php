@@ -117,7 +117,8 @@ if ($export_data === 1) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-$layout->setPageAddAction(_('Add Fee'), 'add/registrar-fee.php?rid=' . urlencode($rid));
+// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
+if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add Fee'), 'add/registrar-fee.php?rid=' . urlencode($rid));
 $layout->addPageAction(_('Export'), 'registrar-fees.php?rid=' . urlencode($rid) . '&export_data=1', 'bi-download');
 
 $stmt2 = $pdo->prepare("
@@ -159,8 +160,10 @@ if (!$result) {
 
     echo $layout->emptyState('bi-cash-coin', _('No fees for this registrar yet'), sprintf(_('Add a fee for each TLD so %s can work out costs.'), SOFTWARE_TITLE));
 
-} else { ?>
+} else {
 
+    // Each fee cell sorts by its amount (a dash, for no fee, as 0), so every fee column sorts as numbers, even one
+    // with no fees in it ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -183,7 +186,7 @@ if (!$result) {
             <td>
                 <bdi dir="ltr">.<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a></bdi>
             </td>
-            <td class="text-end"><?php
+            <td class="text-end" data-order="<?php echo (float) $row->initial_fee; ?>"><?php
                 if ($row->initial_fee > 0) {
 
                     echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -194,7 +197,7 @@ if (!$result) {
 
                 }?>
             </td>
-            <td class="text-end"><?php
+            <td class="text-end" data-order="<?php echo (float) $row->renewal_fee; ?>"><?php
                 if ($row->renewal_fee > 0) {
 
                     echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -205,7 +208,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td class="text-end"><?php
+            <td class="text-end" data-order="<?php echo (float) $row->transfer_fee; ?>"><?php
                 if ($row->transfer_fee > 0) {
 
                     echo $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -216,7 +219,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td class="text-end"><?php
+            <td class="text-end" data-order="<?php echo (float) $row->privacy_fee; ?>"><?php
                 if ($row->privacy_fee > 0) {
 
                     echo $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -227,7 +230,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td class="text-end"><?php
+            <td class="text-end" data-order="<?php echo (float) $row->misc_fee; ?>"><?php
                 if ($row->misc_fee > 0) {
 
                     echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);

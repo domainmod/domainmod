@@ -27,13 +27,20 @@ $slug = "reporting-domain-tld-pricing";
 $report_section = 'domains';
 $report_filename = 'tld-pricing.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
+// The list opens at the user's number of domains per page, and the page-length menu lists that number once,
+// in order with the others
+$page_length = (int) ($_SESSION['s_number_of_domains'] ?? 0);
+if ($page_length < 1) $page_length = 50;
+$length_menu = array_unique(array($page_length, 50, 75, 100));
+sort($length_menu);
 // The overview and the savings, paged and sortable like the Domains list, each opening in the page's own order (most
 // domains first, and largest saving first). The selected TLD's registrars are a short, plain table that the
 // comparison swaps in place.
 $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -62,7 +69,8 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                       domainmodTable(\'#' . $slug . '-savings\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
