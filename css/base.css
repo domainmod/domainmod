@@ -216,12 +216,6 @@ a.btn:hover {
 .app-sidebar {
     --lte-sidebar-submenu-color: #5c636a;
 }
-/* The database upgrade notice's critical warning (a class, since the CSP blocks style attributes) */
-.domainmod-css-critical-warning {
-    color: var(--bs-danger);
-    font-size: 200%;
-    line-height: 1.4;
-}
 /* A past expiry date on the Domains and SSL lists, in Bootstrap's darker or lighter red for each mode, which stays
    readable (WCAG AA) on the list's background */
 .domainmod-css-expired {
@@ -345,6 +339,14 @@ a.btn:hover {
 /* Tom Select puts the remove button's divider on the other side in right-to-left languages (it adds .rtl itself) */
 .ts-wrapper.plugin-remove_button.rtl .item .remove {
     border-right-color: var(--bs-border-color);
+}
+/* In right-to-left languages, AdminLTE's mirrored styles draw the menu's arrow on the left, but Tom Select still leaves
+   the room for it on the right (its own right-to-left rule doesn't match its current markup), so long text ran under
+   the arrow. This swaps the two sides, using Tom Select's own sizes (--ts-pr-min is its usual padding at the start,
+   smaller in a multiple choice menu with choices), and !important to beat its left-to-right rule. */
+.ts-wrapper.form-select.rtl .ts-control {
+    padding-left: max(var(--ts-pr-min), var(--ts-pr-clear-button) + var(--ts-pr-caret)) !important;
+    padding-right: var(--ts-pr-min) !important;
 }
 /* The focus ring in DomainMOD's main colour, like the other fields (the menu's border is on its wrapper) */
 .ts-wrapper.form-select.focus {
@@ -1298,9 +1300,10 @@ table.dataTable > thead > tr > th.control {
     margin-inline-end: .2em;
 }
 
-/* The requirements checklist (System::requirementsChecklist()), on the installer and the System Information page: a
-   summary line, then the full list, always shown. Each row has a tick or a cross (with the status in words for screen
-   readers), a note, and when it isn't met, how to fix it. */
+/* The requirements checklist (System::requirementsChecklist()), on the installer, the System Information page, and the
+   upgrade notice: a summary line, then the full list, shown by default (the upgrade notice puts it in a box that opens
+   on request). Each row has a tick or a cross (with the status in words for screen readers), a note, and when it isn't
+   met, how to fix it. */
 .domainmod-requirements {
     max-width: 48rem;
     margin-bottom: 1rem;
@@ -1466,6 +1469,15 @@ table.dataTable > thead > tr > th.control {
    class (buttons, nav links, tiles, DataTables controls), and links in tables, navigation, breadcrumbs, card footers,
    menus, and the landing pages' link lists. */
 .app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a) {
+    text-decoration: underline;
+}
+/* The same for links in alerts and in card text outside .app-content: the page messages in the page header, and the
+   bare pages (the upgrade notice, and the debugging mode pages, whose link sits loose beside their text). Bootstrap's
+   .alert-link is underlined too, since its bold text in the alert's own colour doesn't stand out enough either. */
+.alert a:not([class]),
+.alert a.alert-link,
+.card-body p a:not([class]),
+main > a:not([class]) {
     text-decoration: underline;
 }
 /* Light mode: inline code, field error messages, and the outline secondary buttons in darker shades, since Bootstrap's
