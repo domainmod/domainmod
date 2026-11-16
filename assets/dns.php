@@ -195,7 +195,9 @@ if ($result) {
     $layout->addPageAction(_('Set Defaults'), WEB_ROOT . '/settings/defaults/', 'bi-person-gear');
 
     // The default (see Settings, User Defaults) as a star, with its meaning in a tooltip and for screen readers
-    $default_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill');
+    // Each icon's wrapper holds a space before it, which keeps the hidden text apart from the name when the list is
+    // searched or sorted. As an inline block, the wrapper doesn't show that space.
+    $default_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill') . '</span>';
 
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;

@@ -190,8 +190,10 @@ if ($result) {
 
     // The default account (see Settings, User Defaults) and reseller accounts as icons, with their meanings in a tooltip
     // and for screen readers
-    $default_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill');
-    $reseller_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Reseller'), ENT_QUOTES, 'UTF-8'), _('Reseller'), 'info', 'bi-shop');
+    // Each icon's wrapper holds a space before it, which keeps the hidden text apart from the name when the list is
+    // searched or sorted. As an inline block, the wrapper doesn't show that space.
+    $default_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill') . '</span>';
+    $reseller_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Reseller'), ENT_QUOTES, 'UTF-8'), _('Reseller'), 'info', 'bi-shop') . '</span>';
 
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
