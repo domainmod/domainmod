@@ -160,8 +160,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('IP Addresses'), SOFTWARE_TITLE); ?></div>
-<BR>
+<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('IP Addresses'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 $layout->setPageAddAction(_('Add IP Address'), 'add/ip-address.php');
@@ -169,13 +168,25 @@ $layout->addPageAction(_('Export'), 'ip-addresses.php?export_data=1', 'bi-downlo
 
 if ($result) {
 
+    // Unused assets are shown or hidden for the rest of the session (the toggle returns to this page)
+    if ($_SESSION['s_display_inactive_assets'] == '1') {
+        $layout->addPageAction(_('Hide Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye-slash');
+    } else {
+        $layout->addPageAction(_('Show Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye');
+    }
+    $layout->addPageAction(_('Set Defaults'), WEB_ROOT . '/settings/defaults/', 'bi-person-gear');
+
+    // Each row's defaults (see Settings, User Defaults) as icons, with their meanings in a tooltip and for screen readers
+    $default_domains_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default for domains'), ENT_QUOTES, 'UTF-8'), _('Default for domains'), 'warning', 'bi-globe2');
+    $default_ssl_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default for SSL certificates'), ENT_QUOTES, 'UTF-8'), _('Default for SSL certificates'), 'warning', 'bi-shield-lock');
+
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
     ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('Name'); ?></th>
             <th><?php echo _('IP Address'); ?></th>
             <th><?php echo _('rDNS'); ?></th>
@@ -206,7 +217,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo '<strong>*</strong>'; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo '<strong>^</strong>'; ?>
+                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo $default_ssl_marker; ?>
                 </td>
                 <td>
                     <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
@@ -247,9 +258,7 @@ if ($result) {
         } ?>
 
         </tbody>
-    </table>
-
-    <strong>*</strong> = <?php echo _('Default Domain Owner'); ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = <?php echo _('Default SSL Owner'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)<BR><BR><?php
+    </table><?php
 
     if ($shown === 0) {
 
@@ -268,7 +277,6 @@ if ($result) {
 
 }
 ?>
-<?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

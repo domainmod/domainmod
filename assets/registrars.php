@@ -154,8 +154,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrars'), SOFTWARE_TITLE); ?></div>
-<BR>
+<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrars'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 $layout->setPageAddAction(_('Add Registrar'), 'add/registrar.php');
@@ -163,17 +162,28 @@ $layout->addPageAction(_('Export'), 'registrars.php?export_data=1', 'bi-download
 
 if ($result) {
 
+    // Unused assets are shown or hidden for the rest of the session (the toggle returns to this page)
+    if ($_SESSION['s_display_inactive_assets'] == '1') {
+        $layout->addPageAction(_('Hide Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye-slash');
+    } else {
+        $layout->addPageAction(_('Show Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye');
+    }
+    $layout->addPageAction(_('Set Defaults'), WEB_ROOT . '/settings/defaults/', 'bi-person-gear');
+
+    // The default (see Settings, User Defaults) as a star, with its meaning in a tooltip and for screen readers
+    $default_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill');
+
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
     ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('Registrar'); ?></th>
             <th><?php echo _('Accounts'); ?></th>
             <th><?php echo _('Domains'); ?></th>
-            <th><?php echo _('Options'); ?></th>
+            <th class="ps-4"><?php echo _('Options'); ?></th>
         </tr>
         </thead>
 
@@ -199,7 +209,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['s_default_registrar'] == $row->rid) echo '<strong>*</strong>'; ?>
+                    <a href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['s_default_registrar'] == $row->rid) echo $default_marker; ?>
                 </td>
                 <td><?php
 
@@ -227,8 +237,8 @@ if ($result) {
                     } ?>
 
                 </td>
-                <td>
-                    <a href="registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <td class="ps-4">
+                    <a href="registrar-fees.php?rid=<?php echo $row->rid; ?>"><?php echo _('Fees'); ?></a><?php if ($row->url != '') { ?><a class="ms-2" target="_blank" rel="noopener" href="<?php echo $row->url; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars(_('Website'), ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i><span class="visually-hidden"><?php echo _('Website'); ?></span></a><?php } ?>
                 </td>
                 </tr><?php
 
@@ -237,9 +247,7 @@ if ($result) {
         } ?>
 
         </tbody>
-    </table>
-
-    <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)<BR><BR><?php
+    </table><?php
 
     if ($shown === 0) {
 
@@ -257,7 +265,6 @@ if ($result) {
     echo $layout->emptyState('bi-building', _('No registrars yet'), _('Add the registrars where your domains are registered.'));
 
 } ?>
-<?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

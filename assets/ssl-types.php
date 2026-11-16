@@ -136,8 +136,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Certificate Types'), SOFTWARE_TITLE); ?></div>
-<BR>
+<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('SSL Certificate Types'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 $layout->setPageAddAction(_('Add SSL Type'), 'add/ssl-type.php');
@@ -145,13 +144,24 @@ $layout->addPageAction(_('Export'), 'ssl-types.php?export_data=1', 'bi-download'
 
 if ($result) {
 
+    // Unused assets are shown or hidden for the rest of the session (the toggle returns to this page)
+    if ($_SESSION['s_display_inactive_assets'] == '1') {
+        $layout->addPageAction(_('Hide Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye-slash');
+    } else {
+        $layout->addPageAction(_('Show Inactive'), WEB_ROOT . '/settings/toggles/inactive-assets/?' . (new DomainMOD\Csrf())->query(), 'bi-eye');
+    }
+    $layout->addPageAction(_('Set Defaults'), WEB_ROOT . '/settings/defaults/', 'bi-person-gear');
+
+    // The default (see Settings, User Defaults) as a star, with its meaning in a tooltip and for screen readers
+    $default_marker = '&nbsp;' . $layout->statusBadge(htmlspecialchars(_('Default'), ENT_QUOTES, 'UTF-8'), _('Default'), 'warning', 'bi-star-fill');
+
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
     ob_start(); ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('Type'); ?></th>
             <th><?php echo _('SSL Certs'); ?></th>
         </tr>
@@ -173,7 +183,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['s_default_ssl_type'] == $row->id) echo '<strong>*</strong>'; ?>
+                    <a href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['s_default_ssl_type'] == $row->id) echo $default_marker; ?>
                 </td>
                 <td><?php
 
@@ -195,9 +205,7 @@ if ($result) {
         } ?>
 
         </tbody>
-    </table>
-
-    <strong>*</strong> = <?php echo _('Default'); ?> (<a href="../settings/defaults/"><?php echo DomainMOD\Format::toLower(_('Set Defaults')); ?></a>)<BR><BR><?php
+    </table><?php
 
     if ($shown === 0) {
 
@@ -215,7 +223,6 @@ if ($result) {
     echo $layout->emptyState('bi-patch-check', _('No SSL types yet'), _('Add the kinds of certificates you use.'));
 
 } ?>
-<?php require_once DIR_INC . '/layout/asset-footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>
