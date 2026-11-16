@@ -19,24 +19,47 @@
  *
  */
 ?>
-<?php if ($new_start_date != '' && $new_end_date != '') { ?>
+<?php
+/*
+ * The report's summary, under the date filter: one card with the number of domains or SSL certificates as its number,
+ * the total cost as its detail line, and a View link to the table below. The total is money, so it never goes in the
+ * card's number, which Dashboard::displayPanel() rounds to a whole number. A report with nothing in it gets an empty
+ * state instead, and a date range that failed its check shows only its error.
+ */
+if ($submission_failed != '1') {
 
-    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR>
+    $report_url = '/reporting/' . $report_section . '/' . $report_filename;
+    if ($report_has_range) $report_url .= '?daterange=' . urlencode($new_start_date . ' - ' . $new_end_date);
 
-<?php } else { ?>
+    if ($total_rows > 0) {
 
-    <strong><?php echo _('Date Range'); ?>:</strong> <?php echo DomainMOD\Format::toUpper(_('All')); ?><BR>
+        // The amount and its currency code stay in order on right-to-left pages (isolated with Unicode marks, since
+        // the card's detail line is plain text)
+        $report_total = "\u{2066}" . $grand_total . ' ' . $_SESSION['s_default_currency'] . "\u{2069}";
 
-<?php } ?>
+        echo '<div class="row mb-4">';
+        if ($report_section == 'domains') {
+            echo $dashboard->displayPanel(_('Domains'), (int) $number_of_domains_total, 'danger', 'bi-globe2', $report_url . '#' . $slug, $breadcrumb, $report_total);
+        } else {
+            echo $dashboard->displayPanel(_('SSL Certificates'), (int) $number_of_certs_total, 'danger', 'bi-shield-lock', $report_url . '#' . $slug, $breadcrumb, $report_total);
+        }
+        echo '</div>';
 
-<?php if ($report_section == 'domains') { ?>
+    } elseif ($report_has_range) {
 
-    <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format((int) $number_of_domains_total); ?><BR>
+        $report_empty_text = $report_section == 'domains'
+            ? _('No live domains with a fee expire between these dates.')
+            : _('No live SSL certificates with a fee expire between these dates.');
+        echo $layout->emptyState('bi-calendar-x', _('No costs in this date range'), $report_empty_text, '', '',
+            '/reporting/' . $report_section . '/' . $report_filename, _('Clear the date range'));
 
-<?php } elseif ($report_section == 'ssl') { ?>
+    } else {
 
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format((int) $number_of_certs_total); ?><BR>
+        $report_empty_text = $report_section == 'domains'
+            ? _('Live domains are counted here once they have a fee.')
+            : _('Live SSL certificates are counted here once they have a fee.');
+        echo $layout->emptyState('bi-cash-coin', _('No costs to report yet'), $report_empty_text);
 
-<?php } ?>
+    }
 
-<strong><?php echo _('Total Cost'); ?>:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
+}

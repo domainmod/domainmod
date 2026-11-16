@@ -37,6 +37,7 @@ $currency = new DomainMOD\Currency();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $chart = new DomainMOD\Chart();
+$dashboard = new DomainMOD\Dashboard();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= _('The end date proceeds the start date') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('The end date is before the start date.') . '<BR>';
         $submission_failed = '1';
 
     }
@@ -152,7 +153,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
         if ($daterange == '') {
 
-            $row_contents = array(_('Date Range') . ':', DomainMOD\Format::toUpper(_('All')));
+            $row_contents = array(_('Date Range') . ':', _('All dates'));
 
         } else {
 
@@ -285,17 +286,19 @@ if ($submission_failed != '1' && $total_rows > 0) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/reporting-block.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
 <?php
 if ($submission_failed != '1' && $total_rows > 0) { ?>
 
-    <?php require_once DIR_INC . '/layout/reporting-block-sub.inc.php'; ?>
-
     <?php echo $chart->bar($slug . '-chart', $breadcrumb, $chart_labels, $chart_values); ?>
 
+    <?php // The table has only four short columns, so it stops at half the page on wide screens ?>
+    <div class="row">
+    <div class="col-lg-8 col-xl-6">
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('Year'); ?></th>
             <th><?php echo _('Month'); ?></th>
             <th><?php echo _('Cost'); ?></th>
@@ -398,11 +401,9 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
         } ?>
 
         </tbody>
-    </table><?php
-
-} else {
-
-    echo _('No results.') . '<BR>';
+    </table>
+    </div>
+    </div><?php
 
 }
 ?>
