@@ -414,87 +414,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->stepIndicator(array(_('Registrar Account'), _('Domains')), 2, _('Domain Queue steps')); ?>
 <?php
-if ($new_raid !== 0) { ?>
+if ($new_raid !== 0) {
 
-    <strong><?php echo _('API Requirements'); ?></strong><BR>
-    <?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must be saved with the %sregistrar account asset%s.'), $api_registrar_name, '<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '">', '</a>'); ?>
+    $account_url = $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid; ?>
 
+    <h2 class="h5 mt-2"><?php echo _('API Requirements'); ?></h2>
+    <p><?php echo sprintf(_('%s requires the following credentials in order to use their API. These credentials must be saved with the %sregistrar account asset%s.'), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), '<a href="' . $account_url . '">', '</a>'); ?></p>
     <ul><?php
 
-    $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span class="domainmod-css-text-highlight-red"><strong>' . DomainMOD\Format::toLower(_('Missing')) . ' - ' . DomainMOD\Format::toLower(_('Click Here to Enter')) . '</strong></span></a>)';
-    $saved_text = ' (<span class="domainmod-css-text-highlight-green"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
+    // Each credential the registrar's API needs (its flag, its label, and whether the account is missing it), shown
+    // with a line under it saying it's saved, or that it's missing with a link to the registrar account to add it
+    $requirements = array(
+        array($req_account_username, _('Registrar Account Username'), $account_username == ''),
+        array($req_account_password, _('Registrar Account Password'), $account_password == ''),
+        array($req_account_id, _('Registrar Account ID'), $account_id == ''),
+        array($req_reseller_id, _('Reseller ID'), $reseller_id == '' || $reseller_id == '0'),
+        array($req_api_app_name, _('API Application Name'), $api_app_name == ''),
+        array($req_api_key, _('API Key'), $api_key == ''),
+        array($req_api_secret, _('API Secret'), $api_secret == ''),
+        array($req_ip_address, _('Connecting IP Address'), $api_ip_id == '0'),
+    );
 
-    if ($req_account_username == '1') {
-        echo '<li>' . _('Registrar Account Username');
-        if ($account_username == '') {
-            echo $missing_text;
+    foreach ($requirements as list($is_required, $requirement, $is_missing)) {
+
+        if ($is_required != '1') continue;
+
+        echo '<li>' . $requirement;
+        if ($is_missing) {
+            // TRANSLATORS: Shown under a credential the registrar account doesn't have yet. The two %s wrap the link to the registrar account and must stay.
+            echo '<div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> ' . sprintf(_('Missing. %sAdd it to the registrar account.%s'), '<a href="' . $account_url . '">', '</a>') . '</div>';
         } else {
-            echo $saved_text;
+            echo '<div class="form-text text-success-emphasis"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> ' . _('Saved') . '</div>';
         }
         echo '</li>';
-    }
-    if ($req_account_password == '1') {
-        echo '<li>' . _('Registrar Account Password');
-        if ($account_password == '') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_account_id == '1') {
-        echo '<li>' . _('Registrar Account ID');
-        if ($account_id == '') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_reseller_id == '1') {
-        echo '<li>' . _('Reseller ID');
-        if ($reseller_id == '' || $reseller_id == '0') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_api_app_name == '1') {
-        echo '<li>' . _('API Application Name');
-        if ($api_app_name == '') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_api_key == '1') {
-        echo '<li>' . _('API Key');
-        if ($api_key == '') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_api_secret == '1') {
-        echo '<li>' . _('API Secret');
-        if ($api_secret == '') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
-    }
-    if ($req_ip_address == '1') {
-        echo '<li>' . _('Connecting IP Address');
-        if ($api_ip_id == '0') {
-            echo $missing_text;
-        } else {
-            echo $saved_text;
-        }
-        echo '</li>';
+
     } ?>
     </ul><?php
 
@@ -503,8 +456,8 @@ if ($new_raid !== 0) { ?>
 $registrar_notes = $registrar_notes ?? '';
 if ($registrar_notes != '') {
 
-    echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
-    echo $registrar_notes . "<BR><BR>";
+    echo '<h2 class="h5 mt-4">' . _('Registrar Notes') . '</h2>';
+    echo '<p>' . $registrar_notes . '</p>';
 
 }
 echo $form->showFormTop('');
@@ -513,11 +466,11 @@ if ($new_raid !== 0) {
 
     if ($lists_domains == '1') {
 
-        echo '<strong>' . _('Domain List') . '</strong><BR>';
+        echo '<h2 class="h5 mt-4">' . _('Domain List') . '</h2>';
 
-        echo sprintf(_("The %s API has a domain list feature, so you don't even have to supply a list of the domains you want to import, %s will retrieve them for you automatically."), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), SOFTWARE_TITLE) . '<BR><BR>';
+        echo '<p>' . sprintf(_("The %s API has a domain list feature, so you don't even have to supply a list of the domains you want to import, %s will retrieve them for you automatically."), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8'), SOFTWARE_TITLE) . '</p>';
 
-        echo $form->showInputTextarea('raw_domain_list', '[' . DomainMOD\Format::toUpper(_('Optional')) . '] ' . _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '', '', '');
+        echo $form->showInputTextarea('raw_domain_list', _('Domains to add (one per line)') . ' (' . DomainMOD\Format::toLower(_('Optional')) . ')', '', $unsanitize->text($raw_domain_list), '', '', '');
 
     } else {
 
