@@ -152,7 +152,8 @@ $day_summary = function ($day) {
 
 $show_names = array('all' => _('All'), 'domains' => _('Domains'), 'ssl' => _('SSL Certificates'));
 
-if ($export_data === 1 && $items) {
+// A month with no renewals still exports, with its summary and the column headings, since Export is always offered
+if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile(_('renewal_calendar_report'), $month);
@@ -215,8 +216,15 @@ if ($system->isHtmxRequest()) {
     header('HX-Push-Url: ' . WEB_ROOT . '/reporting/' . $page_url($month, $show));
 }
 
+/*
+ * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export exports the month and filter
+ * being shown, so each calendar update also swaps in the new page's Export link (hx-select-oob below). It's offered
+ * for every month, so the link is always there to swap.
+ */
+$layout->addPageAction(_('Export Report'), $page_url($month, $show, array('export_data' => 1)), 'bi-download', array('id' => 'renewal-calendar-export'));
+
 // Each month and filter link updates the calendar in place with htmx, and is a normal link without JavaScript
-$calendar_htmx = 'hx-target="#renewal-calendar" hx-select="#renewal-calendar" hx-swap="outerHTML" hx-sync="#renewal-calendar:replace"';
+$calendar_htmx = 'hx-target="#renewal-calendar" hx-select="#renewal-calendar" hx-select-oob="#renewal-calendar-export" hx-swap="outerHTML" hx-sync="#renewal-calendar:replace"';
 $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htmx) {
     return '<a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" hx-get="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" ' . $calendar_htmx . ($class !== '' ? ' class="' . $class . '"' : '') . $extra . '>' . $text . '</a>';
 };
@@ -257,10 +265,7 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
             foreach ($show_names as $show_value => $show_name) {
                 echo $htmx_link($page_url($month, $show_value), $show_name, 'btn btn-sm ' . ($show_value === $show ? 'btn-danger active' : 'btn-outline-secondary'), $show_value === $show ? ' aria-current="true"' : '');
             } ?>
-        </div><?php
-        if ($items) { ?>
-            <a href="<?php echo htmlspecialchars($page_url($month, $show, array('export_data' => 1)), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $layout->showButton('button', _('Export Report')); ?></a><?php
-        } ?>
+        </div>
     </div>
 
     <div class="row"><?php

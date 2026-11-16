@@ -142,9 +142,16 @@ if (!$result) {
 
 }
 ?>
-<a href="servers.php"><?php echo $layout->showButton('button', _('Manage Servers')); ?></a>&nbsp;&nbsp;<?php
-if ($has_servers == 1) { ?><a href="rebuild.php?<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', _('Rebuild DW')); ?></a><?php } ?>
 <?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions()). Rebuild DW starts the build straight
+// away, so it asks first.
+$layout->addPageAction(_('Manage Servers'), 'servers.php', 'bi-hdd-stack');
+if ($has_servers == 1) {
+
+    $layout->addPageAction(_('Rebuild DW'), 'rebuild.php?' . (new DomainMOD\Csrf())->query(), 'bi-arrow-repeat', array('confirm' => array('message' => _('Rebuild the Data Warehouse now? This can take a while.'))));
+
+}
+
 if ($has_servers == 0) {
 
     echo $layout->emptyState('bi-database', _('No servers in the Data Warehouse yet'), _('Add a WHM server to import its accounts, DNS zones, and records.'), '/admin/dw/add-server.php', _('Add Web Server'), '/admin/dw/intro.php', _('What is the Data Warehouse?'));

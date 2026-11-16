@@ -90,9 +90,9 @@ if ($field_id == '0') {
     }
 
     echo $form->showDropdownBottom('', 'field_id'); ?>
-    <a href='../../'><?php echo $layout->showButton('button', _('Go Back'));
-        echo '</a>&nbsp;&nbsp';
-        echo $form->showSubmitButton(_('Next Step'), '', '');
+    <?php // Go Back and the main button in one row, Back on the start side (css/base.css) ?>
+    <div class="domainmod-back-next"><?php echo $layout->linkButton('../../', _('Go Back'), 'secondary', 'bi-arrow-left');
+        echo $form->showSubmitButton(_('Next Step'), '', ''); ?></div><?php
 
 }
 echo $form->showInputHidden('is_submitted', '1');

@@ -451,13 +451,13 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 <?php
 if (!$edited_creation_type_id) {
 
-    echo _('Fixing queue domains becomes available after the next database update.') . '<BR><BR>';
-    echo '<a href="../">' . $layout->showButton('button', _('Go Back')) . '</a>';
+    echo '<p>' . _('Fixing queue domains becomes available after the next database update.') . '</p>';
+    echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left') . '</div>';
 
 } elseif (!$queue_row) {
 
-    echo _("That queue domain can't be fixed. Only domains that failed in the Domain Queue, and haven't been imported since, can be fixed and imported here.") . '<BR><BR>';
-    echo '<a href="../">' . $layout->showButton('button', _('Go Back')) . '</a>';
+    echo '<p>' . _("That queue domain can't be fixed. Only domains that failed in the Domain Queue, and haven't been imported since, can be fixed and imported here.") . '</p>';
+    echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left') . '</div>';
 
 } else {
 

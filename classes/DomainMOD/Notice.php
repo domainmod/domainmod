@@ -78,7 +78,7 @@ class Notice
             </div>
         </div>
         <p><?php echo _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.'); ?></p>
-        <div class="mt-4 mb-3"><a href="<?php echo $esc('checks.php?u=1&' . $csrf_query); ?>"><?php echo $layout->showButton('button', _('Upgrade Database')); ?></a></div><?php
+        <div class="mt-4 mb-3"><?php echo $layout->linkButton('checks.php?u=1&' . $csrf_query, _('Upgrade Database'), 'primary'); ?></div><?php
         return ob_get_clean();
     }
 

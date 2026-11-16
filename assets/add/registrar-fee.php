@@ -188,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../registrar-fees.php?rid=<?php echo $rid; ?>"><?php echo $layout->showButton('button', _('Back to Registrar Fees')); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>

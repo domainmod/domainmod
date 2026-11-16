@@ -53,12 +53,12 @@ $system->authCheck();
 <?php echo _("The Support Portal also has a project Roadmap, built automatically from what users have submitted and where each item stands (Planned, In Progress, Completed, and so on), so you can see how development is progressing."); ?><BR>
 <BR>
 <?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?></div>
-<BR>
-<a target="_blank" href="https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new"><?php echo $layout->showButton('button', _('Submit Feedback')); ?></a>
-&nbsp;&nbsp;&nbsp;
-<a target="_blank" href="https://github.com/domainmod/domainmod/issues/new/choose"><?php echo $layout->showButton('button', _('Report a Bug on GitHub')); ?></a>
-&nbsp;&nbsp;&nbsp;
-<a target="_blank" href="https://support.domainmod.org/roadmap"><?php echo $layout->showButton('button', _('View the Project Roadmap')); ?></a>
+<?php // One red button for the main way to get in touch, and outline buttons for the others, wrapping on phones ?>
+<div class="d-flex flex-wrap gap-2 mt-3"><?php
+echo $layout->linkButton('https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new', _('Submit Feedback'), 'primary', '', array('target' => '_blank', 'rel' => 'noopener'));
+echo $layout->linkButton('https://github.com/domainmod/domainmod/issues/new/choose', _('Report a Bug on GitHub'), 'secondary', '', array('target' => '_blank', 'rel' => 'noopener'));
+echo $layout->linkButton('https://support.domainmod.org/roadmap', _('View the Project Roadmap'), 'secondary', '', array('target' => '_blank', 'rel' => 'noopener')); ?>
+</div>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

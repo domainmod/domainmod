@@ -425,9 +425,10 @@ if ($done != '1') {
 
         echo $form->showInputTextarea('new_notes', $notes_heading, '', $unsanitize->text($new_notes), '', '', ''); ?>
 
-        <a href='../step-one/'><?php echo $layout->showButton('button', _('Go Back')); ?></a>&nbsp;&nbsp;<?php
+        <?php // Go Back and the main button in one row, Back on the start side (css/base.css) ?>
+        <div class="domainmod-back-next"><?php echo $layout->linkButton('../step-one/', _('Go Back'), 'secondary', 'bi-arrow-left');
 
-        echo $form->showSubmitButton(_('Update Custom Domain Field'), '', '');
+        echo $form->showSubmitButton(_('Update Custom Domain Field'), '', ''); ?></div><?php
 
     }
 
@@ -436,7 +437,7 @@ if ($done != '1') {
 
 } else { ?>
 
-    <a href='../step-one/'><?php echo $layout->showButton('button', _('Go Back')); ?></a><BR><BR><?php
+    <div class="domainmod-back-next"><?php echo $layout->linkButton('../step-one/', _('Go Back'), 'secondary', 'bi-arrow-left'); ?></div><?php
 
 }
 ?>

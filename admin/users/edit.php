@@ -459,8 +459,12 @@ echo $form->showFormBottom('');
 <?php if ($uid == ($_SESSION['s_user_id'] ?? 0)) { // resetting your own password here would log you out ?>
 <?php echo sprintf(_('To change your own password, use %sChange Password%s under Settings.'), '<a href="' . WEB_ROOT . '/settings/password/">', '</a>'); ?><BR><BR>
 <?php } else { ?>
-<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&display=1&<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Display Password'))); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="reset-password.php?new_username=<?php echo urlencode($new_username); ?>&<?php echo (new DomainMOD\Csrf())->query(); ?>"><?php echo $layout->showButton('button', DomainMOD\Format::toUpper(_('Reset and Email New Password to User'))); ?></a><BR><BR>
+<?php // The two ways to reset the user's password, as outline buttons beside each other, wrapping on phones ?>
+<div class="d-flex flex-wrap gap-2 mb-3"><?php
+$reset_csrf = (new DomainMOD\Csrf())->query();
+echo $layout->linkButton('reset-password.php?new_username=' . urlencode($new_username) . '&display=1&' . $reset_csrf, _('Reset and Display Password'));
+echo $layout->linkButton('reset-password.php?new_username=' . urlencode($new_username) . '&' . $reset_csrf, _('Reset and Email New Password to User')); ?>
+</div>
 <?php } ?>
 <?php
 $layout->dangerZone(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1', _('Delete this user'), sprintf(_('This removes %s and their settings. It can\'t be undone. The admin user and your own account can\'t be deleted.'), '<strong>' . htmlentities(html_entity_decode($new_first_name . ' ' . $new_last_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2); ?>

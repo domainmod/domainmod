@@ -63,15 +63,13 @@ if (DEMO_INSTALLATION == false) {
 
 if ($result_message !== false) {
 
-    echo $result_message;
-    echo '<BR><BR>';
-    echo '<a href="dw.php">' . $layout->showButton('button', _('Go To Data Warehouse')) . '</a>';
+    echo '<p>' . $result_message . '</p>';
+    echo '<div class="mb-3">' . $layout->linkButton('dw.php', _('Go To Data Warehouse'), 'primary') . '</div>';
 
 } else {
 
-    echo _('There was a problem rebuilding the Data Warehouse.');
-    echo '<BR><BR>';
-    echo '<a href="rebuild.php?' . $csrf->query() . '">' . $layout->showButton('button', _('Try again')) . '</a>';
+    echo '<p>' . _('There was a problem rebuilding the Data Warehouse.') . '</p>';
+    echo '<div class="mb-3">' . $layout->linkButton('rebuild.php?' . $csrf->query(), _('Try again'), 'primary') . '</div>';
 
 }
 ?>

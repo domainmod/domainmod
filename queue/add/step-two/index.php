@@ -478,13 +478,13 @@ if ($new_raid !== 0) {
     }
 
 } ?>
-<a href='../step-one/'><?php echo $layout->showButton('button', _('Go Back')); ?></a>&nbsp;&nbsp;
-<?php
+<?php // Go Back and the main button in one row, Back on the start side (css/base.css) ?>
+<div class="domainmod-back-next"><?php echo $layout->linkButton('../step-one/', _('Go Back'), 'secondary', 'bi-arrow-left');
 if ($new_raid !== 0) {
 
     echo $form->showSubmitButton(_('Add Domains'), '', '');
 
-}
+} ?></div><?php
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

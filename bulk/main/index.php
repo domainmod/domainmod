@@ -2449,7 +2449,8 @@ if ($done != "1") {
 
         } ?>
 
-        <a href='../'><?php echo $layout->showButton('button', _('Go Back')); ?></a>&nbsp;&nbsp;<?php
+        <?php // Go Back and the main button in one row, Back on the start side (css/base.css) ?>
+        <div class="domainmod-back-next"><?php echo $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left');
 
         if ($action == "AD") {
 
@@ -2543,7 +2544,7 @@ if ($done != "1") {
 
             echo $form->showSubmitButton(_('Perform Bulk Action'), '', '');
 
-        }
+        } ?></div><?php
 
     }
 
@@ -2552,7 +2553,7 @@ if ($done != "1") {
 
 } else { ?>
 
-    <a href='../'><?php echo $layout->showButton('button', _('Go Back')); ?></a><BR><BR><?php
+    <div class="domainmod-back-next"><?php echo $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left'); ?></div><?php
 
 }
 ?>

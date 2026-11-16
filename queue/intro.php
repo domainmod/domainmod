@@ -84,10 +84,11 @@ $supported_registrars = substr($supported_registrars, 2);
 <BR>
 <strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('In order to use the Domain Queue you must set up the cron job that comes with %s.'), SOFTWARE_TITLE) . '&nbsp;'; ?>
 <?php echo sprintf(_('For more information, please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/queue/add/"><?php echo $layout->showButton('button', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue')); ?></a>
-<?php if ($queue_rdap_available) { ?>&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/queue/add/rdap.php"><?php echo $layout->showButton('button', _('Add Domains Without an API')); ?></a><?php } ?>
-<BR><BR>
+<?php // The main way in as the one red button, and the other as an outline button beside it ?>
+<div class="d-flex flex-wrap gap-2 mt-3 mb-3"><?php
+echo $layout->linkButton($web_root . '/queue/add/', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), 'primary');
+if ($queue_rdap_available) echo $layout->linkButton($web_root . '/queue/add/rdap.php', _('Add Domains Without an API')); ?>
+</div>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

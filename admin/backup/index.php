@@ -133,7 +133,7 @@ ob_start(); ?>
     <dt><?php echo _('Database Backup File'); ?></dt>
     <dd class="mb-0"><?php echo $layout->ltr('domainmod-backup.sql'); ?></dd>
 </dl>
-<div class="domainmod-span-all mb-3"><a href="download/"><?php echo $layout->showButton('button', _('Backup Entire Database')); ?></a></div><?php
+<div class="domainmod-span-all mb-3"><?php echo $layout->linkButton('download/', _('Backup Entire Database'), 'primary'); ?></div><?php
 echo '<div class="domainmod-form">' . $layout->formSection(_('Back Up'), 'backup', ob_get_clean()) . '</div>';
 
 ob_start(); ?>

@@ -147,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 <?php
 if (!$rdap_api_registrar_id) {
 
-    echo _('RDAP imports become available after the next database update.') . '<BR><BR>';
-    echo '<a href="../">' . $layout->showButton('button', _('Go Back')) . '</a>';
+    echo '<p>' . _('RDAP imports become available after the next database update.') . '</p>';
+    echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left') . '</div>';
 
 } else {
 
@@ -172,8 +172,10 @@ if (!$rdap_api_registrar_id) {
 
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), '', $unsanitize->text($raw_domain_list), '1', '', '');
 
-    echo '<a href="../">' . $layout->showButton('button', _('Go Back')) . '</a>&nbsp;&nbsp;';
+    // Go Back and the main button in one row, Back on the start side (css/base.css)
+    echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left');
     echo $form->showSubmitButton(_('Add Domains'), '', '');
+    echo '</div>';
 
     echo $form->showFormBottom('');
 

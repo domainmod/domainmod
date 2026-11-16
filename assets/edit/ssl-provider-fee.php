@@ -168,7 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<a href="../ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', _('Back to SSL Provider Fees')); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 ?>
