@@ -26,9 +26,9 @@ namespace DomainMOD;
  * data endpoint (domains/list-data.php) sends, so the two can't differ. The columns follow the user's Display Settings
  * and custom fields, given as a copy of the session values ($settings), so the endpoint can let go of the session
  * early. The cells are built exactly as the list has always drawn them, with the same escaping (values from the
- * database are stored sanitized).
+ * database are stored sanitized). What it shares with the SSL Certificates list's columns is in ListColumns.
  */
-class DomainListColumns
+class DomainListColumns extends ListColumns
 {
     // Each optional column's key, its Display Settings session key, and its sort expressions
     const OPTIONAL = array(
@@ -50,10 +50,7 @@ class DomainListColumns
         's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
         's_default_currency_symbol_space');
 
-    private $settings;
-    private $layout;
-    private $currency;
-    private $columns;
+    const FIELD_ALIAS = 'dfd';
 
     /*
      * $settings is sessionCopy()'s array. $current_fields is the custom field columns that exist now
@@ -65,9 +62,6 @@ class DomainListColumns
         $this->settings = $settings;
         $this->layout = new Layout();
         $this->currency = new Currency();
-
-        preg_match_all('/dfd\.([A-Za-z0-9_]+)/', (string) $current_fields_sql, $matches);
-        $current_fields = $matches[1];
 
         $columns = array(array('key' => 'control', 'title' => '', 'sort' => array()));
         $columns[] = array('key' => 'domain', 'title' => _('Domain'), 'sort' => array('d.domain'));
@@ -81,92 +75,15 @@ class DomainListColumns
             }
         }
 
-        foreach ((array) ($settings['s_cdf_data'] ?? array()) as $field) {
-            // Text Areas get no column, and neither does a field that no longer exists
-            if (($field['value'] ?? '') != '1' || ($field['type_id'] ?? '') == '3') continue;
-            if (!in_array($field['field'] ?? '', $current_fields, true)) continue;
-            $columns[] = array('key' => 'cf_' . $field['field'], 'title' => $field['name'], 'sort' => array('dfd.' . $field['field']),
-                'field' => $field);
-        }
-
-        $this->columns = $columns;
-    }
-
-    // The session values the columns need, so the endpoint can close the session before running its queries
-    public static function sessionCopy(array $session)
-    {
-        $copy = array();
-        foreach (self::SESSION_KEYS as $key) {
-            $copy[$key] = $session[$key] ?? '';
-        }
-        return $copy;
-    }
-
-    // The visible columns in order, each with its key, its heading (as the page has always printed it), and whether it sorts
-    public function columns()
-    {
-        return $this->columns;
-    }
-
-    // A short hash of the visible columns in order, so a change made in another tab is noticed
-    public function layoutKey()
-    {
-        return substr(sha1(implode(',', array_column($this->columns, 'key'))), 0, 12);
-    }
-
-    /*
-     * Text custom fields whose stored values are all numbers (or empty) sort as numbers, as DataTables sorted a column
-     * of numbers before, so 2 comes before 10. A number can have a sign, a leading decimal point, an exponent, and the
-     * characters DataTables ignored (thousands separators, currency signs, percent signs, and a few letters). Empty
-     * values come first when ascending and last when descending, as DataTables placed them. Only the domains the list's
-     * filters leave are checked, as DataTables only saw those: $from_sql is DomainList::fromSql() followed by the
-     * filter conditions. Call it before sortMap().
-     */
-    public function useNumericSort(\PDO $pdo, $from_sql)
-    {
-        foreach ($this->columns as $index => $column) {
-            if (!isset($column['field']) || $column['field']['type_id'] != '2') continue;
-            $name = 'dfd.' . $column['field']['field'];
-            $plain = $name;
-            // The characters DataTables 3.1.5's number check ignores, in either case
-            foreach (array("\\'", "\u{00A0}", ',', '$', '£', '€', '¥', '%', "\u{2009}", "\u{202F}", "\u{20BD}", "\u{20A9}",
-                         "\u{20BA}", 'r', 'R', 'f', 'F', 'k', 'K', 'Ƀ', 'ƀ', 'Ξ', 'ξ') as $character) {
-                $plain = "REPLACE(" . $plain . ", '" . $character . "', '')";
-            }
-            $counts = $pdo->query("
-                SELECT SUM(" . $name . " != '') AS filled,
-                       SUM(" . $name . " != '' AND " . $plain . " NOT REGEXP '^[[:space:]]*[-+]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?[[:space:]]*$') AS other
-                " . $from_sql)->fetch(\PDO::FETCH_ASSOC);
-            if ((int) $counts['filled'] > 0 && (int) $counts['other'] === 0) {
-                $this->columns[$index]['sort'] = array($name . " != ''", '(' . $plain . ') + 0');
-            }
-        }
-    }
-
-    // The sort expressions by column index, for DomainList::orderSql(). The control column doesn't sort.
-    public function sortMap()
-    {
-        $map = array();
-        foreach ($this->columns as $index => $column) {
-            if ($column['sort']) $map[$index] = $column['sort'];
-        }
-        return $map;
-    }
-
-    // The default order: the expiry date when it shows, otherwise the domain, both ascending
-    public function defaultOrder()
-    {
-        foreach ($this->columns as $index => $column) {
-            if ($column['key'] === 'expiry') return array(array($index, 'asc'));
-        }
-        return array(array(1, 'asc'));
+        $this->columns = $this->withCustomFields($columns, $settings['s_cdf_data'] ?? array(), $current_fields_sql);
     }
 
     /*
      * The search box's expressions for the visible columns, following what each cell shows: 'lower' ones are compared
      * with the word in lowercase (the domain and TLD, which are stored in lowercase in case-sensitive columns), 'typed'
      * ones with the word as typed (the expiry date, and text, date, and time stamp custom fields, with the empty
-     * placeholder dates left out), and 'encoded' ones with the word HTML-encoded, as asset names are stored.
+     * placeholder dates left out), and 'encoded' ones with the word HTML-encoded, as asset names are stored. The domain
+     * also matches the word's stored IDN form (see DomainList::searchSql()).
      */
     public function searchExpressions()
     {
@@ -186,33 +103,15 @@ class DomainListColumns
                 case 'category': $encoded[] = 'cat.name'; break;
                 case 'owner': $encoded[] = 'o.name'; break;
                 default:
-                    if (!isset($column['field'])) break;
-                    $name = 'dfd.' . $column['field']['field'];
-                    $type = $column['field']['type_id'];
-                    if ($type == '2') {
-                        $typed[] = $name;
-                    } elseif ($type == '4') {
-                        $typed[] = "CASE WHEN " . $name . " IN ('1970-01-01', '0000-00-00') THEN '' ELSE CAST(" . $name . " AS CHAR) END";
-                    } elseif ($type == '5') {
-                        $typed[] = "CASE WHEN " . $name . " IN ('1970-01-01 00:00:00', '0000-00-00 00:00:00') THEN '' ELSE CAST(" . $name . " AS CHAR) END";
-                    }
+                    if (isset($column['field'])) $typed = $this->customFieldSearch($column, $typed);
             }
         }
 
         return array('lower' => $lower, 'typed' => $typed, 'encoded' => $encoded);
     }
 
-    // A row's cells as HTML, in the columns' order. $today is the date past which a live domain's expiry is marked.
-    public function cells($row, $today)
-    {
-        $cells = array();
-        foreach ($this->columns as $column) {
-            $cells[] = $this->cell($column, $row, $today);
-        }
-        return $cells;
-    }
-
-    private function cell(array $column, $row, $today)
+    // A row's cell for one column. $today is the date past which a live domain's expiry is marked.
+    protected function cell(array $column, $row, $today)
     {
         $layout = $this->layout;
         $s = $this->settings;
@@ -285,20 +184,7 @@ class DomainListColumns
                 return '<a href="../assets/edit/account-owner.php?oid=' . $row->o_id . '">' . $row->owner_name . '</a>';
 
             default:
-                $field = $column['field'];
-                $value = $row->{$field['field']} ?? '';
-                if ($field['type_id'] == '1') { // Check Box
-                    return $value == '1' ? 'Yes' : 'No';
-                } elseif ($field['type_id'] == '2') { // Text
-                    return $layout->customFieldText($value);
-                } elseif ($field['type_id'] == '4') { // Date
-                    return Time::isUnset($value) ? '' : $layout->customFieldText($value);
-                } elseif ($field['type_id'] == '5') { // Time Stamp
-                    return Time::isUnset($value) ? '' : $layout->customFieldText($value);
-                } elseif ($field['type_id'] == '6') { // URL
-                    return $value != '' ? $layout->customFieldLink($value) : '';
-                }
-                return '';
+                return $this->customFieldCell($column['field'], $row);
 
         }
     }

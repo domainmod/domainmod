@@ -287,7 +287,7 @@ if ($segid !== 0) {
 
 if ($export_data == 1) {
 
-    // The table's search box, when the link carries it (js/domain-list.js adds it), so the export holds the rows the
+    // The table's search box, when the link carries it (js/server-list.js adds it), so the export holds the rows the
     // table shows. An older link without it exports what the filters match, as before.
     $table_search_for = $_GET['dt_search'] ?? '';
     $table_search = $domain_list->tableSearchSql($table_search_for, $_GET['dt_layout'] ?? '',
@@ -886,7 +886,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 /*
  * Server-side processing: the page prints one page of rows, in the default order, and DataTables fetches the others
- * from domains/list-data.php (see js/domain-list.js). The page and its size come from the address (the no-JavaScript
+ * from domains/list-data.php (see js/server-list.js). The page and its size come from the address (the no-JavaScript
  * pager's links), checked as the endpoint checks them, and a page past the end (an old link, after domains were
  * deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own paging does.
  */
@@ -2055,7 +2055,7 @@ if ($result) {
     $layout->setPageAddAction(_('Add Domain'), 'add.php');
     $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
     $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
-    // Both keep their ids, since js/domain-list.js adds the table's search box to their links (dt_search)
+    // Both keep their ids, since js/server-list.js adds the table's search box to their links (dt_search)
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'domain-list-export')); ?>
@@ -2072,7 +2072,7 @@ if ($result) {
     if ($total_rows) {
 
         /*
-         * Server-side processing (see js/domain-list.js): the columns and cells come from DomainListColumns, as the
+         * Server-side processing (see js/server-list.js): the columns and cells come from DomainListColumns, as the
          * endpoint's do, and the table carries what the script needs, the endpoint's address with the list's whole state
          * (so another tab's filters can't change this tab's rows), the columns, the counts, the page, and its size.
          */
@@ -2206,6 +2206,6 @@ if ($result) {
 <?php require_once DIR_INC . '/layout/footer.inc.php';  //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
 <script src="<?php echo $layout->assetUrl('js/filter-auto-apply.js'); ?>"></script>
-<script src="<?php echo $layout->assetUrl('js/domain-list.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl('js/server-list.js'); ?>"></script>
 </body>
 </html>

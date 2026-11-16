@@ -28,5 +28,5 @@ $slug = "domains-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
 
 // The list uses server-side processing: domains/index.php prints the first page, with the table's settings in its
-// data-domainmod-list attribute, and js/domain-list.js starts DataTables from them.
-$datatable_options = 'domainmodDomainList(\'#' . $slug . '\');';
+// data-domainmod-list attribute, and js/server-list.js starts DataTables from them.
+$datatable_options = 'domainmodServerList(\'#' . $slug . '\');';

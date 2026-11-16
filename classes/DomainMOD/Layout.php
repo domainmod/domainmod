@@ -194,10 +194,10 @@ class Layout
     }
 
     /*
-     * A list's plain pager for when JavaScript is off (the Domains list, see domains/index.php): Previous, the page
-     * numbers around the current one with the first and last, and Next, as start and length links. $base_url already
-     * carries the list's whole state as a query string (it never relies on the session), and $label names the pages for
-     * screen readers. The list's script removes it when DataTables takes over the paging.
+     * A list's plain pager for when JavaScript is off (the Domains and SSL Certificates lists, see domains/index.php):
+     * Previous, the page numbers around the current one with the first and last, and Next, as start and length links.
+     * $base_url already carries the list's whole state as a query string (it never relies on the session), and $label
+     * names the pages for screen readers. The list's script removes it when DataTables takes over the paging.
      */
     public function listPager($total, $start, $length, $base_url, $label)
     {

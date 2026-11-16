@@ -25,30 +25,8 @@ $breadcrumb = _('SSL Certs');
 $software_section = "ssl";
 $slug = "ssl-main";
 
-// If the expiry date is visible sort by it, otherwise sort by the SSL certificate name
-($_SESSION['s_display_ssl_expiry_date'] ?? '') == "1" ? $default_sort_by = '2' : $default_sort_by = '1';
-
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
-$datatable_options = 'domainmodTable(\'#' . $slug . '\', {
-                          "paging": true,
-                          "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, "All"] ],
-                          "searching": true,
-                          "info": true,
-                          "autoWidth": true,
-                          "bAutoWidth": false,
-                          "responsive": {
-                               details: {
-                                         type: "column"
-                                        }
-                                        },
-                          "columnDefs": [ {
-                                           className: "control",
-                                           orderable: false,
-                                           targets:   0
-                                           } ],
-                          "ordering": true,
-                          "order": [[ ' . $default_sort_by . ', "asc" ]],
-                          "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
-                      });';
+
+// The list uses server-side processing: ssl/index.php prints the first page, with the table's settings in its
+// data-domainmod-list attribute, and js/server-list.js starts DataTables from them.
+$datatable_options = 'domainmodServerList(\'#' . $slug . '\');';

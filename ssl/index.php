@@ -47,19 +47,10 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
-/*
- * The keyword search as an SQL condition on the domain column. The term is quoted by PDO rather than pasted into the
- * SQL, and a term that's also a domain or label in another spelling (a pasted xn--mnchen-3ya.de) matches its stored
- * form too. Domains are stored in lowercase, so the term is lowercased; the two values are each worked out from what
- * was typed, so casing rules can't send both to the wrong spelling.
- */
+// The keyword search as an SQL condition on a domain column, for the filter menus' counts (see
+// DomainList::keywordCondition())
 $domain_search_condition = function ($column, $term) use ($pdo) {
-    $term = htmlspecialchars_decode((string) $term, ENT_QUOTES);
-    $lower = mb_strtolower($term, 'UTF-8');
-    $conditions = array($column . ' LIKE ' . $pdo->quote('%' . $lower . '%'));
-    $idn = DomainMOD\Domain::normalize($term);
-    if ($idn !== '' && $idn !== $lower) $conditions[] = $column . ' LIKE ' . $pdo->quote('%' . $idn . '%');
-    return '(' . implode(' OR ', $conditions) . ')';
+    return DomainMOD\DomainList::keywordCondition($pdo, $column, $term);
 };
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
@@ -171,87 +162,28 @@ $daterange = $list_start_date != 'YYYY-MM-DD' ? $list_start_date . ' - ' . $list
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
 
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' ";
-} elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' ";
-} elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' ";
-} elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' ";
-} elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' ";
-} elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' ";
-} elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' ";
-} elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' ";
-} elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' ";
-} elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' ";
-} elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' ";
-} elseif ($is_active == 'LIVE') { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')";
-} elseif ($is_active == 'ALL') { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
-}
-
-if ($oid !== 0) {
-    $oid_string = " AND o.id = '$oid' ";
-} else {
-    $oid_string = "";
-}
-if ($did !== 0) {
-    $did_string = " AND d.id = '$did' ";
-} else {
-    $did_string = "";
-}
-if ($sslpid !== 0) {
-    $sslpid_string = " AND sslp.id = '$sslpid' ";
-} else {
-    $sslpid_string = "";
-}
-if ($sslpaid !== 0) {
-    $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
-} else {
-    $sslpaid_string = "";
-}
-if ($ssltid !== 0) {
-    $ssltid_string = " AND sslc.type_id = '$ssltid' ";
-} else {
-    $ssltid_string = "";
-}
-if ($sslipid !== 0) {
-    $sslipid_string = " AND sslc.ip_id = '$sslipid' ";
-} else {
-    $sslipid_string = "";
-}
-if ($sslpcid !== 0) {
-    $sslpcid_string = " AND sslc.cat_id = '$sslpcid' ";
-} else {
-    $sslpcid_string = "";
-}
-if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
-    $range_string = " AND (sslc.expiry_date >= " . $pdo->quote($list_start_date) . " AND sslc.expiry_date <= " . $pdo->quote($list_end_date) . ")";
-} else {
-    $range_string = "";
-}
-// certificate names are stored HTML-encoded (as the search term is), so they're compared as they are; only the domain
-// side of the search is decoded and normalised
-if ($list_search_for != "") {
-    $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $list_search_for . '%') . ")";
-} else {
-    $search_string = "";
-}
-
+// The list's filters as SQL, from the same class as the list's data endpoint (ssl/list-data.php), so the first page,
+// the pages fetched afterwards, the counts, Export, and the Raw List all agree. The keyword is matched against the
+// certificate's name, which is stored HTML-encoded, as the keyword is (see SslList::filterParts()).
 $sslfd_columns = $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd');
+$ssl_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'], $sslfd_columns);
+$list_state = array('oid' => $oid, 'did' => $did, 'sslpid' => $sslpid, 'sslpaid' => $sslpaid, 'ssltid' => $ssltid,
+    'sslipid' => $sslipid, 'sslpcid' => $sslpcid, 'is_active' => $is_active);
+$filter_parts = $ssl_list->filterParts($list_state, $list_search_for, $list_start_date, $list_end_date);
+$is_active_string = $filter_parts['is_active_string'];
+$oid_string = $filter_parts['oid_string'];
+$did_string = $filter_parts['did_string'];
+$sslpid_string = $filter_parts['sslpid_string'];
+$sslpaid_string = $filter_parts['sslpaid_string'];
+$ssltid_string = $filter_parts['ssltid_string'];
+$sslipid_string = $filter_parts['sslipid_string'];
+$sslpcid_string = $filter_parts['sslpcid_string'];
+$range_string = $filter_parts['range_string'];
+$search_string = $filter_parts['search_string'];
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.creation_type_id, sslc.created_by, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.id AS f_id, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name" . $sslfd_columns . "
-        FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
-             currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip,
-             categories AS cat, ssl_cert_field_data AS sslfd
-        WHERE sslc.account_id = sslpa.id
-          AND sslpa.ssl_provider_id = sslp.id
-          AND sslpa.owner_id = o.id
-          AND sslc.fee_id = f.id
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND sslc.domain_id = d.id
-          AND sslc.type_id = sslcf.id
-          AND sslc.ip_id = ip.id
-          AND sslc.cat_id = cat.id
-          AND sslc.id = sslfd.ssl_id
-          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+// Export and the Raw List come out in the list's default order (SslList::EXPORT_ORDER_SQL). The Raw List also keeps the
+// query without its order, so it can add the table's search box when its link carries one (see raw.php).
+$raw_list_sql = $ssl_list->selectSql() . $ssl_list->fromSql() . "
           $is_active_string
           $oid_string
           $did_string
@@ -262,8 +194,10 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
           $sslpcid_string
           $range_string
           $search_string";
+$sql = $raw_list_sql . DomainMOD\SslList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
 $_SESSION['s_raw_list_sql'] = $sql;
+$_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_string . $sslpaid_string . $ssltid_string
@@ -271,66 +205,50 @@ $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_strin
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
-// This query is identical to the main query, except that it only does a count
-$total_rows = $pdo->query("
-    SELECT count(*)
-    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
-    WHERE sslc.account_id = sslpa.id
-      AND sslpa.ssl_provider_id = sslp.id
-      AND sslpa.owner_id = o.id
-      AND sslc.fee_id = f.id
-      AND f.currency_id = c.id
-      AND c.id = cc.currency_id
-      AND sslc.domain_id = d.id
-      AND sslc.type_id = sslcf.id
-      AND sslc.ip_id = ip.id
-      AND sslc.cat_id = cat.id
-      AND sslc.id = sslfd.ssl_id
-      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-      $is_active_string
-      $oid_string
-      $did_string
-      $sslpid_string
-      $sslpaid_string
-      $ssltid_string
-      $sslipid_string
-      $sslpcid_string
-      $range_string
-      $search_string")->fetchColumn();
+// How many certificates the filters match (the same joins and filters as the main query)
+$total_rows = $ssl_list->count($list_filter_sql);
 
-// The total covers exactly the listed certificates (the same joins and filters as the list and the count above)
-$grand_total = $pdo->query("
-    SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
-    FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
-    WHERE sslc.account_id = sslpa.id
-      AND sslpa.ssl_provider_id = sslp.id
-      AND sslpa.owner_id = o.id
-      AND sslc.fee_id = f.id
-      AND f.currency_id = c.id
-      AND c.id = cc.currency_id
-      AND sslc.domain_id = d.id
-      AND sslc.type_id = sslcf.id
-      AND sslc.ip_id = ip.id
-      AND sslc.cat_id = cat.id
-      AND sslc.id = sslfd.ssl_id
-      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-      $is_active_string
-      $oid_string
-      $did_string
-      $sslpid_string
-      $sslpaid_string
-      $ssltid_string
-      $sslipid_string
-      $sslpcid_string
-      $range_string
-      $search_string")->fetchColumn();
+// The total covers exactly the listed certificates (the same joins and filters as the list and Export)
+$grand_total = $pdo->query("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql)->fetchColumn();
 
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($export_data == 1) {
 
-    $result = $pdo->query($sql)->fetchAll();
+    // The table's search box, when the link carries it (js/server-list.js adds it), so the export holds the rows the
+    // table shows. An older link without it exports what the filters match, as before.
+    $table_search_for = $_GET['dt_search'] ?? '';
+    $table_search = $ssl_list->tableSearchSql($table_search_for, $_GET['dt_layout'] ?? '',
+        DomainMOD\SslListColumns::sessionCopy($_SESSION));
+
+    // The display settings changed after the table was drawn, so its search can't be matched: back to the list, with
+    // its filters, to search again
+    if ($table_search['stale']) {
+
+        $_SESSION['s_message_danger'] .= _('Your display settings have changed since the list was loaded. Please search the list again.') . '<BR>';
+        $back_query = http_build_query(array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout'))));
+        header('Location: index.php' . ($back_query !== '' ? '?' . $back_query : ''));
+        exit;
+
+    }
+
+    $stmt = $pdo->prepare($raw_list_sql . $table_search['sql'] . DomainMOD\SslList::EXPORT_ORDER_SQL);
+    $stmt->execute($table_search['params']);
+    $result = $stmt->fetchAll();
+
+    // With a table search, the export's count and total cost are for the rows it holds
+    if ($table_search['sql'] !== '') {
+
+        $total_rows = count($result);
+
+        $stmt = $pdo->prepare("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql
+            . $table_search['sql']);
+        $stmt->execute($table_search['params']);
+        $grand_total = $currency->format($stmt->fetchColumn(), $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+    }
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile(_('ssl_results'), strtotime($time->stamp()));
@@ -365,6 +283,16 @@ if ($export_data == 1) {
         $row_contents = array(
             _('Keyword Search') . ':',
             $list_search_for
+        );
+        $export->writeRow($export_file, $row_contents);
+
+    }
+
+    if ($table_search['sql'] !== '') {
+
+        $row_contents = array(
+            _('Table Search') . ':',
+            $export->protectFormula($table_search_for)
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -719,7 +647,22 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
 
 }
 
-$result = $pdo->query($sql)->fetchAll();
+/*
+ * Server-side processing: the page prints one page of rows, in the default order, and DataTables fetches the others
+ * from ssl/list-data.php (see js/server-list.js). The page and its size come from the address (the no-JavaScript
+ * pager's links), checked as the endpoint checks them, and a page past the end (an old link, after certificates were
+ * deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own paging does.
+ */
+$list_columns = new DomainMOD\SslListColumns(DomainMOD\SslListColumns::sessionCopy($_SESSION), $sslfd_columns);
+$list_page_sizes = DomainMOD\SslList::pageSizes($_SESSION['s_number_of_ssl_certs']);
+$list_length = DomainMOD\SslList::checkedLength($_GET['length'] ?? '', $list_page_sizes);
+$list_start = DomainMOD\SslList::checkedStart($_GET['start'] ?? 0);
+$list_start -= $list_start % $list_length;
+if ($list_start >= $total_rows) $list_start = $total_rows > 0 ? (int) (floor(($total_rows - 1) / $list_length) * $list_length) : 0;
+
+$result = $total_rows > 0 ? $ssl_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
+    DomainMOD\SslList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
+    $list_length) : array();
 
 // The status names, as the status menu shows them, so the menu and the status chip always match. Any other stored value
 // shows as its number in both.
@@ -1608,222 +1551,82 @@ if ($result) {
      * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link carries the filters
      * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()), since the filter form posts
      * them and they'd otherwise never reach the export. Each active filter is written out (so an inactive-only list
-     * keeps is_active=0), and the keyword and date range always are, empty when off.
+     * keeps is_active=0), and the keyword and date range always are, empty when off. Both links keep their ids, since
+     * js/server-list.js adds the table's search box to them (dt_search).
      */
     $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
-    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank'));
-    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download'); ?>
+    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
+    $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($result)); ?><BR>
+    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
     <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
 
-    if ($total_rows) { ?>
+    if ($total_rows) {
 
-        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        /*
+         * Server-side processing (see js/server-list.js): the columns and cells come from SslListColumns, as the
+         * endpoint's do, and the table carries what the script needs, the endpoint's address with the list's whole state
+         * (so another tab's filters can't change this tab's rows), the columns, the counts, the page, and its size.
+         */
+        $list_state_url = $filter_toolbar->stateUrl();
+        $list_query = (string) parse_url($list_state_url, PHP_URL_QUERY);
+        $list_data_url = $web_root . '/ssl/list-data.php?' . ($list_query !== '' ? $list_query . '&' : '')
+            . http_build_query(array('layout' => $list_columns->layoutKey()));
+        $list_config = array(
+            'url' => $list_data_url,
+            'columns' => array_map(function ($column) {
+                return array('orderable' => (bool) $column['sort'], 'control' => $column['key'] === 'control');
+            }, $list_columns->columns()),
+            'order' => $list_columns->defaultOrder(),
+            'start' => $list_start,
+            'length' => $list_length,
+            'sizes' => $list_page_sizes['sizes'],
+            'total' => $total_rows,
+            'messages' => array(
+                'error' => _("That didn't work. Please reload the page and try again."),
+                'signin' => _('Your session has ended. Please sign in again.'),
+                'signinLink' => _('Sign In'),
+                'reload' => _('Your display settings have changed. Reload the page to see them.'),
+                'reloadLink' => _('Reload'),
+                'close' => _('Close'),
+                'paging' => sprintf(_('Pages of %s'), _('SSL Certificates')),
+            ),
+            'signinUrl' => $web_root . '/',
+            // The links that follow the search box (by id), and what each carries with it (see raw.php)
+            'searchLinks' => array(
+                'ssl-list-raw' => array('dt_layout' => $list_columns->layoutKey(), 'dt_list' => DomainMOD\SslList::savedListKey($raw_list_sql)),
+                'ssl-list-export' => array('dt_layout' => $list_columns->layoutKey()),
+            ),
+        );
+        $today = $time->timeBasic(); // for marking past expiry dates ?>
+
+        <div id="<?php echo $slug; ?>-message"></div>
+        <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>" data-domainmod-list="<?php echo htmlspecialchars(json_encode($list_config), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
             <tr>
-                <th width="20px"></th>
-                <th class="all">
-                    <?php echo _('Name'); ?>
-                </th>
-                <?php if ($_SESSION['s_display_ssl_expiry_date'] == "1") { ?>
-                <th>
-                    <?php echo _('Expiry'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_fee'] == "1") { ?>
-                <th>
-                    <?php echo _('Fee'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_domain'] == "1") { ?>
-                <th>
-                    <?php echo _('Domain'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_provider'] == "1") { ?>
-                <th>
-                    <?php echo _('Provider'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_account'] == "1") { ?>
-                <th>
-                    <?php echo _('Account'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_type'] == "1") { ?>
-                <th>
-                    <?php echo _('Type'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_ip'] == "1") { ?>
-                <th>
-                    <?php echo _('IP Address'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_category'] == "1") { ?>
-                <th>
-                    <?php echo _('Category'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_owner'] == "1") { ?>
-                <th>
-                    <?php echo _('Owner'); ?>
-                </th>
-                <?php } ?>
-                <?php if ($_SESSION['s_csf_data']) {
-
-                    foreach ($_SESSION['s_csf_data'] as $field) {
-
-                        if ($field['value'] == 1 && $field['type_id'] != '3') { // Don't show column for Text Areas ?>
-
-                            <th>
-
-                                <?php echo $field['name']; ?>
-
-                            </th><?php
-
-                        }
-
-                    }
-
+                <?php foreach ($list_columns->columns() as $column) {
+                    if ($column['key'] === 'control') { ?>
+                        <th width="20px"></th>
+                    <?php } elseif ($column['key'] === 'name') { ?>
+                        <th class="all"><?php echo $column['title']; ?></th>
+                    <?php } else { ?>
+                        <th><?php echo $column['title']; ?></th>
+                    <?php }
                 } ?>
             </tr>
             </thead>
             <tbody>
-            <?php $today = $time->timeBasic(); // for marking past expiry dates below ?>
             <?php foreach ($result as $row) { ?>
-            <tr>
-                <td></td>
-                <td>
-                    <?php if ($row->active == "0") {
-                        echo $layout->statusBadge('x', _('Expired'), 'secondary', 'bi-x-circle') . "&nbsp;";
-                    } elseif ($row->active == "3") {
-                        echo $layout->statusBadge(_('Pending Renewal Characters'), _('Pending (Renewal)'), 'warning', 'bi-arrow-repeat') . "&nbsp;";
-                    } elseif ($row->active == "4") {
-                        echo $layout->statusBadge(_('Pending Other Characters'), _('Pending (Other)'), 'warning', 'bi-three-dots') . "&nbsp;";
-                    } elseif ($row->active == "5") {
-                        echo $layout->statusBadge(_('Pending Registration Characters'), _('Pending (Registration)'), 'warning', 'bi-plus-circle') . "&nbsp;";
-                    }
-                    ?><a href="edit.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-                </td>
-                <?php if ($_SESSION['s_display_ssl_expiry_date'] == "1") { ?>
-                <td>
-                    <a href="edit.php?sslcid=<?php echo $row->id; ?>"<?php if ($row->active != '0' && $row->expiry_date < $today) echo ' class="domainmod-css-expired" data-bs-toggle="tooltip" data-bs-title="' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '" aria-label="' . $row->expiry_date . ', ' . htmlspecialchars(_('Expired'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php echo $row->expiry_date; ?></a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_fee'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/ssl-provider-fee.php?sslpid=<?php echo $row->sslp_id; ?>&fee_id=<?php echo $row->f_id; ?>">
-                            <?php
-                            $converted_total_cost = $row->total_cost * $row->conversion;
-                            $temp_output_amount = $currency->format($converted_total_cost,
-                                $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-                                $_SESSION['s_default_currency_symbol_space']);
-                            echo htmlentities($temp_output_amount, ENT_QUOTES, 'UTF-8');
-                            ?>
-                        </a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_domain'] == "1") { ?>
-                <td>
-                    <a href="../domains/edit.php?did=<?php echo $row->domain_id; ?>"><?php echo $row->domain; ?></a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_provider'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/ssl-provider.php?sslpid=<?php echo $row->sslp_id; ?>"><?php echo $row->ssl_provider_name; ?></a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_account'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/ssl-provider.php?sslpid=<?php echo $row->sslp_id; ?>"><?php echo $row->ssl_provider_name; ?></a>, <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a> (<a href="../assets/edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpa_id; ?>"><?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_type'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/ssl-type.php?ssltid=<?php echo $row->type_id; ?>"><?php echo $row->type; ?></a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_ip'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/ip-address.php?ipid=<?php echo $row->ip_id; ?>"><?php
-                        echo $row->ip_name; ?> (<?php echo $row->ip; ?>)</a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_category'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/category.php?pcid=<?php echo $row->cat_id; ?>"><?php echo $row->cat_name; ?></a>
-                </td>
-                <?php } ?>
-                <?php if ($_SESSION['s_display_ssl_owner'] == "1") { ?>
-                <td>
-                    <a href="../assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
-                </td>
-                <?php } ?>
-
-                <?php if ($_SESSION['s_csf_data']) {
-
-                    foreach ($_SESSION['s_csf_data'] as $field) {
-
-                        if ($field['value'] == 1 && $field['type_id'] != '3') { // Don't show data for Text Areas ?>
-
-                        <td><?php
-
-                            if ($field['type_id'] == 1) { // Check Box
-
-                                echo ($row->{$field['field']} == 1 ? 'Yes' : 'No');
-
-                            } elseif ($field['type_id'] == 2) { // Text
-
-                                echo $layout->customFieldText($row->{$field['field']});
-
-                            } elseif ($field['type_id'] == 4) { // Date
-
-                                if (DomainMOD\Time::isUnset($row->{$field['field']})) {
-
-                                    echo '';
-
-                                } else {
-
-                                    echo $layout->customFieldText($row->{$field['field']});
-
-                                }
-
-                            } elseif ($field['type_id'] == 5) { // Time Stamp
-
-                                if (DomainMOD\Time::isUnset($row->{$field['field']})) {
-
-                                    echo '';
-
-                                } else {
-
-                                    echo $layout->customFieldText($row->{$field['field']});
-
-                                }
-
-                            } elseif ($field['type_id'] == 6) { // URL
-
-                                if ($row->{$field['field']} != '') {
-
-                                    echo $layout->customFieldLink($row->{$field['field']});
-
-                                }
-
-                            } ?>
-
-                        </td><?php
-
-                        }
-
-                    }
-
-                } ?>
-
-            </tr>
+                <tr>
+                    <?php foreach ($list_columns->cells($row, $today) as $cell) { ?>
+                        <td><?php echo $cell; ?></td>
+                    <?php } ?>
+                </tr>
             <?php } ?>
             </tbody>
-        </table><BR><?php
+        </table>
+        <?php echo $layout->listPager($total_rows, $list_start, $list_length, $list_state_url, sprintf(_('Pages of %s'), _('SSL Certificates'))); ?>
+        <BR><?php
 
     }
 
@@ -1894,5 +1697,6 @@ if ($result) {
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/date-range-picker-footer.inc.php'; ?>
 <script src="<?php echo $layout->assetUrl('js/filter-auto-apply.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl('js/server-list.js'); ?>"></script>
 </body>
 </html>

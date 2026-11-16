@@ -21,7 +21,7 @@
 ?>
 <?php //@formatter:off
 /*
- * The Domains list's rows, one page at a time, for DataTables' server-side mode (see js/domain-list.js). It answers in
+ * The Domains list's rows, one page at a time, for DataTables' server-side mode (see js/server-list.js). It answers in
  * JSON and changes nothing: no session writes, segment flags, saved Raw List, or currency rates (the page load does
  * those). The list's filters come from the request, the way the page put them in the table's address, never from the
  * session, so another tab's filters can't change this tab's rows.
@@ -63,20 +63,9 @@ if ($system->authCheckResult() !== 'valid') {
 // The request's shape: every value is a single value, and order is a short list of column and direction pairs
 $single_keys = array('draw', 'start', 'length', 'layout', 'pcid', 'oid', 'dnsid', 'ipid', 'whid', 'rid', 'raid', 'tld',
     'segid', 'is_active', 'search_for', 'daterange');
-foreach ($single_keys as $key) {
-    if (isset($_GET[$key]) && !is_string($_GET[$key])) $respond(400, array('error' => $generic_error));
-}
+if (!DomainMOD\ListQuery::requestShapeOk($_GET, $single_keys)) $respond(400, array('error' => $generic_error));
 $search = $_GET['search'] ?? array();
-if (!is_array($search) || (isset($search['value']) && !is_string($search['value']))) {
-    $respond(400, array('error' => $generic_error));
-}
 $order = $_GET['order'] ?? array();
-if (!is_array($order) || !array_is_list($order)) $respond(400, array('error' => $generic_error));
-foreach ($order as $entry) {
-    if (!is_array($entry) || !is_string($entry['column'] ?? null) || !is_string($entry['dir'] ?? null)) {
-        $respond(400, array('error' => $generic_error));
-    }
-}
 
 // The keyword (matched whole, as on the page) and the search box (split into words) have size limits, checked before
 // any SQL is built

@@ -117,7 +117,7 @@ if (file_exists($full_filename)) {
             });
         };
         startTooltips(document);
-        // For rows a script adds later, such as the Domains list's server-side pages (see js/domain-list.js)
+        // For rows a script adds later, such as the server-side lists' pages (see js/server-list.js)
         window.domainmodStartTooltips = startTooltips;
 
         // The expandable boxes' buttons (see Layout::expandableBoxTop()) say whether their box is open, following

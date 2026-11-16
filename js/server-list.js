@@ -1,5 +1,5 @@
 /**
- * /js/domain-list.js
+ * /js/server-list.js
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -19,21 +19,22 @@
  */
 
 /*
- * The Domains list's table in DataTables' server-side mode (see domains/index.php and domains/list-data.php). The page
- * prints the first page itself, so the table starts with deferLoading and makes no request until the user sorts,
- * searches, or changes page. The table's data-domainmod-list attribute carries the endpoint's address (with the list's
- * whole state), the columns, the counts, the page, its size, the messages, and the links that follow the search box.
+ * A list's table in DataTables' server-side mode: the Domains list (see domains/index.php and domains/list-data.php)
+ * and the SSL Certificates list (ssl/index.php and ssl/list-data.php). The page prints the first page itself, so the
+ * table starts with deferLoading and makes no request until the user sorts, searches, or changes page. The table's
+ * data-domainmod-list attribute carries the endpoint's address (with the list's whole state), the columns, the
+ * counts, the page, its size, the messages, and the links that follow the search box.
  * This script:
  * - removes the no-JavaScript pager, since DataTables pages the table from here on, starting on the same page,
  * - starts the tooltips on each draw's new rows and on a phone's opened child rows,
- * - moves back to the last page when a page has emptied (domains deleted while the table was open),
+ * - moves back to the last page when a page has emptied (rows deleted while the table was open),
  * - keeps the search box's search in the Export and Raw List links, so they hold the rows the table shows,
  * - shows one message above the table when a request fails: the session has ended (with a sign-in link), Display
  *   Settings changed in another tab (with a reload link), or the usual "That didn't work" message. Returning false
  *   from DataTables' xhr event skips its own alert, and the processing indicator is turned off.
- * Loaded by domains/index.php, and started from the footer's script by domainmodDomainList().
+ * Loaded by each list's page, and started from the footer's script by domainmodServerList().
  */
-function domainmodDomainList(selector) {
+function domainmodServerList(selector) {
     'use strict';
 
     var table = document.querySelector(selector);
