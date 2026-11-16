@@ -164,14 +164,14 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('TLD'); ?></th>
-            <th><?php echo _('Initial'); ?></th>
-            <th><?php echo _('Renewal'); ?></th>
-            <th><?php echo _('Transfer'); ?></th>
-            <th><?php echo _('Privacy'); ?></th>
-            <th><?php echo _('Misc'); ?></th>
-            <th><?php echo _('Currency'); ?></th>
+            <th class="text-end"><?php echo _('Initial'); ?></th>
+            <th class="text-end"><?php echo _('Renewal'); ?></th>
+            <th class="text-end"><?php echo _('Transfer'); ?></th>
+            <th class="text-end"><?php echo _('Privacy'); ?></th>
+            <th class="text-end"><?php echo _('Misc'); ?></th>
+            <th class="ps-4"><?php echo _('Currency'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -183,7 +183,7 @@ if (!$result) {
             <td>
                 <bdi dir="ltr">.<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a></bdi>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->initial_fee > 0) {
 
                     echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -194,7 +194,7 @@ if (!$result) {
 
                 }?>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->renewal_fee > 0) {
 
                     echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -205,7 +205,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->transfer_fee > 0) {
 
                     echo $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -216,7 +216,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->privacy_fee > 0) {
 
                     echo $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -227,7 +227,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->misc_fee > 0) {
 
                     echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -238,7 +238,7 @@ if (!$result) {
 
                 } ?>
             </td>
-            <td><?php echo $row->currency; ?>
+            <td class="ps-4"><?php echo $row->currency; ?>
             </td>
             </tr><?php
 

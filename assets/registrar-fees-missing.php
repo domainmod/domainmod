@@ -61,44 +61,51 @@ if (!$result) {
     echo $layout->emptyState('bi-check-circle', _('No missing fees'), _('Every domain has a fee, so its costs can be worked out.'));
 
 } else { ?>
-<?php echo _('The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees as soon as possible.'); ?><BR>
+<p class="domainmod-intro"><?php echo _('The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees as soon as possible.'); ?></p>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"></th>
+        <th></th>
         <th><?php echo _('Registrar'); ?></th>
         <th><?php echo _('Missing TLD Fees'); ?></th>
     </tr>
     </thead>
     <tbody><?php
 
-    foreach ($result as $row) { ?>
+    $stmt = $pdo->prepare("
+        SELECT tld
+        FROM domains
+        WHERE registrar_id = :registrar_id
+          AND fee_id = '0'
+        GROUP BY tld
+        ORDER BY tld ASC");
+    $bind_registrar_id = 0;
+    $stmt->bindParam('registrar_id', $bind_registrar_id, PDO::PARAM_INT);
+
+    foreach ($result as $row) {
+
+        $bind_registrar_id = $row->registrar_id;
+        $stmt->execute();
+        $result_missing_tlds = $stmt->fetchAll();
+
+        // Each missing TLD links to Add Registrar Fee for it, with its dot and kept left to right on right-to-left pages
+        $missing_tld_links = array();
+
+        foreach ($result_missing_tlds as $row_missing_tlds) {
+
+            $missing_tld_links[] = '<bdi dir="ltr"><a href="' . $web_root . '/assets/add/registrar-fee.php?rid=' .
+                urlencode($row->registrar_id) . '&amp;tld=' . urlencode($row_missing_tlds->tld) . '">.' .
+                $row_missing_tlds->tld . '</a></bdi>';
+
+        } ?>
 
         <tr>
         <td></td>
         <td>
-            <?php echo $row->registrar_name; ?>
+            <a href="registrar-fees.php?rid=<?php echo urlencode($row->registrar_id); ?>"><?php echo $row->registrar_name; ?></a>
         </td>
-        <td><?php
-
-            $result_missing_tlds = $pdo->query("
-                SELECT tld
-                FROM domains
-                WHERE registrar_id = '" . $row->registrar_id . "'
-                  AND fee_id = '0'
-                GROUP BY tld
-                ORDER BY tld ASC")->fetchAll();
-
-            $full_tld_list = "";
-
-            foreach ($result_missing_tlds as $row_missing_tlds) {
-
-                $full_tld_list .= '<a href=\'' . $web_root . '/assets/add/registrar-fee.php?rid=' . $row->registrar_id . '&tld=' . $row_missing_tlds->tld . '\'>' . $row_missing_tlds->tld . "</a>, ";
-
-            }
-
-            $full_tld_list_formatted = substr($full_tld_list, 0, -2); ?>
-            <a href="registrar-fees.php?rid=<?php echo $row->registrar_id; ?>"><?php echo $full_tld_list_formatted; ?></a>
+        <td>
+            <?php echo implode(', ', $missing_tld_links); ?>
         </td>
         </tr><?php
 

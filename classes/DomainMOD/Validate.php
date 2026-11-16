@@ -62,4 +62,68 @@ class Validate
 
     }
 
+   public function feeError($fee, $required)
+    {
+        /*
+         * Checks a fee typed into a fee form, and returns the message to show under its field, or '' when the fee can be
+         * saved. A fee is a plain number with a period for decimals, such as 12.50 (0 is a fee too). A blank fee is
+         * refused only when the field is required, and saves as 0 otherwise. The largest fee is the largest number the
+         * fee columns hold (DECIMAL(10,2)).
+         */
+
+        $clean_fee = trim((string) $fee);
+
+        if($clean_fee === '') {
+
+            return $required ? _("Enter the fee, or 0 if there isn't one.") : '';
+
+        }
+
+        $is_number = function ($value) {
+            return preg_match('/^-?([0-9]+(\.[0-9]*)?|\.[0-9]+)$/', $value) === 1;
+        };
+
+        if(strpos($clean_fee, ',') !== false) {
+
+            // A comma used for decimals, such as 12,50, gets its own message. Any other comma (such as the thousands
+            // separator in 1,250.00) gets the general one.
+            if(substr_count($clean_fee, ',') === 1 && strpos($clean_fee, '.') === false &&
+                $is_number(str_replace(',', '.', $clean_fee))) {
+
+                /* TRANSLATORS: %s is an example fee, such as 12.50 */
+                return sprintf(_('Use a period for decimals, such as %s.'), '12.50');
+
+            }
+
+            /* TRANSLATORS: %s is an example fee, such as 12.50 */
+            return sprintf(_('Enter the fee as a number, such as %s.'), '12.50');
+
+        }
+
+        if(!$is_number($clean_fee)) {
+
+            /* TRANSLATORS: %s is an example fee, such as 12.50 */
+            return sprintf(_('Enter the fee as a number, such as %s.'), '12.50');
+
+        }
+
+        // Any digit but 0 after a minus sign makes it negative (read from the text, since a tiny value such as -0.000…1
+        // turns into 0 as a number)
+        if($clean_fee[0] === '-' && preg_match('/[1-9]/', $clean_fee) === 1) {
+
+            return _("A fee can't be negative.");
+
+        }
+
+        if((float) $clean_fee > 99999999.99) {
+
+            /* TRANSLATORS: %s is the largest fee that can be saved, 99999999.99 */
+            return sprintf(_('A fee can be at most %s.'), '99999999.99');
+
+        }
+
+        return '';
+
+    }
+
 } //@formatter:on

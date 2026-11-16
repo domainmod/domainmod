@@ -36,6 +36,7 @@ $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -48,16 +49,43 @@ $timestamp = $time->stamp();
 $fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
 $rid = (int) ($_REQUEST['rid'] ?? 0);
 $new_tld = isset($_POST['new_tld']) ? $sanitize->text($_POST['new_tld']) : '';
-$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
-$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
-$new_transfer_fee = (float) ($_POST['new_transfer_fee'] ?? 0.0);
-$new_privacy_fee = (float) ($_POST['new_privacy_fee'] ?? 0.0);
-$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+// The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
+$new_initial_fee = trim((string) ($_POST['new_initial_fee'] ?? '0'));
+$new_renewal_fee = trim((string) ($_POST['new_renewal_fee'] ?? '0'));
+$new_transfer_fee = trim((string) ($_POST['new_transfer_fee'] ?? '0'));
+$new_privacy_fee = trim((string) ($_POST['new_privacy_fee'] ?? '0'));
+$new_misc_fee = trim((string) ($_POST['new_misc_fee'] ?? '0'));
 $new_currency_id = (int) ($_POST['new_currency_id'] ?? 0);
+$has_errors = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+    // Initial, Renewal, and Transfer are required (marked with an asterisk), Privacy and Misc are optional
+    $fee_fields = array('new_initial_fee' => array($new_initial_fee, true), 'new_renewal_fee' => array($new_renewal_fee, true),
+        'new_transfer_fee' => array($new_transfer_fee, true), 'new_privacy_fee' => array($new_privacy_fee, false),
+        'new_misc_fee' => array($new_misc_fee, false));
+
+    foreach ($fee_fields as $fee_field => $fee_check) {
+
+        $fee_error = $validate->feeError($fee_check[0], $fee_check[1]);
+        if ($fee_error !== '') {
+            $form->addFieldError($fee_field, $fee_error);
+            $has_errors = true;
+        }
+
+    }
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
+
+    $new_initial_fee = (float) $new_initial_fee;
+    $new_renewal_fee = (float) $new_renewal_fee;
+    $new_transfer_fee = (float) $new_transfer_fee;
+    $new_privacy_fee = (float) $new_privacy_fee;
+    $new_misc_fee = (float) $new_misc_fee;
 
     try {
 
@@ -168,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
 
-} else {
+} elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     $stmt = $pdo->prepare("
         SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
@@ -204,13 +232,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-$temp_registrar = $assets->getRegistrar($rid);
-?>
-<strong><?php echo _('Domain Registrar'); ?></strong><BR>
-<?php echo $temp_registrar; ?><BR><BR>
-<strong><?php echo _('TLD'); ?></strong><BR>
-<?php echo $layout->ltr('.' . $new_tld); ?><BR><BR>
-<?php
+echo $layout->factList(array(
+    array('label' => _('Domain Registrar'), 'value' => $unsanitize->text($assets->getRegistrar($rid))),
+    array('label' => _('TLD'), 'value' => '.' . $unsanitize->text($new_tld), 'ltr' => true)));
+
 echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_transfer_fee', _('Transfer Fee'), '', $new_transfer_fee, '10', '', '1', '', '');

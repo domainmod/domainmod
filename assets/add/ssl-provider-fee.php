@@ -36,6 +36,7 @@ $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -52,18 +53,41 @@ if ($type_id !== 0) {
 } else {
     $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
 }
-$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
-$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
-$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+// The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
+$new_initial_fee = trim((string) ($_POST['new_initial_fee'] ?? '0'));
+$new_renewal_fee = trim((string) ($_POST['new_renewal_fee'] ?? '0'));
+$new_misc_fee = trim((string) ($_POST['new_misc_fee'] ?? '0'));
 $new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // Initial and Renewal are required (marked with an asterisk), Misc is optional
+    $fee_fields = array('new_initial_fee' => array($new_initial_fee, true), 'new_renewal_fee' => array($new_renewal_fee, true),
+        'new_misc_fee' => array($new_misc_fee, false));
+    $has_errors = false;
+
     if ($new_type_id === 0) {
 
-        if ($new_type_id === 0) $form->addFieldError('new_type_id', _('Choose the SSL Type'));
+        $form->addFieldError('new_type_id', _('Choose the SSL Type'));
+        $has_errors = true;
 
-    } else {
+    }
+
+    foreach ($fee_fields as $fee_field => $fee_check) {
+
+        $fee_error = $validate->feeError($fee_check[0], $fee_check[1]);
+        if ($fee_error !== '') {
+            $form->addFieldError($fee_field, $fee_error);
+            $has_errors = true;
+        }
+
+    }
+
+    if (!$has_errors) {
+
+        $new_initial_fee = (float) $new_initial_fee;
+        $new_renewal_fee = (float) $new_renewal_fee;
+        $new_misc_fee = (float) $new_misc_fee;
 
         $timestamp = $time->stamp();
 
@@ -175,9 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-?>
-<strong><?php echo _('SSL Provider'); ?></strong><BR>
-<?php echo $assets->getSslProvider($sslpid); ?><BR><BR><?php
+echo $layout->factList(array(
+    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($assets->getSslProvider($sslpid)))));
 
 echo $form->showDropdownTop('new_type_id', _('SSL Type'), '', '1', '');
 echo $form->showDropdownOption('', _('Choose an SSL Type'), '');

@@ -34,6 +34,8 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $assets = new DomainMOD\Assets();
 $conversion = new DomainMOD\Conversion();
+$unsanitize = new DomainMOD\Unsanitize();
+$validate = new DomainMOD\Validate();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -45,14 +47,38 @@ $pdo = $deeb->cnxx;
 $fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
 $sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
 $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
-$new_initial_fee = (float) ($_POST['new_initial_fee'] ?? 0.0);
-$new_renewal_fee = (float) ($_POST['new_renewal_fee'] ?? 0.0);
-$new_misc_fee = (float) ($_POST['new_misc_fee'] ?? 0.0);
+// The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
+$new_initial_fee = trim((string) ($_POST['new_initial_fee'] ?? '0'));
+$new_renewal_fee = trim((string) ($_POST['new_renewal_fee'] ?? '0'));
+$new_misc_fee = trim((string) ($_POST['new_misc_fee'] ?? '0'));
 $new_currency_id = (int) ($_POST['new_currency_id'] ?? 0);
+$has_errors = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+    // Initial and Renewal are required (marked with an asterisk), Misc is optional
+    $fee_fields = array('new_initial_fee' => array($new_initial_fee, true), 'new_renewal_fee' => array($new_renewal_fee, true),
+        'new_misc_fee' => array($new_misc_fee, false));
+
+    foreach ($fee_fields as $fee_field => $fee_check) {
+
+        $fee_error = $validate->feeError($fee_check[0], $fee_check[1]);
+        if ($fee_error !== '') {
+            $form->addFieldError($fee_field, $fee_error);
+            $has_errors = true;
+        }
+
+    }
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
+
+    $new_initial_fee = (float) $new_initial_fee;
+    $new_renewal_fee = (float) $new_renewal_fee;
+    $new_misc_fee = (float) $new_misc_fee;
 
     try {
 
@@ -136,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
 
-} else {
+} elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     $stmt = $pdo->prepare("
         SELECT ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id
@@ -170,19 +196,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-?>
-<strong><?php echo _('SSL Provider'); ?></strong><BR>
-<?php
-$temp_ssl_provider = $assets->getSslProvider($sslpid);
-echo $temp_ssl_provider;
-?>
-<BR><BR><?php
+echo $layout->factList(array(
+    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($assets->getSslProvider($sslpid))),
+    array('label' => _('SSL Type'), 'value' => $unsanitize->text($assets->getSslType($new_type_id)))));
 
-$temp_type = $assets->getSslType($new_type_id);
-?>
-<strong>Type</strong><BR>
-<?php echo $temp_type; ?><BR><BR>
-<?php
 echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '10', '', '', '', '');

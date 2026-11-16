@@ -60,49 +60,53 @@ if (!$result) {
 
     echo $layout->emptyState('bi-check-circle', _('No missing fees'), _('Every SSL certificate has a fee, so its costs can be worked out.'));
 
-} else {
-
-    echo _('The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees as soon as possible.');
-?>
-<BR>
+} else { ?>
+<p class="domainmod-intro"><?php echo _('The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees as soon as possible.'); ?></p>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"></th>
+        <th></th>
         <th><?php echo _('Provider'); ?></th>
         <th><?php echo _('Missing Fees'); ?></th>
     </tr>
     </thead>
     <tbody><?php
 
-    foreach ($result as $row) { ?>
+    $stmt = $pdo->prepare("
+        SELECT sslct.id, sslct.type
+        FROM ssl_certs AS sslc, ssl_cert_types AS sslct
+        WHERE sslc.type_id = sslct.id
+          AND sslc.ssl_provider_id = :ssl_provider_id
+          AND sslc.fee_id = '0'
+        GROUP BY sslct.type
+        ORDER BY sslct.type ASC");
+    $bind_ssl_provider_id = 0;
+    $stmt->bindParam('ssl_provider_id', $bind_ssl_provider_id, PDO::PARAM_INT);
+
+    foreach ($result as $row) {
+
+        $bind_ssl_provider_id = $row->ssl_provider_id;
+        $stmt->execute();
+        $result_missing_types = $stmt->fetchAll();
+
+        // Each missing SSL type links to Add SSL Provider Fee for it
+        $missing_type_links = array();
+
+        foreach ($result_missing_types as $row_missing_types) {
+
+            $missing_type_links[] = '<a href="' . $web_root . '/assets/add/ssl-provider-fee.php?sslpid=' .
+                urlencode($row->ssl_provider_id) . '&amp;type_id=' . urlencode($row_missing_types->id) . '">' .
+                $row_missing_types->type . '</a>';
+
+        } ?>
 
         <tr>
         <td></td>
         <td>
-            <?php echo $row->ssl_provider_name; ?>
+            <a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($row->ssl_provider_id); ?>"><?php echo $row->ssl_provider_name; ?></a>
         </td>
-        <td><?php
-
-            $result_missing_types = $pdo->query("
-                SELECT sslct.id, sslct.type
-                FROM ssl_certs AS sslc, ssl_cert_types AS sslct
-                WHERE sslc.type_id = sslct.id
-                  AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
-                  AND sslc.fee_id = '0'
-                GROUP BY sslct.type
-                ORDER BY sslct.type ASC")->fetchAll();
-
-            $full_type_list = "";
-
-            foreach ($result_missing_types as $row_missing_types) {
-
-                $full_type_list .= '<a href=\'' . $web_root . '/assets/add/ssl-provider-fee.php?sslpid=' . $row->ssl_provider_id . '&type_id=' . $row_missing_types->id . '\'>' . $row_missing_types->type . "</a>, ";
-
-            }
-
-            $full_type_list_formatted = substr($full_type_list, 0, -2); ?>
-            <a href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id; ?>"><?php echo $full_type_list_formatted; ?></a>
+        <td>
+            <?php echo implode(', ', $missing_type_links); ?>
         </td>
         </tr><?php
 

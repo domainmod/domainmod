@@ -163,12 +163,12 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th></th>
             <th><?php echo _('Type'); ?></th>
-            <th><?php echo _('Initial Fee'); ?></th>
-            <th><?php echo _('Renewal Fee'); ?></th>
-            <th><?php echo _('Misc Fee'); ?></th>
-            <th><?php echo _('Currency'); ?></th>
+            <th class="text-end"><?php echo _('Initial Fee'); ?></th>
+            <th class="text-end"><?php echo _('Renewal Fee'); ?></th>
+            <th class="text-end"><?php echo _('Misc Fee'); ?></th>
+            <th class="ps-4"><?php echo _('Currency'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -180,7 +180,7 @@ if (!$result) {
             <td>
                 <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->type; ?></a>
             </td>
-            <td><?php
+            <td class="text-end"><?php
                 if ($row->initial_fee > 0) {
 
                     echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
@@ -191,7 +191,7 @@ if (!$result) {
 
                 }?>
             </td>
-            <td>
+            <td class="text-end">
                 <?php
                 if ($row->renewal_fee > 0) {
 
@@ -203,7 +203,7 @@ if (!$result) {
 
                 }?>
             </td>
-            <td>
+            <td class="text-end">
                 <?php
                 if ($row->misc_fee > 0) {
 
@@ -215,7 +215,7 @@ if (!$result) {
 
                 }?>
             </td>
-            <td>
+            <td class="ps-4">
                 <?php echo $row->currency; ?>
             </td>
             </tr><?php
