@@ -28,13 +28,15 @@ namespace DomainMOD;
  * search expressions, and these constants:
  * - SESSION_KEYS, the session values its columns and cells read, copied by sessionCopy(),
  * - FIELD_ALIAS, the SQL alias of its custom field data table (dfd or sslfd),
- * - DEFAULT_SORT_KEY, the column the list sorts by when it shows (otherwise the first column after the control column).
+ * - DEFAULT_SORT_KEY, the column the list sorts by when it shows (otherwise the first column after the control column),
+ * - NAME_KEY, the column that names each row (the domain or the certificate), which stays shown on narrow screens.
  */
 abstract class ListColumns
 {
     const SESSION_KEYS = array();
     const FIELD_ALIAS = '';
     const DEFAULT_SORT_KEY = 'expiry';
+    const NAME_KEY = '';
 
     protected $settings;
     protected $layout;
@@ -157,6 +159,26 @@ abstract class ListColumns
             $typed[] = "CASE WHEN " . $name . " IN ('1970-01-01 00:00:00', '0000-00-00 00:00:00') THEN '' ELSE CAST(" . $name . " AS CHAR) END";
         }
         return $typed;
+    }
+
+    /*
+     * The table's heading cells as HTML, in the columns' order. The control column (Responsive's details button) has
+     * no visible heading, so screen readers get "Details", as on the Domain Queue. The name column has DataTables
+     * Responsive's "all" class, so it's never folded away. Titles are printed as the page has always printed them.
+     */
+    public function headerCells()
+    {
+        $cells = array();
+        foreach ($this->columns as $column) {
+            if ($column['key'] === 'control') {
+                $cells[] = '<th width="20px"><span class="visually-hidden">' . _('Details') . '</span></th>';
+            } elseif ($column['key'] === static::NAME_KEY) {
+                $cells[] = '<th class="all">' . $column['title'] . '</th>';
+            } else {
+                $cells[] = '<th>' . $column['title'] . '</th>';
+            }
+        }
+        return $cells;
     }
 
     // A row's cells as HTML, in the columns' order. $today is the date past which a live row's expiry is marked.

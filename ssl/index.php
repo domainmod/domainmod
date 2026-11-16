@@ -1552,9 +1552,10 @@ if ($result) {
      * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()), since the filter form posts
      * them and they'd otherwise never reach the export. Each active filter is written out (so an inactive-only list
      * keeps is_active=0), and the keyword and date range always are, empty when off. Both links keep their ids, since
-     * js/server-list.js adds the table's search box to them (dt_search).
+     * js/server-list.js adds the table's search box to them (dt_search). Read-only users can't add anything, so they
+     * don't get the Add button (the add page turns them away too).
      */
-    $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
+    if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
@@ -1604,14 +1605,9 @@ if ($result) {
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>" data-domainmod-list="<?php echo htmlspecialchars(json_encode($list_config), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
             <tr>
-                <?php foreach ($list_columns->columns() as $column) {
-                    if ($column['key'] === 'control') { ?>
-                        <th width="20px"></th>
-                    <?php } elseif ($column['key'] === 'name') { ?>
-                        <th class="all"><?php echo $column['title']; ?></th>
-                    <?php } else { ?>
-                        <th><?php echo $column['title']; ?></th>
-                    <?php }
+                <?php // The control column's heading has hidden text for screen readers (see ListColumns::headerCells())
+                foreach ($list_columns->headerCells() as $header_cell) {
+                    echo $header_cell;
                 } ?>
             </tr>
             </thead>
@@ -1634,8 +1630,9 @@ if ($result) {
 
     $ready_for_ssl_certs = $ready_for_ssl_certs ?? 0;
 
-    // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button
-    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') {
+    // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button, and
+    // read-only users can't add anything
+    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1' && ($_SESSION['s_read_only'] ?? '') != '1') {
 
         $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
 

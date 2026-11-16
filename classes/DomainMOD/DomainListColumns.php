@@ -51,6 +51,7 @@ class DomainListColumns extends ListColumns
         's_default_currency_symbol_space');
 
     const FIELD_ALIAS = 'dfd';
+    const NAME_KEY = 'domain';
 
     /*
      * $settings is sessionCopy()'s array. $current_fields is the custom field columns that exist now

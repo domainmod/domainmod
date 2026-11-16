@@ -163,7 +163,8 @@ if ($export_data === 1) {
 <p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('IP Addresses'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-$layout->setPageAddAction(_('Add IP Address'), 'add/ip-address.php');
+// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
+if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add IP Address'), 'add/ip-address.php');
 $layout->addPageAction(_('Export'), 'ip-addresses.php?export_data=1', 'bi-download');
 
 if ($result) {

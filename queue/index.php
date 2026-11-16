@@ -551,11 +551,15 @@ if ($queue_rdap_available) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-$layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
-if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
+// Read-only users can't add to or clear the queue, so they don't get those buttons (the pages turn them away too)
+$queue_read_only = ($_SESSION['s_read_only'] ?? '') == '1';
+if (!$queue_read_only) {
+    $layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
+    if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
+}
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 $_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
-if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Clear Completed'), 'index.php?clear=1', 'bi-check2-all');
+if ($_SESSION['s_domains_in_queue'] == '1' && !$queue_read_only) $layout->addPageAction(_('Clear Completed'), 'index.php?clear=1', 'bi-check2-all');
 $layout->addPageAction(_('More Info'), 'intro.php', 'bi-info-circle');
 if ($_SESSION['s_domains_in_list_queue'] == '1') $layout->addPageAction(_('Export Lists'), 'index.php?s=lists&export_data=1', 'bi-download');
 if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Export Domains'), 'index.php?s=domains&export_data=1', 'bi-download'); ?>

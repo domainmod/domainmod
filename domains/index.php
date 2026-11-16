@@ -2052,10 +2052,13 @@ if ($segid !== 0) {
 
 if ($result) {
 
-    // The page's actions, drawn in the page header (see Layout::renderPageActions())
-    $layout->setPageAddAction(_('Add Domain'), 'add.php');
-    $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
-    $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
+    // The page's actions, drawn in the page header (see Layout::renderPageActions()). Read-only users can't add
+    // anything, so they don't get the Add button or its menu (the add pages turn them away too).
+    if (($_SESSION['s_read_only'] ?? '') != '1') {
+        $layout->setPageAddAction(_('Add Domain'), 'add.php');
+        $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
+        $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
+    }
     // Both keep their ids, since js/server-list.js adds the table's search box to their links (dt_search)
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
@@ -2111,14 +2114,9 @@ if ($result) {
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>" data-domainmod-list="<?php echo htmlspecialchars(json_encode($list_config), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
             <tr>
-                <?php foreach ($list_columns->columns() as $column) {
-                    if ($column['key'] === 'control') { ?>
-                        <th width="20px"></th>
-                    <?php } elseif ($column['key'] === 'domain') { ?>
-                        <th class="all"><?php echo $column['title']; ?></th>
-                    <?php } else { ?>
-                        <th><?php echo $column['title']; ?></th>
-                    <?php }
+                <?php // The control column's heading has hidden text for screen readers (see ListColumns::headerCells())
+                foreach ($list_columns->headerCells() as $header_cell) {
+                    echo $header_cell;
                 } ?>
             </tr>
             </thead>
@@ -2141,8 +2139,9 @@ if ($result) {
 
     $ready_for_domains = $ready_for_domains ?? 0;
 
-    // With no domains at all, the "No domains yet" empty state above already offers the ways to add them
-    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1') {
+    // With no domains at all, the "No domains yet" empty state above already offers the ways to add them, and
+    // read-only users can't add anything
+    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1' && ($_SESSION['s_read_only'] ?? '') != '1') {
 
         $layout->setPageAddAction(_('Add Domain'), 'add.php');
         $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');

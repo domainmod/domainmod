@@ -49,6 +49,7 @@ class SslListColumns extends ListColumns
         's_default_currency_symbol_order', 's_default_currency_symbol_space');
 
     const FIELD_ALIAS = 'sslfd';
+    const NAME_KEY = 'name';
 
     /*
      * $settings is sessionCopy()'s array. $current_fields_sql is the custom field columns that exist now

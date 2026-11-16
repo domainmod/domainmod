@@ -209,7 +209,8 @@ if ($export_data === 1) {
 <p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Domain Registrar Accounts'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-$layout->setPageAddAction(_('Add Registrar Account'), 'add/registrar-account.php');
+// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
+if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add Registrar Account'), 'add/registrar-account.php');
 $layout->addPageAction(_('Export'), 'registrar-accounts.php?export_data=1&rid=' . $rid . '&raid=' . $raid . '&oid=' . $oid, 'bi-download');
 
 if ($result) {
