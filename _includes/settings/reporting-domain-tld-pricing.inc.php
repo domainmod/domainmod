@@ -33,7 +33,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -62,7 +62,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                       domainmodTable(\'#' . $slug . '-savings\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,

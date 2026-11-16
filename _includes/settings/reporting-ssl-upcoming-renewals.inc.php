@@ -30,7 +30,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_ssl_certs'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_ssl_certs'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,

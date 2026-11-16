@@ -214,7 +214,56 @@ if (file_exists($full_filename)) {
         // third click that removes the sort)
         DataTable.defaults.column.orderSequence = ['asc', 'desc'];
 
+        // DataTables' own text, in the user's language, for every list: the search box, the page length menu (its
+        // "All" choice included, so the settings files in _includes/settings/ give only the numbers), the line that
+        // counts the rows, the empty messages, and the pager and sort buttons' names for screen readers. Each value is
+        // set on its own, so DataTables keeps its defaults for the rest, such as the number separators. The words in
+        // capitals between underscores are DataTables' placeholders, filled in as the table draws.
+        var dt_language = DataTable.defaults.language;
+        Object.assign(dt_language, {
+            search: <?php echo json_encode(_('Search') . ':'); ?>,
+            <?php /* TRANSLATORS: Keep _MENU_ and _ENTRIES_ exactly as they are. _MENU_ becomes the menu of page sizes, and _ENTRIES_ becomes the word for entries. */ ?>
+            lengthMenu: <?php echo json_encode(_('_MENU_ _ENTRIES_ per page')); ?>,
+            lengthLabels: {'-1': <?php echo json_encode(_('All')); ?>},
+            entries: {
+                <?php /* TRANSLATORS: The word for more than one row of a list, or none, as in "Showing 1 to 25 of 80 entries" */ ?>
+                _: <?php echo json_encode(_('entries')); ?>,
+                <?php /* TRANSLATORS: The word for one row of a list, as in "Showing 1 to 1 of 1 entry" */ ?>
+                1: <?php echo json_encode(_('entry')); ?>
+            },
+            <?php /* TRANSLATORS: Keep _START_, _END_, _TOTAL_, and _ENTRIES-TOTAL_ exactly as they are. They become the first and last row shown, the number of rows, and the word for entries. */ ?>
+            info: <?php echo json_encode(_('Showing _START_ to _END_ of _TOTAL_ _ENTRIES-TOTAL_')); ?>,
+            <?php /* TRANSLATORS: Keep _ENTRIES-TOTAL_ exactly as it is. It becomes the word for entries. */ ?>
+            infoEmpty: <?php echo json_encode(_('Showing 0 to 0 of 0 _ENTRIES-TOTAL_')); ?>,
+            <?php /* TRANSLATORS: Keep _MAX_ and _ENTRIES-MAX_ exactly as they are. They become the number of rows before the search and the word for entries. */ ?>
+            infoFiltered: <?php echo json_encode(_('(filtered from _MAX_ total _ENTRIES-MAX_)')); ?>,
+            zeroRecords: <?php echo json_encode(_('No matching entries found.')); ?>,
+            emptyTable: <?php echo json_encode(_('There are no entries in this list.')); ?>,
+            loadingRecords: <?php echo json_encode(_('Loading…')); ?>
+        });
+        // The sort buttons' names, after each column's title. DataTables calls a sorted column's next click "remove" when
+        // it's at the end of orderSequence, but with only ascending and descending (above) that click reverses it again.
+        var dt_reverse = ': ' + <?php echo json_encode(_('Activate to reverse the sort')); ?>;
+        Object.assign(dt_language.aria, {
+            orderable: ': ' + <?php echo json_encode(_('Activate to sort')); ?>,
+            orderableReverse: dt_reverse,
+            orderableRemove: dt_reverse
+        });
+        Object.assign(dt_language.aria.paginate, {
+            first: <?php echo json_encode(_('First')); ?>,
+            previous: <?php echo json_encode(_('Previous')); ?>,
+            next: <?php echo json_encode(_('Next')); ?>,
+            last: <?php echo json_encode(_('Last')); ?>
+        });
+
         <?php echo $datatable_options ?? ''; ?>
+
+        // DataTables names each pager "pagination" in English. A list that gives its pager its own name, such as the
+        // Domains list (see js/server-list.js), keeps it.
+        var dt_pages = <?php echo json_encode(_('Pages')); ?>;
+        document.querySelectorAll('.dt-container nav[aria-label="pagination"]').forEach(function (nav) {
+            nav.setAttribute('aria-label', dt_pages);
+        });
 
     };
     if (document.readyState === 'loading') {

@@ -28,7 +28,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '-build\', {
                           "paging": false,
                           "lengthChange": false,
-                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": false,
                           "info": false,
                           "autoWidth": true,
@@ -52,7 +52,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-build\', {
                       domainmodTable(\'#' . $slug . '-totals\', {
                           "paging": false,
                           "lengthChange": false,
-                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": false,
                           "info": false,
                           "autoWidth": true,

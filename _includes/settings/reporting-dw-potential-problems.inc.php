@@ -32,7 +32,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                           "paging": false,
                           "lengthChange": false,
-                          "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": false,
                           "info": false,
                           "autoWidth": true,
@@ -55,7 +55,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-zone\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -84,7 +84,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-no-account\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
@@ -113,7 +113,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                       domainmodTable(\'#' . $slug . '-suspended\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, -1], [' . ($_SESSION['s_number_of_domains'] ?? '') . ', 50, 75, 100, "All"] ],
+                          "lengthMenu": [ ' . ((int) ($_SESSION['s_number_of_domains'] ?? 0) ?: 50) . ', 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
