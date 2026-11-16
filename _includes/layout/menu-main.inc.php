@@ -83,13 +83,101 @@
                 </p>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/assets/" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
+        <li class="nav-item<?php if ($software_section == "assets") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
                 <i class="nav-icon bi bi-boxes"></i>
                 <p>
-                    <?php echo _('Assets'); ?>
+                    <?php echo _('Assets') ?>
+                    <i class="nav-arrow bi bi-chevron-right"></i>
                 </p>
             </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-header"><?php echo _('Domains') ?></li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/registrars.php" class="nav-link<?php if ($slug == "assets-registrars" || $slug == "assets-add-registrar" || $slug == "assets-edit-registrar" || $slug == "assets-registrar-fees" || $slug == "assets-registrar-fees-missing" || $slug == "assets-add-registrar-fee" || $slug == "assets-edit-registrar-fee") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <span aria-hidden="true"><?php echo _('Registrars') ?></span>
+                            <span class="visually-hidden"><?php echo _('Domain Registrars') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/registrar-accounts.php" class="nav-link<?php if ($slug == "assets-registrar-accounts" || $slug == "assets-add-registrar-account" || $slug == "assets-edit-registrar-account") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <span aria-hidden="true"><?php echo _('Registrar Accounts') ?></span>
+                            <span class="visually-hidden"><?php echo _('Domain Registrar Accounts') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/dns.php" class="nav-link<?php if ($slug == "assets-dns" || $slug == "assets-add-dns" || $slug == "assets-edit-dns") echo " active"; ?>" aria-label="<?php echo _('DNS Profiles'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('DNS Profiles') ?></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/hosting.php" class="nav-link<?php if ($slug == "assets-hosting" || $slug == "assets-add-host" || $slug == "assets-edit-host") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the Domains heading, short for Web Hosting Providers ?>
+                            <span aria-hidden="true"><?php echo _('Hosting Providers') ?></span>
+                            <span class="visually-hidden"><?php echo _('Web Hosting Providers') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-header"><?php echo _('SSL Certificates') ?></li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/ssl-providers.php" class="nav-link<?php if ($slug == "assets-ssl-providers" || $slug == "assets-add-ssl-provider" || $slug == "assets-edit-ssl-provider" || $slug == "assets-ssl-provider-fees" || $slug == "assets-ssl-provider-fees-missing" || $slug == "assets-add-ssl-provider-fee" || $slug == "assets-edit-ssl-provider-fee") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the SSL Certificates heading, short for SSL Providers ?>
+                            <span aria-hidden="true"><?php echo _('Providers') ?></span>
+                            <span class="visually-hidden"><?php echo _('SSL Providers') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/ssl-accounts.php" class="nav-link<?php if ($slug == "assets-ssl-accounts" || $slug == "assets-add-ssl-account" || $slug == "assets-edit-ssl-account") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the SSL Certificates heading, short for SSL Provider Accounts ?>
+                            <span aria-hidden="true"><?php echo _('Provider Accounts') ?></span>
+                            <span class="visually-hidden"><?php echo _('SSL Provider Accounts') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/ssl-types.php" class="nav-link<?php if ($slug == "assets-ssl-types" || $slug == "assets-add-ssl-type" || $slug == "assets-edit-ssl-type") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the SSL Certificates heading, short for SSL Certificate Types ?>
+                            <span aria-hidden="true"><?php echo _('Certificate Types') ?></span>
+                            <span class="visually-hidden"><?php echo _('SSL Certificate Types') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-header"><?php echo _('Shared') ?></li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/account-owners.php" class="nav-link<?php if ($slug == "assets-owners" || $slug == "assets-add-owner" || $slug == "assets-edit-owner") echo " active"; ?>" aria-label="<?php echo _('Account Owners'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('Account Owners') ?></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/categories.php" class="nav-link<?php if ($slug == "assets-categories" || $slug == "assets-add-category" || $slug == "assets-edit-category") echo " active"; ?>" aria-label="<?php echo _('Categories'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('Categories') ?></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/ip-addresses.php" class="nav-link<?php if ($slug == "assets-ip-addresses" || $slug == "assets-add-ip-address" || $slug == "assets-edit-ip-address") echo " active"; ?>" aria-label="<?php echo _('IP Addresses'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('IP Addresses') ?></p>
+                    </a>
+                </li>
+            </ul>
         </li>
 
         <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
