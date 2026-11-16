@@ -31,7 +31,7 @@ namespace DomainMOD;
  * the chip's text). The class makes every URL from that state with http_build_query(), never carrying paging keys or
  * from_dropdown, so removing a chip starts the list at its first page.
  * Chip text is plain text: names read from the database are decoded once with decode() (they're stored HTML-escaped),
- * and escaped once here when they're printed.
+ * and escaped once here when they're printed, with each chip's value isolated for right-to-left languages.
  */
 class FilterToolbar
 {
@@ -75,6 +75,7 @@ class FilterToolbar
         $this->filters[$key] = array(
             'value' => $value,
             'label' => (string) $label,
+            'name' => $name === null ? null : (string) $name,
             'chip' => $name === null ? (string) $label : sprintf(_('%1$s: %2$s'), $name, $label),
         );
     }
@@ -137,7 +138,7 @@ class FilterToolbar
             if ((string) $shown === $value) return '';
         }
 
-        return '<option value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '" selected>'
+        return '<option value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '" dir="auto" selected>'
             . htmlspecialchars($this->filters[$key]['label'], ENT_QUOTES, 'UTF-8') . '</option>';
     }
 
@@ -152,6 +153,14 @@ class FilterToolbar
         $count = $this->activeCount();
         $esc = function ($text) { return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8'); };
 
+        // A chip's value is isolated (<bdi>, which takes its direction from its own text), so in a right-to-left
+        // language a left-to-right value keeps its characters in order (".co.uk" doesn't become "co.uk."). A chip
+        // whose label is its whole text is translated text, so it isn't isolated.
+        $chip_html = function ($filter) use ($esc) {
+            if ($filter['name'] === null) return $esc($filter['label']);
+            return sprintf($esc(_('%1$s: %2$s')), $esc($filter['name']), '<bdi>' . $esc($filter['label']) . '</bdi>');
+        };
+
         ob_start(); ?>
 
         <div class="domainmod-filter-toolbar d-flex flex-wrap align-items-center gap-2 mb-3"><?php
@@ -163,7 +172,7 @@ class FilterToolbar
                 } ?></a><?php
             }
             foreach ($this->filters as $key => $filter) { ?>
-            <a class="btn btn-sm rounded-pill domainmod-filter-chip" href="<?php echo $esc($this->url(array($key))); ?>" aria-label="<?php echo $esc(sprintf(_('Remove filter: %s'), $filter['chip'])); ?>"><span class="domainmod-filter-chip-text"><?php echo $esc($filter['chip']); ?></span> <i class="bi bi-x-lg" aria-hidden="true"></i></a><?php
+            <a class="btn btn-sm rounded-pill domainmod-filter-chip" href="<?php echo $esc($this->url(array($key))); ?>" aria-label="<?php echo $esc(sprintf(_('Remove filter: %s'), $filter['chip'])); ?>"><span class="domainmod-filter-chip-text"><?php echo $chip_html($filter); ?></span> <i class="bi bi-x-lg" aria-hidden="true"></i></a><?php
             }
             if ($count > 0) { ?>
             <a class="domainmod-filter-clear" href="<?php echo $esc($this->reset_url); ?>"><?php echo $esc(_('Clear all')); ?></a><?php

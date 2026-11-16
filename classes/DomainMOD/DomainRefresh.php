@@ -350,8 +350,6 @@ class DomainRefresh
      */
     protected function fetchPublicData($row, $deadline)
     {
-        $tld_html = $this->html($row->tld);
-
         if ($deadline - microtime(true) < self::MIN_LOOKUP_TIME) {
             return array('', null, _("RDAP and WHOIS couldn't be tried, because the lookup ran out of time. Please try again later."), '');
         }
@@ -365,12 +363,12 @@ class DomainRefresh
         if ($lookup['status'] !== 'no_server') return array('', null, _('The RDAP lookup failed. Please try again later.'), '');
 
         // No RDAP server for the TLD, so try WHOIS.
-        $whois_line = sprintf(_("RDAP isn't available for .%s domains, so WHOIS was used instead."), $tld_html);
+        $whois_line = $this->tldMessage(_("RDAP isn't available for .%s domains, so WHOIS was used instead."), $row->tld);
         $whois = new Whois();
         list($found, $server) = $whois->serverFor(Domain::forApi($row->domain), $deadline);
 
-        if (!$found) return array('', null, sprintf(_("The WHOIS server for .%s domains couldn't be found. Please try again later."), $tld_html), '');
-        if ($server === '') return array('', null, sprintf(_('Neither RDAP nor WHOIS is available for .%s domains.'), $tld_html), '');
+        if (!$found) return array('', null, $this->tldMessage(_("The WHOIS server for .%s domains couldn't be found. Please try again later."), $row->tld), '');
+        if ($server === '') return array('', null, $this->tldMessage(_('Neither RDAP nor WHOIS is available for .%s domains.'), $row->tld), '');
 
         if ($deadline - microtime(true) < self::MIN_LOOKUP_TIME) {
             return array('', null, _('The WHOIS lookup failed. Please try again later.'), $whois_line);
@@ -645,6 +643,19 @@ class DomainRefresh
 
         return $date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
             && $date->format('Y-m-d') === $value;
+    }
+
+    /*
+     * A translated message that holds a TLD as ".%s", with the TLD and its dot isolated left to right, so a right-to-left
+     * page doesn't show ".co.uk" as "co.uk.". The dot is part of the translated text, so it's moved inside the isolation
+     * here, and a translation that puts it somewhere else still has the TLD itself isolated. The TLD is escaped.
+     */
+    protected function tldMessage($message, $tld)
+    {
+        $layout = new Layout();
+        $isolated = $layout->ltr($tld);
+
+        return str_replace('.' . $isolated, $layout->ltr('.' . $tld), sprintf($message, $isolated));
     }
 
     protected function html($value)

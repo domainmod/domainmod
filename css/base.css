@@ -205,6 +205,18 @@ a.btn:hover {
 .app-sidebar .sidebar-menu .nav-link:hover > p {
     text-decoration: underline;
 }
+/* Long submenu names wrap onto a second line rather than being cut off, such as "Domain Registrar Accounts" when the
+   sidebar has a scrollbar, or longer names in other languages */
+.app-sidebar .sidebar-menu .nav-treeview .nav-link,
+.app-sidebar .sidebar-menu .nav-treeview .nav-link > p {
+    white-space: normal;
+}
+/* The collapsed, icon-only sidebar hides an open submenu until it's hovered (and widens), so the open section's links
+   don't leave a blank gap under the icons. !important, since AdminLTE's slide animation sets display on the element
+   itself. */
+.sidebar-mini.sidebar-collapse .app-sidebar:not(:hover) .sidebar-menu .nav-treeview {
+    display: none !important;
+}
 /* Links in the footer's sentence and in page introductions (callouts) are underlined, since their colour is too
    close to the text around them to tell them apart */
 .app-footer a,
@@ -247,15 +259,18 @@ a.btn:hover {
     max-width: 48rem;
 }
 /* Flatpickr's calendar in DomainMOD's colours: chosen days in the main colour, and dark mode from Bootstrap's own
-   colour variables (Flatpickr doesn't follow data-bs-theme by itself) */
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.endRange,
-.flatpickr-day.selected:hover,
-.flatpickr-day.startRange:hover,
-.flatpickr-day.endRange:hover {
+   colour variables (Flatpickr doesn't follow data-bs-theme by itself). Flatpickr's stylesheet loads after this one, so
+   the chosen days' rules name the calendar and its days too, to outrank Flatpickr's blue in every state (focused,
+   hovered, or from the month before or after). */
+.flatpickr-calendar .flatpickr-days .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-days .flatpickr-day.startRange,
+.flatpickr-calendar .flatpickr-days .flatpickr-day.endRange {
     background: var(--bs-primary);
     border-color: var(--bs-primary);
+}
+/* A range that starts and ends on neighbouring days is joined in the same colour */
+.flatpickr-calendar .flatpickr-days .flatpickr-day.startRange + .endRange:not(:nth-child(7n+1)) {
+    box-shadow: -10px 0 0 var(--bs-primary);
 }
 .flatpickr-wrapper {
     display: block;
@@ -292,9 +307,10 @@ a.btn:hover {
 [data-bs-theme="dark"] .flatpickr-months .flatpickr-next-month svg {
     fill: var(--bs-body-color);
 }
-[data-bs-theme="dark"] .flatpickr-day:hover,
-[data-bs-theme="dark"] .flatpickr-day:focus,
-[data-bs-theme="dark"] .flatpickr-day.inRange {
+/* Hovered and focused days, and the days inside a range, apart from the chosen ones and days outside the allowed range.
+   It names the calendar and its days to outrank Flatpickr's light grey for today and the other months' days, which
+   would leave their light text unreadable. */
+[data-bs-theme="dark"] .flatpickr-calendar .flatpickr-days .flatpickr-day:is(:hover, :focus, .inRange):not(.selected, .startRange, .endRange, .flatpickr-disabled) {
     background: var(--bs-secondary-bg);
     border-color: var(--bs-secondary-bg);
     box-shadow: -5px 0 0 var(--bs-secondary-bg), 5px 0 0 var(--bs-secondary-bg);
@@ -302,8 +318,10 @@ a.btn:hover {
 [data-bs-theme="dark"] .flatpickr-day.today {
     border-color: var(--bs-secondary-color);
 }
-[data-bs-theme="dark"] .flatpickr-day.prevMonthDay,
-[data-bs-theme="dark"] .flatpickr-day.nextMonthDay,
+/* The days from the months before and after in Bootstrap's muted text colour, in light mode as well as dark, since
+   Flatpickr's own light grey is too faint to read on white. Days outside the allowed range stay faint in light mode. */
+.flatpickr-day.prevMonthDay:not(.flatpickr-disabled),
+.flatpickr-day.nextMonthDay:not(.flatpickr-disabled),
 [data-bs-theme="dark"] .flatpickr-day.flatpickr-disabled {
     color: var(--bs-secondary-color);
 }
@@ -542,6 +560,11 @@ div.dt-container > div.bottom {
 table.dataTable > thead > tr > th.control {
     width: 20px;
 }
+/* Right-aligned headers (the fee lists' amounts) keep their sort arrow next to their own label at the column's end edge,
+   instead of at the far start edge beside the previous column's label */
+table.dataTable > thead > tr > th.text-end div.dt-column-header {
+    flex-direction: row;
+}
 /* The landing pages' tiles (Layout::landingTile()): the whole card is one link, so hovering deepens its border and
    keyboard focus rings the whole card, not only the title */
 .domainmod-landing-tile {
@@ -699,9 +722,9 @@ table.dataTable > thead > tr > th.control {
 }
 /* The date picker's chosen days get the same lighter red border round the brand red, so they stand out from the
    calendar */
-[data-bs-theme="dark"] .flatpickr-day.selected,
-[data-bs-theme="dark"] .flatpickr-day.startRange,
-[data-bs-theme="dark"] .flatpickr-day.endRange {
+[data-bs-theme="dark"] .flatpickr-calendar .flatpickr-days .flatpickr-day.selected,
+[data-bs-theme="dark"] .flatpickr-calendar .flatpickr-days .flatpickr-day.startRange,
+[data-bs-theme="dark"] .flatpickr-calendar .flatpickr-days .flatpickr-day.endRange {
     border-color: #d98e95;
 }
 /* Buttons in the brand red, a shade darker on hover and when pressed. Their text stays white. */
