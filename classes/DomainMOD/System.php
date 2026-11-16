@@ -276,11 +276,12 @@ class System
     }
 
     /*
-     * The requirements as a checklist: a summary line first, then the full list, always shown, so people can see each
-     * check was made. When something isn't met, what needs attention (and how to fix it) comes first.
-     * $on_installer adds the line telling people they can carry on.
+     * The requirements as a checklist: a summary line first, then the full list, shown by default, so people can see
+     * each check was made. When something isn't met, what needs attention (and how to fix it) comes first.
+     * $on_installer adds the line telling people they can carry on. $collapsible puts the full list in a box that
+     * opens on request (the upgrade notice), closed while everything is met and open when something needs attention.
      */
-    public function requirementsChecklist($on_installer = false)
+    public function requirementsChecklist($on_installer = false, $collapsible = false)
     {
         $checks = $this->getRequirementChecks();
         $total = count($checks);
@@ -310,6 +311,11 @@ class System
                     <?php echo $on_installer ? ngettext("You can still install, but some features might not work until it's fixed.", "You can still install, but some features might not work until they're fixed.", $failed_count) : ngettext("Some features might not work until it's fixed.", "Some features might not work until they're fixed.", $failed_count); ?></div><?php
                 } ?>
             </div>
+            <?php if ($collapsible) { ?>
+            <details class="card mb-0 domainmod-message-why"<?php echo $failed_count === 0 ? '' : ' open'; ?>>
+                <summary class="card-header fw-semibold"><?php echo _('All Requirements'); ?></summary>
+                <div class="card-body p-2">
+            <?php } ?>
             <div class="domainmod-requirements-list"><?php
                 foreach ($groups as $key => $group) {
                     list($label, $rows) = $group;
@@ -336,6 +342,10 @@ class System
                     </ul><?php
                 } ?>
             </div>
+            <?php if ($collapsible) { ?>
+                </div>
+            </details>
+            <?php } ?>
         </div><?php
 
         return ob_get_clean();

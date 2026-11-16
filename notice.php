@@ -38,8 +38,17 @@ $system->authCheck();
 
 $action = $_GET['a'] ?? '';
 
-// u = Upgrade DomainMOD Database
-if ($action = 'u') $notice->dbUpgrade();
+// u = Upgrade DomainMOD Database, only while an upgrade is waiting. Otherwise there's no notice to show.
+if (DomainMOD\Notice::showsUpgrade($action, $_SESSION['s_system_db_version'] ?? '', SOFTWARE_VERSION)) {
+
+    $notice->dbUpgrade();
+
+} else {
+
+    header('Location: ' . WEB_ROOT . '/dashboard/');
+    exit;
+
+}
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -51,9 +60,9 @@ if ($action = 'u') $notice->dbUpgrade();
 <?php
 $page_align = 'center';
 require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
-<div class="card card-outline card-danger">
+<div class="card card-outline card-danger mb-5">
     <div class="card-header">
-        <h2 class="card-title"><i class="bi bi-info-circle text-danger" aria-hidden="true"></i> <?php echo $_SESSION['s_notice_page_title']; ?></h2>
+        <h2 class="card-title fs-5"><i class="bi bi-info-circle text-danger me-2" aria-hidden="true"></i><?php echo $_SESSION['s_notice_page_title']; ?></h2>
     </div>
     <div class="card-body"><?php echo $_SESSION['s_notice']; ?></div>
 </div>

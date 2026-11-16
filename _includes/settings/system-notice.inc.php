@@ -20,7 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Notice');
+// TRANSLATORS: The page's title, a notice (a message to read) that a database upgrade is waiting
+$page_title = _('Upgrade Notice');
 $breadcrumb = $page_title;
 $software_section = "system";
 $slug = "system-notice";
