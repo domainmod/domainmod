@@ -702,7 +702,7 @@ if (!$result_domains) {
                     } elseif ($row_domains->invalid_domain === 1) {
 
                         echo $layout->highlightText('red', _('Invalid Domain'));
-                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
+                        if ($row_domains->message != '') echo '<BR>' . $queue->getRdapMessageHtml($row_domains->message);
 
                     } elseif ($row_domains->message == 'edited') {
 
@@ -723,7 +723,7 @@ if (!$result_domains) {
                     } else {
 
                         echo _('Pending');
-                        if ($row_domains->message != '') echo '<BR>' . htmlentities($queue->getRdapMessage($row_domains->message), ENT_QUOTES, 'UTF-8');
+                        if ($row_domains->message != '') echo '<BR>' . $queue->getRdapMessageHtml($row_domains->message);
 
                     }
 
@@ -823,7 +823,7 @@ if (!$result_domains) {
             <td><?php
                 if ($queue_fix_available && $row_domains->finished == '1' && $row_domains->invalid_domain === 1
                     && $row_domains->already_in_domains != '1' && $row_domains->already_in_queue != '1') { ?>
-                    <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>" aria-label="<?php echo _('Fix and Import'); ?>"><i class="bi bi-pencil-square"></i></a>&nbsp;<?php
+                    <a class="btn btn-sm btn-outline-secondary me-1" href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>"><i class="bi bi-pencil-square" aria-hidden="true"></i><span class="visually-hidden"><?php echo _('Fix and Import'); ?></span></a><?php
                 } ?>
                 <a class="btn btn-sm btn-outline-danger" href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>" title="<?php echo _('Delete'); ?>"><i class="bi bi-trash" aria-hidden="true"></i><span class="visually-hidden"><?php
                     // TRANSLATORS: Read out by screen readers for a Delete button in a list. %s is a domain, or a registrar account (its registrar, owner, and username).

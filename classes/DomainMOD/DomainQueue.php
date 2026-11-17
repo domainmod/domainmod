@@ -1030,6 +1030,22 @@ class DomainQueue
         return $message;
     }
 
+    /*
+     * The same message as HTML, escaped, with the TLD in the "no server" messages kept left to right (in Arabic a TLD
+     * such as .co.uk otherwise reads as "co.uk."), as DomainRefresh::tldMessage() does for the Refresh messages.
+     * getRdapMessage() stays plain text for the export.
+     */
+    public function getRdapMessageHtml($code)
+    {
+        $html = htmlspecialchars($this->getRdapMessage($code), ENT_QUOTES, 'UTF-8');
+        $code_parts = explode('|', (string) $code, 2);
+        $tld = $code_parts[1] ?? '';
+        if ($tld === '' || !in_array($code_parts[0], array('no_server', 'no_lookup'), true)) return $html;
+
+        $layout = new Layout();
+        return str_replace(htmlspecialchars('.' . $tld, ENT_QUOTES, 'UTF-8'), $layout->ltr('.' . $tld), $html);
+    }
+
     // Logging never stops the run (see processQueueListRow())
     protected function logRdapError($log_message, $domain, $error)
     {

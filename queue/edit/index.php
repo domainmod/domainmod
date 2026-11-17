@@ -466,7 +466,7 @@ if (!$edited_creation_type_id) {
 
     if ($queue_row->message != '') {
 
-        echo ' ' . sprintf(_('Reason: %s'), htmlentities($queue->getRdapMessage($queue_row->message), ENT_QUOTES, 'UTF-8')) . '.';
+        echo ' ' . sprintf(_('Reason: %s'), $queue->getRdapMessageHtml($queue_row->message)) . '.';
 
     }
 
