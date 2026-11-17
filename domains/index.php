@@ -116,8 +116,8 @@ if ($export_data !== 1) {
 
 }
 
-if ($_SESSION['s_start_date'] == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
-if ($_SESSION['s_end_date'] == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
+if (($_SESSION['s_start_date'] ?? '') == '') $_SESSION['s_start_date'] = 'YYYY-MM-DD';
+if (($_SESSION['s_end_date'] ?? '') == '') $_SESSION['s_end_date'] = 'YYYY-MM-DD';
 
 // A range saved by an older version may not have been checked, so anything that isn't a real date range is dropped.
 if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateFormat($_SESSION['s_end_date'])) {
@@ -130,7 +130,7 @@ if (!$date->checkDateFormat($_SESSION['s_start_date']) || !$date->checkDateForma
 // The keyword and date range the list is filtered by. An export reads them from its own request when its link carries
 // them (FilterToolbar::exportUrl() always does), without touching the session, so another tab's filters can't leak into
 // it. An older export link without them falls back to the session, as before.
-$filter_search_for = $_SESSION['s_search_for'];
+$filter_search_for = $_SESSION['s_search_for'] ?? '';
 $filter_start_date = $_SESSION['s_start_date'];
 $filter_end_date = $_SESSION['s_end_date'];
 

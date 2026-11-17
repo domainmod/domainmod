@@ -66,6 +66,22 @@ $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) :
 $new_renewal_years = (int) ($_POST['new_renewal_years'] ?? 0);
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
+// Custom Fields. The values are kept in their own array, keyed by field name, so a field named like one of the settings
+// above (such as notes) can't overwrite it. A value that isn't text (a field posted as a list) is left empty.
+$new_custom_fields = array();
+
+$result = $pdo->query("
+    SELECT field_name
+    FROM domain_fields
+    ORDER BY `name`")->fetchAll();
+
+foreach ($result as $row) {
+
+    $posted_value = $_POST['new_' . $row->field_name] ?? '';
+    $new_custom_fields[$row->field_name] = is_string($posted_value) ? $posted_value : '';
+
+}
+
 $choose_text = _('Click here to choose the new');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
@@ -351,13 +367,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                                     foreach ($field_array as $field) {
 
-                                        $full_field = "new_" . $field;
-
                                         $stmt = $pdo->prepare("
                                             UPDATE domain_field_data
                                             SET {$field} = :full_field
                                             WHERE domain_id = :domain_id");
-                                        $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                                        $stmt->bindValue('full_field', $new_custom_fields[$field] ?? '', PDO::PARAM_STR);
                                         $stmt->bindValue('domain_id', $temp_domain_id, PDO::PARAM_INT);
                                         $stmt->execute();
 
@@ -2398,27 +2412,27 @@ if ($done != "1") {
 
                             if ($row->type_id === 1) { // Check Box
 
-                                echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, '', '', '');
+                                echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, $new_custom_fields[$row->field_name], '', '');
 
                             } elseif ($row->type_id === 2) { // Text
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '255', '', '', '', '');
 
                             } elseif ($row->type_id === 3) { // Text Area
 
-                                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
+                                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '', '', '');
 
                             } elseif ($row->type_id === 4) { // Date
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '10', '', '', '', '', '', 'ltr');
 
                             } elseif ($row->type_id === 5) { // Time Stamp
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '19', '', '', '', '', '', 'ltr');
 
                             } elseif ($row->type_id === 6) { // URL
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '255', '', '', '', '', '', 'ltr');
 
                             }
 

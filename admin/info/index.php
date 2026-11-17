@@ -72,12 +72,26 @@ $connection_advice = ($connection_status !== 'encrypted (certificate checked)' &
 // right-to-left language they keep their own order, rather than reading as "(4.25.0) 4.25.0". The version row builds
 // the same <bdi> by hand to keep its emphasis. The connection status is translated text, so it isn't isolated.
 $esc = function ($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); };
+
+// The Remote IP Address comes from an outside service (ipify), so it's looked up only when asked: Look up fetches it in
+// place with htmx (remote-ip.php), and the address replaces the button. Without JavaScript, remote-ip.php comes back
+// here with the answer, shown once. The wrapper takes focus back and is read out when the answer arrives.
+if (isset($_SESSION['s_remote_ip_lookup'])) {
+    $remote_ip_value = $_SESSION['s_remote_ip_lookup'] !== '' ? $layout->ltr($_SESSION['s_remote_ip_lookup']) : $esc(_('Unknown'));
+    unset($_SESSION['s_remote_ip_lookup']);
+} else {
+    $remote_ip_value = '<span id="domainmod-remote-ip" tabindex="-1" data-domainmod-focus data-domainmod-refocus>'
+        . $layout->htmxTaskLink('remote-ip.php?' . (new DomainMOD\Csrf())->query(),
+            '<i class="bi bi-search me-1" aria-hidden="true"></i>' . $esc(_('Look up')), '#domainmod-remote-ip', 'innerHTML',
+            'domainmod-remote-ip-working', ' class="btn btn-sm btn-outline-secondary domainmod-css-button"')
+        . '</span>' . $layout->htmxSpinner('domainmod-remote-ip-working');
+}
 $info_groups = array(
     array(SOFTWARE_TITLE, array(
         array(_('Version'), '<bdi dir="ltr">' . $esc(SOFTWARE_VERSION) . ' (<em>' . $esc($_SESSION['s_system_db_version']) . '</em>)</bdi>'))),
     array(_('Web Server'), array(
         array(_('Local IP Address'), $layout->ltr($_SERVER['SERVER_ADDR'] ?? '')),
-        array(_('Remote IP Address'), $layout->ltr($system->getIpRemotely())),
+        array(_('Remote IP Address'), $remote_ip_value),
         array(_('Web Server OS'), $layout->ltr(php_uname())),
         array(_('Web Server Software'), $layout->ltr($_SERVER['SERVER_SOFTWARE'] ?? '')))),
     array('PHP', array(

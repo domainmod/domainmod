@@ -853,7 +853,17 @@ class System
 
     public function getIpRemotely()
     {
-        return $this->getFileContents(_('External IP API Call') . ' (ipify)', 'warning', 'https://api.ipify.org');
+        return $this->publicIp($this->getFileContents(_('External IP API Call') . ' (ipify)', 'warning', 'https://api.ipify.org'));
+    }
+
+    /*
+     * The address an IP lookup answered with, or '' when the answer isn't an IP address (a failed call, or an error
+     * page), so nothing else from the outside service is shown.
+     */
+    public function publicIp($answer)
+    {
+        $answer = trim((string) $answer);
+        return filter_var($answer, FILTER_VALIDATE_IP) !== false ? $answer : '';
     }
 
 } //@formatter:on
