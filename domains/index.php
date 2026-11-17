@@ -2175,7 +2175,7 @@ if ($result) {
 
             } else {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/registrar-fees-missing.php', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/domains/registrar-fees.php?all=0#missing', _('Add the missing fees'));
 
             }
 
@@ -2185,7 +2185,7 @@ if ($result) {
 
             if ($filtered_domains > 0) {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/registrar-fees-missing.php', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some domains are hidden until they have a fee'), _("Domains without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/domains/registrar-fees.php?all=0#missing', _('Add the missing fees'));
 
             } else {
 

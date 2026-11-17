@@ -94,7 +94,7 @@ class Chart
 
     /*
      * A bar chart, one bar per label, such as a month. With $first_is_overdue, the first bar is drawn in the warning
-     * colour, for Upcoming Renewals' Overdue bar. $after is HTML shown in the card under the chart, such as a link.
+     * colour, for Domain Renewals' Overdue bar. $after is HTML shown in the card under the chart, such as a link.
      * Without $card_title, the card has no header, for a page that puts the title in a section heading above it (the
      * title still names the chart for screen readers).
      */

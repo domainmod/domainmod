@@ -1670,7 +1670,7 @@ if ($result) {
 
             } else {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/ssl-provider-fees-missing.php', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', _('Add the missing fees'));
 
             }
 
@@ -1680,7 +1680,7 @@ if ($result) {
 
             if ($filtered_certs > 0) {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/assets/ssl-provider-fees-missing.php', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', _('Add the missing fees'));
 
             } else {
 

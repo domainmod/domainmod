@@ -43,6 +43,15 @@ $pdo = $deeb->cnxx;
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $all = $_GET['all'] ?? '';
 
+// Every TLD that has domains without a fee, by registrar, for the Missing Fees section
+$missing_fees = $pdo->query("
+    SELECT r.id, r.name AS registrar, d.tld
+    FROM domains AS d
+    JOIN registrars AS r ON d.registrar_id = r.id
+    WHERE d.fee_id = '0'
+    GROUP BY r.id, r.name, d.tld
+    ORDER BY r.name, r.id, d.tld")->fetchAll();
+
 if ($all == "1") {
 
     $result = $pdo->query("
@@ -110,11 +119,11 @@ if ($total_rows > 0) {
         $row_contents = array(
             _('Registrar'),
             _('TLD'),
-            _('Initial Fee'),
-            _('Renewal Fee'),
-            _('Transfer Fee'),
-            _('Privacy Fee'),
-            _('Misc Fee'),
+            _('Initial'),
+            _('Renewal'),
+            _('Transfer'),
+            _('Privacy'),
+            _('Misc'),
             _('Currency'),
             _('Domains'),
             _('Inserted'),
@@ -195,18 +204,55 @@ if ($total_rows > 0) {
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 $layout->addPageAction(_('View All'), 'registrar-fees.php?all=1', 'bi-list-ul');
 $layout->addPageAction(_('Active Only'), 'registrar-fees.php?all=0', 'bi-funnel');
-if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.php?export_data=1&all=' . urlencode($all), 'bi-download'); ?>
+if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.php?export_data=1&all=' . urlencode($all), 'bi-download');
 
-<?php
-if ($total_rows > 0) {
+// Users who can edit fees get links to them: a registrar's name to its fees, and each TLD to its fee (or, when it's
+// missing, to Add Registrar Fee for it)
+$can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
 
-    // A registrar's name, linked to its fees for users who can edit them, and muted after its first row
-    $can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
-    $registrar_name = function ($row, $first) use ($can_edit) {
-        $class = $first ? '' : ' class="text-body-secondary"';
-        if (!$can_edit) return '<span' . $class . '>' . $row->registrar . '</span>';
-        return '<a href="../../assets/registrar-fees.php?rid=' . (int) $row->id . '"' . $class . '>' . $row->registrar . '</a>';
-    }; ?>
+// A registrar's name, muted after its first row
+$registrar_name = function ($row, $first) use ($can_edit) {
+    $class = $first ? '' : ' class="text-body-secondary"';
+    if (!$can_edit) return '<span' . $class . '>' . $row->registrar . '</span>';
+    return '<a href="../../assets/registrar-fees.php?rid=' . (int) $row->id . '"' . $class . '>' . $row->registrar . '</a>';
+};
+
+if ($missing_fees) {
+
+    // Each missing TLD has its dot and is kept left to right on right-to-left pages
+    $missing_by_registrar = array();
+    foreach ($missing_fees as $row) {
+        $missing_by_registrar[$row->id]['row'] = $row;
+        $missing_by_registrar[$row->id]['tlds'][] = $can_edit
+            ? '<a href="../../assets/add/registrar-fee.php?rid=' . (int) $row->id . '&amp;tld=' . urlencode($row->tld) . '"><bdi dir="ltr">.' . $row->tld . '</bdi></a>'
+            : '<bdi dir="ltr">.' . $row->tld . '</bdi>';
+    } ?>
+
+    <h2 class="h4" id="missing"><?php echo _('Missing Fees'); ?></h2>
+    <p><?php echo _('Some domains have no fee yet, so they can\'t be costed and are hidden from the Domains list. Each TLD below needs a fee at its registrar.'); ?></p>
+    <div class="table-responsive mb-4"><table class="table table-sm table-striped mb-0">
+        <thead>
+        <tr>
+            <th scope="col"><?php echo _('Registrar'); ?></th>
+            <th scope="col"><?php echo _('Missing TLD Fees'); ?></th>
+        </tr>
+        </thead>
+        <tbody><?php
+        foreach ($missing_by_registrar as $missing) { ?>
+
+            <tr>
+                <td><?php echo $registrar_name($missing['row'], true); ?></td>
+                <td><?php echo implode(', ', $missing['tlds']); ?></td>
+            </tr><?php
+
+        } ?>
+
+        </tbody>
+    </table></div><?php
+
+}
+
+if ($total_rows > 0) { ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
@@ -246,8 +292,12 @@ if ($total_rows > 0) {
             <tr>
                 <td></td>
                 <td><?php echo $registrar_name($row, $first_of_registrar); ?></td>
-                <td>
-                    <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
+                <td><?php
+                    if ($can_edit) { ?>
+                        <a href="../../assets/edit/registrar-fee.php?rid=<?php echo (int) $row->id; ?>&amp;fee_id=<?php echo (int) $row->fee_id; ?>"><bdi dir="ltr">.<?php echo $row->tld; ?></bdi></a><?php
+                    } else { ?>
+                        <bdi dir="ltr">.<?php echo $row->tld; ?></bdi><?php
+                    } ?>
                 </td>
                 <td><?php echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
                 <td><?php echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>

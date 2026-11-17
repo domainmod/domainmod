@@ -14,12 +14,10 @@ switch ($slug ?? '') {
     case 'assets-owners':
     case 'assets-registrar-accounts':
     case 'assets-registrar-fees':
-    case 'assets-registrar-fees-missing':
     case 'assets-registrars':
     case 'assets-ssl-accounts':
     case 'assets-ssl-providers':
     case 'assets-ssl-provider-fees':
-    case 'assets-ssl-provider-fees-missing':
     case 'assets-ssl-types':
     case 'domains-edit':
     case 'domains-main':

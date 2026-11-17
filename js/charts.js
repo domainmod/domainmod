@@ -56,7 +56,7 @@
     }
 
     // Each slice or bar's colour: a doughnut's slices in the palette's order (it has at most five), every bar in the
-    // first colour, a bar chart's last "Other" bar (the rest of the groups together) in grey, Upcoming Renewals'
+    // first colour, a bar chart's last "Other" bar (the rest of the groups together) in grey, Domain Renewals'
     // Overdue bar in red, and a price comparison's cheapest bars in green
     function sliceColours(data) {
         var colours = palette();
@@ -138,7 +138,7 @@
     }
 
     /*
-     * Each month's total above its bar, on the monthly cost charts (Cost by Month, Upcoming Renewals, and the
+     * Each month's total above its bar, on the monthly cost charts (Cost by Month, Domain Renewals, and the
      * Dashboard), so the amount can be read without tracing it to the axis. When the full amounts don't fit over
      * their bars, the whole chart uses short amounts (such as $1.2k), then a smaller size, and a label that would still
      * run into another is left off, so labels never overlap. Bars with no total get no label. The labels are

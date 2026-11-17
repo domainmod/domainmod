@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('SSL Upcoming Renewals Report');
-$breadcrumb = _('SSL Upcoming Renewals');
+$page_title = _('SSL Renewals Report');
+$breadcrumb = _('SSL Renewals');
 $software_section = "reporting";
 $slug = "reporting-ssl-upcoming-renewals";
 $report_section = 'ssl';

@@ -41,7 +41,7 @@ class Reporting
 
     /*
      * The live domains (not Expired or Sold) expiring before $end_date (YYYY-MM-DD, not included), overdue ones
-     * included, for Upcoming Renewals, At-Risk Domains, and the Dashboard. Fees and conversion rates are left joins, so
+     * included, for Domain Renewals, At-Risk Domains, and the Dashboard. Fees and conversion rates are left joins, so
      * a domain with no fee, or whose fee's currency has no rate for the user, is still listed: its converted_cost is
      * null, and has_fee and has_rate say why. Sorted by expiry date. $start_date (YYYY-MM-DD, included) limits the rows
      * to those expiring on or after it, for the Renewal Calendar's month. Left empty, there's no lower bound.
@@ -74,7 +74,7 @@ class Reporting
 
     /*
      * The live SSL certificates (not Expired or status 10) expiring before $end_date (YYYY-MM-DD, not included), overdue
-     * ones included, for SSL Upcoming Renewals and SSL At-Risk Certificates: the SSL twin of renewalDomains(). Each row
+     * ones included, for SSL Renewals and At-Risk SSL Certificates: the SSL twin of renewalDomains(). Each row
      * also carries its domain's id, name, expiry date, and status, for the At-Risk report's domain checks. Fees and
      * conversion rates are left joins, so a certificate with no fee, or whose fee's currency has no rate for the user,
      * is still listed with has_fee and has_rate saying why. Sorted by expiry date. $start_date (YYYY-MM-DD, included)
@@ -199,7 +199,7 @@ class Reporting
     }
 
     /*
-     * The SSL At-Risk Certificates from renewalCerts() rows: every certificate that's overdue or expires from $today
+     * The At-Risk SSL Certificates from renewalCerts() rows: every certificate that's overdue or expires from $today
      * through $risk_end (the next 30 days). DomainMOD doesn't record whether a certificate renews itself, so every
      * certificate in the window is listed. Each row gains its reasons: overdue, expiring (only when not overdue),
      * domain (with domain_problem naming what's wrong with its domain), and nofee.
@@ -420,31 +420,50 @@ class Reporting
      */
     public function tldRow($tld, $fees, $domain_count, $price_type)
     {
-        usort($fees, function ($a, $b) use ($price_type) {
+        $ranked = $this->rankFees($fees, $price_type, 'registrar_name', 'registrar_id');
+
+        return array(
+            'tld' => $tld,
+            'fees' => $ranked['fees'],
+            'cheapest' => $ranked['cheapest'],
+            'most_expensive' => $ranked['most_expensive'],
+            'low' => $ranked['low'],
+            'high' => $ranked['high'],
+            'spread' => $ranked['spread'],
+            'registrars' => $ranked['sellers'],
+            'domains' => $domain_count);
+    }
+
+    /*
+     * Fees ranked by a price type, cheapest first (ties by the seller's name, from $name_key): the cheapest and most
+     * expensive fees by index (ties share, compared to the cent), the lowest and highest prices, the spread, and how
+     * many sellers (registrars or SSL providers, from $seller_key) have a fee, for TLD Pricing and SSL Pricing
+     */
+    private function rankFees($fees, $price_type, $name_key, $seller_key)
+    {
+        usort($fees, function ($a, $b) use ($price_type, $name_key) {
             $difference = round($a->price[$price_type], 2) <=> round($b->price[$price_type], 2);
-            return $difference !== 0 ? $difference : strcmp($a->registrar_name, $b->registrar_name);
+            return $difference !== 0 ? $difference : strcmp($a->$name_key, $b->$name_key);
         });
 
         $low = round($fees[0]->price[$price_type], 2);
         $high = round($fees[count($fees) - 1]->price[$price_type], 2);
         $cheapest = $most_expensive = array();
-        $registrars = array();
+        $sellers = array();
         foreach ($fees as $index => $fee) {
             if (round($fee->price[$price_type], 2) == $low) $cheapest[] = $index;
             if (round($fee->price[$price_type], 2) == $high) $most_expensive[] = $index;
-            $registrars[$fee->registrar_id] = true;
+            $sellers[$fee->$seller_key] = true;
         }
 
         return array(
-            'tld' => $tld,
             'fees' => $fees,
             'cheapest' => $cheapest,
             'most_expensive' => $most_expensive,
             'low' => $low,
             'high' => $high,
             'spread' => $high - $low,
-            'registrars' => count($registrars),
-            'domains' => $domain_count);
+            'sellers' => count($sellers));
     }
 
     /*
@@ -503,6 +522,105 @@ class Reporting
         });
 
         return array('rows' => $rows, 'left_out' => $left_out, 'tlds_compared' => count($compared));
+    }
+
+    /*
+     * Every SSL provider fee, with its amounts converted to the user's currency, and the user's active SSL certificates
+     * counted by type and provider, for SSL Pricing. A fee whose currency has no rate for the user is kept with
+     * has_rate 0, so the page can say how many were left out. Each fee gains its yearly price for each price type (the
+     * fee plus the misc fee), as Maintenance's fee update works out total_cost.
+     */
+    public function sslPrices()
+    {
+        $pdo = Database::getInstance()->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT f.id AS fee_id, f.ssl_provider_id, sslp.name AS ssl_provider_name, f.type_id, sslt.type,
+                f.initial_fee, f.renewal_fee, f.misc_fee, c.currency, (cc.id IS NOT NULL) AS has_rate, cc.conversion
+            FROM ssl_fees AS f
+            JOIN ssl_providers AS sslp ON f.ssl_provider_id = sslp.id
+            JOIN ssl_cert_types AS sslt ON f.type_id = sslt.id
+            JOIN currencies AS c ON f.currency_id = c.id
+            LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
+            ORDER BY sslt.type, sslp.name");
+        $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
+        $stmt->execute();
+        $fees = $stmt->fetchAll();
+
+        foreach ($fees as $fee) {
+            $conversion = (float) $fee->conversion;
+            $fee->price = array(
+                'renewal' => ((float) $fee->renewal_fee + (float) $fee->misc_fee) * $conversion,
+                'initial' => ((float) $fee->initial_fee + (float) $fee->misc_fee) * $conversion);
+            $fee->converted = array(
+                'renewal' => (float) $fee->renewal_fee * $conversion,
+                'initial' => (float) $fee->initial_fee * $conversion,
+                'misc' => (float) $fee->misc_fee * $conversion);
+        }
+
+        $certs = $pdo->query("
+            SELECT type_id, ssl_provider_id, COUNT(*) AS certs
+            FROM ssl_certs
+            WHERE active NOT IN ('0')
+            GROUP BY type_id, ssl_provider_id")->fetchAll();
+
+        return array('fees' => $fees, 'certs' => $certs);
+    }
+
+    /*
+     * SSL Pricing's overview from sslPrices(): one row per certificate type that has at least one fee with a rate, as
+     * sslRow() ranks it by renewal price. Sorted by the user's active certificates of that type, most first, then by
+     * type. Also returns how many fees were left out for having no rate.
+     */
+    public function sslOverview($prices)
+    {
+        $by_type = array();
+        $left_out = 0;
+        foreach ($prices['fees'] as $fee) {
+            if (!$fee->has_rate) {
+                $left_out++;
+                continue;
+            }
+            $by_type[(int) $fee->type_id][] = $fee;
+        }
+
+        $cert_counts = array();
+        foreach ($prices['certs'] as $row) {
+            $cert_counts[(int) $row->type_id] = ($cert_counts[(int) $row->type_id] ?? 0) + (int) $row->certs;
+        }
+
+        $rows = array();
+        foreach ($by_type as $type_id => $fees) {
+            $rows[] = $this->sslRow($type_id, $fees, $cert_counts[$type_id] ?? 0, 'renewal');
+        }
+
+        usort($rows, function ($a, $b) {
+            if ($a['certs'] !== $b['certs']) return $b['certs'] - $a['certs'];
+            return strcmp($a['type'], $b['type']);
+        });
+
+        return array('rows' => $rows, 'left_out' => $left_out);
+    }
+
+    /*
+     * One certificate type's fees ranked by a price type (renewal or initial), cheapest first: the fees, the cheapest
+     * and most expensive fees (ties share, compared to the cent), the spread, and the number of providers
+     */
+    public function sslRow($type_id, $fees, $cert_count, $price_type)
+    {
+        $ranked = $this->rankFees($fees, $price_type, 'ssl_provider_name', 'ssl_provider_id');
+
+        return array(
+            'type_id' => (int) $type_id,
+            'type' => (string) $ranked['fees'][0]->type,
+            'fees' => $ranked['fees'],
+            'cheapest' => $ranked['cheapest'],
+            'most_expensive' => $ranked['most_expensive'],
+            'low' => $ranked['low'],
+            'high' => $ranked['high'],
+            'spread' => $ranked['spread'],
+            'providers' => $ranked['sellers'],
+            'certs' => (int) $cert_count);
     }
 
     /*

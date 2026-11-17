@@ -47,7 +47,7 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 // The domains renewing in the renewal cost chart's 12 months (overdue ones included), shared with the At-Risk tile and
-// the Upcoming Renewals and At-Risk Domains reports, and the SSL certificates renewing in them, as SSL Upcoming Renewals
+// the Domain Renewals and At-Risk Domains reports, and the SSL certificates renewing in them, as SSL Renewals
 // counts them
 $today = $time->timeBasic();
 $renewal_rows = $reporting->renewalDomains($reporting->renewalChartEnd($today));
@@ -395,7 +395,7 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Renewal Costs, Next 12 Months (Upcoming Renewals' and SSL Upcoming Renewals' bars stacked, so each month's bar is the
+// Renewal Costs, Next 12 Months (Domain Renewals' and SSL Renewals' bars stacked, so each month's bar is the
 // total, with the figures as a table under the chart)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 if ($renewal_rows || $renewal_cert_rows) {
@@ -412,8 +412,8 @@ if ($renewal_rows || $renewal_cert_rows) {
             </div>
         </details>
         <div class="ms-auto d-flex flex-wrap column-gap-3">
-            <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Upcoming Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Upcoming Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Domain Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div><?php
 

@@ -191,10 +191,10 @@ if ($counts['overdue'] === 0) {
 if (array_sum($counts) > $total_at_risk) echo ' ' . _('A certificate can have more than one reason, so the tiles can add up to more.');
 echo '</p>'; ?>
 <div class="row"><?php
-    echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/ssl/at-risk.php?show=overdue#cert-list', _('SSL At-Risk Certificates'));
-    echo $dashboard->displayPanel(sprintf(_('Expiring Soon (%s days)'), $risk_days), $counts['expiring'], 'warning', 'bi-calendar-event', '/reporting/ssl/at-risk.php?show=expiring#cert-list', _('SSL At-Risk Certificates'));
-    echo $dashboard->displayPanel(_('Domain Problem'), $counts['domain'], 'warning', 'bi-globe', '/reporting/ssl/at-risk.php?show=domain#cert-list', _('SSL At-Risk Certificates'));
-    echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/ssl/at-risk.php?show=nofee#cert-list', _('SSL At-Risk Certificates')); ?>
+    echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/ssl/at-risk.php?show=overdue#cert-list', _('At-Risk SSL Certificates'));
+    echo $dashboard->displayPanel(sprintf(_('Expiring Soon (%s days)'), $risk_days), $counts['expiring'], 'warning', 'bi-calendar-event', '/reporting/ssl/at-risk.php?show=expiring#cert-list', _('At-Risk SSL Certificates'));
+    echo $dashboard->displayPanel(_('Domain Problem'), $counts['domain'], 'warning', 'bi-globe', '/reporting/ssl/at-risk.php?show=domain#cert-list', _('At-Risk SSL Certificates'));
+    echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/ssl/at-risk.php?show=nofee#cert-list', _('At-Risk SSL Certificates')); ?>
 </div>
 
 <h2 class="h4 mt-4" id="cert-list"><?php echo $show === 'all' ? _('All At-Risk SSL Certificates') : $reasons[$show][0]; ?></h2><?php

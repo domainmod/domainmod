@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Domain Registrar Fees');
+$page_title = _('Domain Fees');
 $breadcrumb = _('Domain Fees');
 $software_section = "reporting";
 $slug = "reporting-domain-fees";

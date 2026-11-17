@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Upcoming Renewals Report');
-$breadcrumb = _('Upcoming Renewals');
+$page_title = _('Domain Renewals Report');
+$breadcrumb = _('Domain Renewals');
 $software_section = "reporting";
 $slug = "reporting-domain-upcoming-renewals";
 $report_section = 'domains';

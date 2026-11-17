@@ -105,7 +105,7 @@
             <ul class="nav nav-treeview">
                 <li class="nav-header"><?php echo _('Domains') ?></li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/assets/registrars.php" class="nav-link<?php if ($slug == "assets-registrars" || $slug == "assets-add-registrar" || $slug == "assets-edit-registrar" || $slug == "assets-registrar-fees" || $slug == "assets-registrar-fees-missing" || $slug == "assets-add-registrar-fee" || $slug == "assets-edit-registrar-fee") echo " active"; ?>">
+                    <a href="<?php echo $web_root; ?>/assets/registrars.php" class="nav-link<?php if ($slug == "assets-registrars" || $slug == "assets-add-registrar" || $slug == "assets-edit-registrar" || $slug == "assets-registrar-fees" || $slug == "assets-add-registrar-fee" || $slug == "assets-edit-registrar-fee") echo " active"; ?>">
                         <i class="nav-icon bi"></i>
                         <p>
                             <span aria-hidden="true"><?php echo _('Registrars') ?></span>
@@ -146,7 +146,7 @@
                 </li>
                 <li class="nav-header"><?php echo _('SSL Certificates') ?></li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/assets/ssl-providers.php" class="nav-link<?php if ($slug == "assets-ssl-providers" || $slug == "assets-add-ssl-provider" || $slug == "assets-edit-ssl-provider" || $slug == "assets-ssl-provider-fees" || $slug == "assets-ssl-provider-fees-missing" || $slug == "assets-add-ssl-provider-fee" || $slug == "assets-edit-ssl-provider-fee") echo " active"; ?>">
+                    <a href="<?php echo $web_root; ?>/assets/ssl-providers.php" class="nav-link<?php if ($slug == "assets-ssl-providers" || $slug == "assets-add-ssl-provider" || $slug == "assets-edit-ssl-provider" || $slug == "assets-ssl-provider-fees" || $slug == "assets-add-ssl-provider-fee" || $slug == "assets-edit-ssl-provider-fee") echo " active"; ?>">
                         <i class="nav-icon bi"></i>
                         <p>
                             <?php // TRANSLATORS: Sidebar item under the SSL Certificates heading, short for SSL Providers ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/breadcrumbs/assets-ssl-provider-fees-missing.inc.php
+ * /_includes/breadcrumbs/reporting-ssl-pricing.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -19,8 +19,6 @@
  *
  */
 ?>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/ssl-providers.php"><?php echo _('SSL Providers'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/reporting/"><?php echo _('Reporting'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>
-
