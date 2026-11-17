@@ -73,6 +73,10 @@ class Form
      */
     public function dirAttribute($name, $dir = '', $is_password = false)
     {
+        // A custom field is posted as custom_fields[field_name] (see CustomField::inputName()), and is judged by its
+        // field name, as it was when it was posted as new_field_name
+        if (preg_match('/^custom_fields\[(.+)\]$/', $name, $parts)) $name = 'new_' . $parts[1];
+
         if ($dir === '' && ($is_password || preg_match('/(domain|_url$|email|_ip[0-9]*$|^new_ip|rdns|dns[0-9]+$|username|password|api_|account_id|reseller_id|_port$|smtp_server|_tld$|_hash$|^datepick$|^daterange$)/', $name))) {
             $dir = 'ltr';
         }

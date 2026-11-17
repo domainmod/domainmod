@@ -65,31 +65,10 @@ if ($id < 1 || $type_id === false) {
 }
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
-// Custom Fields
-$result = $pdo->query("
-    SELECT field_name
-    FROM domain_fields
-    ORDER BY name")->fetchAll();
-
-if ($result) {
-
-    $count = 0;
-
-    foreach ($result as $row) {
-
-        $field_array[$count] = $row->field_name;
-        $count++;
-
-    }
-
-    foreach ($field_array as $field) {
-
-        $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field] ?? '';
-
-    }
-
-}
+// Custom Fields. Their values are kept in their own array, keyed by field name, so a field named like one of the
+// settings above (such as notes) can't overwrite it (see DomainMOD\CustomField::inputName()).
+$custom_field_types = $custom_field->getFieldTypes('domain_fields');
+$new_custom_fields = DomainMOD\CustomField::postedValues(array_keys($custom_field_types), $_POST);
 
 $choose_text = _('Click here to choose the new');
 
@@ -102,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
     } else {
 
         $format = new DomainMOD\Format();
+
+        // A Date or Time Stamp that isn't a real date or time is marked under the field, and no domain is changed
+        $chosen_field = (string) $custom_field->getFieldName('domain_fields', $id);
+        $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, array($chosen_field => $type_id), $new_custom_fields);
 
         $domain_array = $format->cleanAndSplitDomains($raw_domain_list);
 
@@ -121,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                 list($missing_to_display, $missing_count) = $domain->findMissingDomains($domain_array);
             }
 
-            if ($raw_domain_list == "" || $invalid_domains == 1 || !$domain_array || $missing_count > 0) {
+            if ($raw_domain_list == "" || $invalid_domains == 1 || !$domain_array || $missing_count > 0 || !$custom_fields_valid) {
 
                 if ($invalid_domains == 1) {
 
@@ -148,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     $form->addFieldError('raw_domain_list', $domain->missingDomainsMessage($missing_to_display, $missing_count));
 
-                } else {
+                } elseif (!$domain_array) {
 
                     $form->addFieldError('raw_domain_list', _('Enter the list of domains to apply the action to'));
 
@@ -197,14 +180,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     }
 
-                    $full_field = "new_" . $temp_field_name;
-
                     $stmt = $pdo->prepare("
                         UPDATE domain_field_data
                         SET `" . $temp_field_name . "` = ?,
                              update_time = ?
                         WHERE domain_id IN (" . $in_list . ")");
-                    $array1 = array(${$full_field}, $timestamp);
+                    $array1 = array($new_custom_fields[$temp_field_name] ?? '', $timestamp);
                     $array2 = $domain_id_list;
                     $full_array = array_merge($array1, $array2);
                     $stmt->execute($full_array);
@@ -314,7 +295,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $row->field_name}, '', '');
+                echo $form->showCheckbox(DomainMOD\CustomField::inputName($row->field_name), '1', $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '', '');
 
             }
 
@@ -333,7 +314,7 @@ if ($done != '1') {
 
         foreach ($result as $row) {
 
-            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+            echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name . ' (255)', $row->description, $new_custom_fields[$row->field_name] ?? '', '255', '', '', '', '');
 
         }
 
@@ -352,7 +333,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
+                echo $form->showInputTextarea(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '', '', '');
 
             }
 
@@ -373,7 +354,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (10)', $row->description, ${'new_' . $row->field_name}, '10', '', '', '', '', '', 'ltr');
+                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name . ' (10)', $row->description, $new_custom_fields[$row->field_name] ?? '', '10', '', '', '', '', '', 'ltr');
 
             }
 
@@ -394,7 +375,7 @@ if ($done != '1') {
 
             foreach ($result as $row) {
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name . ' (19)', $row->description, ${'new_' . $row->field_name}, '19', '', '', '', '', '', 'ltr');
+                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name . ' (19)', $row->description, $new_custom_fields[$row->field_name] ?? '', '19', '', '', '', '', '', 'ltr');
 
             }
 
@@ -413,7 +394,7 @@ if ($done != '1') {
 
         foreach ($result as $row) {
 
-            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '', '', 'ltr');
+            echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name . ' (255)', $row->description, $new_custom_fields[$row->field_name] ?? '', '255', '', '', '', '', '', 'ltr');
 
         }
 

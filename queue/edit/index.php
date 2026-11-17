@@ -63,30 +63,11 @@ $new_privacy = (int) ($_POST['new_privacy'] ?? 0);
 $new_active = (int) ($_POST['new_active'] ?? 0);
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
-// Custom Fields
-$result = $pdo->query("
-    SELECT field_name
-    FROM domain_fields
-    ORDER BY `name`")->fetchAll();
-
-if ($result) {
-
-    $field_array = array();
-
-    foreach ($result as $row) {
-
-        $field_array[] = $row->field_name;
-
-    }
-
-    foreach ($field_array as $field) {
-
-        $full_field = "new_" . $field . "";
-        ${'new_' . $field} = $_POST[$full_field] ?? '';
-
-    }
-
-}
+// Custom Fields. Their values are kept in their own array, keyed by field name, so a field named like one of the
+// settings above (such as notes) can't overwrite it (see DomainMOD\CustomField::inputName()).
+$custom_field = new DomainMOD\CustomField();
+$custom_field_types = $custom_field->getFieldTypes('domain_fields');
+$new_custom_fields = DomainMOD\CustomField::postedValues(array_keys($custom_field_types), $_POST);
 
 // The queue domain to fix: it must still be a failed row that hasn't been fixed yet (the columns this reads come with
 // the same database update as the creation type, so it's only looked up once that has run)
@@ -97,8 +78,11 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
     $date = new DomainMOD\Date();
     $domain = new DomainMOD\Domain();
 
+    // A custom Date or Time Stamp that isn't a real date or time is marked under its field, and nothing is saved
+    $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
+
     if ($date->checkDateFormat($new_expiry_date) && $new_cat_id !== 0 && $new_dns_id !== 0 && $new_ip_id !== 0 &&
-        $new_hosting_id !== 0 && $new_account_id !== 0) {
+        $new_hosting_id !== 0 && $new_account_id !== 0 && $custom_fields_valid) {
 
         try {
 
@@ -308,13 +292,11 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 
                 foreach ($field_array as $field) {
 
-                    $full_field = "new_" . $field;
-
                     $stmt = $pdo->prepare("
                         UPDATE domain_field_data
                         SET `" . $field . "` = :full_field
                         WHERE domain_id = :temp_domain_id");
-                    $stmt->bindValue('full_field', ${$full_field}, PDO::PARAM_STR);
+                    $stmt->bindValue('full_field', $new_custom_fields[$field] ?? '', PDO::PARAM_STR);
                     $stmt->bindValue('temp_domain_id', $temp_domain_id, PDO::PARAM_INT);
                     $stmt->execute();
 
@@ -688,27 +670,27 @@ if (!$edited_creation_type_id) {
 
                     if ($row->type_id == "1") { // Check Box
 
-                        echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $field}, '', '');
+                        echo $form->showCheckbox(DomainMOD\CustomField::inputName($row->field_name), '1', $row->name, $row->description, $new_custom_fields[$field] ?? '', '', '');
 
                     } elseif ($row->type_id == "2") { // Text
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '255', '', '', '', '');
+                        echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$field] ?? '', '255', '', '', '', '');
 
                     } elseif ($row->type_id == "3") { // Text Area
 
-                        echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '', '<div class="domainmod-span-all">', '</div>');
+                        echo $form->showInputTextarea(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$field] ?? '', '', '<div class="domainmod-span-all">', '</div>');
 
                     } elseif ($row->type_id == "4") { // Date
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '10', '', '', '', '', '', 'ltr');
+                        echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$field] ?? '', '10', '', '', '', '', '', 'ltr');
 
                     } elseif ($row->type_id == "5") { // Time Stamp
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '19', '', '', '', '', '', 'ltr');
+                        echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$field] ?? '', '19', '', '', '', '', '', 'ltr');
 
                     } elseif ($row->type_id == "6") { // URL
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $field}, '255', '', '', '', '', '', 'ltr');
+                        echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$field] ?? '', '255', '', '', '', '', '', 'ltr');
 
                     }
 

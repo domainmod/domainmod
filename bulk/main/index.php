@@ -65,21 +65,11 @@ $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) :
 $new_renewal_years = (int) ($_POST['new_renewal_years'] ?? 0);
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
-// Custom Fields. The values are kept in their own array, keyed by field name, so a field named like one of the settings
-// above (such as notes) can't overwrite it. A value that isn't text (a field posted as a list) is left empty.
-$new_custom_fields = array();
-
-$result = $pdo->query("
-    SELECT field_name
-    FROM domain_fields
-    ORDER BY `name`")->fetchAll();
-
-foreach ($result as $row) {
-
-    $posted_value = $_POST['new_' . $row->field_name] ?? '';
-    $new_custom_fields[$row->field_name] = is_string($posted_value) ? $posted_value : '';
-
-}
+// Custom Fields. Their values are kept in their own array, keyed by field name, so a field named like one of the
+// settings above (such as notes) can't overwrite it (see DomainMOD\CustomField::inputName()).
+$custom_field = new DomainMOD\CustomField();
+$custom_field_types = $custom_field->getFieldTypes('domain_fields');
+$new_custom_fields = DomainMOD\CustomField::postedValues(array_keys($custom_field_types), $_POST);
 
 $choose_text = _('Click here to choose the new');
 
@@ -206,7 +196,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     }
 
-                    if (!$date->checkDateFormat($new_expiry_date) || $new_pcid === 0 || $new_dnsid === 0 || $new_ipid === 0 || $new_whid === 0 || $new_raid === 0 || $has_existing_domains == '1') {
+                    // A custom Date or Time Stamp that isn't a real date or time is marked under its field, and nothing is added
+                    $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
+
+                    if (!$date->checkDateFormat($new_expiry_date) || $new_pcid === 0 || $new_dnsid === 0 || $new_ipid === 0 || $new_whid === 0 || $new_raid === 0 || $has_existing_domains == '1' || !$custom_fields_valid) {
 
                         if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= sprintf(_('At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s).'), SOFTWARE_TITLE, '<BR><BR>') . '<BR>';
                         if (!$date->checkDateFormat($new_expiry_date)) $form->addFieldError('datepick', _('You have entered an invalid expiry date'));
@@ -2411,27 +2404,27 @@ if ($done != "1") {
 
                             if ($row->type_id === 1) { // Check Box
 
-                                echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, $new_custom_fields[$row->field_name], '', '');
+                                echo $form->showCheckbox(DomainMOD\CustomField::inputName($row->field_name), '1', $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '', '');
 
                             } elseif ($row->type_id === 2) { // Text
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '255', '', '', '', '');
+                                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '255', '', '', '', '');
 
                             } elseif ($row->type_id === 3) { // Text Area
 
-                                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '', '', '');
+                                echo $form->showInputTextarea(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '', '', '');
 
                             } elseif ($row->type_id === 4) { // Date
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '10', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '10', '', '', '', '', '', 'ltr');
 
                             } elseif ($row->type_id === 5) { // Time Stamp
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '19', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '19', '', '', '', '', '', 'ltr');
 
                             } elseif ($row->type_id === 6) { // URL
 
-                                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $new_custom_fields[$row->field_name], '255', '', '', '', '', '', 'ltr');
+                                echo $form->showInputText(DomainMOD\CustomField::inputName($row->field_name), $row->name, $row->description, $new_custom_fields[$row->field_name] ?? '', '255', '', '', '', '', '', 'ltr');
 
                             }
 
