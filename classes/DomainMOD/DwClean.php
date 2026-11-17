@@ -188,37 +188,52 @@ class DwClean
             WHERE type = 'ZONE TTL'");
     }
 
+    /*
+     * Gives each record type its place in the zone's display order (new_order): the usual types first, in the order
+     * below, then any others the zones have (such as AAAA or CAA), alphabetically, so each type's records stay together.
+     */
     public function reorderRecords()
     {
         $pdo = $this->deeb->cnxx;
 
-        $type_order = array();
-        $count = 0;
-        $new_order = 1;
-        $type_order[$count++] = 'COMMENT';
-        $type_order[$count++] = 'ZONE TTL';
-        $type_order[$count++] = 'SOA';
-        $type_order[$count++] = 'NS';
-        $type_order[$count++] = 'MX';
-        $type_order[$count++] = 'A';
-        $type_order[$count++] = 'CNAME';
-        $type_order[$count++] = 'TXT';
-        $type_order[$count++] = 'SRV';
+        $found_types = $pdo->query("
+            SELECT DISTINCT type
+            FROM dw_dns_records")->fetchAll(\PDO::FETCH_COLUMN);
 
         $stmt = $pdo->prepare("
             UPDATE dw_dns_records
             SET new_order = :new_order
             WHERE type = :type");
-        $stmt->bindValue('new_order', $new_order, \PDO::PARAM_INT);
+        $stmt->bindParam('new_order', $bind_new_order, \PDO::PARAM_INT);
         $stmt->bindParam('type', $bind_type, \PDO::PARAM_STR);
 
-        foreach ($type_order as $bind_type) {
+        foreach (self::typeOrder($found_types) as $bind_new_order => $bind_type) {
 
             $stmt->execute();
 
-            $new_order++;
-
         }
+    }
+
+    /*
+     * The record types in display order, numbered from 1: the usual types in a set order, then the other types in
+     * $found_types, alphabetically. The type column ignores case, so a type is only listed once, whatever its case.
+     */
+    public static function typeOrder($found_types)
+    {
+        $usual_types = array('COMMENT', 'ZONE TTL', 'SOA', 'NS', 'MX', 'A', 'CNAME', 'TXT', 'SRV');
+
+        $listed = array_map('strtoupper', $usual_types);
+        $other_types = array();
+        foreach ($found_types as $type) {
+            $type = (string) $type;
+            if (in_array(strtoupper($type), $listed, true)) continue;
+            $listed[] = strtoupper($type);
+            $other_types[] = $type;
+        }
+        sort($other_types, SORT_STRING | SORT_FLAG_CASE);
+
+        $order = array_merge($usual_types, $other_types);
+        return array_combine(range(1, count($order)), $order);
     }
 
 } //@formatter:on
