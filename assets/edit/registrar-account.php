@@ -349,7 +349,9 @@ if ($result) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-
+// The fields in titled cards, the same way as the edit domain page (Layout::formSection()): the account, then its API
+// credentials (only when the registrar has an API), then the notes
+ob_start();
 $result = $pdo->query("
     SELECT id, `name`
     FROM registrars
@@ -392,103 +394,55 @@ echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', ''
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
-
-echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '', '<BR><BR>');
-
+// The switch is one grid item, with the same spacing as the other fields
+echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
 echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
+echo $layout->formSection(_('Account'), 'account', ob_get_clean());
 
 if ($has_api_support >= 1) {
 
-    echo $layout->expandableBoxTop(_('API Credentials'), '', ''); ?>
+    ob_start(); ?>
 
-    <strong><?php echo _('API Requirements'); ?></strong><BR>
-    <?php echo sprintf(_('%s requires the following credentials in order to use their API.'), $api_registrar_name); ?>
+    <div class="domainmod-span-all">
+        <h3 class="h6"><?php echo _('API Requirements'); ?></h3>
+        <p><?php echo sprintf(_('%s requires the following credentials in order to use their API.'), htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8')); ?></p>
+        <ul><?php
 
-    <ul><?php
+        // Each credential the registrar's API needs (its flag, its label, and whether the account is missing it), with
+        // a line under it saying it's saved or missing, the same way as Domain Queue step two
+        $requirements = array(
+            array($req_account_username, _('Registrar Account Username'), $new_username == ''),
+            array($req_account_password, _('Registrar Account Password'), $new_password == ''),
+            array($req_account_id, _('Registrar Account ID'), $new_account_id == ''),
+            array($req_reseller_id, _('Reseller ID'), $new_reseller_id == '' || $new_reseller_id == '0'),
+            array($req_api_app_name, _('API Application Name'), $new_api_app_name == ''),
+            array($req_api_key, _('API Key'), $new_api_key == ''),
+            array($req_api_secret, _('API Secret'), $new_api_secret == ''),
+            array($req_ip_address, _('Connecting IP Address'), $new_api_ip_id == 0),
+        );
 
-        $missing_text = ' (<span class="domainmod-css-text-highlight-red"><strong>' . DomainMOD\Format::toLower(_('Missing')) . '</strong></span>)';
-        $saved_text = ' (<span class="domainmod-css-text-highlight-green"><strong>' . DomainMOD\Format::toLower(_('Saved')) . '</strong></span>)';
+        foreach ($requirements as list($is_required, $requirement, $is_missing)) {
 
-        if ($req_account_username == '1') {
-            echo '<li>' . _('Registrar Account Username');
-            if ($new_username == '') {
-                echo $missing_text;
+            if ($is_required != '1') continue;
+
+            echo '<li>' . $requirement;
+            if ($is_missing) {
+                echo '<div class="form-text text-danger-emphasis"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> ' . _('Missing') . '</div>';
             } else {
-                echo $saved_text;
+                echo '<div class="form-text text-success-emphasis"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> ' . _('Saved') . '</div>';
             }
             echo '</li>';
-        }
-        if ($req_account_password == '1') {
-            echo '<li>' . _('Registrar Account Password');
-            if ($new_password == '') {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_account_id == '1') {
-            echo '<li>' . _('Registrar Account ID');
-            if ($new_account_id == '') {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_reseller_id == '1') {
-            echo '<li>' . _('Reseller ID');
-            if ($new_reseller_id === 0) {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_api_app_name == '1') {
-            echo '<li>' . _('API Application Name');
-            if ($new_api_app_name == '') {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_api_key == '1') {
-            echo '<li>' . _('API Key');
-            if ($new_api_key == '') {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_api_secret == '1') {
-            echo '<li>' . _('API Secret');
-            if ($new_api_secret == '') {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
-        }
-        if ($req_ip_address == '1') {
-            echo '<li>' . _('Connecting IP Address');
-            if ($new_api_ip_id === 0) {
-                echo $missing_text;
-            } else {
-                echo $saved_text;
-            }
-            echo '</li>';
+
         } ?>
-    </ul><?php
+        </ul><?php
 
-    if ($api_registrar_notes != '') {
+        if ($api_registrar_notes != '') {
 
-        echo '<strong>' . _('Registrar Notes') . '</strong><BR>';
-        echo $api_registrar_notes . "<BR><BR>";
+            echo '<h3 class="h6">' . _('Registrar Notes') . '</h3>';
+            echo '<p>' . $api_registrar_notes . '</p>';
 
-    }
+        } ?>
+    </div><?php
 
     echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
     echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
@@ -501,9 +455,10 @@ if ($has_api_support >= 1) {
 
     if ($result) {
 
-        echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.') . sprintf(_('%sClick here%s to add a new IP Address'), '<a href="' . $web_root . '/assets/add/ip-address.php">', '</a>'), '', '');
+        echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP address you gave the registrar for API access.') . ' <a href="' . WEB_ROOT . '/assets/add/ip-address.php">' . _('Add an IP address') . '</a>', '', '');
 
-        echo $form->showDropdownOption('0', 'n/a', '0');
+        // TRANSLATORS: The API IP Address menu's choice for an account that doesn't use an IP address.
+        echo $form->showDropdownOption('0', _('None'), '0');
 
         foreach ($result as $row) {
 
@@ -515,11 +470,14 @@ if ($has_api_support >= 1) {
 
     }
 
-    echo $layout->expandableBoxBottom();
+    echo $layout->formSection(_('API Credentials'), 'api-credentials', ob_get_clean());
 
 }
 
-echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+ob_start();
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
+
 echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');

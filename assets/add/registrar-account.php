@@ -134,7 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-
+// The fields in titled cards, the same way as the edit domain page (Layout::formSection()): the account, then its API
+// credentials, then the notes
+ob_start();
 echo $form->showDropdownTop('new_registrar_id', _('Registrar'), '', '1', '');
 if ($new_registrar_id === 0) {
     $to_compare = $_SESSION['s_default_registrar'];
@@ -169,19 +171,19 @@ echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', ''
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
 echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
+// The switch is one grid item, with the same spacing as the other fields
+echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
+echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
+echo $layout->formSection(_('Account'), 'account', ob_get_clean());
 
-echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '', '<BR><BR>');
-
-echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $new_reseller_id, '100', '', '', '', '');
-
-echo $layout->expandableBoxTop(_('API Credentials'), '', '');
-
+ob_start();
 echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
 echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
 echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
 
-echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP Address that you whitelisted with the domain registrar for API access.'), '', '');
-echo $form->showDropdownOption('0', 'n/a', '0');
+echo $form->showDropdownTop('new_api_ip_id', _('API IP Address'), _('The IP address you gave the registrar for API access.') . ' <a href="' . WEB_ROOT . '/assets/add/ip-address.php">' . _('Add an IP address') . '</a>', '', '');
+// TRANSLATORS: The API IP Address menu's choice for an account that doesn't use an IP address.
+echo $form->showDropdownOption('0', _('None'), '0');
 $result = $pdo->query("
     SELECT id, `name`, ip
     FROM ip_addresses
@@ -190,10 +192,12 @@ foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_api_ip_id);
 }
 echo $form->showDropdownBottom('');
+echo $layout->formSection(_('API Credentials'), 'api-credentials', ob_get_clean());
 
-echo $layout->expandableBoxBottom();
+ob_start();
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
 
-echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showSubmitButton(_('Add Registrar Account'), '', '');
 echo $form->showFormBottom('');
 ?>

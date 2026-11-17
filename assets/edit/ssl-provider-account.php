@@ -274,7 +274,8 @@ if ($del === 1) {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-
+// The fields in titled cards, the same way as the edit domain page (Layout::formSection()): the account, then the notes
+ob_start();
 $result = $pdo->query("
     SELECT id, `name`
     FROM ssl_providers
@@ -316,9 +317,15 @@ if ($result) {
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
 echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
-echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '', '<BR><BR>');
+// The switch is one grid item, with the same spacing as the other fields
+echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
 echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');
-echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $layout->formSection(_('Account'), 'account', ob_get_clean());
+
+ob_start();
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
+
 echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
