@@ -55,14 +55,25 @@ $upgrade_approved = $_GET['u'] ?? '';
  * notice.php and ask the user to confirm the upgrade
  *
  * If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
+ *
+ * Only an administrator who isn't read-only can run the upgrade. Anyone else is always sent to notice.php, which asks
+ * them to have an administrator run it, even if they ask for the upgrade directly.
  */
 $_SESSION['s_system_db_version'] = $_SESSION['s_system_db_version'] ?? '';
-if ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved != '1') {
+$upgrade_waiting = $_SESSION['s_system_db_version'] !== SOFTWARE_VERSION;
+if ($upgrade_waiting && $upgrade_approved == '1') {
+
+    $notice = new DomainMOD\Notice();
+    if (!$notice->userCanRunUpgrade($_SESSION['s_user_id'] ?? 0)) $upgrade_approved = '';
+
+}
+
+if ($upgrade_waiting && $upgrade_approved != '1') {
 
     header("Location: notice.php?a=u");
     exit;
 
-} elseif ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved == '1') {
+} elseif ($upgrade_waiting && $upgrade_approved == '1') {
 
     // Approving the upgrade changes the database, so the "Upgrade Database" link carries the security token.
     $csrf = new DomainMOD\Csrf();

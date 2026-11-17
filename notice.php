@@ -41,7 +41,16 @@ $action = $_GET['a'] ?? '';
 // u = Upgrade DomainMOD Database, only while an upgrade is waiting. Otherwise there's no notice to show.
 if (DomainMOD\Notice::showsUpgrade($action, $_SESSION['s_system_db_version'] ?? '', SOFTWARE_VERSION)) {
 
-    $notice->dbUpgrade();
+    // Only an administrator who isn't read-only gets the button. Anyone else is asked to have one run the upgrade.
+    if ($notice->userCanRunUpgrade($_SESSION['s_user_id'] ?? 0)) {
+
+        $notice->dbUpgrade();
+
+    } else {
+
+        $notice->dbUpgradeWaiting();
+
+    }
 
 } else {
 

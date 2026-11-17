@@ -36,6 +36,26 @@ class Notice
         return $action === 'u' && is_string($db_version) && $db_version !== '' && $db_version !== $software_version;
     }
 
+    /*
+     * Whether a user may run the database upgrade: an administrator who isn't read-only, since the upgrade changes the
+     * database and read-only users never make changes. $admin and $read_only are the users table's columns, as the
+     * database returns them (a user who can't be found has neither, so can't run it).
+     */
+    public static function canRunUpgrade($admin, $read_only)
+    {
+        return in_array($admin, array(1, '1'), true) && in_array($read_only, array(0, '0'), true);
+    }
+
+    /*
+     * Whether the signed-in user ($user_id) may run the upgrade (canRunUpgrade()). It's read from the database, since
+     * checks.php only puts the user's admin and read-only settings in the session after the upgrade has run.
+     */
+    public function userCanRunUpgrade($user_id)
+    {
+        $result = (new Login())->getUserInfo($user_id);
+        return $result !== false && self::canRunUpgrade($result->admin, $result->read_only);
+    }
+
     public function dbUpgrade()
     {
         $this->system = new System();
@@ -43,6 +63,15 @@ class Notice
 
         $_SESSION['s_notice_page_title'] = $this->upgradeTitle($db_version);
         $_SESSION['s_notice'] = $this->upgradeBody($db_version, $this->system->requirementsChecklist(false, true), (new Csrf())->query());
+    }
+
+    // The notice for anyone who can't run the upgrade (canRunUpgrade()): the same title, without the button
+    public function dbUpgradeWaiting()
+    {
+        $db_version = $_SESSION['s_system_db_version'];
+
+        $_SESSION['s_notice_page_title'] = $this->upgradeTitle($db_version);
+        $_SESSION['s_notice'] = $this->upgradeWaitingBody();
     }
 
     // The notice's title, with the versions the upgrade goes from and to
@@ -79,6 +108,22 @@ class Notice
         </div>
         <p><?php echo _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.'); ?></p>
         <div class="mt-4 mb-3"><?php echo $layout->linkButton('checks.php?u=1&' . $csrf_query, _('Upgrade Database'), 'primary'); ?></div><?php
+        return ob_get_clean();
+    }
+
+    /*
+     * The notice for anyone who can't run the upgrade: why it's needed, that an administrator has to run it, and a way
+     * to sign out. There's no upgrade button, and checks.php won't run the upgrade for them.
+     */
+    public function upgradeWaitingBody()
+    {
+        $layout = new Layout();
+
+        ob_start(); ?>
+        <p><?php echo sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE); ?></p>
+        <?php // TRANSLATORS: Shown to users who aren't administrators (or are read-only) while a database upgrade is waiting ?>
+        <p><?php echo _('An administrator needs to sign in and run the upgrade before you can continue. Please ask one to do this, and then sign in again.'); ?></p>
+        <div class="mt-4 mb-3"><?php echo $layout->linkButton('logout.php', _('Logout')); ?></div><?php
         return ob_get_clean();
     }
 

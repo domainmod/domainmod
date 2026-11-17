@@ -51,6 +51,39 @@ class NoticeTest extends TestCase
         $this->assertSame($expected, Notice::showsUpgrade($action, $db_version, '4.26.0'));
     }
 
+    public static function upgradeRightsCases()
+    {
+        return array(
+            'an administrator' => array('1', '0', true),
+            'an administrator, as numbers' => array(1, 0, true),
+            'a read-only administrator' => array('1', '1', false),
+            'a user' => array('0', '0', false),
+            'a read-only user' => array('0', '1', false),
+            'a user who can\'t be found' => array(null, null, false),
+            'an administrator with no read-only setting' => array('1', null, false),
+            'something that isn\'t a setting' => array('yes', '', false),
+        );
+    }
+
+    #[DataProvider('upgradeRightsCases')]
+    public function testOnlyAnAdministratorWhoCanMakeChangesRunsTheUpgrade($admin, $read_only, $expected)
+    {
+        $this->assertSame($expected, Notice::canRunUpgrade($admin, $read_only));
+    }
+
+    #[RunInSeparateProcess]
+    public function testTheWaitingNoticeAsksForAnAdministratorWithoutTheButton()
+    {
+        $this->defineSoftware();
+        $body = (new Notice())->upgradeWaitingBody();
+
+        $this->assertStringContainsString('An administrator needs to sign in and run the upgrade', $body);
+        $this->assertStringContainsString('href="logout.php"', $body);
+        $this->assertStringNotContainsString('checks.php', $body);
+        $this->assertStringNotContainsString('Upgrade Database', $body);
+        $this->assertStringNotContainsString('csrf_token', $body);
+    }
+
     #[RunInSeparateProcess]
     public function testTheTitleNamesBothVersionsAndEscapesTheDatabaseOne()
     {
