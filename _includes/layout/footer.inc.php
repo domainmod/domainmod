@@ -128,6 +128,14 @@ if (file_exists($full_filename)) {
                 if (button) button.setAttribute('aria-expanded', event_name.indexOf('expanded') === 0 ? 'true' : 'false');
             });
         });
+        // A list built inside a closed box, such as the Data Warehouse boxes on Edit Domain, was measured while hidden,
+        // so its columns are sized again when the box opens, and Responsive works out again which ones fit (otherwise
+        // the table runs off the side on a phone). AdminLTE sends the event once the box has finished opening.
+        document.addEventListener('expanded.lte.card-widget', function () {
+            if (typeof DataTable === 'undefined' || typeof DataTable.tables !== 'function') return;
+            var tables = DataTable.tables({visible: true, api: true}).columns.adjust();
+            if (tables.responsive) tables.responsive.recalc();
+        });
         document.addEventListener('htmx:load', function (event) {
             startTooltips(event.detail.elt);
         });
