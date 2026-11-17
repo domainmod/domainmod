@@ -374,6 +374,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain) . '<BR>';
 
+            // A domain saved without a fee is hidden from the list, so the save says so (DomainMOD\FeeStatus)
+            $fee_status = new DomainMOD\FeeStatus();
+            $fee_row = $fee_status->domainFee($did);
+            if ($fee_row && !$fee_status->hasFee($fee_row)) $_SESSION['s_message_warning'] .= $fee_status->domainWarning($fee_row, true) . '<BR>';
+
             header('Location: edit.php?did=' . $did);
             exit;
 
@@ -691,6 +696,12 @@ if ($result) {
 echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
 echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
 echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
+
+// The saved fee for the domain's TLD at its registrar, or what's missing, with a link to edit or add it for users who
+// can edit fees (DomainMOD\FeeStatus)
+$fee_status = new DomainMOD\FeeStatus();
+$fee_row = $fee_status->domainFee($did);
+if ($fee_row) echo $layout->formSection(_('Fee'), 'fee', $fee_status->domainSection($fee_row, ($_SESSION['s_read_only'] ?? '') != '1'));
 
 ob_start();
 $result = $pdo->query("

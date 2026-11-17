@@ -686,6 +686,12 @@ class System
         return $this->slimMessage('info', 'bi-info-circle-fill', $this->trimMessage($result_message));
     }
 
+    // Something the user should act on after a change, such as an item saved without a fee (DomainMOD\FeeStatus)
+    public function showMessageWarning($result_message)
+    {
+        return $this->slimMessage('warning', 'bi-exclamation-triangle-fill', $this->trimMessage($result_message));
+    }
+
     public function showMaintenanceTable($result_message)
     {
         return $this->slimMessage('warning', 'bi-exclamation-triangle-fill',

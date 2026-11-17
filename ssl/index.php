@@ -1660,6 +1660,9 @@ if ($result) {
               AND sslc.cat_id = cat.id
               AND sslc.id = sslfd.ssl_id";
 
+        // Read-only users can't add fees, so their link only offers to show the missing ones
+        $missing_fees_label = ($_SESSION['s_read_only'] ?? '') == '1' ? _('View the missing fees') : _('Add the missing fees');
+
         if (!$ssl_filters_active) {
 
             $live_certs = (int) $pdo->query("SELECT count(*) FROM ssl_certs WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')")->fetchColumn();
@@ -1670,7 +1673,7 @@ if ($result) {
 
             } else {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', $missing_fees_label);
 
             }
 
@@ -1680,7 +1683,7 @@ if ($result) {
 
             if ($filtered_certs > 0) {
 
-                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', _('Add the missing fees'));
+                echo $layout->emptyState('bi-cash-coin', _('Some SSL certificates are hidden until they have a fee'), _("SSL certificates without a fee can't be costed, so they don't appear in the list yet."), '', '', '/reporting/ssl/provider-fees.php?all=0#missing', $missing_fees_label);
 
             } else {
 

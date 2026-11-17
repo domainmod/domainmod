@@ -187,6 +187,12 @@ $search_for = $search_for ?? '';
                     $_SESSION['s_message_info'] = '';
                 }
 
+                $_SESSION['s_message_warning'] = $_SESSION['s_message_warning'] ?? '';
+                if ($_SESSION['s_message_warning'] != "") {
+                    echo $system->showMessageWarning($_SESSION['s_message_warning']);
+                    $_SESSION['s_message_warning'] = '';
+                }
+
                 require_once DIR_INC . '/layout/table-maintenance.inc.php'; ?>
             </div>
 

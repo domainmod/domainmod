@@ -210,6 +210,9 @@ if ($del === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('Fees'), '../ssl-provider-fees.php?sslpid=' . $sslpid, 'bi-cash-coin');
+
 echo $form->showFormTop('');
 echo $form->showInputText('new_ssl_provider', _('SSL Provider Name') . ' (100)', '', $unsanitize->text($new_ssl_provider), '100', '', '1', '', '');
 echo $form->showInputText('new_url', _("SSL Provider's URL"), '', $unsanitize->text($new_url), '100', '', '', '', '');

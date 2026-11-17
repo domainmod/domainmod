@@ -45,6 +45,6 @@ if ($force_https === 1) {
 session_start();
 
 // Pages add to these messages with .=, so they always exist (the layout empties them once they've been shown)
-foreach (array('s_message_success', 's_message_danger', 's_message_info') as $message_key) {
+foreach (array('s_message_success', 's_message_danger', 's_message_info', 's_message_warning') as $message_key) {
     if (!isset($_SESSION[$message_key])) $_SESSION[$message_key] = '';
 }

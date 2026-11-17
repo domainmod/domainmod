@@ -48,7 +48,7 @@ class DomainListColumns extends ListColumns
         's_display_domain_registrar', 's_display_domain_account', 's_display_domain_dns', 's_display_domain_ip',
         's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_cdf_data',
         's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
-        's_default_currency_symbol_space');
+        's_default_currency_symbol_space', 's_read_only');
 
     const FIELD_ALIAS = 'dfd';
     const NAME_KEY = 'domain';
@@ -150,13 +150,17 @@ class DomainListColumns extends ListColumns
                 }
                 return '<a href="edit.php?did=' . $row->id . '"' . $expired . '>' . $row->expiry_date . '</a>';
 
+            // The fee and TLD link to the domain's fee, except for read-only users, who can't edit it (as on the
+            // Domain Fees report)
             case 'fee':
                 $amount = $this->currency->format($row->total_cost * $row->conversion, $s['s_default_currency_symbol'],
                     $s['s_default_currency_symbol_order'], $s['s_default_currency_symbol_space']);
+                if (($s['s_read_only'] ?? '') == '1') return htmlentities($amount, ENT_QUOTES, 'UTF-8');
                 return '<a href="../assets/edit/registrar-fee.php?rid=' . $row->r_id . '&fee_id=' . $row->f_id . '">'
                     . htmlentities($amount, ENT_QUOTES, 'UTF-8') . '</a>';
 
             case 'tld':
+                if (($s['s_read_only'] ?? '') == '1') return '<bdi dir="ltr">.' . $row->tld . '</bdi>';
                 return '<a href="../assets/edit/registrar-fee.php?rid=' . $row->r_id . '&fee_id=' . $row->f_id
                     . '"><bdi dir="ltr">.' . $row->tld . '</bdi></a>';
 

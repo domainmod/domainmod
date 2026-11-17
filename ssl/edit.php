@@ -269,6 +269,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s updated'), $new_name) . '<BR>';
 
+            // A certificate saved without a fee is hidden from the list, so the save says so (DomainMOD\FeeStatus)
+            $fee_status = new DomainMOD\FeeStatus();
+            $fee_row = $fee_status->sslFee($sslcid);
+            if ($fee_row && !$fee_status->hasFee($fee_row)) $_SESSION['s_message_warning'] .= $fee_status->sslWarning($fee_row, true) . '<BR>';
+
             header('Location: edit.php?sslcid=' . $sslcid);
             exit;
 
@@ -538,6 +543,12 @@ if ($result) {
 
 echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 echo $layout->formSection(_('Certificate'), 'certificate', ob_get_clean());
+
+// The saved fee for the certificate's type at its provider, or what's missing, with a link to edit or add it for users
+// who can edit fees (DomainMOD\FeeStatus)
+$fee_status = new DomainMOD\FeeStatus();
+$fee_row = $fee_status->sslFee($sslcid);
+if ($fee_row) echo $layout->formSection(_('Fee'), 'fee', $fee_status->sslSection($fee_row, ($_SESSION['s_read_only'] ?? '') != '1'));
 
 ob_start();
 $result = $pdo->query("

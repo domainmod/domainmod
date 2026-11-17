@@ -46,9 +46,11 @@ $report = $_REQUEST['report'] ?? '';
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo $layout->calloutTop(); ?>
-<?php echo sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>'); ?>
-<?php echo $layout->calloutBottom(); ?>
+<?php
+// Read-only users can't update the conversion rates, so they don't get the reminder to
+if (($_SESSION['s_read_only'] ?? '') != '1') {
+    echo $layout->calloutTop() . sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>') . $layout->calloutBottom();
+} ?>
 <h2 class="h5 mb-3"><?php echo _('Renewals'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/reporting/renewal-calendar.php', _('Renewal Calendar'), _('What expires on each day, domains and SSL together'), 'bi-calendar3', 'info');
@@ -58,7 +60,9 @@ $report = $_REQUEST['report'] ?? '';
 <h2 class="h5 mt-4 mb-3"><?php echo _('Pricing'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Pricing'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success');
-    echo $layout->landingTile('/reporting/ssl/ssl-pricing.php', _('SSL Pricing'), _('The cheapest provider for each certificate type'), 'bi-shield-lock', 'success'); ?>
+    echo $layout->landingTile('/reporting/ssl/ssl-pricing.php', _('SSL Pricing'), _('The cheapest provider for each certificate type'), 'bi-shield-lock', 'success');
+    echo $layout->landingTile('/reporting/domains/registrar-fees.php?all=0', _('Domain Fees'), _("Each registrar's fees for your TLDs, and any that are missing"), 'bi-cash-coin', 'success');
+    echo $layout->landingTile('/reporting/ssl/provider-fees.php?all=0', _('SSL Fees'), _("Each SSL provider's fees for your certificate types, and any that are missing"), 'bi-cash-coin', 'success'); ?>
 </div>
 <h2 class="h5 mt-4 mb-3"><?php echo _('Needs Attention'); ?></h2>
 <div class="row g-3"><?php
@@ -77,8 +81,7 @@ $report = $_REQUEST['report'] ?? '';
         array('/reporting/domains/costs.php?group=owner', _('Owner'), _('Domain Cost by Owner')),
         array('/reporting/domains/costs.php?group=registrar', _('Registrar'), _('Domain Cost by Registrar')),
         array('/reporting/domains/costs.php?group=tld', _('TLD'), _('Domain Cost by TLD')),
-        array('/reporting/domains/costs.php?group=host', _('Web Host'), _('Domain Cost by Web Host')),
-        array('/reporting/domains/registrar-fees.php?all=0', _('Domain Fees'), _('Domain Fees'))));
+        array('/reporting/domains/costs.php?group=host', _('Web Host'), _('Domain Cost by Web Host'))));
     echo $layout->landingLinks(_('SSL Costs'), array(
         array('/reporting/ssl/costs.php?group=category', _('Category'), _('SSL Cost by Category')),
         array('/reporting/ssl/costs.php?group=domain', _('Domain'), _('SSL Cost by Domain')),
@@ -86,8 +89,7 @@ $report = $_REQUEST['report'] ?? '';
         array('/reporting/ssl/costs.php?group=month', _('Month'), _('SSL Cost by Month')),
         array('/reporting/ssl/costs.php?group=owner', _('Owner'), _('SSL Cost by Owner')),
         array('/reporting/ssl/costs.php?group=provider', _('Provider'), _('SSL Cost by Provider')),
-        array('/reporting/ssl/costs.php?group=type', _('Type'), _('SSL Cost by Type')),
-        array('/reporting/ssl/provider-fees.php?all=0', _('SSL Fees'), _('SSL Fees')))); ?>
+        array('/reporting/ssl/costs.php?group=type', _('Type'), _('SSL Cost by Type')))); ?>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

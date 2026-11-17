@@ -47,6 +47,9 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
 $sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
+// Opened from the SSL Fees report's Missing Fees, the page goes back there once the fee is added (the only return it
+// accepts)
+$return = ($_REQUEST['return'] ?? '') === 'missing' ? 'missing' : '';
 $type_id = (int) ($_GET['type_id'] ?? 0);
 if ($type_id !== 0) {
     $new_type_id = $type_id;
@@ -166,7 +169,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added.'), $temp_type) . '<BR>';
 
-                header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
+                if ($return === 'missing') {
+                    // Back to the missing fees while any are left, otherwise to the top of the report
+                    header("Location: ../../reporting/ssl/provider-fees.php?all=0" . ($_SESSION['s_missing_ssl_fees'] == 1 ? '#missing' : ''));
+                } else {
+                    header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
+                }
                 exit;
 
             } catch (Exception $e) {
@@ -237,6 +245,7 @@ echo $form->showDropdownBottom('');
 
 echo $form->showSubmitButton(_('Add Fee'), '', '');
 echo $form->showInputHidden('sslpid', $sslpid);
+if ($return !== '') echo $form->showInputHidden('return', $return);
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

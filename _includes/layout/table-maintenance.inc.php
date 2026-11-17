@@ -20,8 +20,17 @@
  */
 ?>
 <?php
+// Read-only users can't add fees, zero them out, or update them, so they only get a link to see what's missing
+$fees_read_only = ($_SESSION['s_read_only'] ?? '') == '1';
+
 $missing_domain_fees = $_SESSION['s_missing_domain_fees'] ?? '';
-if ($missing_domain_fees == 1) {
+if ($missing_domain_fees == 1 && $fees_read_only) {
+
+    $message = _('Some of your Domains are missing fees. Until you enter the fees, the Domains will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/reporting/domains/registrar-fees.php?all=0#missing\">" . _('View the missing fees') . "</a>.";
+
+    echo $system->showMaintenanceTable($message);
+
+} elseif ($missing_domain_fees == 1) {
 
     $message = _('Some of your Domains are missing fees. Until you enter the fees, the Domains will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/reporting/domains/registrar-fees.php?all=0#missing\">" . _('Click here to fix this') . "</a>.<BR>";
     $message .= _('If you don\'t care about tracking Domain fees, ') . " <a href=\"" . $web_root . "/assets/zero-out-domain-fees.php?" . (new DomainMOD\Csrf())->query() . "\">" . _('click here to set all missing fees to 0') . "</a>.<BR>";
@@ -32,7 +41,13 @@ if ($missing_domain_fees == 1) {
 }
 
 $missing_ssl_fees = $_SESSION['s_missing_ssl_fees'] ?? '';
-if ($missing_ssl_fees == 1) {
+if ($missing_ssl_fees == 1 && $fees_read_only) {
+
+    $message = _('Some of your SSL Certificates are missing fees. Until you enter the fees, the SSL Certificates will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/reporting/ssl/provider-fees.php?all=0#missing\">" . _('View the missing fees') . "</a>.";
+
+    echo $system->showMaintenanceTable($message);
+
+} elseif ($missing_ssl_fees == 1) {
 
     $message = _('Some of your SSL Certificates are missing fees. Until you enter the fees, the SSL Certificates will not be visible in DomainMOD.') . " <a href=\"" . $web_root . "/reporting/ssl/provider-fees.php?all=0#missing\">" . _('Click here to fix this') . "</a>.<BR>";
     $message .= _('If you don\'t care about tracking SSL Certificate fees, ') . " <a href=\"" . $web_root . "/assets/zero-out-ssl-fees.php?" . (new DomainMOD\Csrf())->query() . "\">" . _('click here to set all missing fees to 0') . "</a>.<BR>";

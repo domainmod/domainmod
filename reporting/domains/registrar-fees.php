@@ -224,7 +224,7 @@ if ($missing_fees) {
     foreach ($missing_fees as $row) {
         $missing_by_registrar[$row->id]['row'] = $row;
         $missing_by_registrar[$row->id]['tlds'][] = $can_edit
-            ? '<a href="../../assets/add/registrar-fee.php?rid=' . (int) $row->id . '&amp;tld=' . urlencode($row->tld) . '"><bdi dir="ltr">.' . $row->tld . '</bdi></a>'
+            ? '<a href="../../assets/add/registrar-fee.php?rid=' . (int) $row->id . '&amp;tld=' . urlencode($row->tld) . '&amp;return=missing"><bdi dir="ltr">.' . $row->tld . '</bdi></a>'
             : '<bdi dir="ltr">.' . $row->tld . '</bdi>';
     } ?>
 

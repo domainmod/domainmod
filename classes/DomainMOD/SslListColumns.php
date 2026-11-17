@@ -46,7 +46,7 @@ class SslListColumns extends ListColumns
     const SESSION_KEYS = array('s_display_ssl_expiry_date', 's_display_ssl_fee', 's_display_ssl_domain',
         's_display_ssl_provider', 's_display_ssl_account', 's_display_ssl_type', 's_display_ssl_ip',
         's_display_ssl_category', 's_display_ssl_owner', 's_csf_data', 's_default_currency', 's_default_currency_symbol',
-        's_default_currency_symbol_order', 's_default_currency_symbol_space');
+        's_default_currency_symbol_order', 's_default_currency_symbol_space', 's_read_only');
 
     const FIELD_ALIAS = 'sslfd';
     const NAME_KEY = 'name';
@@ -141,9 +141,12 @@ class SslListColumns extends ListColumns
                 }
                 return '<a href="edit.php?sslcid=' . $row->id . '"' . $expired . '>' . $row->expiry_date . '</a>';
 
+            // The fee links to the certificate's fee, except for read-only users, who can't edit it (as on the SSL Fees
+            // report)
             case 'fee':
                 $amount = $this->currency->format($row->total_cost * $row->conversion, $s['s_default_currency_symbol'],
                     $s['s_default_currency_symbol_order'], $s['s_default_currency_symbol_space']);
+                if (($s['s_read_only'] ?? '') == '1') return htmlentities($amount, ENT_QUOTES, 'UTF-8');
                 return '<a href="../assets/edit/ssl-provider-fee.php?sslpid=' . $row->sslp_id . '&fee_id=' . $row->f_id . '">'
                     . htmlentities($amount, ENT_QUOTES, 'UTF-8') . '</a>';
 

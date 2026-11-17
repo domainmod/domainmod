@@ -237,35 +237,38 @@
                 </li>
             </ul>
         </li>
-        <li class="nav-item<?php if ($software_section == "maintenance") echo " menu-open"; ?>">
-            <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>" aria-label="<?php echo _('Fees & Rates'); ?>">
-                <i class="nav-icon bi bi-check-lg"></i>
-                <p>
-                    <?php echo _('Fees & Rates') ?>
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                </p>
-            </a>
-            <ul class="nav nav-treeview">
-                <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Conversion Rates'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('Update Conversion Rates') ?></p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Domain Fees'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('Update Domain Fees') ?></p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update SSL Fees'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('Update SSL Fees') ?></p>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        <?php // Read-only users can't recalculate fees or rates, so the section is left out for them
+        if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
+            <li class="nav-item<?php if ($software_section == "maintenance") echo " menu-open"; ?>">
+                <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>" aria-label="<?php echo _('Fees & Rates'); ?>">
+                    <i class="nav-icon bi bi-check-lg"></i>
+                    <p>
+                        <?php echo _('Fees & Rates') ?>
+                        <i class="nav-arrow bi bi-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Conversion Rates'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update Conversion Rates') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Domain Fees'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update Domain Fees') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update SSL Fees'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update SSL Fees') ?></p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        <?php } ?>
 
         <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
             <li class="nav-item<?php if ($software_section == "admin") echo " menu-open"; ?>">

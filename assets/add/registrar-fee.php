@@ -47,6 +47,9 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
 $rid = (int) ($_REQUEST['rid'] ?? 0);
+// Opened from the Domain Fees report's Missing Fees, the page goes back there once the fee is added (the only return
+// it accepts)
+$return = ($_REQUEST['return'] ?? '') === 'missing' ? 'missing' : '';
 $tld = isset($_GET['tld']) ? $sanitize->text($_GET['tld']) : '';
 if ($tld != '') {
     $new_tld = $tld;
@@ -184,7 +187,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added.'), $new_tld) . '<BR>';
 
-                header("Location: ../registrar-fees.php?rid=" . $rid);
+                if ($return === 'missing') {
+                    // Back to the missing fees while any are left, otherwise to the top of the report
+                    header("Location: ../../reporting/domains/registrar-fees.php?all=0" . ($_SESSION['s_missing_domain_fees'] == 1 ? '#missing' : ''));
+                } else {
+                    header("Location: ../registrar-fees.php?rid=" . $rid);
+                }
                 exit;
 
             } catch (Exception $e) {
@@ -243,6 +251,7 @@ echo $form->showDropdownBottom('');
 
 echo $form->showSubmitButton(_('Add Fee'), '', '');
 echo $form->showInputHidden('rid', $rid);
+if ($return !== '') echo $form->showInputHidden('return', $return);
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

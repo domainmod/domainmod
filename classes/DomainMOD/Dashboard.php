@@ -101,6 +101,7 @@ class Dashboard
      * "Hide this checklist" button posts to settings/toggles/getting-started/, a plain form so it works without
      * JavaScript, and Display Settings brings the checklist back. Read-only users can hide it too, since it's their own
      * display choice, not a change to anyone's data.
+     * The fees step is optional (domains can be added first), so it only ever has an outline button.
      */
     public function gettingStarted()
     {
@@ -111,6 +112,7 @@ class Dashboard
 
         $has_registrar = (int) $pdo->query("SELECT COUNT(*) FROM registrars")->fetchColumn() > 0;
         $has_account = (int) $pdo->query("SELECT COUNT(*) FROM registrar_accounts")->fetchColumn() > 0;
+        $has_fee = (int) $pdo->query("SELECT COUNT(*) FROM fees")->fetchColumn() > 0;
         $queue_waiting = (int) $pdo->query("
             SELECT COUNT(*)
             FROM domain_queue
@@ -122,7 +124,8 @@ class Dashboard
             $domains_text = $esc(sprintf(_('Add them one at a time, let %s fetch them from your registrar, or import a CSV file.'), SOFTWARE_TITLE));
         }
 
-        // Each step: done, title, explanation (HTML), the button (URL and label), and extra links (URL and label)
+        // Each step: done, title, explanation (HTML), the button (URL and label), extra links (URL and label), and
+        // whether it's optional (an optional step never has the main button, which goes to the next step that isn't)
         $steps = array(
             array(true, sprintf(_('Install %s'), SOFTWARE_TITLE), '', '', '', array()),
             array($has_registrar, _('Add your registrar'),
@@ -131,6 +134,9 @@ class Dashboard
             array($has_account, _('Add your registrar account'),
                 $esc(sprintf(_('With its API details, %s can fetch your domains and their expiry dates for you.'), SOFTWARE_TITLE)),
                 '/assets/add/registrar-account.php', _('Add Registrar Account'), array()),
+            array($has_fee, _('Add your fees'),
+                $esc(sprintf(_("Optional. With what your registrar charges for each TLD, %s can work out your costs. A domain whose TLD has no fee is hidden from the Domains list until one is added."), SOFTWARE_TITLE)),
+                '/reporting/domains/registrar-fees.php?all=1', _('Domain Fees'), array(), true),
             array(false, _('Add your domains'), $domains_text, '/domains/add.php', _('Add Domain'),
                 array(array('/queue/intro.php', _('Add Domains Automatically')),
                       array('/domains/csv-importer/', _('CSV Importer')))));
@@ -159,7 +165,7 @@ class Dashboard
                 <ol class="domainmod-getting-started-steps"><?php
                 foreach ($steps as $index => $step) {
                     list($is_done, $title, $text, $url, $label, $links) = $step;
-                    $is_next = !$is_done && !$next_found;
+                    $is_next = !$is_done && !$next_found && empty($step[6]);
                     if ($is_next) $next_found = true; ?>
                     <li class="domainmod-getting-started-step<?php echo $is_done ? ' is-done' : ($is_next ? ' is-next' : ''); ?>">
                         <span class="domainmod-step-number" aria-hidden="true"><?php if ($is_done) { ?><i class="bi bi-check-lg"></i><?php } else { echo $index + 1; } ?></span>

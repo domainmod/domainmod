@@ -225,7 +225,7 @@ if ($missing_fees) {
     foreach ($missing_fees as $row) {
         $missing_by_provider[$row->id]['row'] = $row;
         $missing_by_provider[$row->id]['types'][] = $can_edit
-            ? '<a href="../../assets/add/ssl-provider-fee.php?sslpid=' . (int) $row->id . '&amp;type_id=' . (int) $row->type_id . '">' . $row->type . '</a>'
+            ? '<a href="../../assets/add/ssl-provider-fee.php?sslpid=' . (int) $row->id . '&amp;type_id=' . (int) $row->type_id . '&amp;return=missing">' . $row->type . '</a>'
             : $row->type;
     } ?>
 
@@ -235,7 +235,7 @@ if ($missing_fees) {
         <thead>
         <tr>
             <th scope="col"><?php echo _('Provider'); ?></th>
-            <th scope="col"><?php echo _('Missing Fees'); ?></th>
+            <th scope="col"><?php echo _('Missing SSL Type Fees'); ?></th>
         </tr>
         </thead>
         <tbody><?php

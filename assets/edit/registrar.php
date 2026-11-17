@@ -214,6 +214,9 @@ if ($del === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('Fees'), '../registrar-fees.php?rid=' . $rid, 'bi-cash-coin');
+
 echo $form->showFormTop('');
 echo $form->showInputText('new_registrar', _('Registrar Name') . ' (100)', '', $unsanitize->text($new_registrar), '100', '', '1', '', '');
 echo $form->showInputText('new_url', _("Registrar's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');

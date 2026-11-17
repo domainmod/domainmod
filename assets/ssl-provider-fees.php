@@ -114,6 +114,9 @@ if ($export_data === 1) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
+// Users who can edit fees get links to them: each missing type to Add Fee for it, and each type to its fee (read-only
+// users see them as plain text, as on the SSL Fees report)
+$can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
 $layout->setPageAddAction(_('Add Fee'), 'add/ssl-provider-fee.php?sslpid=' . urlencode($sslpid));
 $layout->addPageAction(_('Export'), 'ssl-provider-fees.php?sslpid=' . urlencode($sslpid) . '&export_data=1', 'bi-download');
 
@@ -138,7 +141,9 @@ if ($result2) { ?>
 
     foreach ($result2 as $row2) {
 
-        $temp_all_missing_fees = $temp_all_missing_fees .= "<a href=\"add/ssl-provider-fee.php?sslpid=" . $sslpid . "&type_id=" . $row2->id . "\">" . $row2->type . "</a>, ";
+        $temp_all_missing_fees = $temp_all_missing_fees .= $can_edit
+            ? "<a href=\"add/ssl-provider-fee.php?sslpid=" . $sslpid . "&type_id=" . $row2->id . "\">" . $row2->type . "</a>, "
+            : $row2->type . ", ";
         $count++;
 
     }
@@ -180,7 +185,12 @@ if (!$result) {
             <tr>
             <td></td>
             <td>
-                <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->type; ?></a>
+                <?php
+                if ($can_edit) { ?>
+                    <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->type; ?></a><?php
+                } else {
+                    echo $row->type;
+                } ?>
             </td>
             <td class="text-end" data-order="<?php echo (float) $row->initial_fee; ?>"><?php
                 if ($row->initial_fee > 0) {

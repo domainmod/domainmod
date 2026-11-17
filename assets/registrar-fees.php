@@ -117,6 +117,9 @@ if ($export_data === 1) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
+// Users who can edit fees get links to them: each missing TLD to Add Fee for it, and each TLD to its fee (read-only
+// users see them as plain text, as on the Domain Fees report)
+$can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
 $layout->setPageAddAction(_('Add Fee'), 'add/registrar-fee.php?rid=' . urlencode($rid));
 $layout->addPageAction(_('Export'), 'registrar-fees.php?rid=' . urlencode($rid) . '&export_data=1', 'bi-download');
 
@@ -140,7 +143,9 @@ if ($result2) { ?>
 
     foreach ($result2 as $row2) {
 
-        $temp_all_missing_fees .= "<a href=\"add/registrar-fee.php?rid=" . htmlentities($rid) . "&tld=" . $row2->tld . "\">." . $row2->tld . "</a>, ";
+        $temp_all_missing_fees .= $can_edit
+            ? "<a href=\"add/registrar-fee.php?rid=" . htmlentities($rid) . "&tld=" . $row2->tld . "\">." . $row2->tld . "</a>, "
+            : "." . $row2->tld . ", ";
         $count++;
 
     }
@@ -183,7 +188,12 @@ if (!$result) {
             <tr>
             <td></td>
             <td>
-                <bdi dir="ltr">.<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a></bdi>
+                <?php
+                if ($can_edit) { ?>
+                    <bdi dir="ltr">.<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a></bdi><?php
+                } else { ?>
+                    <bdi dir="ltr">.<?php echo $row->tld; ?></bdi><?php
+                } ?>
             </td>
             <td class="text-end" data-order="<?php echo (float) $row->initial_fee; ?>"><?php
                 if ($row->initial_fee > 0) {

@@ -255,6 +255,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= sprintf(_('Domain %s added'), $new_domain) . '<BR>';
 
+                // A domain added without a fee is hidden from the list, so the add says so (DomainMOD\FeeStatus)
+                $fee_status = new DomainMOD\FeeStatus();
+                $fee_row = $fee_status->domainFee($temp_domain_id);
+                if ($fee_row && !$fee_status->hasFee($fee_row)) $_SESSION['s_message_warning'] .= $fee_status->domainWarning($fee_row, true) . '<BR>';
+
             } catch (Exception $e) {
 
                 if ($pdo->InTransaction()) $pdo->rollback();
