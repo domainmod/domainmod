@@ -52,12 +52,17 @@ $new_registrar_id = (int) ($_POST['new_registrar_id'] ?? 0);
 $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 $new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
 $new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
+// A typed value wins over its Remove box, so the box only counts when nothing is typed (and a form shown again
+// after a failed save doesn't tick it under a value that has to be typed again)
+$new_password_remove = (int) ($_POST['new_password_remove'] ?? 0) === 1 && $new_password === '';
 $new_account_id = isset($_POST['new_account_id']) ? $sanitize->text($_POST['new_account_id']) : '';
 $new_reseller = (int) ($_POST['new_reseller'] ?? 0);
 $new_reseller_id = isset($_POST['new_reseller_id']) ? $sanitize->text($_POST['new_reseller_id']) : '';
 $new_api_app_name = isset($_POST['new_api_app_name']) ? $sanitize->text($_POST['new_api_app_name']) : '';
 $new_api_key = isset($_POST['new_api_key']) ? $sanitize->text($_POST['new_api_key']) : '';
 $new_api_secret = isset($_POST['new_api_secret']) ? $sanitize->text($_POST['new_api_secret']) : '';
+$new_api_key_remove = (int) ($_POST['new_api_key_remove'] ?? 0) === 1 && $new_api_key === '';
+$new_api_secret_remove = (int) ($_POST['new_api_secret_remove'] ?? 0) === 1 && $new_api_secret === '';
 $new_api_ip_id = (int) ($_POST['new_api_ip_id'] ?? 0);
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 $new_raid = (int) ($_POST['new_raid'] ?? 0);
@@ -91,8 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            // An empty Password field keeps the saved password, so the column is only set when one is typed
-            $password_column = $new_password !== '' ? '`password` = :new_password,' : '';
+            // An empty Password, API Key, or API Secret field keeps the saved value, so each column is only set when
+            // something is typed or its Remove box is ticked
+            $password_to_store = DomainMOD\Form::savedSecretToStore($new_password, $new_password_remove);
+            $api_key_to_store = DomainMOD\Form::savedSecretToStore($new_api_key, $new_api_key_remove);
+            $api_secret_to_store = DomainMOD\Form::savedSecretToStore($new_api_secret, $new_api_secret_remove);
+            $password_column = $password_to_store !== null ? '`password` = :new_password,' : '';
+            $api_key_column = $api_key_to_store !== null ? 'api_key = :new_api_key,' : '';
+            $api_secret_column = $api_secret_to_store !== null ? 'api_secret = :new_api_secret,' : '';
 
             $stmt = $pdo->prepare("
                 UPDATE registrar_accounts
@@ -105,8 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     reseller = :new_reseller,
                     reseller_id = :new_reseller_id,
                     api_app_name = :new_api_app_name,
-                    api_key = :new_api_key,
-                    api_secret = :new_api_secret,
+                    " . $api_key_column . "
+                    " . $api_secret_column . "
                     api_ip_id = :new_api_ip_id,
                     notes = :new_notes,
                     update_time = :timestamp
@@ -115,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
             $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
             $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-            if ($new_password !== '') $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            if ($password_to_store !== null) $stmt->bindValue('new_password', $password_to_store, PDO::PARAM_STR);
             $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_STR);
             $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
             $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
             $stmt->bindValue('new_api_app_name', $new_api_app_name, PDO::PARAM_STR);
-            $stmt->bindValue('new_api_key', $new_api_key, PDO::PARAM_STR);
-            $stmt->bindValue('new_api_secret', $new_api_secret, PDO::PARAM_STR);
+            if ($api_key_to_store !== null) $stmt->bindValue('new_api_key', $api_key_to_store, PDO::PARAM_STR);
+            if ($api_secret_to_store !== null) $stmt->bindValue('new_api_secret', $api_secret_to_store, PDO::PARAM_STR);
             $stmt->bindValue('new_api_ip_id', $new_api_ip_id, PDO::PARAM_INT);
             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
             $timestamp = $time->stamp();
@@ -183,9 +194,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('new_username', _('Enter the username'));
         }
 
-        // A typed password isn't put back in the field, so it has to be typed again
-        if ($new_password !== '') {
-            $form->addFieldError('new_password', _('Enter the new password again'));
+        // A typed password, API key, or API secret isn't put back in the field, so it has to be typed again
+        foreach (array('new_password' => $new_password, 'new_api_key' => $new_api_key, 'new_api_secret' => $new_api_secret) as $secret_field => $typed_secret) {
+            if ($typed_secret !== '') {
+                $form->addFieldError($secret_field, _('Enter the new value again'));
+            }
         }
 
     }
@@ -194,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt = $pdo->prepare("
         SELECT owner_id, registrar_id, email_address, username, account_id, reseller, reseller_id,
-               api_app_name, api_key, api_secret, api_ip_id, notes
+               api_app_name, api_ip_id, notes
         FROM registrar_accounts
         WHERE id = :raid");
     $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
@@ -212,8 +225,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_reseller = $result->reseller;
         $new_reseller_id = $result->reseller_id;
         $new_api_app_name = $result->api_app_name;
-        $new_api_key = $result->api_key;
-        $new_api_secret = $result->api_secret;
         $new_api_ip_id = $result->api_ip_id;
         $new_notes = $result->notes;
 
@@ -304,16 +315,19 @@ if ($del === 1) {
 
 }
 
-// Whether the account has a saved password, for the Password field's note and the API requirements (the field itself
-// never shows it)
+// Whether the account has a saved password, API key, and API secret, for their fields' notes and the API requirements
+// (the fields themselves never show them)
 $stmt = $pdo->prepare("
-    SELECT `password`
+    SELECT `password`, api_key, api_secret
     FROM registrar_accounts
     WHERE id = :raid");
 $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
 $stmt->execute();
-$has_saved_password = (string) $stmt->fetchColumn() !== '';
+$result = $stmt->fetch();
 $stmt->closeCursor();
+$has_saved_password = $result && (string) $result->password !== '';
+$has_saved_api_key = $result && (string) $result->api_key !== '';
+$has_saved_api_secret = $result && (string) $result->api_secret !== '';
 
 // the registrar's API requirements, for registrars with an API; registrars without one show no API fields
 $has_api_support = 0;
@@ -410,7 +424,7 @@ if ($result) {
 
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showSavedPassword('new_password', _('Password') . ' (255)', $has_saved_password, '255');
+echo $form->showSavedPassword('new_password', _('Password') . ' (255)', $has_saved_password, '255', $new_password_remove);
 echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
 // The switch is one grid item, with the same spacing as the other fields
 echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
@@ -434,8 +448,8 @@ if ($has_api_support >= 1) {
             array($req_account_id, _('Registrar Account ID'), $new_account_id == ''),
             array($req_reseller_id, _('Reseller ID'), $new_reseller_id == '' || $new_reseller_id == '0'),
             array($req_api_app_name, _('API Application Name'), $new_api_app_name == ''),
-            array($req_api_key, _('API Key'), $new_api_key == ''),
-            array($req_api_secret, _('API Secret'), $new_api_secret == ''),
+            array($req_api_key, _('API Key'), !$has_saved_api_key),
+            array($req_api_secret, _('API Secret'), !$has_saved_api_secret),
             array($req_ip_address, _('Connecting IP Address'), $new_api_ip_id == 0),
         );
 
@@ -463,8 +477,8 @@ if ($has_api_support >= 1) {
     </div><?php
 
     echo $form->showInputText('new_api_app_name', _('API App Name'), '', $unsanitize->text($new_api_app_name), '255', '', '', '', '');
-    echo $form->showInputText('new_api_key', _('API Key'), '', $unsanitize->text($new_api_key), '255', '', '', '', '');
-    echo $form->showInputText('new_api_secret', _('API Secret'), '', $unsanitize->text($new_api_secret), '255', '', '', '', '');
+    echo $form->showSavedPassword('new_api_key', _('API Key'), $has_saved_api_key, '255', $new_api_key_remove);
+    echo $form->showSavedPassword('new_api_secret', _('API Secret'), $has_saved_api_secret, '255', $new_api_secret_remove);
 
     $result = $pdo->query("
         SELECT id, `name`, ip

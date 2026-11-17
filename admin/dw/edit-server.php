@@ -53,6 +53,10 @@ $new_port = (int) ($_POST['new_port'] ?? 0);
 $new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
 $new_api_token = isset($_POST['new_api_token']) ? $sanitize->text($_POST['new_api_token']) : '';
 $new_hash = isset($_POST['new_hash']) ? $sanitize->text($_POST['new_hash']) : '';
+// A typed value wins over its Remove box, so the box only counts when nothing is typed (and a form shown again
+// after a failed save doesn't tick it under a value that has to be typed again)
+$new_api_token_remove = (int) ($_POST['new_api_token_remove'] ?? 0) === 1 && $new_api_token === '';
+$new_hash_remove = (int) ($_POST['new_hash_remove'] ?? 0) === 1 && $new_hash === '';
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']): '';
 $new_dwsid = (int) ($_POST['new_dwsid'] ?? 0);
 // an unticked checkbox isn't posted, so a missing value means certificate checks are off
@@ -60,8 +64,32 @@ $new_verify_ssl = (int) ($_POST['new_verify_ssl'] ?? 0) === 1 ? 1 : 0;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name == "" || $new_host == "" || $new_protocol == "" || $new_port === 0 || $new_username == "" || ($new_api_token == "" && $new_hash == "")
+    /*
+     * An empty API Token or Remote Access Key/Hash field keeps the saved value, so each column is only set when
+     * something is typed or its Remove box is ticked. The server still needs one of them once it's saved. The row is
+     * locked until the save, so two saves at once can't each remove a different one and leave neither.
+     */
+    $pdo->beginTransaction();
+
+    $stmt = $pdo->prepare("
+        SELECT api_token, `hash`
+        FROM dw_servers
+        WHERE id = :new_dwsid
+        FOR UPDATE");
+    $stmt->bindValue('new_dwsid', $new_dwsid, PDO::PARAM_INT);
+    $stmt->execute();
+    $saved = $stmt->fetch();
+    $stmt->closeCursor();
+
+    $api_token_to_store = DomainMOD\Form::savedSecretToStore($new_api_token, $new_api_token_remove);
+    $hash_to_store = DomainMOD\Form::savedSecretToStore($new_hash, $new_hash_remove);
+    $api_token_after_save = $api_token_to_store ?? ($saved ? (string) $saved->api_token : '');
+    $hash_after_save = $hash_to_store ?? ($saved ? (string) $saved->hash : '');
+
+    if ($new_name == "" || $new_host == "" || $new_protocol == "" || $new_port === 0 || $new_username == "" || ($api_token_after_save === '' && $hash_after_save === '')
     ) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
 
         if ($new_name == "") {
             $form->addFieldError('new_name', _('Enter a display name for the server'));
@@ -78,11 +106,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_username == "") {
             $form->addFieldError('new_username', _('Enter the username'));
         }
-        if ($new_api_token == "" && $new_hash == "") {
+        if ($api_token_after_save === '' && $hash_after_save === '') {
             $form->addFieldError(array('new_api_token', 'new_hash'), _('Enter either the API token or remote access key/hash'));
+        }
+        // A typed API token or key isn't put back in the field, so it has to be typed again
+        if ($new_api_token !== '') {
+            $form->addFieldError('new_api_token', _('Enter the new value again'));
+        }
+        if ($new_hash !== '') {
+            $form->addFieldError('new_hash', _('Enter the new value again'));
         }
 
     } else {
+
+        $api_token_column = $api_token_to_store !== null ? 'api_token = :new_api_token,' : '';
+        $hash_column = $hash_to_store !== null ? '`hash` = :new_hash,' : '';
 
         $stmt = $pdo->prepare("
             UPDATE dw_servers
@@ -91,8 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 protocol = :new_protocol,
                 `port` = :new_port,
                 username = :new_username,
-                api_token = :new_api_token,
-                `hash` = :new_hash,
+                " . $api_token_column . "
+                " . $hash_column . "
                 verify_ssl = :new_verify_ssl,
                 notes = :new_notes,
                 update_time = :timestamp
@@ -102,14 +140,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('new_protocol', $new_protocol, PDO::PARAM_STR);
         $stmt->bindValue('new_port', $new_port, PDO::PARAM_INT);
         $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-        $stmt->bindValue('new_api_token', $new_api_token, PDO::PARAM_STR);
-        $stmt->bindValue('new_hash', $new_hash, PDO::PARAM_LOB);
+        if ($api_token_to_store !== null) $stmt->bindValue('new_api_token', $api_token_to_store, PDO::PARAM_STR);
+        if ($hash_to_store !== null) $stmt->bindValue('new_hash', $hash_to_store, PDO::PARAM_LOB);
         $stmt->bindValue('new_verify_ssl', $new_verify_ssl, PDO::PARAM_INT);
         $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
         $timestamp = $time->stamp();
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->bindValue('new_dwsid', $new_dwsid, PDO::PARAM_INT);
         $stmt->execute();
+
+        if ($pdo->InTransaction()) $pdo->commit();
 
         $dwsid = $new_dwsid;
 
@@ -123,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 
     $stmt = $pdo->prepare("
-        SELECT `name`, `host`, protocol, `port`, username, api_token, `hash`, verify_ssl, notes
+        SELECT `name`, `host`, protocol, `port`, username, verify_ssl, notes
         FROM dw_servers
         WHERE id = :dwsid");
     $stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
@@ -138,8 +178,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_protocol = $result->protocol;
         $new_port = $result->port;
         $new_username = $result->username;
-        $new_api_token = $result->api_token;
-        $new_hash = $result->hash;
         $new_verify_ssl = (int) $result->verify_ssl;
         $new_notes = $result->notes;
 
@@ -201,6 +239,19 @@ if ($del === 1) {
     exit;
 
 }
+
+// Whether the server has a saved API token and remote access key/hash, for their fields' notes (the fields themselves
+// never show them)
+$stmt = $pdo->prepare("
+    SELECT api_token, `hash`
+    FROM dw_servers
+    WHERE id = :dwsid");
+$stmt->bindValue('dwsid', $dwsid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetch();
+$stmt->closeCursor();
+$has_saved_api_token = $result && (string) $result->api_token !== '';
+$has_saved_hash = $result && (string) $result->hash !== '';
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -228,8 +279,10 @@ echo $layout->formSection(_('Server'), 'server', ob_get_clean());
 ob_start(); ?>
 <p class="domainmod-span-all"><?php echo _('Enter an API token or a remote access key. Only one is needed, and an API token is the better choice if your WHM supports it.'); ?></p><?php
 echo $form->showInputText('new_username', _('Username') . ' (100)', _('Enter the username for your WHM installation.'), $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_api_token', _('API Token') . ' (255)', _('Enter the API token.'), $unsanitize->text($new_api_token), '255', '', '', '', '');
-echo $form->showInputTextarea('new_hash', _('Remote Access Key/Hash'), _('Enter the remote access key/hash for your WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.'), $unsanitize->text($new_hash), '', '<div class="domainmod-span-all">', '</div>');
+echo $form->showSavedPassword('new_api_token', _('API Token') . ' (255)', $has_saved_api_token, '255', $new_api_token_remove, _('Enter the API token.'));
+// A password field, so the key is hidden like the API token. It drops the line breaks of a pasted key, which WHM
+// doesn't need (DwBuild::apiGet() removes them anyway).
+echo '<div class="domainmod-span-all">' . $form->showSavedPassword('new_hash', _('Remote Access Key/Hash'), $has_saved_hash, '', $new_hash_remove, _('Enter the remote access key/hash for your WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.')) . '</div>';
 echo $layout->formSection(_('Credentials'), 'credentials', ob_get_clean());
 
 ob_start();

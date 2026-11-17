@@ -55,13 +55,18 @@ $new_smtp_port = (int) ($_POST['new_smtp_port'] ?? 0);
 $new_smtp_email_address = isset($_POST['new_smtp_email_address']) ? $sanitize->text($_POST['new_smtp_email_address']) : '';
 $new_smtp_username = isset($_POST['new_smtp_username']) ? $sanitize->text($_POST['new_smtp_username']) : '';
 $new_smtp_password = isset($_POST['new_smtp_password']) ? $sanitize->text($_POST['new_smtp_password']) : '';
+// A typed value wins over its Remove box, so the box only counts when nothing is typed (and a form shown again
+// after a failed save doesn't tick it under a value that has to be typed again)
+$new_smtp_password_remove = (int) ($_POST['new_smtp_password_remove'] ?? 0) === 1 && $new_smtp_password === '';
 $new_debug_mode = (int) ($_POST['new_debug_mode'] ?? 0);
 $new_local_php_log = (int) ($_POST['new_local_php_log'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0) {
 
-    // An empty SMTP Password field keeps the saved password, so the column is only set when one is typed
-    $smtp_password_column = $new_smtp_password !== '' ? 'smtp_password = :new_smtp_password,' : '';
+    // An empty SMTP Password field keeps the saved password, so the column is only set when one is typed or its
+    // Remove box is ticked
+    $smtp_password_to_store = DomainMOD\Form::savedSecretToStore($new_smtp_password, $new_smtp_password_remove);
+    $smtp_password_column = $smtp_password_to_store !== null ? 'smtp_password = :new_smtp_password,' : '';
 
     $stmt = $pdo->prepare("
         UPDATE settings
@@ -88,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     $stmt->bindValue('new_smtp_port', $new_smtp_port, PDO::PARAM_INT);
     $stmt->bindValue('new_smtp_email_address', $new_smtp_email_address, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_username', $new_smtp_username, PDO::PARAM_STR);
-    if ($new_smtp_password !== '') $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);
+    if ($smtp_password_to_store !== null) $stmt->bindValue('new_smtp_password', $smtp_password_to_store, PDO::PARAM_STR);
     $stmt->bindValue('new_expiration_days', $new_expiration_days, PDO::PARAM_INT);
     $stmt->bindValue('new_email_signature', $new_email_signature, PDO::PARAM_INT);
     $stmt->bindValue('new_currency_converter', $new_currency_converter, PDO::PARAM_STR);
@@ -118,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
         if ($new_email_address == "") $form->addFieldError('new_email_address', _('Enter the system email address'));
         if ($new_expiration_days == "") $form->addFieldError('new_expiration_days', _('Enter the number of days to display in expiration emails'));
         // A typed password isn't put back in the field, so it has to be typed again
-        if ($new_smtp_password !== '') $form->addFieldError('new_smtp_password', _('Enter the new password again'));
+        if ($new_smtp_password !== '') $form->addFieldError('new_smtp_password', _('Enter the new value again'));
 
     } else {
 
@@ -204,7 +209,7 @@ echo $form->showRadioBottom('');
 echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
 echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
-echo $form->showSavedPassword('new_smtp_password', _('SMTP Password') . ' (255)', $has_saved_smtp_password, '255');
+echo $form->showSavedPassword('new_smtp_password', _('SMTP Password') . ' (255)', $has_saved_smtp_password, '255', $new_smtp_password_remove);
 echo $layout->formSection(_('SMTP Server Settings'), 'smtp', ob_get_clean());
 
 echo $form->showSubmitButton(_('Update System Settings'), '', '');

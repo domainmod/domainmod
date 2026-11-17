@@ -52,6 +52,9 @@ $new_ssl_provider_id = (int) ($_POST['new_ssl_provider_id'] ?? 0);
 $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 $new_username = isset($_POST['new_username']) ? $sanitize->text($_POST['new_username']) : '';
 $new_password = isset($_POST['new_password']) ? $sanitize->text($_POST['new_password']) : '';
+// A typed value wins over its Remove box, so the box only counts when nothing is typed (and a form shown again
+// after a failed save doesn't tick it under a value that has to be typed again)
+$new_password_remove = (int) ($_POST['new_password_remove'] ?? 0) === 1 && $new_password === '';
 $new_reseller = (int) ($_POST['new_reseller'] ?? 0);
 $new_reseller_id = isset($_POST['new_reseller_id']) ? $sanitize->text($_POST['new_reseller_id']) : '';
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
@@ -86,13 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
+            // An empty Password field keeps the saved password, so the column is only set when one is typed or its
+            // Remove box is ticked
+            $password_to_store = DomainMOD\Form::savedSecretToStore($new_password, $new_password_remove);
+            $password_column = $password_to_store !== null ? '`password` = :new_password,' : '';
+
             $stmt = $pdo->prepare("
                 UPDATE ssl_accounts
                 SET owner_id = :new_owner_id,
                     ssl_provider_id = :new_ssl_provider_id,
                     email_address = :new_email_address,
                     username = :new_username,
-                    `password` =:new_password,
+                    " . $password_column . "
                     reseller = :new_reseller,
                     reseller_id = :new_reseller_id,
                     notes = :new_notes,
@@ -102,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
             $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
             $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            if ($password_to_store !== null) $stmt->bindValue('new_password', $password_to_store, PDO::PARAM_STR);
             $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
             $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
             $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
@@ -165,12 +173,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('new_username', _('Enter a username'));
         }
 
+        // A typed password isn't put back in the field, so it has to be typed again
+        if ($new_password !== '') {
+            $form->addFieldError('new_password', _('Enter the new value again'));
+        }
+
     }
 
 } else {
 
     $stmt = $pdo->prepare("
-        SELECT owner_id, ssl_provider_id, email_address, username, `password`, reseller, reseller_id, notes
+        SELECT owner_id, ssl_provider_id, email_address, username, reseller, reseller_id, notes
         FROM ssl_accounts
         WHERE id = :sslpaid");
     $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
@@ -184,7 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_ssl_provider_id = $result->ssl_provider_id;
         $new_email_address = $result->email_address;
         $new_username = $result->username;
-        $new_password = $result->password;
         $new_reseller = $result->reseller;
         $new_reseller_id = $result->reseller_id;
         $new_notes = $result->notes;
@@ -263,6 +275,16 @@ if ($del === 1) {
     }
 
 }
+
+// Whether the account has a saved password, for the Password field's note (the field itself never shows it)
+$stmt = $pdo->prepare("
+    SELECT `password`
+    FROM ssl_accounts
+    WHERE id = :sslpaid");
+$stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+$stmt->execute();
+$has_saved_password = (string) $stmt->fetchColumn() !== '';
+$stmt->closeCursor();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -316,7 +338,7 @@ if ($result) {
 
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showSavedPassword('new_password', _('Password') . ' (255)', $has_saved_password, '255', $new_password_remove);
 // The switch is one grid item, with the same spacing as the other fields
 echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
 echo $form->showInputText('new_reseller_id', _('Reseller ID') . ' (100)', '', $unsanitize->text($new_reseller_id), '100', '', '', '', '');

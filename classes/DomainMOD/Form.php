@@ -182,9 +182,10 @@ class Form
      * is showing an error message (including one carried over from a redirect) or the form is shown again after a
      * submit, so the focus doesn't skip past the message. A mistake recorded for the field with addFieldError() shows
      * under it, and the first such field on the page gets the focus instead. A password field is marked as a new
-     * password, so browsers don't fill in the user's saved DomainMOD sign-in.
+     * password, so browsers don't fill in the user's saved DomainMOD sign-in. An empty $maxlength leaves the length
+     * open, and $below is HTML shown under the field, inside its grid item (such as showSavedPassword()'s Remove box).
      */
-    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '', $dir = '')
+    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '', $dir = '', $below = '')
     {
         ob_start();
             echo $before; ?>
@@ -192,22 +193,50 @@ class Form
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'new-password'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_password == '1'); ?>
-                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
-                <?php echo $this->errorFeedback($name); ?>
+                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" <?php if ((string) $maxlength !== '') echo ' maxlength="' . $maxlength . '"'; ?><?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
+                <?php echo $this->errorFeedback($name); ?><?php echo $below; ?>
             </div><?php
             echo $after;
         return ob_get_clean();
     }
 
     /*
-     * A password field for a password that's stored, such as the SMTP password. The stored password never goes into the
-     * page: the field is always empty, and when a password is stored, a note under the label says leaving it empty keeps
-     * it. The page saves the field only when something is typed in it.
+     * A password field for a secret that's stored, such as the SMTP password or a registrar account's API key. The stored
+     * value never goes into the page: the field is always empty. When a value is stored, a note under the label says
+     * leaving the field empty keeps it, and a "Remove the saved value" box under the field (named $name . '_remove')
+     * blanks it instead. $remove_checked ticks the box again when the form is shown after a failed submit, and $subtext
+     * is the field's own help, shown before the note. The page saves what savedSecretToStore() returns.
      */
-    public function showSavedPassword($name, $text_to_display, $has_saved_password, $maxlength)
+    public function showSavedPassword($name, $text_to_display, $has_saved_password, $maxlength, $remove_checked = false, $subtext = '')
     {
-        $subtext = $has_saved_password ? _('Leave this empty to keep the saved password.') : '';
-        return $this->showInputText($name, $text_to_display, $subtext, '', $maxlength, '1', '', '', '');
+        $below = '';
+
+        if ($has_saved_password) {
+
+            $keep_note = _('Leave this empty to keep the saved value.');
+            $subtext = $subtext !== '' ? $subtext . ' ' . $keep_note : $keep_note;
+
+            $remove_name = $name . '_remove';
+            $remove_id = $this->fieldId($remove_name);
+            $below = '<div class="form-check mt-2">'
+                . '<input class="form-check-input" type="checkbox" name="' . $remove_name . '" id="' . $remove_id . '" value="1"' . ($remove_checked ? ' checked' : '') . '>'
+                . '<label class="form-check-label" for="' . $remove_id . '">' . _('Remove the saved value') . '</label>'
+                . '</div>';
+
+        }
+
+        return $this->showInputText($name, $text_to_display, $subtext, '', $maxlength, '1', '', '', '', '', '', $below);
+    }
+
+    /*
+     * What a page saves for a saved-secret field (showSavedPassword()): the typed value when there is one, an empty
+     * value when only its Remove box is ticked, or null to leave the saved value as it is (nothing typed, box not
+     * ticked). A typed value wins over the box, so ticking it and typing a new value saves the new value.
+     */
+    public static function savedSecretToStore($typed, $remove)
+    {
+        if ((string) $typed !== '') return (string) $typed;
+        return $remove ? '' : null;
     }
 
     /*
