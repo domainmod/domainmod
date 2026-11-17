@@ -175,7 +175,6 @@ echo $form->showDropdownOption('MOP', 'Macau Pataca', $selected_currency);
 echo $form->showDropdownOption('MKD', 'Macedonia Denar', $selected_currency);
 echo $form->showDropdownOption('MGA', 'Malagasy Ariary', $selected_currency);
 echo $form->showDropdownOption('MWK', 'Malawian Kwacha', $selected_currency);
-echo $form->showDropdownOption('RM', 'Malaysia Ringgit', $selected_currency);
 echo $form->showDropdownOption('MYR', 'Malaysian Ringgit', $selected_currency);
 echo $form->showDropdownOption('MVR', 'Maldivian Rufiyaa', $selected_currency);
 echo $form->showDropdownOption('MRO', 'Mauritanian Ouguiya', $selected_currency);
