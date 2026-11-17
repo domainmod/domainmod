@@ -255,7 +255,7 @@ if ($result) {
     if ($shown === 0) {
 
         ob_end_clean();
-        echo $layout->emptyState('bi-eye-slash', _('No registrars are in use'), _('Unused registrars are hidden. You can show them in Display Settings.'), '', '', '/settings/display/', _('Display Settings'));
+        echo $layout->emptyState('bi-eye-slash', _('No registrars are in use'), _('Unused registrars are hidden. Choose Show Inactive to see them.'), '', '', '/settings/display/', _('Display Settings'));
 
     } else {
 

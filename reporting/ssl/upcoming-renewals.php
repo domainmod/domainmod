@@ -223,7 +223,7 @@ if ($rows) {
 if ($list) { ?>
 
     <strong><?php echo _('Renewal Cost'); ?>:</strong> <?php echo $money($list_cost); ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($list)); ?><BR><?php
+    <strong><?php echo _('Number of SSL Certificates'); ?>:</strong> <?php echo number_format(count($list)); ?><BR><?php
 
     if ($list_missing > 0) { ?>
         <em><?php echo sprintf(ngettext('%s SSL certificate has no fee or rate and is left out of the cost.', '%s SSL certificates have no fee or rate and are left out of the cost.', $list_missing), number_format($list_missing)); ?></em><BR><?php

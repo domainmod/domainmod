@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('new_name', _('Enter the Segment name'));
         }
         if ($raw_domain_list == "") {
-            $form->addFieldError('raw_domain_list', _('Enter the Segment'));
+            $form->addFieldError('raw_domain_list', _('Enter the domains for the segment'));
         }
 
     }

@@ -259,7 +259,7 @@ if ($export_data == 1) {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        _('Number of SSL Certs') . ':',
+        _('Number of SSL Certificates') . ':',
         $total_rows
     );
     $export->writeRow($export_file, $row_contents);
@@ -638,7 +638,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' &
 
 if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
-    echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Cert'));
+    echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Certificate'));
     $ready_for_ssl_certs = 1;
 
 } elseif ($_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
@@ -1558,11 +1558,11 @@ if ($result) {
      * js/server-list.js adds the table's search box to them (dt_search). Read-only users can't add anything, so they
      * don't get the Add button (the add page turns them away too).
      */
-    if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
+    if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
+    <strong><?php echo _('Number of SSL Certificates'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
     <strong><?php echo _('Total Cost'); ?>:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
 
     if ($total_rows) {
@@ -1637,7 +1637,7 @@ if ($result) {
     // read-only users can't add anything
     if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1' && ($_SESSION['s_read_only'] ?? '') != '1') {
 
-        $layout->setPageAddAction(_('Add SSL Cert'), 'add.php');
+        $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
 
     }
 

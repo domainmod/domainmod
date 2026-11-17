@@ -25,6 +25,7 @@ $breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-ssl-providers";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
+// The last column, Options, holds only links, so it can't be sorted
 $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                           "paging": true,
                           "lengthChange": true,
@@ -42,6 +43,9 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                                            className: "control",
                                            orderable: false,
                                            targets:   0
+                                           }, {
+                                           orderable: false,
+                                           targets:   -1
                                            } ],
                           "ordering": true,
                           "order": [[ 1, "asc" ]],

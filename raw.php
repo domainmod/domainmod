@@ -58,7 +58,10 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <?php echo $layout->bodyTag('raw'); ?>
+<main>
 <?php
+// The list is the page's main content, so screen readers can go straight to it. Only the page itself scrolls (the
+// keyboard scrolls it already), so the list needs no tabindex of its own.
 // The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
 unset($_SESSION['s_raw_list_query']);
 /*
@@ -149,5 +152,6 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 
 }
 ?>
+</main>
 </body>
 </html>

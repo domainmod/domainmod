@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") $form->addFieldError('new_name', _('Enter the Segment name'));
-        if ($raw_domain_list == "") $form->addFieldError('raw_domain_list', _('Enter the Segment'));
+        if ($raw_domain_list == "") $form->addFieldError('raw_domain_list', _('Enter the domains for the segment'));
 
     }
 
@@ -333,7 +333,7 @@ echo $form->showInputTextarea('raw_domain_list', _('Segment Domains (one per lin
 echo $form->showInputTextarea('new_description', _('Description'), '', $unsanitize->text($new_description), '', '', '');
 echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
 echo $form->showInputHidden('new_segid', $segid);
-echo $form->showSubmitButton(_('Update Segment'), '', '');
+echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 $layout->dangerZone(_('Segment'), $new_name, 'edit.php?segid=' . $segid . '&del=1', _('Delete this segment'), sprintf(_('This removes %s. The domains in it aren\'t affected. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>

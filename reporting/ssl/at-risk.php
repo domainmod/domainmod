@@ -124,7 +124,7 @@ if ($export_data === 1 && $list) {
     $row_contents = array($intro);
     $export->writeRow($export_file, $row_contents);
 
-    $row_contents = array(_('Number of SSL Certs') . ':', number_format(count($list)));
+    $row_contents = array(_('Number of SSL Certificates') . ':', number_format(count($list)));
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
@@ -205,7 +205,7 @@ if ($show !== 'all') { ?>
 
 if ($list) { ?>
 
-    <strong><?php echo _('Number of SSL Certs'); ?>:</strong> <?php echo number_format(count($list)); ?><BR><BR>
+    <strong><?php echo _('Number of SSL Certificates'); ?>:</strong> <?php echo number_format(count($list)); ?><BR><BR>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
