@@ -65,7 +65,7 @@ if (!$result) {
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th></th>
+        <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
         <th><?php echo _('Provider'); ?></th>
         <th><?php echo _('Missing Fees'); ?></th>
     </tr>

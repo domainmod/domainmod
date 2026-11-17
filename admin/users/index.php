@@ -160,8 +160,7 @@ if ($export_data === 1) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
-if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add User'), 'add.php');
+$layout->setPageAddAction(_('Add User'), 'add.php');
 $layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download');
 
 if ($result) { ?>

@@ -2052,13 +2052,11 @@ if ($segid !== 0) {
 
 if ($result) {
 
-    // The page's actions, drawn in the page header (see Layout::renderPageActions()). Read-only users can't add
-    // anything, so they don't get the Add button or its menu (the add pages turn them away too).
-    if (($_SESSION['s_read_only'] ?? '') != '1') {
-        $layout->setPageAddAction(_('Add Domain'), 'add.php');
-        $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
-        $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
-    }
+    // The page's actions, drawn in the page header (see Layout::renderPageActions()). Layout leaves the Add button
+    // and its menu out for read-only users.
+    $layout->setPageAddAction(_('Add Domain'), 'add.php');
+    $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
+    $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
     // Both keep their ids, since js/server-list.js adds the table's search box to their links (dt_search)
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
@@ -2139,9 +2137,8 @@ if ($result) {
 
     $ready_for_domains = $ready_for_domains ?? 0;
 
-    // With no domains at all, the "No domains yet" empty state above already offers the ways to add them, and
-    // read-only users can't add anything
-    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1' && ($_SESSION['s_read_only'] ?? '') != '1') {
+    // With no domains at all, the "No domains yet" empty state above already offers the ways to add them
+    if ($ready_for_domains === 1 && $_SESSION['s_has_domain'] == '1') {
 
         $layout->setPageAddAction(_('Add Domain'), 'add.php');
         $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');

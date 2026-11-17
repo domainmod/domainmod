@@ -1555,10 +1555,10 @@ if ($result) {
      * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()), since the filter form posts
      * them and they'd otherwise never reach the export. Each active filter is written out (so an inactive-only list
      * keeps is_active=0), and the keyword and date range always are, empty when off. Both links keep their ids, since
-     * js/server-list.js adds the table's search box to them (dt_search). Read-only users can't add anything, so they
-     * don't get the Add button (the add page turns them away too).
+     * js/server-list.js adds the table's search box to them (dt_search). Layout leaves the Add button out for read-only
+     * users.
      */
-    if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
+    $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
@@ -1633,9 +1633,8 @@ if ($result) {
 
     $ready_for_ssl_certs = $ready_for_ssl_certs ?? 0;
 
-    // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button, and
-    // read-only users can't add anything
-    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1' && ($_SESSION['s_read_only'] ?? '') != '1') {
+    // With no certificates at all, the "No SSL certificates yet" empty state above already offers the Add button
+    if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') {
 
         $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
 

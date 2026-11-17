@@ -67,19 +67,30 @@ class Layout
         self::$page_actions[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => $options);
     }
 
-    // The page's main add action, the one red button in the page header. A second call replaces the first.
+    /*
+     * The page's main add action, the one red button in the page header. A second call replaces the first. Read-only
+     * users can't add anything, so it does nothing for them (the add pages turn them away too).
+     */
     public function setPageAddAction($label, $url, $icon = 'bi-plus-lg')
     {
+        if ($this->isReadOnly()) return;
         self::$page_add_action = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => array());
     }
 
     /*
      * Another way to add, shown in the Add button's dropdown. Without a main add action it's drawn as an outline
-     * button instead.
+     * button instead. Like setPageAddAction(), it does nothing for read-only users.
      */
     public function addPageAddMenuItem($label, $url, $icon)
     {
+        if ($this->isReadOnly()) return;
         self::$page_add_menu[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => array());
+    }
+
+    // Whether the signed-in user is read-only, and so can't add or change anything
+    private function isReadOnly()
+    {
+        return ($_SESSION['s_read_only'] ?? '') == '1';
     }
 
     // One action as a link styled as a button (or as a dropdown item), with its label and URL escaped once
@@ -413,7 +424,7 @@ class Layout
                                $secondary_label = '', $heading_level = 2, $action_changes_data = true,
                                $secondary_changes_data = false)
     {
-        $read_only = (($_SESSION['s_read_only'] ?? '') == '1');
+        $read_only = $this->isReadOnly();
         $heading_level = max(2, min(6, (int) $heading_level));
         $url = function ($address) {
             if (strpos($address, '/') === 0) $address = WEB_ROOT . $address;

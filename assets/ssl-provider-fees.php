@@ -114,8 +114,7 @@ if ($export_data === 1) {
 <BR>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
-if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add Fee'), 'add/ssl-provider-fee.php?sslpid=' . urlencode($sslpid));
+$layout->setPageAddAction(_('Add Fee'), 'add/ssl-provider-fee.php?sslpid=' . urlencode($sslpid));
 $layout->addPageAction(_('Export'), 'ssl-provider-fees.php?sslpid=' . urlencode($sslpid) . '&export_data=1', 'bi-download');
 
 $stmt2 = $pdo->prepare("
@@ -166,7 +165,7 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Type'); ?></th>
             <th class="text-end"><?php echo _('Initial Fee'); ?></th>
             <th class="text-end"><?php echo _('Renewal Fee'); ?></th>

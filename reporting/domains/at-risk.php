@@ -215,7 +215,7 @@ if ($list) { ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Domain'); ?></th>
             <th><?php echo _('Reasons'); ?></th>
             <th><?php echo _('Expiry Date'); ?></th>

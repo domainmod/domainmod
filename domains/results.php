@@ -344,7 +344,7 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Domain'); ?></th><?php
             if ($type != "missing") { ?>
             <th><?php echo _('Status'); ?></th>

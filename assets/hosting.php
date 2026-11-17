@@ -141,8 +141,7 @@ if ($export_data === 1) {
 <p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Web Hosting Providers'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
-// Read-only users can't add anything, so they don't get the Add button (the add page turns them away too)
-if (($_SESSION['s_read_only'] ?? '') != '1') $layout->setPageAddAction(_('Add Hosting Provider'), 'add/host.php');
+$layout->setPageAddAction(_('Add Hosting Provider'), 'add/host.php');
 $layout->addPageAction(_('Export'), 'hosting.php?export_data=1', 'bi-download');
 
 if ($result) {
@@ -166,7 +165,7 @@ if ($result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Host'); ?></th>
             <th><?php echo _('Domains'); ?></th>
             <th class="ps-4"><?php echo _('Options'); ?></th>
