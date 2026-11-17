@@ -233,7 +233,7 @@ if (!$has_existing_segments) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Name'); ?></th>
             <th><?php echo _('Domains'); ?></th>
             <th><?php echo _('Count'); ?></th>
@@ -268,7 +268,7 @@ if (!$has_existing_segments) {
                     <?php echo number_format($row->number_of_domains); ?>
                 </td>
                 <td>
-                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>"><?php echo DomainMOD\Format::toUpper(_('Export')); ?></a>
+                    <a href="index.php?export_data=1&segid=<?php echo $row->id; ?>"><?php echo _('Export'); ?><span class="visually-hidden"> <?php echo $row->name; ?></span></a>
                 </td>
             </tr><?php
 

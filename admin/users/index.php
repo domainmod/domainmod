@@ -169,7 +169,7 @@ if ($result) { ?>
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('User'); ?></th>
             <th><?php echo _('Username'); ?></th>
             <th><?php echo _('Email'); ?></th>
@@ -182,9 +182,12 @@ if ($result) { ?>
             <tr>
             <td></td>
             <td>
-                <a <?php if ($row->active != '1') { ?>style="text-decoration: line-through;"
-                   <?php } ?>href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?>
-                    &nbsp;<?php echo $row->last_name; ?></a><?php if ($row->admin == '1') echo "&nbsp;&nbsp;<strong>" . _('A') . "</strong>"; ?><?php if ($row->read_only == '1') echo "&nbsp;&nbsp;<strong>" . _('R') . "</strong>"; ?>
+                <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php
+                // An admin and a read-only user get an icon, with its meaning in the tooltip and as hidden text (so the
+                // list can be searched for it), and an inactive user a grey badge
+                if ($row->admin == '1') echo ' ' . $layout->statusBadge(htmlspecialchars(_('Admin'), ENT_QUOTES, 'UTF-8'), _('Admin'), 'primary', 'bi-shield-fill');
+                if ($row->read_only == '1') echo ' ' . $layout->statusBadge(htmlspecialchars(_('Read-Only'), ENT_QUOTES, 'UTF-8'), _('Read-Only'), 'muted', 'bi-eye-fill');
+                if ($row->active != '1') { ?> <span class="badge text-bg-secondary"><?php echo _('Inactive'); ?></span><?php } ?>
             </td>
             <td>
                 <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
@@ -197,10 +200,7 @@ if ($result) { ?>
         } ?>
 
         </tbody>
-    </table>
-
-    <strong><?php echo _('A'); ?></strong> = <?php echo _('Admin'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <strong><?php echo _('R'); ?></strong> = <?php echo _('Read-Only'); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="domainmod-css-line-through"><?php echo DomainMOD\Format::toUpper(_('Strike')); ?></span> = <?php echo _('Inactive'); ?><?php
+    </table><?php
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

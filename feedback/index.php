@@ -44,15 +44,14 @@ $system->authCheck();
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
-<div class="domainmod-intro"><?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?><BR>
-<BR>
-<?php echo _("Questions, problems, and feature requests (including new registrar integrations) go in our Support Portal. Other users can vote on the requests that matter most to them, which helps us decide what to work on next."); ?><BR>
-<BR>
-<?php echo sprintf(_("If you're a developer and you've found a bug you can point to in the code, you can open an issue on GitHub instead. Please report each bug in one place only, not both. Security vulnerabilities should never be reported publicly, so please follow our %ssecurity policy%s instead."), '<a target="_blank" href="https://github.com/domainmod/domainmod/security/policy">', '</a>'); ?><BR>
-<BR>
-<?php echo _("The Support Portal also has a project Roadmap, built automatically from what users have submitted and where each item stands (Planned, In Progress, Completed, and so on), so you can see how development is progressing."); ?><BR>
-<BR>
-<?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?></div>
+<div class="domainmod-intro">
+<p><?php echo _('Your feedback is important to us!'); ?></p>
+<p><?php echo _("Whether you have a comment, a question, a feature request, or a bug report, we want to hear from you!"); ?></p>
+<p><?php echo _("Questions, problems, and feature requests (including new registrar integrations) go in our Support Portal. Other users can vote on the requests that matter most to them, which helps us decide what to work on next."); ?></p>
+<p><?php echo sprintf(_("If you're a developer and you've found a bug you can point to in the code, you can open an issue on GitHub instead. Please report each bug in one place only, not both. Security vulnerabilities should never be reported publicly, so please follow our %ssecurity policy%s instead."), '<a target="_blank" href="https://github.com/domainmod/domainmod/security/policy">', '</a>'); ?></p>
+<p><?php echo _("The Support Portal also has a project Roadmap, built automatically from what users have submitted and where each item stands (Planned, In Progress, Completed, and so on), so you can see how development is progressing."); ?></p>
+<p class="mb-0"><?php echo _("So what are you waiting for? Speak your mind or check out the Roadmap below!"); ?></p>
+</div>
 <?php // One red button for the main way to get in touch, and outline buttons for the others, wrapping on phones ?>
 <div class="d-flex flex-wrap gap-2 mt-3"><?php
 echo $layout->linkButton('https://support.domainmod.org/b/90pj1r0j/domainmod-support/idea/new', _('Submit Feedback'), 'primary', '', array('target' => '_blank', 'rel' => 'noopener'));

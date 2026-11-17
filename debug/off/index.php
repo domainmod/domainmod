@@ -55,13 +55,11 @@ require_once DIR_INC . '/debug.inc.php';
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <?php echo $layout->bodyTag(); ?>
-<?php
-$page_align = 'center';
-require_once DIR_INC . '/layout/header-bare.inc.php';
-echo sprintf(_('Debugging Mode is %s'), $layout->highlightText('red', DomainMOD\Format::toUpper(_('Off'))));
-?>
-<BR><BR>
-<a href="../on/?<?php echo $csrf->query(); ?>"><?php echo _('Turn Debugging Mode') . ' ' . DomainMOD\Format::toUpper(_('On')); ?></a>
-<?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<p><?php echo _('Debugging mode is off.'); ?></p>
+<div class="d-flex flex-wrap gap-2"><?php
+echo $layout->linkButton('../on/?' . $csrf->query(), _('Turn Debugging Mode On')); ?>
+</div>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

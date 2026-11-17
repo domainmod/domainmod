@@ -111,27 +111,33 @@ require_once DIR_INC . '/layout/header.inc.php';
 
 if (!$result) {
 
-    echo _('The Debug Log is empty');
+    if (DEBUG_MODE == '1') {
 
-    if (DEBUG_MODE != '1') { ?>
+        $empty_text = _('New entries appear here while debugging is on.');
 
-        <BR><BR><?php echo sprintf(_('Debugging can be enabled in %sSettings%s.'), '<a href="' . WEB_ROOT . '/admin/settings/">', '</a>'); ?><?php
+    } else {
+
+        $empty_text = sprintf(_('Debugging can be enabled in %sSettings%s.'), '<a href="' . WEB_ROOT . '/admin/settings/">', '</a>');
 
     }
 
+    echo $layout->emptyState('bi-journal-text', _('No debug log entries'), $empty_text);
+
 } else {
 
-    // The page's actions, drawn in the page header (see Layout::renderPageActions())
-    $layout->addPageAction(_('Clear Debug Log'), '../maintenance/clear-log.php?' . (new DomainMOD\Csrf())->query(), 'bi-trash');
+    // The page's actions, drawn in the page header (see Layout::renderPageActions()). Clearing can't be undone, so it
+    // asks first, and afterwards comes back to this page rather than going to Maintenance.
+    $layout->addPageAction(_('Clear Debug Log'), '../maintenance/clear-log.php?' . (new DomainMOD\Csrf())->query() . '&return=debug-log', 'bi-trash',
+        array('confirm' => _("Clear the debug log? This can't be undone.")));
     $layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download'); ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th class="all"><?php echo _('ID'); ?></th>
             <th class="none"><?php echo _('User ID'); ?></th>
-            <th class="all"><?php echo _('Area'); ?></th>
+            <th><?php echo _('Area'); ?></th>
             <th class="all"><?php echo _('Level'); ?></th>
             <th class="all"><?php echo _('Message'); ?></th>
             <th><?php echo _('Extra'); ?></th>
@@ -143,7 +149,12 @@ if (!$result) {
 
         // Log entries can hold text from anyone who reached a page (such as a sign-in's username or the URL), so it's
         // escaped before it's shown.
-        foreach ($result as $row) { ?>
+        foreach ($result as $row) {
+
+            $level = htmlspecialchars((string) $row->level, ENT_QUOTES, 'UTF-8');
+            // The level sorts by its stored word, and searches by that word and the name shown
+            $level_search = htmlspecialchars((string) $row->level . ' ' . DomainMOD\Log::levelInfo($row->level)[0], ENT_QUOTES, 'UTF-8');
+            $extra_pairs = DomainMOD\Log::extraPairs($row->extra); ?>
 
             <tr>
             <td></td>
@@ -154,19 +165,27 @@ if (!$result) {
                 <?php echo (int) $row->user_id; ?>
             </td>
             <td>
-                <?php echo htmlspecialchars((string) $row->area, ENT_QUOTES, 'UTF-8'); ?>
+                <div class="text-wrap text-break"><?php echo htmlspecialchars((string) $row->area, ENT_QUOTES, 'UTF-8'); ?></div>
             </td>
-            <td>
-                <?php echo htmlspecialchars((string) $row->level, ENT_QUOTES, 'UTF-8'); ?>
+            <td data-order="<?php echo $level; ?>" data-search="<?php echo $level_search; ?>">
+                <?php echo DomainMOD\Log::levelBadge($row->level); ?>
             </td>
             <td>
                 <?php echo htmlspecialchars((string) $row->message, ENT_QUOTES, 'UTF-8'); ?>
             </td>
-            <td>
-                <?php echo htmlspecialchars((string) $row->extra, ENT_QUOTES, 'UTF-8'); ?>
+            <td><?php
+                // Each detail as a label and its value, or the stored text when it can't be read that way. Like the area
+                // and URL, it wraps even with no spaces, including when a phone shows it under the row.
+                echo '<div class="text-wrap text-break">';
+                if ($extra_pairs !== null) {
+                    echo $layout->factList(DomainMOD\Log::extraFacts($extra_pairs), true);
+                } else {
+                    echo htmlspecialchars((string) $row->extra, ENT_QUOTES, 'UTF-8');
+                }
+                echo '</div>'; ?>
             </td>
             <td>
-                <?php echo htmlspecialchars((string) $row->url, ENT_QUOTES, 'UTF-8'); ?>
+                <div class="text-wrap text-break"><?php echo htmlspecialchars((string) $row->url, ENT_QUOTES, 'UTF-8'); ?></div>
             </td>
             <td>
                 <?php echo $time->toUserTimezone($row->insert_time); ?>
@@ -179,7 +198,6 @@ if (!$result) {
     </table><?php
 
 } ?>
-<BR>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

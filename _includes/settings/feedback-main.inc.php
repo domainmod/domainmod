@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Your Feedback Is Important to Us!');
+$page_title = _('Feedback');
 $breadcrumb = _('Feedback');
 $software_section = "feedback";
 $slug = "feedback-main";

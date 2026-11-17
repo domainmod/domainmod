@@ -75,16 +75,101 @@ class Log
         $stmt->execute();
     }
 
+    /*
+     * An entry's extra details, saved as a JSON object (such as {"Last Error":"","Domain":"example.com"}) so the Debug
+     * Log can read them back (see extraPairs()). A value with a malformed UTF-8 byte keeps the rest of its text, with
+     * the bad byte replaced. Should the details still not encode, they're saved in the older format ("key":"value",
+     * "key":"value"), so an entry never loses them.
+     */
     public function formatExtraInfo($extra_info)
     {
-        $extra_info_formatted = '';
         $last_error = error_get_last();
         $last_error_message = array(_('Last Error') => $last_error['message'] ?? ''); // null when there's been no PHP error
         $merged_array = array_merge($last_error_message, $extra_info);
+
+        $json = json_encode((object) $merged_array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+        if ($json !== false) return $json;
+
+        $extra_info_formatted = '';
         foreach ($merged_array as $key => $value) {
             $extra_info_formatted .= '"' . $key . '":"' . $value . '", ';
         }
         return substr($extra_info_formatted, 0, -2);
+    }
+
+    /*
+     * An entry's stored extra details as their keys and values, all plain strings, for the Debug Log to show. It reads
+     * both a JSON object (newer entries) and the older format, "key":"value" pairs without the braces. Only a flat
+     * object counts: string and number values pass as they are, true and false become "true" and "false", and null an
+     * empty string. It returns null when the text can't be read that way (such as an older entry whose value held a
+     * quote or a backslash, which that format didn't escape, or a nested object or list), so the page shows the stored
+     * text instead.
+     */
+    public static function extraPairs($extra)
+    {
+        $extra = trim((string) $extra);
+        if ($extra === '') return null;
+
+        if ($extra[0] !== '{') {
+            // The older format never escaped a backslash, so one would be read as an escape and change the value
+            if (strpos($extra, '\\') !== false) return null;
+            $extra = '{' . $extra . '}';
+        }
+
+        $decoded = json_decode($extra, true, 2, JSON_BIGINT_AS_STRING);
+        if (!is_array($decoded) || !$decoded) return null;
+
+        $pairs = array();
+        foreach ($decoded as $key => $value) {
+            if (is_array($value)) return null;
+            if ($value === true) {
+                $value = 'true';
+            } elseif ($value === false) {
+                $value = 'false';
+            }
+            $pairs[(string) $key] = (string) $value;
+        }
+        return $pairs;
+    }
+
+    /*
+     * The pairs from extraPairs() as Layout::factList() pairs, keeping every key: an empty value shows as "-", since
+     * factList() leaves out a pair with no value.
+     */
+    public static function extraFacts($pairs)
+    {
+        $facts = array();
+        foreach ($pairs as $key => $value) {
+            $facts[] = array('label' => (string) $key, 'value' => (string) $value === '' ? '-' : (string) $value);
+        }
+        return $facts;
+    }
+
+    /*
+     * An entry's level as its translated name and the colour that shows how serious it is: red (danger) for emergency,
+     * alert, critical, and error, yellow (warning) for warning, blue (info) for notice and info, and grey (secondary)
+     * for debug and anything else (such as log(), whose stored word is shown as it is).
+     */
+    public static function levelInfo($level)
+    {
+        $levels = array(
+            'emergency' => array(_('Emergency'), 'danger'),
+            'alert' => array(_('Alert'), 'danger'),
+            'critical' => array(_('Critical'), 'danger'),
+            'error' => array(_('Error'), 'danger'),
+            'warning' => array(_('Warning'), 'warning'),
+            'notice' => array(_('Notice'), 'info'),
+            'info' => array(_('Info'), 'info'),
+            'debug' => array(_('Debug'), 'secondary'),
+        );
+        return $levels[strtolower((string) $level)] ?? array((string) $level, 'secondary');
+    }
+
+    // An entry's level as a badge with its translated name, escaped here (see levelInfo())
+    public static function levelBadge($level)
+    {
+        list($name, $colour) = self::levelInfo($level);
+        return '<span class="badge text-bg-' . $colour . '">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
     }
 
     /*

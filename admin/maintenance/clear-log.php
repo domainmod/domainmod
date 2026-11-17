@@ -49,5 +49,12 @@ if ($system->isHtmxRequest()) {
     exit;
 }
 
+// The Debug Log's own Clear Debug Log comes back to the (now empty) log. Only that one value is accepted, so the link
+// can't be pointed anywhere else.
+if (($_GET['return'] ?? '') === 'debug-log') {
+    header("Location: ../debug-log/");
+    exit;
+}
+
 header("Location: index.php");
 exit;

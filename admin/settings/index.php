@@ -177,27 +177,26 @@ echo $form->showDropdownTop('new_currency_converter', _('Currency Converter'), _
 echo $form->showDropdownOption('fcra', _('Free Currency Rates API'), $new_currency_converter);
 echo $form->showDropdownBottom('');
 
-echo $form->showSwitch(_('Debugging Mode') . '', sprintf(_("Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."), SOFTWARE_TITLE), 'new_debug_mode', $new_debug_mode, '', '<BR><BR>');
+echo $form->showSwitch(_('Debugging Mode') . '', sprintf(_("Unless you're having problems with %s and support has asked you to turn this on, you should leave it turned off."), SOFTWARE_TITLE), 'new_debug_mode', $new_debug_mode, '<div class="mb-3">', '</div>');
 
 echo $form->showSwitch(_('Local PHP Log') . '',
     _('This allows you to log PHP errors in a local file called domainmod.log, instead of recording them in the main PHP log.') . '<BR>' .
-    $layout->highlightText('red', DomainMOD\Format::toUpper(_('Warning'))) . ': ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
-    '&nbsp;' . sprintf(_('Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your %s installation, which could allow them to compromise your system.'), SOFTWARE_TITLE), 'new_local_php_log', $new_local_php_log, '', '<BR><BR>');
+    '<strong>' . _('Warning') . ':</strong> ' . sprintf(_("Only enable this feature temporarily for troubleshooting, and if you're asked to by %s support."), SOFTWARE_TITLE) .
+    ' ' . sprintf(_('Leaving it enabled all the time will cause logged errors to be visible to everyone who knows the URL to your %s installation, which could allow them to compromise your system.'), SOFTWARE_TITLE), 'new_local_php_log', $new_local_php_log, '<div class="mb-3">', '</div>');
 
-echo $layout->expandableBoxTop(_('SMTP Server Settings'), '', '');
-
-echo $form->showSwitch(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), 'new_use_smtp', $new_use_smtp, '', '<BR><BR>');
-
+// The SMTP settings in their own card, always open, with the switch that turns them on first
+ob_start();
+echo $form->showSwitch(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), 'new_use_smtp', $new_use_smtp, '<div class="domainmod-span-all mb-3">', '</div>');
 echo $form->showInputText('new_smtp_server', _('SMTP Server') . ' (255)', _('If you plan on using an external SMTP server, enter the server name here.'), $unsanitize->text($new_smtp_server), '100', '', '', '', '');
 echo $form->showRadioTop(_('SMTP Server Protocol'), '', '');
-echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '', '');
 echo $form->showRadioOption('new_smtp_protocol', 'ssl', _('SSL'), $new_smtp_protocol, '', '');
 echo $form->showRadioBottom('');
 echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
 echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
 echo $form->showInputText('new_smtp_password', _('SMTP Password') . ' (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', '');
-echo $layout->expandableBoxBottom();
+echo $layout->formSection(_('SMTP Server Settings'), 'smtp', ob_get_clean());
 
 echo $form->showSubmitButton(_('Update System Settings'), '', '');
 echo $form->showFormBottom('');
