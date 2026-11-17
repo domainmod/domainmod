@@ -21,9 +21,10 @@
 /*
  * Draws the reports' charts (see DomainMOD\Chart). Each chart is a canvas whose data-domainmod-chart attribute holds
  * JSON with its type (doughnut, bar, hbar for a horizontal bar chart, pricebar for a price comparison, or stacked for
- * stacked counts), labels, values, and the user's currency format. The colours come from css/base.css, so the
- * charts match the colour mode, and they're redrawn in the new colours when it changes. Animation is off for users who
- * prefer reduced motion. Loaded by _includes/layout/chart-footer.inc.php, after Chart.js.
+ * stacked counts), labels, values, and the user's currency format. A bar chart with series stacks its amounts. The
+ * colours come from css/base.css, so the charts match the colour mode, and they're redrawn in the new colours when it
+ * changes. Animation is off for users who prefer reduced motion. Loaded by _includes/layout/chart-footer.inc.php, after
+ * Chart.js.
  */
 (function () {
     'use strict';
@@ -72,8 +73,32 @@
         return out;
     }
 
-    // The datasets to draw: one for most charts, and one per series (each in its own colour) for stacked counts
+    // A colour made see-through, such as #dc2626 at .55, for a second shade of the same colour
+    function fade(hex, alpha) {
+        var match = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+        if (!match) return hex;
+        return 'rgba(' + parseInt(match[1], 16) + ', ' + parseInt(match[2], 16) + ', ' + parseInt(match[3], 16) + ', ' + alpha + ')';
+    }
+
+    // The datasets to draw: one for most charts, and one per series (each in its own colour) for stacked counts and
+    // stacked monthly amounts. A stacked monthly chart's Overdue bar is drawn in the warning colour, its first stack in
+    // full and the others lighter, while the legend keeps each series' own colour.
     function datasets(data) {
+        if (data.type === 'bar' && data.series) {
+            return data.series.map(function (item, series_index) {
+                return {
+                    label: item.name,
+                    data: item.values,
+                    backgroundColor: function (context) {
+                        if (data.firstIsOverdue && context.type === 'data' && context.dataIndex === 0) {
+                            return series_index === 0 ? colour('2') : fade(colour('2'), 0.55);
+                        }
+                        return colour(item.colour);
+                    },
+                    borderWidth: 0
+                };
+            });
+        }
         if (data.type === 'stacked') {
             return data.series.map(function (item) {
                 return {label: item.name, data: item.values, backgroundColor: colour(item.colour), borderWidth: 0};
@@ -123,8 +148,46 @@
         id: 'domainmodBarTotals',
         afterDatasetsDraw: function (chart, args, plugin_options) {
             var data = plugin_options.data;
+            if (!data) return;
+            // A stacked chart's totals are its shown series added up (a series hidden from the legend is left out), and
+            // each total sits above the top of its stack. Chart.js stacks amounts above zero and below it separately, so
+            // each stack's highest and lowest points are kept too.
+            var values = data.values;
+            var highs = [];
+            var lows = [];
             var meta = chart.getDatasetMeta(0);
-            if (!data || !meta || !meta.data.length) return;
+            if (data.series) {
+                var shown = [];
+                chart.data.datasets.forEach(function (dataset, index) {
+                    if (chart.isDatasetVisible(index)) shown.push(index);
+                });
+                if (!shown.length) return;
+                meta = chart.getDatasetMeta(shown[0]);
+                values = data.labels.map(function (label, index) {
+                    highs[index] = lows[index] = 0;
+                    return shown.reduce(function (sum, dataset_index) {
+                        var amount = Number(chart.data.datasets[dataset_index].data[index] || 0);
+                        if (amount > 0) highs[index] += amount;
+                        else lows[index] += amount;
+                        return sum + amount;
+                    }, 0);
+                });
+            }
+            if (!meta || !meta.data.length) return;
+            // A bar's position: its own for a plain bar, and its whole stack's for a stacked one, with y at the end its
+            // total's label goes by (the top for a total above zero, the bottom for one below) and base at the other end.
+            // It's a copy: getProps() can hand back the bar itself, which must keep its own size.
+            var y_scale = chart.scales.y;
+            function barProps(index) {
+                var own = meta.data[index].getProps(['x', 'y', 'width', 'base'], true);
+                var props = {x: own.x, y: own.y, width: own.width, base: own.base};
+                if (data.series) {
+                    var up = Number(values[index]) >= 0;
+                    props.y = y_scale.getPixelForValue(up ? highs[index] : lows[index]);
+                    props.base = y_scale.getPixelForValue(up ? lows[index] : highs[index]);
+                }
+                return props;
+            }
             var ctx = chart.ctx;
             var area = chart.chartArea;
             var family = Chart.defaults.font.family;
@@ -143,7 +206,7 @@
             for (var i = 0; i < styles.length; i++) {
                 ctx.font = '600 ' + styles[i][1] + 'px ' + family;
                 var widest = 0;
-                data.values.forEach(function (value) {
+                values.forEach(function (value) {
                     if (Number(value) !== 0) widest = Math.max(widest, ctx.measureText(styles[i][0](value, data.currency)).width);
                 });
                 if (widest <= slot - 4) {
@@ -152,9 +215,10 @@
                 }
             }
             ctx.font = '600 ' + style[1] + 'px ' + family;
-            meta.data.forEach(function (bar, index) {
-                var value = Number(data.values[index]);
+            meta.data.forEach(function (element, index) {
+                var value = Number(values[index]);
                 if (!value) return;
+                var bar = barProps(index);
                 var label = style[0](value, data.currency);
                 var half = ctx.measureText(label).width / 2;
                 // Above a bar that goes up, and below one that goes down (a month whose credits outweigh its costs)
@@ -174,7 +238,7 @@
                 }) || meta.data.some(function (other, other_index) {
                     // Or over a taller neighbour's bar, where it would be hard to read
                     if (other_index === index) return false;
-                    var props = other.getProps(['x', 'y', 'width', 'base'], true);
+                    var props = barProps(other_index);
                     var bar_top = Math.min(props.y, props.base);
                     var bar_bottom = Math.max(props.y, props.base);
                     return box.left < props.x + props.width / 2 && box.right > props.x - props.width / 2 && box.bottom > bar_top && box.top < bar_bottom;
@@ -202,11 +266,21 @@
                 label: function (context) {
                     var horizontal = data.type === 'hbar' || data.type === 'pricebar' || data.type === 'stacked';
                     var value = data.type === 'doughnut' ? context.parsed : (horizontal ? context.parsed.x : context.parsed.y);
-                    var prefix = data.type === 'stacked' ? context.dataset.label + ': ' : '';
+                    var prefix = data.type === 'stacked' || data.series ? context.dataset.label + ': ' : '';
                     return ' ' + prefix + isolate(amount(value, data));
                 }
             }
         };
+        // A stacked monthly chart's tooltip lists every series in the month, then their total
+        if (data.type === 'bar' && data.series) {
+            tooltip.mode = 'index';
+            tooltip.callbacks.footer = function (items) {
+                var total = items.reduce(function (sum, item) {
+                    return sum + item.parsed.y;
+                }, 0);
+                return data.totalLabel + ': ' + isolate(money(total, data.currency));
+            };
+        }
         if (rtl) {
             tooltip.rtl = true;
             tooltip.textDirection = 'rtl';
@@ -227,9 +301,21 @@
             };
             return common;
         }
-        common.plugins.legend = data.type === 'stacked'
+        common.plugins.legend = data.type === 'stacked' || data.series
             ? {position: 'top', rtl: rtl, textDirection: rtl ? 'rtl' : 'ltr', labels: {color: text}}
             : {display: false};
+        // A stacked monthly chart's legend keeps each series' own colour, which Chart.js would otherwise take from the
+        // first bar, the Overdue bar's warning colours when there is one
+        if (data.type === 'bar' && data.series) {
+            common.plugins.legend.labels.generateLabels = function (chart) {
+                var items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                items.forEach(function (legend_item) {
+                    var series = data.series[legend_item.datasetIndex];
+                    if (series) legend_item.fillStyle = legend_item.strokeStyle = colour(series.colour);
+                });
+                return items;
+            };
+        }
         // A cost report's bar chart, a price comparison, and stacked counts run sideways, one row per group, so long
         // names have room
         if (data.type === 'hbar' || data.type === 'pricebar' || data.type === 'stacked') {
@@ -272,9 +358,10 @@
         common.scales = {
             // The months run right to left in right-to-left languages, so the earliest is on the right, and the
             // amounts axis moves to the right
-            x: {reverse: rtl, ticks: {color: text}, grid: {color: grid}},
+            x: {reverse: rtl, stacked: !!data.series, ticks: {color: text}, grid: {color: grid}},
             y: {
                 beginAtZero: true,
+                stacked: !!data.series,
                 grace: '10%',
                 position: rtl ? 'right' : 'left',
                 ticks: {

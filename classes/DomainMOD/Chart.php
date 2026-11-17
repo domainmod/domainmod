@@ -108,6 +108,35 @@ class Chart
     }
 
     /*
+     * A bar chart of amounts with each bar split into stacks, one bar per label (such as a month), so each bar is the
+     * stacks' total, which is shown above it. $series is a list of the stacks, each array('name' => ...,
+     * 'values' => one amount per label, in the user's currency, 'colour' => a palette colour name, such as '1' or '4').
+     * The legend shows the series names. $first_is_overdue, $after, and $card_title work as in bar(), and the Overdue
+     * bar's stacks are drawn in shades of the warning colour.
+     */
+    public function stackedMonthBars($id, $title, $labels, $series, $first_is_overdue = false, $after = '', $card_title = true)
+    {
+        $labels = array_values($labels);
+        if (!$labels || !$series) return '';
+
+        $clean = array();
+        $totals = array_fill(0, count($labels), 0.0);
+        foreach ($series as $item) {
+            $values = array_map('floatval', array_values($item['values']));
+            foreach ($totals as $index => $total) {
+                $totals[$index] = $total + ($values[$index] ?? 0.0);
+            }
+            $clean[] = array(
+                'name' => html_entity_decode((string) $item['name'], ENT_QUOTES, 'UTF-8'),
+                'values' => $values,
+                'colour' => (string) $item['colour']);
+        }
+
+        return $this->card($id, 'bar', $title, $labels, $totals, $first_is_overdue, false, $after,
+            array('card_title' => $card_title, 'series' => $clean, 'totalLabel' => _('Total Cost')));
+    }
+
+    /*
      * A price comparison: a horizontal bar chart in the order given (the page sorts it cheapest first), every bar in the
      * palette's first colour except the bars whose indexes are in $highlight, which are drawn in green. Every
      * registrar or provider is listed, with no "Other". $values are amounts in the user's currency. $heading_level is

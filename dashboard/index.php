@@ -47,9 +47,11 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 // The domains renewing in the renewal cost chart's 12 months (overdue ones included), shared with the At-Risk tile and
-// the Upcoming Renewals and At-Risk Domains reports
+// the Upcoming Renewals and At-Risk Domains reports, and the SSL certificates renewing in them, as SSL Upcoming Renewals
+// counts them
 $today = $time->timeBasic();
 $renewal_rows = $reporting->renewalDomains($reporting->renewalChartEnd($today));
+$renewal_cert_rows = $reporting->renewalCerts($reporting->renewalChartEnd($today));
 $at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->timeBasicPlusDays(DomainMOD\Reporting::AT_RISK_DAYS)));
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -393,20 +395,26 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Renewal Costs, Next 12 Months (the same bars as Upcoming Renewals, with its figures as a table under the chart)
+// Renewal Costs, Next 12 Months (Upcoming Renewals' and SSL Upcoming Renewals' bars stacked, so each month's bar is the
+// total, with the figures as a table under the chart)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-if ($renewal_rows) {
+if ($renewal_rows || $renewal_cert_rows) {
 
-    $renewal_months = $reporting->renewalMonths($renewal_rows, $today);
+    $renewal_months = $reporting->renewalMonthsBoth($renewal_rows, $renewal_cert_rows, $today);
     ob_start(); ?>
 
-    <?php // The figures toggle and the View link share one row, so the card doesn't end with a gap under the toggle (on a phone, open figures can push the link below them, at the end side) ?>
+    <?php // The figures toggle and the report links share one row, so the card doesn't end with a gap under the toggle (on a phone, open figures can push the links below them, at the end side) ?>
     <div class="d-flex flex-wrap align-items-start gap-2 mt-3">
         <details class="flex-grow-1">
             <summary><?php echo _('Show the figures'); ?></summary>
-            <?php echo $reporting->renewalMonthsTable($renewal_months); ?>
+            <div class="table-responsive">
+                <?php echo $reporting->renewalMonthsBothTable($renewal_months); ?>
+            </div>
         </details>
-        <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="ms-auto link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('View'); ?><span class="visually-hidden"> <?php echo _('Upcoming Renewals'); ?></span> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <div class="ms-auto d-flex flex-wrap column-gap-3">
+            <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Upcoming Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Upcoming Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
     </div><?php
 
     $after = ob_get_clean(); ?>
@@ -414,7 +422,11 @@ if ($renewal_rows) {
     <div class="row">
         <h2 class="h4 mt-4 pt-2"><?php echo _('Renewal Costs, Next 12 Months'); ?></h2>
     </div>
-    <?php echo $chart->bar('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'), array_column($renewal_months, 'cost'), !empty($renewal_months[0]['overdue']), $after, false);
+    <?php echo $chart->stackedMonthBars('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'),
+        array(
+            array('name' => _('Domains'), 'values' => array_column(array_column($renewal_months, 'domains'), 'cost'), 'colour' => '1'),
+            array('name' => _('SSL Certificates'), 'values' => array_column(array_column($renewal_months, 'certs'), 'cost'), 'colour' => '4')),
+        !empty($renewal_months[0]['overdue']), $after, false);
 
     // The chart's card ends the page, so the footer skips its usual gap above it
     $footer_no_gap = true;

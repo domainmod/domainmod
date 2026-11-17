@@ -160,6 +160,33 @@ class Reporting
     }
 
     /*
+     * The Dashboard's renewal chart's bars from renewalDomains() and renewalCerts() rows: renewalMonths() for each, lined
+     * up bar by bar. The Overdue bar is shown when either has overdue items, and the other gets an empty one. Each bar
+     * has its label, whether it's the Overdue bar, its domains' and SSL certificates' renewalMonths() buckets, and the
+     * two costs together.
+     */
+    public function renewalMonthsBoth($domain_rows, $cert_rows, $today)
+    {
+        $domains = $this->renewalMonths($domain_rows, $today);
+        $certs = $this->renewalMonths($cert_rows, $today);
+
+        $empty = array('label' => _('Overdue'), 'count' => 0, 'cost' => 0.0, 'missing' => 0, 'overdue' => true);
+        if (!empty($domains[0]['overdue']) && empty($certs[0]['overdue'])) array_unshift($certs, $empty);
+        if (!empty($certs[0]['overdue']) && empty($domains[0]['overdue'])) array_unshift($domains, $empty);
+
+        $months = array();
+        foreach ($domains as $index => $domain_month) {
+            $months[] = array(
+                'label' => $domain_month['label'],
+                'overdue' => $domain_month['overdue'],
+                'domains' => $domain_month,
+                'certs' => $certs[$index],
+                'cost' => $domain_month['cost'] + $certs[$index]['cost']);
+        }
+        return $months;
+    }
+
+    /*
      * The At-Risk Domains from renewalDomains() rows: every overdue domain, and every domain expiring from $today
      * through $risk_end (the next 30 days) with auto-renewal or privacy off
      */
@@ -239,6 +266,52 @@ class Reporting
                             echo sprintf(ngettext('%s domain has no fee or rate', '%s domains have no fee or rate', $month['missing']), number_format($month['missing']));
                         } ?></span><?php
                     } ?></td>
+                </tr><?php
+
+            } ?>
+
+            </tbody>
+        </table><?php
+
+        return ob_get_clean();
+    }
+
+    /*
+     * The Dashboard's renewal chart's figures as a table (from renewalMonthsBoth()), for screen readers and people
+     * without JavaScript: each bar's label, its domains' and SSL certificates' renewal costs, noting any left out of a
+     * cost, and the two together
+     */
+    public function renewalMonthsBothTable($months)
+    {
+        $currency = new Currency();
+        $format = function ($amount) use ($currency) {
+            return $currency->format($amount, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+        };
+        ob_start(); ?>
+
+        <table class="table table-sm table-striped mb-0">
+            <thead>
+            <tr>
+                <th scope="col"><?php echo _('Month'); ?></th>
+                <th scope="col" class="text-end"><?php echo _('Domains'); ?></th>
+                <th scope="col" class="text-end"><?php echo _('SSL Certificates'); ?></th>
+                <th scope="col" class="text-end"><?php echo _('Total Cost'); ?></th>
+            </tr>
+            </thead>
+            <tbody><?php
+            foreach ($months as $month) { ?>
+
+                <tr>
+                    <th scope="row" class="fw-normal"><?php echo $month['label']; ?></th>
+                    <td class="text-end"><?php echo $format($month['domains']['cost']); ?><?php
+                    if ($month['domains']['missing'] > 0) { ?>
+                        <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s domain has no fee or rate', '%s domains have no fee or rate', $month['domains']['missing']), number_format($month['domains']['missing'])); ?></span><?php
+                    } ?></td>
+                    <td class="text-end"><?php echo $format($month['certs']['cost']); ?><?php
+                    if ($month['certs']['missing'] > 0) { ?>
+                        <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s SSL certificate has no fee or rate', '%s SSL certificates have no fee or rate', $month['certs']['missing']), number_format($month['certs']['missing'])); ?></span><?php
+                    } ?></td>
+                    <td class="text-end"><?php echo $format($month['cost']); ?></td>
                 </tr><?php
 
             } ?>
