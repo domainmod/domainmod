@@ -159,7 +159,7 @@ $search_for = $search_for ?? '';
         <div class="app-content-header">
 
             <div class="container-fluid">
-                <div class="domainmod-page-breadcrumb d-flex justify-content-sm-end">
+                <div class="domainmod-page-breadcrumb d-flex">
                     <?php  require_once DIR_INC . '/layout/breadcrumbs.inc.php'; ?>
                 </div>
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">

@@ -30,14 +30,20 @@ html {
 .domainmod-css-color-black {
     color: #000000;
 }
+/* The logo area takes the sidebar's own colour in both modes, so it matches the domain search and menu below it */
 .domainmod-css-logo-background-colour {
-    background-color: #f1f1f1;
+    background-color: transparent;
     /* No line under the logo area (AdminLTE draws one), and none under the top bar either (below) */
     border-bottom: 0;
 }
-/* No line under the top bar, to match the logo area beside it. Its background already sets it apart from the page. */
+/* No line under the top bar, to match the logo area beside it */
 .app-header {
     border-bottom: 0;
+}
+/* In light mode the top bar is the main area's colour, so it blends into the page (the dark rule further down is more
+   specific and keeps the darkest Polar Night) */
+.app-header.bg-body {
+    background-color: var(--bs-tertiary-bg) !important;
 }
 /* The top bar is as tall as the sidebar's logo area (3.5rem), with its items centred, so both have the same room above
    them. Compact mode otherwise caps it at 2.75rem. */
@@ -62,10 +68,6 @@ html {
     right: auto;
     margin-top: 0;
     transform: translate(-50%, -50%);
-}
-/* In dark mode the logo area takes the sidebar's colour (the logo's dark mode treatment is with the Nord rules below) */
-[data-bs-theme="dark"] .domainmod-css-logo-background-colour {
-    background-color: transparent;
 }
 /* The small logo in the collapsed sidebar, centred and sized to fit it. AdminLTE places it for a wider sidebar, which
    crops it in the compact one. It's positioned within the whole sidebar, so its top is half the logo area's height
@@ -1547,10 +1549,19 @@ main > a:not([class]) {
     --bs-btn-active-border-color: #565e64;
 }
 
-/* The page header (header.inc.php): the breadcrumb on its own small line above the title, and the page's actions
-   (Layout::renderPageActions()) on the title's line, at the end, dropping under the title on phones */
+/* The page header (header.inc.php): the breadcrumb on its own small line just above the title, at the start, and the
+   page's actions (Layout::renderPageActions()) on the title's line, at the end, dropping under the title on phones */
 .domainmod-page-breadcrumb .breadcrumb {
     font-size: .8125rem;
+}
+/* AdminLTE gives the breadcrumb a 2.5rem line and the header 1rem above it, which left a tall gap between the top bar
+   and the title now that the top bar shares the page's colour. The breadcrumb's selector is stronger than AdminLTE's,
+   and the header's matches AdminLTE's in strength and wins because this file loads after it. */
+.app-main .app-content-header .domainmod-page-breadcrumb .breadcrumb {
+    line-height: 1.5;
+}
+.app-main .app-content-header {
+    padding-top: .5rem;
 }
 @media (max-width: 575.98px) {
     .domainmod-page-actions {
