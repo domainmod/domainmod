@@ -54,7 +54,6 @@ $domain_id = (int) ($_GET['domain_id'] ?? 0);
 $deld = (int) ($_GET['deld'] ?? 0);
 $really_deld = (int) ($_GET['really_deld'] ?? 0);
 
-$clear = (int) ($_GET['clear'] ?? 0);
 $really_clear = (int) ($_GET['really_clear'] ?? 0);
 $s = isset($_GET['s']) ? $sanitize->text($_GET['s']) : '';
 $export_data = (int) ($_GET['export_data'] ?? 0);
@@ -442,14 +441,6 @@ if ($export_data === 1) {
 
 }
 
-if ($clear === 1) {
-
-    $_SESSION['s_message_danger'] .= _('Are you sure you want to clear completed items from the queue?') . '<BR><BR>' .
-        _('Before clearing the queue you should review the results to make sure that everything is correct.') . '<BR><BR>' .
-        '<a href="index.php?really_clear=1&' . $csrf->query() . '">' . _('YES, REALLY CLEAR COMPLETED ITEMS FROM THE QUEUE') . '</a><BR>';
-
-}
-
 if ($really_clear === 1) {
 
     $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
@@ -464,10 +455,19 @@ if ($really_clear === 1) {
 
 }
 
+/*
+ * A delete's second step: the question, then Yes, Delete (which carries the CSRF token) and a plain Cancel link back to
+ * the queue in the alert's own colour, side by side, wrapping on narrow screens
+ */
+$delete_confirmation = function ($question, $url) use ($layout) {
+    return $question . '<div class="d-flex flex-wrap align-items-center gap-3 mt-2">'
+        . $layout->linkButton($url, _('Yes, Delete'), 'primary') . '<a class="alert-link" href="index.php">' . _('Cancel') . '</a></div>';
+};
+
 if ($dell === 1 && $list_id !== 0) {
 
-    $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain List from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_dell=1&list_id=' . $list_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN LIST FROM THE QUEUE') . '</a><BR>';
+    $_SESSION['s_message_danger'] .= $delete_confirmation(_('Are you sure you want to delete this Domain List from the Queue?'),
+        'index.php?really_dell=1&list_id=' . $list_id . '&' . $csrf->query());
 
 }
 
@@ -491,8 +491,8 @@ if ($really_dell === 1 && $list_id !== 0) {
 
 if ($deld === 1 && $domain_id !== 0) {
 
-    $_SESSION['s_message_danger'] .= _('Are you sure you want to delete this Domain from the Queue?') . '<BR><BR>' .
-        '<a href="index.php?really_deld=1&domain_id=' . $domain_id . '&' . $csrf->query() . '">' . _('YES, REALLY DELETE THIS DOMAIN FROM THE QUEUE') . '</a><BR>';
+    $_SESSION['s_message_danger'] .= $delete_confirmation(_('Are you sure you want to delete this Domain from the Queue?'),
+        'index.php?really_deld=1&domain_id=' . $domain_id . '&' . $csrf->query());
 
 }
 
@@ -536,7 +536,7 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     <?php echo $queue->processingNotice(); ?><BR><BR><?php
 
 } ?>
-<div class="domainmod-intro"><?php
+<p class="domainmod-intro"><?php
 if ($queue_rdap_available) {
 
     echo sprintf(_("The Domain Queue imports your domains and their details automatically. If %s supports your registrar's API, the queue uses it, and if it doesn't, you can paste a list of your domains and have their details looked up using RDAP or WHOIS instead."), SOFTWARE_TITLE) . ' ';
@@ -547,8 +547,7 @@ if ($queue_rdap_available) {
 
 } ?>
 
-<?php echo sprintf(_('See the %sDomain Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></div>
-<BR>
+<?php echo sprintf(_('See the %sDomain Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 // Read-only users can't add to or clear the queue, so they don't get those buttons (the pages turn them away too)
@@ -559,7 +558,12 @@ if (!$queue_read_only) {
 }
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 $_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
-if ($_SESSION['s_domains_in_queue'] == '1' && !$queue_read_only) $layout->addPageAction(_('Clear Completed'), 'index.php?clear=1', 'bi-check2-all');
+// Clearing asks first, then goes straight to the clear with its CSRF token
+if ($_SESSION['s_domains_in_queue'] == '1' && !$queue_read_only) {
+    $layout->addPageAction(_('Clear Completed'), 'index.php?really_clear=1&' . $csrf->query(), 'bi-check2-all',
+        array('confirm' => _('Are you sure you want to clear completed items from the queue?') . ' '
+            . _('Before clearing the queue you should review the results to make sure that everything is correct.')));
+}
 $layout->addPageAction(_('More Info'), 'intro.php', 'bi-info-circle');
 if ($_SESSION['s_domains_in_list_queue'] == '1') $layout->addPageAction(_('Export Lists'), 'index.php?s=lists&export_data=1', 'bi-download');
 if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Export Domains'), 'index.php?s=domains&export_data=1', 'bi-download'); ?>
@@ -642,7 +646,9 @@ if (!$result_lists) {
                 <?php echo $time->toUserTimezone($row_lists->insert_time, 'Y-m-d H:i:s', '[' . DomainMOD\Format::toLower(_('Unknown')) . ']'); ?>
             </td>
             <td>
-                <a href="index.php?dell=1&list_id=<?php echo $row_lists->id; ?>" title="<?php echo _('Delete'); ?>" aria-label="<?php echo _('Delete'); ?>"><i class="bi bi-x-lg"></i></a>
+                <a class="btn btn-sm btn-outline-danger" href="index.php?dell=1&list_id=<?php echo $row_lists->id; ?>" title="<?php echo _('Delete'); ?>"><i class="bi bi-trash" aria-hidden="true"></i><span class="visually-hidden"><?php
+                    // TRANSLATORS: Read out by screen readers for a Delete button in a list. %s is a domain, or a registrar account (its registrar, owner, and username).
+                    echo sprintf(_('Delete %s'), $row_lists->registrar_name . ', ' . $row_lists->owner . ' (' . $row_lists->username . ')'); ?></span></a>
             </td>
             </tr><?php
 
@@ -821,7 +827,9 @@ if (!$result_domains) {
                     && $row_domains->already_in_domains != '1' && $row_domains->already_in_queue != '1') { ?>
                     <a href="edit/?qid=<?php echo $row_domains->id; ?>" title="<?php echo _('Fix and Import'); ?>" aria-label="<?php echo _('Fix and Import'); ?>"><i class="bi bi-pencil-square"></i></a>&nbsp;<?php
                 } ?>
-                <a href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>" title="<?php echo _('Delete'); ?>" aria-label="<?php echo _('Delete'); ?>"><i class="bi bi-x-lg"></i></a>
+                <a class="btn btn-sm btn-outline-danger" href="index.php?deld=1&domain_id=<?php echo $row_domains->id; ?>" title="<?php echo _('Delete'); ?>"><i class="bi bi-trash" aria-hidden="true"></i><span class="visually-hidden"><?php
+                    // TRANSLATORS: Read out by screen readers for a Delete button in a list. %s is a domain, or a registrar account (its registrar, owner, and username).
+                    echo sprintf(_('Delete %s'), $row_domains->domain); ?></span></a>
             </td>
             </tr><?php
 

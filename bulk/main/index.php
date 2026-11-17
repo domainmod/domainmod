@@ -1923,7 +1923,7 @@ if ($breadcrumb_text != '') {
 ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-echo '<div class="domainmod-intro">' . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '</div>';
+echo $layout->calloutTop() . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . $layout->calloutBottom();
 ?>
 <?php
     $done = $done ?? '';
@@ -1934,52 +1934,52 @@ echo '<div class="domainmod-intro">' . _("The Bulk Updater allows you to add or 
         if ($submission_failed != "1") { ?>
 
         <?php if ($action == "AD") { ?>
-            <BR><strong><?php echo _('The following domains were added'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were added'); ?></h2>
         <?php } elseif ($action == "RENEW") { ?>
-            <BR><strong><?php echo sprintf(ngettext('The following domains were renewed for %s year', 'The following domains were renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
+            <h2 class="h5"><?php echo sprintf(ngettext('The following domains were renewed for %s year', 'The following domains were renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?></h2>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong><?php echo sprintf(ngettext('The following domains were fully renewed for %s year', 'The following domains were fully renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?>:</strong><BR>
+            <h2 class="h5"><?php echo sprintf(ngettext('The following domains were fully renewed for %s year', 'The following domains were fully renewed for %s years', $new_renewal_years), htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8')); ?></h2>
         <?php } elseif ($action == "E") { ?>
-            <BR><strong><?php echo _('The following domains were marked as expired'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as expired'); ?></h2>
         <?php } elseif ($action == "S") { ?>
-            <BR><strong><?php echo _('The following domains were marked as sold'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as sold'); ?></h2>
         <?php } elseif ($action == "A") { ?>
-            <BR><strong><?php echo _('The following domains were marked as active'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as active'); ?></h2>
         <?php } elseif ($action == "T") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Pending Transfer'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Pending Transfer'); ?></h2>
         <?php } elseif ($action == "PRg") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Pending Registration'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Pending Registration'); ?></h2>
         <?php } elseif ($action == "PRn") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Pending Renewal'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Pending Renewal'); ?></h2>
         <?php } elseif ($action == "PO") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Pending (Other)'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Pending (Other)'); ?></h2>
         <?php } elseif ($action == "AURNE") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Auto Renewal'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Auto Renewal'); ?></h2>
         <?php } elseif ($action == "AURND") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Manual Renewal'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Manual Renewal'); ?></h2>
         <?php } elseif ($action == "PRVE") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Private WHOIS'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Private WHOIS'); ?></h2>
         <?php } elseif ($action == "PRVD") { ?>
-            <BR><strong><?php echo _('The following domains were marked as Public WHOIS'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains were marked as Public WHOIS'); ?></h2>
         <?php } elseif ($action == "CED") { ?>
-            <BR><strong><?php echo _('The expiry date was updated for the following domains'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The expiry date was updated for the following domains'); ?></h2>
         <?php } elseif ($action == "CPC") { ?>
-            <BR><strong><?php echo _('The following domains had their Category changed'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had their Category changed'); ?></h2>
         <?php } elseif ($action == "CDNS") { ?>
-            <BR><strong><?php echo _('The following domains had their DNS Profile changed'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had their DNS Profile changed'); ?></h2>
         <?php } elseif ($action == "CIP") { ?>
-            <BR><strong><?php echo _('The following domains had their IP Address changed'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had their IP Address changed'); ?></h2>
         <?php } elseif ($action == "CRA") { ?>
-            <BR><strong><?php echo _('The following domains had their Registrar Account changed'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had their Registrar Account changed'); ?></h2>
         <?php } elseif ($action == "CWH") { ?>
-            <BR><strong><?php echo _('The following domains had their Web Hosting Provider changed'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had their Web Hosting Provider changed'); ?></h2>
         <?php } elseif ($action == "DD") { ?>
-            <BR><strong><?php echo _('The following domains (and associated SSL Certificates) were deleted'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains (and associated SSL Certificates) were deleted'); ?></h2>
         <?php } elseif ($action == "AN") { ?>
-            <BR><strong><?php echo _('The following domains had the Note appended'); ?>:</strong><BR>
+            <h2 class="h5"><?php echo _('The following domains had the Note appended'); ?></h2>
         <?php } ?>
 
-        <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
+        <p><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?></p><?php
 
     }
 
@@ -2020,19 +2020,22 @@ if ($done != "1") {
         echo $form->showInputHidden('is_submitted', '1');
         echo $form->showFormBottom('');
 
-    } else {
-
-        echo '<BR>';
-
     }
 
     echo $form->showFormTop('');
 
     if ($action != "") {
 
+        // The action's name as the heading over the form, and for Delete Domains, what else goes with the domains as a
+        // slim warning under it, inside the form so it keeps to the form's width (like the restore warning on the
+        // Backup & Restore page, it isn't a page message, so it isn't announced when the page loads)
+        $before_list = '<h2 class="h5">' . $breadcrumb_text . '</h2>';
         if ($action == "DD") {
 
-            echo "<strong>" . _("WARNING: In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted.") . ' ' . _("If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.") . "</strong><BR><BR>";
+            $before_list .= '<div class="alert alert-danger d-flex align-items-start gap-2 py-2">'
+                . '<i class="bi bi-exclamation-triangle-fill domainmod-message-icon" aria-hidden="true"></i>'
+                . '<div class="domainmod-message-text">' . _('In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted.') . ' ' . _("If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.") . '</div></div>';
+
         }
 
         if ($action == "AD") {
@@ -2045,7 +2048,7 @@ if ($done != "1") {
 
         }
 
-        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', '<strong>' . $breadcrumb_text . '</strong><BR><BR>', '');
+        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', $before_list, '');
 
     }
 

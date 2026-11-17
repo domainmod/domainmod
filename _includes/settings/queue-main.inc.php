@@ -28,7 +28,7 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ 5, 10, 25, 50, 75, 100, -1 ],
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,

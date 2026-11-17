@@ -272,15 +272,14 @@ $breadcrumb_end = '<li class=\"active\">' . $breadcrumb_text . '</li>';
 $done = $done ?? '';
 $submission_failed = $submission_failed ?? 0;
 if ($done != '1') {
-    echo '<div class="domainmod-intro">' . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . '</div>';
+    echo $layout->calloutTop() . _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.") . $layout->calloutBottom();
 } ?>
 <?php if ($done == "1") { ?>
 
     <?php if ($submission_failed != "1") { ?>
 
-        <BR><strong><?php echo sprintf(_('The following domains had their %s field updated'), '<em>' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</em>'); ?>:</strong><BR>
-
-        <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR>
+        <h2 class="h5"><?php echo sprintf(_('The following domains had their %s field updated'), '<em>' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</em>'); ?></h2>
+        <p><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?></p>
 
     <?php } ?>
 
@@ -295,7 +294,8 @@ if ($done != '1') {
 
         $text = _('Domains to update (one per line)');
 
-        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', '<BR><strong>' . $breadcrumb_text . ':  <BR>' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</strong><BR><BR>', '');
+        // The field being updated, as the heading over the form (its name is stored escaped, as every custom field's is)
+        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', '<h2 class="h5">' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</h2>', '');
 
     }
 

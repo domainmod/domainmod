@@ -51,39 +51,39 @@ $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 <?php
 if ($queue_rdap_available) {
 
-    echo sprintf(_('The Domain Queue imports the details of your domains, such as their expiry dates and DNS servers, and adds them to your main %s database along with your domains. There are two ways to use it.'), SOFTWARE_TITLE) . '<BR><BR>';
-    echo sprintf(_("If %s supports your registrar's API, choose the registrar account and supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains."), SOFTWARE_TITLE) . '<BR><BR>';
-    echo _("If your registrar isn't supported, paste a list of your domains and their details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. WHOIS privacy and auto renewal are set to No, since neither one includes them.") . '<BR><BR>';
+    echo '<p>' . sprintf(_('The Domain Queue imports the details of your domains, such as their expiry dates and DNS servers, and adds them to your main %s database along with your domains. There are two ways to use it.'), SOFTWARE_TITLE) . '</p>';
+    echo '<p>' . sprintf(_("If %s supports your registrar's API, choose the registrar account and supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains."), SOFTWARE_TITLE) . '</p>';
+    echo '<p>' . _("If your registrar isn't supported, paste a list of your domains and their details are looked up using RDAP, the public replacement for WHOIS, or WHOIS itself for domains RDAP doesn't cover. WHOIS privacy and auto renewal are set to No, since neither one includes them.") . '</p>';
 
 } else {
 
-    echo sprintf(_("The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."), SOFTWARE_TITLE) . '&nbsp;';
-    echo _('All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains.') . '<BR><BR>';
+    echo '<p>' . sprintf(_("The Domain Queue allows you to use your domain registrar's API to automatically import the details of your domains, such as expiry date and DNS servers, which are then added to your main %s database along with your domains."), SOFTWARE_TITLE) . ' ';
+    echo _('All you have to do is choose the registrar account, supply a list of domains, and the rest of the work is done for you. Depending on the registrar, you may not even have to supply the list of domains.') . '</p>';
 
 } ?>
-<?php echo sprintf(_("If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."), '<a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a>'); ?><BR>
-<BR>
+<p><?php echo sprintf(_("If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."), '<a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a>'); ?></p>
 <?php
 $result = $pdo->query("
     SELECT `name`
     FROM api_registrars
     WHERE `name` != 'RDAP'
     ORDER BY name ASC")->fetchAll();
-
-$supported_registrars = $supported_registrars ?? '';
-
-foreach ($result as $row) {
-
-    $supported_registrars .= ', ' . $row->name;
-
-}
-
-$supported_registrars = substr($supported_registrars, 2);
 ?>
-<strong><?php echo _('Currently Supported Registrars'); ?></strong>: <?php echo $supported_registrars; ?><BR>
-<BR>
-<strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('In order to use the Domain Queue you must set up the cron job that comes with %s.'), SOFTWARE_TITLE) . '&nbsp;'; ?>
-<?php echo sprintf(_('For more information, please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?><BR>
+<h2 class="h5"><?php echo _('Currently Supported Registrars'); ?></h2>
+<ul><?php
+
+foreach ($result as $row) { ?>
+
+    <li><?php echo $row->name; ?></li><?php
+
+} ?>
+
+</ul>
+<?php // Setting up the cron job, as a slim note (like the warnings on other pages, it isn't a page message, so it isn't announced when the page loads) ?>
+<div class="alert alert-info d-flex align-items-start gap-2 py-2">
+    <i class="bi bi-info-circle-fill domainmod-message-icon" aria-hidden="true"></i>
+    <div class="domainmod-message-text"><?php echo sprintf(_('In order to use the Domain Queue you must set up the cron job that comes with %s.'), SOFTWARE_TITLE) . ' ' . sprintf(_('For more information, please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?></div>
+</div>
 <?php // The main way in as the one red button, and the other as an outline button beside it ?>
 <div class="d-flex flex-wrap gap-2 mt-3 mb-3"><?php
 echo $layout->linkButton($web_root . '/queue/add/', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), 'primary');

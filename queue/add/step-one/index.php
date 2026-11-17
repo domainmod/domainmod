@@ -71,13 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->stepIndicator(array(_('Registrar Account'), _('Domains')), 1, _('Domain Queue steps')); ?>
-<strong><?php echo _('Domain Queue & API Prerequisites'); ?></strong><BR>
-<?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?>
+<h2 class="h5"><?php echo _('Domain Queue & API Prerequisites'); ?></h2>
+<div class="domainmod-intro">
+<p class="mb-2"><?php echo sprintf(_('Before you can add domains to %s using the Domain Queue you must first do the following'), SOFTWARE_TITLE) . ':'; ?></p>
 <ol>
-    <li><?php echo _('Ensure that the registrar has an API and that your account has been granted access to it'); ?></li>
-    <li><?php echo sprintf(_('Enable API Support on the %sregistrar asset%s'), '<a href="' . $web_root . '/assets/registrars.php">', '</a>'); ?></li>
-    <li><?php echo sprintf(_('Save the required API credentials with the %sregistrar account asset%s'), '<a href="' . $web_root . '/assets/registrar-accounts.php">', '</a>'); ?></li>
-</ol><?php
+    <li class="mb-1"><?php echo _('Ensure that the registrar has an API and that your account has been granted access to it'); ?></li>
+    <li class="mb-1"><?php echo sprintf(_('Enable API Support on the %sregistrar asset%s'), '<a href="' . $web_root . '/assets/registrars.php">', '</a>'); ?></li>
+    <li class="mb-1"><?php echo sprintf(_('Save the required API credentials with the %sregistrar account asset%s'), '<a href="' . $web_root . '/assets/registrar-accounts.php">', '</a>'); ?></li>
+</ol>
+</div><?php
 
 echo $form->showFormTop('');
 

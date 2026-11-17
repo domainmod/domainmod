@@ -68,7 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->stepIndicator(array(_('Custom Field'), _('Domains and Value')), 1, _('Bulk Updater steps')); ?>
-<div class="domainmod-intro"><?php echo _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks."); ?></div>
+<?php echo $layout->calloutTop(); ?>
+<?php echo _("The Bulk Updater allows you to add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks."); ?>
+<?php echo $layout->calloutBottom(); ?>
 <?php
 echo $form->showFormTop('');
 
