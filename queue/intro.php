@@ -69,16 +69,21 @@ $result = $pdo->query("
     WHERE `name` != 'RDAP'
     ORDER BY name ASC")->fetchAll();
 ?>
-<h2 class="h5"><?php echo _('Currently Supported Registrars'); ?></h2>
-<ul><?php
+<?php // The supported registrars in a box that starts closed (like the upgrade notice's requirements), headed with the count: read down each column in alphabetical order, two columns on a phone and three on wider screens, with each name kept left to right ?>
+<details class="card mb-3 domainmod-message-why">
+    <summary class="card-header fw-semibold"><?php echo _('Currently Supported Registrars') . ' (' . number_format(count($result)) . ')'; ?></summary>
+    <div class="card-body">
+        <ul class="domainmod-column-list list-unstyled mb-0"><?php
 
-foreach ($result as $row) { ?>
+        foreach ($result as $row) { ?>
 
-    <li><?php echo $row->name; ?></li><?php
+            <li><?php echo $layout->ltr($row->name); ?></li><?php
 
-} ?>
+        } ?>
 
-</ul>
+        </ul>
+    </div>
+</details>
 <?php // Setting up the cron job, as a slim note (like the warnings on other pages, it isn't a page message, so it isn't announced when the page loads) ?>
 <div class="alert alert-info d-flex align-items-start gap-2 py-2">
     <i class="bi bi-info-circle-fill domainmod-message-icon" aria-hidden="true"></i>

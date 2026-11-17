@@ -1587,6 +1587,21 @@ main > a:not([class]) {
 .domainmod-message-why summary {
     cursor: pointer;
 }
+/* A list read down each column, in order: two columns on a phone and three on wider screens (Domain Queue's supported
+   registrars). In right-to-left languages the columns run from the right. */
+.domainmod-column-list {
+    columns: 2;
+    column-gap: 1.5rem;
+}
+@media (min-width: 768px) {
+    .domainmod-column-list {
+        columns: 3;
+    }
+}
+.domainmod-column-list li {
+    break-inside: avoid;
+    margin-bottom: .25rem;
+}
 /* A success that becomes a toast takes no space while the page loads, so nothing jumps. Without JavaScript the media
    query doesn't match and it shows as a slim alert. */
 @media (scripting: enabled) {
