@@ -409,7 +409,7 @@ if ($result) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showSwitch(_('Subscribe to Domain & SSL Certificate expiration emails?') . '', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), 'new_expiration_emails', $new_expiration_emails, '', '<BR><BR>');
+echo $form->showSwitch(_('Subscribe to Domain & SSL Certificate expiration emails?'), '', 'new_expiration_emails', $new_expiration_emails, '', '<BR><BR>');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 

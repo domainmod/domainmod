@@ -77,7 +77,8 @@ class Notice
     // The notice's title, with the versions the upgrade goes from and to
     public function upgradeTitle($db_version)
     {
-        return _('Database Upgrade Available') . ' - <em>v' . htmlspecialchars((string) $db_version, ENT_QUOTES, 'UTF-8') . ' ' . Format::toLower(_('To')) . ' v' . SOFTWARE_VERSION . '</em>';
+        // The range has its own message, not the "To" an email log uses, so translators can word each one for its place
+        return _('Database Upgrade Available') . ' - <em>' . sprintf(_('v%1$s to v%2$s'), htmlspecialchars((string) $db_version, ENT_QUOTES, 'UTF-8'), SOFTWARE_VERSION) . '</em>';
     }
 
     /*

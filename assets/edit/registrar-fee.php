@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
             if ($pdo->InTransaction()) $pdo->rollback();
 
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= sprintf(_('There is no fee for %s.'), $new_tld) . '<BR>';
+            $_SESSION['s_message_danger'] .= sprintf(_('No fee has been set up for %s.'), $new_tld) . '<BR>';
 
             header("Location: ../registrar-fees.php?rid=" . $rid);
             exit;

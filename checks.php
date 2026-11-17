@@ -70,6 +70,9 @@ if ($upgrade_waiting && $upgrade_approved == '1') {
 
 if ($upgrade_waiting && $upgrade_approved != '1') {
 
+    // The notice is shown in the user's language, which is otherwise loaded with the rest of their settings below
+    $login->loadUserLanguage($_SESSION['s_user_id'] ?? 0);
+
     header("Location: notice.php?a=u");
     exit;
 

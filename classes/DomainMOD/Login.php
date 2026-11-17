@@ -94,6 +94,39 @@ class Login
         return $result;
     }
 
+    /*
+     * Puts the user's language in the session, so the next page is shown in it, and returns whether it was found.
+     * checks.php uses it before sending a user to the upgrade notice, since the rest of their settings are only loaded
+     * once the database is up to date. If the language can't be read, the session is left as it was.
+     */
+    public function loadUserLanguage($user_id)
+    {
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT us.default_language, lang.name AS language_name
+                FROM user_settings AS us, languages AS lang
+                WHERE us.default_language = lang.language
+                  AND us.user_id = :user_id");
+            $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stmt->closeCursor();
+
+        } catch (\Throwable $e) {
+
+            return false;
+
+        }
+
+        if (!$result) return false;
+
+        $_SESSION['s_default_language'] = $result->default_language;
+        $_SESSION['s_default_language_name'] = $result->language_name;
+
+        return true;
+    }
+
     public function setLastLogin($user_id)
     {
         $pdo = $this->deeb->cnxx;
