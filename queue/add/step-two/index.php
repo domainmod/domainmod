@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_raid === 0) {
 
-            if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
+            if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account.') . '<BR>';
 
         } else {
 
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } else {
 
-                if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
+                if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account.') . '<BR>';
                 if ($raw_domain_list == '') $form->addFieldError('raw_domain_list', _('Enter the list of domains to add to the queue'));
 
             }
@@ -239,11 +239,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($invalid_count == 1) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                     } else {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                         if (($invalid_count - $invalid_to_display) == 1) {
 
@@ -313,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= sprintf(_('At least one of the domains you entered already exists in %s. %s You should run the domain list through a Segment filter to determine which one(s).'), SOFTWARE_TITLE, '<BR><BR>') . '<BR>';
                     if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= _('At least one of the domains you entered is already in the domain queue.') . '<BR>';
-                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
+                    if ($new_raid === 0) $_SESSION['s_message_danger'] .= _('Please choose the registrar account.') . '<BR>';
 
                     $submission_failed = 1;
 

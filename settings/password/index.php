@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     if (!$result || $user_count > 1) {
 
-        $_SESSION['s_message_danger'] .= _('Your password could not be updated') . '<BR>';
-        $_SESSION['s_message_danger'] .= _('If the problem persists please contact your administrator') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('Your password could not be updated.') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('If the problem persists, please contact your administrator.') . '<BR>';
 
     } else {
 

@@ -57,7 +57,7 @@ $new_default_ssl_provider = $_POST['new_default_ssl_provider'] ?? 0;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $_SESSION['s_message_success'] .= _('Your Defaults were updated') . '<BR>';
+    $_SESSION['s_message_success'] .= _('Your Defaults were updated.') . '<BR>';
 
     $stmt = $pdo->prepare("
         SELECT *

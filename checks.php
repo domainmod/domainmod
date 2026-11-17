@@ -227,7 +227,7 @@ if ($_SESSION['s_version_error'] != '1') {
     if ($_SESSION['s_is_new_password'] == 1) {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-        $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes.') . '<BR>';
         header("Location: settings/password/");
         exit;
 

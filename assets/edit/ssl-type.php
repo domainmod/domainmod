@@ -119,7 +119,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= _('This Type has SSL Certificates associated with it and cannot be deleted') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('This Type has SSL Certificates associated with it and cannot be deleted.') . '<BR>';
 
     } else {
 

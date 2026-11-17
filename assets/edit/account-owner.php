@@ -182,19 +182,19 @@ if ($del === 1) {
     ) {
 
         if ($existing_registrar_accounts > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has registrar accounts associated with it and cannot be deleted') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('This Owner has registrar accounts associated with it and cannot be deleted.') . '<BR>';
         }
 
         if ($existing_domains > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has domains associated with it and cannot be deleted') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('This Owner has domains associated with it and cannot be deleted.') . '<BR>';
         }
 
         if ($existing_ssl_accounts > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has SSL accounts associated with it and cannot be deleted') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('This Owner has SSL accounts associated with it and cannot be deleted.') . '<BR>';
         }
 
         if ($existing_ssl_certs > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has SSL certificates associated with it and cannot be deleted') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('This Owner has SSL certificates associated with it and cannot be deleted.') . '<BR>';
         }
 
     } else {

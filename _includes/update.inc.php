@@ -88,8 +88,8 @@ if ($current_db_version < SOFTWARE_VERSION) {
         UPDATE settings
         SET upgrade_available = '0'");
 
-    $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . _('Your database has been upgraded') . '<BR>';
-    $message_success_cli = _('Your database has been upgraded') . "\r\n\r\n";
+    $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . _('Your database has been upgraded.') . '<BR>';
+    $message_success_cli = _('Your database has been upgraded.') . "\r\n\r\n";
 
 } elseif ($current_db_version > SOFTWARE_VERSION) {
 
@@ -101,7 +101,7 @@ if ($current_db_version < SOFTWARE_VERSION) {
 
 } else {
 
-    $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . _('Your Database is already up-to-date') . '<BR>';
+    $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . _('Your Database is already up-to-date.') . '<BR>';
     $message_success_cli = "Your Database is already up-to-date\r\n\r\n";
 
 }

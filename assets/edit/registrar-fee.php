@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
             if ($pdo->InTransaction()) $pdo->rollback();
 
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= sprintf(_('There is no fee for %s'), $new_tld) . '<BR>';
+            $_SESSION['s_message_danger'] .= sprintf(_('There is no fee for %s.'), $new_tld) . '<BR>';
 
             header("Location: ../registrar-fees.php?rid=" . $rid);
             exit;
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
         if ($pdo->InTransaction()) $pdo->commit();
 
-        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated'), $new_tld) . '<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated.'), $new_tld) . '<BR>';
 
         header("Location: ../registrar-fees.php?rid=" . $rid);
         exit;

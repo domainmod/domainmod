@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($fee_id) {
 
-            $_SESSION['s_message_danger'] .= _('A fee for this TLD already exists') . ' [<a href=\'' . WEB_ROOT .
+            $_SESSION['s_message_danger'] .= _('A fee for this TLD already exists.') . ' [<a href=\'' . WEB_ROOT .
                 '/assets/edit/registrar-fee.php?rid=' . $rid . '&fee_id=' . urlencode($fee_id) .
                 '\'>' . DomainMOD\Format::toLower(_('Edit Fee')) . '</a>]<BR>';
 
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($pdo->InTransaction()) $pdo->commit();
 
-                $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added'), $new_tld) . '<BR>';
+                $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added.'), $new_tld) . '<BR>';
 
                 header("Location: ../registrar-fees.php?rid=" . $rid);
                 exit;

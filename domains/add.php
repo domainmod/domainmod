@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($result) {
 
-            $_SESSION['s_message_danger'] .= sprintf(_('This domain is already in %s'), SOFTWARE_TITLE . '<BR>');
+            $_SESSION['s_message_danger'] .= sprintf(_('This domain is already in %s.'), SOFTWARE_TITLE) . '<BR>';
 
         } else {
 
@@ -419,7 +419,7 @@ if ($result) {
 }
 
 // Each switch is one grid item, with the same spacing as the other fields
-echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
+echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
 echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
 echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
 

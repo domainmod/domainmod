@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     $_SESSION['s_system_currency_converter'] = $new_currency_converter;
     $_SESSION['s_system_local_php_log'] = $new_local_php_log;
 
-    $_SESSION['s_message_success'] .= _('The System Settings were updated') . '<BR>';
+    $_SESSION['s_message_success'] .= _('The System Settings were updated.') . '<BR>';
 
     header("Location: index.php");
     exit;

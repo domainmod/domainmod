@@ -100,11 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     if ($invalid_count == 1) {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                     } else {
 
-                        $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+                        $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
                         if (($invalid_count - $invalid_to_display) == 1) {
 
@@ -1533,7 +1533,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= _('Domains marked as Auto Renewal') . '<BR>';
+                        $_SESSION['s_message_success'] .= _('Domains marked as Auto-Renewal') . '<BR>';
 
                     } catch (Exception $e) {
 
@@ -1890,7 +1890,7 @@ if ($action == "AD") {
 } elseif ($action == "PO") {
     $breadcrumb_text = _('Mark as Pending (Other)');
 } elseif ($action == "AURNE") {
-    $breadcrumb_text = _('Mark as Auto Renewal');
+    $breadcrumb_text = _('Mark as Auto-Renewal');
 } elseif ($action == "AURND") {
     $breadcrumb_text = _('Mark as Manual Renewal');
 } elseif ($action == "PRVE") {
@@ -1954,7 +1954,7 @@ echo $layout->calloutTop() . _("The Bulk Updater allows you to add or modify mul
         <?php } elseif ($action == "PO") { ?>
             <h2 class="h5"><?php echo _('The following domains were marked as Pending (Other)'); ?></h2>
         <?php } elseif ($action == "AURNE") { ?>
-            <h2 class="h5"><?php echo _('The following domains were marked as Auto Renewal'); ?></h2>
+            <h2 class="h5"><?php echo _('The following domains were marked as Auto-Renewal'); ?></h2>
         <?php } elseif ($action == "AURND") { ?>
             <h2 class="h5"><?php echo _('The following domains were marked as Manual Renewal'); ?></h2>
         <?php } elseif ($action == "PRVE") { ?>
@@ -2003,7 +2003,7 @@ if ($done != "1") {
         echo $form->showDropdownOption('PO', _('Mark as Pending (Other)'), $action);
         echo $form->showDropdownOption('E', _('Mark as Expired'), $action);
         echo $form->showDropdownOption('S', _('Mark as Sold'), $action);
-        echo $form->showDropdownOption('AURNE', _('Mark as Auto Renewal'), $action);
+        echo $form->showDropdownOption('AURNE', _('Mark as Auto-Renewal'), $action);
         echo $form->showDropdownOption('AURND', _('Mark as Manual Renewal'), $action);
         echo $form->showDropdownOption('PRVE', _('Mark as Private WHOIS'), $action);
         echo $form->showDropdownOption('PRVD', _('Mark as Public WHOIS'), $action);
@@ -2185,7 +2185,7 @@ if ($done != "1") {
         echo $form->showDropdownBottom('');
 
         // Auto Renewal
-        echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
+        echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '', '<BR><BR>');
 
         // WHOIS Privacy Status
         echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '', '<BR><BR>');
@@ -2501,7 +2501,7 @@ if ($done != "1") {
 
         } elseif ($action == "AURNE") {
 
-            echo $form->showSubmitButton(_('Mark as Auto Renewal'), '', '');
+            echo $form->showSubmitButton(_('Mark as Auto-Renewal'), '', '');
 
         } elseif ($action == "AURND") {
 

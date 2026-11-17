@@ -78,7 +78,7 @@ if ($result) {
 
     if ($result == 'admin' && $_SESSION['s_username'] != 'admin') {
 
-        $_SESSION['s_message_danger'] .= _("You don't have permissions to edit the primary administrator account") . '<BR>';
+        $_SESSION['s_message_danger'] .= _("You don't have permissions to edit the primary administrator account.") . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -304,8 +304,8 @@ if ($del === 1) {
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= _('The admin user cannot be deleted') . '<BR>';
-        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= _("You can't delete yourself") . '<BR>';
+        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= _('The admin user cannot be deleted.') . '<BR>';
+        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= _("You can't delete yourself.") . '<BR>';
 
     } else {
 

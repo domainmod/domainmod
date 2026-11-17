@@ -106,7 +106,7 @@ $yes_no = function ($value) {
 // The reasons, as badges in the list and as plain text in the export
 $reasons = array(
     'overdue' => array(_('Overdue'), _('Past its expiry date'), 'danger'),
-    'autorenew' => array(_('Auto Renewal Off'), _('Auto renewal is off'), 'warning'),
+    'autorenew' => array(_('Auto-Renewal Off'), _('Auto-renewal is off'), 'warning'),
     'privacy' => array(_('Privacy Off'), _('Privacy is off'), 'secondary'),
     'nofee' => array(_('No Fee or Rate'), _('No fee, or no conversion rate for its currency'), 'secondary'));
 
@@ -118,7 +118,7 @@ $row_reasons = function ($row) use ($conditions) {
     return $keys;
 };
 
-$intro = sprintf(_('Domains expiring in the next %1$s days with auto renewal or privacy off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, sprintf(ngettext('%s day', '%s days', $expiration_days), $expiration_days));
+$intro = sprintf(_('Domains expiring in the next %1$s days with auto-renewal or privacy off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, sprintf(ngettext('%s day', '%s days', $expiration_days), $expiration_days));
 
 if ($export_data === 1 && $list) {
 
@@ -144,7 +144,7 @@ if ($export_data === 1 && $list) {
         _('Days Left'),
         _('Registrar'),
         _('Account'),
-        _('Auto Renewal'),
+        _('Auto-Renewal'),
         _('Privacy'),
         _('Renewal Cost'),
         _('Reasons')
@@ -197,7 +197,7 @@ if (array_sum($counts) > $total_at_risk) echo ' ' . _('A domain can have more th
 echo '</p>'; ?>
 <div class="row"><?php
     echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
-    echo $dashboard->displayPanel(sprintf(_('Auto Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
+    echo $dashboard->displayPanel(sprintf(_('Auto-Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Privacy Off (%s days)'), $risk_days), $counts['privacy'], 'secondary', 'bi-incognito', '/reporting/domains/at-risk.php?show=privacy#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains')); ?>
 </div>
@@ -222,7 +222,7 @@ if ($list) { ?>
             <th><?php echo _('Days Left'); ?></th>
             <th><?php echo _('Registrar'); ?></th>
             <th><?php echo _('Account'); ?></th>
-            <th><?php echo _('Auto Renewal'); ?></th>
+            <th><?php echo _('Auto-Renewal'); ?></th>
             <th><?php echo _('Privacy'); ?></th>
             <th><?php echo _('Renewal Cost'); ?></th>
         </tr>

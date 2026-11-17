@@ -66,7 +66,7 @@ $result = $stmt->fetchColumn();
 
 if (!$result) {
 
-    $_SESSION['s_message_danger'] .= _("The Custom SSL Field you're trying to edit is invalid") . '<BR>';
+    $_SESSION['s_message_danger'] .= _("The Custom SSL Field you're trying to edit is invalid.") . '<BR>';
 
     header("Location: ../ssl-fields/");
     exit;
@@ -193,7 +193,7 @@ if ($del === 1) {
 
     if ($csfid === 0) {
 
-        $_SESSION['s_message_danger'] .= _('The Custom SSL Field cannot be deleted') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('The Custom SSL Field cannot be deleted.') . '<BR>';
 
     } else {
 

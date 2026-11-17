@@ -154,7 +154,7 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             if ($result) {
 
                 if ($pdo->InTransaction()) $pdo->rollback();
-                $_SESSION['s_message_danger'] .= sprintf(_('This domain is already in %s'), SOFTWARE_TITLE . '<BR>');
+                $_SESSION['s_message_danger'] .= sprintf(_('This domain is already in %s.'), SOFTWARE_TITLE) . '<BR>';
                 header("Location: index.php?qid=" . $qid);
                 exit;
 
@@ -558,7 +558,7 @@ if (!$edited_creation_type_id) {
     }
 
     // Each switch is one grid item, with the same spacing as the other fields
-    echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
+    echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
     echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
     echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
 

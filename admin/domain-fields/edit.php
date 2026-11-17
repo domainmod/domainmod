@@ -66,7 +66,7 @@ $result = $stmt->fetchColumn();
 
 if (!$result) {
 
-    $_SESSION['s_message_danger'] .= _("The Custom Domain Field you're trying to edit is invalid") . '<BR>';
+    $_SESSION['s_message_danger'] .= _("The Custom Domain Field you're trying to edit is invalid.") . '<BR>';
 
     header("Location: ../domain-fields/");
     exit;
@@ -193,7 +193,7 @@ if ($del === 1) {
 
     if ($cdfid === 0) {
 
-        $_SESSION['s_message_danger'] .= _('The Custom Domain Field cannot be deleted') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('The Custom Domain Field cannot be deleted.') . '<BR>';
 
     } else {
 
@@ -251,7 +251,7 @@ if ($del === 1) {
 
             $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
-            $_SESSION['s_message_success'] .= sprintf(_('Custom Domain Field %s (%s) delete'), $result->name, $result->field_name) . '<BR>';
+            $_SESSION['s_message_success'] .= sprintf(_('Custom Domain Field %s (%s) deleted'), $result->name, $result->field_name) . '<BR>';
 
             header("Location: ../domain-fields/");
             exit;

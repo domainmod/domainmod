@@ -239,7 +239,7 @@ if ($export_data === 1) {
 
             if ($row->autorenew == "1") {
 
-                $autorenew_status = _('Auto Renewal');
+                $autorenew_status = _('Auto-Renewal');
 
             } elseif ($row->autorenew == "0") {
 

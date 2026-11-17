@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= _('Please choose a CSV template file to import') . '<BR>';
+                $_SESSION['s_message_danger'] .= _('Please choose a CSV template file to import.') . '<BR>';
 
             } else {
 
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-                $_SESSION['s_message_success'] .= _('Your CSV Import has been completed') . '<BR>';
+                $_SESSION['s_message_success'] .= _('Your CSV Import has been completed.') . '<BR>';
 
                 if (!empty($csv->invalid_domains)) {
 

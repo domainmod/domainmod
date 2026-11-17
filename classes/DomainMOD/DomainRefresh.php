@@ -336,7 +336,7 @@ class DomainRefresh
         }
 
         if (in_array('autorenew', $unreported, true)) {
-            $details['notes'][] = _("Your registrar's API doesn't report the auto renewal status, so it wasn't changed.");
+            $details['notes'][] = _("Your registrar's API doesn't report the auto-renewal status, so it wasn't changed.");
         } else {
             $details['autorenew'] = ((string) $autorenew_status === '1') ? 1 : 0;
         }
@@ -490,7 +490,7 @@ class DomainRefresh
             if ($details['autorenew'] !== null && $details['autorenew'] !== (int) $row->autorenew) {
 
                 $new['autorenew'] = $details['autorenew'];
-                $changes[] = $details['autorenew'] === 1 ? _('Auto renewal turned on.') : _('Auto renewal turned off.');
+                $changes[] = $details['autorenew'] === 1 ? _('Auto-renewal turned on.') : _('Auto-renewal turned off.');
                 $note_changes[] = $details['autorenew'] === 1 ? 'Auto renewal turned on.' : 'Auto renewal turned off.';
 
             }

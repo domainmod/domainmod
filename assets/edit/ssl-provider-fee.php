@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
         if ($pdo->InTransaction()) $pdo->commit();
 
-        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated'), $temp_type) . '<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated.'), $temp_type) . '<BR>';
 
         header("Location: ../ssl-provider-fees.php?sslpid=" . $sslpid);
         exit;

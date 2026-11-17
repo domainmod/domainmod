@@ -485,7 +485,7 @@ if ($del === 1) {
     $existing_ssl_certs = $existing_ssl_certs ?? 0;
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_message_danger'] .= _('This Domain has SSL Certificates associated with it and cannot be deleted') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('This Domain has SSL Certificates associated with it and cannot be deleted.') . '<BR>';
 
     } else {
 
@@ -573,13 +573,13 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
 
     if ($refresh_api_name !== '') {
 
-        $refresh_source = sprintf(_('Updates the expiry date, DNS servers, WHOIS privacy, and auto renewal from your %s API.'), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
-        $refresh_details = sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto renewal status using your %s API, and update them here."), $refresh_api_name) . ' ' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.") . ' ' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+        $refresh_source = sprintf(_('Updates the expiry date, DNS servers, WHOIS privacy, and auto-renewal from your %s API.'), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
+        $refresh_details = sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto-renewal status using your %s API, and update them here."), $refresh_api_name) . ' ' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.") . ' ' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
 
     } else {
 
         $refresh_source = _('Updates the expiry date and DNS servers from public RDAP and WHOIS data.');
-        $refresh_details = _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto renewal status aren't available this way, so they're left as they are.");
+        $refresh_details = _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto-renewal status aren't available this way, so they're left as they are.");
 
     } ?>
 
@@ -688,7 +688,7 @@ if ($result) {
 }
 
 // Each switch is one grid item, with the same spacing as the other fields
-echo $form->showSwitch(_('Auto Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
+echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
 echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
 echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
 

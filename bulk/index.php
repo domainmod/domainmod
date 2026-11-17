@@ -97,7 +97,7 @@ if ($action == '') {
     echo $form->showDropdownOption('PO', _('Mark as Pending (Other)'), $action);
     echo $form->showDropdownOption('E', _('Mark as Expired'), $action);
     echo $form->showDropdownOption('S', _('Mark as Sold'), $action);
-    echo $form->showDropdownOption('AURNE', _('Mark as Auto Renewal'), $action);
+    echo $form->showDropdownOption('AURNE', _('Mark as Auto-Renewal'), $action);
     echo $form->showDropdownOption('AURND', _('Mark as Manual Renewal'), $action);
     echo $form->showDropdownOption('PRVE', _('Mark as Private WHOIS'), $action);
     echo $form->showDropdownOption('PRVD', _('Mark as Public WHOIS'), $action);

@@ -127,7 +127,7 @@ if ($del === 1) {
 
     if ($result) {
 
-        $_SESSION['s_message_danger'] .= _('This IP Address has domains associated with it and cannot be deleted') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('This IP Address has domains associated with it and cannot be deleted.') . '<BR>';
 
     } else {
 

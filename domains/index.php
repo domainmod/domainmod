@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= _('The date range is invalid') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('The date range is invalid.') . '<BR>';
 
     }
 
@@ -726,7 +726,7 @@ if ($export_data == 1) {
         }
 
         if ($row->autorenew == "1") {
-            $autorenew_status = _('Auto Renewal');
+            $autorenew_status = _('Auto-Renewal');
         } elseif ($row->autorenew == "0") {
             $autorenew_status = _('Manual Renewal');
         }

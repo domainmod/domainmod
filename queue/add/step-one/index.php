@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= _('Please choose the registrar account') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('Please choose the registrar account.') . '<BR>';
 
     }
 

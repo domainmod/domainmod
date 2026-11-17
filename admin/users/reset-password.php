@@ -116,7 +116,7 @@ if ($new_username != '') {
             $username = $result->username;
             $email_address = $result->email_address;
             require_once DIR_INC . '/email/send-new-password.inc.php';
-            $_SESSION['s_message_success'] .= _('The password has been reset and emailed to the account holder') . '<BR>';
+            $_SESSION['s_message_success'] .= _('The password has been reset and emailed to the account holder.') . '<BR>';
 
         }
 
@@ -129,7 +129,7 @@ if ($new_username != '') {
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        if ($new_username == '') $_SESSION['s_message_danger'] .= _('Enter the username') . '<BR>';
+        if ($new_username == '') $_SESSION['s_message_danger'] .= _('Enter the username.') . '<BR>';
 
         header("Location: index.php");
         exit;

@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_start_date > $new_end_date) {
 
-        $_SESSION['s_message_danger'] .= _('The date range is invalid') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('The date range is invalid.') . '<BR>';
 
     }
 

@@ -147,8 +147,8 @@ if ($del === 1) {
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 
-        if ($existing_ssl_provider_accounts > 0) $_SESSION['s_message_danger'] .= _('This SSL Provider has Accounts associated with it and cannot be deleted') . '<BR>';
-        if ($existing_ssl_certs > 0) $_SESSION['s_message_danger'] .= _('This SSL Provider has SSL Certificates associated with it and cannot be deleted') . '<BR>';
+        if ($existing_ssl_provider_accounts > 0) $_SESSION['s_message_danger'] .= _('This SSL Provider has Accounts associated with it and cannot be deleted.') . '<BR>';
+        if ($existing_ssl_certs > 0) $_SESSION['s_message_danger'] .= _('This SSL Provider has SSL Certificates associated with it and cannot be deleted.') . '<BR>';
 
     } else {
 

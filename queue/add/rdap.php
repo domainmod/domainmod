@@ -79,11 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
         if ($invalid_count == 1) {
 
-            $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+            $_SESSION['s_message_danger'] .= sprintf(_('There is %s invalid domain on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
         } else {
 
-            $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
+            $_SESSION['s_message_danger'] .= sprintf(_('There are %s invalid domains on your list.'), number_format($invalid_count)) . '<BR><BR>' . $temp_result_message;
 
             if (($invalid_count - $invalid_to_display) == 1) {
 
@@ -167,7 +167,7 @@ if (!$rdap_api_registrar_id) {
     echo $form->showDropdownBottom('', 'new_owner_id');
 
     // What the lookup can't fill in, as the domain list's help text
-    $list_help = _("Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . ' '
+    $list_help = _("Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto-renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . ' '
         . _("Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import.");
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), $list_help, $unsanitize->text($raw_domain_list), '1', '', '');
 

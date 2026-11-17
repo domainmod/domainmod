@@ -146,7 +146,7 @@ if ($export_data === 1 && $list) {
         _('Days Left'),
         _('Registrar'),
         _('Account'),
-        _('Auto Renewal'),
+        _('Auto-Renewal'),
         _('Privacy'),
         _('Renewal Cost')
     );
@@ -243,7 +243,7 @@ if ($list) { ?>
             <th><?php echo _('Days Left'); ?></th>
             <th><?php echo _('Registrar'); ?></th>
             <th><?php echo _('Account'); ?></th>
-            <th><?php echo _('Auto Renewal'); ?></th>
+            <th><?php echo _('Auto-Renewal'); ?></th>
             <th><?php echo _('Privacy'); ?></th>
             <th><?php echo _('Renewal Cost'); ?></th>
         </tr>

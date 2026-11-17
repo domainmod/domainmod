@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= _('Please choose a backup file to restore') . '<BR>';
+                $_SESSION['s_message_danger'] .= _('Please choose a backup file to restore.') . '<BR>';
 
             } else {
 

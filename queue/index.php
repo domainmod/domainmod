@@ -176,7 +176,7 @@ if ($export_data === 1) {
             _('IP Address (IP)'),
             _('Web Host'),
             _('Category'),
-            _('Auto Renew'),
+            _('Auto-Renew'),
             _('Privacy'),
             _('Ready To Import'),
             _('Already in Domains'),

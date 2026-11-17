@@ -79,7 +79,7 @@ if ($reset_id > 0 || $reset_token !== '') {
     if (!$result) {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-        $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired.') . '<BR>';
         header('Location: ' . $web_root . "/reset.php");
         exit;
 
@@ -107,7 +107,7 @@ if ($reset_id > 0 || $reset_token !== '') {
         if ($stmt->rowCount() !== 1) {
 
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired.') . '<BR>';
             header('Location: ' . $web_root . "/reset.php");
             exit;
 
@@ -120,7 +120,7 @@ if ($reset_id > 0 || $reset_token !== '') {
         require_once DIR_INC . '/email/send-new-password.inc.php';
 
         $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-        $_SESSION['s_message_success'] .= _('Your new password has been emailed to you') . '<BR>';
+        $_SESSION['s_message_success'] .= _('Your new password has been emailed to you.') . '<BR>';
         header('Location: ' . $web_root . "/");
         exit;
 
@@ -144,7 +144,7 @@ if ($reset_id > 0 || $reset_token !== '') {
 
     // The same message either way, so the page doesn't reveal which accounts exist
     $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-    $_SESSION['s_message_success'] .= _("If there's a matching username or email address, a link to reset your password has been emailed to it") . '<BR>';
+    $_SESSION['s_message_success'] .= _("If there's a matching username or email address, a link to reset your password has been emailed to it.") . '<BR>';
 
     /*
      * Finish the response before sending any email, so the response time doesn't reveal whether the account exists

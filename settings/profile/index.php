@@ -69,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if (count($result) !== 1) { // If there isn't exactly one user result
 
-        $_SESSION['s_message_danger'] .= _('Your profile could not be updated') . '<BR>';
-        $_SESSION['s_message_danger'] .= _('If the problem persists please contact your administrator') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('Your profile could not be updated.') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('If the problem persists, please contact your administrator.') . '<BR>';
 
     } else {
 
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             if ($pdo->InTransaction()) $pdo->commit();
 
-            $_SESSION['s_message_success'] .= _('Your profile was updated') . '<BR>';
+            $_SESSION['s_message_success'] .= _('Your profile was updated.') . '<BR>';
 
             header("Location: index.php");
             exit;

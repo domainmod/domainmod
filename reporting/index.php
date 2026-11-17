@@ -58,7 +58,7 @@ $report = $_REQUEST['report'] ?? '';
 </div>
 <h2 class="h5 mt-4 mb-3"><?php echo _('Needs Attention'); ?></h2>
 <div class="row g-3"><?php
-    echo $layout->landingTile('/reporting/domains/at-risk.php', _('At-Risk Domains'), sprintf(_('Expiring in the next %s days without auto renewal or privacy'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-exclamation-triangle', 'warning');
+    echo $layout->landingTile('/reporting/domains/at-risk.php', _('At-Risk Domains'), sprintf(_('Expiring in the next %s days without auto-renewal or privacy'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-exclamation-triangle', 'warning');
     echo $layout->landingTile('/reporting/ssl/at-risk.php', _('SSL At-Risk Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning');
     // To show this tile to admins only (as the sidebar's Data Warehouse section is), wrap it in
     // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }

@@ -515,12 +515,12 @@ class System
         if ($result === 'signed_out') {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('You must be logged in to access this area.') . '<BR>';
             header('Location: ' . WEB_ROOT . '/');
             exit;
         } elseif ($result === 'invalid') {
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= _('You must be logged in to access this area') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('You must be logged in to access this area.') . '<BR>';
             header('Location: ' . WEB_ROOT . '/logout.php');
             exit;
         }
@@ -583,7 +583,7 @@ class System
     {
         if ($this->installMode() === 0) {
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= sprintf(_('%s is already installed'), SOFTWARE_TITLE) . "<BR>";
+            $_SESSION['s_message_danger'] .= sprintf(_('%s is already installed.'), SOFTWARE_TITLE) . "<BR>";
             header('Location: ' . WEB_ROOT . '/');
             exit;
         }
@@ -593,7 +593,7 @@ class System
     {
         if (($_SESSION['s_read_only'] ?? '') == '1') {
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action') . '<BR>';
+            $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
             header('Location: ' . $this->sanitize->text($redirect_url));
             exit;
         }

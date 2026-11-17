@@ -151,8 +151,8 @@ if ($del === 1) {
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
-        if ($existing_registrar_accounts > 0) $_SESSION['s_message_danger'] .= _('This Registrar has Registrar Accounts associated with it and cannot be deleted') . '<BR>';
-        if ($existing_domains > 0) $_SESSION['s_message_danger'] .= _('This Registrar has domains associated with it and cannot be deleted') . '<BR>';
+        if ($existing_registrar_accounts > 0) $_SESSION['s_message_danger'] .= _('This Registrar has Registrar Accounts associated with it and cannot be deleted.') . '<BR>';
+        if ($existing_domains > 0) $_SESSION['s_message_danger'] .= _('This Registrar has domains associated with it and cannot be deleted.') . '<BR>';
 
     } else {
 

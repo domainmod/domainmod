@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['s_system_default_ssl_type'] = $new_default_ssl_type;
     $_SESSION['s_system_default_ssl_provider'] = $new_default_ssl_provider;
 
-    $_SESSION['s_message_success'] .= _('The System Defaults were updated') . '<BR>';
+    $_SESSION['s_message_success'] .= _('The System Defaults were updated.') . '<BR>';
 
     header("Location: index.php");
     exit;
