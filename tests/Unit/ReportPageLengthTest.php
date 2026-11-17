@@ -21,6 +21,7 @@
 //@formatter:off
 namespace DomainMOD\Tests\Unit;
 
+use DomainMOD\CostReport;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +39,8 @@ class ReportPageLengthTest extends TestCase
             'DW Potential Problems' => array('reporting-dw-potential-problems', 's_number_of_domains', 3),
             'At-Risk SSL Certificates' => array('reporting-ssl-at-risk', 's_number_of_ssl_certs', 1),
             'SSL Upcoming Renewals' => array('reporting-ssl-upcoming-renewals', 's_number_of_ssl_certs', 1),
-            'SSL Cost by Domain' => array('reporting-ssl-cost-by-domain', 's_number_of_domains', 1),
+            // SSL Costs grouped by Domain (see datatableOptions())
+            'SSL Cost by Domain' => array('reporting-ssl-costs', 's_number_of_domains', 1),
         );
     }
 
@@ -78,6 +80,21 @@ class ReportPageLengthTest extends TestCase
         $this->assertSame(array_fill(0, $lists, (string) $page_length), $this->values('/"pageLength": (-?\d+),/', $options));
     }
 
+    // Every other cost report grouping lists all its rows on one page, with no page-length menu
+    public function testOtherCostGroupingsHaveNoPageLengthMenu()
+    {
+        $_SESSION = array('s_number_of_domains' => 20, 's_number_of_ssl_certs' => 20);
+
+        foreach (array('domains' => 'reporting-domain-costs', 'ssl' => 'reporting-ssl-costs') as $section => $settings_file) {
+            foreach (CostReport::groupings($section) as $key => $grouping) {
+                if ($section === 'ssl' && $key === 'domain') continue;
+                $options = $this->datatableOptions($settings_file, $grouping);
+                $this->assertStringContainsString('"paging": false', $options, $section . ' ' . $key);
+                $this->assertStringNotContainsString('"pageLength"', $options, $section . ' ' . $key);
+            }
+        }
+    }
+
     protected function tearDown(): void
     {
         $_SESSION = array();
@@ -91,9 +108,13 @@ class ReportPageLengthTest extends TestCase
         return $matches[1];
     }
 
-    // The $datatable_options the settings file sets (it only sets variables, so it can be loaded more than once)
-    private function datatableOptions($settings_file)
+    /*
+     * The $datatable_options the settings file sets (it only sets variables, so it can be loaded more than once). The
+     * cost reports' settings read the page's grouping, SSL Costs grouped by Domain unless another is given.
+     */
+    private function datatableOptions($settings_file, $cost_grouping = null)
     {
+        $cost_grouping = $cost_grouping ?? CostReport::grouping('ssl', 'domain');
         require DIR_INC . '/settings/' . $settings_file . '.inc.php';
 
         return $datatable_options;

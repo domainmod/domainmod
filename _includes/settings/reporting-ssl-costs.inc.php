@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings/reporting-ssl-cost-by-type.inc.php
+ * /_includes/settings/reporting-ssl-costs.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -20,19 +20,37 @@
  */
 ?>
 <?php
-$page_title = _('SSL Cost by Type Report');
-$breadcrumb = _('SSL Cost by Type');
+// $cost_grouping is the report's grouping (DomainMOD\CostReport::grouping()), set by the page before this file
+$page_title = $cost_grouping['title'];
+$breadcrumb = _('SSL Costs');
+$report_name = $cost_grouping['name'];
 $software_section = "reporting";
-$slug = "reporting-ssl-cost-by-type";
+$slug = "reporting-ssl-costs";
 $report_section = 'ssl';
-$report_filename = 'cost-by-type.php';
+$report_filename = 'costs.php';
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
-$datatable_options = 'domainmodTable(\'#' . $slug . '\', {
-                          "paging": false,
+if (isset($cost_grouping['page_length'])) {
+    // The list opens at the user's number of domains per page, and the page-length menu lists that number once,
+    // in order with the others
+    $page_length = (int) ($_SESSION[$cost_grouping['page_length']] ?? 0);
+    if ($page_length < 1) $page_length = 50;
+    $length_menu = array_unique(array($page_length, 50, 75, 100));
+    sort($length_menu);
+    $datatable_paging = '"paging": true,
+                          "lengthChange": true,
+                          "pageLength": ' . $page_length . ',
+                          "lengthMenu": [ ' . implode(', ', $length_menu) . ', -1 ],
+                          "searching": true,
+                          "info": true,';
+} else {
+    $datatable_paging = '"paging": false,
                           "lengthChange": true,
                           "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": false,
-                          "info": false,
+                          "info": false,';
+}
+$datatable_options = 'domainmodTable(\'#' . $slug . '\', {
+                          ' . $datatable_paging . '
                           "autoWidth": true,
                           "bAutoWidth": false,
                           "responsive": {
@@ -45,7 +63,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                                            orderable: false,
                                            targets:   0
                                            } ],
-                          "ordering": true,
+                          "ordering": ' . ($cost_grouping['ordering'] ? 'true' : 'false') . ',
                           "order": [[ 1, "asc" ]],
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'

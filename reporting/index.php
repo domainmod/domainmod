@@ -66,23 +66,23 @@ $report = $_REQUEST['report'] ?? '';
 </div>
 <div class="row g-3 mt-4"><?php
     echo $layout->landingLinks(_('Domain Costs'), array(
-        array('/reporting/domains/cost-by-category.php', _('Category'), _('Domain Cost by Category')),
-        array('/reporting/domains/cost-by-dns.php', _('DNS Profile'), _('Domain Cost by DNS Profile')),
-        array('/reporting/domains/cost-by-ip-address.php', _('IP Address'), _('Domain Cost by IP Address')),
-        array('/reporting/domains/cost-by-month.php', _('Month'), _('Domain Cost by Month')),
-        array('/reporting/domains/cost-by-owner.php', _('Owner'), _('Domain Cost by Owner')),
-        array('/reporting/domains/cost-by-registrar.php', _('Registrar'), _('Domain Cost by Registrar')),
-        array('/reporting/domains/cost-by-tld.php', _('TLD'), _('Domain Cost by TLD')),
-        array('/reporting/domains/cost-by-host.php', _('Web Host'), _('Domain Cost by Web Host')),
+        array('/reporting/domains/costs.php?group=category', _('Category'), _('Domain Cost by Category')),
+        array('/reporting/domains/costs.php?group=dns', _('DNS Profile'), _('Domain Cost by DNS Profile')),
+        array('/reporting/domains/costs.php?group=ip-address', _('IP Address'), _('Domain Cost by IP Address')),
+        array('/reporting/domains/costs.php?group=month', _('Month'), _('Domain Cost by Month')),
+        array('/reporting/domains/costs.php?group=owner', _('Owner'), _('Domain Cost by Owner')),
+        array('/reporting/domains/costs.php?group=registrar', _('Registrar'), _('Domain Cost by Registrar')),
+        array('/reporting/domains/costs.php?group=tld', _('TLD'), _('Domain Cost by TLD')),
+        array('/reporting/domains/costs.php?group=host', _('Web Host'), _('Domain Cost by Web Host')),
         array('/reporting/domains/registrar-fees.php?all=0', _('Registrar Fees'), _('Registrar Fees'))));
     echo $layout->landingLinks(_('SSL Costs'), array(
-        array('/reporting/ssl/cost-by-category.php', _('Category'), _('SSL Cost by Category')),
-        array('/reporting/ssl/cost-by-domain.php', _('Domain'), _('SSL Cost by Domain')),
-        array('/reporting/ssl/cost-by-ip-address.php', _('IP Address'), _('SSL Cost by IP Address')),
-        array('/reporting/ssl/cost-by-month.php', _('Month'), _('SSL Cost by Month')),
-        array('/reporting/ssl/cost-by-owner.php', _('Owner'), _('SSL Cost by Owner')),
-        array('/reporting/ssl/cost-by-provider.php', _('Provider'), _('SSL Cost by Provider')),
-        array('/reporting/ssl/cost-by-type.php', _('Type'), _('SSL Cost by Type')),
+        array('/reporting/ssl/costs.php?group=category', _('Category'), _('SSL Cost by Category')),
+        array('/reporting/ssl/costs.php?group=domain', _('Domain'), _('SSL Cost by Domain')),
+        array('/reporting/ssl/costs.php?group=ip-address', _('IP Address'), _('SSL Cost by IP Address')),
+        array('/reporting/ssl/costs.php?group=month', _('Month'), _('SSL Cost by Month')),
+        array('/reporting/ssl/costs.php?group=owner', _('Owner'), _('SSL Cost by Owner')),
+        array('/reporting/ssl/costs.php?group=provider', _('Provider'), _('SSL Cost by Provider')),
+        array('/reporting/ssl/costs.php?group=type', _('Type'), _('SSL Cost by Type')),
         array('/reporting/ssl/provider-fees.php?all=0', _('Provider Fees'), _('Provider Fees')))); ?>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

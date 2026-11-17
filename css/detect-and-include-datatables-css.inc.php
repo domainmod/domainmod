@@ -27,23 +27,10 @@ switch ($slug ?? '') {
     case 'dw-list-zones':
     case 'dw-main':
     case 'dw-servers':
-    case 'reporting-domain-cost-by-category':
-    case 'reporting-domain-cost-by-dns':
-    case 'reporting-domain-cost-by-host':
-    case 'reporting-domain-cost-by-ip':
-    case 'reporting-domain-cost-by-month':
-    case 'reporting-domain-cost-by-owner':
+    case 'reporting-domain-costs':
     case 'reporting-domain-fees':
-    case 'reporting-domain-cost-by-registrar':
-    case 'reporting-domain-cost-by-tld':
     case 'reporting-main':
-    case 'reporting-ssl-cost-by-category':
-    case 'reporting-ssl-cost-by-domain':
-    case 'reporting-ssl-cost-by-ip':
-    case 'reporting-ssl-cost-by-month':
-    case 'reporting-ssl-cost-by-owner':
-    case 'reporting-ssl-cost-by-provider':
-    case 'reporting-ssl-cost-by-type':
+    case 'reporting-ssl-costs':
     case 'reporting-ssl-fees':
     case 'queue-main':
     case 'segments-main':

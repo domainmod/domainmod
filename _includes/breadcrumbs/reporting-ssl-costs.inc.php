@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/breadcrumbs/reporting-domain-cost-by-registrar.inc.php
+ * /_includes/breadcrumbs/reporting-ssl-costs.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
