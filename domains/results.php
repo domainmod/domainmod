@@ -76,49 +76,9 @@ if ($segment_name === false) {
 // The name is stored escaped, so it's ready to draw (the breadcrumb and the introduction)
 $segment_name_html = $segment_name;
 
-if ($type == "inactive") {
+if ($type == "inactive" || $type == "filtered") {
 
-    $stmt = $pdo->prepare("
-        SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-        WHERE d.account_id = ra.id
-          AND ra.registrar_id = r.id
-          AND ra.owner_id = o.id
-          AND d.registrar_id = f.registrar_id
-          AND d.tld = f.tld
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND d.cat_id = cat.id
-          AND d.dns_id = dns.id
-          AND d.ip_id = ip.id
-          AND d.hosting_id = h.id
-          AND cc.user_id = :user_id
-          AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND inactive = '1' ORDER BY domain)
-        ORDER BY d.domain ASC");
-    $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
-    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetchAll();
-
-} elseif ($type == "filtered") {
-
-    $stmt = $pdo->prepare("
-        SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-        WHERE d.account_id = ra.id
-          AND ra.registrar_id = r.id
-          AND ra.owner_id = o.id
-          AND d.registrar_id = f.registrar_id
-          AND d.tld = f.tld
-          AND f.currency_id = c.id
-          AND c.id = cc.currency_id
-          AND d.cat_id = cat.id
-          AND d.dns_id = dns.id
-          AND d.ip_id = ip.id
-          AND d.hosting_id = h.id
-          AND cc.user_id = :user_id
-          AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND filtered = '1' ORDER BY domain)
-        ORDER BY d.domain ASC");
+    $stmt = $pdo->prepare(DomainMOD\Segment::resultsSql($type));
     $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();

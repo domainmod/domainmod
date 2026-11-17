@@ -54,6 +54,30 @@ class Segment
         }
     }
 
+    // The query behind the segment's Matching But Inactive (inactive) or Matching But Filtered (filtered) list, for the
+    // signed-in user's currency conversions (bind user_id and segid). The summary counts every domain with the flag, so
+    // the list joins everything else with left joins: a domain without a fee, category, DNS profile, IP address, host,
+    // or account is still listed.
+    public static function resultsSql($flag)
+    {
+        $flag = $flag === 'filtered' ? 'filtered' : 'inactive';
+
+        return "
+            SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+            FROM domains AS d
+            LEFT JOIN registrar_accounts AS ra ON d.account_id = ra.id
+            LEFT JOIN registrars AS r ON ra.registrar_id = r.id
+            LEFT JOIN owners AS o ON ra.owner_id = o.id
+            LEFT JOIN fees AS f ON d.registrar_id = f.registrar_id AND d.tld = f.tld
+            LEFT JOIN currency_conversions AS cc ON f.currency_id = cc.currency_id AND cc.user_id = :user_id
+            LEFT JOIN categories AS cat ON d.cat_id = cat.id
+            LEFT JOIN dns ON d.dns_id = dns.id
+            LEFT JOIN ip_addresses AS ip ON d.ip_id = ip.id
+            LEFT JOIN hosting AS h ON d.hosting_id = h.id
+            WHERE d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND " . $flag . " = '1')
+            ORDER BY d.domain ASC";
+    }
+
     public function getSegment($seg_id)
     {
         $pdo = $this->deeb->cnxx;
