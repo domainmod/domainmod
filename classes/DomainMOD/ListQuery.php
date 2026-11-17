@@ -44,6 +44,25 @@ abstract class ListQuery
     // The columns every order ends with, so pages stay stable when values tie (each list sets its own)
     const TIE_BREAK = array();
 
+    // The database version whose update adds the index on each list's custom field data (see fixedJoinOrder())
+    const JOIN_ORDER_DB_VERSION = '4.26.0';
+
+    // The list's custom field data table, and its column with the asset's id, which needs an index (each list sets
+    // its own)
+    const FIELD_DATA_TABLE = '';
+    const FIELD_DATA_ID = '';
+
+    /*
+     * The fixed join order (see fixedJoinOrder()), each list's own: every table with its alias and the index it's read
+     * through, in the order they're read. The asset comes first, then its custom field data (through the index on the
+     * asset's id), then each lookup by its key. The lookups' keys are named so a small lookup table is never read whole
+     * into a join buffer, which would lose the asset's order and sort every row again.
+     */
+    const JOIN_ORDER = array();
+
+    // Whether each list joins in the written order, by list class and connection, worked out once per request
+    protected static $fixed_join_order = array();
+
     protected $pdo;
     protected $user_id;
     protected $field_columns;
@@ -56,7 +75,11 @@ abstract class ListQuery
         $this->field_columns = (string) $field_columns;
     }
 
-    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions
+    /*
+     * The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions. Once
+     * fixedJoinOrder() is true, the tables are joined with STRAIGHT_JOIN, so every query built on it (the counts, the
+     * rows, the numeric sort check, the Total Cost, Export, and the Raw List) reads them in the written order.
+     */
     abstract public function fromSql();
 
     // The columns every row has, plus the current custom fields
@@ -64,6 +87,112 @@ abstract class ListQuery
 
     // The list's columns for a copy of the session's display settings (see ListColumns::sessionCopy())
     abstract protected function listColumns(array $settings);
+
+    /*
+     * Whether a database at this version has the index on each list's custom field data (the asset's id). New code can
+     * arrive before the database update that adds it, so it's used only once the database itself is at that version or
+     * later.
+     */
+    public static function hasListIndexes($db_version)
+    {
+        return is_string($db_version) && $db_version !== ''
+            && version_compare($db_version, self::JOIN_ORDER_DB_VERSION, '>=');
+    }
+
+    /*
+     * Whether the list's queries join their tables in the written order (JOIN_ORDER), rather than in the order the
+     * database picks. With the list indexes that's much faster on large lists, but without the custom field data index
+     * each asset would scan the whole field data table, minutes per query at 30,000 domains. So it needs the database at
+     * JOIN_ORDER_DB_VERSION or later and every index JOIN_ORDER uses there (an update can have skipped one), checked once
+     * per request for each connection, and a failed check counts as no.
+     */
+    public function fixedJoinOrder()
+    {
+        $key = static::class . '#' . spl_object_id($this->pdo);
+
+        if (!isset(self::$fixed_join_order[$key])) {
+
+            try {
+
+                self::$fixed_join_order[$key] = self::hasListIndexes($this->dbVersion()) && $this->listIndexesExist();
+
+            } catch (\Throwable $e) {
+
+                self::$fixed_join_order[$key] = false;
+
+            }
+
+        }
+
+        return self::$fixed_join_order[$key];
+    }
+
+    // The database's version (as System::getDbVersion() reads it)
+    protected function dbVersion()
+    {
+        return $this->pdo->query("
+            SELECT db_version
+            FROM settings")->fetchColumn();
+    }
+
+    /*
+     * Whether the database has every index the fixed join order uses: one starting with the custom field data's asset
+     * id column (under any name), and each lookup key JOIN_ORDER names. An index the database has been told not to use
+     * (ignored on MariaDB, invisible on MySQL) doesn't count, since FORCE INDEX can't name it. Every column is read, as
+     * the two databases name that column differently and older versions have neither.
+     */
+    protected function listIndexesExist()
+    {
+        $tables = array_values(array_unique(array_merge(array(static::FIELD_DATA_TABLE),
+            array_column(static::JOIN_ORDER, 0))));
+        $names = array();
+        foreach ($tables as $n => $table) {
+            $names['table' . $n] = $table;
+        }
+
+        $stmt = $this->pdo->prepare("
+            SELECT *
+            FROM `INFORMATION_SCHEMA`.`STATISTICS`
+            WHERE `TABLE_SCHEMA` = DATABASE()
+              AND `TABLE_NAME` IN (:" . implode(', :', array_keys($names)) . ")
+              AND `SEQ_IN_INDEX` = 1");
+        foreach ($names as $name => $table) {
+            $stmt->bindValue($name, $table, \PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        $indexes = array();
+        $field_data_index = false;
+        foreach ($rows as $row) {
+            $row = array_change_key_case($row, CASE_LOWER);
+            if (strtoupper((string) ($row['ignored'] ?? 'NO')) === 'YES') continue;
+            if (strtoupper((string) ($row['is_visible'] ?? 'YES')) === 'NO') continue;
+            $table = strtolower($row['table_name']);
+            $indexes[$table . '.' . strtolower($row['index_name'])] = true;
+            if ($table === static::FIELD_DATA_TABLE && strtolower($row['column_name']) === static::FIELD_DATA_ID) {
+                $field_data_index = true;
+            }
+        }
+        if (!$field_data_index) return false;
+
+        foreach (static::JOIN_ORDER as $table) {
+            if ($table[2] !== '' && !isset($indexes[strtolower($table[0] . '.' . $table[2])])) return false;
+        }
+
+        return true;
+    }
+
+    // The tables in the fixed join order (JOIN_ORDER), joined with STRAIGHT_JOIN, for the list's fromSql()
+    protected function joinOrderTables()
+    {
+        $tables = array();
+        foreach (static::JOIN_ORDER as $table) {
+            $tables[] = $table[0] . ' AS ' . $table[1] . ($table[2] !== '' ? ' FORCE INDEX (' . $table[2] . ')' : '');
+        }
+        return implode(' STRAIGHT_JOIN ', $tables);
+    }
 
     // How many rows match the filters ($filter_sql from the list's filterSql())
     public function count($filter_sql)

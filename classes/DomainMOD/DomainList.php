@@ -32,6 +32,25 @@ namespace DomainMOD;
  */
 class DomainList extends ListQuery
 {
+    // The custom field data table and its domain id column (see ListQuery::fixedJoinOrder())
+    const FIELD_DATA_TABLE = 'domain_field_data';
+    const FIELD_DATA_ID = 'domain_id';
+
+    // The fixed join order (see ListQuery::JOIN_ORDER)
+    const JOIN_ORDER = array(
+        array('domains', 'd', ''),
+        array('domain_field_data', 'dfd', ''),
+        array('registrar_accounts', 'ra', 'PRIMARY'),
+        array('registrars', 'r', 'PRIMARY'),
+        array('owners', 'o', 'PRIMARY'),
+        array('categories', 'cat', 'PRIMARY'),
+        array('fees', 'f', 'PRIMARY'),
+        array('currencies', 'c', 'PRIMARY'),
+        array('currency_conversions', 'cc', 'user_currency'),
+        array('dns', 'dns', 'PRIMARY'),
+        array('ip_addresses', 'ip', 'PRIMARY'),
+        array('hosting', 'h', 'PRIMARY'));
+
     // Export and the Raw List's order: the expiry date, then the domain (the id keeps domains that tie on both in the
     // same order each time)
     const EXPORT_ORDER_SQL = ' ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC';
@@ -143,11 +162,18 @@ class DomainList extends ListQuery
             . $parts['raid_string'] . $parts['range_string'] . $parts['tld_string'] . $parts['search_string'];
     }
 
-    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions
+    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
+    // ListQuery::fromSql())
     public function fromSql()
     {
+        if ($this->fixedJoinOrder()) {
+            $tables = $this->joinOrderTables();
+        } else {
+            $tables = "domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd";
+        }
+
         return "
-            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+            FROM " . $tables . "
             WHERE d.account_id = ra.id
               AND ra.registrar_id = r.id
               AND ra.owner_id = o.id

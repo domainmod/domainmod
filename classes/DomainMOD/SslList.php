@@ -32,6 +32,25 @@ namespace DomainMOD;
  */
 class SslList extends ListQuery
 {
+    // The custom field data table and its certificate id column (see ListQuery::fixedJoinOrder())
+    const FIELD_DATA_TABLE = 'ssl_cert_field_data';
+    const FIELD_DATA_ID = 'ssl_id';
+
+    // The fixed join order (see ListQuery::JOIN_ORDER)
+    const JOIN_ORDER = array(
+        array('ssl_certs', 'sslc', ''),
+        array('ssl_cert_field_data', 'sslfd', ''),
+        array('ssl_accounts', 'sslpa', 'PRIMARY'),
+        array('ssl_providers', 'sslp', 'PRIMARY'),
+        array('owners', 'o', 'PRIMARY'),
+        array('ssl_fees', 'f', 'PRIMARY'),
+        array('currencies', 'c', 'PRIMARY'),
+        array('currency_conversions', 'cc', 'user_currency'),
+        array('domains', 'd', 'PRIMARY'),
+        array('ssl_cert_types', 'sslcf', 'PRIMARY'),
+        array('ip_addresses', 'ip', 'PRIMARY'),
+        array('categories', 'cat', 'PRIMARY'));
+
     // Export and the Raw List come out in the list's default order, as the Domains list's do
     const EXPORT_ORDER_SQL = ' ORDER BY sslc.expiry_date ASC, sslc.name ASC, sslc.id ASC';
 
@@ -107,13 +126,20 @@ class SslList extends ListQuery
             . $parts['range_string'] . $parts['search_string'];
     }
 
-    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions
+    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
+    // ListQuery::fromSql())
     public function fromSql()
     {
-        return "
-            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
+        if ($this->fixedJoinOrder()) {
+            $tables = $this->joinOrderTables();
+        } else {
+            $tables = "ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
                  currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip,
-                 categories AS cat, ssl_cert_field_data AS sslfd
+                 categories AS cat, ssl_cert_field_data AS sslfd";
+        }
+
+        return "
+            FROM " . $tables . "
             WHERE sslc.account_id = sslpa.id
               AND sslpa.ssl_provider_id = sslp.id
               AND sslpa.owner_id = o.id
