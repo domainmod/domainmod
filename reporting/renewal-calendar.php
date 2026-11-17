@@ -152,6 +152,18 @@ $day_summary = function ($day) {
 
 $show_names = array('all' => _('All'), 'domains' => _('Domains'), 'ssl' => _('SSL Certificates'));
 
+// The day lists' columns, and each one's name as its cells' data-label, which phones show before each value
+$list_columns = array(_('Type'), _('Name'), _('Registrar or Provider'), _('Account'), _('Renewal Cost'));
+$list_labels = array_map(function ($column) {
+    return htmlspecialchars($column, ENT_QUOTES, 'UTF-8');
+}, $list_columns);
+
+// What a month with nothing to renew says, for what's shown
+$empty_texts = array(
+    'all' => _('No live domains or SSL certificates expire in this month.'),
+    'domains' => _('No live domains expire in this month.'),
+    'ssl' => _('No live SSL certificates expire in this month.'));
+
 // A month with no renewals still exports, with its summary and the column headings, since Export is always offered
 if ($export_data === 1) {
 
@@ -280,7 +292,7 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
     </div><?php
 
     if ($missing > 0) { ?>
-        <p class="mt-2"><em><?php echo sprintf(ngettext('%s item has no fee or rate, so it\'s left out of the costs.', '%s items have no fee or rate, so they\'re left out of the costs.', $missing), number_format($missing)); ?></em></p><?php
+        <p class="small text-body-secondary mt-2"><?php echo sprintf(ngettext('%s item has no fee or rate, so it\'s left out of the costs.', '%s items have no fee or rate, so they\'re left out of the costs.', $missing), number_format($missing)); ?></p><?php
     } ?>
 
     <table class="table table-bordered domainmod-calendar d-none d-md-table mt-3">
@@ -337,32 +349,31 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
             <h3 class="h5 mt-3" id="renewals-<?php echo $date; ?>"><?php echo $date . ', ' . $weekday_of($date); ?><?php
                 if ($date < $today) { ?> <span class="badge text-bg-danger fs-6 align-middle"><?php echo _('Overdue'); ?></span><?php } ?></h3>
             <div class="table-responsive">
-            <table class="table table-striped table-sm domainmod-calendar-list">
-                <thead>
-                <tr>
-                    <th scope="col"><?php echo _('Type'); ?></th>
-                    <th scope="col"><?php echo _('Name'); ?></th>
-                    <th scope="col"><?php echo _('Registrar or Provider'); ?></th>
-                    <th scope="col"><?php echo _('Account'); ?></th>
-                    <th scope="col"><?php echo _('Renewal Cost'); ?></th>
+            <table class="table table-striped table-sm domainmod-calendar-list domainmod-stack-table" role="table">
+                <thead role="rowgroup">
+                <tr role="row"><?php
+                    foreach ($list_columns as $index => $column) { ?>
+                    <th scope="col" role="columnheader"<?php echo $index === 4 ? ' class="text-sm-end"' : ''; ?>><?php echo $column; ?></th><?php
+                    } ?>
                 </tr>
                 </thead>
-                <tbody><?php
+                <tbody role="rowgroup"><?php
                 foreach ($day['items'] as $item) { ?>
-                    <tr>
-                        <td><?php echo $type_name($item); ?></td>
-                        <td><a href="<?php echo $item_url($item); ?>"><?php echo $html($item['name']); ?></a></td>
-                        <td><?php echo $html($item['provider']); ?></td>
-                        <td><?php echo $html($item['owner']); ?> (<?php echo $html($item['username']); ?>)</td>
-                        <td><?php echo $cost_text($item); ?></td>
+                    <tr role="row">
+                        <td role="cell" data-label="<?php echo $list_labels[0]; ?>"><?php echo $type_name($item); ?></td>
+                        <td role="cell" data-label="<?php echo $list_labels[1]; ?>"><a href="<?php echo $item_url($item); ?>"><?php echo $html($item['name']); ?></a></td>
+                        <td role="cell" data-label="<?php echo $list_labels[2]; ?>"><?php echo $html($item['provider']); ?></td>
+                        <td role="cell" data-label="<?php echo $list_labels[3]; ?>"><?php echo $html($item['owner']); ?> (<?php echo $html($item['username']); ?>)</td>
+                        <td role="cell" data-label="<?php echo $list_labels[4]; ?>" class="text-sm-end"><?php echo $cost_text($item); ?></td>
                     </tr><?php
                 } ?>
                 </tbody>
             </table>
             </div><?php
         }
-    } else { ?>
-        <p><?php echo _('No renewals this month.'); ?></p><?php
+    } else {
+        // TRANSLATORS: The heading when the Renewal Calendar's month has nothing to renew. %s is a month and year, such as "December 2026".
+        echo $layout->emptyState('bi-calendar-check', sprintf(_('No renewals in %s'), $month_label), $empty_texts[$show], '', '', '', '', 3);
     } ?>
 
 </div>

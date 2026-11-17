@@ -197,12 +197,21 @@ $layout->addPageAction(_('View All'), 'registrar-fees.php?all=1', 'bi-list-ul');
 $layout->addPageAction(_('Active Only'), 'registrar-fees.php?all=0', 'bi-funnel');
 if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.php?export_data=1&all=' . urlencode($all), 'bi-download'); ?>
 
-<?php if ($total_rows > 0) { ?>
+<?php
+if ($total_rows > 0) {
+
+    // A registrar's name, linked to its fees for users who can edit them, and muted after its first row
+    $can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
+    $registrar_name = function ($row, $first) use ($can_edit) {
+        $class = $first ? '' : ' class="text-body-secondary"';
+        if (!$can_edit) return '<span' . $class . '>' . $row->registrar . '</span>';
+        return '<a href="../../assets/registrar-fees.php?rid=' . (int) $row->id . '"' . $class . '>' . $row->registrar . '</a>';
+    }; ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Registrar'); ?></th>
             <th><?php echo _('TLD'); ?></th>
             <th><?php echo _('Initial'); ?></th>
@@ -217,15 +226,9 @@ if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.
         </thead>
         <tbody><?php
 
-        $new_registrar = "";
         $last_registrar = "";
-        $new_tld = "";
-        $last_tld = "";
 
         foreach ($result as $row) {
-
-            $new_registrar = $row->registrar;
-            $new_tld = $row->tld;
 
             if (DomainMOD\Time::isUnset($row->update_time)) {
                 $row->update_time = $row->insert_time;
@@ -236,142 +239,61 @@ if ($total_rows > 0) $layout->addPageAction(_('Export Report'), 'registrar-fees.
                 $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
             }
 
-            if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
+            // Every row names its registrar, so a row collapsed on a phone still says whose fee it is, and the rows
+            // after a registrar's first are muted, so its fees still read as a group
+            $first_of_registrar = $row->registrar != $last_registrar || $row->registrar == ""; ?>
 
-                <tr>
-                    <td></td>
-                    <td>
-                        <?php echo $row->registrar; ?>
-                    </td>
-                    <td>
-                        <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
-                    </td>
-                    <td><?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->initial_fee; ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->renewal_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->transfer_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->privacy_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->misc_fee;
-                        ?>
-                    </td>
-                    <td><?php echo $row->currency; ?></td>
-                    <td>
-                        <?php
-                        $result_domain_count = $pdo->query("
-                            SELECT count(*)
-                            FROM domains
-                            WHERE registrar_id = '" . $row->id . "'
-                              AND fee_id = '" . $row->fee_id . "'
-                              AND active NOT IN ('0', '10')")->fetchColumn();
+            <tr>
+                <td></td>
+                <td><?php echo $registrar_name($row, $first_of_registrar); ?></td>
+                <td>
+                    <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
+                </td>
+                <td><?php echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $row->currency; ?></td>
+                <td>
+                    <?php
+                    $result_domain_count = $pdo->query("
+                        SELECT count(*)
+                        FROM domains
+                        WHERE registrar_id = '" . $row->id . "'
+                          AND fee_id = '" . $row->fee_id . "'
+                          AND active NOT IN ('0', '10')")->fetchColumn();
 
-                        if (!$result_domain_count) {
+                    if (!$result_domain_count) {
 
-                            echo "-";
+                        echo "-";
 
-                        } else {
+                    } else {
 
-                            echo "<a href=\"../../domains/index.php?rid=" . $row->id . "&tld="
-                                . $row->tld . "\">" . $result_domain_count . "</a>";
+                        echo "<a href=\"../../domains/index.php?rid=" . $row->id . "&tld="
+                            . $row->tld . "\">" . $result_domain_count . "</a>";
 
-                        } ?>
-                    </td>
-                    <td><?php echo $last_updated; ?></td>
-                </tr><?php
+                    } ?>
+                </td>
+                <td><?php echo $last_updated; ?></td>
+            </tr><?php
 
-                $last_registrar = $row->registrar;
-                $last_tld = $row->tld;
-
-            } else { ?>
-
-                <tr>
-                    <td></td>
-                    <td>&nbsp;</td>
-                    <td>
-                       <bdi dir="ltr">.<?php echo $row->tld; ?></bdi>
-                    </td>
-                    <td>
-                        <?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->initial_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->renewal_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->transfer_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->privacy_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->misc_fee;
-                        ?>
-                    </td>
-                    <td><?php echo $row->currency; ?></td>
-                    <td>
-                        <?php
-                        $result_domain_count = $pdo->query("
-                            SELECT count(*)
-                            FROM domains
-                            WHERE registrar_id = '" . $row->id . "'
-                              AND fee_id = '" . $row->fee_id . "'
-                              AND active NOT IN ('0', '10')")->fetchColumn();
-
-                        if (!$result_domain_count) {
-
-                            echo "-";
-
-                        } else {
-
-                            echo "<a href=\"../../domains/index.php?rid=" . $row->id . "&tld="
-                                . $row->tld . "\">" . $result_domain_count . "</a>";
-
-                        } ?>
-                    </td>
-                    <td><?php echo $last_updated; ?></td>
-                </tr><?php
-
-                $last_registrar = $row->registrar;
-                $last_tld = $row->tld;
-
-            }
+            $last_registrar = $row->registrar;
 
         } ?>
 
         </tbody>
     </table><?php
+
+} elseif ($all == "1" || (int) $pdo->query("SELECT count(*) FROM fees")->fetchColumn() === 0) {
+
+    // No fees at all reads as "none yet" in either view, since "none in use" would suggest there are some
+
+    echo $layout->emptyState('bi-tags', _('No registrar fees yet'), _('Add fees for your registrars, and this report lists them.'), '', '', '/assets/registrars.php', _('Registrars'));
+
+} else {
+
+    echo $layout->emptyState('bi-tags', _('No fees in use'), _('None of your registrar fees are used by a live domain.'), '', '', 'registrar-fees.php?all=1', _('View All'));
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

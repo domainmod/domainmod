@@ -229,8 +229,8 @@ if ($export_data === 1 && $overview['rows']) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->calloutTop(); ?>
-<?php echo $intro; ?><BR><BR>
-<?php echo $prices_note; ?>
+<p><?php echo $intro; ?></p>
+<p class="mb-0"><?php echo $prices_note; ?></p>
 <?php echo $layout->calloutBottom(); ?>
 
 <?php
@@ -241,7 +241,7 @@ if ($overview['rows']) $layout->addPageAction(_('Export Report'), $report_filena
 
 if (!$overview['rows']) {
 
-    echo _('No results.') . '<BR>';
+    echo $layout->emptyState('bi-tags', _('No TLD fees to compare yet'), _('Add fees for your registrars, and this report compares their prices for each TLD.'), '', '', '/assets/registrars.php', _('Registrars'));
 
     if ($overview['left_out'] > 0) { ?>
         <p class="small text-body-secondary"><?php echo sprintf(ngettext('%s fee is left out, since its currency has no conversion rate for you.', '%s fees are left out, since their currency has no conversion rate for you.', $overview['left_out']), number_format($overview['left_out'])); ?></p><?php
@@ -263,7 +263,7 @@ if (!$overview['rows']) {
     <table id="<?php echo $slug; ?>-overview" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('TLD'); ?></th>
             <th><?php echo _('Your Domains'); ?></th>
             <th><?php echo _('Cheapest'); ?></th>
@@ -318,16 +318,12 @@ if (!$overview['rows']) {
 
     if ($selected) { ?>
 
-        <p class="mb-1"><?php
-            $links = array();
+        <div class="btn-group btn-group-sm mb-2" role="group" aria-label="<?php echo htmlspecialchars(_('Price'), ENT_QUOTES, 'UTF-8'); ?>"><?php
             foreach ($price_names as $key => $name) {
                 $url = $report_filename . '?' . htmlspecialchars(http_build_query(array('tld' => $tld, 'price' => $key)), ENT_QUOTES, 'UTF-8');
-                $links[] = $key === $price_type
-                    ? '<strong>' . $name . '</strong>'
-                    : '<a href="' . $url . '" hx-get="' . $url . '" ' . $compare_htmx . '>' . $name . '</a>';
-            }
-            echo _('Price') . ': ' . implode(' | ', $links); ?>
-        </p>
+                echo '<a href="' . $url . '" hx-get="' . $url . '" ' . $compare_htmx . ' class="btn ' . ($key === $price_type ? 'btn-danger active" aria-current="true"' : 'btn-outline-secondary"') . '>' . $name . '</a>';
+            } ?>
+        </div>
         <p class="small text-body-secondary" data-domainmod-focus><?php echo sprintf(_('Showing each registrar\'s price for .%1$s: %2$s plus misc.'), $selected['tld'], $price_names[$price_type]); ?></p><?php
 
         echo $chart->priceBars('tld-pricing-chart', sprintf(_('%1$s Price by Registrar for .%2$s'), $price_names[$price_type], html_entity_decode($selected['tld'], ENT_QUOTES, 'UTF-8')),
@@ -335,7 +331,10 @@ if (!$overview['rows']) {
             array_map(function ($fee) use ($price_type) { return round($fee->price[$price_type], 2); }, $selected['fees']),
             $selected['cheapest'], '', 3); ?>
 
-        <div class="table-responsive"><table class="table table-sm table-striped mt-3">
+        <p class="small text-body-secondary d-md-none mt-3 mb-1"><?php echo _('Scroll sideways to see every column.'); ?></p>
+        <div class="table-responsive domainmod-scroll-table mt-1 mt-md-3" tabindex="0" role="region" aria-labelledby="tld-compare-caption"><table class="table table-sm table-striped mb-0">
+            <?php // TRANSLATORS: The hidden caption of TLD Pricing's comparison table. %s is a TLD without its leading dot, such as "com". ?>
+            <caption id="tld-compare-caption" class="visually-hidden"><?php echo sprintf(_('Registrars for .%s'), $selected['tld']); ?></caption>
             <thead>
             <tr>
                 <th scope="col"><?php echo _('Registrar'); ?></th>
@@ -388,13 +387,14 @@ if (!$overview['rows']) {
 
     if ($savings['rows']) { ?>
 
-        <strong><?php echo _('Total Yearly Saving'); ?>:</strong> <?php echo $money($total_saving); ?><BR>
-        <strong><?php echo _('Number of Domains'); ?>:</strong> <?php echo number_format(count($savings['rows'])); ?><BR><BR>
+        <?php echo $layout->factList(array(
+            array('label' => _('Total Yearly Saving'), 'value' => html_entity_decode($money($total_saving), ENT_QUOTES, 'UTF-8'), 'ltr' => true),
+            array('label' => _('Number of Domains'), 'value' => number_format(count($savings['rows']))))); ?>
 
         <table id="<?php echo $slug; ?>-savings" class="<?php echo $datatable_class; ?>">
             <thead>
             <tr>
-                <th width="20px"></th>
+                <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
                 <th><?php echo _('Domain'); ?></th>
                 <th><?php echo _('TLD'); ?></th>
                 <th><?php echo _('Current Registrar'); ?></th>

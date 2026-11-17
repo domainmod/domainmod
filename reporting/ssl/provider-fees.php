@@ -316,7 +316,10 @@ if ($compared) { ?>
 
     ob_start(); ?>
 
-    <div class="table-responsive"><table class="table table-sm table-striped mt-3 mb-0">
+    <p class="small text-body-secondary d-md-none mt-3 mb-1"><?php echo _('Scroll sideways to see every column.'); ?></p>
+    <div class="table-responsive domainmod-scroll-table mt-1 mt-md-3" tabindex="0" role="region" aria-labelledby="ssl-compare-caption"><table class="table table-sm table-striped mb-0">
+        <?php // TRANSLATORS: The hidden caption of SSL Provider Fees' comparison table. %s is an SSL certificate type, such as "Wildcard". ?>
+        <caption id="ssl-compare-caption" class="visually-hidden"><?php echo sprintf(_('Yearly Price by Provider for %s'), $type_names[$type_id]); ?></caption>
         <thead>
         <tr>
             <th scope="col"><?php echo _('Provider'); ?></th>
@@ -351,8 +354,7 @@ if ($compared) { ?>
     echo $chart->priceBars('ssl-fee-comparison-chart', sprintf(_('Yearly Price by Provider for %s'), html_entity_decode($type_names[$type_id], ENT_QUOTES, 'UTF-8')),
         array_map(function ($fee) { return $fee->ssl_provider; }, $compared),
         array_map(function ($fee) { return round((float) $fee->yearly_price, 2); }, $compared),
-        $highlight, $after, 3); ?>
-    <BR><?php
+        $highlight, $after, 3);
 
 } else { ?>
 
@@ -366,12 +368,21 @@ if ($fees_left_out > 0) { ?>
     <p class="small text-body-secondary"><?php echo sprintf(ngettext('%s fee is left out of the comparison and the Cheapest badges, since its currency has no conversion rate for you.', '%s fees are left out of the comparison and the Cheapest badges, since their currency has no conversion rate for you.', $fees_left_out), number_format($fees_left_out)); ?></p><?php
 } ?>
 
-<?php if ($total_rows > 0) { ?>
+<?php
+if ($total_rows > 0) {
+
+    // A provider's name, linked to its fees for users who can edit them, and muted after its first row
+    $can_edit = ($_SESSION['s_read_only'] ?? '') != '1';
+    $provider_name = function ($row, $first) use ($can_edit) {
+        $class = $first ? '' : ' class="text-body-secondary"';
+        if (!$can_edit) return '<span' . $class . '>' . $row->ssl_provider . '</span>';
+        return '<a href="../../assets/ssl-provider-fees.php?sslpid=' . (int) $row->id . '"' . $class . '>' . $row->ssl_provider . '</a>';
+    }; ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Provider'); ?></th>
             <th><?php echo _('Type'); ?></th>
             <th><?php echo _('Initial'); ?></th>
@@ -384,15 +395,9 @@ if ($fees_left_out > 0) { ?>
         </thead>
         <tbody><?php
 
-        $new_ssl_provider = "";
         $last_ssl_provider = "";
-        $new_type = "";
-        $last_type = "";
 
         foreach ($result as $row) {
-
-            $new_ssl_provider = $row->ssl_provider;
-            $new_type = $row->type;
 
             if (DomainMOD\Time::isUnset($row->update_time)) {
                 $row->update_time = $row->insert_time;
@@ -403,118 +408,59 @@ if ($fees_left_out > 0) { ?>
                 $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
             }
 
-            if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
+            // Every row names its provider, so a row collapsed on a phone still says whose fee it is, and the rows
+            // after a provider's first are muted, so its fees still read as a group
+            $first_of_provider = $row->ssl_provider != $last_ssl_provider || $row->ssl_provider == ""; ?>
 
-                <tr>
-                    <td></td>
-                    <td>
-                        <?php echo $row->ssl_provider; ?>
-                    </td>
-                    <td>
-                        <?php echo $row->type; ?><?php echo $type_badges($row->fee_id); ?>
-                    </td>
-                    <td><?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->initial_fee; ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->renewal_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->misc_fee;
-                        ?>
-                    </td>
-                    <td><?php echo $row->currency; ?></td>
-                    <td>
-                        <?php
-                        $result_ssl_count = $pdo->query("
-                            SELECT count(*)
-                            FROM ssl_certs
-                            WHERE ssl_provider_id = '" . $row->id . "'
-                              AND fee_id = '" . $row->fee_id . "'
-                              AND active NOT IN ('0')")->fetchColumn();
+            <tr>
+                <td></td>
+                <td><?php echo $provider_name($row, $first_of_provider); ?></td>
+                <td>
+                    <?php echo $row->type; ?><?php echo $type_badges($row->fee_id); ?>
+                </td>
+                <td><?php echo $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space); ?></td>
+                <td><?php echo $row->currency; ?></td>
+                <td>
+                    <?php
+                    $result_ssl_count = $pdo->query("
+                        SELECT count(*)
+                        FROM ssl_certs
+                        WHERE ssl_provider_id = '" . $row->id . "'
+                          AND fee_id = '" . $row->fee_id . "'
+                          AND active NOT IN ('0')")->fetchColumn();
 
-                        if (!$result_ssl_count) {
+                    if (!$result_ssl_count) {
 
-                            echo "-";
+                        echo "-";
 
-                        } else {
+                    } else {
 
-                            echo "<a href=\"../../ssl/index.php?sslpid=" . $row->id .
-                                "&ssltid=" . $row->type_id . "\">" . $result_ssl_count . "</a>";
+                        echo "<a href=\"../../ssl/index.php?sslpid=" . $row->id .
+                            "&ssltid=" . $row->type_id . "\">" . $result_ssl_count . "</a>";
 
-                        } ?>
-                    </td>
-                    <td><?php echo $last_updated; ?></td>
-                </tr><?php
+                    } ?>
+                </td>
+                <td><?php echo $last_updated; ?></td>
+            </tr><?php
 
-                $last_ssl_provider = $row->ssl_provider;
-                $last_type = $row->type;
-
-            } else { ?>
-
-                <tr>
-                    <td></td>
-                    <td>&nbsp;</td>
-                    <td>
-                        <?php echo $row->type; ?><?php echo $type_badges($row->fee_id); ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->initial_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->renewal_fee;
-                        ?>
-                    </td>
-                    <td>
-                        <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
-                        echo $row->misc_fee;
-                        ?>
-                    </td>
-                    <td><?php echo $row->currency; ?></td>
-                    <td>
-                        <?php
-                        $result_ssl_count = $pdo->query("
-                            SELECT count(*)
-                            FROM ssl_certs
-                            WHERE ssl_provider_id = '" . $row->id . "'
-                              AND fee_id = '" . $row->fee_id . "'
-                              AND active NOT IN ('0')")->fetchColumn();
-
-                        if (!$result_ssl_count) {
-
-                            echo "-";
-
-                        } else {
-
-                            echo "<a href=\"../../ssl/index.php?sslpid=" . $row->id .
-                                "&ssltid=" . $row->type_id . "\">" . $result_ssl_count . "</a>";
-
-                        } ?>
-                    </td>
-                    <td><?php echo $last_updated; ?></td>
-                </tr><?php
-
-                $last_ssl_provider = $row->ssl_provider;
-                $last_type = $row->type;
-
-            }
+            $last_ssl_provider = $row->ssl_provider;
 
         } ?>
 
         </tbody>
     </table><?php
+
+} elseif ($all == "1" || (int) $pdo->query("SELECT count(*) FROM ssl_fees")->fetchColumn() === 0) {
+
+    // No fees at all reads as "none yet" in either view, since "none in use" would suggest there are some
+
+    echo $layout->emptyState('bi-shield-lock', _('No SSL provider fees yet'), _('Add fees for your SSL providers, and this report lists and compares them.'), '', '', '/assets/ssl-providers.php', _('SSL Providers'));
+
+} else {
+
+    echo $layout->emptyState('bi-shield-lock', _('No fees in use'), _('None of your SSL provider fees are used by a live SSL certificate.'), '', '', 'provider-fees.php?all=1', _('View All'));
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
