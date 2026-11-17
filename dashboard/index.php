@@ -400,12 +400,13 @@ if ($renewal_rows) {
     $renewal_months = $reporting->renewalMonths($renewal_rows, $today);
     ob_start(); ?>
 
-    <details class="mt-3">
-        <summary><?php echo _('Show the figures'); ?></summary>
-        <?php echo $reporting->renewalMonthsTable($renewal_months); ?>
-    </details>
-    <div class="text-end mt-2">
-        <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('View'); ?><span class="visually-hidden"> <?php echo _('Upcoming Renewals'); ?></span> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    <?php // The figures toggle and the View link share one row, so the card doesn't end with a gap under the toggle (on a phone, open figures can push the link below them, at the end side) ?>
+    <div class="d-flex flex-wrap align-items-start gap-2 mt-3">
+        <details class="flex-grow-1">
+            <summary><?php echo _('Show the figures'); ?></summary>
+            <?php echo $reporting->renewalMonthsTable($renewal_months); ?>
+        </details>
+        <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="ms-auto link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('View'); ?><span class="visually-hidden"> <?php echo _('Upcoming Renewals'); ?></span> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
     </div><?php
 
     $after = ob_get_clean(); ?>

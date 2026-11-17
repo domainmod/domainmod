@@ -83,6 +83,16 @@
                 </p>
             </a>
         </li>
+        <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
+            <li class="nav-item">
+                <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>" aria-label="<?php echo _('Data Warehouse'); ?>">
+                    <i class="nav-icon bi bi-database-fill"></i>
+                    <p>
+                        <?php echo _('Data Warehouse'); ?>
+                    </p>
+                </a>
+            </li>
+        <?php } ?>
         <li class="nav-item<?php if ($software_section == "assets") echo " menu-open"; ?>">
             <a href="#" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
                 <i class="nav-icon bi bi-boxes"></i>
@@ -179,17 +189,6 @@
                 </li>
             </ul>
         </li>
-
-        <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
-            <li class="nav-item">
-                <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>" aria-label="<?php echo _('Data Warehouse'); ?>">
-                    <i class="nav-icon bi bi-database-fill"></i>
-                    <p>
-                        <?php echo _('Data Warehouse'); ?>
-                    </p>
-                </a>
-            </li>
-        <?php } ?>
         <li class="nav-item<?php if ($software_section == "settings") echo " menu-open"; ?>">
             <a href="#" class="nav-link<?php if ($software_section == "settings") echo " active"; ?>" aria-label="<?php echo _('Settings'); ?>">
                 <i class="nav-icon bi bi-gear-fill"></i>
