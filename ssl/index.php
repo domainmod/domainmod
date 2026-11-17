@@ -1373,26 +1373,29 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $range_string = "";
             }
+            // Owners with a matching certificate and at least one domain. The menu has always paired an owner's
+            // certificates with the owner's domains (not the certificates' own domains), so the keyword can match a
+            // certificate's name or any of the owner's domains. Checking each with EXISTS keeps that answer without
+            // joining every certificate to every domain the owner has, which took over a minute at 20,000 certificates.
+            $owner_cert_exists = function ($extra) use ($is_active_string, $did_string, $sslpid_string, $sslpaid_string, $ssltid_string, $sslipid_string, $sslpcid_string, $range_string) {
+                return "EXISTS (SELECT 1 FROM ssl_certs AS sslc WHERE sslc.owner_id = o.id
+                    $is_active_string $did_string $sslpid_string $sslpaid_string $ssltid_string $sslipid_string
+                    $sslpcid_string $range_string $extra)";
+            };
+            $owner_domain_exists = function ($extra) {
+                return "EXISTS (SELECT 1 FROM domains AS d WHERE d.owner_id = o.id $extra)";
+            };
             if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . " OR " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl']) . ")";
+                $owner_condition = "((" . $owner_cert_exists(" AND sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%')) . " AND " . $owner_domain_exists('') . ")
+                    OR (" . $owner_cert_exists('') . " AND " . $owner_domain_exists(" AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for_ssl'])) . "))";
             } else {
-                $search_string = "";
+                $owner_condition = $owner_cert_exists('') . " AND " . $owner_domain_exists('');
             }
 
             $result_owner = $pdo->query("
                 SELECT o.id, o.name
-                FROM owners AS o, ssl_certs AS sslc, domains AS d
-                WHERE o.id = sslc.owner_id
-                  AND o.id = d.owner_id
-                  $is_active_string
-                  $did_string
-                  $sslpid_string
-                  $sslpaid_string
-                  $ssltid_string
-                  $sslipid_string
-                  $sslpcid_string
-                  $range_string
-                  $search_string
+                FROM owners AS o
+                WHERE $owner_condition
                 GROUP BY o.name
                 ORDER BY o.name asc")->fetchAll();
 
