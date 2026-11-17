@@ -181,7 +181,8 @@ class Form
      * first field of a page whose main job is entering something new (such as an Add page). It's left off when the page
      * is showing an error message (including one carried over from a redirect) or the form is shown again after a
      * submit, so the focus doesn't skip past the message. A mistake recorded for the field with addFieldError() shows
-     * under it, and the first such field on the page gets the focus instead.
+     * under it, and the first such field on the page gets the focus instead. A password field is marked as a new
+     * password, so browsers don't fill in the user's saved DomainMOD sign-in.
      */
     public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '', $dir = '')
     {
@@ -190,12 +191,23 @@ class Form
             <div class="mb-3">
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'off'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_password == '1'); ?>
+                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'new-password'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_password == '1'); ?>
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>"<?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
                 <?php echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;
         return ob_get_clean();
+    }
+
+    /*
+     * A password field for a password that's stored, such as the SMTP password. The stored password never goes into the
+     * page: the field is always empty, and when a password is stored, a note under the label says leaving it empty keeps
+     * it. The page saves the field only when something is typed in it.
+     */
+    public function showSavedPassword($name, $text_to_display, $has_saved_password, $maxlength)
+    {
+        $subtext = $has_saved_password ? _('Leave this empty to keep the saved password.') : '';
+        return $this->showInputText($name, $text_to_display, $subtext, '', $maxlength, '1', '', '', '');
     }
 
     /*

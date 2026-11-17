@@ -91,13 +91,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
+            // An empty Password field keeps the saved password, so the column is only set when one is typed
+            $password_column = $new_password !== '' ? '`password` = :new_password,' : '';
+
             $stmt = $pdo->prepare("
                 UPDATE registrar_accounts
                 SET owner_id = :new_owner_id,
                     registrar_id = :new_registrar_id,
                     email_address = :new_email_address,
                     username = :new_username,
-                    `password` = :new_password,
+                    " . $password_column . "
                     account_id = :new_account_id,
                     reseller = :new_reseller,
                     reseller_id = :new_reseller_id,
@@ -112,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
             $stmt->bindValue('new_email_address', $new_email_address, PDO::PARAM_STR);
             $stmt->bindValue('new_username', $new_username, PDO::PARAM_STR);
-            $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
+            if ($new_password !== '') $stmt->bindValue('new_password', $new_password, PDO::PARAM_STR);
             $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_STR);
             $stmt->bindValue('new_reseller', $new_reseller, PDO::PARAM_INT);
             $stmt->bindValue('new_reseller_id', $new_reseller_id, PDO::PARAM_STR);
@@ -180,12 +183,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('new_username', _('Enter the username'));
         }
 
+        // A typed password isn't put back in the field, so it has to be typed again
+        if ($new_password !== '') {
+            $form->addFieldError('new_password', _('Enter the new password again'));
+        }
+
     }
 
 } else {
 
     $stmt = $pdo->prepare("
-        SELECT owner_id, registrar_id, email_address, username, `password`, account_id, reseller, reseller_id,
+        SELECT owner_id, registrar_id, email_address, username, account_id, reseller, reseller_id,
                api_app_name, api_key, api_secret, api_ip_id, notes
         FROM registrar_accounts
         WHERE id = :raid");
@@ -200,7 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_registrar_id = $result->registrar_id;
         $new_email_address = $result->email_address;
         $new_username = $result->username;
-        $new_password = $result->password;
         $new_account_id = $result->account_id;
         $new_reseller = $result->reseller;
         $new_reseller_id = $result->reseller_id;
@@ -297,6 +304,17 @@ if ($del === 1) {
 
 }
 
+// Whether the account has a saved password, for the Password field's note and the API requirements (the field itself
+// never shows it)
+$stmt = $pdo->prepare("
+    SELECT `password`
+    FROM registrar_accounts
+    WHERE id = :raid");
+$stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+$stmt->execute();
+$has_saved_password = (string) $stmt->fetchColumn() !== '';
+$stmt->closeCursor();
+
 // the registrar's API requirements, for registrars with an API; registrars without one show no API fields
 $has_api_support = 0;
 $api_registrar_name = $api_registrar_notes = '';
@@ -392,7 +410,7 @@ if ($result) {
 
 echo $form->showInputText('new_email_address', _('Email Address') . ' (100)', '', $unsanitize->text($new_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_username', _('Username') . ' (100)', '', $unsanitize->text($new_username), '100', '', '1', '', '');
-echo $form->showInputText('new_password', _('Password') . ' (255)', '', $unsanitize->text($new_password), '255', '', '', '', '');
+echo $form->showSavedPassword('new_password', _('Password') . ' (255)', $has_saved_password, '255');
 echo $form->showInputText('new_account_id', _('Account ID') . ' (255)', '', $unsanitize->text($new_account_id), '255', '', '', '', '');
 // The switch is one grid item, with the same spacing as the other fields
 echo $form->showSwitch(_('Reseller Account') . '?', '', 'new_reseller', $new_reseller, '<div class="mb-3">', '</div>');
@@ -412,7 +430,7 @@ if ($has_api_support >= 1) {
         // a line under it saying it's saved or missing, the same way as Domain Queue step two
         $requirements = array(
             array($req_account_username, _('Registrar Account Username'), $new_username == ''),
-            array($req_account_password, _('Registrar Account Password'), $new_password == ''),
+            array($req_account_password, _('Registrar Account Password'), !$has_saved_password),
             array($req_account_id, _('Registrar Account ID'), $new_account_id == ''),
             array($req_reseller_id, _('Reseller ID'), $new_reseller_id == '' || $new_reseller_id == '0'),
             array($req_api_app_name, _('API Application Name'), $new_api_app_name == ''),

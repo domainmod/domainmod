@@ -60,6 +60,9 @@ $new_local_php_log = (int) ($_POST['new_local_php_log'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0) {
 
+    // An empty SMTP Password field keeps the saved password, so the column is only set when one is typed
+    $smtp_password_column = $new_smtp_password !== '' ? 'smtp_password = :new_smtp_password,' : '';
+
     $stmt = $pdo->prepare("
         UPDATE settings
         SET full_url = :new_full_url,
@@ -70,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
             smtp_port = :new_smtp_port,
             smtp_email_address = :new_smtp_email_address,
             smtp_username = :new_smtp_username,
-            smtp_password = :new_smtp_password,
+            " . $smtp_password_column . "
             expiration_days = :new_expiration_days,
             email_signature = :new_email_signature,
             currency_converter = :new_currency_converter,
@@ -85,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
     $stmt->bindValue('new_smtp_port', $new_smtp_port, PDO::PARAM_INT);
     $stmt->bindValue('new_smtp_email_address', $new_smtp_email_address, PDO::PARAM_STR);
     $stmt->bindValue('new_smtp_username', $new_smtp_username, PDO::PARAM_STR);
-    $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);
+    if ($new_smtp_password !== '') $stmt->bindValue('new_smtp_password', $new_smtp_password, PDO::PARAM_STR);
     $stmt->bindValue('new_expiration_days', $new_expiration_days, PDO::PARAM_INT);
     $stmt->bindValue('new_email_signature', $new_email_signature, PDO::PARAM_INT);
     $stmt->bindValue('new_currency_converter', $new_currency_converter, PDO::PARAM_STR);
@@ -114,12 +117,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
         if ($new_full_url == "") $form->addFieldError('new_full_url', sprintf(_('Enter the full URL of your %s installation'), SOFTWARE_TITLE));
         if ($new_email_address == "") $form->addFieldError('new_email_address', _('Enter the system email address'));
         if ($new_expiration_days == "") $form->addFieldError('new_expiration_days', _('Enter the number of days to display in expiration emails'));
+        // A typed password isn't put back in the field, so it has to be typed again
+        if ($new_smtp_password !== '') $form->addFieldError('new_smtp_password', _('Enter the new password again'));
 
     } else {
 
         $stmt = $pdo->prepare("
             SELECT full_url, email_address, use_smtp, smtp_server, smtp_protocol, smtp_port, smtp_email_address,
-                smtp_username, smtp_password, expiration_days, email_signature, currency_converter, debug_mode,
+                smtp_username, expiration_days, email_signature, currency_converter, debug_mode,
                 local_php_log
             FROM settings");
         $stmt->execute();
@@ -136,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
             $new_smtp_port = $result->smtp_port;
             $new_smtp_email_address = $result->smtp_email_address;
             $new_smtp_username = $result->smtp_username;
-            $new_smtp_password = $result->smtp_password;
             $new_expiration_days = $result->expiration_days;
             $new_email_signature = $result->email_signature;
             $new_currency_converter = $result->currency_converter;
@@ -147,6 +151,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
 
     }
 }
+
+// Whether an SMTP password is saved, for the note under the field (the field itself never shows it)
+$has_saved_smtp_password = (string) $pdo->query("
+    SELECT smtp_password
+    FROM settings")->fetchColumn() !== '';
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -195,7 +204,7 @@ echo $form->showRadioBottom('');
 echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
 echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
 echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
-echo $form->showInputText('new_smtp_password', _('SMTP Password') . ' (255)', '', $unsanitize->text($new_smtp_password), '255', '', '', '', '');
+echo $form->showSavedPassword('new_smtp_password', _('SMTP Password') . ' (255)', $has_saved_smtp_password, '255');
 echo $layout->formSection(_('SMTP Server Settings'), 'smtp', ob_get_clean());
 
 echo $form->showSubmitButton(_('Update System Settings'), '', '');
