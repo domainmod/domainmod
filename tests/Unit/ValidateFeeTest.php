@@ -65,6 +65,8 @@ class ValidateFeeTest extends TestCase
             'spaces only' => array('   '),
             'whitespace only' => array(" \t\n"),
             'null' => array(null),
+            // A field posted as an array (new_fee[]=12.50) would otherwise warn "Array to string conversion"
+            'posted array' => array(array('12.50')),
         );
     }
 

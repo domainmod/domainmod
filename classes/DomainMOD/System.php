@@ -44,22 +44,20 @@ class System
 
     public function getRequirements()
     {
-        list($req_text, $req_html_short, $req_html_long) = $this->getReqServerSoft();
-        list($req_text, $req_html_short, $req_html_long) = $this->getReqExtensions($req_text, $req_html_short, $req_html_long);
-        list($req_text, $req_html_short, $req_html_long) = $this->getReqSettings($req_text, $req_html_short, $req_html_long);
-        return array($req_text, $req_html_short, $req_html_long);
+        list($req_text, $req_html_short) = $this->getReqServerSoft();
+        list($req_text, $req_html_short) = $this->getReqExtensions($req_text, $req_html_short);
+        list($req_text, $req_html_short) = $this->getReqSettings($req_text, $req_html_short);
+        return array($req_text, $req_html_short);
     }
 
     public function getReqServerSoft()
     {
         $req_text = '';
         $req_html_short = '';
-        $req_html_long = '';
 
         // SERVER SOFTWARE
         $req_text .= _('Server Software') . ': ';
         $req_html_short .= '<STRONG>' . _('Server Software') . ':</STRONG> ';
-        $req_html_long .= '<STRONG>' . _('Server Software') . '</STRONG><BR>';
 
         // PHP
         $software = $this->reqPhpText();
@@ -68,13 +66,11 @@ class System
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
-            $req_html_long .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . '<BR>';
 
         } else {
 
             $req_text .= $software . ': ' . _('Fail') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('red', _('Fail')) . ', ';
-            $req_html_long .= $software . ': ' . $this->layout->highlightText('red', _('Fail')) . '<BR>';
 
         }
 
@@ -85,27 +81,24 @@ class System
 
             $req_text .= $software . ': ' . _('Pass') . ', ';
             $req_html_short .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . ', ';
-            $req_html_long .= $software . ': ' . $this->layout->highlightText('green', _('Pass')) . '<BR>';
 
         } else {
 
             $req_text .= $software . ': ' . _('Fail');
             $req_html_short .= $software . ': ' . $this->layout->highlightText('red', _('Fail')) . ', ';
-            $req_html_long .= $software . ': ' . $this->layout->highlightText('red', _('Fail')) . '<BR>';
 
         }
 
         $req_html_short = substr($req_html_short, 0, -2);
 
-        return array($req_text, $req_html_short, $req_html_long);
+        return array($req_text, $req_html_short);
     }
 
-    public function getReqExtensions($req_text, $req_html_short, $req_html_long):array
+    public function getReqExtensions($req_text, $req_html_short):array
     {
         // PHP Extensions
         $req_text .= ' / PHP Extensions: ';
         $req_html_short .= '<BR><STRONG>' . _('PHP Extensions') . ':</STRONG> ';
-        $req_html_long .= '<BR><STRONG>' . _('PHP Extensions') . '</STRONG><BR>';
 
         foreach ($this->reqExtensionList() as $key => $value) {
 
@@ -113,13 +106,11 @@ class System
 
                 $req_text .= $value . ': ' . _('Enabled') . ', ';
                 $req_html_short .= $value . ': ' . $this->layout->highlightText('green', _('Enabled')) . ', ';
-                $req_html_long .= $value . ': ' . $this->layout->highlightText('green', _('Enabled')) . '<BR>';
 
             } else {
 
                 $req_text .= $value . ': ' . _('Disabled') . ', ';
                 $req_html_short .= $value . ': ' . $this->layout->highlightText('red', _('Disabled')) . ', ';
-                $req_html_long .= $value . ': ' . $this->layout->highlightText('red', _('Disabled')) . '<BR>';
 
             }
 
@@ -128,15 +119,14 @@ class System
         $req_text = substr($req_text, 0, -2);
         $req_html_short = substr($req_html_short, 0, -2);
 
-        return array($req_text, $req_html_short, $req_html_long);
+        return array($req_text, $req_html_short);
     }
 
-    public function getReqSettings($req_text, $req_html_short, $req_html_long)
+    public function getReqSettings($req_text, $req_html_short)
     {
         // PHP SETTINGS
         $req_text .= ' / PHP Settings: ';
         $req_html_short .= '<BR><STRONG>' . _('PHP Settings') . ':</STRONG> ';
-        $req_html_long .= '<BR><STRONG>' . _('PHP Settings') . '</STRONG><BR>';
 
         foreach ($this->reqSettingList() as $value) {
 
@@ -144,13 +134,11 @@ class System
 
                 $req_text .= $value . ': ' . _('Enabled') . ', ';
                 $req_html_short .= $value . ': ' . $this->layout->highlightText('green', _('Enabled')) . ', ';
-                $req_html_long .= $value . ': ' . $this->layout->highlightText('green', _('Enabled')) . '<BR>';
 
             } else {
 
                 $req_text .= $value . ': ' . _('Disabled') . ', ';
                 $req_html_short .= $value . ': ' . $this->layout->highlightText('red', _('Disabled')) . ', ';
-                $req_html_long .= $value . ': ' . $this->layout->highlightText('red', _('Disabled')) . '<BR>';
 
             }
 
@@ -159,7 +147,7 @@ class System
         $req_text = substr($req_text, 0, -2);
         $req_html_short = substr($req_html_short, 0, -2);
 
-        return array($req_text, $req_html_short, $req_html_long);
+        return array($req_text, $req_html_short);
     }
 
     /*
@@ -826,7 +814,7 @@ class System
         } else {
 
             $log_message = 'Unable to get file contents';
-            list($requirements, $null, $null) = $this->getRequirements();
+            list($requirements) = $this->getRequirements();
             $log_extra = array('File Title' => $file_title, 'Requirements' => $requirements);
             $this->log->{$log_severity}($log_message, $log_extra);
             $file_contents = '';

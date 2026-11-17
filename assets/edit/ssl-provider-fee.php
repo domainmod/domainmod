@@ -48,9 +48,10 @@ $fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
 $sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
 $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
-$new_initial_fee = trim((string) ($_POST['new_initial_fee'] ?? '0'));
-$new_renewal_fee = trim((string) ($_POST['new_renewal_fee'] ?? '0'));
-$new_misc_fee = trim((string) ($_POST['new_misc_fee'] ?? '0'));
+// A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
+$new_initial_fee = is_string($_POST['new_initial_fee'] ?? '0') ? trim($_POST['new_initial_fee'] ?? '0') : '';
+$new_renewal_fee = is_string($_POST['new_renewal_fee'] ?? '0') ? trim($_POST['new_renewal_fee'] ?? '0') : '';
+$new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
 $new_currency_id = (int) ($_POST['new_currency_id'] ?? 0);
 $has_errors = false;
 
@@ -200,9 +201,10 @@ echo $layout->factList(array(
     array('label' => _('SSL Provider'), 'value' => $unsanitize->text($assets->getSslProvider($sslpid))),
     array('label' => _('SSL Type'), 'value' => $unsanitize->text($assets->getSslType($new_type_id)))));
 
-echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '10', '', '', '', '');
+// 11 characters fit the largest fee the fee columns hold (DECIMAL(10,2)), 99999999.99
+echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '11', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '11', '', '1', '', '');
+echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '11', '', '', '', '');
 
 $result = $pdo->query("
     SELECT id, currency, `name`, symbol

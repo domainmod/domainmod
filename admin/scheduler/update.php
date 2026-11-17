@@ -65,6 +65,16 @@ if ($a == 'u') {
 
     // The time is saved as typed, in the admin's own time zone, and the task follows that zone's clock changes.
     $timezone = $schedule->getZone($_SESSION['s_default_timezone'] ?? 'UTC')->getName();
+    $task = $schedule->getTask($id);
+
+    // The time the menu already showed is kept as it is (see Scheduler::isShownHour()).
+    if ($task && $schedule->isShownHour($task->expression, $task->timezone, $timezone, $new_hour)) {
+        $schedule->releaseTaskLock($id);
+        $_SESSION['s_message_success'] = ($_SESSION['s_message_success'] ?? '') . _('Task Updated') . '<BR>';
+        header("Location: index.php");
+        exit;
+    }
+
     $full_expression = '0 ' . (int) $new_hour . ' * * *';
     $new_time_utc = $schedule->getNextRun($full_expression, $timezone);
 

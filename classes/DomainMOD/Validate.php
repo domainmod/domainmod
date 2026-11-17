@@ -68,10 +68,10 @@ class Validate
          * Checks a fee typed into a fee form, and returns the message to show under its field, or '' when the fee can be
          * saved. A fee is a plain number with a period for decimals, such as 12.50 (0 is a fee too). A blank fee is
          * refused only when the field is required, and saves as 0 otherwise. The largest fee is the largest number the
-         * fee columns hold (DECIMAL(10,2)).
+         * fee columns hold (DECIMAL(10,2)). A fee that isn't text or a number (such as a posted array) counts as blank.
          */
 
-        $clean_fee = trim((string) $fee);
+        $clean_fee = is_string($fee) || is_int($fee) || is_float($fee) ? trim((string) $fee) : '';
 
         if($clean_fee === '') {
 

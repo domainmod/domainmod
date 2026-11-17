@@ -98,6 +98,32 @@ if ($new_raid !== 0) {
         $api_secret = $result->api_secret;
         $api_ip_id = $result->api_ip_id;
 
+    } else {
+
+        // An account that doesn't exist, or whose registrar has no API support, has no API details to show, so go back
+        // to step one and say why.
+        $stmt = $pdo->prepare("
+            SELECT registrar_id
+            FROM registrar_accounts
+            WHERE id = :new_raid");
+        $stmt->bindValue('new_raid', $new_raid, PDO::PARAM_INT);
+        $stmt->execute();
+        $temp_registrar_id = $stmt->fetchColumn();
+
+        if ($temp_registrar_id !== false) {
+
+            $_SESSION['s_message_danger'] .= _("Either the registrar associated with this account doesn't have API support, or you haven't yet updated the registrar to indicate API support.") . '<BR><BR>' .
+                sprintf(_('Please check the %sregistrar%s and try again.'), '<a href="' . $web_root . '/assets/edit/registrar.php?rid=' . (int) $temp_registrar_id . '">', '</a>') . '<BR>';
+
+        } else {
+
+            $_SESSION['s_message_danger'] .= _('Please choose the registrar account.') . '<BR>';
+
+        }
+
+        header("Location: ../step-one/");
+        exit;
+
     }
 
 }

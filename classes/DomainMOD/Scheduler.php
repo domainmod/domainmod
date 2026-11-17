@@ -161,6 +161,36 @@ class Scheduler
         return array((int) $matches[2], (int) $matches[1]);
     }
 
+    /*
+     * A daily task's run time as the clock shows it in another time zone (array(hour, minute)), at its next run, or null
+     * for any other expression. The run time menu saves in the user's zone, so it shows the task's time in that zone.
+     * $now (a Unix timestamp) is for testing.
+     */
+    public function getDailyTimeIn($expression, $task_timezone, $user_timezone, $now = null)
+    {
+        $daily_time = $this->getDailyTime($expression);
+        if ($daily_time === null) return null;
+
+        $task_zone = $this->getZone($task_timezone);
+        $user_zone = $this->getZone($user_timezone);
+        if ($task_zone->getName() === $user_zone->getName()) return $daily_time;
+
+        $next_run = new \DateTimeImmutable($this->getNextRun($expression, $task_zone->getName(), $now), new \DateTimeZone('UTC'));
+        $local_time = $next_run->setTimezone($user_zone);
+
+        return array((int) $local_time->format('G'), (int) $local_time->format('i'));
+    }
+
+    /*
+     * Whether a chosen hour is the time the run time menu showed (see getDailyTimeIn()), so saving it changes nothing.
+     * update.php then keeps the task as it is, since saving the same time again in another zone can skip a run (when
+     * the clocks go back, the hour shown can be the second of two with the same name, and a saved time runs at the first).
+     */
+    public function isShownHour($expression, $task_timezone, $user_timezone, $hour, $now = null)
+    {
+        return $this->getDailyTimeIn($expression, $task_timezone, $user_timezone, $now) === array((int) $hour, 0);
+    }
+
     // Whether a time zone can be used, including older names such as Canada/Pacific (see Time::zone()).
     public function isValidZone($timezone)
     {
@@ -627,14 +657,18 @@ class Scheduler
                     <?php echo $layout->factList($facts); ?><?php
 
                     if ($task->interval == 'Daily' && $task->active == '1') {
-                        $hour = ($daily_time !== null) ? sprintf('%02d', $daily_time[0]) : '';
+                        // The menu shows the time in the zone update.php saves in (the user's), so an unchanged choice
+                        // saves the same time. A time that isn't on the hour there is shown as its own choice.
+                        $user_time = $this->getDailyTimeIn($task->expression, $task->timezone, $_SESSION['s_default_timezone'] ?? 'UTC');
+                        $hour = ($user_time !== null && $user_time[1] === 0) ? sprintf('%02d', $user_time[0]) : '';
+                        $other_time = ($user_time !== null && $user_time[1] !== 0) ? sprintf('%02d:%02d', $user_time[0], $user_time[1]) : '';
                         $field_id = 'domainmod-task-hour-' . $task_id; ?>
                         <form name="edit_task_form" method="post" action="update.php">
                             <?php echo $form->showCsrfField(); ?>
                             <label class="form-label" for="<?php echo $field_id; ?>"><?php echo _('Set Run Time'); ?></label>
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <select class="form-select w-auto" name="new_hour" id="<?php echo $field_id; ?>" aria-describedby="<?php echo $field_id; ?>-help">
-                                    <?php echo $this->hourSelect($hour); ?>
+                                    <?php echo $this->hourSelect($hour, $other_time); ?>
                                 </select><?php
                                 echo $form->showInputHidden('a', 'u');
                                 echo $form->showInputHidden('id', $task_id);
@@ -662,11 +696,12 @@ class Scheduler
         }
     }
 
-    // The run time menu's hours, with the task's current hour chosen
-    public function hourSelect($hour)
+    // The run time menu's hours, with the task's current hour chosen. A current time that isn't on the hour ($other_time)
+    // comes first and is chosen, with no value, so saving it unchanged changes nothing (update.php ignores it).
+    public function hourSelect($hour, $other_time = '')
     {
         $form = new Form();
-        $options = '';
+        $options = ($other_time !== '') ? $form->showDropdownOption('', htmlspecialchars($other_time, ENT_QUOTES, 'UTF-8'), '') : '';
         for ($i = 0; $i < 24; $i++) {
             $key = sprintf('%02d', $i);
             $options .= $form->showDropdownOption($key, $key . ':00', $hour);

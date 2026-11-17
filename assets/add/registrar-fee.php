@@ -57,11 +57,12 @@ if ($tld != '') {
     $new_tld = $sanitize->text($_POST['new_tld'] ?? '');
 }
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
-$new_initial_fee = trim((string) ($_POST['new_initial_fee'] ?? '0'));
-$new_renewal_fee = trim((string) ($_POST['new_renewal_fee'] ?? '0'));
-$new_transfer_fee = trim((string) ($_POST['new_transfer_fee'] ?? '0'));
-$new_privacy_fee = trim((string) ($_POST['new_privacy_fee'] ?? '0'));
-$new_misc_fee = trim((string) ($_POST['new_misc_fee'] ?? '0'));
+// A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
+$new_initial_fee = is_string($_POST['new_initial_fee'] ?? '0') ? trim($_POST['new_initial_fee'] ?? '0') : '';
+$new_renewal_fee = is_string($_POST['new_renewal_fee'] ?? '0') ? trim($_POST['new_renewal_fee'] ?? '0') : '';
+$new_transfer_fee = is_string($_POST['new_transfer_fee'] ?? '0') ? trim($_POST['new_transfer_fee'] ?? '0') : '';
+$new_privacy_fee = is_string($_POST['new_privacy_fee'] ?? '0') ? trim($_POST['new_privacy_fee'] ?? '0') : '';
+$new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
 $new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -229,11 +230,12 @@ echo $layout->factList(array(
     array('label' => _('Domain Registrar'), 'value' => $unsanitize->text($assets->getRegistrar($rid)))));
 
 echo $form->showInputText('new_tld', _('TLD'), '', $unsanitize->text($new_tld), '50', '', '1', '', '');
-echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_transfer_fee', _('Transfer Fee'), '', $new_transfer_fee, '10', '', '1', '', '');
-echo $form->showInputText('new_privacy_fee', _('Privacy Fee'), '', $new_privacy_fee, '10', '', '', '', '');
-echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '10', '', '', '', '');
+// 11 characters fit the largest fee the fee columns hold (DECIMAL(10,2)), 99999999.99
+echo $form->showInputText('new_initial_fee', _('Initial Fee'), '', $new_initial_fee, '11', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', _('Renewal Fee'), '', $new_renewal_fee, '11', '', '1', '', '');
+echo $form->showInputText('new_transfer_fee', _('Transfer Fee'), '', $new_transfer_fee, '11', '', '1', '', '');
+echo $form->showInputText('new_privacy_fee', _('Privacy Fee'), '', $new_privacy_fee, '11', '', '', '', '');
+echo $form->showInputText('new_misc_fee', _('Misc Fee'), '', $new_misc_fee, '11', '', '', '', '');
 
 echo $form->showDropdownTop('new_currency', _('Currency'), '', '', '');
 $result = $pdo->query("
