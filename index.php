@@ -251,11 +251,11 @@ $new_password = "";
 
         <form action="" method="post">
             <div class="input-group has-validation mb-3">
-                <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="Username" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" value="<?php echo htmlspecialchars($new_username, ENT_QUOTES, 'UTF-8'); // kept after a mistake, so only the password needs typing again ?>" maxlength="30"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
+                <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="<?php echo htmlspecialchars(_('Username'), ENT_QUOTES, 'UTF-8'); ?>" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" value="<?php echo htmlspecialchars($new_username, ENT_QUOTES, 'UTF-8'); // kept after a mistake, so only the password needs typing again ?>" maxlength="30"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                 <?php echo $form->errorFeedback('new_username'); ?>
             </div>
             <div class="input-group has-validation mb-3">
-                <input type="password" class="form-control<?php echo $form->errorClass('new_password'); ?>" placeholder="Password" name="new_password" id="<?php echo $form->fieldId('new_password'); ?>" maxlength="72"<?php echo $form->errorAttributes('new_password'); ?>>
+                <input type="password" class="form-control<?php echo $form->errorClass('new_password'); ?>" placeholder="<?php echo htmlspecialchars(_('Password'), ENT_QUOTES, 'UTF-8'); ?>" name="new_password" id="<?php echo $form->fieldId('new_password'); ?>" maxlength="72"<?php echo $form->errorAttributes('new_password'); ?>>
                 <?php echo $form->errorFeedback('new_password'); ?>
             </div>
             <div class="row">
@@ -264,7 +264,7 @@ $new_password = "";
                 </div>
                 <!-- /.col -->
                 <div class="col-4">
-                    <button type="submit" class="btn btn-danger w-100">Sign In</button>
+                    <button type="submit" class="btn btn-danger w-100"><?php echo _('Sign In'); ?></button>
                 </div>
                 <!-- /.col -->
             </div>
