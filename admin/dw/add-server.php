@@ -106,21 +106,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
+// The fields in titled cards, the same way as the edit domain page (Layout::formSection())
+ob_start();
 echo $form->showInputText('new_name', _('Name') . ' (100)', _('Enter the display name for this server'), $unsanitize->text($new_name), '100', '', '1', '', '');
-echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the host name of your WHM installation (i.e. server1.example.com).'), $unsanitize->text($new_host), '100', '', '1', '', '');
+echo $form->showInputText('new_host', _('Host Name') . ' (100)', _('Enter the host name of your WHM installation (e.g. server1.example.com).'), $unsanitize->text($new_host), '100', '', '1', '', '');
 echo $form->showDropdownTop('new_protocol', _('Protocol') . ' (5)', _('Enter the protocol you connect with.'), '1', '');
 echo $form->showDropdownOption('https', _('Secured (https)'), $new_protocol);
 echo $form->showDropdownOption('http', _('Unsecured (http)'), $new_protocol);
 echo $form->showDropdownBottom('', 'new_protocol');
 echo $form->showInputText('new_port', _('Port') . ' (5)', _('Enter the port that you connect to (usually 2086 or 2087).'), $new_port, '5', '', '1', '', '');
+echo $form->showSwitch(_('Verify SSL Certificate') . '?', _("Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."), 'new_verify_ssl', $new_verify_ssl, '<div class="domainmod-span-all mb-3">', '</div>');
+echo $layout->formSection(_('Server'), 'server', ob_get_clean());
+
+// Either credential works, so neither one is marked as required, and they share one field error
+ob_start(); ?>
+<p class="domainmod-span-all"><?php echo _('Enter an API token or a remote access key. Only one is needed, and an API token is the better choice if your WHM supports it.'); ?></p><?php
 echo $form->showInputText('new_username', _('Username') . ' (100)', _('Enter the username for your WHM installation.'), $unsanitize->text($new_username), '100', '', '1', '', '');
-?>
-<div class="domainmod-css-random-padding"><strong><?php echo _("Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use."); ?></strong></div>
-<?php
-echo $form->showInputText('new_api_token', _('API Token') . ' (255)', _('Enter the API token.'), $unsanitize->text($new_api_token), '255', '', '1', '', '');
-echo $form->showInputTextarea('new_hash', _('Remote Access Key/Hash'), _('Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.'), $unsanitize->text($new_hash), '1', '', '');
-echo $form->showSwitch(_('Verify SSL Certificate') . '?', _("Leave this on unless your server uses a self-signed certificate and you connect over a network you trust. When it's on, the server's SSL certificate must be valid for the host name you entered."), 'new_verify_ssl', $new_verify_ssl, '', '<BR><BR>');
-echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputText('new_api_token', _('API Token') . ' (255)', _('Enter the API token.'), $unsanitize->text($new_api_token), '255', '', '', '', '');
+echo $form->showInputTextarea('new_hash', _('Remote Access Key/Hash'), _('Enter the remote access key/hash for your WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.'), $unsanitize->text($new_hash), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Credentials'), 'credentials', ob_get_clean());
+
+ob_start();
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '<div class="domainmod-span-all">', '</div>');
+echo $layout->formSection(_('Notes'), 'notes', ob_get_clean());
+
 echo $form->showSubmitButton(_('Add Server'), '', '');
 echo $form->showFormBottom('');
 ?>

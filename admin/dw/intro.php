@@ -47,32 +47,30 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <div class="domainmod-intro">
 <div class="mb-3"><?php echo $layout->linkButton('dw.php', _('Proceed to the Data Warehouse'), 'primary'); ?></div>
 
-<?php echo sprintf(_('%s has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.'), SOFTWARE_TITLE); ?><BR>
-<BR>
-<?php echo sprintf(_("If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into %s, you can ignore this section."), SOFTWARE_TITLE); ?><BR>
-<BR>
-<strong><?php echo DomainMOD\Format::toUpper(_('Note')); ?>:</strong> <?php echo sprintf(_('Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?><BR>
+<p><?php echo sprintf(_('%s has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.'), SOFTWARE_TITLE); ?></p>
+<p><?php echo sprintf(_("If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into %s, you can ignore this section."), SOFTWARE_TITLE); ?></p>
+<?php // A slim note (like the warnings on other pages, it isn't a page message, so it isn't announced when the page loads) ?>
+<div class="alert alert-info d-flex align-items-start gap-2 py-2">
+    <i class="bi bi-info-circle-fill domainmod-message-icon" aria-hidden="true"></i>
+    <div class="domainmod-message-text"><?php echo sprintf(_('Importing your web server(s) into the Data Warehouse will %snot%s modify any of your other %s data, nor any of the data on your web server.'), '<strong>', '</strong>', SOFTWARE_TITLE); ?></div>
+</div>
 
-<BR><h2 class="h3"><?php echo _('Automating Builds'); ?></h2>
-<?php echo sprintf(_("If you're going to use the Data Warehouse it's recommended that you set up the %ssystem cron/scheduled job%s in order to automate your builds."), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?>
+<h2 class="h3 mt-4"><?php echo _('Automating Builds'); ?></h2>
+<p><?php echo sprintf(_("If you're going to use the Data Warehouse it's recommended that you set up the %ssystem cron/scheduled job%s in order to automate your builds."), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>') . ' '; ?>
+<?php echo _("There's a lot of work being done in the background during a build, and more often than not a web browser will time out if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."); ?></p>
+<p><?php echo sprintf(_('After you\'ve set up the cron job, you can manage the Data Warehouse\'s schedule in %1$s\'s %2$sTask Scheduler%3$s.'), SOFTWARE_TITLE, '<a href="' . WEB_ROOT . '/admin/scheduler/">', '</a>'); ?></p>
 
-<?php echo _("There's a lot of work being done in the background during a build, and more often than not a web browser will time out if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse."); ?>
+<h2 class="h3 mt-4"><?php echo _('Supported Data'); ?></h2>
+<p><?php echo _('The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.'); ?></p>
 
-<?php echo sprintf(_("After you've set up the cron job you will be able to manage the Data Warehouse scheduling through %s's Task Scheduler"), SOFTWARE_TITLE, '<a target="_blank" href="https://domainmod.org/docs/userguide/administration#task-scheduler">', '</a>'); ?><BR>
+<h3 class="h5"><?php echo _('Accounts'); ?></h3>
+<p><?php echo _('Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer'); ?></p>
 
-<BR>
-<h2 class="h3"><?php echo _('Supported Data'); ?></h2>
-<?php echo _('The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.'); ?><BR>
-<BR>
+<h3 class="h5"><?php echo _('DNS Zones'); ?></h3>
+<p><?php echo _('Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server'); ?></p>
 
-<strong><?php echo _('Accounts'); ?></strong><BR>
-<?php echo _('Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer'); ?><BR>
-<BR>
-<strong><?php echo _('DNS Zones'); ?></strong><BR>
-<?php echo _('Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server'); ?><BR>
-<BR>
-<strong><?php echo _('DNS Records'); ?></strong><BR>
-<?php echo _('TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data'); ?><BR><BR>
+<h3 class="h5"><?php echo _('DNS Records'); ?></h3>
+<p><?php echo _('TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data'); ?></p>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

@@ -48,6 +48,17 @@ if (!$dw_check->checkForZoneTable()) {
 }
 $pdo = $deeb->cnxx;
 
+// The Data Warehouse page's Servers table links here with ?server=<id> (or all) to choose what to view, then the page
+// comes back without it, so Export and the domain links keep working from the session as before
+if (isset($_GET['server'])) {
+
+    $dwdisplay = new DomainMOD\DwDisplay();
+    $dwdisplay->chooseServer($_GET['server']);
+    header("Location: list-zones.php");
+    exit;
+
+}
+
 $domain = $_GET['domain'] ?? '';
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
@@ -244,7 +255,7 @@ if (!$result) {
 
     if (!$dw_view_all && $dw_server_id === 0) {
 
-        echo $layout->emptyState('bi-database', _('Choose what to view'), _('Pick a server, or View All, on the Data Warehouse page.'), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
+        echo $layout->emptyState('bi-database', _('Choose what to view'), _("Choose a server's accounts or DNS zones on the Data Warehouse page."), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
 
     } elseif ($domain != '' && !$dw_view_all) {
 
@@ -274,9 +285,10 @@ if (!$result) {
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Zone'); ?></th>
-            <th><?php echo _('Data'); ?></th>
+            <th><?php echo _('Server'); ?></th>
+            <th><?php echo _('Records'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -285,12 +297,12 @@ if (!$result) {
 
             <tr>
                 <td></td>
-                <td>
-                    <?php echo $dwdisplay->zoneSidebar($row->server_id, $row->domain, '1', '1'); ?>
+                <td data-order="<?php echo DomainMOD\DwDisplay::escape($row->zonefile); ?>">
+                    <?php echo $layout->ltr($row->zonefile); ?>
+                    <a class="text-decoration-underline" href="list-accounts.php?domain=<?php echo DomainMOD\DwDisplay::escape(rawurlencode((string) $row->domain)); ?>"><?php echo _('Account'); ?></a>
                 </td>
-                <td>
-                    <?php echo $dwdisplay->zone($row->server_id, $row->domain); ?>
-                </td>
+                <td><?php echo DomainMOD\DwDisplay::escape(htmlspecialchars_decode((string) $row->dw_server_name, ENT_QUOTES)); ?></td>
+                <td><?php echo $dwdisplay->records($row->id); ?></td>
             </tr><?php
 
         } ?>

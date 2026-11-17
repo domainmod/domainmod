@@ -32,7 +32,17 @@ class DwBuild
         $this->log = new Log('class.dwbuild');
     }
 
+    // Rebuilds the Data Warehouse, and returns the result's message (see buildResult())
     public function build()
+    {
+        return $this->buildResult()['message'];
+    }
+
+    /*
+     * Rebuilds the Data Warehouse from every server, and returns how it went as array('status' => 'success', 'partial'
+     * (some servers' data couldn't be retrieved), or 'no-servers', 'message' => the translated message for the page)
+     */
+    public function buildResult()
     {
         $accounts = new DwAccounts();
         $zones = new DwZones();
@@ -48,7 +58,7 @@ class DwBuild
 
             $log_message = 'There are no web servers to process in the DW';
             $this->log->info($log_message);
-            return $log_message;
+            return self::resultFor(false, array());
 
         }
 
@@ -88,19 +98,33 @@ class DwBuild
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
         $this->updateEmpty($has_empty);
 
-        if (!empty($failed_servers)) {
+        return self::resultFor(true, $failed_servers);
+    }
+
+    /*
+     * A rebuild's status and message: 'no-servers' when there were no servers to rebuild from, 'partial' when some
+     * servers' data couldn't be retrieved ($failed_server_names, as stored, which the message names), and 'success'
+     * otherwise
+     */
+    public static function resultFor($has_servers, $failed_server_names)
+    {
+        if (!$has_servers) {
+
+            return array('status' => 'no-servers', 'message' => _('There are no servers in the Data Warehouse to rebuild.'));
+
+        }
+
+        if (!empty($failed_server_names)) {
 
             // server names are stored HTML-escaped (they're typed in DomainMOD), so they're decoded before escaping
             $server_names = array_map(function ($name) {
                 return DwDisplay::escape(htmlspecialchars_decode((string) $name, ENT_QUOTES));
-            }, $failed_servers);
-            $result_message = sprintf(_("The Data Warehouse has been rebuilt, but some data couldn't be retrieved from these servers: %s. Check their details on the Servers page, then rebuild it again."), implode(', ', $server_names));
-            return $result_message;
+            }, $failed_server_names);
+            return array('status' => 'partial', 'message' => sprintf(_("The Data Warehouse has been rebuilt, but some data couldn't be retrieved from these servers: %s. Check their details on the Servers page, then rebuild it again."), implode(', ', $server_names)));
 
         }
 
-        $result_message = _('The Data Warehouse has been rebuilt');
-        return $result_message;
+        return array('status' => 'success', 'message' => _('The Data Warehouse has been rebuilt.'));
     }
 
     public function dropDwTables()

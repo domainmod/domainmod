@@ -25,7 +25,8 @@ $breadcrumb = _('DW');
 $software_section = "dw";
 $slug = "dw-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
-$datatable_options = 'domainmodTable(\'#' . $slug . '-build\', {
+// The Servers table (a short list, in the page's order, with the All servers row first)
+$datatable_options = 'domainmodTable(\'#' . $slug . '-servers\', {
                           "paging": false,
                           "lengthChange": false,
                           "lengthMenu": [ 25, 50, 75, 100, -1 ],
@@ -43,32 +44,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-build\', {
                                            orderable: false,
                                            targets:   0
                                            } ],
-                          "ordering": true,
-                          "order": [[ 1, "asc" ]],
+                          "ordering": false,
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
-                      });
-
-                      domainmodTable(\'#' . $slug . '-totals\', {
-                          "paging": false,
-                          "lengthChange": false,
-                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
-                          "searching": false,
-                          "info": false,
-                          "autoWidth": true,
-                          "bAutoWidth": false,
-                          "responsive": {
-                               details: {
-                                         type: "column"
-                                        }
-                                        },
-                          "columnDefs": [ {
-                                           className: "control",
-                                           orderable: false,
-                                           targets:   0
-                                           } ],
-                          "ordering": true,
-                          "order": [[ 1, "asc" ]],
-                          "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\'
-                      });';
+                      }, { scrollOnPage: false });';

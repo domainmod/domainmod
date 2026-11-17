@@ -30,52 +30,93 @@ class DwDisplay
         $this->deeb = Database::getInstance();
     }
 
-    public function account($server_id, $domain)
+    /*
+     * The columns of a Data Warehouse accounts table, in order, after Responsive's control column: each an array with
+     * its 'label' (translated text), 'details' (true for a column shown only in Responsive's details row, DataTables'
+     * "none" class), and 'end' (true for a right-aligned number or date, as DataTables aligns them). The accounts list
+     * shows the Domain column, and Edit Domain leaves it out ($with_domain false), since that page is about the domain.
+     * accountCells() draws a row's cells in the same order.
+     */
+    public static function accountColumns($with_domain = true)
     {
-        $result_account = $this->getAccount($server_id, $domain);
-        $result = '';
-
-        foreach ($result_account as $row) {
-
-            ob_start();  ?>
-
-            <td align="left" valign="top">
-                <strong><?php echo _('Created'); ?>:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
-                <strong><?php echo _('Contact'); ?>:</strong> <?php echo $this->escape($row->email); ?><BR>
-                <strong><?php echo _('IP Address'); ?>:</strong> <?php echo $this->escape($row->ip); ?><BR>
-                <strong><?php echo _('Hosting Plan'); ?>:</strong> <?php echo $this->escape($row->plan); ?><BR>
-                <strong><?php echo _('cPanel Theme'); ?>:</strong> <?php echo $this->escape($row->theme); ?><BR>
-                <strong><?php echo _('User') . ', ' . _('Owner'); ?>:</strong> <?php echo $this->escape($row->user); ?>, <?php echo $this->escape($row->owner); ?>
-            </td>
-            <td align="left" valign="top">
-                <strong><?php echo _('Shell'); ?>:</strong> <?php echo $this->escape($row->shell); ?><BR>
-                <strong><?php echo _('Home'); ?>:</strong> /<?php echo $this->escape($row->partition); ?>/<?php echo $this->escape($row->user); ?><BR>
-                <strong><?php echo _('HD Quota'); ?>:</strong> <?php echo $this->escape($row->disklimit); ?>
-                <?php if ($row->disklimit != "unlimited") echo " MB"; ?><BR>
-                <strong><?php echo _('HD Used'); ?>:</strong> <?php echo number_format((float) $row->diskused); ?> MB
-            </td>
-            <td align="left" valign="top">
-                <strong><?php echo _('POP'); ?>:</strong> <?php echo $this->escape($row->maxpop); ?><BR>
-                <strong><?php echo _('Lists'); ?>:</strong> <?php echo $this->escape($row->maxlst); ?><BR>
-                <strong><?php echo _('Addons'); ?>:</strong> <?php echo $this->escape($row->maxaddons); ?><BR>
-                <strong><?php echo _('Subdomains'); ?>:</strong> <?php echo $this->escape($row->maxsub); ?><BR>
-                <strong><?php echo _('SQL'); ?>:</strong> <?php echo $this->escape($row->maxsql); ?><BR>
-                <strong><?php echo _('FTP'); ?>:</strong> <?php echo $this->escape($row->maxftp); ?><BR>
-                <strong><?php echo _('Parked'); ?>:</strong> <?php echo $this->escape($row->maxparked); ?><BR><BR>
-            </td>
-            <td align="left" valign="top">
-                <strong><?php echo _('Suspended') . '?'; ?></strong> <?php echo (int) $row->suspended === 1 ? _('Yes') : _('No'); ?><BR><?php
-                // WHM sends the suspension time as a Unix timestamp, and 0 when the account isn't suspended
-                if ((int) $row->suspendtime > 0) { ?>
-                <strong><?php echo _('When') . '?'; ?></strong> <?php echo date("Y M jS", (int) $row->suspendtime); ?><BR><?php
-                } ?>
-                <strong><?php echo _('Why') . '?'; ?></strong> <?php echo $this->escape($row->suspendreason); ?>
-            </td><?php
-
-            $result = ob_get_clean();
+        $columns = array();
+        if ($with_domain) $columns[] = array('label' => _('Domain'), 'details' => false, 'end' => false);
+        $columns[] = array('label' => _('Server'), 'details' => false, 'end' => false);
+        $columns[] = array('label' => _('Created'), 'details' => false, 'end' => true);
+        $columns[] = array('label' => _('IP Address'), 'details' => false, 'end' => false);
+        $columns[] = array('label' => _('Plan'), 'details' => false, 'end' => false);
+        $columns[] = array('label' => _('Disk Used'), 'details' => false, 'end' => true);
+        $columns[] = array('label' => _('Suspended'), 'details' => false, 'end' => false);
+        foreach (array(_('Contact'), _('Owner'), _('User'), _('Theme'), _('Shell'), _('Home'), _('Disk Quota'), _('POP'),
+                     _('Lists'), _('Addons'), _('Subdomains'), _('SQL'), _('FTP'), _('Parked'), _('Suspended On'),
+                     _('Suspend Reason')) as $label) {
+            $columns[] = array('label' => $label, 'details' => true, 'end' => false);
         }
+        return $columns;
+    }
 
-        return $result;
+    // The header cells of accountColumns(), after the control column's
+    public static function accountHeaderCells($with_domain = true)
+    {
+        $cells = array();
+        foreach (self::accountColumns($with_domain) as $column) {
+            $classes = array();
+            if ($column['details']) $classes[] = 'none';
+            if ($column['end']) $classes[] = 'text-end';
+            $cells[] = '<th' . ($classes ? ' class="' . implode(' ', $classes) . '"' : '') . '>' . self::escape($column['label']) . '</th>';
+        }
+        return $cells;
+    }
+
+    /*
+     * A Data Warehouse account's cells (a row of dw_accounts with its server's name as dw_server_name), in the order of
+     * accountColumns(), each a whole <td>. The domain's DNS Zone link is underlined, since it sits in a line of text.
+     * Everything is escaped, and left-to-right values (the domain, IP address, email address, and home folder) are
+     * isolated, so they keep their order on right-to-left pages.
+     */
+    public static function accountCells($row, $with_domain = true)
+    {
+        $row = (array) $row;
+        $value = function ($key) use ($row) {
+            return (string) ($row[$key] ?? '');
+        };
+        $layout = new Layout();
+        $ltr = function ($text) use ($layout) {
+            return $text === '' ? '' : $layout->ltr($text);
+        };
+        $cell = function ($html, $attributes = '') {
+            return '<td' . $attributes . '>' . $html . '</td>';
+        };
+
+        $cells = array();
+        if ($with_domain) {
+            $domain = $value('domain');
+            $cells[] = $cell($ltr($domain) . ' <a class="text-decoration-underline" href="list-zones.php?domain=' . self::escape(rawurlencode($domain)) . '">'
+                . self::escape(_('DNS Zone')) . '</a>', ' data-order="' . self::escape($domain) . '"');
+        }
+        // server names are stored HTML-escaped (they're typed in DomainMOD), so they're decoded before escaping
+        $cells[] = $cell(self::escape(htmlspecialchars_decode($value('dw_server_name'), ENT_QUOTES)));
+        $cells[] = $cell(self::escape(self::timestampDate($value('unix_startdate'))), ' class="text-end text-nowrap" data-order="' . (int) $value('unix_startdate') . '"');
+        $cells[] = $cell($ltr($value('ip')));
+        $cells[] = $cell(self::escape($value('plan')));
+        $cells[] = $cell(self::escape(number_format((float) $value('diskused')) . ' MB'), ' class="text-end" data-order="' . (float) $value('diskused') . '"');
+        $cells[] = $cell((int) $value('suspended') === 1 ? '<span class="badge text-bg-danger">' . self::escape(_('Yes')) . '</span>' : self::escape(_('No')));
+        $cells[] = $cell($ltr($value('email')));
+        $cells[] = $cell(self::escape($value('owner')));
+        $cells[] = $cell(self::escape($value('user')));
+        $cells[] = $cell(self::escape($value('theme')));
+        $cells[] = $cell(self::escape($value('shell')));
+        $cells[] = $cell($value('user') === '' ? '' : $ltr('/' . $value('partition') . '/' . $value('user')));
+        $disk_quota = $value('disklimit');
+        if ($disk_quota !== '' && $disk_quota !== 'unlimited') $disk_quota .= ' MB';
+        $cells[] = $cell(self::escape($disk_quota));
+        foreach (array('maxpop', 'maxlst', 'maxaddons', 'maxsub', 'maxsql', 'maxftp', 'maxparked') as $key) {
+            $cells[] = $cell(self::escape($value($key)));
+        }
+        // WHM sends the suspension time as a Unix timestamp, and 0 when the account isn't suspended ("-")
+        $cells[] = $cell(self::escape(self::timestampDate($value('suspendtime'))));
+        $cells[] = $cell(self::escape($value('suspendreason')));
+        return $cells;
     }
 
     public function getAccount($server_id, $domain)
@@ -83,13 +124,14 @@ class DwDisplay
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
+            SELECT a.domain, a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
                 a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
-                a.suspended, a.suspendtime, a.suspendreason, s.name AS server_name
+                a.suspended, a.suspendtime, a.suspendreason, s.name AS dw_server_name
             FROM dw_accounts AS a, dw_servers AS s
             WHERE a.server_id = s.id
               AND a.server_id = :server_id
-              AND a.domain = :domain");
+              AND a.domain = :domain
+            ORDER BY a.unix_startdate DESC");
         $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
         $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
         $stmt->execute();
@@ -97,86 +139,171 @@ class DwDisplay
         return $stmt->fetchAll();
     }
 
-    public function accountSidebar($server_name, $domain, $show_heading, $show_url)
-    { 
-        ob_start();
-        echo $this->showHeading($domain, $show_heading);
-        // server names are stored HTML-escaped (they're typed in DomainMOD), so they're decoded before wrapping
-        echo $this->wrapEscaped(htmlspecialchars_decode((string) $server_name, ENT_QUOTES), 20) . "<BR>";
-        echo $this->showUrl($domain, 'zone', 'list-zones.php', $show_url);
-        $result = ob_get_clean();
-        return $result;
-    } 
-
-    public function showHeading($heading, $show_heading)
+    /*
+     * A Unix timestamp from WHM (an account's creation or suspension time) as a date (YYYY-MM-DD) in the user's time
+     * zone, or "-" for 0, an empty value, or anything that isn't a positive whole number
+     */
+    public static function timestampDate($timestamp)
     {
-        $result = '';
-        
-        if ($show_heading == '1') {
-            $result = "<strong>" . $this->wrapEscaped($heading, 20) . "</strong><BR><BR>";
-        }
-        return $result;
-    } 
+        $timestamp = trim((string) $timestamp);
+        if (!preg_match('/^[0-9]+$/', $timestamp) || (int) $timestamp <= 0) return '-';
 
-    public function showUrl($domain, $text, $url, $show_url)
-    { 
-        $result = '';
-        
-        if ($show_url == '1') {
-            $result = "[<a href=\"" . $url . "?domain=" . $this->escape(rawurlencode((string) $domain)) . "\">" . $this->escape($text) . "</a>]";
-        }
-        return $result;
-    } 
-
-    public function zone($server_id, $domain)
-    { 
-        ob_start();
-
-        $result_zones = $this->getZone($server_id, $domain);
-
-        foreach ($result_zones as $row_zone) {
-
-            $result_records = $this->getRecords($row_zone->zone_id); ?>
-
-            <table><?php
-
-                foreach ($result_records as $row_records) { ?>
-
-                    <tr>
-                        <td align="right" valign="top">
-                            <?php echo $row_records->formatted_type; ?>
-                        </td>
-                        <td align="center" valign="top"><?php
-                            echo $row_records->formatted_line; ?>
-                        </td>
-                        <td align="left" valign="top"><?php
-                            echo $row_records->formatted_output; ?>
-                        </td>
-                    </tr><?php
-
-                } ?>
-
-            </table><?php
-
-        }
-
-        $result = ob_get_clean();
-
-        return $result;
+        return (new Time())->toUserTimezone('@' . (int) $timestamp, 'Y-m-d', '-');
     }
 
-    public function zoneSidebar($server_id, $domain, $show_heading, $show_url)
-    { 
-        ob_start();
-        $zone = $this->getZonefile($server_id, $domain);
-        echo $this->showHeading($zone, $show_heading);
-        $server_name = $this->getServerName($server_id);
-        echo $this->escape(htmlspecialchars_decode((string) $server_name, ENT_QUOTES)) . "<BR>";
-        echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url);
-        $result = ob_get_clean();
+    /*
+     * The view the Data Warehouse page's Servers table links to (?server=<id>, or all): a known server's id views that
+     * server's accounts or DNS zones, "all" views every server's, and anything else clears the view, so the list shows
+     * its "Choose what to view" message rather than a server chosen earlier. The view is kept in the session, as the
+     * lists' Export and domain links expect.
+     */
+    public function chooseServer($server)
+    {
+        $server = (string) $server;
 
-        return $result;
-    } 
+        if ($server === 'all') {
+
+            $_SESSION['s_dw_view_all'] = 1;
+            return;
+
+        }
+
+        $result = false;
+
+        if (preg_match('/^[0-9]+$/', $server)) {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT `name`, `host`
+                FROM dw_servers
+                WHERE id = :id");
+            $stmt->bindValue('id', (int) $server, \PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stmt->closeCursor();
+
+        }
+
+        if ($result) {
+
+            $_SESSION['s_dw_view_all'] = '';
+            $_SESSION['s_dw_server_id'] = (int) $server;
+            $_SESSION['s_dw_server_name'] = $result->name;
+            $_SESSION['s_dw_server_host'] = $result->host;
+
+        } else {
+
+            unset($_SESSION['s_dw_view_all'], $_SESSION['s_dw_server_id']);
+
+        }
+    }
+
+    /*
+     * A DNS record's parts, built from its own fields (not the formatted_* columns, which hold HTML in the language of
+     * whoever ran the build), as plain text: 'type', 'name', 'value', 'ttl' (a number, or '' when there's none to
+     * show), 'line' (its line in the zone file, or ''), and 'facts' (the SOA record's timers, as label => value). The
+     * text comes from the WHM server, so it's escaped only when it's drawn (recordList()).
+     */
+    public static function recordParts($record)
+    {
+        $record = (array) $record;
+        $field = function ($key) use ($record) {
+            return trim((string) ($record[$key] ?? ''));
+        };
+        $type = $field('type');
+        $name = $field('name');
+        $value = '';
+        $facts = array();
+
+        switch ($type) {
+            case 'A':
+            case 'AAAA':
+                $value = $field('address');
+                break;
+            case 'CNAME':
+                $value = $field('cname');
+                break;
+            case 'MX':
+                $value = trim($field('preference') . ' ' . $field('exchange'));
+                break;
+            case 'NS':
+                $value = $field('nsdname');
+                break;
+            case 'TXT':
+                $value = $field('txtdata');
+                break;
+            case 'SRV':
+                $value = $field('raw');
+                break;
+            case 'COMMENT':
+                $name = '';
+                $value = $field('raw');
+                break;
+            case 'ZONE TTL':
+                $name = '';
+                break;
+            case 'SOA':
+                $value = trim($field('mname') . ' ' . $field('rname'));
+                $facts = array(_('Serial') => $field('serial'), _('Refresh') => $field('refresh'),
+                    _('Retry') => $field('retry'), _('Expire') => $field('expire'),
+                    _('Minimum TTL') => $field('minimum'));
+                break;
+            default:
+                foreach (array('address', 'cname', 'txtdata', 'raw') as $key) {
+                    if ($field($key) !== '') {
+                        $value = $field($key);
+                        break;
+                    }
+                }
+        }
+
+        // A comment has no TTL, and a record WHM sent without one is stored as 0
+        $ttl = $type === 'COMMENT' || (int) $field('ttl') <= 0 ? '' : (string) (int) $field('ttl');
+        $line = (int) $field('line') > 0 ? (string) (int) $field('line') : '';
+
+        return array('type' => $type, 'name' => $name, 'value' => $value, 'ttl' => $ttl, 'line' => $line,
+            'facts' => $facts);
+    }
+
+    // A DNS zone's records as a list (see recordList())
+    public function records($zone_id)
+    {
+        return self::recordList($this->getRecords($zone_id));
+    }
+
+    /*
+     * DNS records as a list, one item per record: its type as a grey badge, then its name (in bold) and value (each
+     * isolated, so they keep their order on right-to-left pages), its TTL, the SOA record's timers, and its line in the zone file.
+     * Everything is escaped. Long values wrap in the browser (CSS) rather than at a set width.
+     */
+    public static function recordList($records)
+    {
+        $layout = new Layout();
+        $items = '';
+
+        foreach ($records as $record) {
+
+            $parts = self::recordParts($record);
+            $item = '<span class="badge text-bg-secondary">' . self::escape($parts['type']) . '</span>';
+            if ($parts['name'] !== '') $item .= ' <span class="domainmod-dw-record-name">' . $layout->ltr($parts['name']) . '</span>';
+            if ($parts['value'] !== '') $item .= ' ' . $layout->ltr($parts['value']);
+            // TRANSLATORS: %s is a DNS record's time to live, a number of seconds
+            if ($parts['ttl'] !== '') $item .= ' <span class="text-body-secondary">' . self::escape(sprintf(_('TTL %s'), $parts['ttl'])) . '</span>';
+            // TRANSLATORS: %s is the DNS record's line number in the zone file
+            if ($parts['line'] !== '') $item .= ' <span class="text-body-secondary">' . self::escape(sprintf(_('Line %s'), $parts['line'])) . '</span>';
+            if ($parts['facts']) {
+                $facts = array();
+                foreach ($parts['facts'] as $label => $value) {
+                    $facts[] = array('label' => $label, 'value' => $value, 'ltr' => true);
+                }
+                $item .= $layout->factList($facts, true);
+            }
+            $items .= '<li>' . $item . '</li>';
+
+        }
+
+        if ($items === '') return '';
+        return '<ul class="list-unstyled mb-0 domainmod-dw-records">' . $items . '</ul>';
+    }
 
     // Text from the WHM server (or a server's name), safe to put in the page
     public static function escape($value)
@@ -224,64 +351,16 @@ class DwDisplay
         return $lines;
     }
 
-    public function getZonefile($server_id, $domain)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT zonefile
-            FROM dw_dns_zones
-            WHERE server_id = :server_id
-              AND domain = :domain");
-        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
-        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
-        $stmt->execute();
-
-        return $stmt->fetchColumn();
-    }
-
-    public function getServerName($server_id)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT `name`
-            FROM dw_servers
-            WHERE id = :server_id");
-        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchColumn();
-    }
-
-    public function getZone($server_id, $domain)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
-            FROM dw_dns_zones AS z, dw_servers AS s
-            WHERE z.server_id = s.id
-              AND z.server_id = :server_id
-              AND z.domain = :domain");
-        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
-        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
     public function getRecords($zone_id)
     {
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
             SELECT address, cname, `exchange`, `expire`, line, minimum, mname, `name`, nsdname, preference, raw,
-                refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
-                formatted_output
+                refresh, retry, rname, `serial`, ttl, txtdata, type
             FROM dw_dns_records
             WHERE dns_zone_id = :zone_id
-            ORDER BY new_order");
+            ORDER BY new_order, line, id");
         $stmt->bindValue('zone_id', $zone_id, \PDO::PARAM_INT);
         $stmt->execute();
 

@@ -41,38 +41,45 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
-?>
-<?php require_once DIR_INC . '/doctype.inc.php'; ?>
-<?php echo $layout->htmlTag(); ?>
-<head>
-    <title><?php echo $layout->pageTitle($page_title); ?></title>
-    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
-</head>
-<?php echo $layout->bodyTag(); ?>
-<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php
+
+// The build runs before anything is drawn, then the Data Warehouse page shows how it went: a success as a toast, and
+// anything else as an alert
 if (DEMO_INSTALLATION == false) {
 
-    $result_message = $dw->build();
+    try {
+
+        $result = $dw->buildResult();
+
+    } catch (Throwable $e) {
+
+        // Always in PHP's error log, and in DomainMOD's own log when debugging is on (unless the database is what failed,
+        // which still leaves the message below)
+        error_log('DomainMOD: Unable to rebuild the Data Warehouse: ' . $e->getMessage());
+        try {
+            $log = new DomainMOD\Log('/admin/dw/rebuild.php');
+            $log->critical('Unable to rebuild the Data Warehouse', array('Error' => $e->getMessage()));
+        } catch (Throwable $log_error) {
+            error_log('DomainMOD: Unable to log the Data Warehouse rebuild error: ' . $log_error->getMessage());
+        }
+        $result = array('status' => 'error', 'message' => _('There was a problem rebuilding the Data Warehouse.'));
+
+    }
 
 } else {
 
-    $result_message = _('Data Warehouse Rebuilt.');
+    $result = array('status' => 'success', 'message' => _('Data Warehouse Rebuilt.'));
 
 }
 
-if ($result_message !== false) {
+if ($result['status'] === 'success') {
 
-    echo '<p>' . $result_message . '</p>';
-    echo '<div class="mb-3">' . $layout->linkButton('dw.php', _('Go To Data Warehouse'), 'primary') . '</div>';
+    $_SESSION['s_message_success'] .= $result['message'] . '<BR>';
 
 } else {
 
-    echo '<p>' . _('There was a problem rebuilding the Data Warehouse.') . '</p>';
-    echo '<div class="mb-3">' . $layout->linkButton('rebuild.php?' . $csrf->query(), _('Try again'), 'primary') . '</div>';
+    $_SESSION['s_message_danger'] .= $result['message'] . '<BR>';
 
 }
-?>
-<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
-</body>
-</html>
+
+header("Location: dw.php");
+exit;

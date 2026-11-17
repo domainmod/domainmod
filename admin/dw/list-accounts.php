@@ -48,6 +48,17 @@ if (!$dw_check->checkForAccountTable()) {
 }
 $pdo = $deeb->cnxx;
 
+// The Data Warehouse page's Servers table links here with ?server=<id> (or all) to choose what to view, then the page
+// comes back without it, so Export and the domain links keep working from the session as before
+if (isset($_GET['server'])) {
+
+    $dwdisplay = new DomainMOD\DwDisplay();
+    $dwdisplay->chooseServer($_GET['server']);
+    header("Location: list-accounts.php");
+    exit;
+
+}
+
 $domain = $_GET['domain'] ?? '';
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
@@ -213,7 +224,7 @@ if (!$result) {
 
     if (!$dw_view_all && $dw_server_id === 0) {
 
-        echo $layout->emptyState('bi-database', _('Choose what to view'), _('Pick a server, or View All, on the Data Warehouse page.'), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
+        echo $layout->emptyState('bi-database', _('Choose what to view'), _("Choose a server's accounts or DNS zones on the Data Warehouse page."), '', '', '/admin/dw/dw.php', _('Data Warehouse'));
 
     } elseif ($domain != '' && !$dw_view_all) {
 
@@ -238,17 +249,13 @@ if (!$result) {
     // The page's actions, drawn in the page header (see Layout::renderPageActions())
     $layout->addPageAction(_('Export'), 'list-accounts.php?export_data=1', 'bi-download');
 
-    $dwdisplay = new DomainMOD\DwDisplay(); ?>
+    // Each account's figures in their own columns, with the rest in Responsive's details row (DwDisplay::accountColumns()) ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-            <th><?php echo _('Account'); ?></th>
-            <th><?php echo _('Data'); ?></th>
-            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
-            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
-            <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+            <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+            <?php echo implode('', DomainMOD\DwDisplay::accountHeaderCells()); ?>
         </tr>
         </thead>
         <tbody><?php
@@ -257,12 +264,7 @@ if (!$result) {
 
                 <tr>
                     <td></td>
-                    <td>
-                        <?php echo $dwdisplay->accountSidebar($row->dw_server_name, $row->domain, '1', '1'); ?>
-                    </td>
-
-                    <?php echo $dwdisplay->account($row->server_id, $row->domain); ?>
-
+                    <?php echo implode('', DomainMOD\DwDisplay::accountCells($row)); ?>
                 </tr><?php
 
             } ?>

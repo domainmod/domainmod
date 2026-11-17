@@ -112,7 +112,7 @@ $domain_cell = function ($row) use ($escape, $layout) {
 
 // WHM sends the suspension time as a Unix timestamp, and 0 when there isn't one
 $suspended_when = function ($row) {
-    return (int) $row->suspendtime > 0 ? date("Y M jS", (int) $row->suspendtime) : '';
+    return (int) $row->suspendtime > 0 ? DomainMOD\DwDisplay::timestampDate($row->suspendtime) : '';
 };
 
 if ($export_data === 1) {
@@ -191,7 +191,7 @@ if (!$dw_built) {
         <table id="<?php echo $slug; ?>-servers" class="<?php echo $datatable_class; ?> mt-3">
             <thead>
             <tr>
-                <th width="20px"></th>
+                <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
                 <th><?php echo _('Server'); ?></th>
                 <th><?php echo _('Accounts'); ?></th>
                 <th><?php echo _('Healthy'); ?></th>
@@ -232,101 +232,92 @@ if (!$dw_built) {
 
     if ($temp_accounts_without_a_dns_zone != 0) { ?>
 
-        <div class="row mt-4" id="no-zone">
-            <?php echo $layout->contentBoxTop(sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone), '12'); ?>
-            <table id="<?php echo $slug; ?>-no-zone" class="<?php echo $datatable_class; ?>">
-                <thead>
+        <h2 class="h4 mt-4" id="no-zone"><?php echo sprintf(_('Accounts without a DNS Zone (%s)'), $temp_accounts_without_a_dns_zone); ?></h2>
+        <table id="<?php echo $slug; ?>-no-zone" class="<?php echo $datatable_class; ?>">
+            <thead>
+            <tr>
+                <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+                <th><?php echo _('Domain'); ?></th>
+                <th><?php echo _('Server'); ?></th>
+                <th><?php echo _('cPanel User'); ?></th>
+            </tr>
+            </thead>
+            <tbody><?php
+            foreach ($result_accounts_without_a_dns_zone as $row) { ?>
+
                 <tr>
-                    <th width="20px"></th>
-                    <th><?php echo _('Domain'); ?></th>
-                    <th><?php echo _('Server'); ?></th>
-                    <th><?php echo _('cPanel User'); ?></th>
-                </tr>
-                </thead>
-                <tbody><?php
-                foreach ($result_accounts_without_a_dns_zone as $row) { ?>
+                    <td></td>
+                    <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                    <td><?php echo $row->server_name; ?></td>
+                    <td><?php echo $escape($row->user); ?></td>
+                </tr><?php
 
-                    <tr>
-                        <td></td>
-                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
-                        <td><?php echo $row->server_name; ?></td>
-                        <td><?php echo $escape($row->user); ?></td>
-                    </tr><?php
+            } ?>
 
-                } ?>
-
-                </tbody>
-            </table>
-            <?php echo $layout->contentBoxBottom(); ?>
-        </div><?php
+            </tbody>
+        </table><?php
 
     }
 
     if ($temp_dns_zones_without_an_account != 0) { ?>
 
-        <div class="row mt-4" id="no-account">
-            <?php echo $layout->contentBoxTop(sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account), '12'); ?>
-            <table id="<?php echo $slug; ?>-no-account" class="<?php echo $datatable_class; ?>">
-                <thead>
+        <h2 class="h4 mt-4" id="no-account"><?php echo sprintf(_('DNS Zones without an Account (%s)'), $temp_dns_zones_without_an_account); ?></h2>
+        <table id="<?php echo $slug; ?>-no-account" class="<?php echo $datatable_class; ?>">
+            <thead>
+            <tr>
+                <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+                <th><?php echo _('Domain'); ?></th>
+                <th><?php echo _('Server'); ?></th>
+                <th><?php echo _('Zone File'); ?></th>
+            </tr>
+            </thead>
+            <tbody><?php
+            foreach ($result_dns_zones_without_an_account as $row) { ?>
+
                 <tr>
-                    <th width="20px"></th>
-                    <th><?php echo _('Domain'); ?></th>
-                    <th><?php echo _('Server'); ?></th>
-                    <th><?php echo _('Zone File'); ?></th>
-                </tr>
-                </thead>
-                <tbody><?php
-                foreach ($result_dns_zones_without_an_account as $row) { ?>
+                    <td></td>
+                    <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                    <td><?php echo $row->server_name; ?></td>
+                    <td><?php echo $escape($row->zonefile); ?></td>
+                </tr><?php
 
-                    <tr>
-                        <td></td>
-                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
-                        <td><?php echo $row->server_name; ?></td>
-                        <td><?php echo $escape($row->zonefile); ?></td>
-                    </tr><?php
+            } ?>
 
-                } ?>
-
-                </tbody>
-            </table>
-            <?php echo $layout->contentBoxBottom(); ?>
-        </div><?php
+            </tbody>
+        </table><?php
 
     }
 
     if ($temp_suspended_accounts != 0) { ?>
 
-        <div class="row mt-4" id="suspended">
-            <?php echo $layout->contentBoxTop(sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts), '12'); ?>
-            <table id="<?php echo $slug; ?>-suspended" class="<?php echo $datatable_class; ?>">
-                <thead>
+        <h2 class="h4 mt-4" id="suspended"><?php echo sprintf(_('Suspended Accounts (%s)'), $temp_suspended_accounts); ?></h2>
+        <table id="<?php echo $slug; ?>-suspended" class="<?php echo $datatable_class; ?>">
+            <thead>
+            <tr>
+                <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+                <th><?php echo _('Domain'); ?></th>
+                <th><?php echo _('Server'); ?></th>
+                <th><?php echo _('cPanel User'); ?></th>
+                <th><?php echo _('Reason'); ?></th>
+                <th><?php echo _('Suspended'); ?></th>
+            </tr>
+            </thead>
+            <tbody><?php
+            foreach ($result_suspended_accounts as $row) { ?>
+
                 <tr>
-                    <th width="20px"></th>
-                    <th><?php echo _('Domain'); ?></th>
-                    <th><?php echo _('Server'); ?></th>
-                    <th><?php echo _('cPanel User'); ?></th>
-                    <th><?php echo _('Reason'); ?></th>
-                    <th><?php echo _('Suspended'); ?></th>
-                </tr>
-                </thead>
-                <tbody><?php
-                foreach ($result_suspended_accounts as $row) { ?>
+                    <td></td>
+                    <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
+                    <td><?php echo $row->server_name; ?></td>
+                    <td><?php echo $escape($row->user); ?></td>
+                    <td><?php echo $escape($row->suspendreason); ?></td>
+                    <td data-order="<?php echo (int) $row->suspendtime; ?>"><?php echo $suspended_when($row); ?></td>
+                </tr><?php
 
-                    <tr>
-                        <td></td>
-                        <td data-order="<?php echo $escape($row->domain); ?>"><?php echo $domain_cell($row); ?></td>
-                        <td><?php echo $row->server_name; ?></td>
-                        <td><?php echo $escape($row->user); ?></td>
-                        <td><?php echo $escape($row->suspendreason); ?></td>
-                        <td data-order="<?php echo (int) $row->suspendtime; ?>"><?php echo $suspended_when($row); ?></td>
-                    </tr><?php
+            } ?>
 
-                } ?>
-
-                </tbody>
-            </table>
-            <?php echo $layout->contentBoxBottom(); ?>
-        </div><?php
+            </tbody>
+        </table><?php
 
     }
 

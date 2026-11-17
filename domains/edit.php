@@ -863,7 +863,7 @@ $dw_has_zones = $dwzones->checkForZones($new_domain);
 
 if ($dw_has_accounts === 1 || $dw_has_zones === 1) { ?>
 
-    <BR><BR><h2 class="h3"><?php echo sprintf(_('Data Warehouse Information for %s'), htmlentities($new_domain, ENT_QUOTES, 'UTF-8')); ?></h2><?php
+    <h2 class="h3 mt-5"><?php echo sprintf(_('Data Warehouse Information for %s'), htmlentities($new_domain, ENT_QUOTES, 'UTF-8')); ?></h2><?php
 
 }
 
@@ -872,39 +872,39 @@ if ($dw_has_accounts === 1) { ?>
     <?php echo $layout->expandableBoxTop(_('Accounts'), '', '', 3); ?><?php
 
     $stmt = $pdo->prepare("
-        SELECT s.id, s.name
+        SELECT s.id
         FROM dw_accounts AS a, dw_servers AS s
         WHERE a.server_id = s.id
           AND a.domain = :new_domain
-        ORDER BY s.name ASC, a.unix_startdate DESC");
+        GROUP BY s.id, s.name
+        ORDER BY s.name ASC");
     $stmt->bindValue('new_domain', $new_domain, PDO::PARAM_STR);
     $stmt->execute();
     $result = $stmt->fetchAll();
 
+    // The account's figures in their own columns, without the Domain column (this page is about the domain), and the
+    // rest in Responsive's details row (DwDisplay::accountColumns())
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
 <table id="<?php echo $slug; ?>-account" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-        <th><?php echo _('Server'); ?></th>
-        <th><?php echo _('Data'); ?></th>
-        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
-        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
-        <th><span class="visually-hidden"><?php echo _('More Data'); ?></span></th>
+        <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+        <?php echo implode('', DomainMOD\DwDisplay::accountHeaderCells(false)); ?>
     </tr>
     </thead>
     <tbody><?php
 
-    foreach ($result as $row) { ?>
+    foreach ($result as $row) {
+
+        foreach ($dwdisplay->getAccount($row->id, $new_domain) as $account) { ?>
 
         <tr>
         <td></td>
-        <td><?php echo $row->name; ?></td>
-
-        <?php echo $dwdisplay->account($row->id, $new_domain); ?>
-
+        <?php echo implode('', DomainMOD\DwDisplay::accountCells($account, false)); ?>
         </tr><?php
+
+        }
 
     } ?>
 
@@ -919,7 +919,7 @@ if ($dw_has_zones === 1) { ?>
     <?php echo $layout->expandableBoxTop(_('DNS Zones & Records'), '', '', 3); ?><?php
 
     $stmt = $pdo->prepare("
-        SELECT s.id AS dw_server_id, s.name
+        SELECT z.id AS zone_id, s.name
         FROM dw_dns_zones AS z, dw_servers AS s
         WHERE z.server_id = s.id
           AND z.domain = :new_domain
@@ -933,9 +933,9 @@ if ($dw_has_zones === 1) { ?>
 <table id="<?php echo $slug; ?>-zone" class="<?php echo $datatable_class; ?>">
     <thead>
     <tr>
-        <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+        <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
         <th><?php echo _('Server'); ?></th>
-        <th><?php echo _('Data'); ?></th>
+        <th><?php echo _('Records'); ?></th>
     </tr>
     </thead>
     <tbody><?php
@@ -944,10 +944,8 @@ if ($dw_has_zones === 1) { ?>
 
         <tr>
         <td></td>
-        <td valign="top"><?php echo $row->name; ?></td>
-        <td>
-            <?php echo $dwdisplay->zone($row->dw_server_id, $new_domain); ?>
-        </td>
+        <td><?php echo $row->name; ?></td>
+        <td><?php echo $dwdisplay->records($row->zone_id); ?></td>
         </tr><?php
 
     } ?>

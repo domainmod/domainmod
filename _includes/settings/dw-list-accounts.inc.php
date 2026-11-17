@@ -41,7 +41,8 @@ $datatable_class = 'table table-striped dt-responsive cell-border compact';
 $datatable_options = 'domainmodTable(\'#' . $slug . '\', {
                           "paging": true,
                           "lengthChange": true,
-                          "lengthMenu": [ 10, 25, 50, 75, 100, -1 ],
+                          "pageLength": 25,
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
                           "searching": true,
                           "info": true,
                           "autoWidth": true,
