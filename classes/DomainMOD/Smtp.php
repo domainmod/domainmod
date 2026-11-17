@@ -46,11 +46,9 @@ class Smtp
 
     public function send($email_title, $to_address, $reply_address, $subject, $message_html, $message_text)
     {
-        require_once DIR_ROOT . '/vendor/autoload.php';
-        $mail = new PHPMailer();
+        $mail = $this->getMailer();
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
-        $mail->CharSet = EMAIL_ENCODING_TYPE;
         $mail->SMTPSecure = $this->protocol;
         $mail->Host = $this->server;
         $mail->Port = $this->port;
@@ -58,12 +56,8 @@ class Smtp
         $mail->Username = $this->username;
         $mail->Password = $this->password;
         $mail->setFrom($this->email_address, SOFTWARE_TITLE);
-        $mail->addAddress($to_address);
         $mail->addReplyTo($reply_address, SOFTWARE_TITLE . ' ' . _('Admin'));
-        $mail->isHTML(true);  // Set email format to HTML
-        $mail->Subject = $subject;
-        $mail->Body = $message_html;
-        $mail->AltBody = $message_text;
+        Email::setMessage($mail, $to_address, $subject, $message_html, $message_text);
 
         $log_extra = array(_('Method') => _('SMTP'), _('To') => $to_address, _('From') => $this->email_address,
             _('Subject') => $subject, _('Server') => $this->server, _('Port') => $this->port, _('Protocol') => $this->protocol,
@@ -84,6 +78,13 @@ class Smtp
             return false;
 
         }
+    }
+
+    // A new PHPMailer for one email (its own method, so the tests can use one that doesn't send anything).
+    public function getMailer()
+    {
+        require_once DIR_ROOT . '/vendor/autoload.php';
+        return new PHPMailer();
     }
 
     /*

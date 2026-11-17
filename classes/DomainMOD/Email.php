@@ -21,8 +21,14 @@
 //@formatter:off
 namespace DomainMOD;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 class Email
 {
+    // The logo is sent with each email and shown from there (cid:), so it shows even when the mail app can't reach the
+    // installation.
+    const LOGO_CID = 'domainmod-logo';
+
     public $deeb;
     public $log;
     public $time;
@@ -54,18 +60,26 @@ class Email
 
         } else {
 
-            return $this->intPhpMail($email_title, $to_address, $subject, $message_html);
+            return $this->intPhpMail($email_title, $to_address, $subject, $message_html, $message_text);
 
         }
     }
 
-    public function intPhpMail($email_title, $to_address, $subject, $message)
+    public function intPhpMail($email_title, $to_address, $subject, $message_html, $message_text)
     {
-        $headers = $this->getHeaders();
+        $mail = $this->getMailer();
+        $mail->isMail();
+        // PHPMailer turns down an address it can't use (and would then send with no From), so that counts as a failed send.
+        $from_ok = $mail->setFrom($this->from_address, SOFTWARE_TITLE);
+        // The envelope sender (the Return-Path), passed to mail() as -f unless PHP's sendmail_path already sets one.
+        $mail->Sender = $this->from_address;
+        $mail->addReplyTo($this->from_address);
+        self::setMessage($mail, $to_address, $subject, $message_html, $message_text);
+
         $log_extra = array(_('Method') => 'PHP mail()', _('To') => $to_address, _('From') => $this->from_address,
             _('Subject') => $subject);
 
-        if (mail($to_address, $subject, $message, $headers, '-f' . $this->from_address)) {
+        if ($from_ok && $mail->send()) {
 
             $log_message = $email_title . ' ' . _('Email :: SEND SUCCEEDED');
             $this->log->info($log_message, $log_extra);
@@ -78,6 +92,63 @@ class Email
             return false;
 
         }
+    }
+
+    // A new PHPMailer for one email (its own method, so the tests can use one that doesn't send anything).
+    public function getMailer()
+    {
+        return new PHPMailer();
+    }
+
+    /*
+     * The parts of an email that are the same however it's sent (PHP's mail() here, or SMTP in Smtp.php): the
+     * recipient, subject, and HTML and plain-text versions, plus the logo as an inline image when the HTML shows it.
+     */
+    public static function setMessage($mail, $to_address, $subject, $message_html, $message_text)
+    {
+        $mail->CharSet = EMAIL_ENCODING_TYPE;
+        $mail->addAddress($to_address);
+        $mail->isHTML(true);  // Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body = $message_html;
+        $mail->AltBody = $message_text;
+
+        if (strpos($message_html, 'cid:' . self::LOGO_CID) !== false) {
+
+            $mail->addEmbeddedImage(self::logoFile(), self::LOGO_CID, 'logo.png', PHPMailer::ENCODING_BASE64,
+                'image/png');
+
+        }
+    }
+
+    // The logo file that's sent with the emails.
+    public static function logoFile()
+    {
+        return DIR_ROOT . '/images/logo.png';
+    }
+
+    /*
+     * The logo at the top of an email, linked to the installation. It's on a white cell so it stays readable when a mail
+     * app shows the email in dark mode. If the file can't be read, so it can't be sent with the email, the logo is shown
+     * from the installation instead, as before.
+     */
+    public function logoHtml()
+    {
+        $url = htmlspecialchars($this->full_url . '/', ENT_QUOTES);
+        $src = is_readable(self::logoFile()) ? 'cid:' . self::LOGO_CID : $url . 'images/logo.png';
+        return '<table cellspacing="0" cellpadding="6" border="0" bgcolor="#FFFFFF" style="background-color: #FFFFFF;"><tr>'
+            . '<td bgcolor="#FFFFFF" style="background-color: #FFFFFF;"><a title="' . SOFTWARE_TITLE . '" href="' . $url
+            . '"><img src="' . $src . '" width="204" height="32" border="0" alt="' . SOFTWARE_TITLE
+            . '" style="display: block;"></a></td></tr></table>';
+    }
+
+    /*
+     * Tags for an email's head that ask mail apps not to invert it in dark mode, so the logo and colours show as designed
+     * in the apps that honour them (color-scheme, plus supported-color-schemes for older versions of Apple Mail).
+     */
+    public static function colorSchemeTags()
+    {
+        return '<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">';
     }
 
     public function sendExpirations($from_cron = false)
@@ -263,30 +334,17 @@ class Email
         }
     }
 
-    public function getHeaders()
-    {
-        $headers = '';
-        $headers .= 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=' . EMAIL_ENCODING_TYPE . "\r\n";
-        $headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $this->from_address . ">\r\n";
-        $headers .= 'Return-Path: ' . $this->from_address . "\r\n";
-        $headers .= 'Reply-to: ' . $this->from_address . "\r\n";
-        $version = phpversion();
-        $headers .= 'X-Mailer: PHP/' . $version . "\r\n";
-        return $headers;
-    }
-
     public function messageTopHtml($subject)
     {
         ob_start(); ?>
         <?php echo (new Layout())->emailHtmlTag(); ?>
-        <head><title><?php echo $subject; ?></title></head>
+        <head><?php echo self::colorSchemeTags(); ?><title><?php echo $subject; ?></title></head>
         <body bgcolor="#FFFFFF">
         <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
         <tr>
         <td width="100%" bgcolor="#FFFFFF">
         <font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
-        <a title="<?php echo SOFTWARE_TITLE; ?>" href="<?php echo $this->full_url; ?>/"><img border="0" alt="<?php echo SOFTWARE_TITLE; ?>" src="<?php echo $this->full_url; ?>/images/logo.png"></a><BR>
+        <?php echo $this->logoHtml(); ?>
         <BR>
         <?php echo sprintf(_('Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days.'), SOFTWARE_TITLE, $this->number_of_days); ?><BR>
         <BR>

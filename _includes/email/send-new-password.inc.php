@@ -34,7 +34,7 @@ $headline = $subject;
 $message_html = $message_html ?? '';
 $message_html .= "
 " . (new DomainMOD\Layout())->emailHtmlTag() . "
-<head><title>" . $headline . "</title></head>
+<head>" . DomainMOD\Email::colorSchemeTags() . "<title>" . $headline . "</title></head>
 <body bgcolor=\"#FFFFFF\">
 <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
     <tr>
@@ -46,8 +46,7 @@ $message_html .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
-$message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
-    SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+$message_html .= $email->logoHtml() . "<BR>";
 $message_html .= _('Your password has been reset and you can find it below. The next time you log in you should change your password to something that will be easy for you to remember, but still hard for someone else to guess.') . '<BR>';
 $message_html .= "<BR>";
 $message_html .= _('URL') . ": <a title=\"" . SOFTWARE_TITLE . "\" target=\"_blank\" href=\"" . $full_url . "/\">" .

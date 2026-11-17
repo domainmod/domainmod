@@ -34,7 +34,7 @@ $headline = $subject;
 $message_html = $message_html ?? '';
 $message_html .= "
 " . (new DomainMOD\Layout())->emailHtmlTag() . "
-<head><title>" . $headline . "</title></head>
+<head>" . DomainMOD\Email::colorSchemeTags() . "<title>" . $headline . "</title></head>
 <body bgcolor=\"#FFFFFF\">
 <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
     <tr>
@@ -46,8 +46,7 @@ $message_html .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\"><BR>";
-$message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
-    SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+$message_html .= $email->logoHtml() . "<BR>";
 $message_html .= sprintf(_("This is a test email to ensure that your %s installation is able to send email successfully. "), SOFTWARE_TITLE);
 $message_html .= sprintf(_("If you did not request this from your account, you should report it to your %s Administrator."), SOFTWARE_TITLE) . "<BR>";
 $message_html .= "<BR>";

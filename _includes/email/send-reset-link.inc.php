@@ -35,7 +35,7 @@ $headline = $subject;
 $message_html = $message_html ?? '';
 $message_html .= "
 " . (new DomainMOD\Layout())->emailHtmlTag() . "
-<head><title>" . $headline . "</title></head>
+<head>" . DomainMOD\Email::colorSchemeTags() . "<title>" . $headline . "</title></head>
 <body bgcolor=\"#FFFFFF\">
 <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
     <tr>
@@ -47,8 +47,7 @@ $message_html .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
-$message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
-    SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+$message_html .= $email->logoHtml() . "<BR>";
 $message_html .= _('Someone asked to reset your password. To reset it, use the link below within the next hour. Your new password will then be emailed to you.') . '<BR>';
 $message_html .= "<BR>";
 $message_html .= "<a target=\"_blank\" href=\"" . htmlspecialchars($reset_url, ENT_QUOTES) . "\">" . htmlspecialchars($reset_url, ENT_QUOTES) . "</a><BR>";

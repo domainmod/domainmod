@@ -32,7 +32,7 @@ class EmailSendTest extends TestCase
         $email = $this->getMockBuilder(Email::class)->disableOriginalConstructor()->onlyMethods(array('intPhpMail'))->getMock();
         $email->use_smtp = '0';
         $email->expects($this->once())->method('intPhpMail')
-            ->with('Test', 'to@example.invalid', 'Subject', '<p>HTML</p>')->willReturn($sent);
+            ->with('Test', 'to@example.invalid', 'Subject', '<p>HTML</p>', 'Text')->willReturn($sent);
         return $email;
     }
 
