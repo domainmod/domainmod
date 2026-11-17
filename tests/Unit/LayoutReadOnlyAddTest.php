@@ -71,6 +71,28 @@ class LayoutReadOnlyAddTest extends TestCase
         $this->assertSame('', $layout->renderPageActions());
     }
 
+    public function testReadOnlyUsersGetNoActionThatChangesData()
+    {
+        $_SESSION['s_read_only'] = '1';
+        $layout = new Layout();
+        $layout->addPageAction('Manage Servers', 'servers.php', 'bi-hdd-stack');
+        $layout->addPageAction('Rebuild DW', 'rebuild.php?token=1', 'bi-arrow-repeat', array('confirm' => 'Rebuild now?'));
+        $html = $layout->renderPageActions();
+
+        $this->assertStringContainsString('servers.php', $html);
+        $this->assertStringNotContainsString('rebuild.php', $html);
+        $this->assertStringNotContainsString('Rebuild DW', $html);
+    }
+
+    public function testOtherUsersStillGetActionsThatChangeData()
+    {
+        $_SESSION['s_read_only'] = '0';
+        $layout = new Layout();
+        $layout->addPageAction('Rebuild DW', 'rebuild.php?token=1', 'bi-arrow-repeat', array('confirm' => 'Rebuild now?'));
+
+        $this->assertStringContainsString('Rebuild DW', $layout->renderPageActions());
+    }
+
     public function testOtherUsersStillGetTheAddButtonAndItsMenu()
     {
         foreach (array('0', null) as $read_only) {

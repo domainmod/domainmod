@@ -552,13 +552,12 @@ if ($queue_rdap_available) {
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 // Read-only users can't add to or clear the queue, so they don't get those buttons (the pages turn them away too).
 // Layout leaves the add buttons out for them, and Clear Completed checks for itself below.
-$queue_read_only = ($_SESSION['s_read_only'] ?? '') == '1';
 $layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
 if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 $_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
 // Clearing asks first, then goes straight to the clear with its CSRF token
-if ($_SESSION['s_domains_in_queue'] == '1' && !$queue_read_only) {
+if ($_SESSION['s_domains_in_queue'] == '1') {
     $layout->addPageAction(_('Clear Completed'), 'index.php?really_clear=1&' . $csrf->query(), 'bi-check2-all',
         array('confirm' => _('Are you sure you want to clear completed items from the queue?') . ' '
             . _('Before clearing the queue you should review the results to make sure that everything is correct.')));

@@ -60,10 +60,12 @@ class Layout
      * must already carry the CSRF token. 'confirm' is the question as plain translated text, or an array with the
      * question as 'message' and, optionally, the confirmation's 'title' and its Yes 'button' (both the action's label
      * when left out), all escaped when drawn. A confirmed action stays on the page, so 'target' and 'rel' don't apply
-     * to it.
+     * to it. Read-only users can't change data, so a confirmed action isn't added for them (the action's page turns
+     * them away too).
      */
     public function addPageAction($label, $url, $icon, $options = array())
     {
+        if (isset($options['confirm']) && $this->isReadOnly()) return;
         self::$page_actions[] = array('label' => $label, 'url' => $url, 'icon' => $icon, 'options' => $options);
     }
 
