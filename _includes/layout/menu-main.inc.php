@@ -60,7 +60,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
+            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting" && $slug != "reporting-domain-fees" && $slug != "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
                 <i class="nav-icon bi bi-bar-chart-fill"></i>
                 <p>
                     <?php echo _('Reporting'); ?>
@@ -93,8 +93,9 @@
                 </a>
             </li>
         <?php } ?>
-        <li class="nav-item<?php if ($software_section == "assets") echo " menu-open"; ?>">
-            <a href="#" class="nav-link<?php if ($software_section == "assets") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
+        <?php // The fee reports live in Reporting, but they're listed under Assets, so Assets is open and highlighted on them ?>
+        <li class="nav-item<?php if ($software_section == "assets" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "assets" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
                 <i class="nav-icon bi bi-boxes"></i>
                 <p>
                     <?php echo _('Assets') ?>
@@ -137,6 +138,12 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/reporting/domains/registrar-fees.php?all=0" class="nav-link<?php if ($slug == "reporting-domain-fees") echo " active"; ?>" aria-label="<?php echo _('Domain Fees'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('Domain Fees') ?></p>
+                    </a>
+                </li>
                 <li class="nav-header"><?php echo _('SSL Certificates') ?></li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/assets/ssl-providers.php" class="nav-link<?php if ($slug == "assets-ssl-providers" || $slug == "assets-add-ssl-provider" || $slug == "assets-edit-ssl-provider" || $slug == "assets-ssl-provider-fees" || $slug == "assets-ssl-provider-fees-missing" || $slug == "assets-add-ssl-provider-fee" || $slug == "assets-edit-ssl-provider-fee") echo " active"; ?>">
@@ -166,6 +173,12 @@
                             <span aria-hidden="true"><?php echo _('Certificate Types') ?></span>
                             <span class="visually-hidden"><?php echo _('SSL Certificate Types') ?></span>
                         </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/reporting/ssl/provider-fees.php?all=0" class="nav-link<?php if ($slug == "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('SSL Fees'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('SSL Fees') ?></p>
                     </a>
                 </li>
                 <li class="nav-header"><?php echo _('Shared') ?></li>
