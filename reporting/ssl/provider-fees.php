@@ -275,14 +275,7 @@ if ($total_rows > 0) { ?>
 
         foreach ($result as $row) {
 
-            if (DomainMOD\Time::isUnset($row->update_time)) {
-                $row->update_time = $row->insert_time;
-            }
-            if (DomainMOD\Time::isUnset($row->update_time)) {
-                $last_updated = '';
-            } else {
-                $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
-            }
+            $last_updated = $time->lastChangedDate($row->update_time, $row->insert_time);
 
             // Every row names its provider, so a row collapsed on a phone still says whose fee it is, and the rows
             // after a provider's first are muted, so its fees still read as a group

@@ -203,6 +203,60 @@ class CostReportTest extends TestCase
             array($row(array('registrar_name' => 'Alpha', 'total_cost' => '9.00'))), array()));
     }
 
+    /*
+     * Every grouping with a record behind it groups by the record's id, not its name, and orders same-named records by
+     * id, so two with the same name (such as two owners called Greg) get a row each, linking to its own record. TLD
+     * and Month have no record behind them.
+     */
+    #[DataProvider('groupingCases')]
+    public function testGroupingsGroupByIdNotName($section, $key)
+    {
+        $grouping = CostReport::grouping($section, $key);
+        if ($key === 'tld' || $key === 'month') {
+            $this->assertArrayNotHasKey('select', $grouping['chart']);
+            return;
+        }
+
+        $id = explode(',', $grouping['select'])[0];
+        $this->assertMatchesRegularExpression('/^[a-z]+\.id$/', $id);
+        $this->assertStringStartsWith($id . ',', $grouping['group_by']);
+        $this->assertStringContainsString($id, $grouping['order_by']);
+
+        // Every column the rows show is grouped on (not left to the server to pick from a merged group)
+        foreach (explode(',', $grouping['select']) as $column) {
+            $this->assertStringContainsString(trim(explode(' AS ', $column)[0]), $grouping['group_by']);
+        }
+    }
+
+    public function testRegistrarAndProviderRowsGroupByEachRecordsId()
+    {
+        $this->assertSame('r.id, r.name, o.id, o.name, ra.id, ra.username',
+            CostReport::grouping('domains', 'registrar')['group_by']);
+        $this->assertSame('r.name, r.id, o.name, o.id, ra.username, ra.id',
+            CostReport::grouping('domains', 'registrar')['order_by']);
+        $this->assertSame('sslp.id, sslp.name, o.id, o.name, sslpa.id, sslpa.username',
+            CostReport::grouping('ssl', 'provider')['group_by']);
+        $this->assertSame('sslp.name, sslp.id, o.name, o.id, sslpa.username, sslpa.id',
+            CostReport::grouping('ssl', 'provider')['order_by']);
+    }
+
+    // Two registrars with the same name are separate groups in the table, each showing its own cells. Month's group is
+    // its year, and other groupings have no groups.
+    public function testTheGroupKeyKeepsSameNamedRegistrarsApart()
+    {
+        $registrar = CostReport::grouping('domains', 'registrar');
+        $first = (object) array('id' => 4, 'registrar_name' => 'Same');
+        $second = (object) array('id' => 7, 'registrar_name' => 'Same');
+
+        $this->assertSame(4, CostReport::groupKey($registrar, $first));
+        $this->assertSame(7, CostReport::groupKey($registrar, $second));
+        $this->assertSame(9, CostReport::groupKey(CostReport::grouping('ssl', 'provider'),
+            (object) array('id' => 9, 'provider_name' => 'Same')));
+        $this->assertSame(2026, CostReport::groupKey(CostReport::grouping('ssl', 'month'),
+            (object) array('year' => 2026, 'month' => 3)));
+        $this->assertNull(CostReport::groupKey(CostReport::grouping('domains', 'owner'), $first));
+    }
+
     public function testExportIsRequestedOnlyByExactlyOne()
     {
         $this->assertTrue(CostReport::exportRequested(array('export_data' => '1')));

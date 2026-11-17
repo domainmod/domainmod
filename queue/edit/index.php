@@ -38,7 +38,6 @@ $unsanitize = new DomainMOD\Unsanitize();
 $queue = new DomainMOD\DomainQueue();
 
 $timestamp = $time->stamp();
-$timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -522,7 +521,7 @@ if (!$edited_creation_type_id) {
 
     ob_start();
     if ($new_expiry_date == '') {
-        $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
+        $new_expiry_date = $time->userDatePlusYears(1);
     }
     echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 

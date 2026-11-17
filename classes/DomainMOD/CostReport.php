@@ -23,8 +23,9 @@ namespace DomainMOD;
 
 /*
  * The Domain Costs and SSL Costs reports (reporting/domains/costs.php and reporting/ssl/costs.php): what each Group By
- * choice shows, and the queries behind it. Each grouping keeps the tables, grouping, and order of the report it
- * replaced (such as Domain Cost by Registrar), so its rows, totals, and chart are the same.
+ * choice shows, and the queries behind it. Each grouping keeps the tables and order of the report it replaced (such as
+ * Domain Cost by Registrar), but groups by id rather than by name, so two records with the same name (such as two
+ * owners called Greg) get a row each, each linking to its own record.
  *
  * The SQL is built only from the fixed grouping data below, never from the request: the request's group only picks a
  * grouping, and the user and the dates are bound.
@@ -94,7 +95,7 @@ class CostReport
                     'title' => _('SSL Cost by Category Report'), 'name' => _('SSL Cost by Category'),
                     'export' => _('ssl_cost_by_category_report'), 'export_all' => _('ssl_cost_by_category_report_all'),
                     'select' => 'cat.id, cat.name', 'from' => array('categories AS cat'),
-                    'where' => array('sslc.cat_id = cat.id'), 'group_by' => 'cat.name', 'order_by' => 'cat.name',
+                    'where' => array('sslc.cat_id = cat.id'), 'group_by' => 'cat.id, cat.name', 'order_by' => 'cat.name, cat.id',
                     'columns' => array(array('heading' => _('Category'), 'value' => 'field', 'field' => 'name'), $cost,
                         $ssl_certs('sslpcid'), $per_cert),
                     'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
@@ -102,7 +103,7 @@ class CostReport
                     'title' => _('SSL Cost by Domain Report'), 'name' => _('SSL Cost by Domain'),
                     'export' => _('ssl_cost_by_domain_report'), 'export_all' => _('ssl_cost_by_domain_report_all'),
                     'select' => 'd.id, d.domain', 'from' => array('domains AS d'),
-                    'where' => array('sslc.domain_id = d.id'), 'group_by' => 'd.domain', 'order_by' => 'd.domain',
+                    'where' => array('sslc.domain_id = d.id'), 'group_by' => 'd.id, d.domain', 'order_by' => 'd.domain, d.id',
                     'columns' => array(array('heading' => _('Domain'), 'value' => 'field', 'field' => 'domain'), $cost,
                         $ssl_certs('did'), $per_cert),
                     'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'domain'), 'ordering' => true,
@@ -112,7 +113,8 @@ class CostReport
                     'export' => _('ssl_cost_by_ip_address_report'),
                     'export_all' => _('ssl_cost_by_ip_address_report_all'),
                     'select' => 'ip.id, ip.name, ip.ip, ip.rdns', 'from' => array('ip_addresses AS ip'),
-                    'where' => array('sslc.ip_id = ip.id'), 'group_by' => 'ip.name', 'order_by' => 'ip.name',
+                    'where' => array('sslc.ip_id = ip.id'), 'group_by' => 'ip.id, ip.name, ip.ip, ip.rdns',
+                    'order_by' => 'ip.name, ip.id',
                     'columns' => array(
                         array('heading' => _('Name'), 'csv' => _('IP Address Name'), 'value' => 'field', 'field' => 'name'),
                         array('heading' => _('IP Address'), 'value' => 'field', 'field' => 'ip'),
@@ -124,7 +126,7 @@ class CostReport
                     'title' => _('SSL Cost by Owner Report'), 'name' => _('SSL Cost by Owner'),
                     'export' => _('ssl_cost_by_owner_report'), 'export_all' => _('ssl_cost_by_owner_report_all'),
                     'select' => 'o.id, o.name', 'from' => array('owners AS o'),
-                    'where' => array('sslc.owner_id = o.id'), 'group_by' => '`name`', 'order_by' => '`name`',
+                    'where' => array('sslc.owner_id = o.id'), 'group_by' => 'o.id, o.name', 'order_by' => 'o.name, o.id',
                     'columns' => array(array('heading' => _('Owner'), 'value' => 'field', 'field' => 'name'), $cost,
                         $ssl_certs('oid'), $per_cert),
                     'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
@@ -134,7 +136,8 @@ class CostReport
                     'select' => 'sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS account_id, sslpa.username',
                     'from' => array('ssl_providers AS sslp', 'ssl_accounts AS sslpa', 'owners AS o'),
                     'where' => array('sslc.ssl_provider_id = sslp.id', 'sslc.account_id = sslpa.id', 'sslc.owner_id = o.id'),
-                    'group_by' => 'sslp.name, o.name, sslpa.username', 'order_by' => 'sslp.name, o.name, sslpa.username',
+                    'group_by' => 'sslp.id, sslp.name, o.id, o.name, sslpa.id, sslpa.username',
+                    'order_by' => 'sslp.name, sslp.id, o.name, o.id, sslpa.username, sslpa.id',
                     'columns' => array(
                         array('heading' => _('Provider'), 'value' => 'field', 'field' => 'provider_name', 'group_only' => true),
                         array('heading' => _('Cost'), 'value' => 'group_cost', 'group_only' => true),
@@ -145,13 +148,13 @@ class CostReport
                         array('heading' => _('Certs'), 'value' => 'count', 'link' => array('sslpaid', 'account_id')),
                         $per_cert),
                     'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'provider_name',
-                        'select' => 'sslp.name AS provider_name', 'group_by' => 'sslp.id, sslp.name', 'order_by' => 'sslp.name'),
+                        'select' => 'sslp.name AS provider_name', 'group_by' => 'sslp.id, sslp.name', 'order_by' => 'sslp.name, sslp.id'),
                     'subtotal' => array('id' => 'sslp.id', 'name' => 'provider_name', 'blank' => ''), 'ordering' => false),
                 'type' => array('key' => 'type', 'label' => _('Type'),
                     'title' => _('SSL Cost by Type Report'), 'name' => _('SSL Cost by Type'),
                     'export' => _('ssl_cost_by_type_report'), 'export_all' => _('ssl_cost_by_type_report_all'),
                     'select' => 'sslt.id, sslt.type', 'from' => array('ssl_cert_types AS sslt'),
-                    'where' => array('sslc.type_id = sslt.id'), 'group_by' => 'sslt.type', 'order_by' => 'sslt.type',
+                    'where' => array('sslc.type_id = sslt.id'), 'group_by' => 'sslt.id, sslt.type', 'order_by' => 'sslt.type, sslt.id',
                     'columns' => array(array('heading' => _('Type'), 'value' => 'field', 'field' => 'type'), $cost,
                         array('heading' => _('Certs'), 'value' => 'count', 'link' => array('ssltid', 'id')), $per_cert),
                     'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'type'), 'ordering' => true),
@@ -164,7 +167,7 @@ class CostReport
                 'title' => _('Domain Cost by Category Report'), 'name' => _('Domain Cost by Category'),
                 'export' => _('domain_cost_by_category_report'), 'export_all' => _('domain_cost_by_category_report_all'),
                 'select' => 'cat.id, cat.name', 'from' => array('categories AS cat'),
-                'where' => array('d.cat_id = cat.id'), 'group_by' => 'cat.name', 'order_by' => 'cat.name',
+                'where' => array('d.cat_id = cat.id'), 'group_by' => 'cat.id, cat.name', 'order_by' => 'cat.name, cat.id',
                 'columns' => array(array('heading' => _('Category'), 'value' => 'field', 'field' => 'name'), $cost,
                     $domains('pcid'), $per_domain),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
@@ -172,7 +175,7 @@ class CostReport
                 'title' => _('Domain Cost by DNS Report'), 'name' => _('Domain Cost by DNS'),
                 'export' => _('domain_cost_by_dns_report'), 'export_all' => _('domain_cost_by_dns_report_all'),
                 'select' => 'dns.id, dns.name', 'from' => array('dns AS dns'),
-                'where' => array('d.dns_id = dns.id'), 'group_by' => 'dns.name', 'order_by' => 'dns.name',
+                'where' => array('d.dns_id = dns.id'), 'group_by' => 'dns.id, dns.name', 'order_by' => 'dns.name, dns.id',
                 'columns' => array(array('heading' => _('DNS Profile'), 'value' => 'field', 'field' => 'name'), $cost,
                     $domains('dnsid'), $per_domain),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
@@ -181,7 +184,8 @@ class CostReport
                 'export' => _('domain_cost_by_ip_address_report'),
                 'export_all' => _('domain_cost_by_ip_address_report_all'),
                 'select' => 'ip.id, ip.name, ip.ip, ip.rdns', 'from' => array('ip_addresses AS ip'),
-                'where' => array('d.ip_id = ip.id'), 'group_by' => 'ip.name', 'order_by' => 'ip.name',
+                'where' => array('d.ip_id = ip.id'), 'group_by' => 'ip.id, ip.name, ip.ip, ip.rdns',
+                    'order_by' => 'ip.name, ip.id',
                 'columns' => array(
                     array('heading' => _('Name'), 'csv' => _('IP Address Name'), 'value' => 'field', 'field' => 'name'),
                     array('heading' => _('IP Address'), 'value' => 'field', 'field' => 'ip'),
@@ -193,7 +197,7 @@ class CostReport
                 'title' => _('Domain Cost by Owner Report'), 'name' => _('Domain Cost by Owner'),
                 'export' => _('domain_cost_by_owner_report'), 'export_all' => _('domain_cost_by_owner_report_all'),
                 'select' => 'o.id, o.name', 'from' => array('owners AS o'),
-                'where' => array('d.owner_id = o.id'), 'group_by' => 'NAME', 'order_by' => 'NAME',
+                'where' => array('d.owner_id = o.id'), 'group_by' => 'o.id, o.name', 'order_by' => 'o.name, o.id',
                 'columns' => array(array('heading' => _('Owner'), 'value' => 'field', 'field' => 'name'), $cost,
                     $domains('oid'), $per_domain),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
@@ -203,7 +207,8 @@ class CostReport
                 'select' => 'r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS account_id, ra.username',
                 'from' => array('registrars AS r', 'registrar_accounts AS ra', 'owners AS o'),
                 'where' => array('d.registrar_id = r.id', 'd.account_id = ra.id', 'd.owner_id = o.id'),
-                'group_by' => 'r.name, o.name, ra.username', 'order_by' => 'r.name, o.name, ra.username',
+                'group_by' => 'r.id, r.name, o.id, o.name, ra.id, ra.username',
+                'order_by' => 'r.name, r.id, o.name, o.id, ra.username, ra.id',
                 'columns' => array(
                     array('heading' => _('Registrar'), 'value' => 'field', 'field' => 'registrar_name', 'group_only' => true),
                     array('heading' => _('Cost'), 'value' => 'group_cost', 'group_only' => true),
@@ -214,7 +219,7 @@ class CostReport
                     array('heading' => _('Domains'), 'value' => 'count', 'link' => array('raid', 'account_id')),
                     $per_domain),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'registrar_name',
-                    'select' => 'r.name AS registrar_name', 'group_by' => 'r.id, r.name', 'order_by' => 'r.name'),
+                    'select' => 'r.name AS registrar_name', 'group_by' => 'r.id, r.name', 'order_by' => 'r.name, r.id'),
                 'subtotal' => array('id' => 'r.id', 'name' => 'registrar_name', 'blank' => ''), 'ordering' => false),
             'tld' => array('key' => 'tld', 'label' => _('TLD'),
                 'title' => _('Domain Cost by TLD Report'), 'name' => _('Domain Cost by TLD'),
@@ -230,7 +235,7 @@ class CostReport
                 'title' => _('Domain Cost by Web Host Report'), 'name' => _('Domain Cost by Web Host'),
                 'export' => _('domain_cost_by_web_host_report'), 'export_all' => _('domain_cost_by_web_host_report_all'),
                 'select' => 'wh.id, wh.name', 'from' => array('hosting AS wh'),
-                'where' => array('d.hosting_id = wh.id'), 'group_by' => 'wh.name', 'order_by' => 'wh.name',
+                'where' => array('d.hosting_id = wh.id'), 'group_by' => 'wh.id, wh.name', 'order_by' => 'wh.name, wh.id',
                 // The number of domains comes before the cost here
                 'columns' => array(
                     array('heading' => _('Host'), 'csv' => _('Web Hosting Provider'), 'value' => 'field', 'field' => 'name'),
@@ -256,6 +261,17 @@ class CostReport
                 array('heading' => _('By Year'), 'value' => 'year_cost', 'group_only' => true)),
             'chart' => array('type' => 'bar', 'label' => 'month'),
             'subtotal' => array('year' => true, 'name' => 'year', 'blank' => '&nbsp;'), 'ordering' => false);
+    }
+
+    /*
+     * What marks a row's group in the table, whose cells show only on the group's first row: the registrar's or
+     * provider's id (so two with the same name stay apart), or the year (Month). Groupings without a subtotal have none.
+     */
+    public static function groupKey($grouping, $row)
+    {
+        if (!isset($grouping['subtotal'])) return null;
+        if (isset($grouping['subtotal']['id'])) return $row->id;
+        return $row->{$grouping['subtotal']['name']};
     }
 
     // One grouping of the section, or the section's default when $key isn't one of its groupings (or isn't text)

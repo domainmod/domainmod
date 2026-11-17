@@ -141,6 +141,27 @@ class Time
             '0000-00-00'), true);
     }
 
+    /*
+     * The date a record was last changed, in the user's time zone: its update time, or its insert time if it was never
+     * updated, or $unset if neither was set. It converts the full time, since a date alone (midnight UTC) is the
+     * previous day in zones west of UTC.
+     */
+    public function lastChangedDate($update_time, $insert_time, $unset = '')
+    {
+        return $this->toUserTimezone(self::isUnset($update_time) ? $insert_time : $update_time, 'Y-m-d', $unset);
+    }
+
+    // Today's date in the user's time zone, a number of years on (such as a new domain's expiry date). $now is the
+    // time to count from, for tests.
+    public function userDatePlusYears($years, $now = 'now')
+    {
+        $zone = self::zone($_SESSION['s_default_timezone'] ?? 'UTC');
+        $date = new \DateTime($now, $zone);
+        $date->setTimezone($zone); // a Unix timestamp ('@...') is read as UTC whatever the zone given
+        $date->modify('+' . (int) $years . ' years');
+        return $date->format('Y-m-d');
+    }
+
     // A stored UTC time in the user's time zone, or $unset if the time was never set
     public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s', $unset = '')
     {

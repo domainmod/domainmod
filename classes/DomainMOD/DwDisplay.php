@@ -23,6 +23,10 @@ namespace DomainMOD;
 
 class DwDisplay
 {
+    // The order a zone's DNS records are listed in, on screen and in the DNS zones list's export: their order in the
+    // zone file, with the line and the id settling ties
+    const RECORD_ORDER = 'new_order, line, id';
+
     public $deeb;
 
     public function __construct()
@@ -360,8 +364,26 @@ class DwDisplay
                 refresh, retry, rname, `serial`, ttl, txtdata, type
             FROM dw_dns_records
             WHERE dns_zone_id = :zone_id
-            ORDER BY new_order, line, id");
+            ORDER BY " . self::RECORD_ORDER);
         $stmt->bindValue('zone_id', $zone_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    // A zone's DNS records with every column, for the DNS zones list's export, in the same order as the display
+    public function exportRecords($server_id, $domain)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM dw_dns_records
+            WHERE server_id = :server_id
+              AND domain = :domain
+            ORDER BY " . self::RECORD_ORDER);
+        $stmt->bindValue('server_id', $server_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt->fetchAll();

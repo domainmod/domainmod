@@ -326,7 +326,7 @@ if ($total_rows > 0) {
 
             $first_of_group = true;
             if (isset($cost_grouping['subtotal'])) {
-                $group_value = $row->{$cost_grouping['subtotal']['name']};
+                $group_value = DomainMOD\CostReport::groupKey($cost_grouping, $row);
                 $first_of_group = $group_value != $last_group || $group_value == '';
                 $last_group = $group_value;
             } ?>

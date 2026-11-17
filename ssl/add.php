@@ -36,7 +36,6 @@ $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
-$timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -426,7 +425,7 @@ foreach ($result as $row) {
 echo $form->showDropdownBottom('', 'new_type_id');
 
 if ($new_expiry_date == '') {
-    $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
+    $new_expiry_date = $time->userDatePlusYears(1);
 }
 echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 echo $layout->formSection(_('Certificate'), 'certificate', ob_get_clean());

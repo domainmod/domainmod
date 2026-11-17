@@ -105,6 +105,7 @@ if ($domain != "") {
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
+    $dwdisplay = new DomainMOD\DwDisplay();
     $export_file = $export->openFile(_('dw_dns_zones'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
@@ -191,12 +192,8 @@ if ($export_data === 1) {
 
         foreach ($result as $row_dw_dns_zone_temp) {
 
-            $result_get_records = $pdo->query("
-                SELECT *
-                FROM dw_dns_records
-                WHERE server_id = '" . $row_dw_dns_zone_temp->dw_server_id . "'
-                  AND domain = '" . $row_dw_dns_zone_temp->domain . "'
-                ORDER BY new_order ASC")->fetchAll();
+            $result_get_records = $dwdisplay->exportRecords($row_dw_dns_zone_temp->dw_server_id,
+                $row_dw_dns_zone_temp->domain);
 
             foreach ($result_get_records as $row_get_records) {
 
