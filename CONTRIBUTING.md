@@ -31,6 +31,8 @@ Please make sure the tests pass before submitting a pull request, and add or upd
 
 Please use the [DomainMOD Support Portal](https://support.domainmod.org) for questions, problems using DomainMOD, and feature requests (including new registrar integrations). Feature requests live only in the Support Portal, so other users can vote on them.
 
+If we need to look at your database to help, we'll arrange a safe, temporary way to do it privately. Please never post or email your passwords.
+
 ## Bug Reports
 
 The Support Portal is the right place for any problem, bugs included. If you're a developer and can point to the code, you can submit a GitHub [issue](https://github.com/domainmod/domainmod/issues) instead. Please report each bug in one place only, not both.
