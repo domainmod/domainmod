@@ -38,7 +38,7 @@ Visit the following URL to download DomainMOD in a .zip file: <https://domainmod
 
 **Option #3 -- Using Git**  
 
-To download using Git, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have Git installed on your server):
+To download using Git, change to the directory that will hold DomainMOD and run the following command, which puts it in a new `domainmod` folder there (this download option requires that you have Git installed on your server):
 
     git clone https://github.com/domainmod/domainmod.git
 
