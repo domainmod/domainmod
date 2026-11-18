@@ -68,12 +68,30 @@ class SslListTest extends TestCase
         $this->assertSame(" AND sslc.ip_id = '6' ", $parts['sslipid_string']);
         $this->assertSame(" AND sslc.cat_id = '7' ", $parts['sslpcid_string']);
         $this->assertSame(" AND (sslc.expiry_date >= [2026-01-01] AND sslc.expiry_date <= [2026-12-31])", $parts['range_string']);
-        // The keyword is matched against the encoded name as it is, quoted by PDO
-        $this->assertSame(" AND (sslc.name LIKE [%it&#39;s%]) ", $parts['search_string']);
+        // The keyword is matched as it is against the encoded name, and decoded against the domain, each quoted by PDO
+        $this->assertSame(" AND (sslc.name LIKE [%it&#39;s%] OR sslc.domain_id IN (SELECT kd.id FROM domains AS kd"
+            . " WHERE (kd.domain LIKE [%it's%]))) ", $parts['search_string']);
 
         $this->assertSame($parts['is_active_string'] . $parts['oid_string'] . $parts['did_string'] . $parts['sslpid_string']
             . $parts['sslpaid_string'] . $parts['ssltid_string'] . $parts['sslipid_string'] . $parts['sslpcid_string']
             . $parts['range_string'] . $parts['search_string'], SslList::filterSql($parts));
+    }
+
+    // The keyword also matches the certificate's domain, as the page's filter menus match it. The domain is matched
+    // against the decoded, lowercased keyword, and also against its normalized (IDN) form when there is one and it's
+    // different.
+    public function testKeywordAlsoMatchesTheDomain()
+    {
+        $state = SslList::normalizeState(array());
+
+        $parts = $this->sslList()->filterParts($state, 'Example.COM', 'YYYY-MM-DD', 'YYYY-MM-DD');
+        $this->assertSame(" AND (sslc.name LIKE [%Example.COM%] OR sslc.domain_id IN (SELECT kd.id FROM domains AS kd"
+            . " WHERE (kd.domain LIKE [%example.com%]))) ",
+            $parts['search_string']);
+
+        $parts = $this->sslList()->filterParts($state, 'xn--mnchen-3ya.de', 'YYYY-MM-DD', 'YYYY-MM-DD');
+        $this->assertSame(" AND (sslc.name LIKE [%xn--mnchen-3ya.de%] OR sslc.domain_id IN (SELECT kd.id FROM domains AS kd"
+            . " WHERE (kd.domain LIKE [%xn--mnchen-3ya.de%] OR kd.domain LIKE [%münchen.de%]))) ", $parts['search_string']);
     }
 
     public function testOrderEndsWithTheNameAndId()

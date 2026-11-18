@@ -27,8 +27,8 @@ namespace DomainMOD;
  * pages DataTables fetches afterwards, the counts, Export, and the Raw List can't drift apart. What it shares with the
  * Domains list (page sizes, the search box, counts, rows, and the order) is in ListQuery.
  *
- * The filter conditions are the same SQL fragments the page has always used (whole numbers cast, and the dates and
- * keyword quoted by PDO), so the results don't change.
+ * The filter conditions are SQL fragments, with whole numbers cast, and the dates and keyword quoted by PDO. The keyword
+ * matches a certificate's name or its domain, as the page's filter menus match it.
  */
 class SslList extends ListQuery
 {
@@ -83,8 +83,11 @@ class SslList extends ListQuery
     /*
      * The filter conditions for a state (see normalizeState()), the keyword, and the date range, as the page's named
      * SQL fragments, each starting with " AND " or empty. $keyword is the keyword as the page keeps it, HTML-encoded by
-     * Sanitize::text(), and it's matched against the certificate's name, which is stored encoded the same way, so
-     * neither is decoded. $start_date and $end_date are checked dates, or 'YYYY-MM-DD' (or '') when there's no range.
+     * Sanitize::text(). It's matched against the certificate's name, which is stored encoded the same way, so neither
+     * is decoded, or against its domain, as the page's filter menus match it (see DomainList::keywordCondition()). The
+     * domain is matched in a subquery on the certificate's domain_id, so the condition can be checked on each
+     * certificate before the other tables are joined, which keeps a keyword search fast on a long list. $start_date and
+     * $end_date are checked dates, or 'YYYY-MM-DD' (or '') when there's no range.
      */
     public function filterParts(array $state, $keyword, $start_date, $end_date)
     {
@@ -113,7 +116,9 @@ class SslList extends ListQuery
                 . $pdo->quote($end_date) . ")";
         }
 
-        $parts['search_string'] = $keyword != '' ? " AND (sslc.name LIKE " . $pdo->quote('%' . $keyword . '%') . ") " : '';
+        $parts['search_string'] = $keyword != '' ? " AND (sslc.name LIKE " . $pdo->quote('%' . $keyword . '%')
+            . " OR sslc.domain_id IN (SELECT kd.id FROM domains AS kd WHERE "
+            . DomainList::keywordCondition($pdo, 'kd.domain', $keyword) . ")) " : '';
 
         return $parts;
     }

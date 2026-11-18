@@ -164,7 +164,8 @@ if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is
 
 // The list's filters as SQL, from the same class as the list's data endpoint (ssl/list-data.php), so the first page,
 // the pages fetched afterwards, the counts, Export, and the Raw List all agree. The keyword is matched against the
-// certificate's name, which is stored HTML-encoded, as the keyword is (see SslList::filterParts()).
+// certificate's name, which is stored HTML-encoded, as the keyword is, or its domain, as the filter menus match it (see
+// SslList::filterParts()).
 $sslfd_columns = $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd');
 $ssl_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'], $sslfd_columns);
 $list_state = array('oid' => $oid, 'did' => $did, 'sslpid' => $sslpid, 'sslpaid' => $sslpaid, 'ssltid' => $ssltid,
@@ -1476,11 +1477,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $range_string = "";
             }
-            if ($_SESSION['s_search_for_ssl'] != "") {
-                $search_string = " AND (sslc.name LIKE " . $pdo->quote('%' . $_SESSION['s_search_for_ssl'] . '%') . ")";
-            } else {
-                $search_string = "";
-            }
+            // The list's own keyword condition, which matches the domain in a subquery, so this menu doesn't need to
+            // join the domains
+            $search_string = $ssl_list->filterParts($list_state, $_SESSION['s_search_for_ssl'], '', '')['search_string'];
 
             $result_active = $pdo->query("
                 SELECT sslc.active, count(*) AS total_count
