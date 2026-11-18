@@ -39,12 +39,15 @@ $layout = new DomainMOD\Layout();
 // The strict policy, with nothing loosened. The page has no inline scripts or styles, so it needs no nonce.
 header("Content-Security-Policy: default-src 'none'; font-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';");
 header('X-Content-Type-Options: nosniff');
+// Never indexed, even on the public demo, since it's only the installed app's offline screen
+header('X-Robots-Tag: noindex, nofollow');
 ?>
 <!DOCTYPE html>
 <?php echo $layout->htmlTag(); ?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
     <title><?php echo $layout->pageTitle(_("You're offline")); ?></title>
     <!-- Reads the colour mode the other pages saved, before anything is drawn, without changing it -->
     <script src="<?php echo $layout->assetUrl('js/offline-colour-mode.js'); ?>"></script>

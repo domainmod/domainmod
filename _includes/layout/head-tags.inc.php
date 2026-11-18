@@ -21,6 +21,9 @@
 ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php if (!defined('DEMO_INSTALLATION') || DEMO_INSTALLATION !== true) { // Asks search engines not to index the page or follow its links, except on the public demo ?>
+<meta name="robots" content="noindex, nofollow">
+<?php } ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- htmx's settings for the strict CSP: no eval, no inserted styles (its indicator rules are in base.css), no style

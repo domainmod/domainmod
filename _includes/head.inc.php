@@ -63,3 +63,10 @@ if (isset($force_https) && $force_https === 1) {
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header("X-XSS-Protection: 1; mode=block");
+// DomainMOD is a private dashboard, so search engines are asked not to index its pages or follow their links. The
+// public demo is the exception, since people find it through search. config-demo.inc.php (require_once, so the pages that
+// load it again are unaffected) sets DEMO_INSTALLATION from the host name, here and for head-tags.inc.php later.
+require_once DIR_INC . '/config-demo.inc.php';
+if (DEMO_INSTALLATION !== true) {
+    header('X-Robots-Tag: noindex, nofollow');
+}

@@ -10,7 +10,7 @@ Source Code: <https://domainmod.org/source/>
 
 About
 -----
-DomainMOD is an open source application written in PHP & MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
+DomainMOD is a free, open source, self-hosted application for managing your domains, SSL certificates, web hosting, and other internet assets in one place. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
 
 Live Demo
 ---------
@@ -100,7 +100,7 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 6. Do not host DomainMOD on a public website or on an easy-to-guess URL.
 
-   If you do end up hosting DomainMOD on a public website, you should use your website's robots.txt file to block bots and spiders from crawling your site, otherwise your DomainMOD URL may end up in public search results.
+   If you do end up hosting DomainMOD on a public website, DomainMOD asks search engines not to index its pages. Don't block its URL in your website's robots.txt file, since search engines then can't see that request, and your DomainMOD URL may still end up in public search results.
 
 7. Do not give the URL to anyone who does not need to access DomainMOD. You should treat the URL like a password.
 
