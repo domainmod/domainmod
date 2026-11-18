@@ -25,6 +25,7 @@ use DomainMOD\DomainList;
 use DomainMOD\ListQuery;
 use DomainMOD\SslList;
 use DomainMOD\Tests\Support\Instance;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 // The parts of the server-side lists' shared query class that need no database (ListQuery, through SslList and
@@ -67,6 +68,54 @@ class ListQueryTest extends TestCase
         $this->assertSame(25, SslList::checkedLength(array('50'), $sizes));
     }
 
+    public static function pagePreferences()
+    {
+        return array(
+            'the default' => array('50', 50, array(50, 75, 100, 250, 500)),
+            'a size not in the menu' => array('20', 20, array(20, 50, 75, 100, 250, 500)),
+            'a whole number' => array(75, 75, array(75, 50, 100, 250, 500)),
+            'the largest size' => array('500', 500, array(500, 50, 75, 100, 250)),
+            // capped at 500 rather than falling back to 50 (2ee3db39)
+            'over the cap' => array('1000', 500, array(500, 50, 75, 100, 250)),
+            'far over the cap' => array('99999999', 500, array(500, 50, 75, 100, 250)),
+            'a decimal' => array('25.5', 50, array(50, 75, 100, 250, 500)),
+        );
+    }
+
+    #[DataProvider('pagePreferences')]
+    public function testPageSizesGiveTheWholeMenu($preference, $default, $sizes)
+    {
+        $this->assertSame(array('default' => $default, 'sizes' => $sizes), DomainList::pageSizes($preference));
+    }
+
+    public static function starts()
+    {
+        return array(
+            'zero' => array('0', 0),
+            'a whole number' => array(250, 250),
+            'the largest' => array('10000000', 10000000),
+            'past the largest' => array('10000001', 0),
+            'a decimal' => array('1.5', 0),
+            'null' => array(null, 0),
+        );
+    }
+
+    #[DataProvider('starts')]
+    public function testCheckedStartLimits($start, $expected)
+    {
+        $this->assertSame($expected, DomainList::checkedStart($start));
+    }
+
+    public function testCheckedLengthRefusesSizesNotInTheMenu()
+    {
+        $sizes = DomainList::pageSizes('20');
+
+        $this->assertSame(20, DomainList::checkedLength('20', $sizes));
+        $this->assertSame(500, DomainList::checkedLength('500', $sizes));
+        $this->assertSame(20, DomainList::checkedLength('30', $sizes));
+        $this->assertSame(20, DomainList::checkedLength(null, $sizes));
+    }
+
     public function testSearchTokensSplitWordsAndQuotedPhrases()
     {
         $this->assertSame(array(
@@ -90,6 +139,51 @@ class ListQueryTest extends TestCase
         $this->assertFalse(SslList::searchTokens(str_repeat('a', ListQuery::MAX_SEARCH_LENGTH + 1)));
         $this->assertFalse(SslList::searchTokens(implode(' ', range(1, ListQuery::MAX_SEARCH_WORDS + 1))));
         $this->assertCount(ListQuery::MAX_SEARCH_WORDS, SslList::searchTokens(implode(' ', range(1, ListQuery::MAX_SEARCH_WORDS))));
+    }
+
+    // Each token as text, with an excluded one marked "[not] ", so a token that kept a literal "!" in its text (and
+    // wasn't excluded) can't pass for an excluded one
+    private static function words(array $tokens)
+    {
+        return array_map(function ($token) {
+            // negate is checked as a real boolean, so a 1 or 0 shows up as "[?] " and fails
+            return ($token['negate'] === true ? '[not] ' : ($token['negate'] === false ? '' : '[?] ')) . $token['text'];
+        }, $tokens);
+    }
+
+    public static function searches()
+    {
+        return array(
+            'words with extra spaces' => array('example  com', array('example', 'com')),
+            'an excluded phrase' => array('!"two words"', array('[not] two words')),
+            'an empty phrase is ignored' => array('"" example', array('example')),
+            'an unclosed quote is a word' => array('"open', array('"open')),
+            'an exclamation mark inside a word' => array('a!b', array('a!b')),
+            'empty' => array('', array()),
+            'Unicode' => array('münchen рф', array('münchen', 'рф')),
+        );
+    }
+
+    #[DataProvider('searches')]
+    public function testSearchTokens($text, $expected)
+    {
+        $this->assertSame($expected, self::words(DomainList::searchTokens($text)));
+    }
+
+    public function testSearchTokensLimitsCountCharactersAndSkipIgnoredExclusions()
+    {
+        // ignored exclusions don't count toward the ten words, wherever they sit, and every word is still kept
+        $this->assertCount(10, DomainList::searchTokens(implode(' ', range(1, 10)) . ' !a !b'));
+        $this->assertSame(array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'),
+            self::words(DomainList::searchTokens('!a 1 2 3 !b 4 5 6 7 8 9 10')));
+        // eleven real words is one too many, written out rather than taken from the limit constant
+        $this->assertFalse(DomainList::searchTokens('1 2 3 4 5 6 7 8 9 10 11'));
+
+        $this->assertCount(1, DomainList::searchTokens(str_repeat('a', 200)));
+        // and 201 is one too many, written out rather than taken from the limit constant
+        $this->assertFalse(DomainList::searchTokens(str_repeat('a', 201)));
+        // the length is counted in characters, not bytes
+        $this->assertCount(1, DomainList::searchTokens(str_repeat('ü', 200)));
     }
 
     public function testRequestShapeAcceptsSingleValuesAndAnOrderList()
@@ -128,6 +222,28 @@ class ListQueryTest extends TestCase
             SslList::orderSql(array(array(9, 'asc'), array(0, 'asc'), array(1, 'asc; DROP TABLE x')), $map, array(array(2, 'asc'))));
         $this->assertSame(' ORDER BY sslc.name DESC, sslc.expiry_date ASC, sslc.name ASC, sslc.id ASC',
             SslList::orderSql(array(array(1, 'desc'), array(2, 'asc'), array(1, 'asc')), $map, array(array(2, 'asc'))));
+    }
+
+    public function testOrderSqlSkipsBadRequestsButKeepsTheOthers()
+    {
+        $map = array(1 => array('d.domain'), 2 => array('d.expiry_date'), 3 => array('d.tld'));
+        $default = array(array(2, 'asc'));
+        $order = array(array(9, 'asc'), array(3, 'sideways'), array(1, 'desc'), array(1, 'asc'), array('x', 'asc'),
+            array(0, 'asc'), array(), array(3, 'ASC'));
+
+        $this->assertSame(' ORDER BY d.domain DESC, d.tld ASC, d.domain ASC, d.id ASC',
+            DomainList::orderSql($order, $map, $default));
+    }
+
+    public function testOrderSqlUsesTheDefaultOnlyWhenNothingValidIsLeft()
+    {
+        $map = array(1 => array('d.domain'), 2 => array('d.expiry_date'));
+        $default = array(array(2, 'asc'));
+
+        $this->assertSame(' ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC',
+            DomainList::orderSql(array(array(7, 'asc'), array(1, '; DROP TABLE domains')), $map, $default));
+        $this->assertSame(' ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC', DomainList::orderSql(array(), $map, $default));
+        $this->assertSame(' ORDER BY d.domain ASC, d.id ASC', DomainList::orderSql(array(), $map, array(array(9, 'asc'))));
     }
 
     public function testSearchSqlMatchesEachWordInTheVisibleColumns()
@@ -171,6 +287,12 @@ class ListQueryTest extends TestCase
     {
         $this->assertSame(12, strlen(ListQuery::savedListKey('SELECT 1')));
         $this->assertNotSame(ListQuery::savedListKey('SELECT 1'), ListQuery::savedListKey('SELECT 2'));
+    }
+
+    public function testSavedListKeyIsTheStartOfTheQuerysSha1()
+    {
+        $this->assertSame(substr(sha1('SELECT 1'), 0, 12), ListQuery::savedListKey('SELECT 1'));
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{12}$/', ListQuery::savedListKey(null));
     }
 
     private function sslList()
