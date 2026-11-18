@@ -1,4 +1,4 @@
-#admin-custom-ssl-fields thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#admin-custom-ssl-fields thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
 #admin-custom-ssl-fields tbody tr:hover { background-color: #cccccc; }
-#admin-custom-ssl-fields tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#admin-custom-ssl-fields tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
 [data-bs-theme="dark"] #admin-custom-ssl-fields tbody tr:hover { background-color: #343a40; }

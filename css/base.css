@@ -558,6 +558,13 @@ div.dt-container > div.bottom {
 table.dataTable > thead > tr > th.control {
     width: 20px;
 }
+/* The control column's cells have no padding at their end edge, so the arrow still fits in those 20px now that the
+   other cells have padding on both sides. It's !important because the per-table padding rules in css/datatables/ use
+   the table's id, which would otherwise win. */
+table.dataTable > thead > tr > th.control,
+table.dataTable > tbody > tr > td.control {
+    padding-inline-end: 0 !important;
+}
 /* Right-aligned headers (the fee lists' amounts) keep their sort arrow next to their own label at the column's end edge,
    instead of at the far start edge beside the previous column's label */
 table.dataTable > thead > tr > th.text-end div.dt-column-header {

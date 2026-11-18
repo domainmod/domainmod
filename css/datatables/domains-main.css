@@ -1,4 +1,4 @@
-#domains-main thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#domains-main thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
 #domains-main tbody tr:hover { background-color: #cccccc; }
-#domains-main tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#domains-main tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
 [data-bs-theme="dark"] #domains-main tbody tr:hover { background-color: #343a40; }

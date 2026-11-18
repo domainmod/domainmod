@@ -1,4 +1,4 @@
-#assets-registrars thead th { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#assets-registrars thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
 #assets-registrars tbody tr:hover { background-color: #cccccc; }
-#assets-registrars tbody td { padding: 4px 0px 4px 6px; border: 0; white-space: nowrap; }
+#assets-registrars tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
 [data-bs-theme="dark"] #assets-registrars tbody tr:hover { background-color: #343a40; }
