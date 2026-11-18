@@ -48,7 +48,8 @@ $timestamp = $time->stamp();
 
 $fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
 $rid = (int) ($_REQUEST['rid'] ?? 0);
-$new_tld = isset($_POST['new_tld']) ? $sanitize->text($_POST['new_tld']) : '';
+// A TLD posted as anything but text (such as an array) counts as empty, like the fees below
+$new_tld = is_string($_POST['new_tld'] ?? null) ? $sanitize->text($_POST['new_tld']) : '';
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
 // A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
 $new_initial_fee = is_string($_POST['new_initial_fee'] ?? '0') ? trim($_POST['new_initial_fee'] ?? '0') : '';

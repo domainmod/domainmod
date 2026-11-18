@@ -50,11 +50,12 @@ $rid = (int) ($_REQUEST['rid'] ?? 0);
 // Opened from the Domain Fees report's Missing Fees, the page goes back there once the fee is added (the only return
 // it accepts)
 $return = ($_REQUEST['return'] ?? '') === 'missing' ? 'missing' : '';
-$tld = isset($_GET['tld']) ? $sanitize->text($_GET['tld']) : '';
+// A TLD or currency sent as anything but text (such as an array) counts as empty, like the fees below
+$tld = is_string($_GET['tld'] ?? null) ? $sanitize->text($_GET['tld']) : '';
 if ($tld != '') {
     $new_tld = $tld;
 } else {
-    $new_tld = $sanitize->text($_POST['new_tld'] ?? '');
+    $new_tld = is_string($_POST['new_tld'] ?? null) ? $sanitize->text($_POST['new_tld']) : '';
 }
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
 // A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
@@ -63,7 +64,7 @@ $new_renewal_fee = is_string($_POST['new_renewal_fee'] ?? '0') ? trim($_POST['ne
 $new_transfer_fee = is_string($_POST['new_transfer_fee'] ?? '0') ? trim($_POST['new_transfer_fee'] ?? '0') : '';
 $new_privacy_fee = is_string($_POST['new_privacy_fee'] ?? '0') ? trim($_POST['new_privacy_fee'] ?? '0') : '';
 $new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
-$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
+$new_currency = is_string($_POST['new_currency'] ?? null) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -73,9 +74,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'new_misc_fee' => array($new_misc_fee, false));
     $has_errors = false;
 
-    if ($new_tld == '') {
+    // A TLD of only dots or spaces is empty too, since they're trimmed off before it's saved
+    if (trim($new_tld, ". \t\n\r\0\x0B") === '') {
 
         $form->addFieldError('new_tld', _('Enter the TLD'));
+        $has_errors = true;
+
+    }
+
+    // The currency has to be one in the list (only a hand-made request can send another), since the fee is saved
+    // with its ID
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM currencies
+        WHERE currency = :new_currency");
+    $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+    $stmt->execute();
+    $currency_found = $stmt->fetchColumn() !== false;
+    $stmt->closeCursor();
+
+    if (!$currency_found) {
+
+        $form->addFieldError('new_currency', _('Choose the Currency'));
         $has_errors = true;
 
     }
@@ -249,7 +269,7 @@ foreach ($result as $row) {
         $new_currency !== '' ? $new_currency : ($_SESSION['s_default_currency'] ?? '')); // '' until the form is posted
 
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_currency');
 
 echo $form->showSubmitButton(_('Add Fee'), '', '');
 echo $form->showInputHidden('rid', $rid);

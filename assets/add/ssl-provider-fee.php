@@ -61,7 +61,8 @@ if ($type_id !== 0) {
 $new_initial_fee = is_string($_POST['new_initial_fee'] ?? '0') ? trim($_POST['new_initial_fee'] ?? '0') : '';
 $new_renewal_fee = is_string($_POST['new_renewal_fee'] ?? '0') ? trim($_POST['new_renewal_fee'] ?? '0') : '';
 $new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
-$new_currency = isset($_POST['new_currency']) ? $sanitize->text($_POST['new_currency']) : '';
+// A currency posted as anything but text (such as an array) counts as empty, like the fees above
+$new_currency = is_string($_POST['new_currency'] ?? null) ? $sanitize->text($_POST['new_currency']) : '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -73,6 +74,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_type_id === 0) {
 
         $form->addFieldError('new_type_id', _('Choose the SSL Type'));
+        $has_errors = true;
+
+    }
+
+    // The currency has to be one in the list (only a hand-made request can send another), since the fee is saved
+    // with its ID
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM currencies
+        WHERE currency = :new_currency");
+    $stmt->bindValue('new_currency', $new_currency, PDO::PARAM_STR);
+    $stmt->execute();
+    $currency_found = $stmt->fetchColumn() !== false;
+    $stmt->closeCursor();
+
+    if (!$currency_found) {
+
+        $form->addFieldError('new_currency', _('Choose the Currency'));
         $has_errors = true;
 
     }
@@ -242,7 +261,7 @@ foreach ($result as $row) {
         $new_currency !== '' ? $new_currency : ($_SESSION['s_default_currency'] ?? '')); // '' until the form is posted
 
 }
-echo $form->showDropdownBottom('');
+echo $form->showDropdownBottom('', 'new_currency');
 
 
 echo $form->showSubmitButton(_('Add Fee'), '', '');
