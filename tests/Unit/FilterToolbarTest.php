@@ -146,7 +146,7 @@ class FilterToolbarTest extends TestCase
         $this->assertStringContainsString('href="index.php?rid=5" aria-label="Remove filter: TLD: de"', $html);
         $this->assertStringContainsString('<span aria-hidden="true">2</span><span class="visually-hidden">(2 active)</span>', $html);
         $this->assertStringContainsString('href="index.php?rid=5&amp;tld=de&amp;expand=1#domain-filters"', $html);
-        $this->assertStringContainsString('<a class="domainmod-filter-clear" href="index.php?reset=1">Clear all</a>', $html);
+        $this->assertStringContainsString('<a class="domainmod-filter-clear" href="index.php?reset=1">Clear filters</a>', $html);
     }
 
     public function testToolbarWithoutFiltersHasNoCountOrClearLink()
@@ -154,7 +154,7 @@ class FilterToolbarTest extends TestCase
         $html = $this->toolbar()->toolbar();
 
         $this->assertStringNotContainsString('badge', $html);
-        $this->assertStringNotContainsString('Clear all', $html);
+        $this->assertStringNotContainsString('Clear filters', $html);
         $this->assertStringNotContainsString('domainmod-filter-chip', $html);
     }
 

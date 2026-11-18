@@ -107,7 +107,7 @@ class Notice
                         sprintf(_('You should also make a note of your current version (%s), as this may be required by the recovery process'), $esc($db_version)) . '.'; ?></p>
             </div>
         </div>
-        <p><?php echo _('Please be patient, this may take a moment. The older your current version is, the longer the upgrade will take.'); ?></p>
+        <p><?php echo _('Please be patient. This may take a moment. The older your current version is, the longer the upgrade will take.'); ?></p>
         <div class="mt-4 mb-3"><?php echo $layout->linkButton('checks.php?u=1&' . $csrf_query, _('Upgrade Database'), 'primary'); ?></div><?php
         return ob_get_clean();
     }

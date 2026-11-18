@@ -175,7 +175,7 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', sprintf(_('Full %s URL'), SOFTWARE_TITLE) . ' (100)', sprintf(_('Enter the full URL of your %s installation, excluding the trailing slash (Example: http://example.com/domainmod)'), SOFTWARE_TITLE), $unsanitize->text($new_full_url), '100', '', '1', '', '');
 echo $form->showInputText('new_email_address', _('System Email Address') . ' (100)', sprintf(_('This should be a valid email address that is monitored by the %s System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by %s.'), SOFTWARE_TITLE, SOFTWARE_TITLE), $unsanitize->text($new_email_address), '100', '', '1', '', '');
 echo $form->showInputText('new_expiration_days', _('Expiration Days to Display'), _('This is the number of days in the future to display on the Dashboard and in expiration emails.'), $new_expiration_days, '3', '', '1', '', '');
-echo $form->showDropdownTop('new_email_signature', _('Email Signature'), _("Every email sent by the system (new account notices, expiration emails, etc.), includes an email signature, which includes a user's full name and email address. Use the below menu to choose the user that you would like to appear in your system's email signature."), '1', '');
+echo $form->showDropdownTop('new_email_signature', _('Email Signature'), _("Every email sent by the system (new account notices, expiration emails, etc.) includes a signature with a user's full name and email address. Use the menu below to choose whose signature appears."), '1', '');
 $result = $pdo->query("
     SELECT id, `first_name`, `last_name`
     FROM users

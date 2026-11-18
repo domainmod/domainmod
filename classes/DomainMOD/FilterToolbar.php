@@ -23,7 +23,7 @@ namespace DomainMOD;
 
 /*
  * A list's filter toolbar (the Domains and SSL lists): a Filters button with a count of the active
- * filters, one removable chip per active filter, and Clear all, with every filter in a Bootstrap offcanvas side panel.
+ * filters, one removable chip per active filter, and Clear filters, with every filter in a Bootstrap offcanvas side panel.
  * Without JavaScript the Filters button reloads the page with expand=1, and the form is drawn as a normal card instead.
  * With it, a change in the panel applies at once and the panel opens again after the reload (js/filter-auto-apply.js).
  *
@@ -175,7 +175,7 @@ class FilterToolbar
             <a class="btn btn-sm rounded-pill domainmod-filter-chip" href="<?php echo $esc($this->url(array($key))); ?>" aria-label="<?php echo $esc(sprintf(_('Remove filter: %s'), $filter['chip'])); ?>"><span class="domainmod-filter-chip-text"><?php echo $chip_html($filter); ?></span> <i class="bi bi-x-lg" aria-hidden="true"></i></a><?php
             }
             if ($count > 0) { ?>
-            <a class="domainmod-filter-clear" href="<?php echo $esc($this->reset_url); ?>"><?php echo $esc(_('Clear all')); ?></a><?php
+            <a class="domainmod-filter-clear" href="<?php echo $esc($this->reset_url); ?>"><?php echo $esc(_('Clear filters')); ?></a><?php
             } ?>
         </div><?php
 

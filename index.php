@@ -277,7 +277,7 @@ if (DEMO_INSTALLATION == false) { ?>
 
     <BR>
     <p class="mb-1">
-        <a href="reset.php"><?php echo _('Forgot your Password'); ?>?</a>
+        <a href="reset.php"><?php echo _('Forgot your password?'); ?></a>
     </p><?php
 
 }

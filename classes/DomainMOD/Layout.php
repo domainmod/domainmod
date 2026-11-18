@@ -347,7 +347,7 @@ class Layout
         $url .= (strpos($url, '?') === false ? '?' : '&') . $csrf->query();
 
         echo $this->modalButton(Format::toUpper(_('Delete This')) . ' ' . Format::toUpper($item_type));
-        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
+        echo $this->modal(sprintf(_('Delete %s'), $item_type), $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }
 
     /*
@@ -408,7 +408,7 @@ class Layout
         </div><?php
 
         echo ob_get_clean();
-        echo $this->modal(_('Delete') . ' ' . $item_type, $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
+        echo $this->modal(sprintf(_('Delete %s'), $item_type), $item_name, $url, Format::toUpper(_('Cancel')), Format::toUpper(_('Yes, Delete')));
     }
 
     /*

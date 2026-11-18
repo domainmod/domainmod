@@ -172,7 +172,7 @@ class CostReport
                     $domains('pcid'), $per_domain),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
             'dns' => array('key' => 'dns', 'label' => _('DNS Profile'),
-                'title' => _('Domain Cost by DNS Report'), 'name' => _('Domain Cost by DNS'),
+                'title' => _('Domain Cost by DNS Profile Report'), 'name' => _('Domain Cost by DNS Profile'),
                 'export' => _('domain_cost_by_dns_report'), 'export_all' => _('domain_cost_by_dns_report_all'),
                 'select' => 'dns.id, dns.name', 'from' => array('dns AS dns'),
                 'where' => array('d.dns_id = dns.id'), 'group_by' => 'dns.id, dns.name', 'order_by' => 'dns.name, dns.id',

@@ -372,7 +372,7 @@ echo $form->showMultipleSelectBottom('<BR>');
 ?>
 
 <h2 class="h3"><?php echo _('Asset Management Pages'); ?></h2>
-<?php echo $form->showCheckbox('new_display_inactive_assets', '1', _('Display inactive Assets'), '', $new_display_inactive_assets, '', '<BR>'); ?>
+<?php echo $form->showCheckbox('new_display_inactive_assets', '1', _('Display inactive assets'), '', $new_display_inactive_assets, '', '<BR>'); ?>
 
 <h2 class="h3"><?php echo _('Data Warehouse'); ?></h2>
 <?php echo $form->showCheckbox('new_display_dw_intro_page', '1', _('Display intro page'), '', $new_display_dw_intro_page, '', '<BR>'); ?>

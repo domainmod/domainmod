@@ -1918,7 +1918,7 @@ if ($action == "AD") {
 } elseif ($action == "DD") {
     $breadcrumb_text = _('Delete Domains');
 } elseif ($action == "AN") {
-    $breadcrumb_text = _('Add A Note');
+    $breadcrumb_text = _('Add a Note');
 } else {
     $breadcrumb_text = '';
 }
@@ -1999,7 +1999,7 @@ if ($done != "1") {
         echo $form->showDropdownTop('action', _('Choose Action'), '', '', '', false, true);
         echo $form->showDropdownOption('', _('Choose Action'), $action);
         echo $form->showDropdownOption('AD', _('Add Domains'), $action);
-        echo $form->showDropdownOption('AN', _('Add A Note'), $action);
+        echo $form->showDropdownOption('AN', _('Add a Note'), $action);
         echo $form->showDropdownOption('FR', _('Renew Domains (Update Expiry Date, Mark Active, Add Note)'), $action);
         echo $form->showDropdownOption('RENEW', _('Renew Domains (Update Expiry Date Only)'), $action);
         echo $form->showDropdownOption('A', _('Mark as Active'), $action);
@@ -2471,11 +2471,11 @@ if ($done != "1") {
 
         } elseif ($action == "FR") {
 
-            echo $form->showSubmitButton(_('Mark As Renewed'), '', '');
+            echo $form->showSubmitButton(_('Mark as Renewed'), '', '');
 
         } elseif ($action == "RENEW") {
 
-            echo $form->showSubmitButton(_('Mark As Renewed'), '', '');
+            echo $form->showSubmitButton(_('Mark as Renewed'), '', '');
 
         } elseif ($action == "A") {
 

@@ -87,7 +87,7 @@ if ($action == '') {
     echo $form->showDropdownTop('action', _('Choose Action'), '', '', '', false, true);
     echo $form->showDropdownOption('', _('Choose Action'), $action);
     echo $form->showDropdownOption('AD', _('Add Domains'), $action);
-    echo $form->showDropdownOption('AN', _('Add A Note'), $action);
+    echo $form->showDropdownOption('AN', _('Add a Note'), $action);
     echo $form->showDropdownOption('FR', _('Renew Domains (Update Expiry Date, Mark Active, Add Note)'), $action);
     echo $form->showDropdownOption('RENEW', _('Renew Domains (Update Expiry Date Only)'), $action);
     echo $form->showDropdownOption('A', _('Mark as Active'), $action);

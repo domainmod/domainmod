@@ -236,7 +236,7 @@ $report_range = $report_has_range ? array('daterange' => $new_start_date . ' - '
                 echo $form->showDropdownOption($cost_option['key'], $cost_option['label'], $cost_key);
             } ?>
         </select>
-        <label for="daterange" class="form-label fw-bold mb-0"><?php echo _('Filter By Date Range'); ?></label>
+        <label for="daterange" class="form-label fw-bold mb-0"><?php echo _('Filter by Date Range'); ?></label>
         <input type="text" name="daterange" id="daterange" class="form-control w-auto" size="23" dir="ltr" value="<?php echo $daterange; ?>" />
         <?php echo $form->showSubmitButton(_('Filter Report'), '', ''); ?>
         <?php if ($report_has_range) echo $layout->linkButton($report_filename . '?' . http_build_query(array('group' => $cost_key)), _('Clear')); ?>

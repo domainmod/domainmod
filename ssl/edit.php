@@ -655,7 +655,7 @@ echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->dangerZone(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1', _('Delete this SSL certificate'), sprintf(_('This removes %s and its details from DomainMOD. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'));
+$layout->dangerZone(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1', _('Delete this SSL certificate'), sprintf(_('This removes %s and its details from %s. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>', SOFTWARE_TITLE));
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

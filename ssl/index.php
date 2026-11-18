@@ -1533,8 +1533,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
 
             <div class="d-flex flex-wrap gap-2 domainmod-filter-actions">
-                <?php echo $form->showSubmitButton(_('Apply Filters'), '', ''); ?>
-                <a class="btn btn-outline-secondary" href="<?php echo htmlspecialchars($web_root . '/ssl/index.php', ENT_QUOTES, 'UTF-8'); ?>"><?php echo _('Reset Filters'); ?></a>
+                <?php echo $form->showSubmitButton(_('Apply filters'), '', ''); ?>
+                <a class="btn btn-outline-secondary" href="<?php echo htmlspecialchars($web_root . '/ssl/index.php', ENT_QUOTES, 'UTF-8'); ?>"><?php echo _('Clear filters'); ?></a>
             </div><?php
 
             echo $form->showFormBottom(''); ?>

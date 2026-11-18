@@ -948,7 +948,7 @@ if ($dw_has_zones === 1) { ?>
     <?php echo $layout->expandableBoxBottom(); ?><?php
 }
 
-$layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1', _('Delete this domain'), sprintf(_('This removes %s and its details from DomainMOD. It can only be deleted when no SSL certificates are linked to it. It can\'t be undone.'), '<strong>' . $layout->ltr(html_entity_decode($new_domain, ENT_QUOTES, 'UTF-8')) . '</strong>'));
+$layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1', _('Delete this domain'), sprintf(_('This removes %s and its details from %s. It can only be deleted when no SSL certificates are linked to it. It can\'t be undone.'), '<strong>' . $layout->ltr(html_entity_decode($new_domain, ENT_QUOTES, 'UTF-8')) . '</strong>', SOFTWARE_TITLE));
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

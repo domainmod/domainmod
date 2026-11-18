@@ -674,7 +674,7 @@ class Scheduler
                                 echo $form->showInputHidden('id', $task_id);
                                 echo $form->showSubmitButton(_('Change Time'), '', ''); ?>
                             </div>
-                            <div class="form-text" id="<?php echo $field_id; ?>-help"><?php echo _('The time is saved in your own time zone, which you can change in your user settings.'); ?></div>
+                            <div class="form-text" id="<?php echo $field_id; ?>-help"><?php echo _('The time is saved in your own time zone, which you can change in your User Profile.'); ?></div>
                         </form><?php
                     } ?>
 
