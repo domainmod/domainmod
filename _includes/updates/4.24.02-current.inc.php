@@ -211,6 +211,419 @@ if ($current_db_version === '4.24.02') {
         $stmt->bindValue('update_time', $time->stamp(), PDO::PARAM_STR);
         $stmt->execute();
 
+        $upgrade->database($new_version);
+
+        if ($pdo->InTransaction()) $pdo->commit();
+        $current_db_version = $new_version;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+        $upgrade->logFailedUpgrade($old_version, $new_version, $e);
+        throw $e;
+
+    }
+
+}
+
+// upgrade database from 4.25.0 to 4.26.0
+if ($current_db_version === '4.25.0') {
+
+    $old_version = '4.25.0';
+    $new_version = '4.26.0';
+
+    try {
+
+        /*
+         * ALTER TABLE commits straight away, so the schema steps come first, outside the transaction, and each one is
+         * safe to run again: an upgrade that stops part-way finishes on the next run.
+         */
+
+        // New users start on Auto (the colour mode that follows the system setting). Setting the same default again
+        // is harmless.
+        $pdo->query("
+            ALTER TABLE `user_settings`
+            ALTER `dark_mode` SET DEFAULT '2'");
+
+        // The Dashboard's Getting Started checklist can be hidden by each user (shown until they hide it).
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'user_settings'
+              AND `COLUMN_NAME` = 'display_getting_started'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ((int) $stmt->fetchColumn() === 0) {
+
+            $pdo->query("
+                ALTER TABLE `user_settings`
+                ADD `display_getting_started` TINYINT(1) NOT NULL DEFAULT '1' AFTER `display_dw_intro_page`");
+
+        }
+
+        // Line up with fresh installs: scheduled tasks use five-field expressions, and older upgrades
+        // left the column's default as a six-field one, which the cron library rejects.
+        $pdo->query("
+            ALTER TABLE `scheduler`
+            ALTER `expression` SET DEFAULT '0 7 * * *'");
+
+        // Line up with fresh installs: 4.20.07 moved every install to the Free Currency Rates API
+        // (fcra), the only converter Admin Settings offers, but left the column's default as an older one.
+        $pdo->query("
+            ALTER TABLE `settings`
+            ALTER `currency_converter` SET DEFAULT 'fcra'");
+
+        // Line up with upgraded installs: currency codes are three letters (ISO 4217), as in every
+        // default_currency column, but fresh installs before 4.26.0 made this column four characters long. It's only
+        // narrowed when it's wider and every saved code fits.
+        $stmt = $pdo->prepare("
+            SELECT `CHARACTER_MAXIMUM_LENGTH`
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'currencies'
+              AND `COLUMN_NAME` = 'currency'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+        $currency_length = (int) $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        $longest_currency = (int) $pdo->query("
+            SELECT COALESCE(MAX(CHAR_LENGTH(`currency`)), 0)
+            FROM `currencies`")->fetchColumn();
+
+        if ($currency_length > 3 && $longest_currency <= 3) {
+
+            $pdo->query("
+                ALTER TABLE `currencies`
+                MODIFY `currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL");
+
+        }
+
+        // Users added later take the time zone column's default, which older upgrades left as Canada/Pacific, one of
+        // the older names (see Time::LEGACY_ZONES). Point it at the zone that name stands for.
+        $stmt = $pdo->prepare("
+            SELECT `COLUMN_DEFAULT`
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'user_settings'
+              AND `COLUMN_NAME` = 'default_timezone'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+        // MariaDB quotes a text default here and MySQL doesn't.
+        $timezone_default = trim((string) $stmt->fetchColumn(), "'");
+        $stmt->closeCursor();
+
+        if (isset(DomainMOD\Time::LEGACY_ZONES[$timezone_default])) {
+
+            $pdo->query("
+                ALTER TABLE `user_settings`
+                ALTER `default_timezone` SET DEFAULT " . $pdo->quote(DomainMOD\Time::LEGACY_ZONES[$timezone_default]));
+
+        }
+
+        // When cron.php last ran, so administrators are warned when the Task Scheduler stops (Scheduler::healthState()).
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'settings'
+              AND `COLUMN_NAME` = 'cron_last_run'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ((int) $stmt->fetchColumn() === 0) {
+
+            $pdo->query("
+                ALTER TABLE `settings`
+                ADD `cron_last_run` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00' AFTER `upgrade_available`");
+
+        }
+
+        /*
+         * Indexes for the server-side Domains and SSL Certificates lists: each list joins its custom field rows by the
+         * asset's id, and its default order is the expiry date, then the name. The lists join their tables in a fixed
+         * order only once the database is at this version and the indexes the query needs (these and earlier lookup keys)
+         * are usable (ListQuery::fixedJoinOrder()). An index that's already there (by name) is left
+         * alone.
+         */
+        $list_indexes = array(
+            array('domain_field_data', 'domain_id', '`domain_id`'),
+            array('ssl_cert_field_data', 'ssl_id', '`ssl_id`'),
+            array('domains', 'expiry_date', '`expiry_date`, `domain`'),
+            array('ssl_certs', 'expiry_date', '`expiry_date`, `name`'));
+
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM `INFORMATION_SCHEMA`.`STATISTICS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = :table_name
+              AND `INDEX_NAME` = :index_name");
+
+        foreach ($list_indexes as $list_index) {
+
+            list($table_name, $index_name, $index_columns) = $list_index;
+
+            $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+            $stmt->bindValue('table_name', $table_name, PDO::PARAM_STR);
+            $stmt->bindValue('index_name', $index_name, PDO::PARAM_STR);
+            $stmt->execute();
+            $index_exists = (int) $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if ($index_exists === 0) {
+
+                $pdo->query("
+                    ALTER TABLE `" . $table_name . "`
+                    ADD INDEX `" . $index_name . "` (" . $index_columns . ")");
+
+            }
+
+        }
+
+        // Large Mode is gone: the Domains list pages, sorts, and searches on the server for everyone.
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+            WHERE `TABLE_SCHEMA` = :dbname
+              AND `TABLE_NAME` = 'settings'
+              AND `COLUMN_NAME` = 'large_mode'");
+        $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ((int) $stmt->fetchColumn() === 1) {
+
+            $pdo->query("
+                ALTER TABLE `settings`
+                DROP `large_mode`");
+
+        }
+
+        $pdo->beginTransaction();
+
+        /*
+         * Older time zone names (US/Pacific, Asia/Calcutta, and so on) can be refused by PHP builds that use a system's
+         * time zone list without the legacy names. Saved settings and scheduled tasks move to the zone each name stands
+         * for, and the time zone menus offer only the current names, each once. Time::LEGACY_ZONES stays, for sessions
+         * and imports.
+         */
+        $stmt_user = $pdo->prepare("
+            UPDATE user_settings
+            SET default_timezone = :new_timezone
+            WHERE default_timezone = :old_timezone");
+        $stmt_task = $pdo->prepare("
+            UPDATE scheduler
+            SET `timezone` = :new_timezone
+            WHERE `timezone` = :old_timezone");
+        $stmt_delete = $pdo->prepare("
+            DELETE FROM timezones
+            WHERE `timezone` = :old_timezone");
+
+        foreach (DomainMOD\Time::LEGACY_ZONES as $old_timezone => $new_timezone) {
+
+            foreach (array($stmt_user, $stmt_task) as $stmt) {
+
+                $stmt->bindValue('new_timezone', $new_timezone, PDO::PARAM_STR);
+                $stmt->bindValue('old_timezone', $old_timezone, PDO::PARAM_STR);
+                $stmt->execute();
+
+            }
+
+            $stmt_delete->bindValue('old_timezone', $old_timezone, PDO::PARAM_STR);
+            $stmt_delete->execute();
+
+        }
+
+        $stmt_check = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM timezones
+            WHERE `timezone` = :timezone");
+        $stmt_insert = $pdo->prepare("
+            INSERT INTO timezones
+            (`timezone`, insert_time)
+            VALUES
+            (:timezone, :insert_time)");
+
+        foreach (array_unique(DomainMOD\Time::LEGACY_ZONES) as $new_timezone) {
+
+            $stmt_check->bindValue('timezone', $new_timezone, PDO::PARAM_STR);
+            $stmt_check->execute();
+            $timezone_exists = (int) $stmt_check->fetchColumn();
+            $stmt_check->closeCursor();
+
+            if ($timezone_exists === 0) {
+
+                $stmt_insert->bindValue('timezone', $new_timezone, PDO::PARAM_STR);
+                $stmt_insert->bindValue('insert_time', $time->stamp(), PDO::PARAM_STR);
+                $stmt_insert->execute();
+
+            }
+
+        }
+
+        /*
+         * The Malaysian ringgit was seeded twice: as RM (its symbol, so its exchange rate can't be looked up) and as MYR
+         * (its ISO 4217 code). Fees, exchange rates, and users' default currencies on RM move to MYR, and the RM row
+         * goes. Without an MYR row, RM is renamed instead. A user with exchange rates for both keeps MYR's.
+         */
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM currencies
+            WHERE currency = :currency
+            ORDER BY id ASC");
+        $stmt->bindValue('currency', 'RM', PDO::PARAM_STR);
+        $stmt->execute();
+        $rm_currency_ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        $stmt->bindValue('currency', 'MYR', PDO::PARAM_STR);
+        $stmt->execute();
+        $myr_currency_id = (int) $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        if ($rm_currency_ids !== array()) {
+
+            if ($myr_currency_id === 0) {
+
+                $myr_currency_id = array_shift($rm_currency_ids);
+
+                $stmt = $pdo->prepare("
+                    UPDATE currencies
+                    SET currency = 'MYR',
+                        `name` = 'Malaysian Ringgit',
+                        update_time = :update_time
+                    WHERE id = :currency_id");
+                $stmt->bindValue('update_time', $time->stamp(), PDO::PARAM_STR);
+                $stmt->bindValue('currency_id', $myr_currency_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
+            $stmt_fees = $pdo->prepare("
+                UPDATE fees
+                SET currency_id = :new_currency_id
+                WHERE currency_id = :old_currency_id");
+            $stmt_ssl_fees = $pdo->prepare("
+                UPDATE ssl_fees
+                SET currency_id = :new_currency_id
+                WHERE currency_id = :old_currency_id");
+            $stmt_conversions = $pdo->prepare("
+                UPDATE currency_conversions
+                SET currency_id = :new_currency_id
+                WHERE currency_id = :old_currency_id");
+            // The users who already have a MYR rate are read first, rather than in a subquery on the table being
+            // deleted from, which MySQL 5.7.9 and 5.7.10 can refuse (error 1093)
+            $stmt_myr_users = $pdo->prepare("
+                SELECT user_id
+                FROM currency_conversions
+                WHERE currency_id = :new_currency_id");
+            $stmt_delete_conversion = $pdo->prepare("
+                DELETE FROM currency_conversions
+                WHERE currency_id = :old_currency_id
+                  AND user_id = :user_id");
+            $stmt_delete_currency = $pdo->prepare("
+                DELETE FROM currencies
+                WHERE id = :old_currency_id");
+
+            foreach ($rm_currency_ids as $rm_currency_id) {
+
+                // A user's exchange rate for RM goes only where they have none for MYR (one per user and currency)
+                $stmt_myr_users->bindValue('new_currency_id', $myr_currency_id, PDO::PARAM_INT);
+                $stmt_myr_users->execute();
+                foreach ($stmt_myr_users->fetchAll(PDO::FETCH_COLUMN) as $myr_user_id) {
+
+                    $stmt_delete_conversion->bindValue('old_currency_id', $rm_currency_id, PDO::PARAM_INT);
+                    $stmt_delete_conversion->bindValue('user_id', (int) $myr_user_id, PDO::PARAM_INT);
+                    $stmt_delete_conversion->execute();
+
+                }
+
+                foreach (array($stmt_fees, $stmt_ssl_fees, $stmt_conversions) as $stmt) {
+
+                    $stmt->bindValue('new_currency_id', $myr_currency_id, PDO::PARAM_INT);
+                    $stmt->bindValue('old_currency_id', $rm_currency_id, PDO::PARAM_INT);
+                    $stmt->execute();
+
+                }
+
+                $stmt_delete_currency->bindValue('old_currency_id', $rm_currency_id, PDO::PARAM_INT);
+                $stmt_delete_currency->execute();
+
+            }
+
+            $stmt = $pdo->prepare("
+                UPDATE user_settings
+                SET default_currency = 'MYR'
+                WHERE default_currency = 'RM'");
+            $stmt->execute();
+
+
+        }
+
+        // A user left on RM after its currency row was already gone (an import or a manual clean-up) moves to MYR too,
+        // since a default currency that has no row can't be looked up at sign-in.
+        if ($myr_currency_id !== 0) {
+
+            $stmt = $pdo->prepare("
+                UPDATE user_settings
+                SET default_currency = 'MYR'
+                WHERE default_currency = 'RM'");
+            $stmt->execute();
+
+            // A user whose default currency is now MYR converts MYR at 1, as for any default currency, so a failed
+            // 0.0000 rate kept from the merge can't zero their ringgit costs until the next conversion run.
+            $stmt = $pdo->prepare("
+                UPDATE currency_conversions cc
+                JOIN user_settings us ON us.user_id = cc.user_id
+                SET cc.conversion = 1
+                WHERE cc.currency_id = :myr_currency_id
+                  AND us.default_currency = 'MYR'");
+            $stmt->bindValue('myr_currency_id', $myr_currency_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+        }
+
+        /*
+         * Every domain and SSL certificate gets its custom field row, which some older imports and edits left out.
+         * Without one, the lists left the asset out while the totals still counted it. NOT IN is used rather than a
+         * LEFT JOIN, since it needs no index on the asset's id (an install can already have its own index under the name
+         * the step above uses, and then the step adds none): the database looks the ids up once, so 40,000 domains take
+         * a fraction of a second instead of half a minute. The subquery leaves out NULL ids, which would otherwise make
+         * NOT IN match nothing.
+         */
+        $stmt = $pdo->prepare("
+            INSERT INTO domain_field_data
+            (domain_id, insert_time)
+            SELECT d.id, :insert_time
+            FROM domains AS d
+            WHERE d.id NOT IN (SELECT domain_id FROM domain_field_data WHERE domain_id IS NOT NULL)");
+        $stmt->bindValue('insert_time', $time->stamp(), PDO::PARAM_STR);
+        $stmt->execute();
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_cert_field_data
+            (ssl_id, insert_time)
+            SELECT sc.id, :insert_time
+            FROM ssl_certs AS sc
+            WHERE sc.id NOT IN (SELECT ssl_id FROM ssl_cert_field_data WHERE ssl_id IS NOT NULL)");
+        $stmt->bindValue('insert_time', $time->stamp(), PDO::PARAM_STR);
+        $stmt->execute();
+
+        /*
+         * An install whose tasks have run before starts with the upgrade's time as cron.php's last run, so a working cron
+         * job isn't reported as stopped before its next run (with the Domain Queue disabled, the other tasks run only
+         * daily, so their last run can be hours old). A broken one is reported two hours after the upgrade. An install
+         * whose tasks have never run keeps 1970-01-01 (never run), and a time already recorded is kept.
+         */
+        $stmt = $pdo->prepare("
+            UPDATE settings
+            SET cron_last_run = :cron_last_run
+            WHERE cron_last_run = '1970-01-01 00:00:00'
+              AND (SELECT COUNT(*)
+                   FROM scheduler
+                   WHERE last_run > '1970-01-01 00:00:00') > 0");
+        $stmt->bindValue('cron_last_run', $time->stamp(), PDO::PARAM_STR);
+        $stmt->execute();
+
         /*
          * This needs to be MOVED from the last version to the newest version with every release
          */
