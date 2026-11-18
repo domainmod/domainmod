@@ -1599,11 +1599,13 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
 .app-content a:not([class]):not(:is(table, nav, .breadcrumb, .card-footer, .dropdown-menu, .list-inline, .dt-container) a) {
     text-decoration: underline;
 }
-/* The same for links in alerts and in card text outside .app-content: the page messages in the page header, and the
-   bare pages (the upgrade notice, and the debugging mode pages, whose link sits loose beside their text). Bootstrap's
-   .alert-link is underlined too, since its bold text in the alert's own colour doesn't stand out enough either. */
+/* The same for links in alerts, toasts, and card text outside .app-content: the page messages in the page header, the
+   toasts in the corner, and the bare pages (the upgrade notice, and the debugging mode pages, whose link sits loose
+   beside their text). Bootstrap's .alert-link is underlined too, since its bold text in the alert's own colour doesn't
+   stand out enough either. */
 .alert a:not([class]),
 .alert a.alert-link,
+.domainmod-toast a:not([class]),
 .card-body p a:not([class]),
 main > a:not([class]) {
     text-decoration: underline;

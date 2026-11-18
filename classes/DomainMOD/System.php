@@ -741,10 +741,11 @@ class System
         return preg_replace('/^(?:\s|&nbsp;|<br\s*\/?>)+|(?:\s|&nbsp;|<br\s*\/?>)+$/i', '', (string) $result_message);
     }
 
-    // A success short enough for a toast: one part (no inner <BR>), no link, and at most 100 characters of text
+    // A success short enough for a toast: one part (no inner <BR>) and at most 100 characters of text. It can hold a
+    // link, such as the new domain in "Domain example.com added", since the toast has no timeout.
     protected function isShortMessage($result_message)
     {
-        if (preg_match('/<br\s*\/?>/i', $result_message) || stripos($result_message, '<a') !== false) return false;
+        if (preg_match('/<br\s*\/?>/i', $result_message)) return false;
         $text = html_entity_decode(strip_tags($result_message), ENT_QUOTES, 'UTF-8');
         $length = function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : preg_match_all('/./us', $text);
         return $length > 0 && $length <= 100;

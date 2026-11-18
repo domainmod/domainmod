@@ -234,7 +234,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($pdo->InTransaction()) $pdo->commit();
 
-                $_SESSION['s_message_success'] .= sprintf(_('Domain %s added'), $new_domain) . '<BR>';
+                // The domain links to its edit page, and the form stays here for the next domain
+                $_SESSION['s_message_success'] .= sprintf(_('Domain %s added'), '<a href="edit.php?did=' . $temp_domain_id . '">' . $layout->ltr($unsanitize->text($new_domain)) . '</a>') . '<BR>';
 
                 // A domain added without a fee is hidden from the list, so the add says so (DomainMOD\FeeStatus)
                 $fee_status = new DomainMOD\FeeStatus();

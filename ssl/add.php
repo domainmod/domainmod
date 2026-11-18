@@ -213,7 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->commit();
 
-            $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s added'), $new_name) . '<BR>';
+            // The certificate links to its edit page, and the form stays here for the next one
+            $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s added'), '<a href="edit.php?sslcid=' . $temp_ssl_id . '">' . $layout->ltr($unsanitize->text($new_name)) . '</a>') . '<BR>';
 
             // A certificate added without a fee is hidden from the list, so the add says so (DomainMOD\FeeStatus)
             $fee_status = new DomainMOD\FeeStatus();
