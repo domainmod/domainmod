@@ -1,0 +1,692 @@
+/*
+ * guide.css
+ * The User Guide's layout, matching domainmod.org's redesign. The first part copies the site's own styles from its
+ * assets/css/site.css (the page, the header, the title band, the footer, the inner pages' running text, code blocks,
+ * and the link list), so keep it in step with the site. The second part is the guide's own: the sidebar, the table of
+ * contents, the previous and next links, search, and admonitions. Colours come from domainmod-tokens.css.
+ */
+
+/* ===== From the site's site.css ===== */
+
+/* The page */
+.dm-body {
+    --dm-site-page: #ffffff;
+    --dm-site-line: #e3e6ea;
+    --dm-site-frame: #f1f3f5;
+    --dm-site-frame-line: #dee2e6;
+    --dm-site-muted: #5c636a;
+    background-color: var(--dm-site-page);
+}
+[data-bs-theme="dark"] .dm-body {
+    --dm-site-page: #2e3440;
+    --dm-site-line: #434c5e;
+    --dm-site-frame: #3b4252;
+    --dm-site-frame-line: #4c566a;
+    --dm-site-muted: #b5bdcd;
+}
+
+/* Header. From the lg breakpoint up it stays at the top, so focused elements scroll clear of it. */
+@media (min-width: 992px) {
+    html {
+        scroll-padding-top: 6.5rem;
+    }
+}
+.dm-header {
+    background-color: var(--dm-site-page);
+    border-block-end: 1px solid var(--dm-site-line);
+}
+.dm-header .navbar {
+    padding-block: 1.25rem;
+}
+.dm-header .navbar-brand img {
+    height: 1.875rem;
+    width: auto;
+}
+/* More room between the menu links (Bootstrap's own padding rule wins over a plain padding, so set its variable) */
+.dm-header .navbar-nav {
+    --bs-navbar-nav-link-padding-x: 1.125rem;
+}
+.dm-header .nav-link {
+    color: var(--bs-body-color);
+    padding-inline: 1rem;
+}
+.dm-header .nav-link:hover,
+.dm-header .nav-link[aria-current] {
+    color: var(--bs-emphasis-color);
+}
+.dm-header .nav-link[aria-current] {
+    font-weight: 600;
+}
+.dm-mode {
+    color: var(--bs-body-color);
+}
+/* The colour menu scrolls inside itself if the window is too short to show it whole, so its items draw their focus
+   ring inside */
+.dm-header .dropdown-menu {
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+}
+.dm-header .dropdown-item:focus-visible {
+    outline-offset: -3px;
+}
+.dm-pill {
+    border-radius: 2rem;
+    padding-inline: 1.125rem;
+}
+
+/* The inner pages' title band */
+.dm-page-header {
+    padding-block: 3rem 2.5rem;
+    background-color: var(--dm-site-frame);
+    border-block-end: 1px solid var(--dm-site-line);
+}
+.dm-page-title {
+    font-size: calc(1.75rem + 1.5vw);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+@media (min-width: 1200px) {
+    .dm-page-title {
+        font-size: 3rem;
+    }
+}
+.dm-page-intro {
+    max-width: 40em;
+    margin-block-end: 0;
+    font-size: 1.25rem;
+    color: var(--dm-site-muted);
+}
+
+/* Footer */
+.dm-footer {
+    padding-block: 3.5rem 2rem;
+    border-block-start: 1px solid var(--dm-site-line);
+    font-size: 0.9375rem;
+}
+.dm-footer-heading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+.dm-footer-list li {
+    margin-block-end: 0.375rem;
+}
+.dm-footer-list a,
+.dm-social {
+    color: var(--dm-site-muted);
+}
+.dm-footer-list a:hover {
+    color: var(--bs-emphasis-color);
+}
+.dm-footer-bottom {
+    margin-block-start: 2.5rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--dm-site-line);
+    color: var(--dm-site-muted);
+}
+.dm-footer-bottom p a {
+    color: var(--dm-site-muted);
+    text-decoration: underline;
+}
+.dm-social {
+    font-size: 1.125rem;
+}
+
+/* Inner pages: the content under the title band */
+.dm-page {
+    padding-block: 3.5rem 4.5rem;
+}
+
+/* Running text in a readable column: headings, lists, and links underlined, as the app does in its callouts */
+.dm-prose {
+    max-width: 48rem;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+}
+.dm-prose > :last-child {
+    margin-block-end: 0;
+}
+.dm-prose h2 {
+    margin-block: 2.75rem 0.875rem;
+    font-size: 1.625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+.dm-prose h2:first-child {
+    margin-block-start: 0;
+}
+.dm-prose h3 {
+    margin-block: 1.75rem 0.5rem;
+    font-size: 1.1875rem;
+    font-weight: 600;
+}
+.dm-prose ul,
+.dm-prose ol {
+    padding-inline-start: 1.375rem;
+}
+.dm-prose li {
+    margin-block-end: 0.375rem;
+}
+.dm-prose a:not(.btn) {
+    text-decoration: underline;
+}
+.dm-prose a:not(.btn):hover {
+    text-decoration-thickness: 2px;
+}
+
+/* Code blocks, as the site's .dm-code: long lines wrap rather than scroll sideways */
+.dm-prose pre {
+    margin-block: 0.75rem 1.25rem;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--bs-emphasis-color);
+    background-color: var(--dm-site-frame);
+    border: 1px solid var(--dm-site-frame-line);
+    border-radius: 0.5rem;
+}
+.dm-prose pre code {
+    color: inherit;
+    font-size: inherit;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.dm-prose :not(pre) > code {
+    padding: 0.0625rem 0.375rem;
+    font-size: 0.875em;
+    color: var(--bs-emphasis-color);
+    background-color: var(--dm-site-frame);
+    border-radius: 0.25rem;
+}
+
+/* A list of plain links, one per row, each with an arrow (the 404 page) */
+.dm-link-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--dm-site-line);
+}
+.dm-link-list li {
+    border-block-end: 1px solid var(--dm-site-line);
+}
+.dm-link-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    text-decoration: none;
+}
+.dm-link-list a:hover {
+    text-decoration: underline;
+}
+.dm-link-list .bi {
+    color: var(--dm-red-text);
+}
+
+/* Form fields: a field's edge needs 3:1 contrast against the page */
+.dm-body .form-control {
+    border-color: var(--dm-site-muted);
+}
+.dm-body .form-control:focus {
+    /* No change when a field is clicked into (the owner's choice): the border stays as it is, and Bootstrap's glow is
+       turned off, so the text cursor shows where you're typing. The transparent outline draws nothing normally, but
+       Windows contrast themes show it in their own colour, so focus is still visible there. */
+    border-color: var(--dm-site-muted);
+    outline: 2px solid transparent;
+    outline-offset: 0;
+    box-shadow: none;
+}
+
+/* ===== The guide's own ===== */
+
+/* "User Guide" over the page title, like the site's short labels */
+.dm-guide-eyebrow {
+    margin-block-end: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.dm-guide-eyebrow a {
+    color: var(--dm-red-text);
+}
+/* The DomainMOD version the guide is for, muted, on its own on the home page and after the "User Guide" link elsewhere */
+.dm-guide-version {
+    color: var(--dm-site-muted);
+}
+
+/* The layout: one column on phones, the page list and the content from lg up, and the table of contents from xl up */
+.dm-guide-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+}
+@media (min-width: 992px) {
+    .dm-guide-layout {
+        grid-template-columns: 14.5rem minmax(0, 1fr);
+        gap: 3rem;
+    }
+}
+@media (min-width: 1200px) {
+    .dm-guide-layout--toc {
+        grid-template-columns: 14.5rem minmax(0, 1fr) 12.5rem;
+    }
+}
+
+/* The sidebar stays in view beside the content from lg up, under the sticky header, and scrolls inside itself if the
+   window is too short. Its links draw their focus ring inside, so the scroll box doesn't clip it. */
+@media (min-width: 992px) {
+    .dm-guide-side {
+        position: sticky;
+        top: 6.5rem;
+        align-self: start;
+        max-height: calc(100vh - 8rem);
+        overflow-y: auto;
+    }
+}
+.dm-guide-side a:focus-visible,
+.dm-guide-toc a:focus-visible {
+    outline-offset: -3px;
+}
+/* The sidebar scrolls inside itself, which clips anything drawn outside it, so its search box keeps a little room
+   around it for the focus outline Windows contrast themes draw */
+.dm-guide-side .dm-guide-search {
+    padding: 0.375rem;
+}
+/* The icon button is placed from the form's edge, so it moves in by the same room */
+.dm-guide-side .dm-guide-search-button {
+    inset-block: 0.625rem;
+    inset-inline-start: 0.75rem;
+}
+
+/* The page list's toggle on phones */
+.dm-guide-pages-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    border: 1px solid var(--dm-site-frame-line);
+    border-radius: 0.5rem;
+}
+.dm-guide-pages-toggle:hover,
+.dm-guide-pages-toggle:active {
+    color: var(--bs-emphasis-color);
+    background-color: var(--dm-site-frame);
+    border-color: var(--bs-emphasis-color);
+}
+.dm-guide-pages-chevron {
+    transition: transform 0.15s ease-in-out;
+}
+.dm-guide-pages-toggle[aria-expanded="true"] .dm-guide-pages-chevron {
+    transform: rotate(180deg);
+}
+@media (max-width: 991.98px) {
+    #dm-guide-pages .dm-guide-nav {
+        margin-block-start: 0.75rem;
+    }
+}
+
+/* The page list: a thin line down the side, marked in red beside the current page */
+.dm-guide-nav,
+.dm-guide-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.dm-guide-nav a {
+    display: block;
+    padding: 0.3125rem 0.875rem;
+    color: var(--dm-site-muted);
+    text-decoration: none;
+    border-inline-start: 2px solid var(--dm-site-line);
+}
+.dm-guide-nav a:hover {
+    color: var(--bs-emphasis-color);
+    border-inline-start-color: var(--bs-emphasis-color);
+}
+.dm-guide-nav a[aria-current="page"] {
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    border-inline-start-color: var(--dm-red);
+}
+.dm-guide-nav-heading {
+    display: block;
+    padding: 1rem 0.875rem 0.375rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+
+/* The search box: one rounded field, with the search button as a plain icon inside its start edge (the browser's own
+   clear button stays at the other end) */
+.dm-guide-search {
+    position: relative;
+    margin-block-end: 1.25rem;
+}
+.dm-guide-search .form-control {
+    /* Room for the icon button, so typed text starts clear of its click area */
+    padding-inline-start: 2.875rem;
+    border-radius: 2rem;
+}
+.dm-guide-search .form-control-lg {
+    padding-inline-start: 3.375rem;
+}
+.dm-guide-search--page {
+    max-width: 36rem;
+}
+.dm-guide-search-button {
+    position: absolute;
+    /* Inset from the field's edges, so its click area stays inside the pill's rounded corners */
+    inset-block: 0.25rem;
+    inset-inline-start: 0.375rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    padding-inline: 0.625rem;
+    color: var(--dm-site-muted);
+    background: none;
+    border: 0;
+}
+.dm-guide-search--page .dm-guide-search-button {
+    inset-inline-start: 0.5rem;
+    font-size: 1.125rem;
+}
+.dm-guide-search-button:hover {
+    color: var(--bs-emphasis-color);
+}
+.dm-guide-search-button:focus-visible {
+    color: var(--bs-emphasis-color);
+    outline: 2px solid var(--bs-emphasis-color);
+    outline-offset: -2px;
+    border-radius: 2rem;
+}
+
+/* Search results, as MkDocs' search script writes them: an article per page, its title linked, and the page's start */
+.dm-guide-results {
+    margin-block-start: 1.5rem;
+    color: var(--dm-site-muted);
+}
+.dm-guide-results article {
+    padding-block: 1.25rem;
+    border-block-end: 1px solid var(--dm-site-line);
+}
+.dm-guide-results article:first-child {
+    padding-block-start: 0.5rem;
+}
+.dm-prose .dm-guide-results h3 {
+    margin-block: 0 0.25rem;
+    font-size: 1.25rem;
+}
+.dm-guide-results article p {
+    margin-block-end: 0;
+    overflow-wrap: anywhere;
+}
+
+/* The table of contents, from xl up: it stays in view beside the content */
+.dm-guide-toc {
+    display: none;
+}
+@media (min-width: 1200px) {
+    .dm-guide-toc {
+        display: block;
+        position: sticky;
+        top: 6.5rem;
+        align-self: start;
+        max-height: calc(100vh - 8rem);
+        overflow-y: auto;
+        font-size: 0.9375rem;
+    }
+}
+.dm-guide-toc-heading {
+    margin-block-end: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dm-site-muted);
+}
+.dm-guide-toc-list,
+.dm-guide-toc-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.dm-guide-toc-list ul {
+    padding-inline-start: 0.875rem;
+}
+.dm-guide-toc-list a {
+    display: block;
+    padding-block: 0.25rem;
+    color: var(--dm-site-muted);
+}
+.dm-guide-toc-list a:hover {
+    color: var(--bs-emphasis-color);
+}
+
+/* Previous and next links under the content, side by side from sm up */
+.dm-guide-pager {
+    display: grid;
+    gap: 1rem;
+    max-width: 48rem;
+    margin-block-start: 3.5rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--dm-site-line);
+}
+@media (min-width: 576px) {
+    .dm-guide-pager {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .dm-guide-pager-next {
+        grid-column: 2;
+        text-align: end;
+    }
+}
+.dm-guide-pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    border: 1px solid var(--dm-site-line);
+    border-radius: 0.75rem;
+    transition: border-color 0.15s ease-in-out;
+}
+.dm-guide-pager-link:hover {
+    color: var(--bs-body-color);
+    text-decoration: none;
+    border-color: var(--bs-emphasis-color);
+}
+.dm-guide-pager-link:hover .dm-guide-pager-title {
+    text-decoration: underline;
+}
+.dm-guide-pager-label {
+    font-size: 0.9375rem;
+    color: var(--dm-site-muted);
+}
+.dm-guide-pager-label .bi {
+    color: var(--dm-red-text);
+}
+.dm-guide-pager-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+
+/* Admonitions (!!! note, warning, and danger): a tinted box with a coloured edge and an icon in the title */
+.dm-prose .admonition {
+    --dm-adm-bg: var(--bs-info-bg-subtle);
+    --dm-adm-line: var(--bs-info-border-subtle);
+    --dm-adm-text: var(--bs-info-text-emphasis);
+    --dm-adm-icon: "\f430";
+    margin-block: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
+    color: var(--bs-body-color);
+    background-color: var(--dm-adm-bg);
+    border: 1px solid var(--dm-adm-line);
+    border-inline-start: 4px solid var(--dm-adm-text);
+    border-radius: 0.5rem;
+}
+.dm-prose .admonition.warning,
+.dm-prose .admonition.caution,
+.dm-prose .admonition.attention {
+    --dm-adm-bg: var(--bs-warning-bg-subtle);
+    --dm-adm-line: var(--bs-warning-border-subtle);
+    --dm-adm-text: var(--bs-warning-text-emphasis);
+    --dm-adm-icon: "\f33a";
+}
+.dm-prose .admonition.danger,
+.dm-prose .admonition.error {
+    --dm-adm-bg: var(--bs-danger-bg-subtle);
+    --dm-adm-line: var(--bs-danger-border-subtle);
+    --dm-adm-text: var(--bs-danger-text-emphasis);
+    --dm-adm-icon: "\f336";
+}
+.dm-prose .admonition.tip,
+.dm-prose .admonition.hint {
+    --dm-adm-bg: var(--bs-success-bg-subtle);
+    --dm-adm-line: var(--bs-success-border-subtle);
+    --dm-adm-text: var(--bs-success-text-emphasis);
+    --dm-adm-icon: "\f468";
+}
+.dm-prose .admonition > :last-child {
+    margin-block-end: 0;
+}
+.dm-prose .admonition-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-block-end: 0.375rem;
+    font-weight: 600;
+    color: var(--dm-adm-text);
+}
+.dm-prose .admonition-title::before {
+    content: var(--dm-adm-icon);
+    font-family: "bootstrap-icons";
+    font-weight: normal;
+    line-height: 1;
+}
+.dm-prose .admonition pre {
+    background-color: var(--dm-site-page);
+}
+
+/* Screenshots and other images in a page stay inside the column */
+.dm-prose img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Tables and quotes in a page */
+.dm-prose table {
+    width: 100%;
+    margin-block: 1rem 1.5rem;
+    border-collapse: collapse;
+}
+.dm-prose th,
+.dm-prose td {
+    padding: 0.5rem 0.75rem;
+    text-align: start;
+    vertical-align: top;
+    border-block-end: 1px solid var(--dm-site-line);
+}
+.dm-prose th {
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+}
+.dm-prose blockquote {
+    padding-inline-start: 1rem;
+    color: var(--dm-site-muted);
+    border-inline-start: 3px solid var(--dm-site-line);
+}
+
+/* The 404 page's headings */
+/* Copied from site.css, like the sections above */
+.dm-h3 {
+    font-size: 1.1875rem;
+    font-weight: 600;
+    margin-block-end: 0.375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dm-guide-pager-link,
+    .dm-guide-pages-chevron {
+        transition: none;
+    }
+}
+
+/* Below xl, the page's headings fold away above the content, since the table of contents beside it is hidden */
+.dm-guide-toc-compact {
+    margin-block-end: 2rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    border: 1px solid var(--dm-site-line);
+    border-radius: 0.5rem;
+}
+.dm-guide-toc-compact summary {
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    cursor: pointer;
+}
+.dm-guide-toc-compact[open] summary {
+    margin-block-end: 0.5rem;
+}
+@media (min-width: 1200px) {
+    .dm-guide-toc-compact {
+        display: none;
+    }
+}
+
+/* Long URLs and commands in the text wrap rather than widen the page on a phone */
+.dm-guide-content a,
+.dm-guide-content code {
+    overflow-wrap: anywhere;
+}
+
+/* Links inside notes, warnings, and dangers take the text colour, so they keep 4.5:1 contrast on every tinted
+   background, and stay underlined */
+.dm-guide-content .admonition a {
+    color: var(--bs-emphasis-color);
+    text-decoration: underline;
+}
+.dm-guide-main:focus {
+    outline: none;
+}
+
+/* The link to the page's source, quiet, under the content */
+.dm-guide-edit {
+    margin-block: 2rem 0;
+    font-size: 0.9375rem;
+}
+.dm-guide-edit a {
+    color: var(--dm-site-muted);
+}
+.dm-guide-edit a:hover {
+    color: var(--bs-emphasis-color);
+}
+
+/* Search result links: the title in the text colour, underlined only on hover or keyboard focus, with a section result's page name in
+   small muted text on its own line above it */
+.dm-prose .dm-guide-results h3 a {
+    display: block;
+    text-decoration: none;
+    color: var(--bs-emphasis-color);
+}
+.dm-prose .dm-guide-results h3 a:hover .dm-guide-result-title,
+.dm-prose .dm-guide-results h3 a:focus-visible .dm-guide-result-title {
+    text-decoration: underline;
+}
+.dm-guide-result-page {
+    display: block;
+    margin-block-end: 0.125rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dm-site-muted);
+}

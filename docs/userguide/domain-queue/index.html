@@ -1,218 +1,121 @@
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!doctype html>
+<html lang="en" data-bs-theme="light" data-base-url="..">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <meta name="author" content="Greg Chetcuti">
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Domain Queue - DomainMOD User Guide</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Domain Queue";
-    var mkdocs_page_input_path = "domain-queue.md";
-    var mkdocs_page_url = "/docs/userguide/domain-queue/";
-  </script>
-  
-  <script src="../js/jquery-3.7.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script> 
-  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Domain Queue - DomainMOD User Guide</title>
+<link rel="canonical" href="https://domainmod.org/docs/userguide/domain-queue/">
+<script src="../js/colour-mode.js"></script>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../vendor/bootstrap/5.3.8/css/bootstrap.min.css">
+<link rel="stylesheet" href="../vendor/bootstrap-icons/1.13.2/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../fonts/source-sans-3/source-sans-3.css">
+<link rel="stylesheet" href="../css/domainmod-tokens.css">
+<link rel="stylesheet" href="../css/guide.css">
+<link rel="shortcut icon" href="../img/favicon.ico">
 </head>
+<body class="dm-body dm-guide"><a class="dm-skip" href="#dm-guide-main">Skip to main content</a>
 
-<body class="wy-body-for-nav" role="document">
-
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search the User Guide" title="Search the User Guide" />
-  </form>
-</div>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../getting-started/">Getting Started</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../first-run/">First Run</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../upgrading/">Upgrading</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../migrating/">Migrating</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../database-encryption/">Encrypted Database Connections</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../creating-assets/">Creating Assets</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../adding-domains/">Adding Domains</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../csv-importer/">CSV Importer</a>
-	    </li>
-          
-            <li class="toctree-l1 current">
-		
-    <a class="current" href="./">Domain Queue</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#supported-registrars">Supported Registrars</a></li>
-    
-
-    <li class="toctree-l2"><a href="#usage">Usage</a></li>
-    
-
-    <li class="toctree-l2"><a href="#adding-domains-without-an-api">Adding Domains Without an API</a></li>
-    
-
-    <li class="toctree-l2"><a href="#fixing-failed-domains">Fixing Failed Domains</a></li>
-    
-
-    <li class="toctree-l2"><a href="#keeping-domains-up-to-date">Keeping Domains Up To Date</a></li>
-    
-
-    <li class="toctree-l2"><a href="#api-notes">API Notes</a></li>
-    
-
-    <li class="toctree-l2"><a href="#example">Example</a></li>
-    
-
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../bulk-updater/">Bulk Updater</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../administration/">Administration</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../backup-restore/">Backup & Restore</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../data-warehouse/">Data Warehouse</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../faq/">Frequently Asked Questions</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../conduct/">Code of Conduct</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../contributing/">Contributing</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../troubleshooting/">Troubleshooting</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../support/">Support</a>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
+<header class="dm-header sticky-lg-top">
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
+        <div class="container-xl">
+            <a class="navbar-brand" href="https://domainmod.org/">
+                <span class="dm-logo dm-logo--filter"><img class="dm-logo-image" src="../img/logo.png" width="264" height="40" alt="DomainMOD home"><img class="dm-logo-icon" src="../img/logo.png" width="264" height="40" alt=""></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#dm-menu" aria-controls="dm-menu" aria-expanded="false">
+                <i class="bi bi-list" aria-hidden="true"></i><span class="visually-hidden">Menu</span>
+            </button>
+            <div class="collapse navbar-collapse" id="dm-menu">
+                <ul class="navbar-nav mx-lg-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/download/">Download</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/docs/" aria-current="true">Docs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/support/">Support</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/news/">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/about/">About</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2 py-2 py-lg-0">
+                    <div class="dropdown">
+                        <button class="btn btn-link dm-mode dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <i class="bi bi-circle-half" aria-hidden="true"></i><span class="visually-hidden">Color Mode</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end">
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="light" aria-pressed="false"><i class="bi bi-sun-fill" aria-hidden="true"></i>Light<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i>Dark<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="auto" aria-pressed="false"><i class="bi bi-circle-half" aria-hidden="true"></i>Auto<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-outline-primary dm-pill" href="https://demo.domainmod.org">Try the Demo</a>
+                </div>
+            </div>
+        </div>
     </nav>
+</header>
+<main id="main">
+    <div class="dm-page-header">
+        <div class="container-xl">
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <h1 class="dm-page-title">Domain Queue</h1>
+        </div>
+    </div>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+    <div class="container-xl dm-page">
+        <div class="dm-guide-layout dm-guide-layout--toc">
+            <nav class="dm-guide-side" aria-label="User Guide">
+                <form class="dm-guide-search" action="../search.html" method="get" role="search">
+    <label class="visually-hidden" for="dm-guide-search-input">Search the User Guide</label>
+    <input class="form-control" type="search" name="q" id="dm-guide-search-input" placeholder="Search the guide" autocomplete="off">
+    <button class="btn dm-guide-search-button" type="submit"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Search</span></button>
+</form>
+                <button class="btn dm-guide-pages-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#dm-guide-pages" aria-controls="dm-guide-pages" aria-expanded="false">
+                    <span><i class="bi bi-journal-text" aria-hidden="true"></i> Pages in This Guide</span><i class="bi bi-chevron-down dm-guide-pages-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="collapse d-lg-block" id="dm-guide-pages">
+                    <ul class="dm-guide-nav" role="list">
+    <li><a href="..">Home</a></li>
+    <li><a href="../getting-started/">Getting Started</a></li>
+    <li><a href="../first-run/">First Run</a></li>
+    <li><a href="../upgrading/">Upgrading</a></li>
+    <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../creating-assets/">Creating Assets</a></li>
+    <li><a href="../adding-domains/">Adding Domains</a></li>
+    <li><a href="../csv-importer/">CSV Importer</a></li>
+    <li><a href="./" aria-current="page">Domain Queue</a></li>
+    <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../administration/">Administration</a></li>
+    <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
+    <li><a href="../data-warehouse/">Data Warehouse</a></li>
+    <li><a href="../faq/">Frequently Asked Questions</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../troubleshooting/">Troubleshooting</a></li>
+    <li><a href="../support/">Support</a></li>
+</ul>
+                </div>
+            </nav>
 
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <!--<a href="..">DomainMOD User Guide</a>-->
-        <a href="..">User Guide</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-
-        <span class="domainmod-logo">
-          <a href="https://domainmod.org"><img width="264" height="40" src="../img/logo.png" alt="DomainMOD"></a>
-        </span>
-
-        <div class="rst-content" style="padding-top: 23px;">
-
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">User Guide</a> &raquo;&nbsp;</li>
-    
-      
-    
-    <li>Domain Queue</li>
-    <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/domainmod/userguide/edit/master/docs/domain-queue.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
+            <div class="dm-guide-main" id="dm-guide-main" tabindex="-1"><details class="dm-guide-toc-compact">
+                    <summary>On This Page</summary>
+                    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#supported-registrars">Supported Registrars</a>
     </li>
-  </ul>
-  <hr/>
-</div>
-
-          <div role="main">
-            <div class="section">
-                
-                
-                <h1>Domain Queue</h1>
-                
-
-                
-                <p>One of the easiest options for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let DomainMOD take care of the rest (and in some cases you don't even need to supply the list of domains, it will be automatically retrieved from your registrar account).</p>
+    <li><a href="#usage">Usage</a>
+    </li>
+    <li><a href="#adding-domains-without-an-api">Adding Domains Without an API</a>
+    </li>
+    <li><a href="#fixing-failed-domains">Fixing Failed Domains</a>
+    </li>
+    <li><a href="#keeping-domains-up-to-date">Keeping Domains Up To Date</a>
+    </li>
+    <li><a href="#api-notes">API Notes</a>
+    </li>
+    <li><a href="#example">Example</a>
+    </li>
+</ul>
+                </details>
+                <div class="dm-prose dm-guide-content">
+                    <p>One of the easiest options for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let DomainMOD take care of the rest (and in some cases you don't even need to supply the list of domains, it will be automatically retrieved from your registrar account).</p>
 <p>If your registrar has an API that DomainMOD supports, the Domain Queue uses it to retrieve the information required to add your domains, so before using this option make sure your API credentials have been saved with your registrar account. If your registrar isn't supported, you can still paste in a list of your domains, and DomainMOD will look up their details using RDAP, the public replacement for WHOIS, or WHOIS itself for domains that RDAP doesn't cover.</p>
 <h2 id="supported-registrars">Supported Registrars</h2>
 <p>The following registrars are currently supported by the Domain Queue:</p>
@@ -228,13 +131,13 @@
 <p>Click on <strong>Domains</strong> on the main menu.</p>
 </li>
 <li>
-<p>Click the <strong>Add Domains Automatically</strong> button on the Domains page.</p>
+<p>Click <strong>Add Domains Automatically</strong> on the Domains page. Once you have domains, it's in the menu beside the <strong>Add Domain</strong> button.</p>
 </li>
 <li>
 <p>Click the <strong>Add Domains Using an API</strong> button.</p>
 </li>
 <li>
-<p>On the dropdown list, choose the registrar account that you would like to import using the Domain Queue.</p>
+<p>On the dropdown list, choose the registrar account that you would like to import using the Domain Queue, and click <strong>Next Step</strong>.</p>
 </li>
 <li>
 <p>If requested, paste in a list of the domains you want to add to the Domain Queue. This is not always required, as some domain registrars will retrieve the list of domains from your account automatically.</p>
@@ -256,7 +159,7 @@
 <p>Click on <strong>Domains</strong> on the main menu.</p>
 </li>
 <li>
-<p>Click the <strong>Add Domains Automatically</strong> button on the Domains page.</p>
+<p>Click <strong>Add Domains Automatically</strong> on the Domains page. Once you have domains, it's in the menu beside the <strong>Add Domain</strong> button. If you haven't added a registrar and a registrar account yet, click <strong>Add Domains Automatically</strong> in the Dashboard's Getting Started checklist instead (if you've hidden the checklist, you can turn it back on in <strong>Settings</strong> -&gt; <strong>Display Settings</strong>).</p>
 </li>
 <li>
 <p>Click the <strong>Add Domains Without an API</strong> button.</p>
@@ -274,7 +177,7 @@
 <p>A registrar that isn't in DomainMOD yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named "RDAP Import", which is created the first time it's needed and used for later imports.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto renewal status, so both are set to No. You can update them afterwards using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
+<p>Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto-renewal status, so both are set to No. You can update them afterwards using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
 </div>
 <p>Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. WHOIS lookups also need your server to be able to connect to WHOIS servers on port 43, which some web hosts block. If a domain can't be looked up, it fails in the queue with the reason, and you can finish it by hand with <a href="#fix">Fix and Import</a>.</p>
 <h2 id="fixing-failed-domains"><a name="fix"></a>Fixing Failed Domains</h2>
@@ -292,7 +195,7 @@
 </ol>
 <p>The domain is added with the creation type "Queue (Edited Manually)", and the Domain Queue shows it as "Imported (Edited Manually)".</p>
 <h2 id="keeping-domains-up-to-date">Keeping Domains Up To Date</h2>
-<p>Once your domains have been added, you can update a single domain at any time using the <strong>Refresh Domain</strong> box on its edit page. See <a href="../faq/#refresh">Refreshing a Domain</a> for details.</p>
+<p>Once your domains have been added, you can update a single domain at any time using the <strong>Refresh</strong> button on its edit page. See <a href="../faq/#refresh">Refreshing a Domain</a> for details.</p>
 <h2 id="api-notes"><a name="apinotes"></a>API Notes</h2>
 <p>This section contains various notes and things to watch out for when using the domain registrar APIs.</p>
 <h4>Cloudflare</h4>
@@ -319,7 +222,7 @@
 <h4>Hostinger</h4>
 
 <p>For the API Key, create an API token in your Hostinger dashboard (<strong>Dev tools</strong> -&gt; <strong>API</strong> -&gt; <strong>API tokens</strong>). Hostinger API tokens have full access to your Hostinger account, so consider giving the token an expiry date.</p>
-<p>Hostinger does not return the Auto Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto Renewal status set to No by default.</p>
+<p>Hostinger does not return the Auto-Renewal status when retrieving the details of a domain, so all domains imported via the API will have their Auto-Renewal status set to No by default.</p>
 <h4>NameSilo</h4>
 
 <p>NameSilo's domains have 6 possible statuses: Active, Expired (grace period), Expired (restore period), Expired (pending delete), Inactive, and Pending Outbound Transfer</p>
@@ -337,7 +240,7 @@
 <p>When retrieving your list of domains from Porkbun, the current limit is 1,000 domains. If you have more than this you should export the full list of domains from Porkbun and paste it into the <strong>Domains to add</strong> field when adding domains via the Domain Queue.</p>
 <h4>ResellerClub</h4>
 
-<p>ResellerClub does not allow users to retrieve a list of their domains via the API, nor do they return the Auto Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto Renewal status set to No by default.</p>
+<p>ResellerClub does not allow users to retrieve a list of their domains via the API, nor does it return the Auto-Renewal status when retrieving the details of a domain. All domains imported via the API will have their Auto-Renewal status set to No by default.</p>
 <h4>SiteHost</h4>
 
 <p>A SiteHost registrar account uses the following fields:</p>
@@ -348,7 +251,7 @@
 <p>Below is an example of how to use the Domain Queue to import the domains from a Namecheap account:</p>
 <p>Create a <strong>Domain Registrar</strong> asset, ensuring that you've selected <strong>Namecheap</strong> on the <strong>API Support</strong> dropdown list.</p>
 <p><a href="../img/domain-queue/domain_registrar.png"><img alt="Domain Registrar" src="../img/domain-queue/domain_registrar.png" /></a></p>
-<p><BR>Create an <strong>IP Address</strong> asset, ensuring that you enter the public IP address of the server that DomainMOD is running on.</p>
+<p><BR>Create an <strong>IP Address</strong> asset, ensuring that you enter the public IP address that DomainMOD's server uses for outgoing connections (usually the server's own public IP address, unless its traffic goes out through another address).</p>
 <p><a href="../img/domain-queue/ip_address.png"><img alt="IP Address" src="../img/domain-queue/ip_address.png" /></a></p>
 <p><BR>Create a <strong>Domain Registrar Account</strong> asset, ensuring that you've entered your account username and API Key, and that you've selected the IP address that you created in the previous step.</p>
 <p><a href="../img/domain-queue/domain_registrar_account.png"><img alt="Domain Registrar Account" src="../img/domain-queue/domain_registrar_account.png" /></a></p>
@@ -361,56 +264,98 @@
 <p><a href="../img/domain-queue/whitelisted_ips.png"><img alt="Whitelisted" src="../img/domain-queue/whitelisted_ips.png" /></a></p>
 <p>And that's it, your Namecheap API connection should now be set up!</p>
 <p>With your API connection up and running, it's time to <a href="#usage">import your domains using the Domain Queue</a>.</p>
-                
+                </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/domain-queue.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
+                <nav class="dm-guide-pager" aria-label="Previous and next pages">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../csv-importer/" rel="prev">
+                        <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
+                        <span class="dm-guide-pager-title">CSV Importer</span>
+                    </a>
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../bulk-updater/" rel="next">
+                        <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                        <span class="dm-guide-pager-title">Bulk Updater</span>
+                    </a>
+                </nav>
             </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../bulk-updater/" class="btn btn-neutral float-right" title="Bulk Updater">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../csv-importer/" class="btn btn-neutral" title="CSV Importer"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-  </div>
-
-  <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="https://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2026 <a href="https://greg.ca">Greg Chetcuti</a> &lt;greg@chetcuti.com&gt;. All rights reserved.</span>
-
-</footer>
-      
+            <aside class="dm-guide-toc" aria-label="On this page">
+    <p class="dm-guide-toc-heading" aria-hidden="true">On This Page</p>
+    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#supported-registrars">Supported Registrars</a>
+    </li>
+    <li><a href="#usage">Usage</a>
+    </li>
+    <li><a href="#adding-domains-without-an-api">Adding Domains Without an API</a>
+    </li>
+    <li><a href="#fixing-failed-domains">Fixing Failed Domains</a>
+    </li>
+    <li><a href="#keeping-domains-up-to-date">Keeping Domains Up To Date</a>
+    </li>
+    <li><a href="#api-notes">API Notes</a>
+    </li>
+    <li><a href="#example">Example</a>
+    </li>
+</ul>
+</aside>
         </div>
-      </div>
+    </div>
+</main>
 
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="../csv-importer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../bulk-updater/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
-</div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-
+<footer class="dm-footer">
+    <div class="container-xl">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Product</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/download/">Download</a></li>
+                    <li><a href="https://domainmod.org/docker/">Install with Docker</a></li>
+                    <li><a href="https://domainmod.org/upgrade/">Upgrade</a></li>
+                    <li><a href="https://demo.domainmod.org">Live Demo</a></li>
+                    <li><a href="https://domainmod.org/changelog/">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Docs</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/docs/userguide/">User Guide</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/getting-started/">Getting Started</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/upgrading/">Upgrading</a></li>
+                    <li><a href="https://domainmod.org/readme/">README</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/faq/">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Community</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/support/">Support Portal</a></li>
+                    <li><a href="https://github.com/domainmod/domainmod">GitHub</a></li>
+                    <li><a href="https://domainmod.org/subscribe/">Subscribe</a></li>
+                    <li><a href="https://domainmod.org/rss/">RSS</a></li>
+                    <li><a href="https://domainmod.org/contribute/">Contribute</a></li>
+                    <li><a href="https://domainmod.org/contributing/">Contributing</a></li>
+                    <li><a href="https://domainmod.org/conduct/">Code of Conduct</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Legal</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/privacy/">Privacy</a></li>
+                    <li><a href="https://domainmod.org/terms/">Terms</a></li>
+                    <li><a href="https://domainmod.org/LICENSE">License</a></li>
+                    <li><a href="https://domainmod.org/security.txt">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="dm-footer-bottom d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <p class="mb-0">Copyright © 2013-2026 <a href="https://greg.ca">Greg Chetcuti</a>. DomainMOD is free software under the GPLv3.</p>
+            <ul class="list-unstyled d-flex gap-3 mb-0" role="list">
+                <li><a href="https://x.com/DomainMOD" class="dm-social"><i class="bi bi-twitter-x" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on X</span></a></li>
+                <li><a href="https://www.facebook.com/DomainMOD" class="dm-social"><i class="bi bi-facebook" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Facebook</span></a></li>
+                <li><a href="https://www.linkedin.com/company/domainmod" class="dm-social"><i class="bi bi-linkedin" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on LinkedIn</span></a></li>
+                <li><a href="https://www.reddit.com/r/DomainMOD" class="dm-social"><i class="bi bi-reddit" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Reddit</span></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="../vendor/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+<script src="../js/guide.js"></script>
 </body>
 </html>

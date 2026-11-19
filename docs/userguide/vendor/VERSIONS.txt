@@ -1,0 +1,5 @@
+# Front-end libraries in assets/, written by DomainMOD's .data/release/site-vendor.py. Don't edit by hand.
+
+Bootstrap 5.3.8  https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.8.tgz  sha256:8b02d4a7482e0f0a2b1da58f1c9c86830e96cc2f77f094f89e4681b19886bc38
+Bootstrap Icons 1.13.2  https://registry.npmjs.org/bootstrap-icons/-/bootstrap-icons-1.13.2.tgz  sha256:7b5960145e1ab14a49a117f96a9e5a54a94fdf07f21e302d9e4f88d73dd19f9c
+Source Sans 3 (Fontsource) 5.3.1  https://registry.npmjs.org/@fontsource/source-sans-3/-/source-sans-3-5.3.1.tgz  sha256:b598201d980b3512805bbea186aab8ef91590d59990e6a13c90e030b6ff37881

@@ -1,267 +1,210 @@
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!doctype html>
+<html lang="en" data-bs-theme="light" data-base-url="..">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <meta name="author" content="Greg Chetcuti">
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Contributing - DomainMOD User Guide</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Contributing";
-    var mkdocs_page_input_path = "contributing.md";
-    var mkdocs_page_url = "/docs/userguide/contributing/";
-  </script>
-  
-  <script src="../js/jquery-3.7.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script> 
-  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contributing - DomainMOD User Guide</title>
+<link rel="canonical" href="https://domainmod.org/docs/userguide/contributing/">
+<script src="../js/colour-mode.js"></script>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../vendor/bootstrap/5.3.8/css/bootstrap.min.css">
+<link rel="stylesheet" href="../vendor/bootstrap-icons/1.13.2/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../fonts/source-sans-3/source-sans-3.css">
+<link rel="stylesheet" href="../css/domainmod-tokens.css">
+<link rel="stylesheet" href="../css/guide.css">
+<link rel="shortcut icon" href="../img/favicon.ico">
 </head>
+<body class="dm-body dm-guide"><a class="dm-skip" href="#dm-guide-main">Skip to main content</a>
 
-<body class="wy-body-for-nav" role="document">
-
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search the User Guide" title="Search the User Guide" />
-  </form>
-</div>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../getting-started/">Getting Started</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../first-run/">First Run</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../upgrading/">Upgrading</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../migrating/">Migrating</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../database-encryption/">Encrypted Database Connections</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../creating-assets/">Creating Assets</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../adding-domains/">Adding Domains</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../csv-importer/">CSV Importer</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../domain-queue/">Domain Queue</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../bulk-updater/">Bulk Updater</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../administration/">Administration</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../backup-restore/">Backup & Restore</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../data-warehouse/">Data Warehouse</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../faq/">Frequently Asked Questions</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../conduct/">Code of Conduct</a>
-	    </li>
-          
-            <li class="toctree-l1 current">
-		
-    <a class="current" href="./">Contributing</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#pull-requests">Pull Requests</a></li>
-    
-
-    <li class="toctree-l2"><a href="#questions-problems-feature-requests">Questions, Problems &amp; Feature Requests</a></li>
-    
-
-    <li class="toctree-l2"><a href="#bug-reports">Bug Reports</a></li>
-    
-
-    <li class="toctree-l2"><a href="#security-issues">Security Issues</a></li>
-    
-
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../troubleshooting/">Troubleshooting</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../support/">Support</a>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
+<header class="dm-header sticky-lg-top">
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
+        <div class="container-xl">
+            <a class="navbar-brand" href="https://domainmod.org/">
+                <span class="dm-logo dm-logo--filter"><img class="dm-logo-image" src="../img/logo.png" width="264" height="40" alt="DomainMOD home"><img class="dm-logo-icon" src="../img/logo.png" width="264" height="40" alt=""></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#dm-menu" aria-controls="dm-menu" aria-expanded="false">
+                <i class="bi bi-list" aria-hidden="true"></i><span class="visually-hidden">Menu</span>
+            </button>
+            <div class="collapse navbar-collapse" id="dm-menu">
+                <ul class="navbar-nav mx-lg-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/download/">Download</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/docs/" aria-current="true">Docs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/support/">Support</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/news/">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/about/">About</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2 py-2 py-lg-0">
+                    <div class="dropdown">
+                        <button class="btn btn-link dm-mode dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <i class="bi bi-circle-half" aria-hidden="true"></i><span class="visually-hidden">Color Mode</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end">
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="light" aria-pressed="false"><i class="bi bi-sun-fill" aria-hidden="true"></i>Light<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i>Dark<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="auto" aria-pressed="false"><i class="bi bi-circle-half" aria-hidden="true"></i>Auto<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-outline-primary dm-pill" href="https://demo.domainmod.org">Try the Demo</a>
+                </div>
+            </div>
+        </div>
     </nav>
+</header>
+<main id="main">
+    <div class="dm-page-header">
+        <div class="container-xl">
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <h1 class="dm-page-title">Contributing</h1>
+        </div>
+    </div>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+    <div class="container-xl dm-page">
+        <div class="dm-guide-layout dm-guide-layout--toc">
+            <nav class="dm-guide-side" aria-label="User Guide">
+                <form class="dm-guide-search" action="../search.html" method="get" role="search">
+    <label class="visually-hidden" for="dm-guide-search-input">Search the User Guide</label>
+    <input class="form-control" type="search" name="q" id="dm-guide-search-input" placeholder="Search the guide" autocomplete="off">
+    <button class="btn dm-guide-search-button" type="submit"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Search</span></button>
+</form>
+                <button class="btn dm-guide-pages-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#dm-guide-pages" aria-controls="dm-guide-pages" aria-expanded="false">
+                    <span><i class="bi bi-journal-text" aria-hidden="true"></i> Pages in This Guide</span><i class="bi bi-chevron-down dm-guide-pages-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="collapse d-lg-block" id="dm-guide-pages">
+                    <ul class="dm-guide-nav" role="list">
+    <li><a href="..">Home</a></li>
+    <li><a href="../getting-started/">Getting Started</a></li>
+    <li><a href="../first-run/">First Run</a></li>
+    <li><a href="../upgrading/">Upgrading</a></li>
+    <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../creating-assets/">Creating Assets</a></li>
+    <li><a href="../adding-domains/">Adding Domains</a></li>
+    <li><a href="../csv-importer/">CSV Importer</a></li>
+    <li><a href="../domain-queue/">Domain Queue</a></li>
+    <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../administration/">Administration</a></li>
+    <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
+    <li><a href="../data-warehouse/">Data Warehouse</a></li>
+    <li><a href="../faq/">Frequently Asked Questions</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
+    <li><a href="./" aria-current="page">Contributing</a></li>
+    <li><a href="../troubleshooting/">Troubleshooting</a></li>
+    <li><a href="../support/">Support</a></li>
+</ul>
+                </div>
+            </nav>
 
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <!--<a href="..">DomainMOD User Guide</a>-->
-        <a href="..">User Guide</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-
-        <span class="domainmod-logo">
-          <a href="https://domainmod.org"><img width="264" height="40" src="../img/logo.png" alt="DomainMOD"></a>
-        </span>
-
-        <div class="rst-content" style="padding-top: 23px;">
-
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">User Guide</a> &raquo;&nbsp;</li>
-    
-      
-    
-    <li>Contributing</li>
-    <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/domainmod/userguide/edit/master/docs/contributing.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
+            <div class="dm-guide-main" id="dm-guide-main" tabindex="-1"><details class="dm-guide-toc-compact">
+                    <summary>On This Page</summary>
+                    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#pull-requests">Pull Requests</a>
     </li>
-  </ul>
-  <hr/>
-</div>
-
-          <div role="main">
-            <div class="section">
-                
-                
-                <h1>Contributing</h1>
-                
-
-                
-                <h2 id="pull-requests">Pull Requests</h2>
+    <li><a href="#questions-problems-feature-requests">Questions, Problems &amp; Feature Requests</a>
+    </li>
+    <li><a href="#bug-reports">Bug Reports</a>
+    </li>
+    <li><a href="#security-issues">Security Issues</a>
+    </li>
+</ul>
+                </details>
+                <div class="dm-prose dm-guide-content">
+                    <h2 id="pull-requests">Pull Requests</h2>
 <p>Before submitting a <a href="https://github.com/domainmod/domainmod/pulls">pull request</a>, please contact the maintainers of the repository to discuss the change. As much as we appreciate you wanting to contribute, we don't want you to waste your time working on a change or new feature that won't get implemented (such as a feature that's already in progress).</p>
 <h2 id="questions-problems-feature-requests">Questions, Problems &amp; Feature Requests</h2>
 <p>Please use the <a href="https://support.domainmod.org">DomainMOD Support Portal</a> for questions, problems using DomainMOD, and feature requests (including new registrar integrations). Feature requests live only in the Support Portal, so other users can vote on them.</p>
+<p>If we need to look at your database to help, we'll arrange a safe, temporary way to do it privately. Please never post or email your passwords.</p>
 <h2 id="bug-reports">Bug Reports</h2>
 <p>The Support Portal is the right place for any problem, bugs included. If you're a developer and can point to the code, you can submit a GitHub <a href="https://github.com/domainmod/domainmod/issues">issue</a> instead. Please report each bug in one place only, not both.</p>
 <p>A GitHub issue should be a bug you can reproduce, with the DomainMOD and PHP versions you're using, the steps to reproduce it, and any error messages (with the file and line number, if there is one). Remove any domains, usernames, API keys, and other private details first. Before submitting, please search the existing issues to make sure it hasn't already been reported.</p>
 <h2 id="security-issues">Security Issues</h2>
 <p>Please don't report security vulnerabilities in a public issue or in the Support Portal. See our <a href="https://github.com/domainmod/domainmod/security/policy">security policy</a> for how to report them privately. </p>
-                
+                </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/contributing.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
+                <nav class="dm-guide-pager" aria-label="Previous and next pages">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../conduct/" rel="prev">
+                        <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
+                        <span class="dm-guide-pager-title">Code of Conduct</span>
+                    </a>
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../troubleshooting/" rel="next">
+                        <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                        <span class="dm-guide-pager-title">Troubleshooting</span>
+                    </a>
+                </nav>
             </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../conduct/" class="btn btn-neutral" title="Code of Conduct"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-  </div>
-
-  <span style="font-family: 'Verdana', sans-serif; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="https://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
-  Copyright (c) 2010-2026 <a href="https://greg.ca">Greg Chetcuti</a> &lt;greg@chetcuti.com&gt;. All rights reserved.</span>
-
-</footer>
-      
+            <aside class="dm-guide-toc" aria-label="On this page">
+    <p class="dm-guide-toc-heading" aria-hidden="true">On This Page</p>
+    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#pull-requests">Pull Requests</a>
+    </li>
+    <li><a href="#questions-problems-feature-requests">Questions, Problems &amp; Feature Requests</a>
+    </li>
+    <li><a href="#bug-reports">Bug Reports</a>
+    </li>
+    <li><a href="#security-issues">Security Issues</a>
+    </li>
+</ul>
+</aside>
         </div>
-      </div>
+    </div>
+</main>
 
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/domainmod/userguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="../conduct/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
-</div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-
+<footer class="dm-footer">
+    <div class="container-xl">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Product</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/download/">Download</a></li>
+                    <li><a href="https://domainmod.org/docker/">Install with Docker</a></li>
+                    <li><a href="https://domainmod.org/upgrade/">Upgrade</a></li>
+                    <li><a href="https://demo.domainmod.org">Live Demo</a></li>
+                    <li><a href="https://domainmod.org/changelog/">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Docs</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/docs/userguide/">User Guide</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/getting-started/">Getting Started</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/upgrading/">Upgrading</a></li>
+                    <li><a href="https://domainmod.org/readme/">README</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/faq/">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Community</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/support/">Support Portal</a></li>
+                    <li><a href="https://github.com/domainmod/domainmod">GitHub</a></li>
+                    <li><a href="https://domainmod.org/subscribe/">Subscribe</a></li>
+                    <li><a href="https://domainmod.org/rss/">RSS</a></li>
+                    <li><a href="https://domainmod.org/contribute/">Contribute</a></li>
+                    <li><a href="https://domainmod.org/contributing/">Contributing</a></li>
+                    <li><a href="https://domainmod.org/conduct/">Code of Conduct</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Legal</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/privacy/">Privacy</a></li>
+                    <li><a href="https://domainmod.org/terms/">Terms</a></li>
+                    <li><a href="https://domainmod.org/LICENSE">License</a></li>
+                    <li><a href="https://domainmod.org/security.txt">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="dm-footer-bottom d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <p class="mb-0">Copyright © 2013-2026 <a href="https://greg.ca">Greg Chetcuti</a>. DomainMOD is free software under the GPLv3.</p>
+            <ul class="list-unstyled d-flex gap-3 mb-0" role="list">
+                <li><a href="https://x.com/DomainMOD" class="dm-social"><i class="bi bi-twitter-x" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on X</span></a></li>
+                <li><a href="https://www.facebook.com/DomainMOD" class="dm-social"><i class="bi bi-facebook" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Facebook</span></a></li>
+                <li><a href="https://www.linkedin.com/company/domainmod" class="dm-social"><i class="bi bi-linkedin" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on LinkedIn</span></a></li>
+                <li><a href="https://www.reddit.com/r/DomainMOD" class="dm-social"><i class="bi bi-reddit" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Reddit</span></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="../vendor/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+<script src="../js/guide.js"></script>
 </body>
 </html>
