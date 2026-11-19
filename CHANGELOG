@@ -1,5 +1,48 @@
 DomainMOD CHANGELOG
 ===================
+v4.26.0     2026-11-18
+- Added a new design, built on AdminLTE 4 and Bootstrap 5, with a reworked sidebar, Dashboard, forms, lists, and reports, and status icons in the lists
+- Added full right-to-left layouts for Arabic, Persian, and Urdu
+- Added an Auto colour mode and a colour mode picker in the header, with dark mode restyled in the Nord palette and new users starting in Auto
+- Added the Domain Renewals, At-Risk Domains, SSL Renewals, At-Risk SSL Certificates, and Renewal Calendar reports
+- Added TLD Pricing and SSL Pricing, with charts comparing fees across registrars and SSL providers
+- Added charts to the cost reports, Domain Renewals, SSL Renewals, and Potential Problems, plus badges in Potential Problems for domains missing from DomainMOD
+- Added a renewal costs chart for domains and SSL certificates to the Dashboard, an At Risk (30 days) tile when any domains are at risk, and a Getting Started checklist for installs with no domains yet
+- Added a warning for administrators when scheduled tasks are enabled but cron.php hasn't run in the last two hours, and its last run time on the Task Scheduler page
+- Added filter toolbars to the Domains and SSL Certificates lists, where filters apply as soon as you choose them
+- Added an installable web app on HTTPS installs, with an offline page
+- Added each domain's and SSL certificate's fee to its edit page, and a warning when adding or saving an item that a missing fee will hide from its list
+- Added Domain Fees and SSL Fees to the Assets menu, and Show Inactive and Hide Inactive to the asset lists
+- Added a Danger Zone section for delete buttons, setup guidance on empty lists, and step indicators in the installer, the Domain Queue, and the Bulk Updater
+- Added support for MySQL 9 and MariaDB up to 12.3
+- Updated the installer with a requirements checklist, a Ready to Install review step, the language, currency, and time zone preselected from your browser's settings, and an admin account with the username and password you choose, instead of admin/admin
+- Updated the Domains and SSL Certificates lists to page, sort, and search on the server, with up to 500 rows a page, and past expiry dates on active items in bold red
+- Updated the Task Scheduler, maintenance tasks, Send Test Email, and Refresh Domain to run in place, and the Domain Queue to refresh itself when processing finishes
+- Updated form errors to show under the fields they belong to, and short success messages to show as toasts, with a link to edit a domain or SSL certificate you've just added
+- Updated saved passwords and API keys to stay out of forms: leave a field empty to keep the saved value, or tick Remove the saved value and leave it empty to clear it
+- Updated new passwords in the installer and on the Password page to need at least 8 characters and at most 72 bytes
+- Updated passwords to be saved in the modern format as soon as they're set, with older or weaker password hashes upgraded at sign-in
+- Updated the database upgrade so only an administrator with write access can run it, and read-only users' pages to hide actions that change data
+- Updated DomainMOD's emails to embed the logo
+- Updated DomainMOD to ask search engines not to index it, apart from the public demo
+- Updated the Data Warehouse with a Servers table, and made its rebuilds name any servers that returned incomplete data
+- Updated the menus: Maintenance is now Fees & Rates, and Assets opens as a submenu in the sidebar
+- Fixed the Bulk Updater's Add Domains dropping custom field values (since 4.18.0), and the Bulk Updater crashing or reporting success when a listed domain doesn't exist
+- Fixed a custom field named like a page field (such as "notes") overwriting that field, and invalid custom dates being saved as zero dates
+- Fixed placeholder dates in custom fields on edit forms and in exports, and unset times showing as 1969-12-31
+- Fixed time zone handling in pre-filled expiry dates, the fee reports' Last Updated dates, Debug Log exports, and the Task Scheduler's Set Run Time menu
+- Fixed the SSL Certificates keyword search and Owner filter, and rows missing from segment results
+- Fixed the Domains and SSL Certificates exports and Raw Lists ignoring the table's search, and the Domains export with an account filter
+- Fixed invalid fee amounts, currencies, and TLDs being accepted on the fee pages, and fee columns sorting as text
+- Fixed CSV imports swallowing the next row after a value ending in a backslash, and Display Settings crashing when a menu had nothing selected
+- Fixed Data Warehouse suspension dates, and DNS records not being grouped by type in the Data Warehouse and its exports
+- Fixed the installer offering an invalid RM currency and old time zone names, and the upgrade notice showing when the database was already up to date
+- Fixed missing translations for the sign-in placeholders and button and the password reset placeholder (thanks to @Qrzysio)
+- Fixed Dynadot refreshes misreading a single nameserver
+- Fixed accessibility issues across the app
+- Merged the cost reports into Domain Costs and SSL Costs with a Group By menu, and moved Missing Fees into the fee reports
+- Removed the Domains list's Large Mode, since the list now loads from the server
+
 v4.25.0     2026-11-13
 - Added domain imports without a registrar API, using RDAP, and WHOIS for domains that RDAP doesn't cover
 - Added Fix and Import for Domain Queue domains that failed to import
