@@ -20,7 +20,7 @@
  */
 ?>
 <nav aria-label="<?php echo _('Breadcrumb'); ?>">
-<ol class="breadcrumb mb-1">
+<ol class="breadcrumb mb-3">
     <?php if ($software_section == 'dashboard') { ?>
         <li class="breadcrumb-item active"><?php echo _("Dashboard"); ?></li>
     <?php } else { ?>
