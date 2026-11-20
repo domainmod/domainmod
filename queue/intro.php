@@ -30,6 +30,7 @@ $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $queue = new DomainMOD\DomainQueue();
+$ssl_queue = new DomainMOD\SslQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -38,6 +39,9 @@ require_once DIR_INC . '/settings/queue-info.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
+// SSL imports wait for the database update that adds them, and read-only users can't add anything
+$ssl_queue_available = $ssl_queue->isAvailable();
+$ssl_add_allowed = $ssl_queue_available && ($_SESSION['s_read_only'] ?? '') != '1';
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -63,6 +67,14 @@ if ($queue_rdap_available) {
 } ?>
 <p><?php echo sprintf(_("If you use a registrar that isn't already supported, and they have an API, send us an email at %s and we'll see what we can do about adding it."), '<a href="mailto:suggestions@domainmod.org">suggestions@domainmod.org</a>'); ?></p>
 <?php
+if ($ssl_queue_available) {
+
+    echo '<p>' . sprintf(_("The SSL Queue imports your SSL certificates. Paste a list of hostnames, and %s connects to each site, reads the certificate it serves, and adds it as an SSL certificate, linked to its domain, with its expiry date and issuer."), SOFTWARE_TITLE) . ' '
+        // TRANSLATORS: The two %s wrap the link to the SSL Queue's page in the User Guide and must stay.
+        . sprintf(_('See the %sSSL Queue page%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/ssl-queue/">', '</a>') . '</p>';
+
+} ?>
+<?php
 $result = $pdo->query("
     SELECT `name`
     FROM api_registrars
@@ -87,12 +99,13 @@ $result = $pdo->query("
 <?php // Setting up the cron job, as a slim note (like the warnings on other pages, it isn't a page message, so it isn't announced when the page loads) ?>
 <div class="alert alert-info d-flex align-items-start gap-2 py-2">
     <i class="bi bi-info-circle-fill domainmod-message-icon" aria-hidden="true"></i>
-    <div class="domainmod-message-text"><?php echo sprintf(_('In order to use the Domain Queue you must set up the cron job that comes with %s.'), SOFTWARE_TITLE) . ' ' . sprintf(_('For more information, please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?></div>
+    <div class="domainmod-message-text"><?php echo sprintf(_('In order to use the Import Queue you must set up the cron job that comes with %s.'), SOFTWARE_TITLE) . ' ' . sprintf(_('For more information, please see the %sUser Guide%s.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">', '</a>'); ?></div>
 </div>
-<?php // The main way in as the one red button, and the other as an outline button beside it ?>
+<?php // The main way in as the one red button, and the others as outline buttons beside it ?>
 <div class="d-flex flex-wrap gap-2 mt-3 mb-3"><?php
 echo $layout->linkButton($web_root . '/queue/add/', $queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), 'primary');
-if ($queue_rdap_available) echo $layout->linkButton($web_root . '/queue/add/rdap.php', _('Add Domains Without an API')); ?>
+if ($queue_rdap_available) echo $layout->linkButton($web_root . '/queue/add/rdap.php', _('Add Domains Without an API'));
+if ($ssl_add_allowed) echo $layout->linkButton($web_root . '/queue/add/ssl.php', _('Add SSL Certificates')); ?>
 </div>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

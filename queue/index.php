@@ -555,6 +555,8 @@ if ($queue_rdap_available) {
 // Layout leaves the add buttons out for them, and Clear Completed checks for itself below.
 $layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
 if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
+// SSL imports wait for the database update that adds them
+if ((new DomainMOD\SslQueue())->isAvailable()) $layout->addPageAddMenuItem(_('Add SSL Certificates'), $web_root . '/queue/add/ssl.php', 'bi-lock');
 $_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
 $_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
 // Clearing asks first, then goes straight to the clear with its CSRF token

@@ -384,6 +384,46 @@ class SslQueue
         return $full ? 'full' : 'added';
     }
 
+    /*
+     * The SSL paste page's list: array(hosts, invalid lines). The text is split into lines, blank and whitespace-only
+     * lines are skipped (each other line keeps its own line number, from 1, for the invalid-line messages), every
+     * remaining line is checked with SslLookup::cleanHost(), and only then are duplicate hosts dropped, keeping the first.
+     * The hosts are in their stored form, in the order pasted. A paste with only blank lines gives two empty arrays.
+     */
+    public static function parseHostList($text)
+    {
+        $lookup = new SslLookup();
+        $hosts = array();
+        $invalid = array();
+        $seen = array(); // the hosts so far, as keys, so a long paste isn't searched once per line
+
+        foreach (preg_split('/\r\n|\r|\n/', (string) $text) as $index => $line) {
+
+            // whitespace of any kind, such as a no-break space, makes a blank line too. A line that isn't valid UTF-8
+            // (preg_match() gives false) is invalid, whatever part of it the host is taken from, and so is one with
+            // U+FFFD, which the page shows in place of such bytes (and a browser shows in place of a NUL, which is
+            // refused for the same reason), so resubmitting it unchanged is refused the same way.
+            $blank = preg_match('/^[\s\p{Z}]*$/u', $line);
+            if ($blank === 1) continue;
+
+            $host = ($blank === false || strpos($line, "\u{FFFD}") !== false || strpos($line, "\0") !== false) ? '' : $lookup->cleanHost($line);
+
+            if ($host === '') {
+
+                $invalid[] = $index + 1;
+
+            } elseif (!isset($seen[$host])) {
+
+                $seen[$host] = true;
+                $hosts[] = $host;
+
+            }
+
+        }
+
+        return array($hosts, $invalid);
+    }
+
     // The number of unfinished rows, for the cap message
     public function countUnfinished()
     {

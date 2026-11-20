@@ -340,10 +340,12 @@ if (!$ssl_queue_available) {
         if (DomainMOD\SslQueue::rowState($row) === 'failed' && $row->message !== 'stale_choice') $failed_count++;
     }
 
-    // Both status pages hold every way in, so the type is chosen from one place. The domain ways in follow the RDAP
-    // availability check queue/index.php makes. Layout leaves them out for read-only users.
+    // Both status pages hold every way in, so the type is chosen from one place, with Add SSL Certificates as this page's
+    // main action. The domain ways in follow the RDAP availability check queue/index.php makes. Layout leaves them all
+    // out for read-only users.
     $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
-    $layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
+    $layout->setPageAddAction(_('Add SSL Certificates'), $web_root . '/queue/add/ssl.php');
+    $layout->addPageAddMenuItem($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/', 'bi-diagram-3');
     if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
 
     if ($completed_count > 0) {

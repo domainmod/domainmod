@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Domain Queue Information');
+$page_title = _('Import Queue Information');
 $breadcrumb = _('Information');
 $software_section = "queue";
 $slug = "queue-info";
