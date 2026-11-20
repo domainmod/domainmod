@@ -19,6 +19,7 @@
  *
  */
 ?>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
     <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/dw/dw.php"><?php echo _('DW'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

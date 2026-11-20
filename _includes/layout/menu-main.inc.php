@@ -38,6 +38,14 @@
                 </p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/ssl/" class="nav-link<?php if ($software_section == "ssl") echo " active"; ?>" aria-label="<?php echo _('SSL Certificates'); ?>">
+                <i class="nav-icon bi bi-lock-fill"></i>
+                <p>
+                    <?php echo _('SSL Certificates'); ?>
+                </p>
+            </a>
+        </li>
         <?php
 	    // The Import Queue only shows while any of its queues has rows (see SslQueue::inMenu()). Users reach the add pages
 	    // from the Domains and SSL Certificates lists and the Dashboard.
@@ -52,18 +60,10 @@
         </li>
         <?php } ?>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/ssl/" class="nav-link<?php if ($software_section == "ssl") echo " active"; ?>" aria-label="<?php echo _('SSL Certificates'); ?>">
-                <i class="nav-icon bi bi-lock-fill"></i>
+            <a href="<?php echo $web_root; ?>/bulk/" class="nav-link<?php if ($software_section == "bulk") echo " active"; ?>" aria-label="<?php echo _('Bulk Updater'); ?>">
+                <i class="nav-icon bi bi-files"></i>
                 <p>
-                    <?php echo _('SSL Certificates'); ?>
-                </p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting" && $slug != "reporting-domain-fees" && $slug != "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
-                <i class="nav-icon bi bi-bar-chart-fill"></i>
-                <p>
-                    <?php echo _('Reporting'); ?>
+                    <?php echo _('Bulk Updater'); ?>
                 </p>
             </a>
         </li>
@@ -76,26 +76,18 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/bulk/" class="nav-link<?php if ($software_section == "bulk") echo " active"; ?>" aria-label="<?php echo _('Bulk Updater'); ?>">
-                <i class="nav-icon bi bi-files"></i>
+            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting" && $slug != "reporting-domain-fees" && $slug != "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
+                <i class="nav-icon bi bi-bar-chart-fill"></i>
                 <p>
-                    <?php echo _('Bulk Updater'); ?>
+                    <?php echo _('Reporting'); ?>
                 </p>
             </a>
         </li>
-        <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
-            <li class="nav-item">
-                <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>" aria-label="<?php echo _('Data Warehouse'); ?>">
-                    <i class="nav-icon bi bi-database-fill"></i>
-                    <p>
-                        <?php echo _('Data Warehouse'); ?>
-                    </p>
-                </a>
-            </li>
-        <?php } ?>
-        <?php // The fee reports live in Reporting, but they're listed under Assets, so Assets is open and highlighted on them ?>
-        <li class="nav-item<?php if ($software_section == "assets" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " menu-open"; ?>">
-            <a href="#" class="nav-link<?php if ($software_section == "assets" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
+        <?php // The fee reports live in Reporting and the fee and rate updates in Maintenance, but they're listed under
+        // Assets, so Assets is open and highlighted on those pages. Read-only users can't update fees or rates, so
+        // those items are left out for them. ?>
+        <li class="nav-item<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
                 <i class="nav-icon bi bi-boxes"></i>
                 <p>
                     <?php echo _('Assets') ?>
@@ -144,6 +136,14 @@
                         <p><?php echo _('Domain Fees') ?></p>
                     </a>
                 </li>
+                <?php if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Domain Fees'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update Domain Fees') ?></p>
+                        </a>
+                    </li>
+                <?php } ?>
                 <li class="nav-header"><?php echo _('SSL Certificates') ?></li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/assets/ssl-providers.php" class="nav-link<?php if ($slug == "assets-ssl-providers" || $slug == "assets-add-ssl-provider" || $slug == "assets-edit-ssl-provider" || $slug == "assets-ssl-provider-fees" || $slug == "assets-add-ssl-provider-fee" || $slug == "assets-edit-ssl-provider-fee") echo " active"; ?>">
@@ -181,6 +181,14 @@
                         <p><?php echo _('SSL Fees') ?></p>
                     </a>
                 </li>
+                <?php if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update SSL Fees'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update SSL Fees') ?></p>
+                        </a>
+                    </li>
+                <?php } ?>
                 <li class="nav-header"><?php echo _('Shared') ?></li>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/assets/account-owners.php" class="nav-link<?php if ($slug == "assets-owners" || $slug == "assets-add-owner" || $slug == "assets-edit-owner") echo " active"; ?>" aria-label="<?php echo _('Account Owners'); ?>">
@@ -200,6 +208,14 @@
                         <p><?php echo _('IP Addresses') ?></p>
                     </a>
                 </li>
+                <?php if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Conversion Rates'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update Conversion Rates') ?></p>
+                        </a>
+                    </li>
+                <?php } ?>
             </ul>
         </li>
         <li class="nav-item<?php if ($software_section == "settings") echo " menu-open"; ?>">
@@ -237,42 +253,10 @@
                 </li>
             </ul>
         </li>
-        <?php // Read-only users can't recalculate fees or rates, so the section is left out for them
-        if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
-            <li class="nav-item<?php if ($software_section == "maintenance") echo " menu-open"; ?>">
-                <a href="#" class="nav-link<?php if ($software_section == "maintenance") echo " active"; ?>" aria-label="<?php echo _('Fees & Rates'); ?>">
-                    <i class="nav-icon bi bi-check-lg"></i>
-                    <p>
-                        <?php echo _('Fees & Rates') ?>
-                        <i class="nav-arrow bi bi-chevron-right"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Conversion Rates'); ?>">
-                            <i class="nav-icon bi"></i>
-                            <p><?php echo _('Update Conversion Rates') ?></p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Domain Fees'); ?>">
-                            <i class="nav-icon bi"></i>
-                            <p><?php echo _('Update Domain Fees') ?></p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update SSL Fees'); ?>">
-                            <i class="nav-icon bi"></i>
-                            <p><?php echo _('Update SSL Fees') ?></p>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        <?php } ?>
 
         <?php if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ?>
-            <li class="nav-item<?php if ($software_section == "admin") echo " menu-open"; ?>">
-                <a href="#" class="nav-link<?php if ($software_section == "admin") echo " active"; ?>" aria-label="<?php echo _('Administration'); ?>">
+            <li class="nav-item<?php if ($software_section == "admin" || $software_section == "dw") echo " menu-open"; ?>">
+                <a href="#" class="nav-link<?php if ($software_section == "admin" || $software_section == "dw") echo " active"; ?>" aria-label="<?php echo _('Administration'); ?>">
                     <i class="nav-icon bi bi-wrench"></i>
                     <p>
                         <?php echo _('Administration') ?>
@@ -280,6 +264,12 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/users/" class="nav-link<?php if ($slug == "admin-users-main" || $slug == "admin-users-add" || $slug == 'admin-users-edit') echo " active"; ?>" aria-label="<?php echo _('Users'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Users') ?></p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/settings/" class="nav-link<?php if ($slug == "admin-settings") echo " active"; ?>" aria-label="<?php echo _('System Settings'); ?>">
                             <i class="nav-icon bi"></i>
@@ -290,12 +280,6 @@
                         <a href="<?php echo $web_root; ?>/admin/defaults/" class="nav-link<?php if ($slug == "admin-defaults") echo " active"; ?>" aria-label="<?php echo _('System Defaults'); ?>">
                             <i class="nav-icon bi"></i>
                             <p><?php echo _('System Defaults') ?></p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/admin/users/" class="nav-link<?php if ($slug == "admin-users-main" || $slug == "admin-users-add" || $slug == 'admin-users-edit') echo " active"; ?>" aria-label="<?php echo _('Users'); ?>">
-                            <i class="nav-icon bi"></i>
-                            <p><?php echo _('Users') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -317,6 +301,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/backup/" class="nav-link<?php if ($slug == "admin-backup-main") echo " active"; ?>" aria-label="<?php echo _('Backup & Restore'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Backup & Restore') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/upgrade/" class="nav-link<?php if ($slug == "admin-upgrade-main") echo " active"; ?>" aria-label="<?php echo _('Upgrade'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Upgrade') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/maintenance/" class="nav-link<?php if ($slug == "admin-maintenance-main") echo " active"; ?>" aria-label="<?php echo _('Maintenance'); ?>">
                             <i class="nav-icon bi"></i>
                             <p><?php echo _('Maintenance') ?></p>
@@ -329,15 +325,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/admin/backup/" class="nav-link<?php if ($slug == "admin-backup-main") echo " active"; ?>" aria-label="<?php echo _('Backup & Restore'); ?>">
+                        <a href="<?php echo $web_root; ?>/admin/dw/" class="nav-link<?php if ($software_section == "dw") echo " active"; ?>" aria-label="<?php echo _('Data Warehouse'); ?>">
                             <i class="nav-icon bi"></i>
-                            <p><?php echo _('Backup & Restore') ?></p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo $web_root; ?>/admin/upgrade/" class="nav-link<?php if ($slug == "admin-upgrade-main") echo " active"; ?>" aria-label="<?php echo _('Upgrade'); ?>">
-                            <i class="nav-icon bi"></i>
-                            <p><?php echo _('Upgrade') ?></p>
+                            <p><?php echo _('Data Warehouse') ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -356,6 +346,51 @@
             </li>
         <?php } ?>
         <li class="nav-item">
+            <a href="#" class="nav-link" aria-label="<?php echo _('Help'); ?>">
+                <i class="nav-icon bi bi-question-circle-fill"></i>
+                <p>
+                    <?php echo _('Help') ?>
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/docs/userguide/" class="nav-link" aria-label="<?php echo _('Documentation'); ?>">
+                        <i class="nav-icon bi bi-book-fill"></i>
+                        <p>
+                            <?php echo _('Documentation'); ?>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://domainmod.org/support/" class="nav-link" aria-label="<?php echo _('Support'); ?>">
+                        <i class="nav-icon bi bi-life-preserver"></i>
+                        <p>
+                            <?php echo _('Support'); ?>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://domainmod.org/news/" class="nav-link" aria-label="<?php echo _('News'); ?>">
+                        <i class="nav-icon bi bi-newspaper"></i>
+                        <p>
+                            <?php echo _('News'); ?>
+                        </p>
+                    </a>
+                </li>
+<?php /* ?>
+                <li class="nav-item">
+                    <a href="https://domainmod.org/contribute/" class="nav-link" aria-label="<?php echo _('Contribute'); ?>">
+                        <i class="nav-icon bi bi-hand-thumbs-up-fill"></i>
+                        <p>
+                            <?php echo _('Contribute'); ?>
+                        </p>
+                    </a>
+                </li>
+<?php */ ?>
+            </ul>
+        </li>
+        <li class="nav-item">
             <a href="<?php echo $web_root; ?>/logout.php" class="nav-link" aria-label="<?php echo _('Logout'); ?>">
                 <i class="nav-icon bi bi-box-arrow-right"></i>
                 <p>
@@ -363,41 +398,6 @@
                 </p>
             </a>
         </li>
-        <li class="nav-header"><?php echo _('HELP') ?></li>
-        <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/docs/userguide/" class="nav-link" aria-label="<?php echo _('Documentation'); ?>">
-                <i class="nav-icon bi bi-book-fill"></i>
-                <p>
-                    <?php echo _('Documentation'); ?>
-                </p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="https://domainmod.org/support/" class="nav-link" aria-label="<?php echo _('Support'); ?>">
-                <i class="nav-icon bi bi-life-preserver"></i>
-                <p>
-                    <?php echo _('Support'); ?>
-                </p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="https://domainmod.org/news/" class="nav-link" aria-label="<?php echo _('News'); ?>">
-                <i class="nav-icon bi bi-newspaper"></i>
-                <p>
-                    <?php echo _('News'); ?>
-                </p>
-            </a>
-        </li>
-<?php /* ?>
-        <li class="nav-item">
-            <a href="https://domainmod.org/contribute/" class="nav-link" aria-label="<?php echo _('Contribute'); ?>">
-                <i class="nav-icon bi bi-hand-thumbs-up-fill"></i>
-                <p>
-                    <?php echo _('Contribute'); ?>
-                </p>
-            </a>
-        </li>
-<?php */ ?>
     </ul>
 </nav>
 <!-- /.sidebar-menu -->
