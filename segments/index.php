@@ -142,6 +142,7 @@ if ($export_data === 1) {
         $row_contents[$count++] = _('Number of Domains in Segment');
 
     }
+    $row_contents[$count++] = _('Notes');
     $row_contents[$count++] = _('Creation Type');
     $row_contents[$count++] = _('Created By');
     $row_contents[$count++] = _('Insert Time');
