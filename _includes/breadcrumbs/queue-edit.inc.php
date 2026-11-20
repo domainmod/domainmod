@@ -19,6 +19,6 @@
  *
  */
 ?>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/queue/"><?php echo _('Queue'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/queue/"><?php echo _('Import Queue'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

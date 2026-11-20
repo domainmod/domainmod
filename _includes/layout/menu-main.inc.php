@@ -38,15 +38,18 @@
                 </p>
             </a>
         </li>
-        <?php 
+        <?php
 	    $domains_in_list_queue = $_SESSION['s_domains_in_list_queue'] ?? '';
 	    $domains_in_queue = $_SESSION['s_domains_in_queue'] ?? '';
-	    if ($domains_in_list_queue == '1' || $domains_in_queue == '1') { ?>
+	    $ssl_in_queue = $_SESSION['s_ssl_in_queue'] ?? '';
+	    // Users who can change data always see the Import Queue, where they choose what to import. Read-only users, who
+	    // can't add anything, only see it while either queue has rows.
+	    if (($_SESSION['s_read_only'] ?? '') != '1' || $domains_in_list_queue == '1' || $domains_in_queue == '1' || $ssl_in_queue == '1') { ?>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/queue/" class="nav-link<?php if ($software_section == "queue") echo " active"; ?>" aria-label="<?php echo _('Queue'); ?>">
+            <a href="<?php echo $web_root; ?>/queue/" class="nav-link<?php if ($software_section == "queue") echo " active"; ?>" aria-label="<?php echo _('Import Queue'); ?>">
                 <i class="nav-icon bi bi-hourglass-split"></i>
                 <p>
-                    <?php echo _('Queue'); ?>
+                    <?php echo _('Import Queue'); ?>
                 </p>
             </a>
         </li>

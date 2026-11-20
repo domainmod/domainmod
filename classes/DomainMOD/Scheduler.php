@@ -86,6 +86,21 @@ class Scheduler
     }
 
     /*
+     * Whether a run holds the task's lock now. It only looks at the lock, never takes it, so a page asking (such as the
+     * SSL Queue's processing notice) can't turn away a run starting at the same moment.
+     */
+    public function isTaskLocked($task_id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("SELECT IS_USED_LOCK(:lock_name)");
+        $stmt->bindValue('lock_name', $this->getTaskLockName($task_id), \PDO::PARAM_STR);
+        $stmt->execute();
+        $holder = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $holder !== null && $holder !== false;
+    }
+
+    /*
      * Named locks are shared by every database on the server, so the name includes a short hash of this database's name,
      * and two installations on one server don't block each other (it stays well under MySQL's 64-character limit).
      */

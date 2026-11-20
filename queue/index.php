@@ -524,6 +524,7 @@ if ($really_deld === 1 && $domain_id !== 0) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php require_once DIR_INC . '/layout/import-queue-tabs.inc.php'; ?>
 <?php
 $queue->checkProcessingLists();
 $queue->checkProcessingDomains();

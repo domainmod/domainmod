@@ -394,6 +394,350 @@ class SslQueue
     }
 
     /*
+     * The Import Queue's tab badges: array(the Domain Queue's unfinished lists and domains, the SSL Queue's unfinished
+     * rows). Before the database update, the SSL Queue's count is 0.
+     */
+    public function tabCounts()
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $domains = (int) $pdo->query("
+            SELECT COUNT(*)
+            FROM domain_queue_list
+            WHERE finished = '0'")->fetchColumn();
+
+        $domains += (int) $pdo->query("
+            SELECT COUNT(*)
+            FROM domain_queue
+            WHERE finished = '0'")->fetchColumn();
+
+        return array($domains, $this->isAvailable() ? $this->countUnfinished() : 0);
+    }
+
+    /*
+     * array(completed, total) for the status page's progress line, from rows with the state flags. Finished rows count as
+     * completed, failed ones included, since some rows finish without a lookup.
+     */
+    public static function progressCounts($rows)
+    {
+        $completed = 0;
+        foreach ($rows as $row) {
+            if ((int) $row->finished === 1) $completed++;
+        }
+
+        return array($completed, count($rows));
+    }
+
+    /*
+     * Whether the queue is being processed now: the ssl-queue task is running (its running flag is set and its lock is
+     * held, the same test Scheduler::clearStoppedTasks() makes, so a flag a killed run left behind doesn't count), or a
+     * row was claimed within CLAIM_TIMEOUT (an older claim is one a stopped run left behind).
+     */
+    public function isProcessing()
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $task_ids = $pdo->query("
+            SELECT id
+            FROM scheduler
+            WHERE slug = 'ssl-queue'
+              AND is_running = '1'")->fetchAll(\PDO::FETCH_COLUMN);
+
+        $scheduler = new Scheduler();
+
+        foreach ($task_ids as $task_id) {
+            if ($scheduler->isTaskLocked((int) $task_id)) return true;
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM ssl_queue
+            WHERE processing = '1'
+              AND last_attempt >= :cutoff
+            LIMIT 1");
+        $stmt->bindValue('cutoff', self::claimCutoff(time()), \PDO::PARAM_STR);
+        $stmt->execute();
+        $claimed = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $claimed !== false;
+    }
+
+    // The oldest claim time (Y-m-d H:i:s, UTC) that still counts as a run's, at the Unix time $now
+    public static function claimCutoff($now)
+    {
+        return gmdate('Y-m-d H:i:s', (int) $now - self::CLAIM_TIMEOUT);
+    }
+
+    // Whether a row (with processing and last_attempt) is claimed by a run now, not left behind by a stopped one
+    public static function freshClaim($row, $now)
+    {
+        return (int) $row->processing === 1 && (string) $row->last_attempt >= self::claimCutoff($now);
+    }
+
+    /*
+     * The SSL Queue page's notice while the queue is processing, built like DomainQueue::processingNotice(): with htmx
+     * it asks queue/ssl/processing.php every 5 seconds, and that page reloads the queue page once processing has ended.
+     */
+    public function processingNotice()
+    {
+        ob_start(); ?>
+        <button type="button" id="domainmod-queue-processing" class="btn btn-secondary btn-lg" hx-get="processing.php" hx-trigger="every 5s" hx-swap="outerHTML">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
+        </button><?php
+        return ob_get_clean();
+    }
+
+    /*
+     * Clear Completed: moves the finished rows (failed ones included) to ssl_queue_history, under the SSL Queue's named
+     * lock and in one transaction. The rows are chosen once (locked), and exactly those are copied and deleted, in
+     * batches of 500 ids, so a row a run finishes meanwhile is left for the next clear. Returns the number cleared, or
+     * false on an error (logged, with nothing changed).
+     */
+    public function clearFinished()
+    {
+        $pdo = $this->deeb->cnxx;
+        $columns = '`host`, `domain_id`, `domain_name`, `owner_id`, `provider_id`, `account_id`, `type_id`, `cat_id`, `ip_id`,
+            `wait_for_domain`, `wait_domain`, `wait_since`, `exact_domain`, `expiry_date`, `issuer`, `fingerprint`, `finished`,
+            `already_in_ssl`, `already_in_queue`, `failed`, `message`, `attempts`, `last_attempt`, `new_ssl_id`, `created_by`,
+            `insert_time`';
+
+        try {
+
+            $this->getQueueLock();
+            $pdo->beginTransaction();
+
+            $ids = $pdo->query("
+                SELECT id
+                FROM ssl_queue
+                WHERE finished = '1'
+                ORDER BY id
+                FOR UPDATE")->fetchAll(\PDO::FETCH_COLUMN);
+
+            foreach (array_chunk(array_map('intval', $ids), 500) as $chunk) {
+
+                $placeholders = implode(', ', array_fill(0, count($chunk), '?'));
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO ssl_queue_history
+                    (" . $columns . ")
+                    SELECT " . $columns . "
+                    FROM ssl_queue
+                    WHERE id IN (" . $placeholders . ")
+                    ORDER BY id");
+                $stmt->execute($chunk);
+
+                $stmt = $pdo->prepare("
+                    DELETE FROM ssl_queue
+                    WHERE id IN (" . $placeholders . ")");
+                $stmt->execute($chunk);
+
+            }
+
+            $pdo->commit();
+
+        } catch (\Throwable $e) {
+
+            $this->cleanUp();
+            $this->logError('Unable to clear completed rows from the SSL Queue', '', $e);
+
+            return false;
+
+        }
+
+        $this->cleanUp();
+        $this->checkSslQueueSafely();
+
+        return count($ids);
+    }
+
+    /*
+     * What Retry Failed does with a failed row, given the host's other unfinished rows (each with id, exact_domain, and
+     * processing), checked in this order:
+     * - array('mark'): another unfinished row is an exact-domain row, or the failed row is a pasted one, so it's marked
+     *   "Already in the queue" rather than looked up twice.
+     * - array('mark_upgrade', row id): the failed row is an exact-domain row and another is a pasted row not yet
+     *   claimed, which gets the exact-domain upgrade, and the failed row is marked.
+     * - array('busy'): the failed row is an exact-domain row and the pasted row is being processed now, so it stays
+     *   failed.
+     * - array('reopen'): no other unfinished row, so it's put back to Pending (if the queue has room).
+     */
+    public static function retryAction($failed, $others)
+    {
+        if (!$others) return array('reopen');
+
+        foreach ($others as $other) {
+            if ((int) $other->exact_domain === 1) return array('mark');
+        }
+
+        if ((int) $failed->exact_domain !== 1) return array('mark');
+
+        foreach ($others as $other) {
+            if ((int) $other->processing === 0) return array('mark_upgrade', (int) $other->id);
+        }
+
+        return array('busy');
+    }
+
+    /*
+     * Retry Failed: puts the failed rows (not stale_choice ones, whose message asks for the hostname to be added again)
+     * back to Pending, oldest first, under the SSL Queue's named lock and in one transaction, following retryAction()
+     * and the MAX_WAITING cap (every reopened row takes a slot, and the marks and upgrades take none). Returns
+     * array('reopened' => n, 'marked' => n, 'busy' => n, 'full' => n), or false on an error (logged, with nothing
+     * changed).
+     */
+    public function retryFailed()
+    {
+        $pdo = $this->deeb->cnxx;
+        $result = array('reopened' => 0, 'marked' => 0, 'busy' => 0, 'full' => 0);
+
+        try {
+
+            $this->getQueueLock();
+            $pdo->beginTransaction();
+
+            $slots = self::MAX_WAITING - (int) $pdo->query("
+                SELECT COUNT(*)
+                FROM ssl_queue
+                WHERE finished = '0'")->fetchColumn();
+
+            $failed_rows = $pdo->query("
+                SELECT *
+                FROM ssl_queue
+                WHERE finished = '1'
+                  AND failed = '1'
+                  AND message <> 'stale_choice'
+                ORDER BY id
+                FOR UPDATE")->fetchAll();
+
+            $now = $this->time->stamp();
+
+            foreach ($failed_rows as $row) {
+
+                // a row reopened earlier in this loop is one of the host's unfinished rows by now (a current read)
+                $action = self::retryAction($row, $this->unfinishedRows($row->host));
+
+                if ($action[0] === 'mark_upgrade') {
+
+                    $choices = array('owner_id' => (int) $row->owner_id, 'account_id' => (int) $row->account_id,
+                        'provider_id' => (int) $row->provider_id, 'type_id' => (int) $row->type_id, 'cat_id' => (int) $row->cat_id,
+                        'ip_id' => (int) $row->ip_id);
+                    $wait_domain = ((string) $row->wait_domain !== '') ? (string) $row->wait_domain : (string) $row->host;
+
+                    $action = $this->upgradeRow($action[1], $wait_domain, $choices, $now) ? array('mark') : array('busy');
+
+                }
+
+                if ($action[0] === 'mark') {
+
+                    $this->updateRow((int) $row->id, array('failed' => 0, 'already_in_queue' => 1, 'attempts' => 0, 'message' => ''));
+                    $result['marked']++;
+
+                } elseif ($action[0] === 'busy') {
+
+                    $result['busy']++;
+
+                } elseif ($slots > 0) {
+
+                    $this->updateRow((int) $row->id, self::afterRetry($row));
+                    $slots--;
+                    $result['reopened']++;
+
+                } else {
+
+                    $result['full']++;
+
+                }
+
+            }
+
+            $pdo->commit();
+
+        } catch (\Throwable $e) {
+
+            $this->cleanUp();
+            $this->logError('Unable to retry the failed rows in the SSL Queue', '', $e);
+
+            return false;
+
+        }
+
+        $this->cleanUp();
+
+        return $result;
+    }
+
+    /*
+     * Deletes one row, under the SSL Queue's named lock, unless it's claimed by a run (which may be in the middle of
+     * changing it). Returns 'deleted', 'claimed', 'gone' (no such row), or 'failed' (an error, logged).
+     */
+    public function deleteRow($id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        try {
+
+            $this->getQueueLock();
+            $pdo->beginTransaction();
+
+            $row = $this->lockRow('ssl_queue', 'id', (int) $id, 'processing');
+            $outcome = !$row ? 'gone' : (((int) $row->processing === 1) ? 'claimed' : 'deleted');
+
+            if ($outcome === 'deleted') {
+
+                $stmt = $pdo->prepare("
+                    DELETE FROM ssl_queue
+                    WHERE id = :id");
+                $stmt->bindValue('id', (int) $id, \PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
+            $pdo->commit();
+
+        } catch (\Throwable $e) {
+
+            $this->cleanUp();
+            $this->logError('Unable to delete a row from the SSL Queue', (string) $id, $e);
+
+            return 'failed';
+
+        }
+
+        $this->cleanUp();
+        if ($outcome === 'deleted') $this->checkSslQueueSafely();
+
+        return $outcome;
+    }
+
+    /*
+     * A text cell for the CSV export, in this order: decoded from its stored escaped form, stripped of the direction marks
+     * Export::writeRow() removes, then protected from running as a spreadsheet formula, so nothing writeRow() strips
+     * afterwards can uncover one.
+     */
+    public function exportText($value)
+    {
+        $value = (new Unsanitize())->text((string) $value);
+        $value = str_replace(array("\u{2066}", "\u{2069}"), '', $value);
+
+        return (new Export())->protectFormula($value);
+    }
+
+    // checkSslQueue() after a change that has already been committed, so a failure here doesn't make the change fail
+    protected function checkSslQueueSafely()
+    {
+        try {
+
+            $this->checkSslQueue();
+
+        } catch (\Throwable $e) {
+
+            $this->logError('Unable to check whether the SSL Queue has rows', '', $e);
+
+        }
+    }
+
+    /*
      * The row's choices as stored: a chosen account is read (and locked) for its owner and provider, and the provider is
      * 0 when matching by issuer. Null when the chosen account no longer exists.
      */

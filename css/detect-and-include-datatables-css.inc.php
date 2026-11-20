@@ -31,6 +31,7 @@ switch ($slug ?? '') {
     case 'reporting-ssl-costs':
     case 'reporting-ssl-fees':
     case 'queue-main':
+    case 'queue-ssl':
     case 'segments-main':
     case 'ssl-main':
         $include_datatable_css = 1;
