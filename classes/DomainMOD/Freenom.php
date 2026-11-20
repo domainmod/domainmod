@@ -38,9 +38,9 @@ class Freenom
         $domain = Domain::forApi($domain);
         $base_url = 'https://api.freenom.com/v2/';
         if ($command == 'domainlist') {
-            return $base_url . 'domain/list?results_per_page=10000&email=' . $account_username . '&password=' . $account_password;
+            return $base_url . 'domain/list?results_per_page=10000&email=' . rawurlencode($account_username) . '&password=' . rawurlencode($account_password);
         } elseif ($command == 'info') {
-            return $base_url . 'domain/getinfo?domainname=' . $domain . '&email=' . $account_username . '&password=' . $account_password;
+            return $base_url . 'domain/getinfo?domainname=' . $domain . '&email=' . rawurlencode($account_username) . '&password=' . rawurlencode($account_password);
         } else {
             return _('Unable to build API URL');
         }

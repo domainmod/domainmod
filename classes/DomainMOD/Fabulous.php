@@ -38,9 +38,9 @@ class Fabulous
         $domain = Domain::forApi($domain);
         $base_url = 'https://api.fabulous.com/';
         if ($command == 'domainlist') {
-            return $base_url . 'listDomains?username=' . $account_username . '&password=' . $account_password;
+            return $base_url . 'listDomains?username=' . rawurlencode($account_username) . '&password=' . rawurlencode($account_password);
         } elseif ($command == 'info') {
-            return $base_url . 'domainInfo?username=' . $account_username . '&password=' . $account_password . '&domain=' . $domain;
+            return $base_url . 'domainInfo?username=' . rawurlencode($account_username) . '&password=' . rawurlencode($account_password) . '&domain=' . $domain;
         } else {
             return _('Unable to build API URL');
         }

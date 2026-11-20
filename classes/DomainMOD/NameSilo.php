@@ -38,9 +38,9 @@ class NameSilo
         $domain = Domain::forApi($domain);
         $base_url = 'https://www.namesilo.com/api/';
         if ($command == 'domainlist') {
-            return $base_url . 'listDomains?version=1&type=xml&key=' . $api_key;
+            return $base_url . 'listDomains?version=1&type=xml&key=' . rawurlencode($api_key);
         } elseif ($command == 'info') {
-            return $base_url . 'getDomainInfo?version=1&type=xml&key=' . $api_key . '&domain=' . $domain;
+            return $base_url . 'getDomainInfo?version=1&type=xml&key=' . rawurlencode($api_key) . '&domain=' . $domain;
         } else {
             return _('Unable to build API URL');
         }

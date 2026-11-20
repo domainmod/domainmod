@@ -36,7 +36,7 @@ class DreamHost
 
     public function getApiUrl($api_key, $command)
     {
-        $base_url = 'https://api.dreamhost.com/?key=' . $api_key;
+        $base_url = 'https://api.dreamhost.com/?key=' . rawurlencode($api_key);
         if ($command == 'domainlist') {
             return $base_url . '&cmd=domain-list_registrations&format=json';
         } else {

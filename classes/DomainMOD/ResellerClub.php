@@ -36,7 +36,7 @@ class ResellerClub
     {
         // registrar APIs take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
         $domain = Domain::forApi($domain);
-        $base_url = 'https://httpapi.com/api/domains/details-by-name.json?auth-userid=' . $reseller_id . '&api-key=' . $api_key . '&domain-name=' . $domain;
+        $base_url = 'https://httpapi.com/api/domains/details-by-name.json?auth-userid=' . rawurlencode($reseller_id) . '&api-key=' . rawurlencode($api_key) . '&domain-name=' . $domain;
         if ($command == 'info') {
             return $base_url . '&options=OrderDetails';
         } elseif ($command == 'dns') {

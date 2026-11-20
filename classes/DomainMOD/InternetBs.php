@@ -38,9 +38,9 @@ class InternetBs
         $domain = Domain::forApi($domain);
         $base_url = 'https://api.internet.bs/';
         if ($command == 'domainlist') {
-            return $base_url . 'domain/List?apiKey=' . $api_key . '&password=' . $api_secret . '&ResponseFormat=JSON';
+            return $base_url . 'domain/List?apiKey=' . rawurlencode($api_key) . '&password=' . rawurlencode($api_secret) . '&ResponseFormat=JSON';
         } elseif ($command == 'info') {
-            return $base_url . 'domain/Info?apiKey=' . $api_key . '&password=' . $api_secret . '&ResponseFormat=JSON&Domain=' . $domain;
+            return $base_url . 'domain/Info?apiKey=' . rawurlencode($api_key) . '&password=' . rawurlencode($api_secret) . '&ResponseFormat=JSON&Domain=' . $domain;
         } else {
             return _('Unable to build API URL');
         }

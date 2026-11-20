@@ -36,7 +36,7 @@ class AboveCom
 
     public function getApiUrl($api_key, $command)
     {
-        $base_url = 'https://www.above.com/registrar/api/query.html?key=' . $api_key;
+        $base_url = 'https://www.above.com/registrar/api/query.html?key=' . rawurlencode($api_key);
         if ($command == 'domainlist') {
             return $base_url . '&query=my_domains&limit=1000';
         } else {

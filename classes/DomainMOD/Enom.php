@@ -43,13 +43,13 @@ class Enom
 
         $base_url = 'https://reseller.enom.com/interface.asp?command=';
         if ($command == 'domainlist') {
-            return $base_url . 'AdvancedDomainSearch&uid=' . $account_username . '&pw=' . $account_password . '&ResponseType=XML';
+            return $base_url . 'AdvancedDomainSearch&uid=' . rawurlencode($account_username) . '&pw=' . rawurlencode($account_password) . '&ResponseType=XML';
         } elseif ($command == 'info') {
-            return $base_url . 'GetDomainInfo&uid=' . $account_username . '&pw=' . $account_password . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
+            return $base_url . 'GetDomainInfo&uid=' . rawurlencode($account_username) . '&pw=' . rawurlencode($account_password) . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
         } elseif ($command == 'privacy') {
-            return $base_url . 'GetWPPSInfo&uid=' . $account_username . '&pw=' . $account_password . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
+            return $base_url . 'GetWPPSInfo&uid=' . rawurlencode($account_username) . '&pw=' . rawurlencode($account_password) . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
         } elseif ($command == 'autorenewal') {
-            return $base_url . 'GetRenew&uid=' . $account_username . '&pw=' . $account_password . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
+            return $base_url . 'GetRenew&uid=' . rawurlencode($account_username) . '&pw=' . rawurlencode($account_password) . '&sld=' . $domain_part . '&tld=' . $tld . '&ResponseType=XML';
         } else {
             return _('Unable to build API URL');
         }
