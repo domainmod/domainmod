@@ -28,6 +28,7 @@ require_once DIR_ROOT . '/vendor/autoload.php';
 
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
+$log = new DomainMOD\Log('/assets/edit/ssl-type.php');
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
@@ -123,16 +124,42 @@ if ($del === 1) {
 
     } else {
 
-        $stmt = $pdo->prepare("
-            DELETE FROM ssl_cert_types
-            WHERE id = :ssltid");
-        $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
 
-        $_SESSION['s_message_success'] .= sprintf(_('SSL Type %s deleted'), $new_type) . '<BR>';
+            $pdo->beginTransaction();
 
-        header("Location: ../ssl-types.php");
-        exit;
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_fees
+                WHERE type_id = :ssltid");
+            $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $pdo->prepare("
+                DELETE FROM ssl_cert_types
+                WHERE id = :ssltid");
+            $stmt->bindValue('ssltid', $ssltid, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if ($pdo->InTransaction()) $pdo->commit();
+
+            $_SESSION['s_message_success'] .= sprintf(_('SSL Type %s deleted'), $new_type) . '<BR>';
+
+            header("Location: ../ssl-types.php");
+            exit;
+
+        } catch (Exception $e) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+
+            $log_message = 'Unable to delete SSL type';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
 
     }
 
@@ -154,7 +181,7 @@ echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->dangerZone(_('SSL Type'), $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1', _('Delete this SSL type'), sprintf(_('This removes %s. It can only be deleted when no SSL certificates use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_type, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
+$layout->dangerZone(_('SSL Type'), $new_type, 'ssl-type.php?ssltid=' . $ssltid . '&del=1', _('Delete this SSL type'), sprintf(_('This removes %s and its fees. It can only be deleted when no SSL certificates use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_type, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
