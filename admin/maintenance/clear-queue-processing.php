@@ -39,7 +39,17 @@ $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-$_SESSION['s_message_success'] .= $queue->clearProcessing() . '<BR>';
+$cleared = $queue->clearProcessing();
+
+if ($cleared === false) {
+
+    $_SESSION['s_message_danger'] .= _('The Domain Queue is being processed right now. Please try again once it finishes.') . '<BR>';
+
+} else {
+
+    $_SESSION['s_message_success'] .= $cleared . '<BR>';
+
+}
 
 $queue->checkListQueue();
 $queue->checkDomainQueue();

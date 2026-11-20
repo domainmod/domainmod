@@ -29,6 +29,7 @@ class DomainQueue
     public $log;
     public $maint;
     public $queryB;
+    public $schedule;
     public $system;
     public $time;
 
@@ -51,12 +52,16 @@ class DomainQueue
         $this->log = new Log('class.domainqueue');
         $this->maint = new Maintenance();
         $this->queryB = new QueryBuild();
+        $this->schedule = new Scheduler();
         $this->system = new System();
         $this->time = new Time();
     }
 
     public function processQueueList()
     {
+        // lists still flagged by a run that was killed are waiting again (see releaseListProcessing())
+        $this->releaseListProcessing();
+
         // process domain lists in the queue
         $result = $this->getQueueList();
 
@@ -303,6 +308,9 @@ class DomainQueue
 
     public function processQueueDomain()
     {
+        // domains still flagged by a run that was killed are waiting again (see releaseDomainProcessing())
+        $this->releaseDomainProcessing();
+
         // process domains in the queue
         $result = $this->getQueueDomain();
 
@@ -320,60 +328,7 @@ class DomainQueue
 
             foreach ($result as $row) {
 
-                $registrar_info = $this->fetchRegistrarInfo($row->api_registrar_name, $row->account_id, $row->domain);
-
-                if ($registrar_info === false) {
-
-                    return _('Invalid Domain Registrar');
-
-                }
-
-                list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar_info;
-
-                // make sure the domain details were successfully retrieved
-                if ($expiration_date != '' && $expiration_date != '0000-00-00' && $expiration_date != '1970-01-01'
-                    && $dns_servers != '' && $privacy_status != '' && $autorenew_status != '') {
-
-                    $created_by = $row->created_by;
-                    list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
-                        = $this->updateDomain($row->id, $row->domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by);
-
-                    // only process the domain if $ready_to_import = 1 (ie. all the information is valid)
-                    if ($ready_to_import == '1') {
-
-                        // the domain may have reached the main domain table since it was queued (added by hand, or
-                        // a queued punycode name that's the same domain as one already there), so check again
-                        $existing_domain_id = $this->getDomainIdByName($row->domain);
-
-                        if ($existing_domain_id) {
-
-                            $this->markAlreadyInDomains($row->id, $existing_domain_id);
-
-                        } else {
-
-                            $new_domain_id = $this->importToMainDb($row->id);
-
-                            // updates queue with the new domain id
-                            $this->updateNewDomainId($row->id, $new_domain_id);
-
-                            // markFinishedDomain confirms that the domain was added to the main domain database before marketing it as finished
-                            $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
-
-                        }
-
-                    }
-
-                } else {
-
-                    if ($domain_status == Format::toLower(_('Invalid'))) {
-
-                        $this->markInvalidDomain($row->id);
-
-                    }
-
-                    $this->markNotProcessingDomain($row->id);
-
-                }
+                $this->processQueueDomainRow($row);
 
             }
 
@@ -388,6 +343,118 @@ class DomainQueue
         $this->copyToHistoryDomain();
 
         return _('Domain Queue Processed') . '<BR>';
+    }
+
+    /*
+     * Gets one queued domain's details from its registrar and imports it. Marking it ready and importing it happen in
+     * one transaction, as for RDAP domains, so a failure (or a run that dies) part-way leaves the domain waiting to be
+     * looked up again, never ready but not imported, or imported without its custom field row. A domain whose registrar
+     * has no API class here, or one that fails, is put back to be retried on the next run, and the other domains are
+     * still processed.
+     */
+    private function processQueueDomainRow($row)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        try {
+
+            $registrar_info = $this->fetchRegistrarInfo($row->api_registrar_name, $row->account_id, $row->domain);
+
+            if ($registrar_info === false) {
+
+                $log_message = 'Invalid Domain Registrar for a domain in the Domain Queue';
+                $log_extra = array('Queue Domain ID' => $row->id, 'Registrar' => $row->api_registrar_name);
+                $this->log->error($log_message, $log_extra);
+                $this->markNotProcessingDomain($row->id);
+                return;
+
+            }
+
+            list($domain_status, $expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar_info;
+
+            // make sure the domain details were successfully retrieved
+            if ($expiration_date != '' && $expiration_date != '0000-00-00' && $expiration_date != '1970-01-01'
+                && $dns_servers != '' && $privacy_status != '' && $autorenew_status != '') {
+
+                $pdo->beginTransaction();
+
+                $created_by = $row->created_by;
+                list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
+                    = $this->updateDomain($row->id, $row->domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by);
+
+                // only process the domain if $ready_to_import = 1 (ie. all the information is valid)
+                if ($ready_to_import == '1') {
+
+                    // the domain may have reached the main domain table since it was queued (added by hand, or
+                    // a queued punycode name that's the same domain as one already there), so check again
+                    $existing_domain_id = $this->getDomainIdByName($row->domain);
+
+                    if ($existing_domain_id) {
+
+                        $this->markAlreadyInDomains($row->id, $existing_domain_id);
+
+                    } else {
+
+                        $new_domain_id = $this->importToMainDb($row->id);
+
+                        // importToMainDb() returns a message instead of an id when it can't import the row
+                        if (!ctype_digit((string) $new_domain_id)) {
+
+                            throw new \RuntimeException('The domain could not be imported');
+
+                        }
+
+                        // updates queue with the new domain id
+                        $this->updateNewDomainId($row->id, $new_domain_id);
+
+                        // markFinishedDomain confirms that the domain was added to the main domain database before marking it as finished
+                        $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+
+                    }
+
+                    $pdo->commit();
+
+                } else {
+
+                    // the details found so far are kept, and the domain is looked up again on the next run
+                    $pdo->commit();
+                    $this->markNotProcessingDomain($row->id);
+
+                }
+
+            } else {
+
+                if ($domain_status == Format::toLower(_('Invalid'))) {
+
+                    $this->markInvalidDomain($row->id);
+
+                }
+
+                $this->markNotProcessingDomain($row->id);
+
+            }
+
+        } catch (\Throwable $e) {
+
+            // as for a list (see processQueueListRow()), recovery must never stop the other domains
+            try {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+            } catch (\Throwable $rollback_error) {
+            }
+
+            try {
+                $log_message = 'Unable to process a domain in the Domain Queue';
+                $log_extra = array('Queue Domain ID' => $row->id, 'Domain' => $row->domain, 'Error' => $e->getMessage());
+                $this->log->error($log_message, $log_extra);
+            } catch (\Throwable $log_error) {
+            }
+
+            try {
+                $this->markNotProcessingDomain($row->id);
+            } catch (\Throwable $reset_error) {
+            }
+
+        }
     }
 
     /*
@@ -1128,9 +1195,10 @@ class DomainQueue
     {
         $pdo = $this->deeb->cnxx;
 
+        // the IP lookup goes first, so its network work happens before the caller's transaction locks anything
+        $ip_id = $this->updateIp($queue_domain_id, $domain, $created_by);
         $this->updateExpirationDate($queue_domain_id, $expiration_date);
         $dns_id = $this->updateDnsServers($queue_domain_id, $dns_servers, $created_by);
-        $ip_id = $this->updateIp($queue_domain_id, $domain, $created_by);
         $cat_id = $this->updateCategory($queue_domain_id, $created_by);
         $hosting_id = $this->updateHosting($queue_domain_id, $created_by);
         $this->updatePrivacy($queue_domain_id, $privacy_status);
@@ -2120,21 +2188,69 @@ class DomainQueue
         $this->checkDomainQueue();
     }
 
+    /*
+     * Maintenance's Clear Queue Processing. It takes the Domain Queue Processing task's lock first, as Run Now does, so it
+     * can't clear the flags of a run that's still going, and returns false without clearing anything while a run holds
+     * the lock.
+     */
     public function clearProcessing()
     {
-        $pdo = $this->deeb->cnxx;
+        $task_id = $this->getTaskId();
 
-        $pdo->query("
+        if ($task_id && !$this->schedule->getTaskLock($task_id)) return false;
+
+        try {
+
+            $this->releaseListProcessing();
+            $this->releaseDomainProcessing();
+
+        } finally {
+
+            if ($task_id) $this->schedule->releaseTaskLock($task_id);
+
+        }
+
+        return _('Queue Processing Cleared') . '<BR>';
+    }
+
+    // The ID of the Domain Queue Processing task, or 0 if there isn't one (then nothing runs the queue)
+    public function getTaskId()
+    {
+        return (int) $this->deeb->cnxx->query("
+            SELECT id
+            FROM scheduler
+            WHERE slug = 'domain-queue'
+            LIMIT 1")->fetchColumn();
+    }
+
+    /*
+     * Clears every list's processing flag. Only a queue run flags lists, and it only runs while it holds the Domain Queue
+     * Processing task's lock (cron.php and the Task Scheduler's Run Now, and Clear Queue Processing takes it too), so
+     * when a run starts, any list still flagged was left by a run that was killed part-way (a time limit or a crash),
+     * and it would otherwise never be processed again.
+     */
+    public function releaseListProcessing()
+    {
+        $this->deeb->cnxx->query("
             UPDATE domain_queue_list
             SET processing = '0'
             WHERE processing = '1'");
+    }
 
-        $pdo->query("
+    /*
+     * Clears every domain's processing flag, for the same reason (see releaseListProcessing()). An unfinished domain whose
+     * processing flag is cleared also loses its ready_to_import mark. A run marks a domain ready only in the transaction
+     * that imports it, so an unfinished domain marked ready was left by an older version's run that was killed between
+     * the two, or its import couldn't be confirmed. It's looked up again, and a domain that did reach the main domain
+     * table is then marked as already there.
+     */
+    public function releaseDomainProcessing()
+    {
+        $this->deeb->cnxx->query("
             UPDATE domain_queue
-            SET processing = '0'
+            SET ready_to_import = IF(finished = '0', '0', ready_to_import),
+                processing = '0'
             WHERE processing = '1'");
-
-        return _('Queue Processing Cleared') . '<BR>';
     }
 
     public function clearQueues()
