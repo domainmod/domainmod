@@ -43,6 +43,7 @@ class SchedulerTaskTextTest extends TestCase
     {
         return array(
             'domain-queue' => array('domain-queue', 'Domain Queue Processing', 'Retrieves information for the domains in the Domain Queue and adds them to DomainMOD.'),
+            'ssl-queue' => array('ssl-queue', 'SSL Queue Processing', 'Reads the certificates of the sites in the SSL Queue and adds them to DomainMOD.'),
             'expiration-email' => array('expiration-email', 'Send Expiration Email', "Emails everyone who's subscribed about upcoming domain and SSL certificate expirations. Users can subscribe in their User Profile, and administrators can set the From address and the number of days the email covers in System Settings."),
             'update-conversion-rates' => array('update-conversion-rates', 'Update Conversion Rates', "Retrieves the current currency conversion rates and updates every user's costs, which keeps the financial information in DomainMOD accurate. Users can set their currency in their User Profile."),
             'cleanup' => array('cleanup', 'System Cleanup', 'Converts domains to lowercase, checks that every TLD is correct, and records the status of each domain in your segments, which keeps segment filtering up to date. It also checks the domain, SSL certificate, and fee data against each other, and deletes unused fees.'),

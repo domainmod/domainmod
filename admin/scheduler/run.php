@@ -180,6 +180,21 @@ if (DEMO_INSTALLATION == false) {
 
                 $_SESSION['s_message_success'] .= _('Domain Queue Processed') . '<BR>';
 
+            } elseif ($result->slug == 'ssl-queue') {
+
+                $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                $ssl_queue = new DomainMOD\SslQueue();
+                $schedule->isRunning($id);
+                $ssl_queue->process();
+                $schedule->finishTask($id, $started);
+
+                $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message);
+
+                $_SESSION['s_message_success'] .= _('SSL Queue Processed') . '<BR>';
+
             }
 
         } finally {

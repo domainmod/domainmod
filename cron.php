@@ -69,7 +69,8 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
         SELECT id, `name`, slug, expression, active
         FROM scheduler
         WHERE active = '1'
-          AND next_run <= :next_run");
+          AND next_run <= :next_run
+        ORDER BY sort_order, id");
     $bind_timestamp = $time->stamp();
     $stmt->bindValue('next_run', $bind_timestamp, PDO::PARAM_STR);
     $stmt->execute();
@@ -190,6 +191,19 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
                     $schedule->finishTask($row->id, $started);
 
                     $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
+                    $log->notice($log_message);
+
+                } elseif ($row->slug == 'ssl-queue') {
+
+                    $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('Start')));
+                    $log->notice($log_message, $log_extra);
+
+                    $ssl_queue = new DomainMOD\SslQueue();
+                    $schedule->isRunning($row->id);
+                    $ssl_queue->process();
+                    $schedule->finishTask($row->id, $started);
+
+                    $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('End')));
                     $log->notice($log_message);
 
                 } else {
