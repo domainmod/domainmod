@@ -44,6 +44,14 @@ abstract class ListQuery
     // The columns every order ends with, so pages stay stable when values tie (each list sets its own)
     const TIE_BREAK = array();
 
+    /*
+     * Export and the Raw List's order, each list's own: the expiry date, the name, and the id, all on the list's first
+     * table and all sorted ascending. The list's EXPORT_ORDER_SQL and the keyset (see keysetSql()) are both built from
+     * it, so they can't drift apart.
+     */
+    const EXPORT_ORDER = array();
+    const EXPORT_ORDER_SQL = '';
+
     // The database version whose update adds the index on each list's custom field data (see fixedJoinOrder())
     const JOIN_ORDER_DB_VERSION = '4.26.0';
 
@@ -62,6 +70,21 @@ abstract class ListQuery
 
     // Whether each list joins in the written order, by list class and connection, worked out once per request
     protected static $fixed_join_order = array();
+
+    /*
+     * Export and the Raw List read their rows in chunks (see exportChunks()): this many keys at a time when the expiry
+     * date index can serve the export order, and more without it, where each chunk sorts what's left of the list
+     */
+    const EXPORT_KEYS = 1000;
+    const EXPORT_KEYS_UNINDEXED = 5000;
+
+    // The most bytes of full rows read at once, and the allowance for each row's columns other than its notes and
+    // custom fields
+    const EXPORT_GROUP_BYTES = 8388608;
+    const EXPORT_ROW_BYTES = 4096;
+
+    // Whether each list's first table has the expiry date index, by list class and connection, worked out once per request
+    protected static $export_index = array();
 
     protected $pdo;
     protected $user_id;
@@ -167,8 +190,7 @@ abstract class ListQuery
         $field_data_index = false;
         foreach ($rows as $row) {
             $row = array_change_key_case($row, CASE_LOWER);
-            if (strtoupper((string) ($row['ignored'] ?? 'NO')) === 'YES') continue;
-            if (strtoupper((string) ($row['is_visible'] ?? 'YES')) === 'NO') continue;
+            if (!self::indexUsable($row)) continue;
             $table = strtolower($row['table_name']);
             $indexes[$table . '.' . strtolower($row['index_name'])] = true;
             if ($table === static::FIELD_DATA_TABLE && strtolower($row['column_name']) === static::FIELD_DATA_ID) {
@@ -184,6 +206,14 @@ abstract class ListQuery
         return true;
     }
 
+    // Whether an index (a row from INFORMATION_SCHEMA.STATISTICS, with lowercase keys) can be used: not ignored on
+    // MariaDB, and not invisible on MySQL
+    protected static function indexUsable(array $row)
+    {
+        return strtoupper((string) ($row['ignored'] ?? 'NO')) !== 'YES'
+            && strtoupper((string) ($row['is_visible'] ?? 'YES')) !== 'NO';
+    }
+
     // The tables in the fixed join order (JOIN_ORDER), joined with STRAIGHT_JOIN, for the list's fromSql()
     protected function joinOrderTables()
     {
@@ -192,6 +222,256 @@ abstract class ListQuery
             $tables[] = $table[0] . ' AS ' . $table[1] . ($table[2] !== '' ? ' FORCE INDEX (' . $table[2] . ')' : '');
         }
         return implode(' STRAIGHT_JOIN ', $tables);
+    }
+
+    /*
+     * The read-only snapshot every query of an export runs in (its counts, its header, and each chunk), so a row that's
+     * renewed, added, or deleted part way through can't be skipped, repeated, or counted in the header but missing from
+     * the rows. The isolation level is set first, as a server can default to READ COMMITTED, where the snapshot wouldn't
+     * hold. Nothing can write inside it, not even a log entry. The page that starts it ends it with endSnapshot().
+     */
+    public function beginSnapshot()
+    {
+        $this->pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+        $this->pdo->exec("START TRANSACTION WITH CONSISTENT SNAPSHOT, READ ONLY");
+    }
+
+    // Ends the snapshot beginSnapshot() started, with COMMIT or, after an error, ROLLBACK
+    public function endSnapshot($commit)
+    {
+        $this->pdo->exec($commit ? "COMMIT" : "ROLLBACK");
+    }
+
+    /*
+     * The list's rows in the export order (EXPORT_ORDER), a group at a time, as a generator of groups, each itself a
+     * generator of rows (see fetchEach()), for Export. Each group's rows must be read before the next group. Each chunk is
+     * read in two steps, so the memory it takes stays near a fixed size however long the list is. A narrow query reads
+     * the next keys (see exportKeyBatches()), each with an estimate of its row's size in bytes. Then the full rows for
+     * those keys are read in groups whose estimated sizes add up to at most EXPORT_GROUP_BYTES (see byteGroups()), by
+     * the asset's id and its custom field data row's id, with the list's filters. The estimate counts the notes and
+     * custom fields, plus EXPORT_ROW_BYTES for the rest, so a group can take somewhat more or less than that in PHP. A
+     * single row estimated at more than EXPORT_GROUP_BYTES is a group on its own, which is no worse than the list
+     * showing it. $filter_sql is the list's filters (and the table search's conditions), and $params their bound
+     * values. It never starts or ends a transaction: the page runs it inside beginSnapshot() and endSnapshot().
+     */
+    public function exportChunks($filter_sql, array $params, $keys_per_chunk = null)
+    {
+        $id_column = static::EXPORT_ORDER[2];
+        $field_id_column = static::JOIN_ORDER[1][1] . '.id';
+
+        foreach ($this->exportKeyBatches($this->fromSql() . $filter_sql, $params, $keys_per_chunk) as $keys) {
+
+            foreach (self::byteGroups($keys) as $group) {
+
+                $ids = array_values(array_unique(array_column($group, 'ks_id')));
+                $field_ids = array_column($group, 'ks_field_id');
+                $group_params = array();
+                foreach ($ids as $n => $id) {
+                    $group_params['ks_id' . $n] = $id;
+                }
+                foreach ($field_ids as $n => $field_id) {
+                    $group_params['ks_fd' . $n] = $field_id;
+                }
+
+                $stmt = $this->pdo->prepare($this->selectSql() . $this->fromSql() . $filter_sql
+                    . " AND " . $id_column . " IN (:ks_id" . implode(', :ks_id', array_keys($ids)) . ")"
+                    . " AND " . $field_id_column . " IN (:ks_fd" . implode(', :ks_fd', array_keys($field_ids)) . ")"
+                    . static::EXPORT_ORDER_SQL);
+                $stmt->execute($params + $group_params);
+
+                yield $this->fetchEach($stmt);
+
+            }
+
+        }
+    }
+
+    // A statement's rows one at a time, as a generator, so only the database driver's copy of a group is held in full
+    protected function fetchEach(\PDOStatement $stmt)
+    {
+        while (($row = $stmt->fetch()) !== false) {
+            yield $row;
+        }
+        $stmt->closeCursor();
+    }
+
+    /*
+     * The keys of the list's rows in the export order, a batch at a time, as a generator: each row's three export order
+     * values (ks_expiry, ks_name, and ks_id), its custom field data row's id (ks_field_id), and its size in bytes
+     * (ks_bytes, or 0 when $sizes is false, as the Raw List needs no sizes). $from_sql is the list's fromSql() and
+     * filters (the Raw List's saved query, or exportChunks()'s), and $params their bound values. Each batch starts after
+     * the last asset of the one before (see keysetSql()).
+     *
+     * A damaged database can have two custom field data rows for one asset, which share its keys, so a batch could end
+     * between them and the next would skip the rest. So when a batch comes back full, the rows of its last asset are put
+     * back unread, and the next batch starts after the asset before it. Only a batch with fewer rows than the limit is
+     * the last one. A full batch that holds only one asset (as many data rows as the limit, or more) is read on its own,
+     * by the data rows' ids (see exportAssetBatches()), in as many batches as that takes. So an asset's rows are only
+     * ever split between batches of its own, and every row is read once.
+     */
+    public function exportKeyBatches($from_sql, array $params, $keys_per_chunk = null, $sizes = true)
+    {
+        $limit = max(1, (int) ($keys_per_chunk ?? $this->exportKeysPerChunk()));
+        $last = null;
+
+        while (true) {
+
+            $keyset = static::keysetSql($last);
+            $keys = $this->exportKeys($from_sql . $keyset['sql'], $params + $keyset['params'],
+                static::EXPORT_ORDER_SQL, $limit, $sizes);
+            $full = count($keys) === $limit;
+
+            if ($full) {
+
+                $last_key = end($keys);
+                while ($keys && end($keys)['ks_id'] == $last_key['ks_id']) {
+                    array_pop($keys);
+                }
+
+                if (!$keys) {
+
+                    yield from $this->exportAssetBatches($from_sql, $params, $last_key['ks_id'], $limit, $sizes);
+                    $last = array($last_key['ks_expiry'], $last_key['ks_name'], $last_key['ks_id']);
+                    continue;
+
+                }
+
+            }
+
+            yield $keys;
+
+            if (!$full) return;
+
+            $last_key = end($keys);
+            $last = array($last_key['ks_expiry'], $last_key['ks_name'], $last_key['ks_id']);
+
+        }
+    }
+
+    // One asset's keys, a batch at a time, ordered by its custom field data rows' ids, for an asset with at least as many
+    // data rows as a batch holds (see exportKeyBatches())
+    protected function exportAssetBatches($from_sql, array $params, $asset_id, $limit, $sizes)
+    {
+        $field_id_column = static::JOIN_ORDER[1][1] . '.id';
+        $after = null;
+
+        do {
+
+            $condition = " AND " . static::EXPORT_ORDER[2] . " = :ks_asset";
+            $condition_params = array('ks_asset' => $asset_id);
+            if ($after !== null) {
+                $condition .= " AND " . $field_id_column . " > :ks_after";
+                $condition_params['ks_after'] = $after;
+            }
+
+            $keys = $this->exportKeys($from_sql . $condition, $params + $condition_params,
+                " ORDER BY " . $field_id_column . " ASC", $limit, $sizes);
+            if ($keys) yield $keys;
+            $after = $keys ? end($keys)['ks_field_id'] : null;
+
+        } while (count($keys) === $limit);
+    }
+
+    // One batch of keys (see exportKeyBatches()), as arrays, with each row's size, or 0 when $sizes is false
+    protected function exportKeys($from_sql, array $params, $order_sql, $limit, $sizes)
+    {
+        list($expiry, $name, $id) = static::EXPORT_ORDER;
+        $stmt = $this->pdo->prepare("SELECT " . $expiry . " AS ks_expiry, " . $name . " AS ks_name, " . $id . " AS ks_id, "
+            . static::JOIN_ORDER[1][1] . ".id AS ks_field_id, " . ($sizes ? $this->rowBytesSql() : "0") . " AS ks_bytes"
+            . $from_sql . $order_sql . " LIMIT " . (int) $limit);
+        $stmt->execute($params);
+        $keys = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        return $keys;
+    }
+
+    // Each row's size in bytes, as SQL: its notes and custom fields, plus EXPORT_ROW_BYTES for everything else
+    protected function rowBytesSql()
+    {
+        $columns = array(static::JOIN_ORDER[0][1] . '.notes');
+        foreach (explode(',', $this->field_columns) as $column) {
+            if (trim($column) !== '') $columns[] = trim($column);
+        }
+
+        $sql = '';
+        foreach ($columns as $column) {
+            $sql .= "COALESCE(LENGTH(" . $column . "), 0) + ";
+        }
+        return "(" . $sql . self::EXPORT_ROW_BYTES . ")";
+    }
+
+    /*
+     * Keys (see exportKeyBatches()) split into groups whose sizes (ks_bytes) add up to at most $budget, in order. A
+     * row bigger than $budget is a group on its own.
+     */
+    public static function byteGroups(array $keys, $budget = self::EXPORT_GROUP_BYTES)
+    {
+        $groups = array();
+        $group = array();
+        $bytes = 0;
+
+        foreach ($keys as $key) {
+            $size = (int) $key['ks_bytes'];
+            if ($group && $bytes + $size > $budget) {
+                $groups[] = $group;
+                $group = array();
+                $bytes = 0;
+            }
+            $group[] = $key;
+            $bytes += $size;
+        }
+        if ($group) $groups[] = $group;
+
+        return $groups;
+    }
+
+    // How many keys each batch of an export reads (see EXPORT_KEYS)
+    public function exportKeysPerChunk()
+    {
+        return $this->fixedJoinOrder() && $this->exportIndexExists() ? self::EXPORT_KEYS : self::EXPORT_KEYS_UNINDEXED;
+    }
+
+    /*
+     * Whether the list's first table has its expiry_date index, starting with the expiry date, which can serve the export
+     * order. An index the database has been told not to use doesn't count (see indexUsable()), and a failed check
+     * counts as no.
+     */
+    protected function exportIndexExists()
+    {
+        $key = static::class . '#' . spl_object_id($this->pdo);
+
+        if (!isset(self::$export_index[$key])) {
+
+            try {
+
+                $stmt = $this->pdo->prepare("
+                    SELECT *
+                    FROM `INFORMATION_SCHEMA`.`STATISTICS`
+                    WHERE `TABLE_SCHEMA` = DATABASE()
+                      AND `TABLE_NAME` = :table
+                      AND `INDEX_NAME` = 'expiry_date'
+                      AND `SEQ_IN_INDEX` = 1");
+                $stmt->bindValue('table', static::JOIN_ORDER[0][0], \PDO::PARAM_STR);
+                $stmt->execute();
+                $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                $stmt->closeCursor();
+
+                $exists = false;
+                foreach ($rows as $row) {
+                    $row = array_change_key_case($row, CASE_LOWER);
+                    if (self::indexUsable($row) && strtolower($row['column_name']) === 'expiry_date') $exists = true;
+                }
+                self::$export_index[$key] = $exists;
+
+            } catch (\Throwable $e) {
+
+                self::$export_index[$key] = false;
+
+            }
+
+        }
+
+        return self::$export_index[$key];
     }
 
     // How many rows match the filters ($filter_sql from the list's filterSql())
@@ -395,6 +675,32 @@ abstract class ListQuery
         }
 
         return $this->searchSql($tokens, $columns->searchExpressions()) + array('stale' => false);
+    }
+
+    /*
+     * The condition that starts a chunk of Export or the Raw List straight after the last row of the one before, as
+     * " AND ..." SQL and its bound parameters, in the list's export order (EXPORT_ORDER). $last holds that row's three
+     * values in the same order, or is null for the first chunk, which has no condition. It's written out rather than as
+     * a row comparison ((a, b, c) > (...)), which older MySQL and MariaDB don't use an index for, and every placeholder
+     * has its own name, even where two take the same value, since native prepares can't repeat one. The ks_ names can't
+     * clash with the search box's.
+     */
+    public static function keysetSql($last)
+    {
+        if ($last === null) return array('sql' => '', 'params' => array());
+
+        list($expiry, $name, $id) = static::EXPORT_ORDER;
+        $last = array_values($last);
+        // A row without all three values would skip or repeat rows, so it's never used
+        if (count($last) !== 3 || in_array(null, $last, true)) {
+            throw new \InvalidArgumentException('The keyset needs the last row\'s expiry date, name, and id');
+        }
+
+        return array(
+            'sql' => " AND (" . $expiry . " > :ks_e OR (" . $expiry . " = :ks_e2 AND (" . $name . " > :ks_d OR ("
+                . $name . " = :ks_d2 AND " . $id . " > :ks_i))))",
+            'params' => array('ks_e' => $last[0], 'ks_e2' => $last[0], 'ks_d' => $last[1], 'ks_d2' => $last[1],
+                'ks_i' => $last[2]));
     }
 
     // A short key for the Raw List's saved query, so a search from one tab is never run on a list another tab saved since

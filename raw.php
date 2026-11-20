@@ -71,41 +71,37 @@ unset($_SESSION['s_raw_list_query']);
  */
 $table_search = array('sql' => '', 'params' => array(), 'stale' => false);
 $list_query = null;
-$export_order_sql = '';
+$list_settings = array();
+// The custom fields are only read for a table search on the saved list its link was made for, which can match them
+// (the names alone never need them)
+$raw_list_search = ($_GET['dt_search'] ?? '') !== '';
+$raw_list_search_saved = $raw_list_search && isset($_SESSION['s_raw_list_unordered_sql'])
+    && ($_GET['dt_list'] ?? '') === DomainMOD\ListQuery::savedListKey($_SESSION['s_raw_list_unordered_sql']);
 if ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
 
     $list_changed = _('The SSL Certificates list has changed since you searched it. Please reload the list and search again.');
+    $list_reopen = _('The SSL Certificates list has changed since you opened it. Please reload the list and open Raw List again.');
+    $list_query = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'] ?? 0,
+        $raw_list_search_saved ? (new DomainMOD\CustomField())->getCustomFieldsSql('ssl_cert_fields', 'sslfd') : '');
+    $list_settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
 
 } else {
 
     $list_changed = _('The Domains list has changed since you searched it. Please reload the list and search again.');
+    $list_reopen = _('The Domains list has changed since you opened it. Please reload the list and open Raw List again.');
+    if ($_SESSION['s_raw_list_type'] == 'domains') {
 
-}
-
-if (($_GET['dt_search'] ?? '') !== '') {
-
-    if (isset($_SESSION['s_raw_list_unordered_sql'])
-        && ($_GET['dt_list'] ?? '') === DomainMOD\ListQuery::savedListKey($_SESSION['s_raw_list_unordered_sql'])) {
-
-        if ($_SESSION['s_raw_list_type'] == 'domains') {
-
-            $list_query = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0,
-                (new DomainMOD\CustomField())->getCustomFieldsSql('domain_fields', 'dfd'));
-            $list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
-            $export_order_sql = DomainMOD\DomainList::EXPORT_ORDER_SQL;
-
-        } elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
-
-            $list_query = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'] ?? 0,
-                (new DomainMOD\CustomField())->getCustomFieldsSql('ssl_cert_fields', 'sslfd'));
-            $list_settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
-            $export_order_sql = DomainMOD\SslList::EXPORT_ORDER_SQL;
-
-        }
+        $list_query = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0,
+            $raw_list_search_saved ? (new DomainMOD\CustomField())->getCustomFieldsSql('domain_fields', 'dfd') : '');
+        $list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
 
     }
 
-    if ($list_query !== null) {
+}
+
+if ($raw_list_search) {
+
+    if ($list_query !== null && $raw_list_search_saved) {
 
         $table_search = $list_query->tableSearchSql($_GET['dt_search'], $_GET['dt_layout'] ?? '', $list_settings);
 
@@ -117,36 +113,82 @@ if (($_GET['dt_search'] ?? '') !== '') {
 
 }
 
+// What's needed from the session is copied first, so the session can be closed before a long list is read, and the
+// user's other tabs aren't held up
+$raw_list_saved = isset($_SESSION['s_raw_list_sql']);
+$raw_list_from_sql = $_SESSION['s_raw_list_from_sql'] ?? null;
+session_write_close();
+
 if ($table_search['stale']) {
 
     echo htmlspecialchars($list_changed, ENT_QUOTES, 'UTF-8') . "<BR>";
-    $result = array();
 
-} elseif ($table_search['sql'] !== '') {
+} elseif ($list_query !== null && $raw_list_saved && $raw_list_from_sql === null) {
 
-    $stmt = $pdo->prepare($_SESSION['s_raw_list_unordered_sql'] . $table_search['sql'] . $export_order_sql);
-    $stmt->execute($table_search['params']);
-    $result = $stmt->fetchAll();
+    // Saved by a version before the list was read in chunks, so it can't be read only by its names
+    echo htmlspecialchars($list_reopen, ENT_QUOTES, 'UTF-8') . "<BR>";
 
-} else {
+} elseif ($list_query !== null && $raw_list_from_sql !== null) {
 
-    $result = isset($_SESSION['s_raw_list_sql']) ? $pdo->query($_SESSION['s_raw_list_sql'])->fetchAll() : array();
+    // Every output buffer that can be ended is ended, so a host that buffers output can't hold the whole list
+    DomainMOD\Export::endOutputBuffers();
 
-}
+    // The names only, in the list's export order, read in chunks inside one read-only snapshot (see
+    // ListQuery::exportKeyBatches()), so a long list can't skip or repeat a row between chunks, or use up PHP's memory
+    $in_snapshot = false;
+    $list_stopped = _('The list stopped early because of an error. Please reload the page to try again.');
 
-if ($_SESSION['s_raw_list_type'] == 'domains') {
+    // An error PHP can't catch (such as its time limit) part way through still ends the list with the message
+    $list_streaming = true;
+    register_shutdown_function(function () use (&$list_streaming, $list_stopped) {
+        if ($list_streaming && DomainMOD\Export::fatalError(error_get_last())) {
+            echo htmlspecialchars($list_stopped, ENT_QUOTES, 'UTF-8') . "<BR>";
+        }
+    });
 
-    foreach ($result as $row) {
+    try {
 
-        echo $row->domain . "<BR>";
+        $list_query->beginSnapshot();
+        $in_snapshot = true;
 
-    }
+        foreach ($list_query->exportKeyBatches($raw_list_from_sql . $table_search['sql'], $table_search['params'], null,
+            false) as $keys) {
 
-} elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
+            foreach ($keys as $key) {
 
-    foreach ($result as $row) {
+                echo $key['ks_name'] . "<BR>";
 
-        echo $row->name . "<BR>";
+            }
+
+            DomainMOD\Export::flushOutput();
+            DomainMOD\Export::resetTimeLimit();
+
+        }
+
+        $list_query->endSnapshot(true);
+        $in_snapshot = false;
+
+        $list_streaming = false;
+
+    } catch (Throwable $e) {
+
+        $list_streaming = false;
+
+        if ($in_snapshot) {
+
+            try {
+                $list_query->endSnapshot(false);
+            } catch (Throwable $ignored) {
+            }
+
+        }
+
+        echo htmlspecialchars($list_stopped, ENT_QUOTES, 'UTF-8') . "<BR>";
+
+        try {
+            (new DomainMOD\Log('/raw.php'))->critical('The Raw List stopped early', array('Error' => $e->getMessage()));
+        } catch (Throwable $ignored) {
+        }
 
     }
 

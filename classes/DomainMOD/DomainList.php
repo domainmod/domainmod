@@ -52,8 +52,10 @@ class DomainList extends ListQuery
         array('hosting', 'h', 'PRIMARY'));
 
     // Export and the Raw List's order: the expiry date, then the domain (the id keeps domains that tie on both in the
-    // same order each time)
-    const EXPORT_ORDER_SQL = ' ORDER BY d.expiry_date ASC, d.domain ASC, d.id ASC';
+    // same order each time). EXPORT_ORDER_SQL and the keyset (see ListQuery::keysetSql()) are both built from it.
+    const EXPORT_ORDER = array('d.expiry_date', 'd.domain', 'd.id');
+    const EXPORT_ORDER_SQL = ' ORDER BY ' . self::EXPORT_ORDER[0] . ' ASC, ' . self::EXPORT_ORDER[1] . ' ASC, '
+        . self::EXPORT_ORDER[2] . ' ASC';
 
     // Every order ends with the domain and the id
     const TIE_BREAK = array('d.domain ASC', 'd.id ASC');
@@ -112,9 +114,10 @@ class DomainList extends ListQuery
     /*
      * The filter conditions for a state (see normalizeState()), the keyword, and the date range, as the page's named
      * SQL fragments, each starting with " AND " or empty. $start_date and $end_date are checked dates, or
-     * 'YYYY-MM-DD' (or '') when there's no range.
+     * 'YYYY-MM-DD' (or '') when there's no range. $segment is the segment's stored domain list, when the page has
+     * already read it (see Segment::storedRow()), so it can't change between the page's check and the filters.
      */
-    public function filterParts(array $state, $keyword, $start_date, $end_date)
+    public function filterParts(array $state, $keyword, $start_date, $end_date, $segment = null)
     {
         $pdo = $this->pdo;
         $parts = array();
@@ -130,7 +133,7 @@ class DomainList extends ListQuery
         }
 
         if ($state['segid'] !== 0) {
-            $parts['segid_string'] = " AND d.domain IN (" . (new Segment())->getSegment($state['segid']) . ")";
+            $parts['segid_string'] = " AND d.domain IN (" . ($segment ?? (new Segment())->getSegment($state['segid'])) . ")";
         } else {
             $parts['segid_string'] = '';
         }
@@ -152,6 +155,208 @@ class DomainList extends ListQuery
         $parts['search_string'] = $keyword != '' ? " AND " . self::keywordCondition($pdo, 'd.domain', $keyword) . " " : '';
 
         return $parts;
+    }
+
+    // How many of a segment's domains the segment flags write (see writeSegmentFlags()) reads and writes at a time
+    const SEGMENT_FLAG_BATCH = 500;
+
+    // The name of segment_data's index on the segment's id (see segmentIndexName()), by connection, worked out once per
+    // request
+    protected static $segment_index = array();
+
+    /*
+     * Writes a segment's "filtered" flags, which mark its active domains that the list's other filters leave out, for
+     * domains/results.php's Matching But Filtered Domains list. $filter_sql is the list's other filters, without the
+     * segment's, $segment is the segment's stored domain list the page's filters were built from, and $params the
+     * filters' bound values.
+     *
+     * It's one short transaction at REPEATABLE READ, so other requests see the flags as they were or as they end up,
+     * never half done. First the segment's list is read again with a shared lock, and if it's changed since the filters
+     * were built (it was edited in the meantime), nothing is written and it returns 'changed'. Otherwise the segment's
+     * active rows are read and locked a batch at a time, in id order (the latest data, so a domain made active a moment
+     * ago is included). The names the other filters match are found with a plain read, which takes no row locks, and
+     * the batch's flags are written by id, cleared for those names and set for the rest, with every value bound, so no
+     * SQL grows with the segment. With the index on segment_id alone (added in 4.27.0, see segmentIndexName()), only
+     * the segment's own rows are locked, in the same id order as Maintenance::updateSegments() takes them, which keeps
+     * the two from deadlocking each other. Without it, the batches can also lock other segments' rows as they're read.
+     * A lock wait timeout or a deadlock rolls it back and it's tried once more, and any other error (or a second
+     * failure) is thrown, after the rollback. Returns 'written' when the flags are written.
+     */
+    public function writeSegmentFlags($segid, $filter_sql, $segment, array $params = array())
+    {
+        for ($attempt = 1; ; $attempt++) {
+
+            try {
+
+                return $this->writeSegmentFlagsOnce((int) $segid, $filter_sql, (string) $segment, $params);
+
+            } catch (\PDOException $e) {
+
+                if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+                if ($attempt >= 2 || !in_array((int) ($e->errorInfo[1] ?? 0), array(1205, 1213), true)) throw $e;
+
+            } catch (\Throwable $e) {
+
+                if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+                throw $e;
+
+            }
+
+        }
+    }
+
+    // One try of writeSegmentFlags()
+    protected function writeSegmentFlagsOnce($segid, $filter_sql, $segment, array $params)
+    {
+        $pdo = $this->pdo;
+        // Named where it exists, so the batches read only the segment's rows, in id order, even for a segment that holds
+        // most of the table
+        $index_name = $this->segmentIndexName();
+        $index_hint = $index_name !== '' ? " FORCE INDEX (`" . str_replace('`', '``', $index_name) . "`)" : "";
+
+        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+        $pdo->beginTransaction();
+
+        $stmt = $pdo->prepare("
+            SELECT `segment`
+            FROM segments
+            WHERE id = :segid
+            LOCK IN SHARE MODE");
+        $stmt->bindValue('segid', $segid, \PDO::PARAM_INT);
+        $stmt->execute();
+        $current = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        if ($current === false || (string) $current !== $segment) {
+
+            $pdo->rollBack();
+            return 'changed';
+
+        }
+
+        $last = 0;
+
+        do {
+
+            // The next batch of the segment's active rows, locked
+            $stmt = $pdo->prepare("
+                SELECT id, domain
+                FROM segment_data" . $index_hint . "
+                WHERE segment_id = :segid
+                  AND active = '1'
+                  AND id > :sg_last
+                ORDER BY id ASC
+                LIMIT " . self::SEGMENT_FLAG_BATCH . "
+                FOR UPDATE");
+            $stmt->execute(array('segid' => $segid, 'sg_last' => $last));
+            $batch = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+            $stmt->closeCursor();
+
+            if (!$batch) break;
+            $last = max(array_keys($batch));
+
+            $names = array();
+            foreach (array_values(array_unique($batch)) as $n => $name) {
+                $names['sg' . $n] = $name;
+            }
+
+            // The ones the list's other filters match
+            $stmt = $pdo->prepare("SELECT DISTINCT d.domain" . $this->fromSql() . $filter_sql . " AND d.domain IN (:"
+                . implode(', :', array_keys($names)) . ")");
+            $stmt->execute($params + $names);
+            $matches = array();
+            foreach ($stmt->fetchAll(\PDO::FETCH_COLUMN) as $n => $match) {
+                $matches['sm' . $n] = $match;
+            }
+            $stmt->closeCursor();
+
+            // The batch's flags: cleared for the matches, set for the rest. The names are compared in SQL, with the
+            // column's own collation, as the filters compared them (a name stored with a trailing space still equals
+            // the name without it).
+            $ids = array();
+            foreach (array_keys($batch) as $n => $id) {
+                $ids['si' . $n] = $id;
+            }
+            $stmt = $pdo->prepare("
+                UPDATE segment_data
+                SET filtered = " . ($matches ? "CASE WHEN domain IN (:" . implode(', :', array_keys($matches))
+                    . ") THEN '0' ELSE '1' END" : "'1'") . "
+                WHERE id IN (:" . implode(', :', array_keys($ids)) . ")");
+            $stmt->execute($ids + $matches);
+
+        } while (count($batch) === self::SEGMENT_FLAG_BATCH);
+
+        $pdo->commit();
+        return 'written';
+    }
+
+    /*
+     * The name of segment_data's index on the segment's id alone (added in 4.27.0, usually named segment_id), when it's
+     * there and usable (see ListQuery::indexUsable()), or '' when it isn't. An index that starts with the segment's id
+     * but has more columns doesn't count, since its entries aren't in id order within a segment. A failed check counts
+     * as no index.
+     */
+    protected function segmentIndexName()
+    {
+        $key = spl_object_id($this->pdo);
+
+        if (!isset(self::$segment_index[$key])) {
+
+            try {
+
+                $rows = $this->pdo->query("
+                    SELECT *
+                    FROM `INFORMATION_SCHEMA`.`STATISTICS`
+                    WHERE `TABLE_SCHEMA` = DATABASE()
+                      AND `TABLE_NAME` = 'segment_data'")->fetchAll(\PDO::FETCH_ASSOC);
+
+                // Each index's columns, in order, and whether it can be used
+                $indexes = array();
+                foreach ($rows as $row) {
+                    $row = array_change_key_case($row, CASE_LOWER);
+                    $name = (string) $row['index_name'];
+                    $indexes[$name]['columns'][(int) $row['seq_in_index']] = strtolower((string) $row['column_name']);
+                    $indexes[$name]['usable'] = ($indexes[$name]['usable'] ?? true) && self::indexUsable($row);
+                }
+
+                $found = '';
+                foreach ($indexes as $name => $index) {
+                    if ($index['usable'] && $index['columns'] === array(1 => 'segment_id')
+                        && ($found === '' || $name === 'segment_id')) {
+                        $found = (string) $name;
+                    }
+                }
+                self::$segment_index[$key] = $found;
+
+            } catch (\Throwable $e) {
+
+                self::$segment_index[$key] = '';
+
+            }
+
+        }
+
+        return self::$segment_index[$key];
+    }
+
+    /*
+     * How many of a segment's active domains the list's filters leave out (its "Matching But Filtered Domains"),
+     * worked out from the filters themselves rather than read back from the segment's stored flags. $filter_sql is the
+     * list's filters, which include the segment's, and $params their bound values. It's a plain read, which takes no row
+     * locks.
+     */
+    public function segmentFilteredCount($segid, $filter_sql, array $params = array())
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT count(*)
+            FROM segment_data AS sd
+            WHERE sd.segment_id = :sf_segid
+              AND sd.active = '1'
+              AND NOT EXISTS (SELECT 1" . $this->fromSql() . $filter_sql . " AND d.domain = sd.domain)");
+        $stmt->execute(array('sf_segid' => (int) $segid) + $params);
+        $count = $stmt->fetchColumn();
+        $stmt->closeCursor();
+        return (int) $count;
     }
 
     // Every filter fragment joined, in the page's order

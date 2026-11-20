@@ -180,13 +180,102 @@ if ($tld && $tld != '') {
 
 }
 
+// Where an export that can't be made sends the user back: the list, with the export's filters. When an older export
+// link leaves out the keyword or the date range, the export uses the saved one, so the saved value is added here for
+// the list to keep. from_dropdown is left out, since it would make the list ignore them.
+$back_filters = array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout', 'from_dropdown')));
+if (!array_key_exists('search_for', $back_filters)) $back_filters['search_for'] = htmlspecialchars_decode($filter_search_for, ENT_QUOTES);
+if (!array_key_exists('daterange', $back_filters)) $back_filters['daterange'] = $daterange;
+
+// A segment that no longer exists (a link or tab from before it was deleted) is dropped, as if none were chosen. Its
+// stored domain list is read once, here, and handed to the filters, so it can't change between this check and them.
+$segment_list = null;
+if ($segid !== 0) {
+
+    $segment_row = DomainMOD\Segment::storedRow($pdo, $segid);
+
+    if ($segment_row === false) {
+
+        $_SESSION['s_message_danger'] .= _("That segment no longer exists, so the list isn't filtered by it.") . '<BR>';
+        $segid = 0;
+
+        // An export goes back to the list without the segment, with the message, rather than downloading a wider list
+        if ($export_data === 1) {
+
+            header('Location: index.php?' . http_build_query(array_diff_key($back_filters, array('segid' => true))));
+            exit;
+
+        }
+
+    } else {
+
+        $segment_list = $segment_row->segment;
+
+    }
+
+}
+
 // The list's filters as SQL, from the same class as the list's data endpoint (domains/list-data.php), so the first
 // page, the pages fetched afterwards, the counts, Export, and the Raw List all agree
 $dfd_columns = $customField->getCustomFieldsSql('domain_fields', 'dfd');
 $domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_columns);
 $list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid, 'rid' => $rid,
     'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active);
-$filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date);
+$filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date,
+    $segment_list);
+
+// The segment's "filtered" flags follow the whole filtered list, not the page shown (see DomainList::writeSegmentFlags()).
+// They're written first, so if the segment has to be dropped, the filters are built again without it before anything
+// else uses them.
+if ($segid !== 0) {
+
+    try {
+
+        $segment_flags = $domain_list->writeSegmentFlags($segid,
+            DomainMOD\DomainList::filterSql(array('segid_string' => '') + $filter_parts), $segment_list);
+
+    } catch (Throwable $e) {
+
+        // The page and Export work out their own counts, so only domains/results.php is left with the earlier flags
+        $segment_flags = 'failed';
+        (new DomainMOD\Log('/domains/index.php'))->error('Unable to update the segment flags',
+            array('Segment ID' => $segid, 'Error' => $e->getMessage()));
+
+    }
+
+    if ($segment_flags === 'changed') {
+
+        if ($export_data === 1) {
+
+            // The filters were built from the segment's old list, so the export goes back to the list to load it again
+            $_SESSION['s_message_danger'] .= _("The export couldn't be created. Please try again.") . '<BR>';
+            header('Location: index.php?' . http_build_query($back_filters));
+            exit;
+
+        } elseif (($_GET['segreload'] ?? '') !== '1') {
+
+            // The segment was edited while the page was loading, so the page loads once more with its new list
+            header('Location: index.php?' . http_build_query(array_merge($list_state,
+                array_intersect_key($_GET, array('start' => true, 'length' => true)),
+                array('search_for' => htmlspecialchars_decode($filter_search_for, ENT_QUOTES), 'daterange' => $daterange,
+                    'expand' => $expand, 'segreload' => 1))));
+            exit;
+
+        } else {
+
+            // It changed again, so the list isn't filtered by it, as if it hadn't been chosen
+            $_SESSION['s_message_danger'] .= _("That segment changed while the list was loading, so the list isn't filtered by it. Please choose it again.") . '<BR>';
+            $segid = 0;
+            $segment_list = null;
+            $list_state['segid'] = 0;
+            $filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date,
+                $filter_end_date);
+
+        }
+
+    }
+
+}
 $is_active_string = $filter_parts['is_active_string'];
 $segid_string = $filter_parts['segid_string'];
 $pcid_string = $filter_parts['pcid_string'];
@@ -201,8 +290,9 @@ $tld_string = $filter_parts['tld_string'];
 $search_string = $filter_parts['search_string'];
 
 // Export and the Raw List come out in the list's default order (DomainList::EXPORT_ORDER_SQL). The Raw List also keeps
-// the query without its order, so it can add the table's search box when its link carries one (see raw.php).
-$raw_list_sql = $domain_list->selectSql() . $domain_list->fromSql() . "
+// the query without its order, so it can add the table's search box when its link carries one, and without its
+// columns, so it can read only the names, in chunks (see raw.php).
+$raw_list_from_sql = $domain_list->fromSql() . "
           $is_active_string
           $segid_string
           $pcid_string
@@ -215,10 +305,12 @@ $raw_list_sql = $domain_list->selectSql() . $domain_list->fromSql() . "
           $range_string
           $tld_string
           $search_string";
+$raw_list_sql = $domain_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\DomainList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_sql'] = $sql;
 $_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
+$_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
@@ -226,66 +318,27 @@ $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_strin
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
-// How many domains the filters match (the same joins and filters as the main query)
-$total_rows = $domain_list->count($list_filter_sql);
+// How many domains the filters match, and their total cost (the same joins and filters as the list). Export reads its
+// own inside its snapshot, so they aren't read twice.
+if ($export_data !== 1) {
 
-// The total covers exactly the listed domains (the same joins and filters as the list and Export)
-$grand_total = $pdo->query("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql)->fetchColumn();
+    $total_rows = $domain_list->count($list_filter_sql);
 
-$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
-    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+    $grand_total = $pdo->query("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql)->fetchColumn();
 
-if ($segid !== 0) {
-
-    // The segment's flags follow the whole filtered list, not the page shown, so only the domains are read here
-    $active_domains = $pdo->query("SELECT d.domain" . $domain_list->fromSql() . $list_filter_sql)->fetchAll(PDO::FETCH_COLUMN);
-
-    $stmt = $pdo->prepare("
-        UPDATE segment_data
-        SET filtered = '0'
-        WHERE active = '1'
-          AND segment_id = :segid");
-    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-    $stmt->execute();
-
-    if ($active_domains) {
-
-        $active_domains = implode(', ', array_map(array($pdo, 'quote'), $active_domains));
-
-        $stmt = $pdo->prepare("
-            UPDATE segment_data
-            SET filtered = '1'
-            WHERE active = '1'
-              AND segment_id = :segid
-              AND domain NOT IN (" . $active_domains . ")");
-        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-        $stmt->execute();
-
-    } else {
-
-        // None of the segment's domains are left by the other filters, so every one of them is filtered out
-        $stmt = $pdo->prepare("
-            UPDATE segment_data
-            SET filtered = '1'
-            WHERE active = '1'
-              AND segment_id = :segid");
-        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-        $stmt->execute();
-
-    }
-
-    $stmt = $pdo->prepare("
-        UPDATE segment_data
-        SET filtered = '1'
-        WHERE active = '1'
-          AND segment_id = :segid
-          AND NOT " . $domain_search_condition('domain', $search_for));
-    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-    $stmt->execute();
+    $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+        $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 }
 
 if ($export_data == 1) {
+
+    // Where an export that can't be made sends the user back (see $back_filters)
+    $back_url = 'index.php?' . http_build_query($back_filters);
+
+    // A streamed export (see Export::begin()), read and written in chunks, so PHP holds only a chunk of the rows at once
+    $export = new DomainMOD\Export();
+    $export->begin($back_url);
 
     // The table's search box, when the link carries it (js/server-list.js adds it), so the export holds the rows the
     // table shows. An older link without it exports what the filters match, as before.
@@ -298,520 +351,422 @@ if ($export_data == 1) {
     if ($table_search['stale']) {
 
         $_SESSION['s_message_danger'] .= _('Your display settings have changed since the list was loaded. Please search the list again.') . '<BR>';
-        $back_query = http_build_query(array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout'))));
-        header('Location: index.php' . ($back_query !== '' ? '?' . $back_query : ''));
+        header('Location: ' . $back_url);
         exit;
 
     }
 
-    $stmt = $pdo->prepare($raw_list_sql . $table_search['sql'] . DomainMOD\DomainList::EXPORT_ORDER_SQL);
-    $stmt->execute($table_search['params']);
-    $result = $stmt->fetchAll();
+    try {
 
-    // With a table search, the export's count and total cost are for the rows it holds, and the domains the search
-    // leaves out count as filtered in a segment's results
-    $table_search_excluded = 0;
-    if ($table_search['sql'] !== '') {
+        // The header block's filters, read before the snapshot below (but inside the try, so an error still goes to
+        // Export::fail()), since the name lookups write to the log when a name is missing, and nothing can write inside the
+        // snapshot
+        $search_filter_rows = array();
 
-        $table_search_excluded = $total_rows - count($result);
-        $total_rows = count($result);
+        $row_contents = array('[' . _('Search Filters') . ']');
+        $search_filter_rows[] = $row_contents;
+
+        if ($filter_search_for != "") {
+
+            $row_contents = array(
+                _('Keyword Search') . ':',
+                $filter_search_for
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($table_search['sql'] !== '') {
+
+            $row_contents = array(
+                _('Table Search') . ':',
+                $export->protectFormula($table_search_for)
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($rid > 0) {
+
+            $temp_registrar_name = $assets->getRegistrar($rid);
+
+            $row_contents = array(
+                _('Registrar') . ':',
+                $temp_registrar_name
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($raid > 0) {
+
+            $stmt = $pdo->prepare("
+                SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
+                FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                WHERE ra.registrar_id = r.id
+                  AND ra.owner_id = o.id
+                  AND ra.id = :raid");
+            $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
+            $stmt->execute();
+            $result_account = $stmt->fetch();
+            $stmt->closeCursor();
+
+            if ($result_account) {
+
+                $row_contents = array(
+                    _('Registrar Account') . ':',
+                    $result_account->registrar_name . " - " . $result_account->owner_name . " - " . $result_account->username
+                );
+                $search_filter_rows[] = $row_contents;
+
+            }
+
+        }
+
+        if ($dnsid > 0) {
+
+            $temp_dns_name = $assets->getDnsName($dnsid);
+
+            $row_contents = array(
+                _('DNS Profile') . ':',
+                $temp_dns_name
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($ipid > 0) {
+
+            list($temp_ip, $temp_ip_name) = $assets->getIpAndName($ipid);
+
+            $row_contents = array(
+                _('IP Address') . ':',
+                $temp_ip_name . ' (' . $temp_ip . ')'
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($whid > 0) {
+
+            $temp_hosting_name = $assets->getHost($whid);
+
+            $row_contents = array(
+                _('Web Host') . ':',
+                $temp_hosting_name
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($pcid > 0) {
+
+            $temp_category = $assets->getCat($pcid);
+
+            $row_contents = array(
+                _('Category') . ':',
+                $temp_category
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($oid > 0) {
+
+            $temp_owner = $assets->getOwner($oid);
+
+            $row_contents = array(
+                _('Owner') . ':',
+                $temp_owner
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($filter_start_date != '' && $filter_start_date != 'YYYY-MM-DD') {
+
+            $row_contents = array(
+                _('Expiry Date Range') . ':',
+                $filter_start_date  . " to " . $filter_end_date
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        unset($row_contents);
+        $count = 0;
+
+        $row_contents[$count++] = _('Domain Status') . ':';
+
+        if ($is_active == 'ALL') {
+
+            $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
+
+        } elseif ($is_active == 'LIVE' || $is_active == "") {
+
+            $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')';
+
+        } elseif ($is_active == "0") {
+
+            $row_contents[$count++] = _('Expired');
+
+        } elseif ($is_active == "1") {
+
+            $row_contents[$count++] = _('Active');
+
+        } elseif ($is_active == "2") {
+
+            $row_contents[$count++] = _('Pending (Transfer)');
+
+        } elseif ($is_active == "3") {
+
+            $row_contents[$count++] = _('Pending (Renewal)');
+
+        } elseif ($is_active == "4") {
+
+            $row_contents[$count++] = _('Pending (Other)');
+
+        } elseif ($is_active == "5") {
+
+            $row_contents[$count++] = _('Pending (Registration)');
+
+        } elseif ($is_active == "10") {
+
+            $row_contents[$count++] = _('Sold');
+
+        }
+        $search_filter_rows[] = $row_contents;
+
+        // Everything from here to the last row reads one snapshot of the database, so the header's numbers and the
+        // rows always agree, however the data changes in the meantime
+        $export->startSnapshot($domain_list);
+
+        // With a table search, the export's count and total cost are for the rows it holds, and the domains the search
+        // leaves out count as filtered in a segment's results
+        $table_search_excluded = 0;
+        if ($table_search['sql'] !== '') {
+
+            list($list_rows, $total_rows) = $domain_list->counts($list_filter_sql, $table_search);
+            $table_search_excluded = $list_rows - $total_rows;
+
+        } else {
+
+            $total_rows = $domain_list->count($list_filter_sql);
+
+        }
 
         $stmt = $pdo->prepare("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql
             . $table_search['sql']);
         $stmt->execute($table_search['params']);
         $grand_total = $currency->format($stmt->fetchColumn(), $_SESSION['s_default_currency_symbol'],
             $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-    }
-
-    $export = new DomainMOD\Export();
-    $export_file = $export->openFile(_('domain_results'), strtotime($time->stamp()));
-
-    $row_contents = array(_('Domain Search Results Export'));
-    $export->writeRow($export_file, $row_contents);
-
-    $export->writeBlankRow($export_file);
-
-    if ($segid == 0) {
-
-        $row_contents = array(
-            _('Number of Domains') . ':',
-            $total_rows
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $row_contents = array(
-            _('Total Cost') . ':',
-            $grand_total,
-            $_SESSION['s_default_currency']
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
-
-    } else {
-
-        $row_contents = array(
-            _('Total Cost') . ':',
-            $grand_total,
-            $_SESSION['s_default_currency']
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
-
-    }
-
-    if ($tld != "") {
-
-        $row_contents = array(
-            _('TLD'),
-            '.' . $tld
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($segid !== 0) {
-
-        $stmt = $pdo->prepare("
-            SELECT count(*)
-            FROM segment_data
-            WHERE segment_id = :segid
-              AND inactive = '1'");
-        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-        $stmt->execute();
-        $totalrows_inactive = $stmt->fetchColumn();
-
-        $stmt = $pdo->prepare("
-            SELECT count(*)
-            FROM segment_data
-            WHERE segment_id = :segid
-              AND missing = '1'");
-        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-        $stmt->execute();
-        $totalrows_missing = $stmt->fetchColumn();
-
-        $stmt = $pdo->prepare("
-            SELECT count(*)
-            FROM segment_data
-            WHERE segment_id = :segid
-              AND filtered = '1'");
-        $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-        $stmt->execute();
-        $totalrows_filtered = $stmt->fetchColumn() + $table_search_excluded;
+        $stmt->closeCursor();
 
         if ($segid !== 0) {
 
-            $number_of_domains = $segment->getNumberOfDomains($segid);
+            // The segment as the snapshot has it, which must be the one the filters were built from
+            $snapshot_segment = DomainMOD\Segment::storedRow($pdo, $segid);
+            if ($snapshot_segment === false || $snapshot_segment->segment !== $segment_list) {
+
+                throw new RuntimeException('The segment changed while the export was being made');
+
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT count(*)
+                FROM segment_data
+                WHERE segment_id = :segid
+                  AND inactive = '1'");
+            $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+            $stmt->execute();
+            $totalrows_inactive = $stmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT count(*)
+                FROM segment_data
+                WHERE segment_id = :segid
+                  AND missing = '1'");
+            $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
+            $stmt->execute();
+            $totalrows_missing = $stmt->fetchColumn();
+
+            // Worked out from this export's own filters, not read back from the segment's stored flags
+            $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql) + $table_search_excluded;
+
+            $number_of_domains = $snapshot_segment->number_of_domains;
+            $temp_name = $snapshot_segment->name;
 
         }
 
-        $row_contents = array('[' . _('Segment Results') . ']');
+        // The rows' custom field columns, read in the snapshot like the headings and types below, so a field added or
+        // deleted in the meantime can't leave a heading without its column
+        $export_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'],
+            $customField->getCustomFieldsSql('domain_fields', 'dfd'));
+
+        // Each custom field's type, by field name
+        $dfd_types = $pdo->query("
+            SELECT field_name, type_id
+            FROM domain_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        // The custom fields, creation types, and users, read once rather than once for each domain
+        $dfd_columns_array = $customField->getCustomFields('domain_fields');
+        $creation_type_names = DomainMOD\Export::creationTypeNames($pdo);
+        $user_names = DomainMOD\Export::userNames($pdo);
+
+        $export_file = $export->openStream(_('domain_results'), strtotime($time->stamp()));
+
+        $row_contents = array(_('Domain Search Results Export'));
         $export->writeRow($export_file, $row_contents);
 
-        $temp_name = $segment->getName($segid);
+        $export->writeBlankRow($export_file);
 
-        $row_contents = array(
-            _('Segment Filter') . ':',
-            $temp_name
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $row_contents = array(
-            _('Domains in Segment') . ':',
-            number_format($number_of_domains)
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $row_contents = array(
-            _('Matching Domains') . ':',
-            $total_rows
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        if ($totalrows_inactive > 0) {
+        if ($segid == 0) {
 
             $row_contents = array(
-                _('Matching But Inactive Domains') . ':',
-                number_format($totalrows_inactive)
+                _('Number of Domains') . ':',
+                $total_rows
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            $row_contents = array(
+                _('Total Cost') . ':',
+                $grand_total,
+                $_SESSION['s_default_currency']
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            $export->writeBlankRow($export_file);
+
+        } else {
+
+            $row_contents = array(
+                _('Total Cost') . ':',
+                $grand_total,
+                $_SESSION['s_default_currency']
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            $export->writeBlankRow($export_file);
+
+        }
+
+        if ($tld != "") {
+
+            $row_contents = array(
+                _('TLD'),
+                '.' . $tld
             );
             $export->writeRow($export_file, $row_contents);
 
         }
 
-        if ($totalrows_filtered > 0) {
+        if ($segid !== 0) {
+
+            $row_contents = array('[' . _('Segment Results') . ']');
+            $export->writeRow($export_file, $row_contents);
 
             $row_contents = array(
-                _('Matching But Filtered Domains') . ':',
-                number_format($totalrows_filtered)
+                _('Segment Filter') . ':',
+                $temp_name
             );
+            $export->writeRow($export_file, $row_contents);
+
+            $row_contents = array(
+                _('Domains in Segment') . ':',
+                number_format($number_of_domains)
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            $row_contents = array(
+                _('Matching Domains') . ':',
+                $total_rows
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            if ($totalrows_inactive > 0) {
+
+                $row_contents = array(
+                    _('Matching But Inactive Domains') . ':',
+                    number_format($totalrows_inactive)
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            if ($totalrows_filtered > 0) {
+
+                $row_contents = array(
+                    _('Matching But Filtered Domains') . ':',
+                    number_format($totalrows_filtered)
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            if ($totalrows_missing > 0) {
+
+                $row_contents = array(
+                    _('Missing Domains') . ':',
+                    number_format($totalrows_missing)
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+        }
+
+        foreach ($search_filter_rows as $row_contents) {
+
             $export->writeRow($export_file, $row_contents);
 
         }
 
-        if ($totalrows_missing > 0) {
-
-            $row_contents = array(
-                _('Missing Domains') . ':',
-                number_format($totalrows_missing)
-            );
-            $export->writeRow($export_file, $row_contents);
-
-        }
-
-    }
-
-    $row_contents = array('[' . _('Search Filters') . ']');
-    $export->writeRow($export_file, $row_contents);
-
-    if ($filter_search_for != "") {
-
-        $row_contents = array(
-            _('Keyword Search') . ':',
-            $filter_search_for
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($table_search['sql'] !== '') {
-
-        $row_contents = array(
-            _('Table Search') . ':',
-            $export->protectFormula($table_search_for)
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($rid > 0) {
-
-        $temp_registrar_name = $assets->getRegistrar($rid);
-
-        $row_contents = array(
-            _('Registrar') . ':',
-            $temp_registrar_name
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($raid > 0) {
-
-        $stmt = $pdo->prepare("
-            SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
-            FROM registrar_accounts AS ra, registrars AS r, owners AS o
-            WHERE ra.registrar_id = r.id
-              AND ra.owner_id = o.id
-              AND ra.id = :raid");
-        $stmt->bindValue('raid', $raid, PDO::PARAM_INT);
-        $stmt->execute();
-        // Its own variable, so the domains in $result are still there for the rows below
-        $result_account = $stmt->fetch();
-        $stmt->closeCursor();
-
-        if ($result_account) {
-
-            $row_contents = array(
-                _('Registrar Account') . ':',
-                $result_account->registrar_name . " - " . $result_account->owner_name . " - " . $result_account->username
-            );
-            $export->writeRow($export_file, $row_contents);
-
-        }
-
-    }
-
-    if ($dnsid > 0) {
-
-        $temp_dns_name = $assets->getDnsName($dnsid);
-
-        $row_contents = array(
-            _('DNS Profile') . ':',
-            $temp_dns_name
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($ipid > 0) {
-
-        list($temp_ip, $temp_ip_name) = $assets->getIpAndName($ipid);
-
-        $row_contents = array(
-            _('IP Address') . ':',
-            $temp_ip_name . ' (' . $temp_ip . ')'
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($whid > 0) {
-
-        $temp_hosting_name = $assets->getHost($whid);
-
-        $row_contents = array(
-            _('Web Host') . ':',
-            $temp_hosting_name
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($pcid > 0) {
-
-        $temp_category = $assets->getCat($pcid);
-
-        $row_contents = array(
-            _('Category') . ':',
-            $temp_category
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($oid > 0) {
-
-        $temp_owner = $assets->getOwner($oid);
-
-        $row_contents = array(
-            _('Owner') . ':',
-            $temp_owner
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($filter_start_date != '' && $filter_start_date != 'YYYY-MM-DD') {
-
-        $row_contents = array(
-            _('Expiry Date Range') . ':',
-            $filter_start_date  . " to " . $filter_end_date
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    unset($row_contents);
-    $count = 0;
-
-    $row_contents[$count++] = _('Domain Status') . ':';
-
-    if ($is_active == 'ALL') {
-
-        $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
-
-    } elseif ($is_active == 'LIVE' || $is_active == "") {
-
-        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')';
-
-    } elseif ($is_active == "0") {
-
-        $row_contents[$count++] = _('Expired');
-
-    } elseif ($is_active == "1") {
-
-        $row_contents[$count++] = _('Active');
-
-    } elseif ($is_active == "2") {
-
-        $row_contents[$count++] = _('Pending (Transfer)');
-
-    } elseif ($is_active == "3") {
-
-        $row_contents[$count++] = _('Pending (Renewal)');
-
-    } elseif ($is_active == "4") {
-
-        $row_contents[$count++] = _('Pending (Other)');
-
-    } elseif ($is_active == "5") {
-
-        $row_contents[$count++] = _('Pending (Registration)');
-
-    } elseif ($is_active == "10") {
-
-        $row_contents[$count++] = _('Sold');
-
-    }
-    $export->writeRow($export_file, $row_contents);
-
-    $export->writeBlankRow($export_file);
-
-    unset($row_contents);
-    $count = 0;
-
-    $row_contents[$count++] = _('Domain Status');
-    $row_contents[$count++] = _('Expiry Date');
-    $row_contents[$count++] = _('Initial Fee');
-    $row_contents[$count++] = _('Renewal Fee');
-    $row_contents[$count++] = _('Transfer Fee');
-    $row_contents[$count++] = _('Privacy Fee');
-    $row_contents[$count++] = _('Misc Fee');
-    $row_contents[$count++] = _('Total Yearly Cost');
-    $row_contents[$count++] = _('Domain');
-    $row_contents[$count++] = _('TLD');
-    $row_contents[$count++] = _('Function');
-    $row_contents[$count++] = _('Renewal Status');
-    $row_contents[$count++] = _('WHOIS Status');
-    $row_contents[$count++] = _('Registrar');
-    $row_contents[$count++] = _('Registrar Account');
-    $row_contents[$count++] = _('Username');
-    $row_contents[$count++] = _('DNS Profile');
-    $row_contents[$count++] = _('IP Address Name');
-    $row_contents[$count++] = _('IP Address');
-    $row_contents[$count++] = _('IP Address rDNS');
-    $row_contents[$count++] = _('Web Host');
-    $row_contents[$count++] = _('Category');
-    $row_contents[$count++] = _('Category Stakeholder');
-    $row_contents[$count++] = _('Owner');
-    $row_contents[$count++] = _('Notes');
-    $row_contents[$count++] = _('Creation Type');
-    $row_contents[$count++] = _('Created By');
-    $row_contents[$count++] = _('Inserted');
-    $row_contents[$count++] = _('Updated');
-    $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
-
-    $result_field = $pdo->query("
-        SELECT `name`
-        FROM domain_fields
-        ORDER BY `name` ASC")->fetchAll();
-
-    if ($result_field) {
-
-        foreach ($result_field as $row_field) {
-
-            $row_contents[$count++] = $row_field->name;
-
-        }
-
-    }
-
-    $export->writeRow($export_file, $row_contents);
-
-    // Each custom field's type, by field name
-    $dfd_types = $pdo->query("
-        SELECT field_name, type_id
-        FROM domain_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
-
-    foreach ($result as $row) {
-
-        $temp_initial_fee = $row->initial_fee * $row->conversion;
-        $temp_renewal_fee = $row->renewal_fee * $row->conversion;
-        $temp_transfer_fee = $row->transfer_fee * $row->conversion;
-        $temp_privacy_fee = $row->privacy_fee * $row->conversion;
-        $temp_misc_fee = $row->misc_fee * $row->conversion;
-        $temp_total_cost = $row->total_cost * $row->conversion;
-
-        // Blank for any value not listed below, rather than the previous domain's label.
-        $domain_status = '';
-        $autorenew_status = '';
-        $privacy_status = '';
-
-        if ($row->active == "0") {
-            $domain_status = DomainMOD\Format::toUpper(_('Expired'));
-        } elseif ($row->active == "1") {
-            $domain_status = DomainMOD\Format::toUpper(_('Active'));
-        } elseif ($row->active == "2") {
-            $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
-        } elseif ($row->active == "3") {
-            $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
-        } elseif ($row->active == "4") {
-            $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
-        } elseif ($row->active == "5") {
-            $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
-        } elseif ($row->active == "10") {
-            $domain_status = DomainMOD\Format::toUpper(_('Sold'));
-        }
-
-        if ($row->autorenew == "1") {
-            $autorenew_status = _('Auto-Renewal');
-        } elseif ($row->autorenew == "0") {
-            $autorenew_status = _('Manual Renewal');
-        }
-
-        if ($row->privacy == "1") {
-            $privacy_status = _('Private');
-        } elseif ($row->privacy == "0") {
-            $privacy_status = _('Public');
-        }
-
-        $export_initial_fee = $currency->format($temp_initial_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-        $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-        $export_transfer_fee = $currency->format($temp_transfer_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-        $export_privacy_fee = $currency->format($temp_privacy_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-        $export_misc_fee = $currency->format($temp_misc_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-        $export_total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+        $export->writeBlankRow($export_file);
 
         unset($row_contents);
         $count = 0;
 
-        $creation_type = $system->getCreationType($row->creation_type_id);
+        $row_contents[$count++] = _('Domain Status');
+        $row_contents[$count++] = _('Expiry Date');
+        $row_contents[$count++] = _('Initial Fee');
+        $row_contents[$count++] = _('Renewal Fee');
+        $row_contents[$count++] = _('Transfer Fee');
+        $row_contents[$count++] = _('Privacy Fee');
+        $row_contents[$count++] = _('Misc Fee');
+        $row_contents[$count++] = _('Total Yearly Cost');
+        $row_contents[$count++] = _('Domain');
+        $row_contents[$count++] = _('TLD');
+        $row_contents[$count++] = _('Function');
+        $row_contents[$count++] = _('Renewal Status');
+        $row_contents[$count++] = _('WHOIS Status');
+        $row_contents[$count++] = _('Registrar');
+        $row_contents[$count++] = _('Registrar Account');
+        $row_contents[$count++] = _('Username');
+        $row_contents[$count++] = _('DNS Profile');
+        $row_contents[$count++] = _('IP Address Name');
+        $row_contents[$count++] = _('IP Address');
+        $row_contents[$count++] = _('IP Address rDNS');
+        $row_contents[$count++] = _('Web Host');
+        $row_contents[$count++] = _('Category');
+        $row_contents[$count++] = _('Category Stakeholder');
+        $row_contents[$count++] = _('Owner');
+        $row_contents[$count++] = _('Notes');
+        $row_contents[$count++] = _('Creation Type');
+        $row_contents[$count++] = _('Created By');
+        $row_contents[$count++] = _('Inserted');
+        $row_contents[$count++] = _('Updated');
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
-        $row_contents[$count++] = $domain_status;
-        $row_contents[$count++] = $row->expiry_date;
-        $row_contents[$count++] = $export_initial_fee;
-        $row_contents[$count++] = $export_renewal_fee;
-        $row_contents[$count++] = $export_transfer_fee;
-        $row_contents[$count++] = $export_privacy_fee;
-        $row_contents[$count++] = $export_misc_fee;
-        $row_contents[$count++] = $export_total_cost;
-        $row_contents[$count++] = $row->domain;
-        $row_contents[$count++] = '.' . $row->tld;
-        $row_contents[$count++] = $row->function;
-        $row_contents[$count++] = $autorenew_status;
-        $row_contents[$count++] = $privacy_status;
-        $row_contents[$count++] = $row->registrar_name;
-        $row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . '(' . $row->username . ')';
-        $row_contents[$count++] = $row->username;
-        $row_contents[$count++] = $row->dns_name;
-        $row_contents[$count++] = $row->ip_name;
-        $row_contents[$count++] = $row->ip;
-        $row_contents[$count++] = $row->rdns;
-        $row_contents[$count++] = $row->wh_name;
-        $row_contents[$count++] = $row->category_name;
-        $row_contents[$count++] = $row->stakeholder;
-        $row_contents[$count++] = $row->owner_name;
-        $row_contents[$count++] = $row->notes;
-        $row_contents[$count++] = $creation_type;
-        if ($row->created_by == '0') {
-            $row_contents[$count++] = _('Unknown');
-        } else {
-            $user = new DomainMOD\User();
-            $row_contents[$count++] = $user->getFullName($row->created_by);
-        }
-        $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
-        $row_contents[$count++] = $time->toUserTimezone($row->update_time);
-        $row_contents[$count++] = '';
+        $result_field = $pdo->query("
+            SELECT `name`
+            FROM domain_fields
+            ORDER BY `name` ASC")->fetchAll();
 
-        $dfd_columns_array = $customField->getCustomFields('domain_fields');
+        if ($result_field) {
 
-        if ($dfd_columns_array != "") {
+            foreach ($result_field as $row_field) {
 
-            foreach ($dfd_columns_array as $column) {
-
-                // An empty Date or Time Stamp field is blank, as the list shows it
-                if (in_array($dfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
-
-                    $row_contents[$count++] = '';
-
-                } else {
-
-                    $row_contents[$count++] = $row->{$column};
-
-                }
+                $row_contents[$count++] = $row_field->name;
 
             }
 
@@ -819,9 +774,147 @@ if ($export_data == 1) {
 
         $export->writeRow($export_file, $row_contents);
 
+        $export->chunkWritten();
+
+        foreach ($export_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params']) as $result) {
+
+            foreach ($result as $row) {
+
+                $temp_initial_fee = $row->initial_fee * $row->conversion;
+                $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+                $temp_transfer_fee = $row->transfer_fee * $row->conversion;
+                $temp_privacy_fee = $row->privacy_fee * $row->conversion;
+                $temp_misc_fee = $row->misc_fee * $row->conversion;
+                $temp_total_cost = $row->total_cost * $row->conversion;
+
+                // Blank for any value not listed below, rather than the previous domain's label.
+                $domain_status = '';
+                $autorenew_status = '';
+                $privacy_status = '';
+
+                if ($row->active == "0") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Expired'));
+                } elseif ($row->active == "1") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Active'));
+                } elseif ($row->active == "2") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
+                } elseif ($row->active == "3") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
+                } elseif ($row->active == "4") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
+                } elseif ($row->active == "5") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
+                } elseif ($row->active == "10") {
+                    $domain_status = DomainMOD\Format::toUpper(_('Sold'));
+                }
+
+                if ($row->autorenew == "1") {
+                    $autorenew_status = _('Auto-Renewal');
+                } elseif ($row->autorenew == "0") {
+                    $autorenew_status = _('Manual Renewal');
+                }
+
+                if ($row->privacy == "1") {
+                    $privacy_status = _('Private');
+                } elseif ($row->privacy == "0") {
+                    $privacy_status = _('Public');
+                }
+
+                $export_initial_fee = $currency->format($temp_initial_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_transfer_fee = $currency->format($temp_transfer_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_privacy_fee = $currency->format($temp_privacy_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_misc_fee = $currency->format($temp_misc_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                unset($row_contents);
+                $count = 0;
+
+                $creation_type = DomainMOD\Export::creationTypeName($creation_type_names, $row->creation_type_id);
+
+                $row_contents[$count++] = $domain_status;
+                $row_contents[$count++] = $row->expiry_date;
+                $row_contents[$count++] = $export_initial_fee;
+                $row_contents[$count++] = $export_renewal_fee;
+                $row_contents[$count++] = $export_transfer_fee;
+                $row_contents[$count++] = $export_privacy_fee;
+                $row_contents[$count++] = $export_misc_fee;
+                $row_contents[$count++] = $export_total_cost;
+                $row_contents[$count++] = $row->domain;
+                $row_contents[$count++] = '.' . $row->tld;
+                $row_contents[$count++] = $row->function;
+                $row_contents[$count++] = $autorenew_status;
+                $row_contents[$count++] = $privacy_status;
+                $row_contents[$count++] = $row->registrar_name;
+                $row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . '(' . $row->username . ')';
+                $row_contents[$count++] = $row->username;
+                $row_contents[$count++] = $row->dns_name;
+                $row_contents[$count++] = $row->ip_name;
+                $row_contents[$count++] = $row->ip;
+                $row_contents[$count++] = $row->rdns;
+                $row_contents[$count++] = $row->wh_name;
+                $row_contents[$count++] = $row->category_name;
+                $row_contents[$count++] = $row->stakeholder;
+                $row_contents[$count++] = $row->owner_name;
+                $row_contents[$count++] = $row->notes;
+                $row_contents[$count++] = $creation_type;
+                if ($row->created_by == '0') {
+                    $row_contents[$count++] = _('Unknown');
+                } else {
+                    $row_contents[$count++] = DomainMOD\Export::userName($user_names, $row->created_by);
+                }
+                $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+                $row_contents[$count++] = $time->toUserTimezone($row->update_time);
+                $row_contents[$count++] = '';
+
+                if ($dfd_columns_array != "") {
+
+                    foreach ($dfd_columns_array as $column) {
+
+                        // An empty Date or Time Stamp field is blank, as the list shows it
+                        if (in_array($dfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+
+                            $row_contents[$count++] = '';
+
+                        } else {
+
+                            $row_contents[$count++] = $row->{$column};
+
+                        }
+
+                    }
+
+                }
+
+                $export->writeDataRow($export_file, $row_contents);
+
+            }
+
+            $export->chunkWritten();
+
+        }
+
+        $export->finish($total_rows);
+
+    } catch (Throwable $e) {
+
+        $export->fail($e);
+
     }
 
-    $export->closeFile($export_file);
+    // finish() and fail() both end the request
+    exit;
 
 }
 ?>
@@ -2021,14 +2114,8 @@ if ($segid !== 0) {
     $stmt->execute();
     $totalrows_missing = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("
-        SELECT count(*)
-        FROM segment_data
-        WHERE segment_id = :segid
-          AND filtered = '1'");
-    $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
-    $stmt->execute();
-    $totalrows_filtered = $stmt->fetchColumn();
+    // Worked out from the list's own filters, not read back from the segment's stored flags
+    $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql);
 
     // The segment's summary as facts, with a link to each of its three results lists (domains/results.php) that has any
     $segment_facts = array(

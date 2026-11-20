@@ -51,8 +51,11 @@ class SslList extends ListQuery
         array('ip_addresses', 'ip', 'PRIMARY'),
         array('categories', 'cat', 'PRIMARY'));
 
-    // Export and the Raw List come out in the list's default order, as the Domains list's do
-    const EXPORT_ORDER_SQL = ' ORDER BY sslc.expiry_date ASC, sslc.name ASC, sslc.id ASC';
+    // Export and the Raw List come out in the list's default order, as the Domains list's do, and EXPORT_ORDER_SQL and
+    // the keyset (see ListQuery::keysetSql()) are both built from it
+    const EXPORT_ORDER = array('sslc.expiry_date', 'sslc.name', 'sslc.id');
+    const EXPORT_ORDER_SQL = ' ORDER BY ' . self::EXPORT_ORDER[0] . ' ASC, ' . self::EXPORT_ORDER[1] . ' ASC, '
+        . self::EXPORT_ORDER[2] . ' ASC';
 
     // Every order ends with the certificate's name and the id
     const TIE_BREAK = array('sslc.name ASC', 'sslc.id ASC');

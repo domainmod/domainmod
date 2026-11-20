@@ -162,6 +162,13 @@ $daterange = $list_start_date != 'YYYY-MM-DD' ? $list_start_date . ' - ' . $list
 $valid_is_active = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'LIVE', 'ALL');
 if (!is_string($is_active) || !in_array($is_active, $valid_is_active, true)) $is_active = 'LIVE';
 
+// Where an export that can't be made sends the user back: the list, with the export's filters. When an older export
+// link leaves out the keyword or the date range, the export uses the saved one, so the saved value is added here for
+// the list to keep. from_dropdown is left out, since it would make the list ignore them.
+$back_filters = array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout', 'from_dropdown')));
+if (!array_key_exists('search_for', $back_filters)) $back_filters['search_for'] = htmlspecialchars_decode($list_search_for, ENT_QUOTES);
+if (!array_key_exists('daterange', $back_filters)) $back_filters['daterange'] = $daterange;
+
 // The list's filters as SQL, from the same class as the list's data endpoint (ssl/list-data.php), so the first page,
 // the pages fetched afterwards, the counts, Export, and the Raw List all agree. The keyword is matched against the
 // certificate's name, which is stored HTML-encoded, as the keyword is, or its domain, as the filter menus match it (see
@@ -183,8 +190,9 @@ $range_string = $filter_parts['range_string'];
 $search_string = $filter_parts['search_string'];
 
 // Export and the Raw List come out in the list's default order (SslList::EXPORT_ORDER_SQL). The Raw List also keeps the
-// query without its order, so it can add the table's search box when its link carries one (see raw.php).
-$raw_list_sql = $ssl_list->selectSql() . $ssl_list->fromSql() . "
+// query without its order, so it can add the table's search box when its link carries one, and without its columns, so
+// it can read only the names, in chunks (see raw.php).
+$raw_list_from_sql = $ssl_list->fromSql() . "
           $is_active_string
           $oid_string
           $did_string
@@ -195,10 +203,12 @@ $raw_list_sql = $ssl_list->selectSql() . $ssl_list->fromSql() . "
           $sslpcid_string
           $range_string
           $search_string";
+$raw_list_sql = $ssl_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\SslList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
 $_SESSION['s_raw_list_sql'] = $sql;
 $_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
+$_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_string . $sslpaid_string . $ssltid_string
@@ -206,16 +216,27 @@ $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_strin
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
-// How many certificates the filters match (the same joins and filters as the main query)
-$total_rows = $ssl_list->count($list_filter_sql);
+// How many certificates the filters match, and their total cost (the same joins and filters as the list). Export reads
+// its own inside its snapshot, so they aren't read twice.
+if ($export_data !== 1) {
 
-// The total covers exactly the listed certificates (the same joins and filters as the list and Export)
-$grand_total = $pdo->query("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql)->fetchColumn();
+    $total_rows = $ssl_list->count($list_filter_sql);
 
-$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
-    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+    $grand_total = $pdo->query("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql)->fetchColumn();
+
+    $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+        $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+}
 
 if ($export_data == 1) {
+
+    // Where an export that can't be made sends the user back (see $back_filters)
+    $back_url = 'index.php?' . http_build_query($back_filters);
+
+    // A streamed export (see Export::begin()), read and written in chunks, so PHP holds only a chunk of the rows at once
+    $export = new DomainMOD\Export();
+    $export->begin($back_url);
 
     // The table's search box, when the link carries it (js/server-list.js adds it), so the export holds the rows the
     // table shows. An older link without it exports what the filters match, as before.
@@ -228,362 +249,285 @@ if ($export_data == 1) {
     if ($table_search['stale']) {
 
         $_SESSION['s_message_danger'] .= _('Your display settings have changed since the list was loaded. Please search the list again.') . '<BR>';
-        $back_query = http_build_query(array_diff_key($_GET, array_flip(array('export_data', 'dt_search', 'dt_layout'))));
-        header('Location: index.php' . ($back_query !== '' ? '?' . $back_query : ''));
+        header('Location: ' . $back_url);
         exit;
 
     }
 
-    $stmt = $pdo->prepare($raw_list_sql . $table_search['sql'] . DomainMOD\SslList::EXPORT_ORDER_SQL);
-    $stmt->execute($table_search['params']);
-    $result = $stmt->fetchAll();
+    try {
 
-    // With a table search, the export's count and total cost are for the rows it holds
-    if ($table_search['sql'] !== '') {
-
-        $total_rows = count($result);
-
-        $stmt = $pdo->prepare("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql
-            . $table_search['sql']);
-        $stmt->execute($table_search['params']);
-        $grand_total = $currency->format($stmt->fetchColumn(), $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-    }
-
-    $export = new DomainMOD\Export();
-    $export_file = $export->openFile(_('ssl_results'), strtotime($time->stamp()));
-
-    $row_contents = array(_('SSL Certificate Search Results Export'));
-    $export->writeRow($export_file, $row_contents);
-
-    $export->writeBlankRow($export_file);
-
-    $row_contents = array(
-        _('Number of SSL Certificates') . ':',
-        $total_rows
-    );
-    $export->writeRow($export_file, $row_contents);
-
-    $row_contents = array(
-        _('Total Cost') . ':',
-        $grand_total,
-        $_SESSION['s_default_currency']
-    );
-    $export->writeRow($export_file, $row_contents);
-
-    $export->writeBlankRow($export_file);
-
-    $row_contents = array(
-        '[' . _('Search Filters') . ']'
-    );
-    $export->writeRow($export_file, $row_contents);
-
-    if ($list_search_for != "") {
+        // The header block's filters, read before the snapshot below (but inside the try, so an error still goes to
+        // Export::fail()), since the name lookups write to the log when a name is missing, and nothing can write inside the
+        // snapshot
+        $search_filter_rows = array();
 
         $row_contents = array(
-            _('Keyword Search') . ':',
-            $list_search_for
+            '[' . _('Search Filters') . ']'
         );
-        $export->writeRow($export_file, $row_contents);
+        $search_filter_rows[] = $row_contents;
 
-    }
-
-    if ($table_search['sql'] !== '') {
-
-        $row_contents = array(
-            _('Table Search') . ':',
-            $export->protectFormula($table_search_for)
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($did > 0) {
-
-        $domain = new DomainMOD\Domain();
-        $temp_domain = $domain->getDomain($did);
-
-        $row_contents = array(
-            _('Associated Domain') . ':',
-            $temp_domain
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($sslpid > 0) {
-
-        $temp_name = $assets->getSslProvider($sslpid);
-
-        $row_contents = array(
-            _('SSL Provider') . ':',
-            $temp_name
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($sslpaid > 0) {
-
-        $stmt = $pdo->prepare("
-            SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
-            FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
-            WHERE sslpa.ssl_provider_id = sslp.id
-              AND sslpa.owner_id = o.id
-              AND sslpa.id = :sslpaid");
-        $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
-        $stmt->execute();
-        // Its own variable, so the certificates in $result are still there for the rows below
-        $account_heading = $stmt->fetch();
-        $stmt->closeCursor();
-
-        if ($account_heading) {
+        if ($list_search_for != "") {
 
             $row_contents = array(
-                _('SSL Provider Account') . ':',
-                $account_heading->ssl_provider_name . " - " . $account_heading->owner_name . " - " . $account_heading->username
+                _('Keyword Search') . ':',
+                $list_search_for
             );
-            $export->writeRow($export_file, $row_contents);
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($table_search['sql'] !== '') {
+
+            $row_contents = array(
+                _('Table Search') . ':',
+                $export->protectFormula($table_search_for)
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($did > 0) {
+
+            $domain = new DomainMOD\Domain();
+            $temp_domain = $domain->getDomain($did);
+
+            $row_contents = array(
+                _('Associated Domain') . ':',
+                $temp_domain
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($sslpid > 0) {
+
+            $temp_name = $assets->getSslProvider($sslpid);
+
+            $row_contents = array(
+                _('SSL Provider') . ':',
+                $temp_name
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($sslpaid > 0) {
+
+            $stmt = $pdo->prepare("
+                SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
+                FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
+                WHERE sslpa.ssl_provider_id = sslp.id
+                  AND sslpa.owner_id = o.id
+                  AND sslpa.id = :sslpaid");
+            $stmt->bindValue('sslpaid', $sslpaid, PDO::PARAM_INT);
+            $stmt->execute();
+            $account_heading = $stmt->fetch();
+            $stmt->closeCursor();
+
+            if ($account_heading) {
+
+                $row_contents = array(
+                    _('SSL Provider Account') . ':',
+                    $account_heading->ssl_provider_name . " - " . $account_heading->owner_name . " - " . $account_heading->username
+                );
+                $search_filter_rows[] = $row_contents;
+
+
+            }
+
+        }
+
+        if ($ssltid > 0) {
+
+            $temp_type = $assets->getSslType($ssltid);
+
+            $row_contents = array(
+                _('SSL Type') . ':',
+                $temp_type
+            );
+            $search_filter_rows[] = $row_contents;
 
 
         }
 
-    }
+        if ($sslipid > 0) {
 
-    if ($ssltid > 0) {
+            list($temp_ip, $temp_ip_name) = $assets->getIpAndName($sslipid);
 
-        $temp_type = $assets->getSslType($ssltid);
-
-        $row_contents = array(
-            _('SSL Type') . ':',
-            $temp_type
-        );
-        $export->writeRow($export_file, $row_contents);
-
-
-    }
-
-    if ($sslipid > 0) {
-
-        list($temp_ip, $temp_ip_name) = $assets->getIpAndName($sslipid);
-
-        $row_contents = array(
-            _('SSL IP Address') . ':',
-            $temp_ip_name . ' (' . $temp_ip . ')'
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($sslpcid > 0) {
-
-        $temp_category = $assets->getCat($sslpcid);
-
-        $row_contents = array(
-            _('SSL Category') . ':',
-            $temp_category
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($oid > 0) {
-
-        $temp_owner = $assets->getOwner($oid);
-
-        $row_contents = array(
-            _('Owner') . ':',
-            $temp_owner
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
-
-        $row_contents = array(
-            _('Expiry Date Range') . ':',
-            $list_start_date  . " to " . $list_end_date
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    unset($row_contents);
-    $count = 0;
-
-    $row_contents[$count++] = _('SSL Status') . ':';
-
-    if ($is_active == 'ALL') {
-
-        $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
-
-    } elseif ($is_active == 'LIVE' || $is_active == "") {
-
-        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Pending') . ')';
-
-    } elseif ($is_active == "0") {
-
-        $row_contents[$count++] = _('Expired');
-
-    } elseif ($is_active == "1") {
-
-        $row_contents[$count++] = _('Active');
-
-    } elseif ($is_active == "3") {
-
-        $row_contents[$count++] = _('Pending (Renewal)');
-
-    } elseif ($is_active == "4") {
-
-        $row_contents[$count++] = _('Pending (Other)');
-
-    } elseif ($is_active == "5") {
-
-        $row_contents[$count++] = _('Pending (Registration)');
-
-    }
-    $export->writeRow($export_file, $row_contents);
-
-    $export->writeBlankRow($export_file);
-
-    unset($row_contents);
-    $count = 0;
-
-    $row_contents[$count++] = _('SSL Cert Status');
-    $row_contents[$count++] = _('Expiry Date');
-    $row_contents[$count++] = _('Initial Fee');
-    $row_contents[$count++] = _('Renewal Fee');
-    $row_contents[$count++] = _('Misc Fee');
-    $row_contents[$count++] = _('Total Yearly Cost');
-    $row_contents[$count++] = _('Host') . ' / ' . _('Label');
-    $row_contents[$count++] = _('Domain');
-    $row_contents[$count++] = _('SSL Provider');
-    $row_contents[$count++] = _('SSL Provider Account');
-    $row_contents[$count++] = _('Username');
-    $row_contents[$count++] = _('SSL Type');
-    $row_contents[$count++] = _('IP Address Name');
-    $row_contents[$count++] = _('IP Address');
-    $row_contents[$count++] = _('IP Address rDNS');
-    $row_contents[$count++] = _('Category');
-    $row_contents[$count++] = _('Owner');
-    $row_contents[$count++] = _('Notes');
-    $row_contents[$count++] = _('Creation Type');
-    $row_contents[$count++] = _('Created By');
-    $row_contents[$count++] = _('Inserted');
-    $row_contents[$count++] = _('Updated');
-    $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
-
-    $result_field = $pdo->query("
-        SELECT `name`
-        FROM ssl_cert_fields
-        ORDER BY `name` ASC")->fetchAll();
-
-    if ($result_field) {
-
-        foreach ($result_field as $row_field) {
-
-            $row_contents[$count++] = $row_field->name;
+            $row_contents = array(
+                _('SSL IP Address') . ':',
+                $temp_ip_name . ' (' . $temp_ip . ')'
+            );
+            $search_filter_rows[] = $row_contents;
 
         }
 
-    }
+        if ($sslpcid > 0) {
 
-    $export->writeRow($export_file, $row_contents);
+            $temp_category = $assets->getCat($sslpcid);
 
-    // Each custom field's type, by field name
-    $sslfd_types = $pdo->query("
-        SELECT field_name, type_id
-        FROM ssl_cert_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
+            $row_contents = array(
+                _('SSL Category') . ':',
+                $temp_category
+            );
+            $search_filter_rows[] = $row_contents;
 
-    foreach ($result as $row) {
-
-        $temp_initial_fee = $row->initial_fee * $row->conversion;
-        $temp_renewal_fee = $row->renewal_fee * $row->conversion;
-        $temp_misc_fee = $row->misc_fee * $row->conversion;
-        $temp_total_cost = $row->total_cost * $row->conversion;
-
-        if ($row->active == "0") {
-            $ssl_status = DomainMOD\Format::toUpper(_('Expired'));
-        } elseif ($row->active == "1") {
-            $ssl_status = DomainMOD\Format::toUpper(_('Active'));
-        } elseif ($row->active == "3") {
-            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
-        } elseif ($row->active == "4") {
-            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
-        } elseif ($row->active == "5") {
-            $ssl_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
-        } else {
-            $ssl_status = _('ERROR -- PROBLEM WITH CODE IN SSL/INDEX.PHP');
         }
 
-        $export_initial_fee = $currency->format($temp_initial_fee,
-            $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-            $_SESSION['s_default_currency_symbol_space']);
+        if ($oid > 0) {
 
-        $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+            $temp_owner = $assets->getOwner($oid);
 
-        $export_misc_fee = $currency->format($temp_misc_fee,
-            $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-            $_SESSION['s_default_currency_symbol_space']);
+            $row_contents = array(
+                _('Owner') . ':',
+                $temp_owner
+            );
+            $search_filter_rows[] = $row_contents;
 
-        $export_total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+        }
+
+        if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
+
+            $row_contents = array(
+                _('Expiry Date Range') . ':',
+                $list_start_date  . " to " . $list_end_date
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
 
         unset($row_contents);
         $count = 0;
 
-        $creation_type = $system->getCreationType($row->creation_type_id);
+        $row_contents[$count++] = _('SSL Status') . ':';
 
-        if ($row->created_by == '0') {
-            $created_by = _('Unknown');
-        } else {
-            $user = new DomainMOD\User();
-            $created_by = $user->getFullName($row->created_by);
+        if ($is_active == 'ALL') {
+
+            $row_contents[$count++] = DomainMOD\Format::toUpper(_('All'));
+
+        } elseif ($is_active == 'LIVE' || $is_active == "") {
+
+            $row_contents[$count++] = DomainMOD\Format::toUpper(_('Live')) . ' (' . _('Active') . ' / ' . _('Pending') . ')';
+
+        } elseif ($is_active == "0") {
+
+            $row_contents[$count++] = _('Expired');
+
+        } elseif ($is_active == "1") {
+
+            $row_contents[$count++] = _('Active');
+
+        } elseif ($is_active == "3") {
+
+            $row_contents[$count++] = _('Pending (Renewal)');
+
+        } elseif ($is_active == "4") {
+
+            $row_contents[$count++] = _('Pending (Other)');
+
+        } elseif ($is_active == "5") {
+
+            $row_contents[$count++] = _('Pending (Registration)');
+
+        }
+        $search_filter_rows[] = $row_contents;
+
+        // Everything from here to the last row reads one snapshot of the database, so the header's numbers and the
+        // rows always agree, however the data changes in the meantime
+        $export->startSnapshot($ssl_list);
+
+        // The export's count and total cost, for the rows it holds (with a table search, the rows the search matches)
+        $stmt = $pdo->prepare("SELECT count(*) AS total_rows, SUM(sslc.total_cost * cc.conversion) AS grand_total"
+            . $ssl_list->fromSql() . $list_filter_sql . $table_search['sql']);
+        $stmt->execute($table_search['params']);
+        $export_totals = $stmt->fetch();
+        $stmt->closeCursor();
+        $total_rows = (int) $export_totals->total_rows;
+        $grand_total = $currency->format($export_totals->grand_total, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+        // The rows' custom field columns, read in the snapshot like the headings and types below, so a field added or
+        // deleted in the meantime can't leave a heading without its column
+        $export_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'],
+            $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd'));
+
+        // Each custom field's type, by field name
+        $sslfd_types = $pdo->query("
+            SELECT field_name, type_id
+            FROM ssl_cert_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        // The custom fields, creation types, and users, read once rather than once for each certificate
+        $sslfd_columns_array = $customField->getCustomFields('ssl_cert_fields');
+        $creation_type_names = DomainMOD\Export::creationTypeNames($pdo);
+        $user_names = DomainMOD\Export::userNames($pdo);
+
+        $export_file = $export->openStream(_('ssl_results'), strtotime($time->stamp()));
+
+        $row_contents = array(_('SSL Certificate Search Results Export'));
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        $row_contents = array(
+            _('Number of SSL Certificates') . ':',
+            $total_rows
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $row_contents = array(
+            _('Total Cost') . ':',
+            $grand_total,
+            $_SESSION['s_default_currency']
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        foreach ($search_filter_rows as $row_contents) {
+
+            $export->writeRow($export_file, $row_contents);
+
         }
 
-        $row_contents[$count++] = $ssl_status;
-        $row_contents[$count++] = $row->expiry_date;
-        $row_contents[$count++] = $export_initial_fee;
-        $row_contents[$count++] = $export_renewal_fee;
-        $row_contents[$count++] = $export_misc_fee;
-        $row_contents[$count++] = $export_total_cost;
-        $row_contents[$count++] = $row->name;
-        $row_contents[$count++] = $row->domain;
-        $row_contents[$count++] = $row->ssl_provider_name;
-        $row_contents[$count++] = $row->ssl_provider_name . ', ' . $row->owner_name . ' (' . $row->username . ')';
-        $row_contents[$count++] = $row->username;
-        $row_contents[$count++] = $row->type;
-        $row_contents[$count++] = $row->ip_name;
-        $row_contents[$count++] = $row->ip;
-        $row_contents[$count++] = $row->rdns;
-        $row_contents[$count++] = $row->cat_name;
-        $row_contents[$count++] = $row->owner_name;
-        $row_contents[$count++] = $row->notes;
-        $row_contents[$count++] = $creation_type;
-        $row_contents[$count++] = $created_by;
-        $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
-        $row_contents[$count++] = $time->toUserTimezone($row->update_time);
-        $row_contents[$count++] = '';
+        $export->writeBlankRow($export_file);
 
-        $sslfd_columns_array = $customField->getCustomFields('ssl_cert_fields');
+        unset($row_contents);
+        $count = 0;
 
-        if ($sslfd_columns_array != "") {
+        $row_contents[$count++] = _('SSL Cert Status');
+        $row_contents[$count++] = _('Expiry Date');
+        $row_contents[$count++] = _('Initial Fee');
+        $row_contents[$count++] = _('Renewal Fee');
+        $row_contents[$count++] = _('Misc Fee');
+        $row_contents[$count++] = _('Total Yearly Cost');
+        $row_contents[$count++] = _('Host') . ' / ' . _('Label');
+        $row_contents[$count++] = _('Domain');
+        $row_contents[$count++] = _('SSL Provider');
+        $row_contents[$count++] = _('SSL Provider Account');
+        $row_contents[$count++] = _('Username');
+        $row_contents[$count++] = _('SSL Type');
+        $row_contents[$count++] = _('IP Address Name');
+        $row_contents[$count++] = _('IP Address');
+        $row_contents[$count++] = _('IP Address rDNS');
+        $row_contents[$count++] = _('Category');
+        $row_contents[$count++] = _('Owner');
+        $row_contents[$count++] = _('Notes');
+        $row_contents[$count++] = _('Creation Type');
+        $row_contents[$count++] = _('Created By');
+        $row_contents[$count++] = _('Inserted');
+        $row_contents[$count++] = _('Updated');
+        $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
-            foreach ($sslfd_columns_array as $column) {
+        $result_field = $pdo->query("
+            SELECT `name`
+            FROM ssl_cert_fields
+            ORDER BY `name` ASC")->fetchAll();
 
-                // An empty Date or Time Stamp field is blank, as the list shows it
-                if (in_array($sslfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+        if ($result_field) {
 
-                    $row_contents[$count++] = '';
+            foreach ($result_field as $row_field) {
 
-                } else {
-
-                    $row_contents[$count++] = $row->{$column};
-
-                }
+                $row_contents[$count++] = $row_field->name;
 
             }
 
@@ -591,9 +535,117 @@ if ($export_data == 1) {
 
         $export->writeRow($export_file, $row_contents);
 
+        $export->chunkWritten();
+
+        foreach ($export_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params']) as $result) {
+
+            foreach ($result as $row) {
+
+                $temp_initial_fee = $row->initial_fee * $row->conversion;
+                $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+                $temp_misc_fee = $row->misc_fee * $row->conversion;
+                $temp_total_cost = $row->total_cost * $row->conversion;
+
+                if ($row->active == "0") {
+                    $ssl_status = DomainMOD\Format::toUpper(_('Expired'));
+                } elseif ($row->active == "1") {
+                    $ssl_status = DomainMOD\Format::toUpper(_('Active'));
+                } elseif ($row->active == "3") {
+                    $ssl_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
+                } elseif ($row->active == "4") {
+                    $ssl_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
+                } elseif ($row->active == "5") {
+                    $ssl_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
+                } else {
+                    $ssl_status = _('ERROR -- PROBLEM WITH CODE IN SSL/INDEX.PHP');
+                }
+
+                $export_initial_fee = $currency->format($temp_initial_fee,
+                    $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                    $_SESSION['s_default_currency_symbol_space']);
+
+                $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $export_misc_fee = $currency->format($temp_misc_fee,
+                    $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                    $_SESSION['s_default_currency_symbol_space']);
+
+                $export_total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                unset($row_contents);
+                $count = 0;
+
+                $creation_type = DomainMOD\Export::creationTypeName($creation_type_names, $row->creation_type_id);
+
+                if ($row->created_by == '0') {
+                    $created_by = _('Unknown');
+                } else {
+                    $created_by = DomainMOD\Export::userName($user_names, $row->created_by);
+                }
+
+                $row_contents[$count++] = $ssl_status;
+                $row_contents[$count++] = $row->expiry_date;
+                $row_contents[$count++] = $export_initial_fee;
+                $row_contents[$count++] = $export_renewal_fee;
+                $row_contents[$count++] = $export_misc_fee;
+                $row_contents[$count++] = $export_total_cost;
+                $row_contents[$count++] = $row->name;
+                $row_contents[$count++] = $row->domain;
+                $row_contents[$count++] = $row->ssl_provider_name;
+                $row_contents[$count++] = $row->ssl_provider_name . ', ' . $row->owner_name . ' (' . $row->username . ')';
+                $row_contents[$count++] = $row->username;
+                $row_contents[$count++] = $row->type;
+                $row_contents[$count++] = $row->ip_name;
+                $row_contents[$count++] = $row->ip;
+                $row_contents[$count++] = $row->rdns;
+                $row_contents[$count++] = $row->cat_name;
+                $row_contents[$count++] = $row->owner_name;
+                $row_contents[$count++] = $row->notes;
+                $row_contents[$count++] = $creation_type;
+                $row_contents[$count++] = $created_by;
+                $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+                $row_contents[$count++] = $time->toUserTimezone($row->update_time);
+                $row_contents[$count++] = '';
+
+                if ($sslfd_columns_array != "") {
+
+                    foreach ($sslfd_columns_array as $column) {
+
+                        // An empty Date or Time Stamp field is blank, as the list shows it
+                        if (in_array($sslfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+
+                            $row_contents[$count++] = '';
+
+                        } else {
+
+                            $row_contents[$count++] = $row->{$column};
+
+                        }
+
+                    }
+
+                }
+
+                $export->writeDataRow($export_file, $row_contents);
+
+            }
+
+            $export->chunkWritten();
+
+        }
+
+        $export->finish($total_rows);
+
+    } catch (Throwable $e) {
+
+        $export->fail($e);
+
     }
 
-    $export->closeFile($export_file);
+    // finish() and fail() both end the request
+    exit;
 
 }
 ?>

@@ -76,6 +76,200 @@ if ($segment_name === false) {
 // The name is stored escaped, so it's ready to draw (the breadcrumb and the introduction)
 $segment_name_html = $segment_name;
 
+if ($export_data === 1) {
+
+    // A streamed export (see Export::begin()), read and written in chunks, so PHP holds only a chunk of the rows at once.
+    // An export that fails before its file starts sends the user back to this page.
+    $export = new DomainMOD\Export();
+    $export->begin('results.php?' . http_build_query(array('type' => $type, 'segid' => $segid)));
+
+    try {
+
+        // Everything from here to the last row reads one snapshot of the database, so the count and the rows always
+        // agree, however the data changes in the meantime (a Domains list starts it, since the snapshot is the list
+        // reader's, but none of its rows are read)
+        $export->startSnapshot(new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], ''));
+
+        $total_rows = DomainMOD\Segment::resultsCount($pdo, $type, $_SESSION['s_user_id'], $segid);
+
+        if ($type == "inactive") {
+
+            $base_filename = _('segment_results_inactive');
+
+        } elseif ($type == "filtered") {
+
+            $base_filename = _('segment_results_filtered');
+
+        } elseif ($type == "missing") {
+
+            $base_filename = _('segment_results_missing');
+
+        }
+
+        $export_file = $export->openStream($base_filename, strtotime($time->stamp()));
+
+        if ($type == "inactive" || $type == "filtered") {
+
+            if ($type == "inactive") {
+
+                $row_contents = array(DomainMOD\Format::toUpper(_('Inactive Domains')));
+
+            } elseif ($type == "filtered") {
+
+                $row_contents = array(DomainMOD\Format::toUpper(_('Filtered Domains')));
+
+            }
+
+            $export->writeRow($export_file, $row_contents);
+
+            $export->writeBlankRow($export_file);
+
+            $row_contents = array(
+                _('Domain Status'),
+                _('Expiry Date'),
+                _('Initial Fee'),
+                _('Renewal Fee'),
+                _('Domain'),
+                _('TLD'),
+                _('Renewal Status'),
+                _('WHOIS Status'),
+                _('Registrar'),
+                _('Username'),
+                _('DNS Profile'),
+                _('IP Address Name'),
+                _('IP Address'),
+                _('IP Address rDNS'),
+                _('Web Host'),
+                _('Category'),
+                _('Category Stakeholder'),
+                _('Owner'),
+                _('Function'),
+                _('Notes'),
+                _('Inserted'),
+                _('Updated')
+            );
+            $export->writeRow($export_file, $row_contents);
+
+        } elseif ($type == "missing") {
+
+            $row_contents = array(DomainMOD\Format::toUpper(_('Missing Domains')));
+            $export->writeRow($export_file, $row_contents);
+
+        }
+
+        $export->chunkWritten();
+
+        foreach (DomainMOD\Segment::resultsChunks($pdo, $type, $_SESSION['s_user_id'], $segid) as $result) {
+
+            if ($type == "inactive" || $type == "filtered") {
+
+                foreach ($result as $row) {
+
+                    $temp_initial_fee = $row->initial_fee * $row->conversion;
+                    $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+
+                    if ($row->active == "0") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Expired'));
+                    } elseif ($row->active == "1") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Active'));
+                    } elseif ($row->active == "2") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
+                    } elseif ($row->active == "3") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
+                    } elseif ($row->active == "4") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
+                    } elseif ($row->active == "5") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
+                    } elseif ($row->active == "10") {
+                        $domain_status = DomainMOD\Format::toUpper(_('Sold'));
+                    } else {
+                        $domain_status = _('ERROR -- PROBLEM WITH CODE IN RESULTS.PHP');
+                    }
+
+                    if ($row->autorenew == "1") {
+
+                        $autorenew_status = _('Auto-Renewal');
+
+                    } elseif ($row->autorenew == "0") {
+
+                        $autorenew_status = _('Manual Renewal');
+
+                    }
+
+                    if ($row->privacy == "1") {
+
+                        $privacy_status = _('Private');
+
+                    } elseif ($row->privacy == "0") {
+
+                        $privacy_status = _('Public');
+
+                    }
+
+                    $export_initial_fee = $currency->format($temp_initial_fee,
+                        $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                        $_SESSION['s_default_currency_symbol_space']);
+
+                    $export_renewal_fee = $currency->format($temp_renewal_fee,
+                        $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                        $_SESSION['s_default_currency_symbol_space']);
+
+                    $row_contents = array(
+                        $domain_status,
+                        $row->expiry_date,
+                        $export_initial_fee,
+                        $export_renewal_fee,
+                        $row->domain,
+                        '.' . $row->tld,
+                        $autorenew_status,
+                        $privacy_status,
+                        $row->registrar_name,
+                        $row->username,
+                        $row->dns_profile,
+                        $row->name,
+                        $row->ip,
+                        $row->rdns,
+                        $row->wh_name,
+                        $row->category_name,
+                        $row->category_stakeholder,
+                        $row->owner_name,
+                        $row->function,
+                        $row->notes,
+                        $time->toUserTimezone($row->insert_time),
+                        $time->toUserTimezone($row->update_time)
+                    );
+                    $export->writeDataRow($export_file, $row_contents);
+
+                }
+
+            } elseif ($type == "missing") {
+
+                foreach ($result as $missing_domain) {
+
+                    $row_contents = array($missing_domain);
+                    $export->writeDataRow($export_file, $row_contents);
+
+                }
+
+            }
+
+            $export->chunkWritten();
+
+        }
+
+        $export->finish($total_rows);
+
+    } catch (Throwable $e) {
+
+        $export->fail($e);
+
+    }
+
+    // finish() and fail() both end the request
+    exit;
+
+}
+
 if ($type == "inactive" || $type == "filtered") {
 
     $stmt = $pdo->prepare(DomainMOD\Segment::resultsSql($type));
@@ -95,176 +289,6 @@ if ($type == "inactive" || $type == "filtered") {
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetchAll();
-
-}
-
-if ($export_data === 1) {
-
-    if ($type == "inactive") {
-
-        $base_filename = _('segment_results_inactive');
-
-    } elseif ($type == "filtered") {
-
-        $base_filename = _('segment_results_filtered');
-
-    } elseif ($type == "missing") {
-
-        $base_filename = _('segment_results_missing');
-
-    }
-
-    $export = new DomainMOD\Export();
-    $export_file = $export->openFile($base_filename, strtotime($time->stamp()));
-
-    if ($type == "inactive" || $type == "filtered") {
-
-        if ($type == "inactive") {
-
-            $row_contents = array(DomainMOD\Format::toUpper(_('Inactive Domains')));
-
-        } elseif ($type == "filtered") {
-
-            $row_contents = array(DomainMOD\Format::toUpper(_('Filtered Domains')));
-
-        }
-
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
-
-        $row_contents = array(
-            _('Domain Status'),
-            _('Expiry Date'),
-            _('Initial Fee'),
-            _('Renewal Fee'),
-            _('Domain'),
-            _('TLD'),
-            _('Renewal Status'),
-            _('WHOIS Status'),
-            _('Registrar'),
-            _('Username'),
-            _('DNS Profile'),
-            _('IP Address Name'),
-            _('IP Address'),
-            _('IP Address rDNS'),
-            _('Web Host'),
-            _('Category'),
-            _('Category Stakeholder'),
-            _('Owner'),
-            _('Function'),
-            _('Notes'),
-            _('Inserted'),
-            _('Updated')
-        );
-        $export->writeRow($export_file, $row_contents);
-
-    } elseif ($type == "missing") {
-
-        $row_contents = array(DomainMOD\Format::toUpper(_('Missing Domains')));
-        $export->writeRow($export_file, $row_contents);
-
-    }
-
-    if ($type == "inactive" || $type == "filtered") {
-
-        $total_initial_fee_export = 0;
-        $total_renewal_fee_export = 0;
-
-        foreach ($result as $row) {
-
-            $temp_initial_fee = $row->initial_fee * $row->conversion;
-            $total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
-
-            $temp_renewal_fee = $row->renewal_fee * $row->conversion;
-            $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
-
-            if ($row->active == "0") {
-                $domain_status = DomainMOD\Format::toUpper(_('Expired'));
-            } elseif ($row->active == "1") {
-                $domain_status = DomainMOD\Format::toUpper(_('Active'));
-            } elseif ($row->active == "2") {
-                $domain_status = DomainMOD\Format::toUpper(_('Pending (Transfer)'));
-            } elseif ($row->active == "3") {
-                $domain_status = DomainMOD\Format::toUpper(_('Pending (Renewal)'));
-            } elseif ($row->active == "4") {
-                $domain_status = DomainMOD\Format::toUpper(_('Pending (Other)'));
-            } elseif ($row->active == "5") {
-                $domain_status = DomainMOD\Format::toUpper(_('Pending (Registration)'));
-            } elseif ($row->active == "10") {
-                $domain_status = DomainMOD\Format::toUpper(_('Sold'));
-            } else {
-                $domain_status = _('ERROR -- PROBLEM WITH CODE IN RESULTS.PHP');
-            }
-
-            if ($row->autorenew == "1") {
-
-                $autorenew_status = _('Auto-Renewal');
-
-            } elseif ($row->autorenew == "0") {
-
-                $autorenew_status = _('Manual Renewal');
-
-            }
-
-            if ($row->privacy == "1") {
-
-                $privacy_status = _('Private');
-
-            } elseif ($row->privacy == "0") {
-
-                $privacy_status = _('Public');
-
-            }
-
-            $export_initial_fee = $currency->format($temp_initial_fee,
-                $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-                $_SESSION['s_default_currency_symbol_space']);
-
-            $export_renewal_fee = $currency->format($temp_renewal_fee,
-                $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
-                $_SESSION['s_default_currency_symbol_space']);
-
-            $row_contents = array(
-                $domain_status,
-                $row->expiry_date,
-                $export_initial_fee,
-                $export_renewal_fee,
-                $row->domain,
-                '.' . $row->tld,
-                $autorenew_status,
-                $privacy_status,
-                $row->registrar_name,
-                $row->username,
-                $row->dns_profile,
-                $row->name,
-                $row->ip,
-                $row->rdns,
-                $row->wh_name,
-                $row->category_name,
-                $row->category_stakeholder,
-                $row->owner_name,
-                $row->function,
-                $row->notes,
-                $time->toUserTimezone($row->insert_time),
-                $time->toUserTimezone($row->update_time)
-            );
-            $export->writeRow($export_file, $row_contents);
-
-        }
-
-    } elseif ($type == "missing") {
-
-        foreach ($result as $row) {
-
-            $row_contents = array($row->domain);
-            $export->writeRow($export_file, $row_contents);
-
-        }
-
-    }
-
-    $export->closeFile($export_file);
 
 }
 ?>
