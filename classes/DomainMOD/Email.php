@@ -70,10 +70,10 @@ class Email
         $mail = $this->getMailer();
         $mail->isMail();
         // PHPMailer turns down an address it can't use (and would then send with no From), so that counts as a failed send.
-        $from_ok = $mail->setFrom($this->from_address, SOFTWARE_TITLE);
+        $from_ok = $mail->setFrom(self::address($this->from_address), SOFTWARE_TITLE);
         // The envelope sender (the Return-Path), passed to mail() as -f unless PHP's sendmail_path already sets one.
-        $mail->Sender = $this->from_address;
-        $mail->addReplyTo($this->from_address);
+        $mail->Sender = self::address($this->from_address);
+        $mail->addReplyTo(self::address($this->from_address));
         self::setMessage($mail, $to_address, $subject, $message_html, $message_text);
 
         $log_extra = array(_('Method') => 'PHP mail()', _('To') => $to_address, _('From') => $this->from_address,
@@ -107,7 +107,7 @@ class Email
     public static function setMessage($mail, $to_address, $subject, $message_html, $message_text)
     {
         $mail->CharSet = EMAIL_ENCODING_TYPE;
-        $mail->addAddress($to_address);
+        $mail->addAddress(self::address($to_address));
         $mail->isHTML(true);  // Set email format to HTML
         $mail->Subject = $subject;
         $mail->Body = $message_html;
@@ -119,6 +119,15 @@ class Email
                 'image/png');
 
         }
+    }
+
+    /*
+     * A stored email address as it was typed. Addresses are saved HTML-escaped (Sanitize::text()), so one with & or '
+     * in it would otherwise reach the mailer escaped (such as o&#039;brien@example.com), and the email wouldn't go.
+     */
+    public static function address($address)
+    {
+        return (new Unsanitize())->text((string) $address);
     }
 
     // The logo file that's sent with the emails.

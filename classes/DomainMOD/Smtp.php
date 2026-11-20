@@ -58,8 +58,8 @@ class Smtp
         if ((string) $this->protocol === '') $mail->SMTPAutoTLS = false;
         $mail->Username = $this->username;
         $mail->Password = $this->password;
-        $mail->setFrom($this->email_address, SOFTWARE_TITLE);
-        $mail->addReplyTo($reply_address, SOFTWARE_TITLE . ' ' . _('Admin'));
+        $mail->setFrom(Email::address($this->email_address), SOFTWARE_TITLE);
+        $mail->addReplyTo(Email::address($reply_address), SOFTWARE_TITLE . ' ' . _('Admin'));
         Email::setMessage($mail, $to_address, $subject, $message_html, $message_text);
 
         $log_extra = array(_('Method') => _('SMTP'), _('To') => $to_address, _('From') => $this->email_address,
