@@ -46,7 +46,7 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
 $new_domain_id = (int) ($_POST['new_domain_id'] ?? 0);
-$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_name = is_string($_POST['new_name'] ?? null) ? $sanitize->text(trim($_POST['new_name'])) : '';
 $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
 $new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
