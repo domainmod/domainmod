@@ -27,6 +27,8 @@ namespace DomainMOD;
  * and custom fields, given as a copy of the session values ($settings), so the endpoint can let go of the session
  * early. The cells are built exactly as the list has always drawn them, with the same escaping (values from the
  * database are stored sanitized). What it shares with the SSL Certificates list's columns is in ListColumns.
+ * Like that list, it has no control column for DataTables Responsive: the Domains list keeps every column and
+ * scrolls sideways with the domain kept in view (see css/datatables/domains-main.css), so the domain comes first.
  */
 class DomainListColumns extends ListColumns
 {
@@ -64,8 +66,7 @@ class DomainListColumns extends ListColumns
         $this->layout = new Layout();
         $this->currency = new Currency();
 
-        $columns = array(array('key' => 'control', 'title' => '', 'sort' => array()));
-        $columns[] = array('key' => 'domain', 'title' => _('Domain'), 'sort' => array('d.domain'));
+        $columns = array(array('key' => 'domain', 'title' => _('Domain'), 'sort' => array('d.domain')));
         $titles = array('expiry' => _('Expiry'),
             'fee' => _('Fee') . ' (' . ($settings['s_default_currency'] ?? '') . ')',
             'tld' => _('TLD'), 'registrar' => _('Registrar'), 'account' => _('Account'), 'dns' => _('DNS'),
@@ -118,9 +119,6 @@ class DomainListColumns extends ListColumns
         $s = $this->settings;
 
         switch ($column['key']) {
-
-            case 'control':
-                return '';
 
             case 'domain':
                 $html = '';

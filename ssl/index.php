@@ -1574,9 +1574,16 @@ if ($result) {
             . http_build_query(array('layout' => $list_columns->layoutKey()));
         $list_config = array(
             'url' => $list_data_url,
-            'columns' => array_map(function ($column) {
-                return array('orderable' => (bool) $column['sort'], 'control' => $column['key'] === 'control');
+            // Each column carries its class (ListColumns::columnClass()) for the list's styles
+            // (css/datatables/ssl-main.css), which DataTables adds to the cells it draws
+            'columns' => array_map(function ($column) use ($list_columns) {
+                return array('orderable' => (bool) $column['sort'], 'control' => $column['key'] === 'control',
+                    'className' => $list_columns->columnClass($column));
             }, $list_columns->columns()),
+            // The list's styles cut long values short, so the script gives a cut-short cell its full text as a tooltip
+            'cellTitles' => true,
+            // Every column stays, and the table scrolls sideways in its own box instead of folding columns away
+            'responsive' => false,
             'order' => $list_columns->defaultOrder(),
             'start' => $list_start,
             'length' => $list_length,
@@ -1590,6 +1597,7 @@ if ($result) {
                 'reloadLink' => _('Reload'),
                 'close' => _('Close'),
                 'paging' => sprintf(_('Pages of %s'), _('SSL Certificates')),
+                'scroll' => _('SSL Certificates'),
             ),
             'signinUrl' => $web_root . '/',
             // The links that follow the search box (by id), and what each carries with it (see raw.php)
@@ -1601,25 +1609,30 @@ if ($result) {
         $today = $time->timeBasic(); // for marking past expiry dates ?>
 
         <div id="<?php echo $slug; ?>-message"></div>
+        <?php // The table's scroll box, for when JavaScript is off (js/server-list.js gives DataTables its own) ?>
+        <div class="domainmod-list-scroll" tabindex="0" role="region" aria-label="<?php echo htmlspecialchars(_('SSL Certificates'), ENT_QUOTES, 'UTF-8'); ?>">
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>" data-domainmod-list="<?php echo htmlspecialchars(json_encode($list_config), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
             <tr>
-                <?php // The control column's heading has hidden text for screen readers (see ListColumns::headerCells())
+                <?php // The headings, as ListColumns::headerCells() prints them
                 foreach ($list_columns->headerCells() as $header_cell) {
                     echo $header_cell;
                 } ?>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($result as $row) { ?>
+            <?php // Each cell has its column's class, as the headings do, for when JavaScript is off
+            $list_cell_classes = array_map(array($list_columns, 'columnClass'), $list_columns->columns());
+            foreach ($result as $row) { ?>
                 <tr>
-                    <?php foreach ($list_columns->cells($row, $today) as $cell) { ?>
-                        <td><?php echo $cell; ?></td>
+                    <?php foreach ($list_columns->cells($row, $today) as $index => $cell) { ?>
+                        <td class="<?php echo $list_cell_classes[$index]; ?>"><?php echo $cell; ?></td>
                     <?php } ?>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
+        </div>
         <?php echo $layout->listPager($total_rows, $list_start, $list_length, $list_state_url, sprintf(_('Pages of %s'), _('SSL Certificates'))); ?>
         <BR><?php
 

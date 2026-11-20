@@ -104,9 +104,10 @@ class DomainListColumnsTest extends TestCase
             's_display_domain_tld' => '1', 's_display_domain_owner' => '1')), self::FIELDS_SQL);
 
         // Text Areas, hidden fields, and fields that no longer exist get no column
-        $this->assertSame(array('control', 'domain', 'expiry', 'tld', 'owner', 'cf_renew_date', 'cf_checked_at', 'cf_note',
+        // No control column: the Domains list keeps every column and scrolls sideways instead of using Responsive
+        $this->assertSame(array('domain', 'expiry', 'tld', 'owner', 'cf_renew_date', 'cf_checked_at', 'cf_note',
             'cf_is_flagged', 'cf_site'), self::keys($columns));
-        $this->assertSame(array('', 'Domain', 'Expiry', 'TLD', 'Owner', 'Renew Date', 'Checked At', 'Note', 'Flagged', 'Site'),
+        $this->assertSame(array('Domain', 'Expiry', 'TLD', 'Owner', 'Renew Date', 'Checked At', 'Note', 'Flagged', 'Site'),
             array_column($columns->columns(), 'title'));
     }
 
@@ -118,9 +119,9 @@ class DomainListColumnsTest extends TestCase
         }
         $columns = new DomainListColumns(self::settings($all + array('s_cdf_data' => array())), '');
 
-        $this->assertSame(array('control', 'domain', 'expiry', 'fee', 'tld', 'registrar', 'account', 'dns', 'ip', 'host',
+        $this->assertSame(array('domain', 'expiry', 'fee', 'tld', 'registrar', 'account', 'dns', 'ip', 'host',
             'category', 'owner'), self::keys($columns));
-        $this->assertSame('Fee (USD)', $columns->columns()[3]['title']);
+        $this->assertSame('Fee (USD)', $columns->columns()[2]['title']);
     }
 
     public function testSortMapAndDefaultOrder()
@@ -128,12 +129,13 @@ class DomainListColumnsTest extends TestCase
         $with_expiry = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1',
             's_display_domain_account' => '1', 's_cdf_data' => array(self::field('note', 'Note', '2')))), self::FIELDS_SQL);
 
-        $this->assertSame(array(1 => array('d.domain'), 2 => array('d.expiry_date'), 3 => array('r.name', 'o.name', 'ra.username'),
-            4 => array('dfd.note')), $with_expiry->sortMap());
-        $this->assertSame(array(array(2, 'asc')), $with_expiry->defaultOrder());
+        $this->assertSame(array(0 => array('d.domain'), 1 => array('d.expiry_date'), 2 => array('r.name', 'o.name', 'ra.username'),
+            3 => array('dfd.note')), $with_expiry->sortMap());
+        $this->assertSame(array(array(1, 'asc')), $with_expiry->defaultOrder());
 
         $without_expiry = new DomainListColumns(self::settings(array('s_cdf_data' => array())), '');
-        $this->assertSame(array(array(1, 'asc')), $without_expiry->defaultOrder());
+        // When Expiry is hidden, the list sorts by Domain, the first column
+        $this->assertSame(array(array(0, 'asc')), $without_expiry->defaultOrder());
     }
 
     public function testLayoutKeyChangesWithTheColumns()
@@ -177,8 +179,8 @@ class DomainListColumnsTest extends TestCase
         $columns = new DomainListColumns(self::settings(), self::FIELDS_SQL);
         $row = (object) array_merge(array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0'),
             $row_values);
-        // the control and domain cells come first
-        return array_slice($columns->cells($row, '2026-11-15'), 2);
+        // the domain cell comes first
+        return array_slice($columns->cells($row, '2026-11-15'), 1);
     }
 
     public function testOtherCustomFieldCells()
@@ -205,19 +207,19 @@ class DomainListColumnsTest extends TestCase
         $row = (object) array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0',
             'expiry_date' => '2027-01-01', 'total_cost' => '10.5', 'conversion' => '2', 'r_id' => 3, 'f_id' => 4);
 
-        $this->assertSame(array('', '<a href="edit.php?did=7">example.com</a>', '<a href="edit.php?did=7">2027-01-01</a>',
+        $this->assertSame(array('<a href="edit.php?did=7">example.com</a>', '<a href="edit.php?did=7">2027-01-01</a>',
             '<a href="../assets/edit/registrar-fee.php?rid=3&fee_id=4">$21.00</a>'), $columns->cells($row, '2026-11-15'));
 
         // A symbol after the amount, with a space, so losing either preference in the session copy fails
         $after = new DomainListColumns(self::settings(array('s_display_domain_fee' => '1', 's_cdf_data' => array(),
             's_default_currency_symbol_order' => '1', 's_default_currency_symbol_space' => '1')), '');
         $this->assertSame('<a href="../assets/edit/registrar-fee.php?rid=3&fee_id=4">21.00 $</a>',
-            $after->cells($row, '2026-11-15')[2]);
+            $after->cells($row, '2026-11-15')[1]);
 
         // A read-only user's session, through the same copy, gets the fee without the edit link
         $read_only = new DomainListColumns(self::settings(array('s_display_domain_fee' => '1', 's_cdf_data' => array(),
             's_read_only' => '1')), '');
-        $this->assertSame('$21.00', $read_only->cells($row, '2026-11-15')[2]);
+        $this->assertSame('$21.00', $read_only->cells($row, '2026-11-15')[1]);
     }
 
     public function testAnExpiredLiveDomainIsMarked()
@@ -227,18 +229,18 @@ class DomainListColumnsTest extends TestCase
             'expiry_date' => '2026-11-14');
 
         $this->assertSame('<a href="edit.php?did=7" class="domainmod-css-expired" data-bs-toggle="tooltip" '
-            . 'data-bs-title="Expired" aria-label="2026-11-14, Expired">2026-11-14</a>', $columns->cells($row, '2026-11-15')[2]);
+            . 'data-bs-title="Expired" aria-label="2026-11-14, Expired">2026-11-14</a>', $columns->cells($row, '2026-11-15')[1]);
 
         // an inactive or sold domain isn't marked
         foreach (array('0', '10') as $status) {
             $row->active = $status;
-            $this->assertSame('<a href="edit.php?did=7">2026-11-14</a>', $columns->cells($row, '2026-11-15')[2], $status);
+            $this->assertSame('<a href="edit.php?did=7">2026-11-14</a>', $columns->cells($row, '2026-11-15')[1], $status);
         }
 
         // nor is one that expires today
         $row->active = '1';
         $row->expiry_date = '2026-11-15';
-        $this->assertSame('<a href="edit.php?did=7">2026-11-15</a>', $columns->cells($row, '2026-11-15')[2]);
+        $this->assertSame('<a href="edit.php?did=7">2026-11-15</a>', $columns->cells($row, '2026-11-15')[1]);
     }
 
     private static function assetRow($username)
@@ -267,7 +269,7 @@ class DomainListColumnsTest extends TestCase
             '<a href="../assets/edit/host.php?whid=17">Host</a>',
             '<a href="../assets/edit/category.php?pcid=18">Category</a>',
             '<a href="../assets/edit/account-owner.php?oid=13">Owner</a>',
-        ), array_slice($columns->cells(self::assetRow('fifteen-chars-x'), '2026-11-15'), 2));
+        ), array_slice($columns->cells(self::assetRow('fifteen-chars-x'), '2026-11-15'), 1));
     }
 
     public function testALongAccountUsernameIsShortened()
@@ -276,9 +278,9 @@ class DomainListColumnsTest extends TestCase
 
         // 16 characters or more: the first 15, then an ellipsis
         $this->assertStringEndsWith('raid=14">sixteen-chars-x...</a>)',
-            $columns->cells(self::assetRow('sixteen-chars-xyz'), '2026-11-15')[2]);
+            $columns->cells(self::assetRow('sixteen-chars-xyz'), '2026-11-15')[1]);
         $this->assertStringEndsWith('raid=14">sixteen-chars-x...</a>)',
-            $columns->cells(self::assetRow('sixteen-chars-x!'), '2026-11-15')[2]);
+            $columns->cells(self::assetRow('sixteen-chars-x!'), '2026-11-15')[1]);
     }
 
 } //@formatter:on

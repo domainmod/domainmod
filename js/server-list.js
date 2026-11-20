@@ -25,10 +25,14 @@
  * data-domainmod-list attribute carries the endpoint's address (with the list's whole state), the columns, the
  * counts, the page, its size, the messages, and the links that follow the search box.
  * This script:
- * - removes the no-JavaScript pager, since DataTables pages the table from here on, starting on the same page,
+ * - removes the no-JavaScript pager once DataTables has started, since it pages the table from there on, starting
+ *   on the same page,
+ * - for a list without Responsive (responsive false), puts the table alone in a box that scrolls sideways, and
+ *   keeps each column at least as wide as on the first page, so later draws don't make the columns jump,
  * - starts the tooltips on each draw's new rows and on a phone's opened child rows,
  * - moves back to the last page when a page has emptied (rows deleted while the table was open),
  * - keeps the search box's search in the Export and Raw List links, so they hold the rows the table shows,
+ * - gives a cut-short cell its full text as a tooltip, for a list whose styles cut long values short (cellTitles),
  * - shows one message above the table when a request fails: the session has ended (with a sign-in link), Display
  *   Settings changed in another tab (with a reload link), or the usual "That didn't work" message. Returning false
  *   from DataTables' xhr event skips its own alert, and the processing indicator is turned off.
@@ -48,8 +52,16 @@ function domainmodServerList(selector) {
     }
     var messages = config.messages || {};
 
-    var pager = table.parentNode.querySelector('.domainmod-list-pager');
-    if (pager) pager.remove();
+    // A list without Responsive (config.responsive false, such as the Domains list) keeps every column and scrolls
+    // sideways in its own box. The page wraps the table in one for when JavaScript is off, which comes off once
+    // DataTables has started (it makes its own around just the table, between the controls above and below it), so
+    // the page's box stays if DataTables can't start.
+    var scrolls = config.responsive === false;
+    var page_box = scrolls && table.parentNode.classList.contains('domainmod-list-scroll') ? table.parentNode : null;
+
+    // The page's own pager follows the table (or the page's scroll box around it). It comes off once DataTables has
+    // started, as the page's box does.
+    var pager = (page_box || table).parentNode.querySelector('.domainmod-list-pager');
 
     var message_area = document.getElementById(table.id + '-message');
     var message_kind = '';
@@ -94,8 +106,12 @@ function domainmodServerList(selector) {
 
     var columns = (config.columns || []).map(function (column) {
         var options = {orderable: !!column.orderable};
-        // Responsive needs the control class on its details column, Ajax-drawn cells included
-        if (column.control) options.className = 'control';
+        // Responsive needs the control class on its details column, Ajax-drawn cells included. A column can also carry
+        // the list's own classes (config.columns' className), which DataTables adds to its heading and cells.
+        var classes = [];
+        if (column.control) classes.push('control');
+        if (column.className) classes.push(column.className);
+        if (classes.length) options.className = classes.join(' ');
         return options;
     });
 
@@ -114,7 +130,7 @@ function domainmodServerList(selector) {
         "info": true,
         "autoWidth": true,
         "bAutoWidth": false,
-        "responsive": {
+        "responsive": scrolls ? false : {
             details: {
                 type: "column"
             }
@@ -123,9 +139,135 @@ function domainmodServerList(selector) {
         "ordering": true,
         "order": config.order,
         "bSortClasses": false,
-        "dom": '<"top"lif>rt<"bottom"ip><"clear">'
+        // The loading indicator sits outside the scroll box, so it stays in view however far the table is scrolled
+        "dom": '<"top"lif>' + (scrolls ? 'r<"domainmod-list-scroll"t>' : 'rt') + '<"bottom"ip><"clear">'
     });
     if (!api) return null;
+    if (pager) pager.remove();
+    if (page_box) page_box.replaceWith.apply(page_box, Array.prototype.slice.call(page_box.childNodes));
+
+    // The scroll box can take keyboard focus, to scroll with the arrow keys, and is named for screen readers
+    var scroll_box = scrolls ? table.closest('.domainmod-list-scroll') : null;
+    if (scroll_box) {
+        scroll_box.setAttribute('tabindex', '0');
+        scroll_box.setAttribute('role', 'region');
+        if (messages.scroll) scroll_box.setAttribute('aria-label', messages.scroll);
+
+        // Each column keeps at least the width it has on the first page, so a later page, sort, or search can't make
+        // it narrower and the columns don't jump about (a longer value can still widen one, up to the list's limit).
+        // It's measured once the page's fonts have loaded, so the widths are the ones the page shows. The pinned first
+        // column is left to its own limit (a share of the window's width, see the list's styles), which a fixed
+        // minimum would override once the window is narrowed. A change of the box's width measures them again from
+        // scratch, so widths taken from a wide window, where the table stretches to fill the box, don't hold the
+        // columns wide once it's narrowed.
+        //
+        // The box's scroll padding at the start is the pinned column's width, so a link tabbed to behind that column
+        // is scrolled out from under it. It follows the column's width as the window changes.
+        var pinned = table.querySelector('thead th:first-child');
+        var keepWidths = function () {
+            var headings = table.querySelectorAll('thead th:not(:first-child)');
+            headings.forEach(function (heading) {
+                heading.style.minWidth = '';
+            });
+            // Never more than the cells' own limit (18rem, or 40vw on a phone, see the list's styles), so a column that
+            // stretched to fill the box can't keep a column wider than the space beside the pinned one
+            var root_size = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            var limit = Math.min(18 * root_size, 0.4 * window.innerWidth);
+            headings.forEach(function (heading) {
+                heading.style.minWidth = Math.min(heading.getBoundingClientRect().width, limit) + 'px';
+            });
+            padStart();
+        };
+        var padStart = function () {
+            if (pinned) scroll_box.style.scrollPaddingInlineStart = pinned.getBoundingClientRect().width + 'px';
+        };
+        // The box's own width is watched (where the browser can), so opening or closing the sidebar counts too
+        var width_timer = null;
+        var box_width = scroll_box.clientWidth;
+        var widthChanged = function () {
+            if (scroll_box.clientWidth === box_width) return;
+            box_width = scroll_box.clientWidth;
+            clearTimeout(width_timer);
+            width_timer = setTimeout(keepWidths, 200);
+        };
+        if (window.ResizeObserver) {
+            new ResizeObserver(widthChanged).observe(scroll_box);
+        } else {
+            window.addEventListener('resize', widthChanged);
+        }
+        // A draw with no matches at all scrolls the box back to the start, where the "no matches" message is
+        api.on('draw', function () {
+            padStart();
+            if (api.page.info().recordsDisplay === 0) scroll_box.scrollLeft = 0;
+        });
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(keepWidths);
+        } else {
+            keepWidths();
+        }
+    }
+
+    /*
+     * A list whose styles cut long values short (config.cellTitles, such as the Domains list, see
+     * css/datatables/domains-main.css) shows a cut-short cell's full text as a tooltip when the pointer is over it. The
+     * text is read at that moment, so it follows each draw and each change of width, and leaves out the hidden text
+     * that screen readers get (such as a status icon's code).
+     */
+    if (config.cellTitles) {
+        table.addEventListener('mouseover', function (event) {
+            var cell = event.target.closest('td');
+            if (!cell || cell.closest('table') !== table) return;
+            if (cell.classList.contains('control') || cell.classList.contains('child')) return;
+            if (cell.scrollWidth > cell.clientWidth) {
+                var copy = cell.cloneNode(true);
+                copy.querySelectorAll('.visually-hidden').forEach(function (hidden) {
+                    hidden.remove();
+                });
+                cell.title = copy.textContent.replace(/\s+/g, ' ').trim();
+            } else {
+                cell.removeAttribute('title');
+            }
+        });
+
+        // A cut-short cell with nothing in it to tab to (plain text, such as a Text custom field) can be tabbed to
+        // itself, so it opens up in full on keyboard focus as a cell with a link does. Checked after each draw and
+        // each change of width, and left alone while it has focus, since it isn't cut short then.
+        var reachCutShort = function () {
+            table.querySelectorAll('tbody td').forEach(function (cell) {
+                if (cell.contains(document.activeElement)) return;
+                var marked = cell.hasAttribute('data-domainmod-cut');
+                if (!marked && cell.querySelector('a, button, input, select, textarea, [tabindex]')) return;
+                if (cell.scrollWidth > cell.clientWidth) {
+                    cell.setAttribute('tabindex', '0');
+                    cell.setAttribute('data-domainmod-cut', '');
+                } else if (marked) {
+                    cell.removeAttribute('tabindex');
+                    cell.removeAttribute('data-domainmod-cut');
+                }
+            });
+        };
+        // The table's own size is watched (where the browser can), so a column narrowed by a change of the box's width,
+        // such as opening the sidebar, is checked too
+        var reach_timer = null;
+        var reachLater = function () {
+            clearTimeout(reach_timer);
+            reach_timer = setTimeout(reachCutShort, 200);
+        };
+        if (window.ResizeObserver) {
+            new ResizeObserver(reachLater).observe(table);
+        } else {
+            window.addEventListener('resize', reachLater);
+        }
+        api.on('draw', reachCutShort);
+        // A cell skipped while it had focus is checked again once focus has left it
+        table.addEventListener('focusout', function () {
+            setTimeout(reachCutShort, 0);
+        });
+        reachCutShort();
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(reachCutShort);
+        }
+    }
 
     // The paging controls' name for screen readers, as on the other lists
     var paging = table.closest('.dt-container') ? table.closest('.dt-container').querySelector('nav') : null;

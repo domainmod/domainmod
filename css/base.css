@@ -1193,6 +1193,25 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
     }
 }
 
+/* The Domains and SSL Certificates lists' scroll box, from DataTables (or the page, when JavaScript is off, see
+   js/server-list.js). It has no width of its own but at least its container's, so the wide table never widens the
+   page around it, and it's positioned, so the cells' visually hidden text (absolutely positioned) is clipped by it
+   too. It can take keyboard focus, to scroll with the arrow keys. Its scroll padding at the start keeps a link tabbed
+   to out from under the pinned first column: the column's widest (see css/datatables/domains-main.css), which the
+   script narrows to the column's actual width. */
+.domainmod-list-scroll {
+    position: relative;
+    inline-size: 0;
+    min-inline-size: 100%;
+    overflow-x: auto;
+    scroll-padding-inline-start: min(18rem, 45vw);
+    border-radius: var(--bs-border-radius);
+}
+.domainmod-list-scroll:focus-visible {
+    outline: 2px solid var(--bs-focus-ring-color, var(--bs-primary));
+    outline-offset: 2px;
+}
+
 /* A real grid that's too wide for a phone (TLD Pricing's and SSL Provider Fees' comparisons): its box scrolls sideways
    while the first column (the registrar or provider) stays in view, at the start in either direction. Bootstrap gives
    table cells their own background, so the rows don't show through the column as they scroll under it. The box can

@@ -28,7 +28,8 @@ namespace DomainMOD;
  * search expressions, and these constants:
  * - SESSION_KEYS, the session values its columns and cells read, copied by sessionCopy(),
  * - FIELD_ALIAS, the SQL alias of its custom field data table (dfd or sslfd),
- * - DEFAULT_SORT_KEY, the column the list sorts by when it shows (otherwise the first column after the control column),
+ * - DEFAULT_SORT_KEY, the column the list sorts by when it shows (otherwise the first column that isn't the control
+ *   column),
  * - NAME_KEY, the column that names each row (the domain or the certificate), which stays shown on narrow screens.
  */
 abstract class ListColumns
@@ -132,14 +133,17 @@ abstract class ListColumns
         return $map;
     }
 
-    // The default order: the DEFAULT_SORT_KEY column (the expiry date) when it shows, otherwise the first column after
-    // the control column, both ascending
+    // The default order: the DEFAULT_SORT_KEY column (the expiry date) when it shows, otherwise the first column that
+    // isn't the control column (a list without Responsive has none), both ascending
     public function defaultOrder()
     {
         foreach ($this->columns as $index => $column) {
             if ($column['key'] === static::DEFAULT_SORT_KEY) return array(array($index, 'asc'));
         }
-        return array(array(1, 'asc'));
+        foreach ($this->columns as $index => $column) {
+            if ($column['key'] !== 'control') return array(array($index, 'asc'));
+        }
+        return array(array(0, 'asc'));
     }
 
     /*
@@ -162,9 +166,9 @@ abstract class ListColumns
     }
 
     /*
-     * The table's heading cells as HTML, in the columns' order. The control column (Responsive's details button) has
-     * no visible heading, so screen readers get "Details", as on the Domain Queue. The name column has DataTables
-     * Responsive's "all" class, so it's never folded away. Titles are printed as the page has always printed them.
+     * The table's heading cells as HTML, in the columns' order, each with its column's class (see columnClass()). The
+     * control column (Responsive's details button) has no visible heading, so screen readers get "Details", as on the
+     * Domain Queue. Titles are printed as the page has always printed them.
      */
     public function headerCells()
     {
@@ -172,13 +176,18 @@ abstract class ListColumns
         foreach ($this->columns as $column) {
             if ($column['key'] === 'control') {
                 $cells[] = '<th width="20px"><span class="visually-hidden">' . _('Details') . '</span></th>';
-            } elseif ($column['key'] === static::NAME_KEY) {
-                $cells[] = '<th class="all">' . $column['title'] . '</th>';
             } else {
-                $cells[] = '<th>' . $column['title'] . '</th>';
+                $cells[] = '<th class="' . $this->columnClass($column) . '">' . $column['title'] . '</th>';
             }
         }
         return $cells;
+    }
+
+    // A column's class for the list's styles (domainmod-list-domain, domainmod-list-fee, and so on, with
+    // domainmod-list-custom for the custom fields), on its heading and every cell, with JavaScript on or off
+    public function columnClass(array $column)
+    {
+        return 'domainmod-list-' . (strpos($column['key'], 'cf_') === 0 ? 'custom' : $column['key']);
     }
 
     // A row's cells as HTML, in the columns' order. $today is the date past which a live row's expiry is marked.

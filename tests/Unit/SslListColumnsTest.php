@@ -49,9 +49,10 @@ class SslListColumnsTest extends TestCase
     {
         $columns = new SslListColumns(SslListColumns::sessionCopy(array()), '');
 
-        $this->assertSame(array('control', 'name'), array_column($columns->columns(), 'key'));
-        $this->assertSame(array(1 => array('sslc.name')), $columns->sortMap());
-        $this->assertSame(array(array(1, 'asc')), $columns->defaultOrder());
+        // No control column: the list keeps every column and scrolls sideways instead of using Responsive
+        $this->assertSame(array('name'), array_column($columns->columns(), 'key'));
+        $this->assertSame(array(0 => array('sslc.name')), $columns->sortMap());
+        $this->assertSame(array(array(0, 'asc')), $columns->defaultOrder());
         $this->assertSame(array('lower' => array(), 'typed' => array(), 'idn' => array(), 'encoded' => array('sslc.name')),
             $columns->searchExpressions());
     }
@@ -60,27 +61,27 @@ class SslListColumnsTest extends TestCase
     {
         $columns = new SslListColumns($this->settings(), self::FIELDS_SQL);
 
-        $this->assertSame(array('control', 'name', 'expiry', 'fee', 'domain', 'provider', 'account', 'type', 'ip', 'category',
+        $this->assertSame(array('name', 'expiry', 'fee', 'domain', 'provider', 'account', 'type', 'ip', 'category',
             'owner', 'cf_purchaser_name', 'cf_renewed', 'cf_order_number', 'cf_issued', 'cf_checked_at', 'cf_portal'),
             array_column($columns->columns(), 'key'));
-        $this->assertSame(array('', 'Name', 'Expiry', 'Fee', 'Domain', 'Provider', 'Account', 'Type', 'IP Address', 'Category',
+        $this->assertSame(array('Name', 'Expiry', 'Fee', 'Domain', 'Provider', 'Account', 'Type', 'IP Address', 'Category',
             'Owner', 'Purchaser', 'Renewed', 'Order Number', 'Issued', 'Checked At', 'Portal'),
             array_column($columns->columns(), 'title'));
         // The expiry date is the default order when it shows
-        $this->assertSame(array(array(2, 'asc')), $columns->defaultOrder());
+        $this->assertSame(array(array(1, 'asc')), $columns->defaultOrder());
     }
 
     public function testTheSortMapUsesFixedExpressions()
     {
         $map = (new SslListColumns($this->settings(), self::FIELDS_SQL))->sortMap();
 
-        $this->assertArrayNotHasKey(0, $map);
-        $this->assertSame(array('sslc.expiry_date'), $map[2]);
-        $this->assertSame(array('sslc.total_cost * cc.conversion'), $map[3]);
-        $this->assertSame(array('d.domain'), $map[4]);
-        $this->assertSame(array('sslp.name', 'o.name', 'sslpa.username'), $map[6]);
-        $this->assertSame(array('ip.name', 'ip.ip'), $map[8]);
-        $this->assertSame(array('sslfd.purchaser_name'), $map[11]);
+        $this->assertSame(array('sslc.name'), $map[0]);
+        $this->assertSame(array('sslc.expiry_date'), $map[1]);
+        $this->assertSame(array('sslc.total_cost * cc.conversion'), $map[2]);
+        $this->assertSame(array('d.domain'), $map[3]);
+        $this->assertSame(array('sslp.name', 'o.name', 'sslpa.username'), $map[5]);
+        $this->assertSame(array('ip.name', 'ip.ip'), $map[7]);
+        $this->assertSame(array('sslfd.purchaser_name'), $map[10]);
     }
 
     public function testDeletedFieldsAndTextAreasGetNoColumn()
@@ -133,27 +134,26 @@ class SslListColumnsTest extends TestCase
         $settings['s_display_ssl_fee'] = '0'; // the fee goes through Currency::format(), which needs a language
         $cells = (new SslListColumns($settings, self::FIELDS_SQL))->cells($this->row(), '2026-11-15');
 
-        $this->assertSame('', $cells[0]);
-        $this->assertStringContainsString('aria-label="Pending (Renewal)"', $cells[1]);
-        $this->assertStringEndsWith('&nbsp;<a href="edit.php?sslcid=7">a &amp; b</a>', $cells[1]);
+        $this->assertStringContainsString('aria-label="Pending (Renewal)"', $cells[0]);
+        $this->assertStringEndsWith('&nbsp;<a href="edit.php?sslcid=7">a &amp; b</a>', $cells[0]);
         $this->assertSame('<a href="edit.php?sslcid=7" class="domainmod-css-expired" data-bs-toggle="tooltip"'
-            . ' data-bs-title="Expired" aria-label="2026-01-02, Expired">2026-01-02</a>', $cells[2]);
-        $this->assertSame('<a href="../domains/edit.php?did=3">example.com</a>', $cells[3]);
-        $this->assertSame('<a href="../assets/edit/ssl-provider.php?sslpid=4">Prov</a>', $cells[4]);
+            . ' data-bs-title="Expired" aria-label="2026-01-02, Expired">2026-01-02</a>', $cells[1]);
+        $this->assertSame('<a href="../domains/edit.php?did=3">example.com</a>', $cells[2]);
+        $this->assertSame('<a href="../assets/edit/ssl-provider.php?sslpid=4">Prov</a>', $cells[3]);
         $this->assertSame('<a href="../assets/edit/ssl-provider.php?sslpid=4">Prov</a>, '
             . '<a href="../assets/edit/account-owner.php?oid=5">Own</a> '
-            . '(<a href="../assets/edit/ssl-provider-account.php?sslpaid=6">abcdefghijklmno...</a>)', $cells[5]);
-        $this->assertSame('<a href="../assets/edit/ssl-type.php?ssltid=8">Web</a>', $cells[6]);
-        $this->assertSame('<a href="../assets/edit/ip-address.php?ipid=9">Main (10.0.0.1)</a>', $cells[7]);
-        $this->assertSame('<a href="../assets/edit/category.php?pcid=10">Cat</a>', $cells[8]);
-        $this->assertSame('<a href="../assets/edit/account-owner.php?oid=5">Own</a>', $cells[9]);
+            . '(<a href="../assets/edit/ssl-provider-account.php?sslpaid=6">abcdefghijklmno...</a>)', $cells[4]);
+        $this->assertSame('<a href="../assets/edit/ssl-type.php?ssltid=8">Web</a>', $cells[5]);
+        $this->assertSame('<a href="../assets/edit/ip-address.php?ipid=9">Main (10.0.0.1)</a>', $cells[6]);
+        $this->assertSame('<a href="../assets/edit/category.php?pcid=10">Cat</a>', $cells[7]);
+        $this->assertSame('<a href="../assets/edit/account-owner.php?oid=5">Own</a>', $cells[8]);
         // Custom fields: text escaped, a check box as Yes or No, a number, an empty date, a time stamp, and a URL
-        $this->assertSame('&lt;script&gt;', $cells[10]);
-        $this->assertSame('Yes', $cells[11]);
-        $this->assertSame('42', $cells[12]);
-        $this->assertSame('', $cells[13]);
-        $this->assertSame('2026-02-03 04:05:06', $cells[14]);
-        $this->assertStringContainsString('https://example.com/', $cells[15]);
+        $this->assertSame('&lt;script&gt;', $cells[9]);
+        $this->assertSame('Yes', $cells[10]);
+        $this->assertSame('42', $cells[11]);
+        $this->assertSame('', $cells[12]);
+        $this->assertSame('2026-02-03 04:05:06', $cells[13]);
+        $this->assertStringContainsString('https://example.com/', $cells[14]);
     }
 
     public function testAnExpiredCertificatesDateIsNotMarked()
@@ -162,8 +162,8 @@ class SslListColumnsTest extends TestCase
         $row->active = '0';
         $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), ''))->cells($row, '2026-11-15');
 
-        $this->assertStringContainsString('aria-label="Expired"', $cells[1]);
-        $this->assertSame('<a href="edit.php?sslcid=7">2026-01-02</a>', $cells[2]);
+        $this->assertStringContainsString('aria-label="Expired"', $cells[0]);
+        $this->assertSame('<a href="edit.php?sslcid=7">2026-01-02</a>', $cells[1]);
     }
 
     private function settings()

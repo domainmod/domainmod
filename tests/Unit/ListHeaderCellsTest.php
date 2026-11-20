@@ -45,20 +45,32 @@ class ListHeaderCellsTest extends TestCase
         $this->setDatabase(null);
     }
 
-    public function testTheDomainsListsControlHeadingHasHiddenText()
+    public function testTheDomainsListHasNoControlHeading()
     {
+        // The Domains list keeps every column and scrolls sideways, so it has no Responsive details column
         $cells = (new DomainListColumns(array('s_display_domain_tld' => '1'), ''))->headerCells();
 
-        $this->assertSame(array('<th width="20px"><span class="visually-hidden">Details</span></th>',
-            '<th class="all">Domain</th>', '<th>TLD</th>'), $cells);
+        $this->assertSame(array('<th class="domainmod-list-domain">Domain</th>', '<th class="domainmod-list-tld">TLD</th>'), $cells);
     }
 
-    public function testTheSslListsControlHeadingHasHiddenText()
+    public function testTheSslListHasNoControlHeading()
     {
+        // The SSL Certificates list keeps every column and scrolls sideways, so it has no Responsive details column
         $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), ''))->headerCells();
 
-        $this->assertSame(array('<th width="20px"><span class="visually-hidden">Details</span></th>',
-            '<th class="all">Name</th>', '<th>Expiry</th>'), $cells);
+        $this->assertSame(array('<th class="domainmod-list-name">Name</th>', '<th class="domainmod-list-expiry">Expiry</th>'), $cells);
+    }
+
+    public function testCustomFieldHeadingsShareOneClass()
+    {
+        // Every custom field column gets domainmod-list-custom for the list's styles, whatever the field is called
+        $columns = new DomainListColumns(array('s_cdf_data' => array(
+            array('field' => 'note', 'name' => 'Note', 'type_id' => '2', 'value' => '1'),
+            array('field' => 'renew_date', 'name' => 'Renew Date', 'type_id' => '4', 'value' => '1'),
+        )), ', dfd.note, dfd.renew_date');
+
+        $this->assertSame(array('<th class="domainmod-list-domain">Domain</th>', '<th class="domainmod-list-custom">Note</th>',
+            '<th class="domainmod-list-custom">Renew Date</th>'), $columns->headerCells());
     }
 
     public function testEveryHeadingCellHasText()

@@ -25,7 +25,8 @@ $breadcrumb = _('Domains');
 $software_section = "domains";
 $slug = "domains-main";
 
-$datatable_class = 'table table-striped dt-responsive cell-border compact';
+// No dt-responsive: the list keeps every column and scrolls sideways in its own box (see js/server-list.js)
+$datatable_class = 'table table-striped cell-border compact';
 
 // The list uses server-side processing: domains/index.php prints the first page, with the table's settings in its
 // data-domainmod-list attribute, and js/server-list.js starts DataTables from them.

@@ -50,21 +50,21 @@ class DomainListDateCellsTest extends TestCase
         foreach (array(array('1970-01-01', '1970-01-01 00:00:00'), array('0000-00-00', '0000-00-00 00:00:00'),
                      array(null, null), array('', '')) as $values) {
             $cells = $this->cells($values[0], $values[1]);
-            $this->assertSame('', $cells[2], var_export($values[0], true));
-            $this->assertSame('', $cells[3], var_export($values[1], true));
+            $this->assertSame('', $cells[1], var_export($values[0], true));
+            $this->assertSame('', $cells[2], var_export($values[1], true));
         }
     }
 
     public function testSetDatesAndTimeStampsShowTheStoredValue()
     {
         $cells = $this->cells('2026-02-03', '2026-02-03 04:05:06');
-        $this->assertSame('2026-02-03', $cells[2]);
-        $this->assertSame('2026-02-03 04:05:06', $cells[3]);
+        $this->assertSame('2026-02-03', $cells[1]);
+        $this->assertSame('2026-02-03 04:05:06', $cells[2]);
 
         // A real time one second after the default still shows
         $cells = $this->cells('1970-01-02', '1970-01-01 00:00:01');
-        $this->assertSame('1970-01-02', $cells[2]);
-        $this->assertSame('1970-01-01 00:00:01', $cells[3]);
+        $this->assertSame('1970-01-02', $cells[1]);
+        $this->assertSame('1970-01-01 00:00:01', $cells[2]);
     }
 
     private function cells($date, $time_stamp)
@@ -73,7 +73,7 @@ class DomainListDateCellsTest extends TestCase
             array('name' => 'Renewed On', 'field' => 'renewed_on', 'type_id' => '4', 'value' => '1'),
             array('name' => 'Checked At', 'field' => 'checked_at', 'type_id' => '5', 'value' => '1'))));
         $columns = new DomainListColumns($settings, self::FIELDS_SQL);
-        $this->assertSame(array('control', 'domain', 'cf_renewed_on', 'cf_checked_at'),
+        $this->assertSame(array('domain', 'cf_renewed_on', 'cf_checked_at'),
             array_column($columns->columns(), 'key'));
 
         $row = (object) array('id' => 3, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0',

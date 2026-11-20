@@ -26,7 +26,9 @@ namespace DomainMOD;
  * server-side data endpoint (ssl/list-data.php) sends, so the two can't differ. The columns follow the user's Display
  * Settings and custom fields, given as a copy of the session values ($settings), so the endpoint can let go of the
  * session early. The cells are built exactly as the list has always drawn them, with the same escaping (values from the
- * database are stored sanitized). What it shares with the Domains list's columns is in ListColumns.
+ * database are stored sanitized). What it shares with the Domains list's columns is in ListColumns. Like that list,
+ * it has no control column for DataTables Responsive: the list keeps every column and scrolls sideways with the name
+ * kept in view (see css/datatables/ssl-main.css), so the name comes first.
  */
 class SslListColumns extends ListColumns
 {
@@ -62,8 +64,7 @@ class SslListColumns extends ListColumns
         $this->layout = new Layout();
         $this->currency = new Currency();
 
-        $columns = array(array('key' => 'control', 'title' => '', 'sort' => array()));
-        $columns[] = array('key' => 'name', 'title' => _('Name'), 'sort' => array('sslc.name'));
+        $columns = array(array('key' => 'name', 'title' => _('Name'), 'sort' => array('sslc.name')));
         $titles = array('expiry' => _('Expiry'), 'fee' => _('Fee'), 'domain' => _('Domain'),
             'provider' => _('Provider'), 'account' => _('Account'), 'type' => _('Type'), 'ip' => _('IP Address'),
             'category' => _('Category'), 'owner' => _('Owner'));
@@ -115,9 +116,6 @@ class SslListColumns extends ListColumns
         $s = $this->settings;
 
         switch ($column['key']) {
-
-            case 'control':
-                return '';
 
             case 'name':
                 $html = '';

@@ -25,7 +25,8 @@ $breadcrumb = _('SSL Certificates');
 $software_section = "ssl";
 $slug = "ssl-main";
 
-$datatable_class = 'table table-striped dt-responsive cell-border compact';
+// No dt-responsive: the list keeps every column and scrolls sideways in its own box (see js/server-list.js)
+$datatable_class = 'table table-striped cell-border compact';
 
 // The list uses server-side processing: ssl/index.php prints the first page, with the table's settings in its
 // data-domainmod-list attribute, and js/server-list.js starts DataTables from them.
