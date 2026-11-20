@@ -117,6 +117,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $saved_currency = $result->default_currency;
             $saved_timezone = $result->default_timezone;
 
+            if ($new_language != DEFAULT_LANGUAGE) {
+
+                // gettext was set up in the session's language, so it's switched here, and the success messages
+                // saved for the page after the redirect are translated into the new language.
+                setlocale(LC_ALL, $new_language);
+
+            }
+
             if ($saved_currency != $new_currency) {
 
                 $currency = new DomainMOD\Currency();
