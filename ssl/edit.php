@@ -65,6 +65,104 @@ $custom_field = new DomainMOD\CustomField();
 $custom_field_types = $custom_field->getFieldTypes('ssl_cert_fields');
 $new_custom_fields = DomainMOD\CustomField::postedValues(array_keys($custom_field_types), $_POST);
 
+// The Refresh form posts here too, and is handled on its own, before the save handler.
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_ssl'] ?? '') === '1') {
+
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+    $refresh = new DomainMOD\SslRefresh();
+    // The name and domain the page was drawn with, so a change made in another window since then stops the refresh
+    $expected_name = is_string($_POST['expected_name'] ?? null) ? $_POST['expected_name'] : '';
+    $expected_domain_id = (int) ($_POST['expected_domain_id'] ?? 0);
+
+    // The Refresh button at the top of the page runs in place (htmx, see js/ssl-refresh.js): it answers with the result
+    // message and, after a refresh that worked, the saved values of the fields Refresh owns, so the page can update them
+    // in the form. Without JavaScript it's a normal post, handled below.
+    if ($system->isHtmxRequest()) {
+
+        $refresh_values = function ($pdo, $sslcid) {
+            $stmt = $pdo->prepare("
+                SELECT expiry_date, active, notes
+                FROM ssl_certs
+                WHERE id = :sslcid");
+            $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch();
+            $stmt->closeCursor();
+            return $row;
+        };
+
+        // A new refresh of this certificate clears any result stored by an earlier one without JavaScript (below)
+        if ((int) ($_SESSION['s_ssl_refresh_result']['sslcid'] ?? 0) === $sslcid) unset($_SESSION['s_ssl_refresh_result']);
+
+        $before = $refresh_values($pdo, $sslcid);
+        list($refreshed, $refresh_lines, $refresh_parts) = $refresh->refresh($sslcid, (int) $_SESSION['s_user_id'], $expected_name, $expected_domain_id);
+
+        header('X-DomainMOD-Result: 1');
+        echo '<div data-domainmod-focus>';
+        // The compact result: a summary, any reasons, the changes, and the notes behind "Why?"
+        echo $system->showMessageResult($refreshed ? 'success' : 'danger', $refresh_parts);
+
+        if ($refreshed) {
+
+            $after = $refresh_values($pdo, $sslcid);
+
+            if ($after) {
+
+                $values = array(
+                    'expiry_date' => (string) $after->expiry_date,
+                    'active' => (int) $after->active,
+                    // Notes are stored escaped, so they're unescaped the same way the notes field shows them
+                    'notes' => $unsanitize->text($after->notes));
+
+                $changed = array();
+                foreach (array('expiry_date', 'active', 'notes') as $field) {
+                    if (!$before || (string) $before->$field !== (string) $after->$field) $changed[] = $field;
+                }
+                $values['changed'] = $changed;
+
+                $json = json_encode($values, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE);
+                echo '<div id="domainmod-refresh-data" hidden data-values="' . htmlspecialchars($json, ENT_QUOTES, 'UTF-8') . '"></div>';
+
+            }
+
+        }
+
+        echo '</div>';
+        exit;
+
+    }
+
+    list($refreshed, $refresh_lines, $refresh_parts) = $refresh->refresh($sslcid, (int) $_SESSION['s_user_id'], $expected_name, $expected_domain_id);
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM ssl_certs
+        WHERE id = :sslcid");
+    $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+    $stmt->execute();
+    $refresh_exists = $stmt->fetchColumn();
+    $stmt->closeCursor();
+
+    if ($refresh_exists && $ssl_queue->isAvailable()) {
+
+        // The result is shown under the Refresh button after the redirect, on this certificate's page only (see below)
+        $_SESSION['s_ssl_refresh_result'] = array('sslcid' => $sslcid, 'type' => $refreshed ? 'success' : 'danger', 'parts' => $refresh_parts);
+        header('Location: edit.php?sslcid=' . $sslcid);
+
+    } else {
+
+        // Without the Refresh section (the certificate is gone, or the database isn't updated yet), the result is a page
+        // message instead
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . implode(' ', array_merge(array($refresh_parts['summary']), $refresh_parts['reasons'])) . '<BR>';
+        header($refresh_exists ? 'Location: edit.php?sslcid=' . $sslcid : 'Location: index.php');
+
+    }
+
+    exit;
+
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
@@ -433,6 +531,18 @@ if ($del === 1) {
     }
 
 }
+
+// The certificate as it's saved (even after a failed Save, which shows the posted values): Refresh checks the saved
+// name's host, and the domain menu always lists the saved domain, so a changed domain can be put back
+$stmt = $pdo->prepare("
+    SELECT c.`name`, c.domain_id, d.domain
+    FROM ssl_certs AS c
+    LEFT JOIN domains AS d ON d.id = c.domain_id
+    WHERE c.id = :sslcid");
+$stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+$stmt->execute();
+$refresh_record = $stmt->fetch();
+$stmt->closeCursor();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -444,6 +554,83 @@ if ($del === 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
+// Refresh, at the top of the page in its own small form (read-only users can't change data, so they don't see it). It
+// runs in place with htmx (see js/ssl-refresh.js), and without JavaScript it's a normal post. Its table comes with the
+// 4.27.0 database update, so it's only shown after that.
+if (($_SESSION['s_read_only'] ?? '') != '1' && $refresh_record && $ssl_queue->isAvailable()) {
+
+    $refresh = new DomainMOD\SslRefresh();
+    $saved_name = $unsanitize->text((string) $refresh_record->name);
+
+    // The host Refresh checks, or why it can't check one
+    if ($refresh_record->domain === null) {
+
+        $refresh_source = _('The domain you chose no longer exists. Please choose another one.');
+
+    } else {
+
+        $saved_domain = $unsanitize->text((string) $refresh_record->domain);
+        list($refresh_host_status, $refresh_host) = $refresh->hostCheck($saved_name, $saved_domain);
+
+        if ($refresh_host_status === 'ok') {
+            // TRANSLATORS: %s is the hostname whose certificate Refresh reads, such as www.example.com.
+            $refresh_source = sprintf(_('Updates the expiry date and status from the certificate %s serves now.'), $layout->ltr($refresh_host));
+        } else {
+            $refresh_source = $refresh->refusalMessage($refresh_host_status, $saved_name, $saved_domain);
+        }
+
+    }
+
+    $refresh_details = _("Read the certificate this hostname serves now and update this SSL certificate's expiry date and status when they've changed, with a note saying what changed. A pending status is kept, and the SSL provider, account, type, and fee aren't changed."); ?>
+
+    <div class="domainmod-refresh-row d-flex flex-wrap align-items-center justify-content-end gap-2">
+        <span class="text-body-secondary small"><?php echo $refresh_source; ?></span>
+        <form method="post" class="d-inline-flex align-items-center" hx-post="edit.php?sslcid=<?php echo $sslcid; ?>" hx-target="#domainmod-refresh-result" hx-swap="innerHTML" hx-indicator="#domainmod-refresh-spinner" hx-disabled-elt="find button" hx-sync="this:drop" data-domainmod-refresh>
+            <?php echo $form->showCsrfField(); ?>
+            <?php echo $form->showInputHidden('refresh_ssl', '1'); ?>
+            <?php echo $form->showInputHidden('sslcid', $sslcid); ?>
+            <?php echo $form->showInputHidden('expected_name', $saved_name); ?>
+            <?php echo $form->showInputHidden('expected_domain_id', (int) $refresh_record->domain_id); ?>
+            <button type="submit" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($refresh_details, ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <?php echo _('Refresh'); ?></button>
+            <?php echo $layout->htmxSpinner('domainmod-refresh-spinner'); ?>
+        </form>
+    </div>
+    <div id="domainmod-refresh-result" class="domainmod-refresh-result"><?php
+    // A result stored by a refresh without JavaScript, shown once, and only on the page of the certificate it belongs to
+    $stored_refresh = $_SESSION['s_ssl_refresh_result'] ?? null;
+    if (is_array($stored_refresh) && (int) ($stored_refresh['sslcid'] ?? 0) === $sslcid) {
+        echo '<div data-domainmod-focus>' . $system->showMessageResult($stored_refresh['type'] === 'danger' ? 'danger' : 'success', $stored_refresh['parts']) . '</div>';
+        unset($_SESSION['s_ssl_refresh_result']);
+    } ?></div>
+
+    <?php // Asks before a refresh replaces fields the user has changed but not saved, and stops one after an unsaved name or domain change (see js/ssl-refresh.js) ?>
+    <div class="modal fade" id="domainmod-refresh-confirm" tabindex="-1" aria-labelledby="domainmod-refresh-confirm-title" aria-hidden="true" data-message="<?php echo htmlspecialchars(_("You've changed %s but haven't saved. Refreshing saves the looked-up details straight away and replaces what you typed in those fields."), ENT_QUOTES, 'UTF-8'); ?>" data-name-message="<?php echo htmlspecialchars(_('Save or undo your changes to the name or domain first, so Refresh checks the right site.'), ENT_QUOTES, 'UTF-8'); ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="domainmod-refresh-confirm-title"><?php echo _('Unsaved Changes'); ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo _('Close'); ?>"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0" data-domainmod-refresh-message></p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-domainmod-refresh-cancel><?php echo _('Cancel'); ?></button>
+                    <button type="button" class="btn btn-secondary d-none" data-bs-dismiss="modal" data-domainmod-refresh-close><?php echo _('Close'); ?></button>
+                    <button type="button" class="btn btn-danger" data-domainmod-refresh-anyway><?php echo _('Refresh anyway'); ?></button>
+                </div>
+            </div>
+        </div>
+    </div><?php
+
+    // The saved name and domain decide which site Refresh checks, so the script compares the form with them
+    echo '<div hidden data-domainmod-refresh-saved data-name="' . htmlspecialchars($saved_name, ENT_QUOTES, 'UTF-8') . '" data-domain-id="' . (int) $refresh_record->domain_id . '"></div>';
+
+    // A page shown again after a failed Save holds the user's unsaved values, not the saved ones
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') echo '<div hidden data-domainmod-refresh-unsaved></div>';
+
+}
+
 echo $form->showFormTop('');
 // The fields in titled cards, the same way as the edit domain page. Each card's fields are built first, so a card
 // whose menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is
@@ -454,9 +641,10 @@ echo $form->showInputText('new_name', _('Host') . ' / Label (100)', '', $unsanit
 $stmt = $pdo->prepare("
     SELECT id, domain
     FROM domains
-    WHERE (active NOT IN ('0', '10') OR id = :new_domain_id)
+    WHERE (active NOT IN ('0', '10') OR id = :new_domain_id OR id = :saved_domain_id)
     ORDER BY domain");
 $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+$stmt->bindValue('saved_domain_id', $refresh_record ? (int) $refresh_record->domain_id : 0, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
@@ -680,5 +868,6 @@ $layout->dangerZone(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslci
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/ssl-refresh.js'); ?>"></script>
 </body>
 </html>
