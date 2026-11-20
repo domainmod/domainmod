@@ -48,7 +48,7 @@ if ($sslpaid !== 0) { $sslpaid_string = ' AND sa.id = ' . $sslpaid . ' '; } else
 if ($oid !== 0) { $oid_string = ' AND sa.owner_id = ' . $oid . ' '; } else { $oid_string = ''; }
 
 $result = $pdo->query("
-    SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
+    SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
         o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.creation_type_id, sa.created_by, sa.insert_time, sa.update_time
     FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
     WHERE sa.owner_id = o.id
@@ -74,7 +74,6 @@ if ($export_data === 1) {
         _('SSL Provider'),
         _('Email Address'),
         _('Username'),
-        _('Password'),
         _('Reseller Account') . '?',
         _('Reseller ID'),
         _('Owner'),
@@ -142,7 +141,6 @@ if ($export_data === 1) {
                 $row->sslpname,
                 $row->email_address,
                 $row->username,
-                $row->password,
                 $is_reseller,
                 $row->reseller_id,
                 $row->oname,
