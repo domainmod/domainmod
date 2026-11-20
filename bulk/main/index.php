@@ -37,7 +37,6 @@ $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
-$ssl_queue = new DomainMOD\SslQueue();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -977,6 +976,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $pdo->beginTransaction();
 
+                        $unlinked_ssl_certs = 0;
+
                         $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
                         $sql = "SELECT id
                                 FROM domains
@@ -1007,41 +1008,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
 
-                            // a current read, after the domains are locked by their delete, so a certificate an SSL
-                            // Queue import committed meanwhile is deleted too
-                            $sql = "SELECT id
-                                    FROM ssl_certs
-                                    WHERE domain_id IN (" . $in_list . ")
-                                    FOR UPDATE";
-                            $stmt = $pdo->prepare($sql);
-                            $stmt->execute($domain_id_list);
-                            $result_ssl = $stmt->fetchAll();
-
-                            if ($result_ssl) {
-
-                                $ssl_id_list = array();
-
-                                foreach ($result_ssl as $row_ssl) {
-
-                                    $ssl_id_list[] = $row_ssl->id;
-
-                                }
-
-                                $in_list = str_repeat('?, ', count($ssl_id_list) - 1) . '?';
-
-                                $sql = "DELETE FROM ssl_certs
-                                        WHERE id IN (" . $in_list . ")";
-                                $stmt = $pdo->prepare($sql);
-                                $stmt->execute($ssl_id_list);
-
-                                $sql = "DELETE FROM ssl_cert_field_data
-                                        WHERE ssl_id IN (" . $in_list . ")";
-                                $stmt = $pdo->prepare($sql);
-                                $stmt->execute($ssl_id_list);
-
-                                $ssl_queue->deleteStatus($ssl_id_list);
-
-                            }
+                            // The domains' SSL certificates are kept, without a domain, after the domains are
+                            // locked by their delete, so a certificate an SSL Queue import committed meanwhile is kept
+                            // too
+                            $unlinked_ssl_certs = $domain->unlinkSslCertificates($domain_id_list);
 
                         }
 
@@ -1049,7 +1019,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
-                        $_SESSION['s_message_success'] .= _('Domains (and associated data) Deleted') . '<BR>';
+                        $_SESSION['s_message_success'] .= _('Domains Deleted') . '<BR>';
+
+                        if ($unlinked_ssl_certs > 0) {
+                            // TRANSLATORS: %s is the number of SSL certificates that were linked to the deleted domain or domains.
+                            $_SESSION['s_message_success'] .= sprintf(ngettext('%s SSL certificate was kept without a domain.', '%s SSL certificates were kept without a domain.', $unlinked_ssl_certs), number_format($unlinked_ssl_certs)) . '<BR>';
+                        }
 
                     } catch (Exception $e) {
 
@@ -1986,7 +1961,7 @@ echo $layout->calloutTop() . _("The Bulk Updater allows you to add or modify mul
         <?php } elseif ($action == "CWH") { ?>
             <h2 class="h5"><?php echo _('The following domains had their Web Hosting Provider changed'); ?></h2>
         <?php } elseif ($action == "DD") { ?>
-            <h2 class="h5"><?php echo _('The following domains (and associated SSL Certificates) were deleted'); ?></h2>
+            <h2 class="h5"><?php echo _('The following domains were deleted'); ?></h2>
         <?php } elseif ($action == "AN") { ?>
             <h2 class="h5"><?php echo _('The following domains had the Note appended'); ?></h2>
         <?php } ?>
@@ -2046,7 +2021,7 @@ if ($done != "1") {
 
             $before_list .= '<div class="alert alert-danger d-flex align-items-start gap-2 py-2">'
                 . '<i class="bi bi-exclamation-triangle-fill domainmod-message-icon" aria-hidden="true"></i>'
-                . '<div class="domainmod-message-text">' . _('In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted.') . ' ' . _("If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.") . '</div></div>';
+                . '<div class="domainmod-message-text">' . _('Deleting these domains also deletes their custom field data. Any linked SSL certificates are kept without a domain.') . ' ' . _("If you don't want to completely remove all traces of the domains from the system, you may be better off marking them as expired instead.") . '</div></div>';
 
         }
 

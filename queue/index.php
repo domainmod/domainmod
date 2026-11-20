@@ -946,7 +946,9 @@ if ($ssl_queue_available) {
         <?php echo $ssl_queue->processingNotice(); ?><BR><BR><?php
 
     } ?>
-    <p class="domainmod-intro"><?php echo sprintf(_("The SSL Queue reads the certificate of each site you add and adds it to %s as an SSL certificate, linked to its domain."), SOFTWARE_TITLE); ?>
+    <p class="domainmod-intro"><?php
+        // TRANSLATORS: Both %1$s are the app's name, DomainMOD.
+        echo sprintf(_('The SSL Queue reads the certificate of each site you add and adds it to %1$s as an SSL certificate. New certificates are linked to their domain when that domain is in %1$s.'), SOFTWARE_TITLE); ?>
 
     <?php echo sprintf(_('See the %sImport Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></p>
     <?php
@@ -995,7 +997,7 @@ if ($ssl_queue_available) {
             foreach ($ssl_rows as $row) {
 
                 list($state, $label, $flag, $detail) = $ssl_queue->statusParts($row);
-                $domain_shown = ($row->domain_name !== '') ? $row->domain_name : $row->wait_domain;
+                $domain_shown = DomainMOD\SslQueue::domainShown($row);
                 // Imported and Already in DomainMOD rows link to the certificate while it still exists
                 $linked = ($state === 'imported' || $state === 'already_in_ssl') && $row->ssl_id !== null; ?>
 

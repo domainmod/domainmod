@@ -109,8 +109,9 @@ class SslListColumnsTest extends TestCase
     {
         $search = (new SslListColumns($this->settings(), self::FIELDS_SQL))->searchExpressions();
 
-        $this->assertSame(array('d.domain'), $search['lower']);
-        $this->assertSame(array('d.domain'), $search['idn']);
+        // A certificate with no domain has a NULL domain, read as '', so an excluded word doesn't hide it
+        $this->assertSame(array("COALESCE(d.domain, '')"), $search['lower']);
+        $this->assertSame(array("COALESCE(d.domain, '')"), $search['idn']);
         $this->assertSame(array('sslc.name', 'sslp.name', "CONCAT(sslp.name, ', ', o.name, ' (', sslpa.username, ')')",
             'sslcf.type', "CONCAT(ip.name, ' (', ip.ip, ')')", 'cat.name', 'o.name'), $search['encoded']);
         $this->assertSame(array('CAST(sslc.expiry_date AS CHAR)', 'sslfd.purchaser_name', 'sslfd.order_number',
@@ -154,6 +155,20 @@ class SslListColumnsTest extends TestCase
         $this->assertSame('', $cells[12]);
         $this->assertSame('2026-02-03 04:05:06', $cells[13]);
         $this->assertStringContainsString('https://example.com/', $cells[14]);
+    }
+
+    // A certificate with no domain has an empty Domain cell, with no link
+    public function testACertificateWithNoDomainHasAnEmptyDomainCell()
+    {
+        $settings = array('s_display_ssl_domain' => '1');
+        $row = $this->row();
+        $row->domain_id = 0;
+        $row->domain = null;
+        $cells = (new SslListColumns($settings, ''))->cells($row, '2026-11-15');
+        $this->assertSame('', $cells[1]);
+
+        $cells = (new SslListColumns($settings, ''))->cells($this->row(), '2026-11-15');
+        $this->assertSame('<a href="../domains/edit.php?did=3">example.com</a>', $cells[1]);
     }
 
     public function testAnExpiredCertificatesDateIsNotMarked()

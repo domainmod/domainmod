@@ -82,7 +82,9 @@ class SslListColumns extends ListColumns
      * with the word in lowercase (the domain, stored in lowercase in a case-sensitive column), 'typed' ones with the
      * word as typed (the expiry date, and text, date, and time stamp custom fields, with the empty placeholder dates
      * left out), 'idn' ones (the domain) also with the word's stored IDN form, and 'encoded' ones with the word
-     * HTML-encoded, as certificate and asset names are stored. The name always shows, so it's always searched.
+     * HTML-encoded, as certificate and asset names are stored. The name always shows, so it's always searched. A
+     * certificate with no domain has a NULL domain, read as '', so an excluded word (see ListQuery::searchSql()) doesn't
+     * hide it.
      */
     public function searchExpressions()
     {
@@ -94,7 +96,7 @@ class SslListColumns extends ListColumns
         foreach ($this->columns as $column) {
             switch ($column['key']) {
                 case 'expiry': $typed[] = 'CAST(sslc.expiry_date AS CHAR)'; break;
-                case 'domain': $lower[] = 'd.domain'; $idn[] = 'd.domain'; break;
+                case 'domain': $lower[] = "COALESCE(d.domain, '')"; $idn[] = "COALESCE(d.domain, '')"; break;
                 case 'provider': $encoded[] = 'sslp.name'; break;
                 case 'account': $encoded[] = "CONCAT(sslp.name, ', ', o.name, ' (', sslpa.username, ')')"; break;
                 case 'type': $encoded[] = 'sslcf.type'; break;
@@ -148,7 +150,9 @@ class SslListColumns extends ListColumns
                 return '<a href="../assets/edit/ssl-provider-fee.php?sslpid=' . $row->sslp_id . '&fee_id=' . $row->f_id . '">'
                     . htmlentities($amount, ENT_QUOTES, 'UTF-8') . '</a>';
 
+            // A certificate with no domain has an empty cell
             case 'domain':
+                if ($row->domain === null) return '';
                 return '<a href="../domains/edit.php?did=' . $row->domain_id . '">' . $row->domain . '</a>';
 
             case 'provider':

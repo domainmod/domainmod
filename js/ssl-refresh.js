@@ -75,7 +75,9 @@
     var siteChanged = function () {
         if (!saved) return false;
         var saved_domain = saved.getAttribute('data-domain-id');
-        // A saved domain that's been deleted isn't in the menu, so there's nothing to undo, and Refresh itself says so
+        // The saved domain is None (0) for a certificate with no domain, including one whose domain is gone, and such a
+        // certificate refreshes its own hostname. A saved value that isn't in the menu has nothing to undo, so it never
+        // stops a refresh.
         var domain_listed = domain_field !== null && Array.prototype.some.call(domain_field.options, function (option) {
             return option.value === saved_domain;
         });

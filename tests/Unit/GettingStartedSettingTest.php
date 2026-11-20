@@ -22,6 +22,8 @@
 namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\Dashboard;
+use DomainMOD\Database;
+use DomainMOD\Tests\Support\FakeDatabase;
 use DomainMOD\Tests\Support\Instance;
 use DomainMOD\Time;
 use DomainMOD\User;
@@ -193,6 +195,30 @@ class GettingStartedSettingTest extends TestCase
         $_SESSION['s_display_getting_started'] = 0;
 
         $this->assertFalse(Instance::withoutConstructor(Dashboard::class)->showGettingStarted());
+    }
+
+    /*
+     * The checklist shows only while there are no domains and no SSL certificates: a user tracking certificates without
+     * a domain has clearly started, so they see the Dashboard's totals instead
+     */
+    public function testTheChecklistShowsOnlyWithNoDomainsAndNoCertificates()
+    {
+        $cases = array(
+            'nothing yet' => array('0', '0', true),
+            'certificates without domains' => array('0', '3', false),
+            'domains without certificates' => array('2', '0', false),
+            'both' => array('2', '3', false),
+        );
+        foreach ($cases as $name => $case) {
+            list($domains, $certs, $expected) = $case;
+            $_SESSION['s_display_getting_started'] = 1;
+            $pdo = new FakeDatabase(array('FROM domains' => $domains, 'FROM ssl_certs' => $certs));
+            (new \ReflectionProperty(Database::class, 'instance'))->setValue(null,
+                Instance::withoutConstructor(Database::class, array('cnxx' => $pdo)));
+
+            $this->assertSame($expected, Instance::withoutConstructor(Dashboard::class)->showGettingStarted(), $name);
+        }
+        (new \ReflectionProperty(Database::class, 'instance'))->setValue(null, null);
     }
 
     // A User with a stand-in database and log. $db_version is the database's version, or an exception for a version

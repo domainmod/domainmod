@@ -55,7 +55,9 @@ $domain_search_condition = function ($column, $term) use ($pdo) {
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
-$did = (int) ($_REQUEST['did'] ?? 0);
+// The Domain filter also takes SslList::NO_DOMAIN (certificates with no domain), and any other negative number is no
+// filter, as on the list's data endpoint
+$did = DomainMOD\SslList::checkedDomainId($_REQUEST['did'] ?? 0);
 $sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
 $sslpaid = (int) ($_REQUEST['sslpaid'] ?? 0);
 $ssltid = (int) ($_REQUEST['ssltid'] ?? 0);
@@ -294,6 +296,14 @@ if ($export_data == 1) {
             $row_contents = array(
                 _('Associated Domain') . ':',
                 $temp_domain
+            );
+            $search_filter_rows[] = $row_contents;
+
+        } elseif ($did === DomainMOD\SslList::NO_DOMAIN) {
+
+            $row_contents = array(
+                _('Associated Domain') . ':',
+                _('None')
             );
             $search_filter_rows[] = $row_contents;
 
@@ -659,10 +669,10 @@ if ($export_data == 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-// Double check to make sure there are still no SSL certs in the system, and likewise for the domains, SSL providers, and
-// SSL accounts the empty states below depend on, since the Import Queue adds them in cron, where no session is updated
+// Double check to make sure there are still no SSL certs in the system, and likewise for the SSL providers and SSL
+// accounts the empty states below depend on, since the Import Queue adds them in cron, where no session is updated
 $queryB = new DomainMOD\QueryBuild();
-foreach (array('s_has_ssl_cert' => 'ssl_certs', 's_has_domain' => 'domains', 's_has_ssl_provider' => 'ssl_providers',
+foreach (array('s_has_ssl_cert' => 'ssl_certs', 's_has_ssl_provider' => 'ssl_providers',
              's_has_ssl_account' => 'ssl_accounts') as $asset_flag => $asset_table) {
 
     if (($_SESSION[$asset_flag] ?? '0') == '0') {
@@ -675,13 +685,13 @@ foreach (array('s_has_ssl_cert' => 'ssl_certs', 's_has_domain' => 'domains', 's_
 }
 
 // The SSL Queue can do the missing setup itself (it adds the provider and account), so once the database update has
-// added it, the empty states below offer it as their second action when there's a domain for it to link to (checked
-// now, since a session's flag can still say there's one after another user deleted it)
+// added it, the empty states below offer it as their second action. A certificate doesn't need a domain, so neither
+// does the SSL Queue.
 $ssl_import_available = (new DomainMOD\SslQueue())->isAvailable();
-$ssl_import_action = ($ssl_import_available && $system->checkForRows($queryB->singleAsset('domains')) == '1') ? '/queue/add/ssl.php' : '';
+$ssl_import_action = $ssl_import_available ? '/queue/add/ssl.php' : '';
 
 // Before anything exists, the list walks a new user through the order things are added in: an SSL provider, then an
-// account at it, then a domain, then certificates, one step at a time (Layout::emptyState())
+// account at it, then certificates, one step at a time (Layout::emptyState())
 if ($_SESSION['s_has_ssl_provider'] != '1') {
 
     echo $layout->emptyState('bi-shield-check', _('Add an SSL provider first'), _('SSL certificates belong to an SSL provider account, so start by adding the company you buy them from.'), '/assets/add/ssl-provider.php', _('Add SSL Provider'), $ssl_import_action, _('Add SSL Certificates Automatically'), 2, true, true);
@@ -694,14 +704,7 @@ if ($_SESSION['s_has_ssl_account'] != '1' && $_SESSION['s_has_ssl_provider'] == 
 
 }
 
-if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
-
-    // Adding a domain may need a registrar and an account first, so this goes to the Domains list, which guides that
-    echo $layout->emptyState('bi-globe2', _('Add a domain first'), _('Each SSL certificate belongs to a domain, so add the domain it covers.'), '/domains/', _('Go to Domains'), '', '', 2, false);
-
-}
-
-if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
+if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
 
     echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Certificate'), $ssl_import_action, _('Add SSL Certificates Automatically'), 2, true, true);
     $ready_for_ssl_certs = 1;
@@ -750,7 +753,11 @@ $filter_name = function ($sql, $id) use ($pdo) {
     $stmt->closeCursor();
     return $name === false ? DomainMOD\FilterToolbar::notFound() : DomainMOD\FilterToolbar::decode($name);
 };
-if ($did !== 0) $filter_toolbar->addFilter('did', $did, 0, $filter_name("SELECT domain FROM domains WHERE id = :id", $did), _('Domain'));
+if ($did === DomainMOD\SslList::NO_DOMAIN) {
+    $filter_toolbar->addFilter('did', $did, 0, _('None'), _('Domain'));
+} elseif ($did !== 0) {
+    $filter_toolbar->addFilter('did', $did, 0, $filter_name("SELECT domain FROM domains WHERE id = :id", $did), _('Domain'));
+}
 if ($sslpid !== 0) $filter_toolbar->addFilter('sslpid', $sslpid, 0, $filter_name("SELECT `name` FROM ssl_providers WHERE id = :id", $sslpid), _('SSL Provider'));
 if ($sslpaid !== 0) $filter_toolbar->addFilter('sslpaid', $sslpaid, 0, $filter_name("
     SELECT CONCAT(sslp.name, ', ', o.name, ' (', sslpa.username, ')')
@@ -772,7 +779,7 @@ if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
         sprintf(_('Expiring: %1$s to %2$s'), $list_start_date, $list_end_date));
 }
 
-if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
+if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1') {
 
     // The no-JavaScript page (expand=1) draws the form as a card under the toolbar instead of in the side panel
     $filter_expanded = ($expand === 1);
@@ -853,11 +860,12 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
+            // The domains of the matching certificates. This one is an inner join on purpose, since it lists domains (the
+            // certificates with no domain are counted below, for the None option).
             $result_domain = $pdo->query("
                 SELECT d.id, d.domain
-                FROM domains AS d, ssl_certs AS sslc
-                WHERE d.id = sslc.domain_id
-                  AND d.active not in ('0', '10')
+                FROM ssl_certs AS sslc JOIN domains AS d ON d.id = sslc.domain_id
+                WHERE d.active not in ('0', '10')
                   $is_active_string
                   $oid_string
                   $sslpid_string
@@ -870,14 +878,37 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 GROUP BY d.domain
                 ORDER BY d.domain asc")->fetchAll();
 
+            // Whether any matching certificate has no domain, for the None option (SslList::NO_DOMAIN), which is only
+            // offered when it's in use, as the other options are
+            $no_domain_count = (int) $pdo->query("
+                SELECT COUNT(*)
+                FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
+                WHERE d.id IS NULL
+                  $is_active_string
+                  $oid_string
+                  $sslpid_string
+                  $sslpaid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $range_string
+                  $search_string")->fetchColumn();
+
             echo $form->showDropdownTop('did', _('Domain'), '', '', '');
             echo $form->showDropdownOption('', _('Domain') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
+            $domain_options = array_column($result_domain, 'id');
+            if ($no_domain_count > 0) {
+
+                echo $form->showDropdownOption(DomainMOD\SslList::NO_DOMAIN, _('None'), $did);
+                $domain_options[] = DomainMOD\SslList::NO_DOMAIN;
+
+            }
             foreach ($result_domain as $row_domain) {
 
                 echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $did);
 
             }
-            echo $filter_toolbar->keepOption('did', array_column($result_domain, 'id'));
+            echo $filter_toolbar->keepOption('did', $domain_options);
             echo $form->showDropdownBottom('');
 
 
@@ -915,11 +946,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpaid !== 0) {
                 $sslpaid_string = " AND sslc.account_id = '$sslpaid' ";
             } else {
@@ -953,9 +980,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_ssl_provider = $pdo->query("
                 SELECT sslp.id, sslp.name
-                FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
+                FROM ssl_providers AS sslp, ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
                 WHERE sslp.id = sslc.ssl_provider_id
-                  AND sslc.domain_id = d.id
                   $is_active_string
                   $oid_string
                   $did_string
@@ -1013,11 +1039,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1051,11 +1073,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_account = $pdo->query("
                 SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
-                FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
+                FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o,
+                     ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
                 WHERE sslpa.ssl_provider_id = sslp.id
                   AND sslpa.owner_id = o.id
                   AND sslpa.id = sslc.account_id
-                  AND sslc.domain_id = d.id
                   $is_active_string
                   $oid_string
                   $did_string
@@ -1113,11 +1135,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1151,9 +1169,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_type = $pdo->query("
                 SELECT sslc.type_id, sslcf.type
-                FROM ssl_certs AS sslc, domains AS d, ssl_cert_types AS sslcf
-                WHERE sslc.domain_id = d.id
-                  AND sslc.type_id = sslcf.id
+                FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_cert_types AS sslcf
+                WHERE sslc.type_id = sslcf.id
                   $is_active_string
                   $oid_string
                   $did_string
@@ -1212,11 +1229,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1250,9 +1263,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_ip = $pdo->query("
                 SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
-                FROM ssl_certs AS sslc, domains AS d, ip_addresses AS ip
-                WHERE sslc.domain_id = d.id
-                  AND sslc.ip_id = ip.id
+                FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ip_addresses AS ip
+                WHERE sslc.ip_id = ip.id
                   $is_active_string
                   $oid_string
                   $did_string
@@ -1310,11 +1322,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1348,9 +1356,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_cat = $pdo->query("
                 SELECT c.id AS cat_id, c.name AS cat_name
-                FROM ssl_certs AS sslc, domains AS d, categories AS c
-                WHERE sslc.domain_id = d.id
-                  AND sslc.cat_id = c.id
+                FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, categories AS c
+                WHERE sslc.cat_id = c.id
                   $is_active_string
                   $oid_string
                   $did_string
@@ -1403,11 +1410,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')";
             }
 
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1446,9 +1449,8 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             $result_owner = $pdo->query("
                 SELECT o.id, o.name
-                FROM ssl_certs AS sslc, domains AS d, owners AS o
-                WHERE sslc.domain_id = d.id
-                  AND sslc.owner_id = o.id
+                FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, owners AS o
+                WHERE sslc.owner_id = o.id
                   $is_active_string
                   $did_string
                   $sslpid_string
@@ -1506,11 +1508,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             } else {
                 $oid_string = "";
             }
-            if ($did !== 0) {
-                $did_string = " AND sslc.domain_id = '$did' ";
-            } else {
-                $did_string = "";
-            }
+            $did_string = DomainMOD\SslList::domainCondition($did);
             if ($sslpid !== 0) {
                 $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' ";
             } else {
@@ -1715,7 +1713,7 @@ if ($result) {
 
     }
 
-    if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_domain'] == '1') {
+    if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1') {
 
         // Certificates exist but none are listed. Which empty state shows depends on why (see the empty states plan).
         $ssl_filters_active = $oid !== 0 || $did !== 0 || $sslpid !== 0 || $sslpaid !== 0 || $ssltid !== 0 || $sslipid !== 0
@@ -1724,12 +1722,12 @@ if ($result) {
         // The list only shows certificates that have a fee (it joins the fees to work out costs), so these counts
         // leave the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
         $ssl_without_fee_join = "
-            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, domains AS d,
-                 ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
+            FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_accounts AS sslpa,
+                 ssl_providers AS sslp, owners AS o, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat,
+                 ssl_cert_field_data AS sslfd
             WHERE sslc.account_id = sslpa.id
               AND sslpa.ssl_provider_id = sslp.id
               AND sslpa.owner_id = o.id
-              AND sslc.domain_id = d.id
               AND sslc.type_id = sslcf.id
               AND sslc.ip_id = ip.id
               AND sslc.cat_id = cat.id

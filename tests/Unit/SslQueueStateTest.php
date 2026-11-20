@@ -26,7 +26,9 @@ use PHPUnit\Framework\TestCase;
 
 /*
  * The SSL Queue's row state rules, as pure functions: afterResult() (the columns written after a lookup result that
- * isn't a success), afterRetry() (Retry Failed), and rowState() (the state the status page shows).
+ * isn't a success), afterRetry() (Retry Failed), rowState() (the state the status page shows), and the rules for a
+ * row's domain: pastedAction() and claimAction() (link, go ahead without a domain, wait, or read domains again),
+ * releaseValues() (a waiting row's release), and waitDone() (a row that has already waited never waits again).
  */
 class SslQueueStateTest extends TestCase
 {
@@ -95,6 +97,80 @@ class SslQueueStateTest extends TestCase
         $this->assertSame(0, $values['finished']);
         $this->assertSame(0, $values['failed']);
         $this->assertSame('pending', SslQueue::rowState((object) ($values + (array) $this->row())));
+    }
+
+    public function testADomainChangedDuringTheLookupPutsTheRowBackWithoutItsDomain()
+    {
+        $row = $this->row(array('attempts' => 1, 'message' => 'timeout', 'domain_id' => 5, 'domain_name' => 'example.com'));
+        $values = SslQueue::afterResult($row, 'domain_changed');
+
+        // no attempt counted and nothing finished, like a deferral, but the domain is cleared for the next claim
+        $this->assertSame(array('processing' => 0, 'domain_id' => 0, 'domain_name' => ''), $values);
+        $this->assertSame('retrying', SslQueue::rowState((object) ($values + (array) $row)));
+        $this->assertSame('pending', SslQueue::rowState((object) (SslQueue::afterResult($this->row(), 'domain_changed') + (array) $this->row())));
+    }
+
+    public function testTheRemovedDomainCodesAreGone()
+    {
+        foreach (array('no_domain', 'domain_not_imported', 'ambiguous_domain') as $code) {
+            $this->assertNotContains($code, SslQueue::$failure_codes, $code);
+        }
+    }
+
+    public function testAPastedHostIsLinkedQueuedOrAddedWithoutADomain()
+    {
+        $this->assertSame('link', SslQueue::pastedAction('one', ''));
+        // more than one record of the best-matching name never fails or waits
+        $this->assertSame('no_domain', SslQueue::pastedAction('many', ''));
+        $this->assertSame('no_domain', SslQueue::pastedAction('many', 'example.com'));
+        $this->assertSame('wait', SslQueue::pastedAction('none', 'example.com'));
+        $this->assertSame('recheck', SslQueue::pastedAction('none', ''));
+        $this->assertSame('link', SslQueue::pastedAction('none', '', 'one'));
+        $this->assertSame('no_domain', SslQueue::pastedAction('none', '', 'many'));
+        $this->assertSame('no_domain', SslQueue::pastedAction('none', '', 'none'));
+    }
+
+    public function testAClaimWaitsOnlyWhenTheRowHasntWaitedAlready()
+    {
+        $this->assertSame('link', SslQueue::claimAction('one', '', false));
+        $this->assertSame('link', SslQueue::claimAction('one', '', true));
+        $this->assertSame('no_domain', SslQueue::claimAction('many', 'example.com', false));
+        $this->assertSame('wait', SslQueue::claimAction('none', 'example.com', false));
+        $this->assertSame('recheck', SslQueue::claimAction('none', 'example.com', true));
+        $this->assertSame('recheck', SslQueue::claimAction('none', '', false));
+        $this->assertSame('link', SslQueue::claimAction('none', 'example.com', true, 'one'));
+        $this->assertSame('no_domain', SslQueue::claimAction('none', 'example.com', true, 'many'));
+        $this->assertSame('no_domain', SslQueue::claimAction('none', '', false, 'none'));
+    }
+
+    public function testAWaitingRowIsReleasedWithItsDomainOrWithoutOne()
+    {
+        $linked = array('wait_for_domain' => 0, 'domain_id' => 4, 'domain_name' => 'example.com');
+        $none = array('wait_for_domain' => 0, 'domain_id' => 0, 'domain_name' => '');
+
+        $this->assertSame($linked, SslQueue::releaseValues(array('one', 4, 'example.com'), false, false));
+        $this->assertSame($linked, SslQueue::releaseValues(array('one', 4, 'example.com'), true, true));
+        // still in the Domain Queue within WAIT_DAYS: no change, so it keeps waiting
+        $this->assertNull(SslQueue::releaseValues(array('none', 0, ''), true, false));
+        $this->assertSame($none, SslQueue::releaseValues(array('none', 0, ''), true, true));
+        $this->assertSame($none, SslQueue::releaseValues(array('none', 0, ''), false, false));
+        $this->assertSame($none, SslQueue::releaseValues(array('many', 0, ''), true, false));
+    }
+
+    public function testOnlyAReleasedRowHasWaited()
+    {
+        $never = (object) array('wait_for_domain' => 0, 'wait_since' => '1970-01-01 00:00:00');
+        $waiting = (object) array('wait_for_domain' => 1, 'wait_since' => '2026-11-20 10:00:00');
+        $released = (object) array('wait_for_domain' => 0, 'wait_since' => '2026-11-20 10:00:00');
+
+        $this->assertFalse(SslQueue::waitDone($never));
+        $this->assertFalse(SslQueue::waitDone($waiting));
+        $this->assertTrue(SslQueue::waitDone($released));
+
+        // a release keeps wait_since, so the released row has waited (and is never sent back to wait a fresh WAIT_DAYS)
+        $values = SslQueue::releaseValues(array('none', 0, ''), false, true);
+        $this->assertTrue(SslQueue::waitDone((object) ($values + (array) $waiting)));
+        $this->assertSame('no_domain', SslQueue::claimAction('none', 'example.com', SslQueue::waitDone((object) ($values + (array) $waiting)), 'none'));
     }
 
     public function testTheStates()

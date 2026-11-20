@@ -102,8 +102,7 @@ $reasons = array(
 $domain_problems = array(
     'expired' => _('Its domain has expired'),
     'inactive' => _('Its domain is inactive'),
-    'first' => _('Its domain expires before the certificate'),
-    'missing' => _('Its domain is missing'));
+    'first' => _('Its domain expires before the certificate'));
 
 $reason_names = function ($row) use ($reasons) {
     return implode(', ', array_map(function ($key) use ($reasons) { return $reasons[$key][0]; }, $row->reasons));

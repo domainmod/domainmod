@@ -494,4 +494,35 @@ class Domain
 
     }
 
+    /*
+     * Keeps the SSL certificates of deleted domains, without a domain (domain_id 0), and returns how many were changed.
+     * Their lookup status rows are kept, since their names, and so the sites they describe, haven't changed. It
+     * starts no transaction and locks no domain itself: the domain deletes call it inside their transaction, after
+     * deleting the domain rows, so the domains are locked first and its update then locks the certificates, in the
+     * same order as the SSL Queue and SSL Refresh.
+     */
+    public function unlinkSslCertificates(array $domain_ids)
+    {
+        $domain_ids = array_values(array_map('intval', $domain_ids));
+        if (!$domain_ids) return 0;
+
+        $placeholders = array();
+        foreach ($domain_ids as $index => $domain_id) {
+            $placeholders[] = ':domain_id' . $index;
+        }
+
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE ssl_certs
+            SET domain_id = 0,
+                update_time = :update_time
+            WHERE domain_id IN (" . implode(', ', $placeholders) . ")");
+        $stmt->bindValue('update_time', $this->time->stamp(), \PDO::PARAM_STR);
+        foreach ($domain_ids as $index => $domain_id) {
+            $stmt->bindValue('domain_id' . $index, $domain_id, \PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
 } //@formatter:on

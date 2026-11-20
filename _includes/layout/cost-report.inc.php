@@ -82,7 +82,7 @@ $cost_cell = function ($column, $row) use ($cost_list, $cost_subtotals, $money, 
     $link = '';
     switch ($column['value']) {
         case 'field':
-            $text = $row->{$column['field']};
+            $text = DomainMOD\CostReport::fieldText($column, $row);
             if (!empty($column['tld'])) {
                 return array('text' => '.' . $text, 'html' => '<bdi dir="ltr">.' . $text . '</bdi>', 'order' => null);
             }
@@ -137,7 +137,7 @@ $cost_cell = function ($column, $row) use ($cost_list, $cost_subtotals, $money, 
     }
     $html = $text;
     if (isset($column['link'])) {
-        $html = '<a href="' . $cost_list . '?' . $column['link'][0] . '=' . $row->{$column['link'][1]} . '">' . $text . '</a>';
+        $html = '<a href="' . $cost_list . '?' . $column['link'][0] . '=' . DomainMOD\CostReport::linkValue($column, $row) . '">' . $text . '</a>';
     }
     return array('text' => $text, 'html' => $html, 'order' => $order);
 };

@@ -27,8 +27,8 @@ use PHPUnit\Framework\TestCase;
 
 /*
  * The SSL Queue status page's pure rules: retryAction() (what Retry Failed does with each failed row), progressCounts()
- * (the progress line), freshClaim() (a claim that keeps the processing notice up), and exportText() (how a text cell is
- * prepared for the CSV export).
+ * (the progress line), freshClaim() (a claim that keeps the processing notice up), exportText() (how a text cell is
+ * prepared for the CSV export), and domainShown() (the Domain shown for a row).
  */
 class SslQueueStatusPageTest extends TestCase
 {
@@ -36,6 +36,20 @@ class SslQueueStatusPageTest extends TestCase
     private function row($id, $exact, $processing = 0)
     {
         return (object) array('id' => $id, 'exact_domain' => $exact, 'processing' => $processing);
+    }
+
+    public function testTheDomainShownIsTheLinkedDomainOrTheOneBeingWaitedFor()
+    {
+        $row = function ($values) {
+            return (object) ($values + array('finished' => 0, 'failed' => 0, 'already_in_queue' => 0, 'already_in_ssl' => 0,
+                'processing' => 0, 'wait_for_domain' => 0, 'wait_domain' => '', 'domain_name' => '', 'attempts' => 0));
+        };
+
+        $this->assertSame('example.com', SslQueue::domainShown($row(array('finished' => 1, 'domain_name' => 'example.com'))));
+        $this->assertSame('example.com', SslQueue::domainShown($row(array('wait_for_domain' => 1, 'wait_domain' => 'example.com'))));
+        // a row that waited and went ahead without a domain shows none, not the domain it waited for
+        $this->assertSame('', SslQueue::domainShown($row(array('finished' => 1, 'wait_domain' => 'example.com'))));
+        $this->assertSame('', SslQueue::domainShown($row(array('wait_domain' => 'example.com'))));
     }
 
     public function testAFailedRowWithNoOtherUnfinishedRowIsReopened()

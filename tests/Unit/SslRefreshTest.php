@@ -116,11 +116,21 @@ class SslRefreshTest extends TestCase
         $this->assertSame(array('outside', ''), $this->refresh()->hostCheck('myexample.com', 'example.com'));
     }
 
+    public function testACertificateWithNoDomainAcceptsAnyHostname()
+    {
+        $this->assertSame(array('ok', 'www.example.com'), $this->refresh()->hostCheck('www.example.com.', ''));
+        $this->assertSame(array('ok', 'status.example.org'), $this->refresh()->hostCheck('Status.Example.ORG', ''));
+        $this->assertSame(array('ok', 'shop.münchen.de'), $this->refresh()->hostCheck('shop.xn--mnchen-3ya.de', ''));
+        // A name that isn't a hostname is still refused
+        $this->assertSame(array('label', ''), $this->refresh()->hostCheck('2027 wildcard renewal', ''));
+        $this->assertSame(array('label', ''), $this->refresh()->hostCheck('www', ''));
+    }
+
     public function testTheRefusalsNameTheHostnameRule()
     {
         $this->assertSame("Refresh needs this certificate's name to be the hostname it's installed on, such as www.example.com.",
             $this->refresh()->refusalMessage('label', 'Office & Shop', 'example.com'));
-        $this->assertSame('This certificate\'s name, <bdi dir="ltr">www.example.net</bdi>, isn\'t part of its domain, <bdi dir="ltr">example.com</bdi>. Link it to the right domain, or change the name, then refresh it.',
+        $this->assertSame('This certificate\'s name, <bdi dir="ltr">www.example.net</bdi>, isn\'t part of its domain, <bdi dir="ltr">example.com</bdi>. Link the certificate to the right domain, set its Domain to None, or change its name. Then refresh the certificate.',
             $this->refresh()->refusalMessage('outside', 'www.example.net', 'example.com'));
         $this->assertStringContainsString('<bdi dir="ltr">a&amp;b.example.net</bdi>',
             $this->refresh()->refusalMessage('outside', 'a&b.example.net', 'example.com'));

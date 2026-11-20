@@ -69,29 +69,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
 
     if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_type_id !== 0 && $new_ip_id !== 0 &&
-        $new_cat_id !== 0 && $new_domain_id !== 0 && $new_account_id !== 0 && $custom_fields_valid
+        $new_cat_id !== 0 && $new_account_id !== 0 && $custom_fields_valid
     ) {
 
         try {
 
             $pdo->beginTransaction();
 
-            // the domain may have been deleted while the form was open; then nothing is saved
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM domains
-                WHERE id = :new_domain_id");
-            $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $domain_exists = $stmt->fetchColumn();
-            $stmt->closeCursor();
+            // The domain is optional, and 0 is None. A chosen domain may have been deleted while the form was open, and
+            // then nothing is saved. The read locks the domain row, so a domain delete running at the same moment waits
+            // for this save, and its unlink then sees the new certificate. A negative id, which only a changed form can
+            // send, is refused the same way.
+            if ($new_domain_id !== 0) {
 
-            if (!$domain_exists) {
+                $domain_exists = false;
 
-                if ($pdo->InTransaction()) $pdo->rollback();
-                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The domain you chose no longer exists. Please choose another one.') . '<BR>';
-                header("Location: add.php");
-                exit;
+                if ($new_domain_id > 0) {
+
+                    $stmt = $pdo->prepare("
+                        SELECT id
+                        FROM domains
+                        WHERE id = :new_domain_id
+                        FOR UPDATE");
+                    $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $domain_exists = $stmt->fetchColumn();
+                    $stmt->closeCursor();
+
+                }
+
+                if (!$domain_exists) {
+
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The domain you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: add.php");
+                    exit;
+
+                }
 
             }
 
@@ -244,9 +258,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
         }
 
-        if ($new_domain_id === 0) {
+        // A chosen domain that was deleted while the form was open isn't in the menu any more, so it's marked here
+        // rather than shown again as None
+        if ($new_domain_id !== 0) {
 
-            $form->addFieldError('new_domain_id', _('Choose the domain'));
+            $domain_exists = false;
+
+            if ($new_domain_id > 0) {
+
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM domains
+                    WHERE id = :new_domain_id");
+                $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $domain_exists = $stmt->fetchColumn();
+                $stmt->closeCursor();
+
+            }
+
+            if (!$domain_exists) {
+
+                $form->addFieldError('new_domain_id', _('The domain you chose no longer exists. Please choose another one.'));
+
+            }
 
         }
 
@@ -310,7 +345,9 @@ $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '1', '');
+echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '', '');
+// TRANSLATORS: The Domain menu's choice for an SSL certificate that isn't linked to a domain.
+echo $form->showDropdownOption('0', _('None'), $new_domain_id);
 
 foreach ($result as $row) {
 

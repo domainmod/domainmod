@@ -453,88 +453,74 @@ if ($del === 1) {
     $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-    $stmt = $pdo->prepare("
-        SELECT domain_id
-        FROM ssl_certs
-        WHERE domain_id = :did
-        LIMIT 1");
-    $stmt->bindValue('did', $did, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetchColumn();
+    try {
 
-    if ($result) {
+        $pdo->beginTransaction();
 
-        $existing_ssl_certs = 1;
+        // the record may have been deleted while the form was open; then nothing is saved
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM domains
+            WHERE id = :record_id");
+        $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
+        $stmt->execute();
+        $record_exists = $stmt->fetchColumn();
+        $stmt->closeCursor();
 
-    }
+        if (!$record_exists) {
 
-    $existing_ssl_certs = $existing_ssl_certs ?? 0;
-    if ($existing_ssl_certs > 0) {
-
-        $_SESSION['s_message_danger'] .= _('This Domain has SSL Certificates associated with it and cannot be deleted.') . '<BR>';
-
-    } else {
-
-        try {
-
-            $pdo->beginTransaction();
-
-            // the record may have been deleted while the form was open; then nothing is saved
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM domains
-                WHERE id = :record_id");
-            $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
-            $stmt->execute();
-            $record_exists = $stmt->fetchColumn();
-            $stmt->closeCursor();
-
-            if (!$record_exists) {
-
-                if ($pdo->InTransaction()) $pdo->rollback();
-                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
-                header("Location: ../domains/index.php");
-                exit;
-
-            }
-
-            $stmt = $pdo->prepare("
-                DELETE FROM domains
-                WHERE id = :did");
-            $stmt->bindValue('did', $did, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $stmt = $pdo->prepare("
-                DELETE FROM domain_field_data
-                WHERE domain_id = :did");
-            $stmt->bindValue('did', $did, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $maint->updateSegments();
-
-            $system->checkExistingAssets();
-
-            if ($pdo->InTransaction()) $pdo->commit();
-
-            $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-            $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted'), $new_domain) . '<BR>';
-
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That domain no longer exists.') . '<BR>';
             header("Location: ../domains/index.php");
             exit;
 
-        } catch (Exception $e) {
-
-            if ($pdo->InTransaction()) $pdo->rollback();
-
-            $log_message = 'Unable to delete domain';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
-
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
-
-            throw $e;
-
         }
+
+        $stmt = $pdo->prepare("
+            DELETE FROM domains
+            WHERE id = :did");
+        $stmt->bindValue('did', $did, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt = $pdo->prepare("
+            DELETE FROM domain_field_data
+            WHERE domain_id = :did");
+        $stmt->bindValue('did', $did, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // The domain's SSL certificates are kept, without a domain (after the domain row is deleted, so the domain is
+        // locked before its certificates)
+        $domain = new DomainMOD\Domain();
+        $unlinked_ssl_certs = $domain->unlinkSslCertificates(array($did));
+
+        $maint->updateSegments();
+
+        $system->checkExistingAssets();
+
+        if ($pdo->InTransaction()) $pdo->commit();
+
+        $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
+        $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted'), $new_domain) . '<BR>';
+
+        if ($unlinked_ssl_certs > 0) {
+            // TRANSLATORS: %s is the number of SSL certificates that were linked to the deleted domain or domains.
+            $_SESSION['s_message_success'] .= sprintf(ngettext('%s SSL certificate was kept without a domain.', '%s SSL certificates were kept without a domain.', $unlinked_ssl_certs), number_format($unlinked_ssl_certs)) . '<BR>';
+        }
+
+        header("Location: ../domains/index.php");
+        exit;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+
+        $log_message = 'Unable to delete domain';
+        $log_extra = array('Error' => $e);
+        $log->critical($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
 
     }
 
@@ -948,7 +934,8 @@ if ($dw_has_zones === 1) { ?>
     <?php echo $layout->expandableBoxBottom(); ?><?php
 }
 
-$layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1', _('Delete this domain'), sprintf(_('This removes %s and its details from %s. It can only be deleted when no SSL certificates are linked to it. It can\'t be undone.'), '<strong>' . $layout->ltr(html_entity_decode($new_domain, ENT_QUOTES, 'UTF-8')) . '</strong>', SOFTWARE_TITLE));
+// TRANSLATORS: The first %s is the domain's name, and the second is the app's name, DomainMOD.
+$layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1', _('Delete this domain'), sprintf(_('This removes %s and its details from %s. Any linked SSL certificates are kept without a domain. Deleting the domain can\'t be undone.'), '<strong>' . $layout->ltr(html_entity_decode($new_domain, ENT_QUOTES, 'UTF-8')) . '</strong>', SOFTWARE_TITLE));
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>

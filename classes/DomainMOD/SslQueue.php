@@ -54,7 +54,7 @@ class SslQueue
     // The result codes that are retried, and the ones that fail a row straight away
     public static $retry_codes = array('timeout', 'save_failed', 'local_error');
     public static $failure_codes = array('no_dns', 'not_public', 'no_connect', 'no_tls', 'name_mismatch', 'not_yet_valid',
-        'bad_certificate', 'no_domain', 'domain_not_imported', 'stale_choice', 'ambiguous_domain', 'name_too_long');
+        'bad_certificate', 'stale_choice', 'name_too_long');
 
     /*
      * Test-only hooks, null outside tests:
@@ -62,12 +62,18 @@ class SslQueue
      *   database update ('unavailable'), and when another run holds the run lock ('locked').
      * - $test_add_failure: when true, addHosts() throws inside its transaction after writing its first row, so the
      *   rollback can be tested.
+     * - $test_before_save: a callable($stage, $row) called with 'claim_read' in prepareClaimed() between its first read
+     *   of domains and its Domain Queue check, with 'read' in import() just after the read of the certificates with no
+     *   domain (before the transaction), and with 'locked' in importLocked() once the candidates are locked, so a test
+     *   can change the data between the reads and the locks, or check the locks while the transaction is open.
      */
     public static $test_trace = null;
     public static $test_add_failure = null;
+    public static $test_before_save = null;
 
     protected $queue_locked = false;
     protected $queued_domains = null; // the Domain Queue's unfinished, valid domains, read once per add or waiting check
+    protected $ascii_names = array(); // each certificate name's asciiHostname(), by the name's stored text, for the run
 
     public function __construct()
     {
@@ -145,16 +151,10 @@ class SslQueue
             $message = _("The site answered on port 443, but not with TLS.");
         } elseif ($code === 'timeout') {
             $message = _('The lookup ran out of time.');
-        } elseif ($code === 'no_domain') {
-            $message = _("This hostname's domain isn't in DomainMOD. Add the domain first, then retry.");
-        } elseif ($code === 'domain_not_imported') {
-            $message = _("The Domain Queue didn't import this hostname's domain.");
         } elseif ($code === 'stale_choice') {
             $message = _('Something chosen when this hostname was queued has changed or been deleted. Delete this queue entry and add the hostname again.');
         } elseif ($code === 'local_error') {
             $message = _("DomainMOD couldn't write a temporary file to check this certificate. Check that PHP's temporary folder is writable.");
-        } elseif ($code === 'ambiguous_domain') {
-            $message = _('More than one domain in DomainMOD has this name. Remove the extra one, then retry.');
         } elseif ($code === 'name_too_long') {
             $message = _('This hostname is longer than the 100 characters an SSL certificate name can hold.');
         } elseif ($code === 'bad_certificate') {
@@ -170,12 +170,15 @@ class SslQueue
 
     /*
      * The columns to write to a claimed row after a lookup result that isn't a success: a pacing deferral puts it back
-     * as it was before the claim (attempts, message, and the claim's last_attempt kept), a retryable code counts an
-     * attempt and fails the row on the third, and any other code fails it straight away. Every result clears the claim.
+     * as it was before the claim (attempts, message, and the claim's last_attempt kept), domain_changed (its domain was
+     * deleted or renamed during the lookup) puts it back the same way without its domain, so its next claim finds its
+     * domain again, a retryable code counts an attempt and fails the row on the third, and any other code fails it
+     * straight away. Every result clears the claim.
      */
     public static function afterResult($row, $code)
     {
         if ($code === 'deferred') return array('processing' => 0);
+        if ($code === 'domain_changed') return array('processing' => 0, 'domain_id' => 0, 'domain_name' => '');
 
         if (in_array($code, self::$retry_codes, true)) {
 
@@ -224,6 +227,66 @@ class SslQueue
         if ((int) $row->attempts > 0) return 'retrying';
 
         return 'pending';
+    }
+
+    /*
+     * Whether a row has already waited for its domain and been released, so it never waits again: a released row keeps
+     * the wait_since its wait started with, while a row that never waited has the column's default.
+     */
+    public static function waitDone($row)
+    {
+        return (int) $row->wait_for_domain === 0 && (string) $row->wait_since !== '1970-01-01 00:00:00';
+    }
+
+    /*
+     * The domain the Import Queue page and the export show for a row: the domain it's linked to, or the domain it's
+     * waiting for while it waits, or '' (a row that went ahead without a domain).
+     */
+    public static function domainShown($row)
+    {
+        if ((string) $row->domain_name !== '') return (string) $row->domain_name;
+
+        return self::rowState($row) === 'waiting' ? (string) $row->wait_domain : '';
+    }
+
+    /*
+     * What to do with a row's domain, from the first read of domains ($status: 'one', 'many', or 'none'), the Domain
+     * Queue's domain for it ($queued, or ''), whether it has already waited ($wait_done), and, once that's been asked
+     * for, the second read's $second status. Returns 'link' (the one domain found), 'no_domain' (go ahead without one),
+     * 'wait' (wait for the Domain Queue's domain), or 'recheck' (read domains once more, since the Domain Queue may have
+     * imported the domain and finished its row between the reads). More than one record never waits: it goes ahead
+     * without a domain straight away.
+     */
+    public static function claimAction($status, $queued, $wait_done, $second = null)
+    {
+        if ($status === 'one') return 'link';
+        if ($status === 'many') return 'no_domain';
+        if ($queued !== '' && !$wait_done) return 'wait';
+        if ($second === null) return 'recheck';
+
+        return ($second === 'one') ? 'link' : 'no_domain';
+    }
+
+    // What to do with a pasted host's domain (see claimAction()): a newly pasted row has never waited
+    public static function pastedAction($status, $queued, $second = null)
+    {
+        return self::claimAction($status, $queued, false, $second);
+    }
+
+    /*
+     * The columns that release a waiting row, from the read of domains ($found: array(status, id, name)), whether its
+     * domain is still in the Domain Queue ($still_queued), and whether its WAIT_DAYS are up ($expired), or null when it
+     * keeps waiting. It's released linked to the one domain found, and otherwise without a domain, and its wait_since is
+     * kept, so it never waits again (see waitDone()).
+     */
+    public static function releaseValues($found, $still_queued, $expired)
+    {
+        list($status, $domain_id, $domain_name) = $found;
+
+        if ($status === 'one') return array('wait_for_domain' => 0, 'domain_id' => (int) $domain_id, 'domain_name' => (string) $domain_name);
+        if ($status === 'none' && $still_queued && !$expired) return null;
+
+        return array('wait_for_domain' => 0, 'domain_id' => 0, 'domain_name' => '');
     }
 
     /*
@@ -354,8 +417,6 @@ class SslQueue
 
                 if ($kind === 'already_in_queue') {
                     $row += array('finished' => 1, 'already_in_queue' => 1);
-                } elseif ($kind === 'no_domain' || $kind === 'ambiguous_domain') {
-                    $row += array('finished' => 1, 'failed' => 1, 'message' => $kind);
                 } elseif ($kind === 'pending') {
                     $row += array('domain_id' => $action[1], 'domain_name' => $action[2]);
                 } elseif ($kind === 'waiting') {
@@ -632,8 +693,10 @@ class SslQueue
         } elseif ($state === 'waiting') {
 
             $label = _('Waiting for the Domain');
-            // TRANSLATORS: Shown under "Waiting for the Domain" in the SSL Queue. %s is a domain.
-            $detail = sprintf(_('Waiting for %s to be added. This is checked on the next run.'), $row->wait_domain);
+            // TRANSLATORS: Shown under "Waiting for the Domain" in the SSL Queue. %1$s is a domain, and %2$d is a number of days.
+            $detail = sprintf(ngettext('Waiting up to %2$d day for %1$s to be added. If the wait ends first, the SSL Queue checks the site anyway and links the certificate only if a matching domain has been added by then.',
+                'Waiting up to %2$d days for %1$s to be added. If the wait ends first, the SSL Queue checks the site anyway and links the certificate only if a matching domain has been added by then.',
+                self::WAIT_DAYS), $row->wait_domain, self::WAIT_DAYS);
 
         } elseif ($state === 'processing') {
 
@@ -1018,27 +1081,29 @@ class SslQueue
     }
 
     /*
-     * What to do with a pasted host: array('already_in_queue'), array('pending', domain id, domain name),
-     * array('waiting', the Domain Queue's domain), array('ambiguous_domain'), or array('no_domain').
+     * What to do with a pasted host (see pastedAction()): array('already_in_queue'), array('pending', domain id, domain
+     * name), with 0 and '' when it goes ahead without a domain, or array('waiting', the Domain Queue's domain).
      */
     protected function planPasted($host)
     {
         if ($this->unfinishedRows($host)) return array('already_in_queue');
 
         list($status, $domain_id, $domain_name) = $this->findDomain($host, false, false);
-        if ($status === 'one') return array('pending', $domain_id, $domain_name);
-        if ($status === 'many') return array('ambiguous_domain');
+        $queued = ($status === 'none') ? $this->findQueuedDomain($host, false) : '';
+        $action = self::pastedAction($status, $queued);
 
-        $queued = $this->findQueuedDomain($host, false);
-        if ($queued !== '') return array('waiting', $queued);
+        if ($action === 'wait') return array('waiting', $queued);
 
-        // the Domain Queue may have imported the domain between the two reads, so domains is read once more (a current
-        // read, since a plain read inside the transaction only sees the first read's snapshot)
-        list($status, $domain_id, $domain_name) = $this->findDomain($host, false, true);
-        if ($status === 'one') return array('pending', $domain_id, $domain_name);
-        if ($status === 'many') return array('ambiguous_domain');
+        if ($action === 'recheck') {
 
-        return array('no_domain');
+            // the Domain Queue may have imported the domain between the two reads, so domains is read once more (a
+            // current read, since a plain read inside the transaction only sees the first read's snapshot)
+            list($status, $domain_id, $domain_name) = $this->findDomain($host, false, true);
+            $action = self::pastedAction('none', $queued, $status);
+
+        }
+
+        return ($action === 'link') ? array('pending', $domain_id, $domain_name) : array('pending', 0, '');
     }
 
     /*
@@ -1201,12 +1266,12 @@ class SslQueue
     }
 
     /*
-     * Releases or fails the rows waiting for their domain, under the SSL Queue's named lock. A row whose wait_domain is
-     * now in domains (as exactly one record) is released, keeping its attempts and message. One that's still in the
-     * Domain Queue (an unfinished, valid row) keeps waiting for up to WAIT_DAYS from wait_since. Otherwise it fails
-     * with domain_not_imported, after domains is read once more. The Domain Queue is read once, before the rows, since
-     * domain_queue has no index on domain: a domain queued again during the check is only seen by the next one, and a
-     * row that fails meanwhile can be put back with Retry Failed. $now (Y-m-d H:i:s, UTC) is for tests.
+     * Releases the rows waiting for their domain, under the SSL Queue's named lock (see releaseValues()). A row whose
+     * wait_domain is now in domains (as exactly one record) is released linked to it, keeping its attempts and message.
+     * One that's still in the Domain Queue (an unfinished, valid row) keeps waiting for up to WAIT_DAYS from wait_since.
+     * Otherwise it's released without a domain (when no record was found, only after domains is read once more), and
+     * its claim looks for a domain again. The Domain Queue is read once, before the rows, since domain_queue has no index on domain: a domain queued
+     * again during the check is only seen by the next one. $now (Y-m-d H:i:s, UTC) is for tests.
      */
     public function releaseWaiting($now = null)
     {
@@ -1231,9 +1296,12 @@ class SslQueue
                 $this->getQueueLock();
                 $pdo->beginTransaction();
 
-                list($status, $domain_id, $domain_name) = $this->findDomain($row->wait_domain, true, true);
+                $found = $this->findDomain($row->wait_domain, true, true);
+                $expired = $row->wait_since <= $cutoff;
+                $still_queued = $found[0] === 'none' && !$expired && $this->findQueuedDomain($row->wait_domain, true) !== '';
+                $values = self::releaseValues($found, $still_queued, $expired);
 
-                if ($status === 'none' && $row->wait_since > $cutoff && $this->findQueuedDomain($row->wait_domain, true) !== '') {
+                if ($values === null) {
 
                     $pdo->rollback();
                     $this->releaseQueueLock();
@@ -1241,20 +1309,11 @@ class SslQueue
 
                 }
 
-                if ($status === 'none') {
+                if ($found[0] === 'none') {
 
                     // the Domain Queue may have imported the domain and finished its row between the reads
-                    list($status, $domain_id, $domain_name) = $this->findDomain($row->wait_domain, true, true);
+                    $values = self::releaseValues($this->findDomain($row->wait_domain, true, true), false, true);
 
-                }
-
-
-                if ($status === 'one') {
-                    $values = array('wait_for_domain' => 0, 'domain_id' => $domain_id, 'domain_name' => $domain_name);
-                } elseif ($status === 'many') {
-                    $values = array('wait_for_domain' => 0, 'finished' => 1, 'failed' => 1, 'message' => 'ambiguous_domain');
-                } else {
-                    $values = array('wait_for_domain' => 0, 'finished' => 1, 'failed' => 1, 'message' => 'domain_not_imported');
                 }
 
                 $this->updateRow((int) $row->id, $values, "wait_for_domain = '1' AND wait_domain = :wait_domain AND exact_domain = :exact_domain",
@@ -1471,8 +1530,11 @@ class SslQueue
 
     /*
      * Finds the claimed row's domain from its current settings, and returns the row ready for its lookup, or null when
-     * it waits or fails here (its claim then cleared). A stored domain_id is kept, and fails the row with stale_choice
-     * when that domain is gone or renamed. An exact-domain row only ever looks for its own wait_domain.
+     * it waits here (its claim then cleared). A stored domain_id that still exists under the same name is kept. When
+     * it's gone or renamed, or there's none, the domain is looked for again (see claimAction()): the one record found
+     * is linked, a domain in the Domain Queue is waited for (unless the row has waited already), and otherwise the row
+     * goes ahead without a domain. Any change to the row's domain is written to it here. An exact-domain row only ever
+     * looks for its own wait_domain.
      */
     protected function prepareClaimed($row)
     {
@@ -1490,65 +1552,54 @@ class SslQueue
             $name = $stmt->fetchColumn();
             $stmt->closeCursor();
 
-            if ($name === false || (string) $name !== (string) $row->domain_name) {
-
-                $this->writeResult($row, 'stale_choice');
-                return null;
-
-            }
-
-            return $row;
+            if ($name !== false && (string) $name === (string) $row->domain_name) return $row;
 
         }
 
         list($status, $domain_id, $domain_name) = $this->findDomain($target, $exact, false);
+        if (self::$test_before_save) call_user_func(self::$test_before_save, 'claim_read', $row);
+        $queued = ($status === 'none') ? $this->findQueuedDomain($target, $exact) : '';
+        $action = self::claimAction($status, $queued, self::waitDone($row));
 
-        if ($status === 'many') {
-
-            $this->writeResult($row, 'ambiguous_domain');
-            return null;
-
-        }
-
-        if ($status === 'one') {
-
-            $this->updateRow((int) $row->id, array('domain_id' => $domain_id, 'domain_name' => $domain_name));
-            $row->domain_id = $domain_id;
-            $row->domain_name = $domain_name;
-            return $row;
-
-        }
-
-        $queued = $this->findQueuedDomain($target, $exact);
-
-        if ($queued !== '') {
+        if ($action === 'wait') {
 
             $this->updateRow((int) $row->id, array('processing' => 0, 'wait_for_domain' => 1, 'wait_domain' => $queued,
-                'wait_since' => $this->time->stamp()));
+                'wait_since' => $this->time->stamp(), 'domain_id' => 0, 'domain_name' => ''));
             return null;
 
         }
 
-        // the Domain Queue may have imported the domain and finished its row between the two reads
-        list($status, $domain_id, $domain_name) = $this->findDomain($target, $exact, false);
+        if ($action === 'recheck') {
 
-        if ($status === 'one') {
+            // the Domain Queue may have imported the domain and finished its row between the two reads
+            list($status, $domain_id, $domain_name) = $this->findDomain($target, $exact, false);
+            $action = self::claimAction('none', $queued, self::waitDone($row), $status);
+
+        }
+
+        if ($action !== 'link') {
+
+            $domain_id = 0;
+            $domain_name = '';
+
+        }
+
+        if ((int) $row->domain_id !== $domain_id || (string) $row->domain_name !== $domain_name) {
 
             $this->updateRow((int) $row->id, array('domain_id' => $domain_id, 'domain_name' => $domain_name));
             $row->domain_id = $domain_id;
             $row->domain_name = $domain_name;
-            return $row;
 
         }
 
-        $this->writeResult($row, $status === 'many' ? 'ambiguous_domain' : 'no_domain');
-        return null;
+        return $row;
     }
 
     /*
-     * array(revision, name) of every certificate on the row's domain named for the host (or, for a tick-box row, for
-     * its www. name too), with the revision of its status row (null for none): the records a name match could pick at
-     * save time. The name is kept as well, since a record with no status row can be renamed with no revision to show it.
+     * array(revision, name) of every certificate a name match could pick at save time, with the revision of its status
+     * row (null for none): those named for the host (or, for a tick-box row, for its www. name too) on the row's domain,
+     * when it has one, and those with no domain. The name is kept as well, since a record with no status row can be
+     * renamed with no revision to show it.
      */
     protected function noteRevisions($row)
     {
@@ -1556,13 +1607,62 @@ class SslQueue
         if ((int) $row->exact_domain === 1) $wanted[] = strtolower(Domain::forApi('www.' . $row->host));
 
         $noted = array();
+        $certificates = ((int) $row->domain_id > 0) ? $this->certificatesNamed((int) $row->domain_id, $wanted, false) : array();
 
-        foreach ($this->certificatesNamed((int) $row->domain_id, $wanted, false) as $certificate) {
+        foreach ($certificates as $certificate) {
             $noted[(int) $certificate->id] = array(($certificate->revision === null) ? null : (int) $certificate->revision,
                 (string) $certificate->name);
         }
 
+        $candidates = $this->noDomainCandidates($wanted);
+
+        if ($candidates) {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT ssl_id, revision
+                FROM ssl_cert_status
+                WHERE ssl_id IN (" . implode(', ', array_fill(0, count($candidates), '?')) . ")");
+            $stmt->execute(array_keys($candidates));
+            $revisions = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+
+            foreach ($candidates as $id => $name) {
+                $noted[$id] = array(isset($revisions[$id]) ? (int) $revisions[$id] : null, $name);
+            }
+
+        }
+
         return $noted;
+    }
+
+    /*
+     * The certificates with no domain whose name (normalised, and a valid hostname) is one of the ASCII names in
+     * $wanted, as array(id => stored name), lowest id first. It's an unlocked read on ssl_certs alone, so it locks
+     * nothing and sees every certificate with no domain committed by then. Each name's ASCII form is kept for the run, so a name is only
+     * converted once however many saves read it, and the rows are read one at a time rather than all at once, so a
+     * large table doesn't need its every row in memory as objects. The SSL Queue only runs once the 4.27.0 update has
+     * set every certificate whose domain was deleted to 0, so domain_id = 0 is exactly "no domain" wherever it runs.
+     */
+    protected function noDomainCandidates($wanted)
+    {
+        $stmt = $this->deeb->cnxx->query("
+            SELECT id, `name`
+            FROM ssl_certs
+            WHERE domain_id = '0'
+            ORDER BY id");
+
+        $candidates = array();
+
+        while (($certificate = $stmt->fetch(\PDO::FETCH_OBJ)) !== false) {
+
+            $name = (string) $certificate->name;
+            if (!isset($this->ascii_names[$name])) {
+                $this->ascii_names[$name] = $this->asciiHostname((new Unsanitize())->text($name));
+            }
+            if ($this->ascii_names[$name] !== '' && in_array($this->ascii_names[$name], $wanted, true)) $candidates[(int) $certificate->id] = $name;
+
+        }
+
+        return $candidates;
     }
 
     /*
@@ -1614,7 +1714,9 @@ class SslQueue
     /*
      * Saves a lookup that came with a certificate, in one transaction under the SSL Queue's named lock: the queue row and
      * every id the certificate uses are locked and rechecked, then the certificate is matched to an existing record
-     * (by name, then fingerprint) or inserted. Any error rolls back and counts as save_failed.
+     * (by name, then fingerprint, then a certificate with no domain named for the host) or inserted. The certificates
+     * with no domain are read after the lock and before the transaction, so the read sees everything committed by then.
+     * Any error rolls back and counts as save_failed.
      */
     protected function import($row, $code, $details, $noted)
     {
@@ -1625,9 +1727,11 @@ class SslQueue
         try {
 
             $this->getQueueLock();
+            $candidates = $this->noDomainCandidates(array(strtolower(Domain::forApi($details['host']))));
+            if (self::$test_before_save) call_user_func(self::$test_before_save, 'read', $row);
             $pdo->beginTransaction();
 
-            $outcome = $this->importLocked($row, $code, $details, $noted, $ssl_assets);
+            $outcome = $this->importLocked($row, $code, $details, $noted, $ssl_assets, $candidates);
 
             if ($outcome === 'saved') {
                 $pdo->commit();
@@ -1669,18 +1773,27 @@ class SslQueue
 
     /*
      * The import's work inside its transaction. Returns 'saved', 'gone' (the row is no longer this run's claim, so
-     * nothing is written), or a failure code to write to the row once the transaction is rolled back.
+     * nothing is written), or a code to write to the row once the transaction is rolled back. $candidates are the
+     * certificates with no domain named for the host (noDomainCandidates()), read before the transaction.
      */
-    protected function importLocked($row, $code, $details, $noted, $ssl_assets)
+    protected function importLocked($row, $code, $details, $noted, $ssl_assets, $candidates)
     {
         $pdo = $this->deeb->cnxx;
 
         $current = $this->lockRow('ssl_queue', 'id', (int) $row->id, '*');
         if (!$current || (int) $current->processing !== 1 || (int) $current->finished !== 0) return 'gone';
 
-        // every id the certificate will use, locked and rechecked, since any can be deleted or changed while the lookup runs
-        $domain = $this->lockRow('domains', 'id', (int) $row->domain_id, 'domain');
-        if (!$domain || (string) $domain->domain !== (string) $row->domain_name) return 'stale_choice';
+        // every id the certificate will use, locked and rechecked, since any can be deleted or changed while the lookup
+        // runs. A domain that's gone or renamed isn't looked up again here, since that could lock domains in another
+        // order than a bulk delete: the row goes back to the queue without it, and its next claim finds its domain.
+        $domain = null;
+
+        if ((int) $row->domain_id > 0) {
+
+            $domain = $this->lockRow('domains', 'id', (int) $row->domain_id, 'domain');
+            if (!$domain || (string) $domain->domain !== (string) $row->domain_name) return 'domain_changed';
+
+        }
 
         foreach (array(array('owners', $row->owner_id), array('ssl_cert_types', $row->type_id),
                      array('categories', $row->cat_id), array('ip_addresses', $row->ip_id)) as $check) {
@@ -1702,11 +1815,19 @@ class SslQueue
         $served_ascii = strtolower(Domain::forApi($details['host']));
         $now = $this->time->stamp();
 
-        // 1. An existing record: the lowest id named for the host, then the lowest id holding the fingerprint
-        $by_name = $this->certificatesNamed((int) $row->domain_id, array($served_ascii), true);
+        /*
+         * 1. An existing record: on the row's domain, the lowest id named for the host, then the lowest id holding the
+         * fingerprint, and then (with or without a domain) the lowest id with no domain named for the host. A record
+         * matched by name has its status row updated (below), and its name and revision as they are now are kept in
+         * $name_match for that.
+         */
+        $by_name = $domain ? $this->certificatesNamed((int) $row->domain_id, array($served_ascii), true) : array();
         $match_id = $by_name ? (int) $by_name[0]->id : 0;
+        $name_match = $by_name ? array(($by_name[0]->revision === null) ? null : (int) $by_name[0]->revision,
+            (string) $by_name[0]->name) : null;
+        $finish_domain = null;
 
-        if ($match_id === 0 && $details['fingerprint'] !== '') {
+        if ($domain && $match_id === 0 && $details['fingerprint'] !== '') {
 
             $stmt = $pdo->prepare("
                 SELECT c.id, c.`name`
@@ -1736,20 +1857,46 @@ class SslQueue
 
         }
 
+        if ($match_id === 0) {
+
+            /*
+             * Each candidate is locked by its id on ssl_certs alone, then its status row, and rechecked: still named for
+             * the host, and still with no domain (0 is never a domain, so no domains row is read under these locks). One
+             * renamed or linked since the read only moves the match to the next candidate.
+             */
+            foreach ($candidates as $candidate_id => $candidate_name) {
+
+                $certificate = $this->lockRow('ssl_certs', 'id', $candidate_id, 'id, `name`, domain_id');
+                $status = $this->lockRow('ssl_cert_status', 'ssl_id', $candidate_id, 'revision');
+                if (!$certificate || (int) $certificate->domain_id !== 0) continue;
+                if ($this->asciiHostname((new Unsanitize())->text($certificate->name)) !== $served_ascii) continue;
+
+                $match_id = (int) $candidate_id;
+                $name_match = array($status ? (int) $status->revision : null, (string) $certificate->name);
+
+                // the finished row shows the matched record's domain, which it leaves as it is
+                if ($domain) $finish_domain = array(0, '');
+                break;
+
+            }
+
+        }
+
+        if (self::$test_before_save) call_user_func(self::$test_before_save, 'locked', $row);
+
         if ($match_id > 0) {
 
-            if ($by_name) {
+            if ($name_match !== null) {
 
                 // the status row describes the latest lookup, unless the record or its status row changed while this lookup
                 // ran (then the newer result is kept, and only the link is made)
-                $revision = ($by_name[0]->revision === null) ? null : (int) $by_name[0]->revision;
-                if (isset($noted[$match_id]) && $noted[$match_id] === array($revision, (string) $by_name[0]->name)) {
+                if (isset($noted[$match_id]) && $noted[$match_id] === $name_match) {
                     $this->writeStatus($match_id, $details, $code, false);
                 }
 
             }
 
-            $this->finishRow((int) $row->id, $code, $details, $match_id, true);
+            $this->finishRow((int) $row->id, $code, $details, $match_id, true, $finish_domain);
             return 'saved';
 
         }
@@ -1936,12 +2083,19 @@ class SslQueue
         $stmt->execute();
     }
 
-    // Completes a row with the lookup's details, imported or matched to an existing record
-    protected function finishRow($id, $code, $details, $ssl_id, $already_in_ssl)
+    /*
+     * Completes a row with the lookup's details, imported or matched to an existing record. $domain, array(id, name),
+     * replaces the row's domain (a row with a domain matched to a certificate with no domain), so the finished row
+     * shows the domain of the certificate it ended with.
+     */
+    protected function finishRow($id, $code, $details, $ssl_id, $already_in_ssl, $domain = null)
     {
-        $this->updateRow($id, array('processing' => 0, 'finished' => 1, 'already_in_ssl' => $already_in_ssl ? 1 : 0,
+        $values = array('processing' => 0, 'finished' => 1, 'already_in_ssl' => $already_in_ssl ? 1 : 0,
             'new_ssl_id' => $ssl_id, 'expiry_date' => $details['expiry_date'], 'issuer' => $this->storedText($details['issuer'], 255),
-            'fingerprint' => $details['fingerprint'], 'message' => $code));
+            'fingerprint' => $details['fingerprint'], 'message' => $code);
+        if ($domain !== null) $values += array('domain_id' => (int) $domain[0], 'domain_name' => (string) $domain[1]);
+
+        $this->updateRow($id, $values);
     }
 
     // Writes a result that isn't a success to a claimed row (afterResult()), clearing its claim

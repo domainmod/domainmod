@@ -214,14 +214,25 @@ abstract class ListQuery
             && strtoupper((string) ($row['is_visible'] ?? 'YES')) !== 'NO';
     }
 
-    // The tables in the fixed join order (JOIN_ORDER), joined with STRAIGHT_JOIN, for the list's fromSql()
+    /*
+     * The tables in the fixed join order (JOIN_ORDER), joined with STRAIGHT_JOIN, for the list's fromSql(). An entry
+     * with a fourth element, its join condition, is joined with LEFT JOIN ... ON that condition instead, so a row
+     * without a match in that table is kept. A LEFT JOIN still reads the tables before it first, so the order holds.
+     */
     protected function joinOrderTables()
     {
-        $tables = array();
-        foreach (static::JOIN_ORDER as $table) {
-            $tables[] = $table[0] . ' AS ' . $table[1] . ($table[2] !== '' ? ' FORCE INDEX (' . $table[2] . ')' : '');
+        $sql = '';
+        foreach (static::JOIN_ORDER as $n => $table) {
+            $entry = $table[0] . ' AS ' . $table[1] . ($table[2] !== '' ? ' FORCE INDEX (' . $table[2] . ')' : '');
+            if ($n === 0) {
+                $sql = $entry;
+            } elseif (isset($table[3])) {
+                $sql .= ' LEFT JOIN ' . $entry . ' ON ' . $table[3];
+            } else {
+                $sql .= ' STRAIGHT_JOIN ' . $entry;
+            }
         }
-        return implode(' STRAIGHT_JOIN ', $tables);
+        return $sql;
     }
 
     /*

@@ -232,7 +232,8 @@ if (!$ssl_queue_available) {
 
 } else {
 
-    echo '<p class="domainmod-intro">' . sprintf(_("Paste a list of hostnames, and %s connects to each site, reads its SSL certificate, and adds it, linked to the matching domain. The domain must already be in %s or in the Domain Queue. Only port 443 is checked, and only public sites can be reached."), SOFTWARE_TITLE, SOFTWARE_TITLE) . '</p>';
+    // TRANSLATORS: Both %1$s are the app's name, DomainMOD.
+    echo '<p class="domainmod-intro">' . sprintf(_("Paste a list of hostnames, and %1\$s connects to each site, reads its SSL certificate, and adds it. New certificates are linked to their domain when that domain is in %1\$s, and a hostname whose domain is in the Domain Queue waits for it first. Only port 443 is checked, and only public sites can be reached."), SOFTWARE_TITLE) . '</p>';
     // TRANSLATORS: The two %s wrap the link to the SSL Queue's page in the User Guide and must stay.
     echo '<p>' . sprintf(_('See the %sSSL Queue page%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/ssl-queue/">', '</a>') . '</p>';
 

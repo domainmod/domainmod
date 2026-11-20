@@ -34,6 +34,84 @@ class SslListTest extends TestCase
             'sslpcid' => 0, 'is_active' => '5'), $state);
     }
 
+    // The Domain filter keeps NO_DOMAIN (-1) and positive ids, and any other negative number is no filter
+    public function testNormalizeStateKeepsNoDomainAndDropsOtherNegatives()
+    {
+        $this->assertSame(-1, SslList::NO_DOMAIN);
+        $this->assertSame(-1, SslList::normalizeState(array('did' => '-1'))['did']);
+        $this->assertSame(0, SslList::normalizeState(array('did' => '-2'))['did']);
+        $this->assertSame(0, SslList::normalizeState(array('did' => '-100'))['did']);
+        $this->assertSame(5, SslList::normalizeState(array('did' => '5'))['did']);
+        $this->assertSame(0, SslList::normalizeState(array('did' => ''))['did']);
+        $this->assertSame(0, SslList::checkedDomainId('-3'));
+        $this->assertSame(-1, SslList::checkedDomainId(-1));
+        $this->assertSame(12, SslList::checkedDomainId('12'));
+    }
+
+    /*
+     * The Domain filter's condition is written from sslc alone (and a subquery on domains AS nd), so it works in the
+     * STATUS menu's query, which doesn't join the domains: nothing for 0, an existing domain for an id, and no domain
+     * (domain_id 0, or a domain that no longer exists) for NO_DOMAIN
+     */
+    public function testDomainCondition()
+    {
+        $this->assertSame('', SslList::domainCondition(0));
+        $this->assertSame('', SslList::domainCondition(-2));
+        $this->assertSame(" AND NOT EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ",
+            SslList::domainCondition(SslList::NO_DOMAIN));
+        $this->assertSame(" AND sslc.domain_id = '7' AND EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ",
+            SslList::domainCondition(7));
+        $this->assertSame(" AND sslc.domain_id = '7' AND EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ",
+            SslList::domainCondition('7abc'));
+
+        foreach (array(SslList::NO_DOMAIN, 7) as $did) {
+            $condition = SslList::domainCondition($did);
+            preg_match_all('/\b([a-z]+)\.[a-z_]+/', $condition, $aliases);
+            $this->assertSame(array('nd', 'sslc'), self::sorted(array_unique($aliases[1])), (string) $did);
+            $this->assertStringNotContainsString(' d.', $condition);
+        }
+    }
+
+    // The list's filters give NO_DOMAIN's condition for did=-1
+    public function testFilterPartsForNoDomain()
+    {
+        $parts = $this->sslList()->filterParts(SslList::normalizeState(array('did' => '-1')), '', 'YYYY-MM-DD', 'YYYY-MM-DD');
+        $this->assertSame(SslList::domainCondition(SslList::NO_DOMAIN), $parts['did_string']);
+        $this->assertStringContainsString($parts['did_string'], SslList::filterSql($parts));
+
+        $parts = $this->sslList()->filterParts(SslList::normalizeState(array('did' => '-2')), '', 'YYYY-MM-DD', 'YYYY-MM-DD');
+        $this->assertSame('', $parts['did_string']);
+    }
+
+    // The domain is a LEFT JOIN in both join modes, so a certificate with no domain stays in the list
+    public function testTheListLeftJoinsTheDomain()
+    {
+        $list = new class extends SslList {
+            public $fixed = false;
+
+            public function __construct()
+            {
+                $this->user_id = 1;
+                $this->field_columns = '';
+            }
+
+            public function fixedJoinOrder()
+            {
+                return $this->fixed;
+            }
+        };
+
+        $from = $list->fromSql();
+        $this->assertStringContainsString('ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id', $from);
+        $this->assertStringNotContainsString('sslc.domain_id = d.id', $from);
+
+        $list->fixed = true;
+        $from = $list->fromSql();
+        $this->assertStringContainsString(' LEFT JOIN domains AS d FORCE INDEX (PRIMARY) ON d.id = sslc.domain_id ', $from);
+        $this->assertStringNotContainsString('sslc.domain_id = d.id', $from);
+        $this->assertStringNotContainsString('STRAIGHT_JOIN domains', $from);
+    }
+
     public function testNormalizeStateFallsBackToLive()
     {
         foreach (array('', 'live', 'Expired', '11', array('ALL')) as $value) {
@@ -61,7 +139,8 @@ class SslListTest extends TestCase
 
         $this->assertSame(" AND sslc.active = '0' ", $parts['is_active_string']);
         $this->assertSame(" AND o.id = '1' ", $parts['oid_string']);
-        $this->assertSame(" AND d.id = '2' ", $parts['did_string']);
+        $this->assertSame(" AND sslc.domain_id = '2' AND EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ",
+            $parts['did_string']);
         $this->assertSame(" AND sslp.id = '3' ", $parts['sslpid_string']);
         $this->assertSame(" AND sslc.account_id = '4' ", $parts['sslpaid_string']);
         $this->assertSame(" AND sslc.type_id = '5' ", $parts['ssltid_string']);
@@ -97,6 +176,12 @@ class SslListTest extends TestCase
     public function testOrderEndsWithTheNameAndId()
     {
         $this->assertSame(array('sslc.name ASC', 'sslc.id ASC'), SslList::TIE_BREAK);
+    }
+
+    private static function sorted(array $values)
+    {
+        sort($values);
+        return array_values($values);
     }
 
     // An SslList with a PDO that never connects and shows what it quotes in square brackets

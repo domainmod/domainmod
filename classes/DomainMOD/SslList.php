@@ -36,7 +36,10 @@ class SslList extends ListQuery
     const FIELD_DATA_TABLE = 'ssl_cert_field_data';
     const FIELD_DATA_ID = 'ssl_id';
 
-    // The fixed join order (see ListQuery::JOIN_ORDER)
+    /*
+     * The fixed join order (see ListQuery::JOIN_ORDER). The domain is a LEFT JOIN, since a certificate doesn't need a
+     * domain: one with no domain (domain_id 0, or the id of a domain that no longer exists) has a NULL d.domain.
+     */
     const JOIN_ORDER = array(
         array('ssl_certs', 'sslc', ''),
         array('ssl_cert_field_data', 'sslfd', ''),
@@ -46,7 +49,7 @@ class SslList extends ListQuery
         array('ssl_fees', 'f', 'PRIMARY'),
         array('currencies', 'c', 'PRIMARY'),
         array('currency_conversions', 'cc', 'user_currency'),
-        array('domains', 'd', 'PRIMARY'),
+        array('domains', 'd', 'PRIMARY', 'd.id = sslc.domain_id'),
         array('ssl_cert_types', 'sslcf', 'PRIMARY'),
         array('ip_addresses', 'ip', 'PRIMARY'),
         array('categories', 'cat', 'PRIMARY'));
@@ -60,10 +63,14 @@ class SslList extends ListQuery
     // Every order ends with the certificate's name and the id
     const TIE_BREAK = array('sslc.name ASC', 'sslc.id ASC');
 
+    // The Domain filter's value for certificates with no domain (0 already means no filter)
+    const NO_DOMAIN = -1;
+
     /*
      * The list's filters, checked the way the page has always checked them: the id filters as whole numbers, and the
      * status from a fixed list, falling back to Live. $request holds the raw values (a missing key, or one that isn't a
-     * single value, counts as no filter).
+     * single value, counts as no filter). The domain filter also takes NO_DOMAIN, and any other negative number counts
+     * as no filter.
      */
     public static function normalizeState(array $request)
     {
@@ -76,11 +83,36 @@ class SslList extends ListQuery
         foreach (array('oid', 'did', 'sslpid', 'sslpaid', 'ssltid', 'sslipid', 'sslpcid') as $key) {
             $state[$key] = (int) $single($key);
         }
+        $state['did'] = self::checkedDomainId($state['did']);
 
         $is_active = $single('is_active');
         $state['is_active'] = in_array($is_active, self::VALID_IS_ACTIVE, true) ? $is_active : 'LIVE';
 
         return $state;
+    }
+
+    // A Domain filter value as the list uses it: a domain's id, NO_DOMAIN, or 0 (no filter) for any other number
+    public static function checkedDomainId($did)
+    {
+        $did = (int) $did;
+        return $did < 0 && $did !== self::NO_DOMAIN ? 0 : $did;
+    }
+
+    /*
+     * The Domain filter's condition for a value (checked with checkedDomainId()), written from sslc alone so it works in
+     * a query with or without the domains table: '' for 0 (no filter), the certificates linked to an existing domain
+     * for its id, and for NO_DOMAIN the certificates with no domain, the ones whose domain_id matches no domain
+     * (domain_id 0, or a domain that no longer exists). A certificate pointing at a missing domain id is only ever found
+     * under NO_DOMAIN.
+     */
+    public static function domainCondition($did)
+    {
+        $did = self::checkedDomainId($did);
+        if ($did === 0) return '';
+        if ($did === self::NO_DOMAIN) {
+            return " AND NOT EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ";
+        }
+        return " AND sslc.domain_id = '" . $did . "' AND EXISTS (SELECT 1 FROM domains AS nd WHERE nd.id = sslc.domain_id) ";
     }
 
     /*
@@ -107,11 +139,12 @@ class SslList extends ListQuery
             $parts['is_active_string'] = " AND sslc.active = '" . (int) $is_active . "' ";
         }
 
-        $id_columns = array('oid' => 'o.id', 'did' => 'd.id', 'sslpid' => 'sslp.id', 'sslpaid' => 'sslc.account_id',
+        $id_columns = array('oid' => 'o.id', 'sslpid' => 'sslp.id', 'sslpaid' => 'sslc.account_id',
             'ssltid' => 'sslc.type_id', 'sslipid' => 'sslc.ip_id', 'sslpcid' => 'sslc.cat_id');
         foreach ($id_columns as $key => $column) {
             $parts[$key . '_string'] = $state[$key] !== 0 ? " AND " . $column . " = '" . (int) $state[$key] . "' " : '';
         }
+        $parts['did_string'] = self::domainCondition($state['did']);
 
         $parts['range_string'] = '';
         if ($start_date != '' && $start_date != 'YYYY-MM-DD') {
@@ -134,16 +167,19 @@ class SslList extends ListQuery
             . $parts['range_string'] . $parts['search_string'];
     }
 
-    // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
-    // ListQuery::fromSql())
+    /*
+     * The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
+     * ListQuery::fromSql()). The domain is a LEFT JOIN, written next to ssl_certs (a LEFT JOIN's ON can only name the
+     * tables in its own operand), so a certificate with no domain stays in the list with a NULL d.domain.
+     */
     public function fromSql()
     {
         if ($this->fixedJoinOrder()) {
             $tables = $this->joinOrderTables();
         } else {
-            $tables = "ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
-                 currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip,
-                 categories AS cat, ssl_cert_field_data AS sslfd";
+            $tables = "ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_accounts AS sslpa,
+                 ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+                 ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd";
         }
 
         return "
@@ -154,7 +190,6 @@ class SslList extends ListQuery
               AND sslc.fee_id = f.id
               AND f.currency_id = c.id
               AND c.id = cc.currency_id
-              AND sslc.domain_id = d.id
               AND sslc.type_id = sslcf.id
               AND sslc.ip_id = ip.id
               AND sslc.cat_id = cat.id

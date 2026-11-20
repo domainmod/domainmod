@@ -326,6 +326,14 @@ class ListExportChunksTest extends TestCase
         $this->assertStringContainsString('(COALESCE(LENGTH(sslc.notes), 0) + COALESCE(LENGTH(sslfd.order_ref), 0) + '
             . 'COALESCE(LENGTH(sslfd.issued_at), 0) + ' . ListQuery::EXPORT_ROW_BYTES . ') AS ks_bytes',
             $this->keysQueries()[0]['sql']);
+
+        // The keys and the full rows both keep certificates with no domain (a LEFT JOIN on the domain)
+        $rows_queries = $this->pdo->statementsWith('SELECT sslc.id, sslc.domain_id');
+        $this->assertNotEmpty($rows_queries);
+        foreach (array($this->keysQueries()[0]['sql'], $rows_queries[0]['sql']) as $sql) {
+            $this->assertMatchesRegularExpression('/LEFT JOIN domains AS d( FORCE INDEX \(PRIMARY\))? ON d\.id = sslc\.domain_id/', $sql);
+            $this->assertStringNotContainsString('sslc.domain_id = d.id', $sql);
+        }
     }
 
     public function testTheReaderNeverStartsOrEndsATransaction()

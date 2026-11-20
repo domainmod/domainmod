@@ -45,11 +45,8 @@ class SslQueueMessageTest extends TestCase
             'no_connect' => 'Nothing answered on port 443.',
             'no_tls' => 'The site answered on port 443, but not with TLS.',
             'timeout' => 'The lookup ran out of time.',
-            'no_domain' => "This hostname's domain isn't in DomainMOD. Add the domain first, then retry.",
-            'domain_not_imported' => "The Domain Queue didn't import this hostname's domain.",
             'stale_choice' => 'Something chosen when this hostname was queued has changed or been deleted. Delete this queue entry and add the hostname again.',
             'local_error' => "DomainMOD couldn't write a temporary file to check this certificate. Check that PHP's temporary folder is writable.",
-            'ambiguous_domain' => 'More than one domain in DomainMOD has this name. Remove the extra one, then retry.',
             'name_too_long' => 'This hostname is longer than the 100 characters an SSL certificate name can hold.',
             'bad_certificate' => "A date in this certificate can't be stored.",
             'save_failed' => "The certificate couldn't be saved.");

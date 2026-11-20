@@ -87,17 +87,13 @@ class SslRefresh
 
             $unsanitize = new Unsanitize();
             $plain_name = $unsanitize->text((string) $before->name);
+            // '' for a certificate with no domain (0, or a stored id whose domain is gone), which refreshes its own hostname
             $plain_domain = $unsanitize->text((string) $before->domain);
             $failed = sprintf(_("SSL certificate %s couldn't be refreshed."), (new Layout())->ltr($plain_name));
 
             if ($plain_name !== (string) $expected_name || (int) $before->domain_id !== (int) $expected_domain_id) {
                 $other_window = _('This SSL certificate was changed in another window. Please reload the page and try again.');
                 return $this->result(false, $failed, array($other_window), array(), array());
-            }
-
-            // an older database can hold a certificate whose domain is gone, which the user can link to another one
-            if ($before->domain === null) {
-                return $this->result(false, $failed, array(_('The domain you chose no longer exists. Please choose another one.')), array(), array());
             }
 
             list($host_status, $host) = $this->hostCheck($plain_name, $plain_domain);
@@ -135,8 +131,8 @@ class SslRefresh
             array('summary' => $summary, 'reasons' => $reasons, 'changes' => $changes, 'notes' => $notes));
     }
 
-    // The certificate with its domain's name (null when the domain is gone) and its status row's revision (null for
-    // none), read without locking
+    // The certificate with its domain's name (null when it has no domain, or its domain is gone) and its status row's
+    // revision (null for none), read without locking
     protected function getCertificateRow($ssl_id)
     {
         $stmt = $this->deeb->cnxx->prepare("
@@ -156,13 +152,14 @@ class SslRefresh
     /*
      * Which host a certificate's name (plain text) means: array('ok', host) with the host in its stored form
      * (Domain::normalize()) when the name is a hostname at or under its domain, array('label', '') when it isn't a
-     * hostname, or array('outside', '') when it's a hostname outside its domain.
+     * hostname, or array('outside', '') when it's a hostname outside its domain. A certificate with no domain ($domain_name
+     * '') accepts any hostname.
      */
     public function hostCheck($plain_name, $domain_name)
     {
         $ascii = $this->queue->asciiHostname($plain_name);
         if ($ascii === '') return array('label', '');
-        if (!SslQueue::isUnder($ascii, $domain_name)) return array('outside', '');
+        if ((string) $domain_name !== '' && !SslQueue::isUnder($ascii, $domain_name)) return array('outside', '');
 
         return array('ok', Domain::normalize($plain_name));
     }
@@ -176,7 +173,7 @@ class SslRefresh
 
         $layout = new Layout();
         // TRANSLATORS: %1$s is the SSL certificate's name, and %2$s is the domain it's linked to.
-        return sprintf(_("This certificate's name, %1\$s, isn't part of its domain, %2\$s. Link it to the right domain, or change the name, then refresh it."),
+        return sprintf(_("This certificate's name, %1\$s, isn't part of its domain, %2\$s. Link the certificate to the right domain, set its Domain to None, or change its name. Then refresh the certificate."),
             $layout->ltr($plain_name), $layout->ltr($domain_name));
     }
 
@@ -239,7 +236,9 @@ class SslRefresh
     /*
      * Compares the lookup with the certificate as it is now and writes the changes, all in one transaction (the lookup
      * is already done). The domain, then the certificate, then its status row are locked, in the same order as the SSL
-     * Queue and the bulk delete, and nothing is saved when anything the lookup depended on changed meanwhile. Returns
+     * Queue and the bulk delete, and nothing is saved when anything the lookup depended on changed meanwhile. A
+     * certificate with no domain (the same joined domain name refresh() went by) locks no domain, and only its stored
+     * domain id is checked, so linking it to a domain in another window still stops the refresh. Returns
      * array(success, reasons, changes).
      */
     protected function apply($before, $code, $details)
@@ -250,7 +249,8 @@ class SslRefresh
 
             $pdo->beginTransaction();
 
-            $domain = $this->lockRow("SELECT domain FROM domains WHERE id = :id FOR UPDATE", (int) $before->domain_id);
+            $has_domain = ($before->domain !== null);
+            $domain = $has_domain ? $this->lockRow("SELECT domain FROM domains WHERE id = :id FOR UPDATE", (int) $before->domain_id) : null;
             $current = $this->lockRow("SELECT `name`, domain_id, account_id, expiry_date, active, notes FROM ssl_certs WHERE id = :id FOR UPDATE", (int) $before->id);
             $status = $this->lockRow("SELECT revision, refreshed_issuer FROM ssl_cert_status WHERE ssl_id = :id FOR UPDATE", (int) $before->id);
 
@@ -264,7 +264,7 @@ class SslRefresh
             $revision = $status ? (int) $status->revision : null;
             $before_revision = ($before->revision === null) ? null : (int) $before->revision;
 
-            if (!$domain || (string) $domain->domain !== (string) $before->domain
+            if (($has_domain && (!$domain || (string) $domain->domain !== (string) $before->domain))
                 || (int) $current->domain_id !== (int) $before->domain_id
                 || (string) $current->name !== (string) $before->name
                 || (int) $current->account_id !== (int) $before->account_id

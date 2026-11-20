@@ -186,7 +186,7 @@ if ($ssl_queue_available && $export_data === 1) {
     foreach ($ssl_queue->statusRows() as $row) {
 
         list($state, $label, $flag, $detail) = $ssl_queue->statusParts($row);
-        $domain_shown = ($row->domain_name !== '') ? $row->domain_name : $row->wait_domain;
+        $domain_shown = DomainMOD\SslQueue::domainShown($row);
 
         // the table's missing-fee note, as plain text
         if ($state === 'imported' && $row->ssl_id !== null && !$fee_status->hasFee($row)) {

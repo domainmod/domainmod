@@ -35,7 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ListJoinOrderTest extends TestCase
 {
-    // The lists' FROM and WHERE before the fixed join order, which they must still give when the check doesn't pass
+    // The lists' FROM and WHERE before the fixed join order, which they must still give when the check doesn't pass. The
+    // SSL list's domain is a LEFT JOIN, since a certificate doesn't need a domain.
     const DOMAINS_FROM = "
             FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
             WHERE d.account_id = ra.id
@@ -52,16 +53,15 @@ class ListJoinOrderTest extends TestCase
               AND cc.user_id = '7'";
 
     const SSL_FROM = "
-            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
-                 currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip,
-                 categories AS cat, ssl_cert_field_data AS sslfd
+            FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_accounts AS sslpa,
+                 ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+                 ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
             WHERE sslc.account_id = sslpa.id
               AND sslpa.ssl_provider_id = sslp.id
               AND sslpa.owner_id = o.id
               AND sslc.fee_id = f.id
               AND f.currency_id = c.id
               AND c.id = cc.currency_id
-              AND sslc.domain_id = d.id
               AND sslc.type_id = sslcf.id
               AND sslc.ip_id = ip.id
               AND sslc.cat_id = cat.id
@@ -231,7 +231,7 @@ class ListJoinOrderTest extends TestCase
         $this->assertStringStartsWith("
             FROM domains AS d STRAIGHT_JOIN domain_field_data AS dfd STRAIGHT_JOIN registrar_accounts AS ra FORCE INDEX (PRIMARY) STRAIGHT_JOIN registrars AS r FORCE INDEX (PRIMARY) STRAIGHT_JOIN owners AS o FORCE INDEX (PRIMARY) STRAIGHT_JOIN categories AS cat FORCE INDEX (PRIMARY) STRAIGHT_JOIN fees AS f FORCE INDEX (PRIMARY) STRAIGHT_JOIN currencies AS c FORCE INDEX (PRIMARY) STRAIGHT_JOIN currency_conversions AS cc FORCE INDEX (user_currency) STRAIGHT_JOIN dns AS dns FORCE INDEX (PRIMARY) STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY) STRAIGHT_JOIN hosting AS h FORCE INDEX (PRIMARY)
             WHERE ", $from);
-        $this->assertSameJoin(self::DOMAINS_FROM, $from);
+        $this->assertSameJoin(self::DOMAINS_FROM, $from, 11, 0);
     }
 
     public function testWithTheIndexTheSslListJoinsInTheWrittenOrder()
@@ -240,23 +240,25 @@ class ListJoinOrderTest extends TestCase
         $this->assertTrue($ssl->fixedJoinOrder());
         $from = $ssl->fromSql();
         $this->assertStringStartsWith("
-            FROM ssl_certs AS sslc STRAIGHT_JOIN ssl_cert_field_data AS sslfd STRAIGHT_JOIN ssl_accounts AS sslpa FORCE INDEX (PRIMARY) STRAIGHT_JOIN ssl_providers AS sslp FORCE INDEX (PRIMARY) STRAIGHT_JOIN owners AS o FORCE INDEX (PRIMARY) STRAIGHT_JOIN ssl_fees AS f FORCE INDEX (PRIMARY) STRAIGHT_JOIN currencies AS c FORCE INDEX (PRIMARY) STRAIGHT_JOIN currency_conversions AS cc FORCE INDEX (user_currency) STRAIGHT_JOIN domains AS d FORCE INDEX (PRIMARY) STRAIGHT_JOIN ssl_cert_types AS sslcf FORCE INDEX (PRIMARY) STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY) STRAIGHT_JOIN categories AS cat FORCE INDEX (PRIMARY)
+            FROM ssl_certs AS sslc STRAIGHT_JOIN ssl_cert_field_data AS sslfd STRAIGHT_JOIN ssl_accounts AS sslpa FORCE INDEX (PRIMARY) STRAIGHT_JOIN ssl_providers AS sslp FORCE INDEX (PRIMARY) STRAIGHT_JOIN owners AS o FORCE INDEX (PRIMARY) STRAIGHT_JOIN ssl_fees AS f FORCE INDEX (PRIMARY) STRAIGHT_JOIN currencies AS c FORCE INDEX (PRIMARY) STRAIGHT_JOIN currency_conversions AS cc FORCE INDEX (user_currency) LEFT JOIN domains AS d FORCE INDEX (PRIMARY) ON d.id = sslc.domain_id STRAIGHT_JOIN ssl_cert_types AS sslcf FORCE INDEX (PRIMARY) STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY) STRAIGHT_JOIN categories AS cat FORCE INDEX (PRIMARY)
             WHERE ", $from);
-        $this->assertSameJoin(self::SSL_FROM, $from);
+        $this->assertSameJoin(self::SSL_FROM, $from, 10, 1);
     }
 
     /*
      * The fixed order's FROM has the same tables (each once, the asset first and its custom field data second) and the
-     * same WHERE as before, with STRAIGHT_JOIN between them and each lookup read through its key
+     * same WHERE as before, with STRAIGHT_JOIN between them ($straight of them) and each lookup read through its key. A
+     * LEFT JOIN ($left of them) keeps its ON condition, the same in both forms.
      */
-    protected function assertSameJoin($before, $after)
+    protected function assertSameJoin($before, $after, $straight, $left)
     {
         list($before_tables, $before_where) = explode('WHERE', $before, 2);
         list($after_tables, $after_where) = explode('WHERE', $after, 2);
         $this->assertSame($before_where, $after_where);
 
         $split = function ($tables, $separator) {
-            $list = array_map('trim', explode($separator, preg_replace(array('/^\s*FROM\s+/', '/ FORCE INDEX \(\w+\)/'), '', $tables)));
+            $list = array_map('trim', preg_split('/' . $separator . '|\sLEFT JOIN\s/',
+                preg_replace(array('/^\s*FROM\s+/', '/ FORCE INDEX \(\w+\)/'), '', $tables)));
             $list = array_map(function ($table) {
                 return preg_replace('/\s+/', ' ', $table);
             }, $list);
@@ -264,7 +266,9 @@ class ListJoinOrderTest extends TestCase
             return $list;
         };
         $this->assertSame($split($before_tables, ','), $split($after_tables, 'STRAIGHT_JOIN'));
-        $this->assertSame(11, substr_count($after_tables, 'STRAIGHT_JOIN'), 'twelve tables, eleven joins');
+        $this->assertSame($straight, substr_count($after_tables, 'STRAIGHT_JOIN'));
+        $this->assertSame($left, substr_count($after_tables, 'LEFT JOIN'));
+        $this->assertSame(11, $straight + $left, 'twelve tables, eleven joins');
         $this->assertStringNotContainsString(',', $after_tables);
         $this->assertSame(10, substr_count($after_tables, 'FORCE INDEX ('), 'every lookup through its key');
     }

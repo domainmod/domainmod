@@ -63,15 +63,20 @@ class CostReport
      *   export        the export's file name, with the _all form for every date
      *   select, from, where, group_by, order_by
      *                 the grouped query's own columns, extra tables, their join conditions, grouping, and order
+     *   left_join     (optional) a table joined with LEFT JOIN instead, as its table, alias, and ON condition, so assets
+     *                 without a match are kept, as one row whose columns from that table are NULL
      *   columns       the table's columns after the control column, in order. Each has its heading, its export heading
      *                 ('csv', when it differs), and its 'value': 'field' (the row's 'field', with 'tld' for a TLD),
      *                 'cost', 'count', or 'per' (the row's cost, number, and cost per asset), 'group_cost',
      *                 'group_count', or 'group_per' (the same for the row's registrar or provider), 'account' (owner and
      *                 username), or 'year', 'month', 'month_cost', and 'year_cost' (Month). 'link' is a count's link to
      *                 the list, as its parameter and the row's id field. 'group_only' cells show only on a group's
-     *                 first row in the table (every row in the export).
+     *                 first row in the table (every row in the export). With a left_join, a field's 'null_label' is
+     *                 its text and a count's 'null_link' its link's value on the NULL row (see fieldText() and
+     *                 linkValue()).
      *   chart         'doughnut' or 'bar', and its labels: 'field' (a row's field), 'tld', 'ip' (name and IP address),
-     *                 'month', or the chart query's field (Registrar and Provider, which have their own chart query)
+     *                 'month', or the chart query's field (Registrar and Provider, which have their own chart query),
+     *                 with 'null_label' for a NULL field, as for the columns
      *   subtotal      'year' (Month), or the registrar's or provider's id column and name field, with 'blank', the
      *                 text of a group cell on a group's later rows
      *   ordering      whether the table's columns sort, and 'page_length', the user setting a paged table opens at
@@ -102,11 +107,15 @@ class CostReport
                 'domain' => array('key' => 'domain', 'label' => _('Domain'),
                     'title' => _('SSL Cost by Domain Report'), 'name' => _('SSL Cost by Domain'),
                     'export' => _('ssl_cost_by_domain_report'), 'export_all' => _('ssl_cost_by_domain_report_all'),
-                    'select' => 'd.id, d.domain', 'from' => array('domains AS d'),
-                    'where' => array('sslc.domain_id = d.id'), 'group_by' => 'd.id, d.domain', 'order_by' => 'd.domain, d.id',
-                    'columns' => array(array('heading' => _('Domain'), 'value' => 'field', 'field' => 'domain'), $cost,
-                        $ssl_certs('did'), $per_cert),
-                    'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'domain'), 'ordering' => true,
+                    // A certificate doesn't need a domain, so the certificates with no domain are one NULL row, None
+                    'select' => 'd.id, d.domain', 'from' => array(), 'where' => array(),
+                    'left_join' => array('table' => 'domains', 'alias' => 'd', 'on' => 'd.id = sslc.domain_id'),
+                    'group_by' => 'd.id, d.domain', 'order_by' => 'd.domain, d.id',
+                    'columns' => array(
+                        array('heading' => _('Domain'), 'value' => 'field', 'field' => 'domain', 'null_label' => _('None')),
+                        $cost, $ssl_certs('did') + array('null_link' => SslList::NO_DOMAIN), $per_cert),
+                    'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'domain',
+                        'null_label' => _('None')), 'ordering' => true,
                     'page_length' => 's_number_of_domains'),
                 'ip-address' => array('key' => 'ip-address', 'label' => _('IP Address'),
                     'title' => _('SSL Cost by IP Address Report'), 'name' => _('SSL Cost by IP Address'),
@@ -379,6 +388,22 @@ class CostReport
         return $subtotals;
     }
 
+    // A 'field' column's text for a row: the row's field, or the column's null_label when the field is NULL
+    public static function fieldText($column, $row)
+    {
+        $text = $row->{$column['field']};
+        if ($text === null && isset($column['null_label'])) return $column['null_label'];
+        return $text;
+    }
+
+    // The value a count's link gives the list: the row's id field, or the column's null_link when that's NULL
+    public static function linkValue($column, $row)
+    {
+        $value = $row->{$column['link'][1]};
+        if ($value === null && isset($column['null_link'])) return $column['null_link'];
+        return $value;
+    }
+
     /*
      * The chart's labels and values: the grouped rows' (or Registrar's and Provider's chart rows'), or for Month, each
      * listed month with its cost (0 when it has none)
@@ -402,7 +427,7 @@ class CostReport
             } elseif ($chart['label'] === 'ip') {
                 $labels[] = $row->name . ' (' . $row->ip . ')';
             } else {
-                $labels[] = $row->{$chart['field']};
+                $labels[] = self::fieldText($chart, $row);
             }
             $values[] = $row->total_cost;
         }
@@ -417,15 +442,22 @@ class CostReport
     }
 
     /*
-     * The query's SQL and its parameters: the section's live assets with a fee, joined to the grouping's own tables,
-     * and (unless $with_rates is false) to the user's conversion rates, between the dates when both are set
+     * The query's SQL and its parameters: the section's live assets with a fee, joined to the grouping's own tables
+     * (and its LEFT JOIN, if it has one), and (unless $with_rates is false) to the user's conversion rates, between the
+     * dates when both are set
      */
     public function sql($section, $grouping, $select, $group_by, $order_by, $start_date, $end_date, $with_rates = true)
     {
         $assets = self::SECTIONS[$section];
         $a = $assets['alias'];
 
-        $from = array($assets['table'] . ' AS ' . $a, $assets['fees'] . ' AS f', 'currencies AS c');
+        // A grouping's LEFT JOIN is written straight after the asset's table, as its ON can only name that table
+        $asset_table = $assets['table'] . ' AS ' . $a;
+        if (isset($grouping['left_join'])) {
+            $join = $grouping['left_join'];
+            $asset_table .= ' LEFT JOIN ' . $join['table'] . ' AS ' . $join['alias'] . ' ON ' . $join['on'];
+        }
+        $from = array($asset_table, $assets['fees'] . ' AS f', 'currencies AS c');
         $where = array($a . '.fee_id = f.id', 'f.currency_id = c.id');
         $params = array();
         if ($with_rates) {

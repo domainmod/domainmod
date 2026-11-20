@@ -172,13 +172,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // A custom Date or Time Stamp that isn't a real date or time is marked under its field, and nothing is saved
     $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
 
-    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id !== 0 && $new_account_id !== 0 &&
+    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_account_id !== 0 &&
         $new_type_id !== 0 && $new_ip_id !== 0 && $new_cat_id !== 0 && $custom_fields_valid
     ) {
 
         try {
 
             $pdo->beginTransaction();
+
+            // The domain is optional, and 0 is None. A chosen domain may have been deleted while the form was open, and
+            // then nothing is saved. The read locks the domain row before the certificate's own (below), the same order
+            // as the domain deletes, the SSL Queue, and SSL Refresh, so a domain delete running at the same moment waits
+            // for this save, and its unlink then sees the saved certificate. A negative id, which only a changed form can
+            // send, is refused the same way.
+            if ($new_domain_id !== 0) {
+
+                $domain_exists = false;
+
+                if ($new_domain_id > 0) {
+
+                    $stmt = $pdo->prepare("
+                        SELECT id
+                        FROM domains
+                        WHERE id = :new_domain_id
+                        FOR UPDATE");
+                    $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $domain_exists = $stmt->fetchColumn();
+                    $stmt->closeCursor();
+
+                }
+
+                if (!$domain_exists) {
+
+                    if ($pdo->InTransaction()) $pdo->rollback();
+                    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The domain you chose no longer exists. Please choose another one.') . '<BR>';
+                    header("Location: edit.php?sslcid=" . $sslcid . "");
+                    exit;
+
+                }
+
+            }
 
             // If the record was deleted while the form was open, nothing is saved. A record that's found stays locked
             // until the save ends, so its stored name and domain can be compared with the saved ones below.
@@ -201,22 +235,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            // the domain may have been deleted while the form was open; then nothing is saved
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM domains
-                WHERE id = :new_domain_id");
-            $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $domain_exists = $stmt->fetchColumn();
-            $stmt->closeCursor();
+            // The stored domain as the page shows it: a stored id with no domains row counts as no domain (0), so saving
+            // such a certificate unchanged (it shows None and posts 0) doesn't count as a new domain below
+            $stored_domain_id = (int) $stored_record->domain_id;
 
-            if (!$domain_exists) {
+            if ($stored_domain_id !== 0) {
 
-                if ($pdo->InTransaction()) $pdo->rollback();
-                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The domain you chose no longer exists. Please choose another one.') . '<BR>';
-                header("Location: edit.php?sslcid=" . $sslcid . "");
-                exit;
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM domains
+                    WHERE id = :stored_domain_id");
+                $stmt->bindValue('stored_domain_id', $stored_domain_id, PDO::PARAM_INT);
+                $stmt->execute();
+                if (!$stmt->fetchColumn()) $stored_domain_id = 0;
+                $stmt->closeCursor();
 
             }
 
@@ -322,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->closeCursor();
 
             if (!$saved_record || (string) $saved_record->name !== (string) $stored_record->name
-                || (int) $saved_record->domain_id !== (int) $stored_record->domain_id) {
+                || (int) $saved_record->domain_id !== $stored_domain_id) {
                 $ssl_queue->resetStatus($sslcid);
             }
 
@@ -398,9 +430,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
         }
 
-        if ($new_domain_id === 0) {
+        // A chosen domain that was deleted while the form was open isn't in the menu any more, so it's marked here
+        // rather than shown again as None
+        if ($new_domain_id !== 0) {
 
-            $form->addFieldError('new_domain_id', _('Choose the domain'));
+            $domain_exists = false;
+
+            if ($new_domain_id > 0) {
+
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM domains
+                    WHERE id = :new_domain_id");
+                $stmt->bindValue('new_domain_id', $new_domain_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $domain_exists = $stmt->fetchColumn();
+                $stmt->closeCursor();
+
+            }
+
+            if (!$domain_exists) {
+
+                $form->addFieldError('new_domain_id', _('The domain you chose no longer exists. Please choose another one.'));
+
+            }
 
         }
 
@@ -543,6 +596,10 @@ $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
 $stmt->execute();
 $refresh_record = $stmt->fetch();
 $stmt->closeCursor();
+
+// A certificate whose stored domain no longer exists has no domain, so its menu starts on None (Refresh's hidden
+// expected_domain_id below still holds the stored id, for the server's check)
+if ($_SERVER['REQUEST_METHOD'] != 'POST' && $refresh_record && $refresh_record->domain === null) $new_domain_id = 0;
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -562,23 +619,16 @@ if (($_SESSION['s_read_only'] ?? '') != '1' && $refresh_record && $ssl_queue->is
     $refresh = new DomainMOD\SslRefresh();
     $saved_name = $unsanitize->text((string) $refresh_record->name);
 
-    // The host Refresh checks, or why it can't check one
-    if ($refresh_record->domain === null) {
+    // The host Refresh checks, or why it can't check one. A certificate with no domain (or whose domain is gone) has the
+    // domain name '', and refreshes its own hostname.
+    $saved_domain = $unsanitize->text((string) $refresh_record->domain);
+    list($refresh_host_status, $refresh_host) = $refresh->hostCheck($saved_name, $saved_domain);
 
-        $refresh_source = _('The domain you chose no longer exists. Please choose another one.');
-
+    if ($refresh_host_status === 'ok') {
+        // TRANSLATORS: %s is the hostname whose certificate Refresh reads, such as www.example.com.
+        $refresh_source = sprintf(_('Updates the expiry date and status from the certificate %s serves now.'), $layout->ltr($refresh_host));
     } else {
-
-        $saved_domain = $unsanitize->text((string) $refresh_record->domain);
-        list($refresh_host_status, $refresh_host) = $refresh->hostCheck($saved_name, $saved_domain);
-
-        if ($refresh_host_status === 'ok') {
-            // TRANSLATORS: %s is the hostname whose certificate Refresh reads, such as www.example.com.
-            $refresh_source = sprintf(_('Updates the expiry date and status from the certificate %s serves now.'), $layout->ltr($refresh_host));
-        } else {
-            $refresh_source = $refresh->refusalMessage($refresh_host_status, $saved_name, $saved_domain);
-        }
-
+        $refresh_source = $refresh->refusalMessage($refresh_host_status, $saved_name, $saved_domain);
     }
 
     $refresh_details = _("Read the certificate this hostname serves now and update this SSL certificate's expiry date and status when they've changed, with a note saying what changed. A pending status is kept, and the SSL provider, account, type, and fee aren't changed."); ?>
@@ -623,8 +673,10 @@ if (($_SESSION['s_read_only'] ?? '') != '1' && $refresh_record && $ssl_queue->is
         </div>
     </div><?php
 
-    // The saved name and domain decide which site Refresh checks, so the script compares the form with them
-    echo '<div hidden data-domainmod-refresh-saved data-name="' . htmlspecialchars($saved_name, ENT_QUOTES, 'UTF-8') . '" data-domain-id="' . (int) $refresh_record->domain_id . '"></div>';
+    // The saved name and domain decide which site Refresh checks, so the script compares the form with them. A
+    // certificate whose domain is gone shows None in the menu, so its saved domain is 0 here too.
+    $saved_domain_id = ($refresh_record->domain === null) ? 0 : (int) $refresh_record->domain_id;
+    echo '<div hidden data-domainmod-refresh-saved data-name="' . htmlspecialchars($saved_name, ENT_QUOTES, 'UTF-8') . '" data-domain-id="' . $saved_domain_id . '"></div>';
 
     // A page shown again after a failed Save holds the user's unsaved values, not the saved ones
     if ($_SERVER['REQUEST_METHOD'] == 'POST') echo '<div hidden data-domainmod-refresh-unsaved></div>';
@@ -648,19 +700,18 @@ $stmt->bindValue('saved_domain_id', $refresh_record ? (int) $refresh_record->dom
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-if ($result) {
+// Shown even when there are no domains, so None is always there and the saved choice is always posted
+echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '', '');
+// TRANSLATORS: The Domain menu's choice for an SSL certificate that isn't linked to a domain.
+echo $form->showDropdownOption('0', _('None'), $new_domain_id);
 
-    echo $form->showDropdownTop('new_domain_id', _('Domain'), '', '1', '');
+foreach ($result as $row) {
 
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->domain, $new_domain_id);
-
-    }
-
-    echo $form->showDropdownBottom('', 'new_domain_id');
+    echo $form->showDropdownOption($row->id, $row->domain, $new_domain_id);
 
 }
+
+echo $form->showDropdownBottom('', 'new_domain_id');
 
 $result = $pdo->query("
     SELECT id, `name`

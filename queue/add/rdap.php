@@ -183,7 +183,8 @@ if (!$rdap_api_registrar_id) {
     $list_help = _("Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto-renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . ' '
         . _("Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import.");
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), $list_help, $unsanitize->text($raw_domain_list), '1', '', '');
-    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), _("Each certificate is read from the domain's site once the domain has been imported."), 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
+    // TRANSLATORS: %s is the app's name, DomainMOD.
+    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), sprintf(_("Each domain's site is checked once the domain has been imported, and a new certificate is linked to it when %s has just one record of that domain. If the domain isn't imported, the site is still checked, and a new certificate is added without a domain."), SOFTWARE_TITLE), 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 
     // Go Back and the main button in one row, Back on the start side (css/base.css)
     echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left');

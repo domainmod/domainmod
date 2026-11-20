@@ -22,6 +22,7 @@
 namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\CostReport;
+use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FakeDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -106,6 +107,13 @@ class CostReportTest extends TestCase
             foreach (array_merge($grouping['from'], $grouping['where']) as $part) {
                 $this->assertStringContainsString($part, $sql, 'query ' . $index);
             }
+            if (isset($grouping['left_join'])) {
+                $join = $grouping['left_join'];
+                $this->assertStringContainsString('FROM ' . CostReport::SECTIONS[$section]['table'] . ' AS ' . $alias
+                    . ' LEFT JOIN ' . $join['table'] . ' AS ' . $join['alias'] . ' ON ' . $join['on'] . ', ', $sql);
+            } else {
+                $this->assertStringNotContainsString('LEFT JOIN', $sql);
+            }
             $this->assertStringContainsString($alias . '.expiry_date BETWEEN :start_date AND :end_date', $sql);
             $this->assertStringContainsString($alias . '.active NOT IN (' . ($section === 'ssl' ? "'0'" : "'0', '10'") . ')', $sql);
             $this->assertStringNotContainsString('2026-', $sql);
@@ -118,6 +126,49 @@ class CostReportTest extends TestCase
                 $this->assertStringContainsString('cc.user_id = :user_id', $sql);
             }
         }
+    }
+
+    /*
+     * SSL Cost by Domain keeps certificates with no domain, as one NULL row, so its total matches every other
+     * grouping's. Its label is None and its count links to the list's None filter (did=-1). No other grouping, in
+     * either section, has a LEFT JOIN.
+     */
+    public function testSslCostByDomainKeepsCertificatesWithNoDomain()
+    {
+        $grouping = CostReport::grouping('ssl', 'domain');
+        $report = new CostReport(new FakeDatabase(), 1);
+        list($sql) = $report->sql('ssl', $grouping, $grouping['select'], $grouping['group_by'], $grouping['order_by'], '', '');
+
+        $this->assertStringContainsString('FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_fees AS f', $sql);
+        $this->assertStringNotContainsString('sslc.domain_id = d.id', $sql);
+        $this->assertStringNotContainsString('domains AS d,', $sql);
+        $this->assertSame(1, substr_count($sql, 'domains AS d'));
+
+        $none = (object) array('id' => null, 'domain' => null, 'total_cost' => '4.00', 'number_of_assets' => 2);
+        $linked = (object) array('id' => 3, 'domain' => 'example.com', 'total_cost' => '6.00', 'number_of_assets' => 1);
+        $field = $grouping['columns'][0];
+        $count = $grouping['columns'][2];
+        $this->assertSame('None', CostReport::fieldText($field, $none));
+        $this->assertSame('example.com', CostReport::fieldText($field, $linked));
+        $this->assertSame(array('did', 'id'), $count['link']);
+        $this->assertSame(-1, CostReport::linkValue($count, $none));
+        $this->assertSame(SslList::NO_DOMAIN, CostReport::linkValue($count, $none));
+        $this->assertSame(3, CostReport::linkValue($count, $linked));
+        $this->assertSame(array(array('None', 'example.com'), array('4.00', '6.00')),
+            $report->chartData($grouping, array($none, $linked), array(), array()));
+
+        foreach (array('domains', 'ssl') as $section) {
+            foreach (CostReport::groupings($section) as $key => $other) {
+                if ($section === 'ssl' && $key === 'domain') continue;
+                $this->assertArrayNotHasKey('left_join', $other, $section . ' ' . $key);
+                list($other_sql) = $report->sql($section, $other, 'count(*)', '', '', '', '');
+                $this->assertStringNotContainsString('LEFT JOIN', $other_sql, $section . ' ' . $key);
+            }
+        }
+
+        // A NULL field without a null_label stays NULL, and a row's own link value is used as it is
+        $this->assertNull(CostReport::fieldText(array('field' => 'name'), (object) array('name' => null)));
+        $this->assertNull(CostReport::linkValue(array('link' => array('oid', 'id')), (object) array('id' => null)));
     }
 
     public function testThereIsNoDateConditionWithoutBothDates()

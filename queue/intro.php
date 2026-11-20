@@ -69,7 +69,8 @@ if ($queue_rdap_available) {
 <?php
 if ($ssl_queue_available) {
 
-    echo '<p>' . sprintf(_("The SSL Queue imports your SSL certificates. Paste a list of hostnames, and %s connects to each site, reads the certificate it serves, and adds it as an SSL certificate, linked to its domain, with its expiry date and issuer."), SOFTWARE_TITLE) . ' '
+    // TRANSLATORS: Both %1$s are the app's name, DomainMOD.
+    echo '<p>' . sprintf(_('The SSL Queue imports your SSL certificates. Paste a list of hostnames, and %1$s connects to each site, reads the certificate it serves, and adds it as an SSL certificate with its expiry date and issuer. New certificates are linked to their domain when that domain is in %1$s.'), SOFTWARE_TITLE) . ' '
         // TRANSLATORS: The two %s wrap the link to the SSL Queue's page in the User Guide and must stay.
         . sprintf(_('See the %sSSL Queue page%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/ssl-queue/">', '</a>') . '</p>';
 

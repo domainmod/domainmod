@@ -519,7 +519,8 @@ if ($new_raid !== 0) {
     }
 
     // With an optional list, the help says the lookups are only for the domains pasted here
-    $ssl_switch_help = _("Each certificate is read from the domain's site once the domain has been imported.");
+    // TRANSLATORS: %s is the app's name, DomainMOD.
+    $ssl_switch_help = sprintf(_("Each domain's site is checked once the domain has been imported, and a new certificate is linked to it when %s has just one record of that domain. If the domain isn't imported, the site is still checked, and a new certificate is added without a domain."), SOFTWARE_TITLE);
     if ($lists_domains == '1') $ssl_switch_help .= ' ' . _("Only the domains you paste are looked up, not the ones the registrar's API supplies.");
     if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), $ssl_switch_help, 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 

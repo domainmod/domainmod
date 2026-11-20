@@ -139,7 +139,7 @@ class ImportQueuePageTest extends TestCase
         $queue = Instance::withoutConstructor(SslQueue::class);
 
         $this->assertSame(array('pending', 'Pending', '', ''), $queue->statusParts($this->row()));
-        $this->assertSame(array('waiting', 'Waiting for the Domain', '', 'Waiting for example.com to be added. This is checked on the next run.'),
+        $this->assertSame(array('waiting', 'Waiting for the Domain', '', 'Waiting up to 7 days for example.com to be added. If the wait ends first, the SSL Queue checks the site anyway and links the certificate only if a matching domain has been added by then.'),
             $queue->statusParts($this->row(array('wait_for_domain' => 1, 'wait_domain' => 'example.com'))));
         $this->assertSame(array('retrying', 'Retrying', '', 'Attempt 1 of 3 failed. The lookup ran out of time.'),
             $queue->statusParts($this->row(array('attempts' => 1, 'message' => 'timeout'))));

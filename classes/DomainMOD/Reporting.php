@@ -202,7 +202,8 @@ class Reporting
      * The At-Risk SSL Certificates from renewalCerts() rows: every certificate that's overdue or expires from $today
      * through $risk_end (the next 30 days). DomainMOD doesn't record whether a certificate renews itself, so every
      * certificate in the window is listed. Each row gains its reasons: overdue, expiring (only when not overdue),
-     * domain (with domain_problem naming what's wrong with its domain), and nofee.
+     * domain (with domain_problem naming what's wrong with its domain, never for a certificate with no domain), and
+     * nofee.
      */
     public function atRiskCerts($rows, $today, $risk_end)
     {
@@ -215,9 +216,10 @@ class Reporting
             } else {
                 $reasons[] = 'expiring';
             }
+            // A certificate with no domain (a NULL joined domain) has no domain problem, since it doesn't need one
             $row->domain_problem = '';
             if ($row->domain_id === null) {
-                $row->domain_problem = 'missing';
+                // No domain to check
             } elseif ($row->domain_active == '0') {
                 $row->domain_problem = 'inactive';
             } elseif ($row->domain_expiry_date < $today) {
