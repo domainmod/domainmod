@@ -691,23 +691,42 @@ class System
      * be out of date): before the database has it, a session that knew about it (one created on an upgraded database,
      * such as before a restore from older backup) is invalid, and every other session is as before. After, see
      * TwoFactor::sessionResult(). A version that can't be read fails closed.
+     *
+     * It also keeps s_two_factor_on (1 or 0) in the session from the same read, for the user menu's MFA line, so the
+     * line follows a change made in another tab of the same session without a read of its own. Before the database has
+     * two-factor sign-in, or when the read fails or finds no active user, the key is removed and the menu leaves the
+     * line out.
      */
     protected function twoFactorResult($user_id, $db_version)
     {
         try {
 
             if (!TwoFactor::isAvailableStrict($db_version)) {
+                unset($_SESSION['s_two_factor_on']);
                 return isset($_SESSION['s_two_factor_stamp']) ? 'invalid' : 'valid';
             }
 
-            $two_factor = new TwoFactor();
-            return $two_factor->sessionResult($two_factor->getState($user_id), $_SESSION, $this->currentPage());
+            $two_factor = $this->newTwoFactor();
+            $state = $two_factor->getState($user_id);
+            if (is_array($state)) {
+                $_SESSION['s_two_factor_on'] = $two_factor->isOn($state) ? 1 : 0;
+            } else {
+                unset($_SESSION['s_two_factor_on']);
+            }
+            return $two_factor->sessionResult($state, $_SESSION, $this->currentPage());
 
         } catch (\Throwable $e) {
 
+            unset($_SESSION['s_two_factor_on']);
             return 'invalid';
 
         }
+    }
+
+    // A TwoFactor for twoFactorResult() (tests replace it)
+    protected function newTwoFactor()
+    {
+        return new TwoFactor();
     }
 
     // This page's path from the install's root, such as /settings/password/index.php

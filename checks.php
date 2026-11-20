@@ -95,6 +95,9 @@ $_SESSION['s_email_address'] = $result->email_address;
 $_SESSION['s_is_new_password'] = $result->new_password;
 $_SESSION['s_number_of_logins'] = $result->number_of_logins;
 $login->setPermissions($result);
+// The sign-in before this one, for the user menu (DomainMOD\UserMenu::lastSignIn()), kept once per sign-in before
+// it's replaced below
+if (($_SESSION['s_last_login_recorded'] ?? 0) !== 1) $_SESSION['s_previous_login'] = $result->last_login;
 
 // Tell admins about any sensitive files from an older version that couldn't be deleted automatically
 if (!empty($legacy_temp_files) && ($_SESSION['s_is_admin'] ?? 0) === 1) {

@@ -68,33 +68,67 @@ $search_for = $search_for ?? '';
                     </ul>
                 </li>
 
-                <!-- User menu -->
+                <!-- User menu: who's signed in, their role, MFA, and last sign-in (DomainMOD\UserMenu, from the session), then
+                     their own settings pages and Logout. The names and email address are stored HTML-escaped, so they're
+                     shown as they are (the email address isolated left to right, like Layout::ltr()). -->
+                <?php
+                $user_menu_initials = DomainMOD\UserMenu::initials($_SESSION['s_first_name'] ?? '', $_SESSION['s_last_name'] ?? '');
+                $user_menu_last_sign_in = DomainMOD\UserMenu::lastSignIn($_SESSION['s_previous_login'] ?? ''); ?>
                 <li class="nav-item dropdown user-menu">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-label="<?php echo _('User Profile'); ?>">
+                    <a href="#" class="nav-link dropdown-toggle" id="domainmod-user-menu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<?php echo _('User Profile'); ?>">
                         <i class="bi bi-person-fill"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                        <li class="user-header text-bg-primary">
-                            <p>
-                                <?php echo ($_SESSION['s_first_name'] ?? '') . " "; ?> <?php echo $_SESSION['s_last_name'] ?? ''; ?><BR>
-                                <?php echo $_SESSION['s_email_address'] ?? ''; ?><BR>
-                                <small><BR>
-                                    <?php echo _('Language'); ?>: <?php echo $_SESSION['s_default_language_name'] ?? ''; ?><BR>
-                                    <?php echo _('Currency'); ?>: <?php echo $_SESSION['s_default_currency'] ?? ''; ?><BR>
-                                    <?php echo _('Time Zone'); ?>: <?php echo $_SESSION['s_default_timezone'] ?? ''; ?><BR>
-                                    <?php echo _('Expiration Emails'); ?>: <?php
-                                    if (($_SESSION['s_expiration_emails'] ?? '') == '1') {
-                                        echo _('Yes');
-                                    } else {
-                                        echo _('No');
-                                    } ?>
-                                </small>
-                            </p>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-2" aria-labelledby="domainmod-user-menu">
+                        <li class="px-3 pt-1 pb-2">
+                            <div class="d-flex align-items-start">
+                                <span class="img-size-50 flex-shrink-0 me-3" aria-hidden="true"><span class="ratio ratio-1x1"><span class="d-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary-emphasis fw-semibold"><?php
+                                    if ($user_menu_initials !== '') {
+                                        echo $user_menu_initials;
+                                    } else { ?><i class="bi bi-person-fill"></i><?php
+                                    } ?></span></span></span>
+                                <!-- overflow-hidden lets the column shrink so a long email address wraps (AdminLTE's
+                                     ".dropdown-menu-lg p" rule breaks it, in the right-to-left stylesheet too) -->
+                                <div class="flex-grow-1 overflow-hidden text-break">
+                                    <p class="fw-semibold"><?php echo trim(($_SESSION['s_first_name'] ?? '') . ' ' . ($_SESSION['s_last_name'] ?? '')); ?></p>
+                                    <p class="small text-body-secondary"><bdi dir="ltr"><?php echo $_SESSION['s_email_address'] ?? ''; ?></bdi></p>
+                                    <div class="mt-1"><?php
+                                        foreach (DomainMOD\UserMenu::roleLabels($_SESSION['s_is_admin'] ?? 0, $_SESSION['s_read_only'] ?? '1') as $user_menu_role) { ?>
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><?php echo $user_menu_role; ?></span><?php
+                                        } ?>
+
+                                    </div>
+                                </div>
+                            </div><?php
+                            if (isset($_SESSION['s_two_factor_on'])) { ?>
+
+                            <div class="small mt-2"><?php
+                                if ($_SESSION['s_two_factor_on'] === 1) {
+                                    echo _('MFA') . ': ' . _('On');
+                                } else {
+                                    echo _('MFA') . ': ' . _('Off');
+                                    // MFA can't be set up on the demo, so it gets no link there
+                                    if (DEMO_INSTALLATION != true) { ?> &middot; <a href="<?php echo $web_root; ?>/settings/two-factor/"><?php echo _('Set it up'); ?></a><?php
+                                    }
+                                } ?></div><?php
+                            }
+                            if ($user_menu_last_sign_in !== '') { ?>
+
+                            <div class="small text-body-secondary mt-1"><?php echo sprintf(_('Last Login: %s'), $layout->ltr($user_menu_last_sign_in)); ?></div><?php
+                            } ?>
+
                         </li>
-                        <li class="user-footer">
-                            <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-outline-secondary"><?php echo _('User Profile'); ?></a>
-                            <a href="<?php echo $web_root; ?>/settings/display/" class="btn btn-outline-secondary float-end"><?php echo _('Display Settings'); ?></a>
-                        </li>
+                        <li><hr class="dropdown-divider my-1"></li><?php
+                        // The same order as the Settings menu in the sidebar
+                        foreach (array(array('/settings/profile/', 'bi-person-circle', _('User Profile')),
+                                     array('/settings/display/', 'bi-display', _('Display Settings')),
+                                     array('/settings/defaults/', 'bi-person-gear', _('User Defaults')),
+                                     array('/settings/two-factor/', 'bi-shield-lock', _('Security'))) as $user_menu_link) { ?>
+
+                        <li><a class="dropdown-item d-flex align-items-center" href="<?php echo $web_root . $user_menu_link[0]; ?>"><i class="bi <?php echo $user_menu_link[1]; ?> me-2" aria-hidden="true"></i><?php echo $user_menu_link[2]; ?></a></li><?php
+                        } ?>
+
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="<?php echo $web_root; ?>/logout.php"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i><?php echo _('Logout'); ?></a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
