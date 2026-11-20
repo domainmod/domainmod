@@ -1,0 +1,10 @@
+{
+  "http_code": 401,
+  "body": {
+    "code": 401,
+    "message": "Unauthorized",
+    "error": {
+      "description": "The provided API key is invalid, expired, or missing. Please verify your key is correct and active."
+    }
+  }
+}

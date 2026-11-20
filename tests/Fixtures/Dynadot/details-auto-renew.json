@@ -1,0 +1,27 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "auto-renew-example.com",
+        "expiration_date": 1826724885905,
+        "glue_info": {
+          "glue_type": "NAME_SERVERS",
+          "nameserver_list": [
+            {
+              "server_name": "ns1.dynadot.com"
+            },
+            {
+              "server_name": "ns1.dynadot.com"
+            }
+          ]
+        },
+        "privacy": "Privacy Off",
+        "renew_option": "auto-renew",
+        "status": "active"
+      }
+    }
+  }
+}

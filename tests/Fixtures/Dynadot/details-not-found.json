@@ -1,0 +1,10 @@
+{
+  "http_code": 404,
+  "body": {
+    "code": 404,
+    "message": "Not Found",
+    "error": {
+      "description": "Can not find the domain in the account."
+    }
+  }
+}

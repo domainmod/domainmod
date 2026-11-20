@@ -132,6 +132,13 @@ class HttpClient
         self::$deadline = null;
     }
 
+    // The overall deadline itself (an absolute time), or null when none is set, so a caller that sets its own for a while
+    // can put back exactly the one it found.
+    public static function getDeadline()
+    {
+        return self::$deadline;
+    }
+
     // The seconds left before the overall deadline, or null when none is set.
     public static function remaining()
     {

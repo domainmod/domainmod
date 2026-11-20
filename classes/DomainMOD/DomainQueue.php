@@ -44,6 +44,13 @@ class DomainQueue
     const WHOIS_PER_SERVER = 20;
     const WHOIS_MAX_FAILURES = 5;
 
+    // Seconds of list paging that Dynadot lists leave free at the end of PHP's time limit while Dynadot domains are
+    // waiting for their details, so long lists can't use up the time those details calls need
+    const DYNADOT_LIST_RESERVE = 10;
+
+    // Whether domain_queue_list has its last_attempt column (added in 4.27.0), worked out once per request
+    protected static $list_last_attempt = null;
+
     public function __construct()
     {
         $this->api = new Api();
@@ -77,11 +84,23 @@ class DomainQueue
             $log_message = '[START] Processing Domain Queue Lists';
             $this->log->notice($log_message);
 
+            $dynadot_details_waiting = null;
+
             foreach ($result as $row) {
+
+                if ($row->api_registrar_name == 'Dynadot') {
+
+                    // counted again until some are waiting, since an earlier Dynadot list may have just queued some
+                    if (!$dynadot_details_waiting) $dynadot_details_waiting = $this->hasDynadotDetailsWaiting();
+                    Dynadot::$list_reserve = $dynadot_details_waiting ? self::DYNADOT_LIST_RESERVE : 0;
+
+                }
 
                 $this->processQueueListRow($row);
 
             }
+
+            Dynadot::$list_reserve = 0;
 
             $log_message = '[END] Processing Domain Queue Lists';
             $this->log->notice($log_message);
@@ -101,6 +120,10 @@ class DomainQueue
     private function processQueueListRow($row)
     {
         $pdo = $this->deeb->cnxx;
+
+        // Dynadot reports whether this list's first request was sent, and whether it fell back to the legacy API
+        Dynadot::$last_list_sent = false;
+        Dynadot::$last_list_fell_back = null;
 
         try {
 
@@ -165,6 +188,102 @@ class DomainQueue
             } catch (\Throwable $reset_error) {
             }
 
+        } finally {
+
+            $this->finishListAttempt($row);
+
+        }
+    }
+
+    /*
+     * After a list's transaction has ended (committed or rolled back), so neither entry can be lost with a rollback:
+     * logs a Dynadot list that went through the legacy API because Dynadot refused the API Secret, and stamps the list's
+     * last attempt, so a list that keeps failing waits behind lists not tried yet. A Dynadot list is only stamped when
+     * its first request was sent. Neither step can stop the other lists.
+     */
+    protected function finishListAttempt($row)
+    {
+        $is_dynadot = $row->api_registrar_name == 'Dynadot';
+
+        if ($is_dynadot && Dynadot::$last_list_fell_back !== null && Dynadot::$last_list_sent) {
+
+            try {
+                $log_extra = array('List ID' => $row->id, 'HTTP Status' => Dynadot::$last_list_fell_back);
+                $this->log->addEntry('warning', Dynadot::LIST_FALLBACK_MESSAGE, $log_extra);
+            } catch (\Throwable $log_error) {
+            }
+
+        }
+
+        if ($is_dynadot && !Dynadot::$last_list_sent) return;
+
+        try {
+
+            if (!$this->hasListLastAttempt()) return;
+
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE domain_queue_list
+                SET last_attempt = :last_attempt
+                WHERE id = :id");
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('last_attempt', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindValue('id', $row->id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+        } catch (\Throwable $e) {
+
+            try {
+                $log_message = "Unable to save a Domain Queue list's last attempt";
+                $log_extra = array('List ID' => $row->id, 'Error' => $e->getMessage());
+                $this->log->error($log_message, $log_extra);
+            } catch (\Throwable $log_error) {
+            }
+
+        }
+    }
+
+    // Whether Dynadot domains are already waiting in the Domain Queue for their details
+    protected function hasDynadotDetailsWaiting()
+    {
+        try {
+
+            return (int) $this->deeb->cnxx->query("
+                SELECT COUNT(*)
+                FROM domain_queue AS dq, api_registrars AS ar
+                WHERE dq.api_registrar_id = ar.id
+                  AND ar.name = 'Dynadot'
+                  AND dq.ready_to_import = '0'
+                  AND dq.finished = '0'
+                  AND dq.copied_to_history = '0'
+                  AND dq.already_in_domains = '0'
+                  AND dq.already_in_queue = '0'")->fetchColumn() > 0;
+
+        } catch (\Throwable $e) {
+
+            return false;
+
+        }
+    }
+
+    // Whether domain_queue_list has its last_attempt column, which a database not yet upgraded to 4.27.0 lacks
+    protected function hasListLastAttempt()
+    {
+        if (self::$list_last_attempt !== null) return self::$list_last_attempt;
+
+        try {
+
+            $columns = (int) $this->deeb->cnxx->query("
+                SELECT COUNT(*)
+                FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA` = DATABASE()
+                  AND `TABLE_NAME` = 'domain_queue_list'
+                  AND `COLUMN_NAME` = 'last_attempt'")->fetchColumn();
+            return self::$list_last_attempt = $columns === 1;
+
+        } catch (\Throwable $e) {
+
+            return false;
+
         }
     }
 
@@ -202,8 +321,8 @@ class DomainQueue
         } elseif ($row->api_registrar_name == 'Dynadot') {
 
             $registrar = new Dynadot();
-            $api_key = $this->api->getKey($row->account_id);
-            list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
+            list($api_key, $api_secret) = $this->api->getKeySecret($row->account_id);
+            list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
         } elseif ($row->api_registrar_name == 'eNom') {
 
@@ -358,7 +477,24 @@ class DomainQueue
 
         try {
 
-            $registrar_info = $this->fetchRegistrarInfo($row->api_registrar_name, $row->account_id, $row->domain);
+            // The row's last attempt is stamped even if the lookup throws, unless the registrar has no API class here
+            // or a Dynadot call's time budget stopped it before anything was sent (it then keeps its place)
+            $registrar_info = null;
+            Dynadot::$last_call_skipped = false;
+
+            try {
+
+                $registrar_info = $this->fetchRegistrarInfo($row->api_registrar_name, $row->account_id, $row->domain);
+
+            } finally {
+
+                if ($registrar_info !== false && !($row->api_registrar_name == 'Dynadot' && Dynadot::$last_call_skipped)) {
+
+                    $this->stampDomainAttempt($row->id);
+
+                }
+
+            }
 
             if ($registrar_info === false) {
 
@@ -496,8 +632,8 @@ class DomainQueue
         } elseif ($api_registrar_name == 'Dynadot') {
 
             $registrar = new Dynadot();
-            $api_key = $this->api->getKey($registrar_account_id);
-            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $domain);
+            list($api_key, $api_secret) = $this->api->getKeySecret($registrar_account_id);
+            list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $domain);
 
         } elseif ($api_registrar_name == 'eNom') {
 
@@ -1188,7 +1324,9 @@ class DomainQueue
               AND dql.ready_to_import = '0'
               AND dql.finished = '0'
               AND dql.copied_to_history = '0'
-            ORDER BY dql.insert_time DESC")->fetchAll();
+            ORDER BY " . ($this->hasListLastAttempt()
+                ? "(dql.last_attempt > '1970-01-01 00:00:00'), dql.last_attempt, dql.insert_time DESC"
+                : "dql.insert_time DESC"))->fetchAll();
     }
 
     public function getQueueDomain()
@@ -1204,7 +1342,35 @@ class DomainQueue
               AND dq.finished = '0'
               AND dq.copied_to_history = '0'
               AND dq.already_in_domains = '0'
-              AND dq.already_in_queue = '0'")->fetchAll();
+              AND dq.already_in_queue = '0'
+            ORDER BY (dq.last_attempt > '1970-01-01 00:00:00'), dq.last_attempt, dq.id")->fetchAll();
+    }
+
+    // Records when a queued domain's registrar was last asked for its details, so domains not tried yet go first and
+    // the rest take turns. A failure here is logged and never stops the run.
+    public function stampDomainAttempt($queue_domain_id)
+    {
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE domain_queue
+                SET last_attempt = :last_attempt
+                WHERE id = :queue_domain_id");
+            $bind_timestamp = $this->time->stamp();
+            $stmt->bindValue('last_attempt', $bind_timestamp, \PDO::PARAM_STR);
+            $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+        } catch (\Throwable $e) {
+
+            try {
+                $log_message = "Unable to save a queued domain's last attempt";
+                $log_extra = array('Queue Domain ID' => $queue_domain_id, 'Error' => $e->getMessage());
+                $this->log->error($log_message, $log_extra);
+            } catch (\Throwable $log_error) {
+            }
+
+        }
     }
 
     public function markProcessingList()

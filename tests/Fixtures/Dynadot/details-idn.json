@@ -1,0 +1,27 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "xn--exmple-cua.com",
+        "expiration_date": 1826724895778,
+        "glue_info": {
+          "glue_type": "NAME_SERVERS",
+          "nameserver_list": [
+            {
+              "server_name": "ns1.dynadot.com"
+            },
+            {
+              "server_name": "ns1.dynadot.com"
+            }
+          ]
+        },
+        "privacy": "Privacy Off",
+        "renew_option": "manual renewal",
+        "status": "active"
+      }
+    }
+  }
+}

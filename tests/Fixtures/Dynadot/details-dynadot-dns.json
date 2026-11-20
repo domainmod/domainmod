@@ -1,0 +1,19 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "dynadot-dns-example.com",
+        "expiration_date": 1826724884344,
+        "glue_info": {
+          "glue_type": "DNS"
+        },
+        "privacy": "Full Privacy",
+        "renew_option": "manual renewal",
+        "status": "active"
+      }
+    }
+  }
+}

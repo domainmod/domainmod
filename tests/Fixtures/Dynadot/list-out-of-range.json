@@ -1,0 +1,10 @@
+{
+  "http_code": 400,
+  "body": {
+    "code": 400,
+    "message": "Bad Request",
+    "error": {
+      "description": "The page is out of range"
+    }
+  }
+}

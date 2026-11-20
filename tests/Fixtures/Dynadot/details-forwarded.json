@@ -1,0 +1,19 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "forwarded-example.com",
+        "expiration_date": 1826724882729,
+        "glue_info": {
+          "glue_type": "REGISTRAR_FORWARDING"
+        },
+        "privacy": "Privacy Off",
+        "renew_option": "manual renewal",
+        "status": "active"
+      }
+    }
+  }
+}

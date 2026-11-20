@@ -1,0 +1,27 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "two-servers-example.com",
+        "expiration_date": 1826724874060,
+        "glue_info": {
+          "glue_type": "NAME_SERVERS",
+          "nameserver_list": [
+            {
+              "server_name": "dns1.registrar-servers.com"
+            },
+            {
+              "server_name": "dns2.registrar-servers.com"
+            }
+          ]
+        },
+        "privacy": "Full Privacy",
+        "renew_option": "manual renewal",
+        "status": "active"
+      }
+    }
+  }
+}

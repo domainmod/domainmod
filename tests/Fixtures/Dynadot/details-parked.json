@@ -1,0 +1,19 @@
+{
+  "http_code": 200,
+  "body": {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "domain_info": {
+        "domain_name": "parked-example.com",
+        "expiration_date": 1826724881102,
+        "glue_info": {
+          "glue_type": "REGISTRAR_PARKING"
+        },
+        "privacy": "Partial Privacy",
+        "renew_option": "manual renewal",
+        "status": "active"
+      }
+    }
+  }
+}
