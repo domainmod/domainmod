@@ -1819,6 +1819,24 @@ html.domainmod-toasts-compact {
 .domainmod-filter-inline {
     max-width: 48rem;
 }
+/* The filter panel's Custom Fields section (CustomFieldFilter::panelHtml()): a disclosure whose summary reads like a
+   label, with each field's controls grouped under its name */
+.domainmod-filter-custom-fields > summary {
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+.domainmod-filter-custom-field {
+    min-width: 0;
+    margin: 0;
+    padding: .5rem 0 0;
+    border: 0;
+    border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+.domainmod-filter-custom-field > legend {
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
 @media (max-width: 575.98px) {
     .domainmod-filter-panel {
         --bs-offcanvas-width: 100%;

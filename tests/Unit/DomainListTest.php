@@ -88,7 +88,7 @@ class DomainListTest extends TestCase
 
     public function testFilterPartsCastsIdsAndQuotesText()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $state = DomainList::normalizeState(array('rid' => '3', 'raid' => '12', 'tld' => 'de', 'is_active' => '5'));
 
         $parts = $list->filterParts($state, 'shop', '2026-01-01', "2026-12-31");
@@ -107,7 +107,7 @@ class DomainListTest extends TestCase
 
     public function testFilterPartsMapsEachIdFilterToItsColumn()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $state = DomainList::normalizeState(array('pcid' => '21', 'oid' => '22', 'dnsid' => '23', 'ipid' => '24',
             'whid' => '25', 'rid' => '26', 'raid' => '27'));
 
@@ -120,7 +120,7 @@ class DomainListTest extends TestCase
 
     public function testFilterPartsWithoutFilters()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $parts = $list->filterParts(DomainList::normalizeState(array()), '', 'YYYY-MM-DD', 'YYYY-MM-DD');
 
         $this->assertSame(" AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ", DomainList::filterSql($parts));
@@ -130,7 +130,7 @@ class DomainListTest extends TestCase
 
     public function testSearchSqlBindsEveryWordAndEscapesLikeCharacters()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $columns = array('lower' => array('d.domain', 'd.tld'), 'typed' => array('CAST(d.expiry_date AS CHAR)'),
             'encoded' => array('r.name'));
 
@@ -148,7 +148,7 @@ class DomainListTest extends TestCase
 
     public function testSearchSqlAlsoMatchesTheStoredFormOfAnIdn()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $columns = array('lower' => array('d.domain'), 'typed' => array(), 'encoded' => array());
 
         $search = $list->searchSql(DomainList::searchTokens('XN--MNCHEN-3YA.DE'), $columns);
@@ -159,7 +159,7 @@ class DomainListTest extends TestCase
 
     public function testSearchSqlWithoutWords()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
 
         $this->assertSame(array('sql' => '', 'params' => array()),
             $list->searchSql(array(), array('lower' => array('d.domain'), 'typed' => array(), 'encoded' => array())));

@@ -41,7 +41,7 @@ class DomainListSegmentTest extends TestCase
 
     public function testTheSegmentFilterUsesTheListItIsGiven()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
         $state = DomainList::normalizeState(array('segid' => '7'));
 
         $parts = $list->filterParts($state, '', '', '', "'a.com', 'b.com'");
@@ -51,7 +51,7 @@ class DomainListSegmentTest extends TestCase
 
     public function testNoSegmentNeedsNoList()
     {
-        $list = new DomainList(new QuotingPdo(), 1, '');
+        $list = new DomainList(new QuotingPdo(), 1, array());
 
         $parts = $list->filterParts(DomainList::normalizeState(array()), '', '', '', "'a.com'");
 
@@ -61,7 +61,7 @@ class DomainListSegmentTest extends TestCase
     public function testTheFilteredCountCarriesTheListsFiltersAndParameters()
     {
         $pdo = new RecordingPdo(array('FROM segment_data AS sd' => array(array(array('count(*)' => 12)))));
-        $list = new DomainList($pdo, 1, '');
+        $list = new DomainList($pdo, 1, array());
         $filter_sql = " AND d.active IN ('1') AND d.domain IN ('a.com', 'b.com') AND (d.domain LIKE :sw0 ESCAPE '\\\\')";
 
         $count = $list->segmentFilteredCount(7, $filter_sql, array('sw0' => '%a%'));

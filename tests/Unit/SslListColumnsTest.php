@@ -23,6 +23,7 @@ namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\Database;
 use DomainMOD\SslListColumns;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\Instance;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +48,7 @@ class SslListColumnsTest extends TestCase
 
     public function testOnlyTheNameShowsWhenEveryOptionalColumnIsOff()
     {
-        $columns = new SslListColumns(SslListColumns::sessionCopy(array()), '');
+        $columns = new SslListColumns(SslListColumns::sessionCopy(array()), array());
 
         // No control column: the list keeps every column and scrolls sideways instead of using Responsive
         $this->assertSame(array('name'), array_column($columns->columns(), 'key'));
@@ -59,7 +60,7 @@ class SslListColumnsTest extends TestCase
 
     public function testEveryColumnInDisplaySettingsOrderWithItsTitle()
     {
-        $columns = new SslListColumns($this->settings(), self::FIELDS_SQL);
+        $columns = new SslListColumns($this->settings(), FieldRows::of(self::FIELDS_SQL, $this->settings()));
 
         $this->assertSame(array('name', 'expiry', 'fee', 'domain', 'provider', 'account', 'type', 'ip', 'category',
             'owner', 'cf_purchaser_name', 'cf_renewed', 'cf_order_number', 'cf_issued', 'cf_checked_at', 'cf_portal'),
@@ -73,7 +74,7 @@ class SslListColumnsTest extends TestCase
 
     public function testTheSortMapUsesFixedExpressions()
     {
-        $map = (new SslListColumns($this->settings(), self::FIELDS_SQL))->sortMap();
+        $map = (new SslListColumns($this->settings(), FieldRows::of(self::FIELDS_SQL, $this->settings())))->sortMap();
 
         $this->assertSame(array('sslc.name'), $map[0]);
         $this->assertSame(array('sslc.expiry_date'), $map[1]);
@@ -87,7 +88,7 @@ class SslListColumnsTest extends TestCase
     public function testDeletedFieldsAndTextAreasGetNoColumn()
     {
         // The session still lists every field, but only purchaser_name exists now, and notes_area is a Text Area
-        $columns = new SslListColumns($this->settings(), ', sslfd.purchaser_name, sslfd.notes_area');
+        $columns = new SslListColumns($this->settings(), FieldRows::of(', sslfd.purchaser_name, sslfd.notes_area', $this->settings()));
 
         $this->assertSame(array('cf_purchaser_name'), array_values(array_filter(array_column($columns->columns(), 'key'),
             function ($key) { return str_starts_with($key, 'cf_'); })));
@@ -96,18 +97,18 @@ class SslListColumnsTest extends TestCase
     public function testTheLayoutKeyFollowsTheVisibleColumns()
     {
         $settings = $this->settings();
-        $all = new SslListColumns($settings, self::FIELDS_SQL);
+        $all = new SslListColumns($settings, FieldRows::of(self::FIELDS_SQL, $settings));
         $settings['s_display_ssl_fee'] = '0';
-        $no_fee = new SslListColumns($settings, self::FIELDS_SQL);
+        $no_fee = new SslListColumns($settings, FieldRows::of(self::FIELDS_SQL, $settings));
 
         $this->assertSame(12, strlen($all->layoutKey()));
-        $this->assertSame($all->layoutKey(), (new SslListColumns($this->settings(), self::FIELDS_SQL))->layoutKey());
+        $this->assertSame($all->layoutKey(), (new SslListColumns($this->settings(), FieldRows::of(self::FIELDS_SQL, $this->settings())))->layoutKey());
         $this->assertNotSame($all->layoutKey(), $no_fee->layoutKey());
     }
 
     public function testSearchExpressionsFollowTheVisibleColumns()
     {
-        $search = (new SslListColumns($this->settings(), self::FIELDS_SQL))->searchExpressions();
+        $search = (new SslListColumns($this->settings(), FieldRows::of(self::FIELDS_SQL, $this->settings())))->searchExpressions();
 
         // A certificate with no domain has a NULL domain, read as '', so an excluded word doesn't hide it
         $this->assertSame(array("COALESCE(d.domain, '')"), $search['lower']);
@@ -133,7 +134,7 @@ class SslListColumnsTest extends TestCase
     {
         $settings = $this->settings();
         $settings['s_display_ssl_fee'] = '0'; // the fee goes through Currency::format(), which needs a language
-        $cells = (new SslListColumns($settings, self::FIELDS_SQL))->cells($this->row(), '2026-11-15');
+        $cells = (new SslListColumns($settings, FieldRows::of(self::FIELDS_SQL, $settings)))->cells($this->row(), '2026-11-15');
 
         $this->assertStringContainsString('aria-label="Pending (Renewal)"', $cells[0]);
         $this->assertStringEndsWith('&nbsp;<a href="edit.php?sslcid=7">a &amp; b</a>', $cells[0]);
@@ -164,10 +165,10 @@ class SslListColumnsTest extends TestCase
         $row = $this->row();
         $row->domain_id = 0;
         $row->domain = null;
-        $cells = (new SslListColumns($settings, ''))->cells($row, '2026-11-15');
+        $cells = (new SslListColumns($settings, array()))->cells($row, '2026-11-15');
         $this->assertSame('', $cells[1]);
 
-        $cells = (new SslListColumns($settings, ''))->cells($this->row(), '2026-11-15');
+        $cells = (new SslListColumns($settings, array()))->cells($this->row(), '2026-11-15');
         $this->assertSame('<a href="../domains/edit.php?did=3">example.com</a>', $cells[1]);
     }
 
@@ -175,7 +176,7 @@ class SslListColumnsTest extends TestCase
     {
         $row = $this->row();
         $row->active = '0';
-        $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), ''))->cells($row, '2026-11-15');
+        $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), array()))->cells($row, '2026-11-15');
 
         $this->assertStringContainsString('aria-label="Expired"', $cells[0]);
         $this->assertSame('<a href="edit.php?sslcid=7">2026-01-02</a>', $cells[1]);

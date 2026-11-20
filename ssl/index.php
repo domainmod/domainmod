@@ -175,8 +175,37 @@ if (!array_key_exists('daterange', $back_filters)) $back_filters['daterange'] = 
 // the pages fetched afterwards, the counts, Export, and the Raw List all agree. The keyword is matched against the
 // certificate's name, which is stored HTML-encoded, as the keyword is, or its domain, as the filter menus match it (see
 // SslList::filterParts()).
-$sslfd_columns = $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd');
-$ssl_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'], $sslfd_columns);
+//
+// The list's custom fields are read once, so the SELECT, the columns, Export, and the custom field filters all describe
+// the same fields, and the custom field filters come from the request only, as on the Domains list (see there)
+$sslfd_fields = $customField->getFilterFields('ssl_cert_fields');
+$cf = new DomainMOD\CustomFieldFilter($sslfd_fields, 'sslfd');
+$cf_request = ($_SERVER['REQUEST_METHOD'] == 'POST' && $export_data !== 1) ? $_POST : $_GET;
+if (!$cf->requestOk($cf_request) || ($export_data === 1 && DomainMOD\CustomFieldFilter::hasFilterKeys($cf_request)
+        && !isset($cf_request['cfk']))) {
+
+    $_SESSION['s_message_danger'] .= _("A custom field in your filters was changed or deleted, so the list isn't filtered by your custom field filters.") . '<BR>';
+
+    // An export goes back to the list without them, with the message, rather than exporting an old filter
+    if ($export_data === 1) {
+
+        header('Location: index.php?' . http_build_query(array_diff_key(DomainMOD\CustomFieldFilter::withoutFilterKeys($back_filters),
+            array('cff' => true, 'cfk' => true))));
+        exit;
+
+    }
+
+    $cf_request = DomainMOD\CustomFieldFilter::withoutFilterKeys($cf_request);
+
+}
+$cf_state = $cf->normalize($cf_request, $cf_dropped);
+if ($cf_dropped) {
+    $_SESSION['s_message_danger'] .= _("Some custom field filters were left out because there are too many or they're too long. Use fewer or shorter ones.") . '<BR>';
+}
+$cf_filter = $cf->conditions($cf_state);
+$cf_keys = DomainMOD\CustomFieldFilter::requestKeys($cf_state);
+
+$ssl_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'], $sslfd_fields);
 $list_state = array('oid' => $oid, 'did' => $did, 'sslpid' => $sslpid, 'sslpaid' => $sslpaid, 'ssltid' => $ssltid,
     'sslipid' => $sslipid, 'sslpcid' => $sslpcid, 'is_active' => $is_active);
 $filter_parts = $ssl_list->filterParts($list_state, $list_search_for, $list_start_date, $list_end_date);
@@ -204,17 +233,21 @@ $raw_list_from_sql = $ssl_list->fromSql() . "
           $sslipid_string
           $sslpcid_string
           $range_string
-          $search_string";
+          $search_string" . $cf_filter['sql'];
 $raw_list_sql = $ssl_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\SslList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'ssl-certs';
 $_SESSION['s_raw_list_sql'] = $sql;
 $_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
 $_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
+// The custom field filters' bound values, and their keys, for raw.php's checks (see raw.php)
+$_SESSION['s_raw_list_params'] = $cf_filter['params'];
+$_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_string . $sslpaid_string . $ssltid_string
-    . $sslipid_string . $sslpcid_string . $range_string . $search_string;
+    . $sslipid_string . $sslpcid_string . $range_string . $search_string . $cf_filter['sql'];
+$list_filter_params = $cf_filter['params'];
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
@@ -222,9 +255,12 @@ $list_has_search = $search_string != '';
 // its own inside its snapshot, so they aren't read twice.
 if ($export_data !== 1) {
 
-    $total_rows = $ssl_list->count($list_filter_sql);
+    $total_rows = $ssl_list->count($list_filter_sql, $list_filter_params);
 
-    $grand_total = $pdo->query("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql)->fetchColumn();
+    $stmt = $pdo->prepare("SELECT SUM(sslc.total_cost * cc.conversion)" . $ssl_list->fromSql() . $list_filter_sql);
+    $stmt->execute($list_filter_params);
+    $grand_total = $stmt->fetchColumn();
+    $stmt->closeCursor();
 
     $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
         $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
@@ -406,6 +442,17 @@ if ($export_data == 1) {
 
         }
 
+        // The custom field filters, by field name, as their chips show them (names and values are the user's own text)
+        foreach ($cf->describe($cf_state) as $cf_described) {
+
+            $row_contents = array(
+                $export->protectFormula($cf_described['name'] . ':'),
+                $export->protectFormula($cf_described['label'])
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
         unset($row_contents);
         $count = 0;
 
@@ -446,28 +493,32 @@ if ($export_data == 1) {
         // rows always agree, however the data changes in the meantime
         $export->startSnapshot($ssl_list);
 
+        // The custom fields as the snapshot has them, which must be the ones the page read (the headings, the cells,
+        // and the filters all come from that read), then the full row query once with LIMIT 0, the first query of the
+        // custom field data, so a column that's gone fails here, before the file starts, rather than in a chunk
+        if (!$cf->sameFields(DomainMOD\CustomField::readFilterFields($pdo, 'ssl_cert_fields'))) {
+
+            throw new RuntimeException('The custom fields changed while the export was being made');
+
+        }
+        $ssl_list->exportPreflight($list_filter_sql . $table_search['sql'], $table_search['params'] + $list_filter_params);
+
         // The export's count and total cost, for the rows it holds (with a table search, the rows the search matches)
         $stmt = $pdo->prepare("SELECT count(*) AS total_rows, SUM(sslc.total_cost * cc.conversion) AS grand_total"
             . $ssl_list->fromSql() . $list_filter_sql . $table_search['sql']);
-        $stmt->execute($table_search['params']);
+        $stmt->execute($table_search['params'] + $list_filter_params);
         $export_totals = $stmt->fetch();
         $stmt->closeCursor();
         $total_rows = (int) $export_totals->total_rows;
         $grand_total = $currency->format($export_totals->grand_total, $_SESSION['s_default_currency_symbol'],
             $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        // The rows' custom field columns, read in the snapshot like the headings and types below, so a field added or
-        // deleted in the meantime can't leave a heading without its column
-        $export_list = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'],
-            $customField->getCustomFieldsSql('ssl_cert_fields', 'sslfd'));
+        // The custom fields' columns, headings, and types all come from the page's one read of them (checked against
+        // the snapshot above)
+        $sslfd_types = array_column($sslfd_fields, 'type_id', 'field_name');
+        $sslfd_columns_array = array_column($sslfd_fields, 'field_name');
 
-        // Each custom field's type, by field name
-        $sslfd_types = $pdo->query("
-            SELECT field_name, type_id
-            FROM ssl_cert_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
-
-        // The custom fields, creation types, and users, read once rather than once for each certificate
-        $sslfd_columns_array = $customField->getCustomFields('ssl_cert_fields');
+        // The creation types and users, read once rather than once for each certificate
         $creation_type_names = DomainMOD\Export::creationTypeNames($pdo);
         $user_names = DomainMOD\Export::userNames($pdo);
 
@@ -528,18 +579,10 @@ if ($export_data == 1) {
         $row_contents[$count++] = _('Updated');
         $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
-        $result_field = $pdo->query("
-            SELECT `name`
-            FROM ssl_cert_fields
-            ORDER BY `name` ASC")->fetchAll();
+        // The headings are the fields' names, the user's own text
+        foreach ($sslfd_fields as $row_field) {
 
-        if ($result_field) {
-
-            foreach ($result_field as $row_field) {
-
-                $row_contents[$count++] = $row_field->name;
-
-            }
+            $row_contents[$count++] = $export->protectFormula($row_field['name']);
 
         }
 
@@ -547,7 +590,7 @@ if ($export_data == 1) {
 
         $export->chunkWritten();
 
-        foreach ($export_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params']) as $result) {
+        foreach ($ssl_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params'] + $list_filter_params) as $result) {
 
             foreach ($result as $row) {
 
@@ -624,7 +667,7 @@ if ($export_data == 1) {
                     foreach ($sslfd_columns_array as $column) {
 
                         // An empty Date or Time Stamp field is blank, as the list shows it
-                        if (in_array($sslfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+                        if (in_array((string) ($sslfd_types[$column] ?? ''), array('4', '5'), true) && DomainMOD\Time::isUnset($row->{$column})) {
 
                             $row_contents[$count++] = '';
 
@@ -721,7 +764,7 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
  * pager's links), checked as the endpoint checks them, and a page past the end (an old link, after certificates were
  * deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own paging does.
  */
-$list_columns = new DomainMOD\SslListColumns(DomainMOD\SslListColumns::sessionCopy($_SESSION), $sslfd_columns);
+$list_columns = new DomainMOD\SslListColumns(DomainMOD\SslListColumns::sessionCopy($_SESSION), $sslfd_fields);
 $list_page_sizes = DomainMOD\SslList::pageSizes($_SESSION['s_number_of_ssl_certs']);
 $list_length = DomainMOD\SslList::checkedLength($_GET['length'] ?? '', $list_page_sizes);
 $list_start = DomainMOD\SslList::checkedStart($_GET['start'] ?? 0);
@@ -730,7 +773,7 @@ if ($list_start >= $total_rows) $list_start = $total_rows > 0 ? (int) (floor(($t
 
 $result = $total_rows > 0 ? $ssl_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
     DomainMOD\SslList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
-    $list_length) : array();
+    $list_length, $list_filter_params) : array();
 
 // The status names, as the status menu shows them, so the menu and the status chip always match. Any other stored value
 // shows as its number in both.
@@ -778,6 +821,27 @@ if ($list_start_date != '' && $list_start_date != 'YYYY-MM-DD') {
     $filter_toolbar->addFilter('daterange', $list_start_date . ' - ' . $list_end_date, '',
         sprintf(_('Expiring: %1$s to %2$s'), $list_start_date, $list_end_date));
 }
+// The custom field filters' chips, and the keys that let the next request check their fields: the field set's (cff)
+// on every address, and the filters' own (cfk) on the state and export addresses
+$cf->addChips($filter_toolbar, $cf_state);
+if ($cf_state) {
+    $filter_toolbar->carry('cff', $cf->fieldsKey());
+    $filter_toolbar->carryState('cfk', $cf->filterKey(array_keys($cf_keys)));
+}
+// The date range picker's inputs (see date-range-picker-footer.inc.php): Expiring Between and the date custom fields
+$date_range_fields = array_merge(array('daterange'), $cf->dateKeys());
+
+// The custom field filters for the filter menus' queries, which don't join the custom field data, by the certificate
+// id (never the domain's, since a domain can have several certificates, and a certificate can have no domain), and a
+// menu's rows with their bound values
+$cf_menu = $cf->subquery($cf_state, DomainMOD\SslList::FIELD_DATA_TABLE, DomainMOD\SslList::FIELD_DATA_ID, 'sslc.id');
+$menu_rows = function ($sql) use ($pdo, $cf_menu) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($cf_menu['params']);
+    $rows = $stmt->fetchAll();
+    $stmt->closeCursor();
+    return $rows;
+};
 
 if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_ssl_cert'] == '1') {
 
@@ -862,7 +926,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
             // The domains of the matching certificates. This one is an inner join on purpose, since it lists domains (the
             // certificates with no domain are counted below, for the None option).
-            $result_domain = $pdo->query("
+            $result_domain = $menu_rows("
                 SELECT d.id, d.domain
                 FROM ssl_certs AS sslc JOIN domains AS d ON d.id = sslc.domain_id
                 WHERE d.active not in ('0', '10')
@@ -875,12 +939,13 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY d.domain
-                ORDER BY d.domain asc")->fetchAll();
+                ORDER BY d.domain asc");
 
             // Whether any matching certificate has no domain, for the None option (SslList::NO_DOMAIN), which is only
             // offered when it's in use, as the other options are
-            $no_domain_count = (int) $pdo->query("
+            $stmt = $pdo->prepare("
                 SELECT COUNT(*)
                 FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
                 WHERE d.id IS NULL
@@ -892,7 +957,11 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslipid_string
                   $sslpcid_string
                   $range_string
-                  $search_string")->fetchColumn();
+                  $search_string
+                  {$cf_menu['sql']}");
+            $stmt->execute($cf_menu['params']);
+            $no_domain_count = (int) $stmt->fetchColumn();
+            $stmt->closeCursor();
 
             echo $form->showDropdownTop('did', _('Domain'), '', '', '');
             echo $form->showDropdownOption('', _('Domain') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -978,7 +1047,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_ssl_provider = $pdo->query("
+            $result_ssl_provider = $menu_rows("
                 SELECT sslp.id, sslp.name
                 FROM ssl_providers AS sslp, ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
                 WHERE sslp.id = sslc.ssl_provider_id
@@ -991,8 +1060,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY sslp.name
-                ORDER BY sslp.name asc")->fetchAll();
+                ORDER BY sslp.name asc");
 
             echo $form->showDropdownTop('sslpid', _('SSL Provider'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1071,7 +1141,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_account = $pdo->query("
+            $result_account = $menu_rows("
                 SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
                 FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o,
                      ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id
@@ -1087,8 +1157,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY sslp.name, o.name, sslpa.username
-                ORDER BY sslp.name asc, o.name asc, sslpa.username asc")->fetchAll();
+                ORDER BY sslp.name asc, o.name asc, sslpa.username asc");
 
             echo $form->showDropdownTop('sslpaid', _('SSL Provider Account'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Provider Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1167,7 +1238,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_type = $pdo->query("
+            $result_type = $menu_rows("
                 SELECT sslc.type_id, sslcf.type
                 FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ssl_cert_types AS sslcf
                 WHERE sslc.type_id = sslcf.id
@@ -1180,8 +1251,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY sslcf.type
-                ORDER BY sslcf.type asc")->fetchAll();
+                ORDER BY sslcf.type asc");
 
             echo $form->showDropdownTop('ssltid', _('SSL Type'), '', '', '');
             echo $form->showDropdownOption('', _('SSL Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1261,7 +1333,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_ip = $pdo->query("
+            $result_ip = $menu_rows("
                 SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
                 FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, ip_addresses AS ip
                 WHERE sslc.ip_id = ip.id
@@ -1274,8 +1346,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY ip.name, ip.ip
-                ORDER BY ip.name, ip.ip")->fetchAll();
+                ORDER BY ip.name, ip.ip");
 
             echo $form->showDropdownTop('sslipid', _('IP Address'), '', '', '');
             echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1354,7 +1427,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_cat = $pdo->query("
+            $result_cat = $menu_rows("
                 SELECT c.id AS cat_id, c.name AS cat_name
                 FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, categories AS c
                 WHERE sslc.cat_id = c.id
@@ -1367,8 +1440,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslipid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                GROUP BY c.name
-               ORDER BY c.name")->fetchAll();
+               ORDER BY c.name");
 
             echo $form->showDropdownTop('sslpcid', _('Category'), '', '', '');
             echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1447,7 +1521,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                 $search_string = "";
             }
 
-            $result_owner = $pdo->query("
+            $result_owner = $menu_rows("
                 SELECT o.id, o.name
                 FROM ssl_certs AS sslc LEFT JOIN domains AS d ON d.id = sslc.domain_id, owners AS o
                 WHERE sslc.owner_id = o.id
@@ -1460,8 +1534,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY o.name
-                ORDER BY o.name asc")->fetchAll();
+                ORDER BY o.name asc");
 
             echo $form->showDropdownTop('oid', _('Owner'), '', '', '');
             echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1543,7 +1618,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             // join the domains
             $search_string = $ssl_list->filterParts($list_state, $_SESSION['s_search_for_ssl'], '', '')['search_string'];
 
-            $result_active = $pdo->query("
+            $result_active = $menu_rows("
                 SELECT sslc.active, count(*) AS total_count
                 FROM ssl_certs AS sslc
                 WHERE sslc.id != '0'
@@ -1556,8 +1631,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                   $sslpcid_string
                   $range_string
                   $search_string
+                  {$cf_menu['sql']}
                 GROUP BY sslc.active
-                ORDER BY sslc.active asc")->fetchAll();
+                ORDER BY sslc.active asc");
 
             echo $form->showDropdownTop('is_active', _('Status'), '', '', '');
             echo $form->showDropdownOption('LIVE', _('Live SSL Certificates') . ' (' . _('Active') . ' / ' . _('Pending') . ')', 'LIVE');
@@ -1592,7 +1668,10 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
             echo $filter_toolbar->keepOption('is_active', array_merge(array('LIVE', 'ALL'), array_map('strval', array_column($result_active, 'active'))));
             echo $form->showDropdownBottom('');
 
-            echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
+            echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
+
+            // CUSTOM FIELDS
+            echo $cf->panelHtml($form, $cf_state); ?>
 
             <div class="d-flex flex-wrap gap-2 domainmod-filter-actions">
                 <?php echo $form->showSubmitButton(_('Apply filters'), '', ''); ?>
@@ -1618,7 +1697,11 @@ if ($result) {
      */
     $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
     if ($ssl_import_available) $layout->addPageAddMenuItem(_('Add SSL Certificates Automatically'), $web_root . '/queue/add/ssl.php', 'bi-magic');
-    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
+    // The Raw List link always names the list it was made for (see raw.php)
+    $raw_list_url = $web_root . '/raw.php?' . http_build_query(array(
+        'dt_list' => DomainMOD\SslList::savedListKey($raw_list_from_sql, $list_filter_params), 'dt_type' => 'ssl-certs',
+        'dt_cfk' => $cf->filterKey(array_keys($cf_keys))));
+    $layout->addPageAction(_('Raw List'), $raw_list_url, 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
     <strong><?php echo _('Number of SSL Certificates'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
@@ -1657,15 +1740,20 @@ if ($result) {
                 'signin' => _('Your session has ended. Please sign in again.'),
                 'signinLink' => _('Sign In'),
                 'reload' => _('Your display settings have changed. Reload the page to see them.'),
+                'filterReload' => _('A custom field in your filters was changed or deleted. Reload the page to see the list without your custom field filters.'),
                 'reloadLink' => _('Reload'),
                 'close' => _('Close'),
                 'paging' => sprintf(_('Pages of %s'), _('SSL Certificates')),
                 'scroll' => _('SSL Certificates'),
             ),
             'signinUrl' => $web_root . '/',
+            // Where each Reload link goes: the list's whole state when Display Settings changed, and the state without the
+            // custom field filters when one of their fields changed (see js/server-list.js)
+            'reloadUrl' => $list_state_url,
+            'filterReloadUrl' => $filter_toolbar->stateUrl('search_for', 'daterange', array(), array_keys($cf_keys)),
             // The links that follow the search box (by id), and what each carries with it (see raw.php)
             'searchLinks' => array(
-                'ssl-list-raw' => array('dt_layout' => $list_columns->layoutKey(), 'dt_list' => DomainMOD\SslList::savedListKey($raw_list_sql)),
+                'ssl-list-raw' => array('dt_layout' => $list_columns->layoutKey()),
                 'ssl-list-export' => array('dt_layout' => $list_columns->layoutKey()),
             ),
         );
@@ -1717,7 +1805,7 @@ if ($result) {
 
         // Certificates exist but none are listed. Which empty state shows depends on why (see the empty states plan).
         $ssl_filters_active = $oid !== 0 || $did !== 0 || $sslpid !== 0 || $sslpaid !== 0 || $ssltid !== 0 || $sslipid !== 0
-            || $sslpcid !== 0 || $list_has_range || $list_has_search || $is_active != 'LIVE';
+            || $sslpcid !== 0 || $list_has_range || $list_has_search || $is_active != 'LIVE' || $cf_state !== array();
 
         // The list only shows certificates that have a fee (it joins the fees to work out costs), so these counts
         // leave the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
@@ -1752,7 +1840,10 @@ if ($result) {
 
         } else {
 
-            $filtered_certs = (int) $pdo->query("SELECT count(*)" . $ssl_without_fee_join . $list_filter_sql)->fetchColumn();
+            $stmt = $pdo->prepare("SELECT count(*)" . $ssl_without_fee_join . $list_filter_sql);
+            $stmt->execute($list_filter_params);
+            $filtered_certs = (int) $stmt->fetchColumn();
+            $stmt->closeCursor();
 
             if ($filtered_certs > 0) {
 

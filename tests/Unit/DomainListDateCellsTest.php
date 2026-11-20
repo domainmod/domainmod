@@ -23,6 +23,7 @@ namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\Database;
 use DomainMOD\DomainListColumns;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\Instance;
 use PHPUnit\Framework\TestCase;
 
@@ -72,7 +73,7 @@ class DomainListDateCellsTest extends TestCase
         $settings = DomainListColumns::sessionCopy(array('s_cdf_data' => array(
             array('name' => 'Renewed On', 'field' => 'renewed_on', 'type_id' => '4', 'value' => '1'),
             array('name' => 'Checked At', 'field' => 'checked_at', 'type_id' => '5', 'value' => '1'))));
-        $columns = new DomainListColumns($settings, self::FIELDS_SQL);
+        $columns = new DomainListColumns($settings, FieldRows::of(self::FIELDS_SQL, $settings));
         $this->assertSame(array('domain', 'cf_renewed_on', 'cf_checked_at'),
             array_column($columns->columns(), 'key'));
 

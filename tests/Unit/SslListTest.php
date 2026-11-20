@@ -197,7 +197,7 @@ class SslListTest extends TestCase
                 return '[' . $string . ']';
             }
         };
-        return new SslList($pdo, 1, '');
+        return new SslList($pdo, 1, array());
     }
 
 } //@formatter:on

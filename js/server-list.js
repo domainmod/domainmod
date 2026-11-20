@@ -34,7 +34,9 @@
  * - keeps the search box's search in the Export and Raw List links, so they hold the rows the table shows,
  * - gives a cut-short cell its full text as a tooltip, for a list whose styles cut long values short (cellTitles),
  * - shows one message above the table when a request fails: the session has ended (with a sign-in link), Display
- *   Settings changed in another tab (with a reload link), or the usual "That didn't work" message. Returning false
+ *   Settings changed in another tab (with a reload link to the list's whole state, config.reloadUrl), a custom field
+ *   in the filters was changed or deleted (with a reload link to the state without the custom field filters,
+ *   config.filterReloadUrl), or the usual "That didn't work" message. Returning false
  *   from DataTables' xhr event skips its own alert, and the processing indicator is turned off.
  * Loaded by each list's page, and started from the footer's script by domainmodServerList().
  */
@@ -121,7 +123,14 @@ function domainmodServerList(selector) {
         "deferLoading": [config.total, config.total],
         "displayStart": config.start,
         "pageLength": config.length,
-        "ajax": {url: config.url},
+        // DataTables sends six columns[n][...] keys for each column, which the endpoints never read and which make a wide
+        // list's address several kilobytes long, so they're left out (draw, start, length, search, and order stay)
+        "ajax": {
+            url: config.url,
+            data: function (data) {
+                delete data.columns;
+            }
+        },
         "searchDelay": 400,
         "paging": true,
         "lengthChange": true,
@@ -276,8 +285,9 @@ function domainmodServerList(selector) {
     /*
      * Export and the Raw List follow the search box: after each draw, their links carry the search the rows on screen
      * came from as dt_search, with the values that tie it to this table (config.searchLinks, by link id: the column
-     * layout as dt_layout, so a change to Display Settings since is caught, as the endpoint catches it, and for the Raw
-     * List the saved list it's for as dt_list), or leave them all out when there's no search. A request that fails
+     * layout as dt_layout, so a change to Display Settings since is caught, as the endpoint catches it), or leave them
+     * all out when there's no search. The Raw List link's own dt_list, dt_type, and dt_cfk (the saved list it's for) are
+     * part of its address from the page and stay whatever the search. A request that fails
      * doesn't draw, so the links keep the search of the rows still showing. Only these two links change, so the chips,
      * Clear all, and the page's own address (and bookmarks of it) never carry it.
      */
@@ -343,8 +353,11 @@ function domainmodServerList(selector) {
         }
         if (status === 401) {
             showMessage('signin', messages.signin, messages.signinLink, config.signinUrl);
+        } else if (status === 409 && answer && answer.reload && answer.reason === 'filter') {
+            showMessage('reload', messages.filterReload || messages.reload, messages.reloadLink,
+                config.filterReloadUrl || window.location.href);
         } else if (status === 409 && answer && answer.reload) {
-            showMessage('reload', messages.reload, messages.reloadLink, window.location.href);
+            showMessage('reload', messages.reload, messages.reloadLink, config.reloadUrl || window.location.href);
         } else {
             showMessage('error', messages.error);
         }

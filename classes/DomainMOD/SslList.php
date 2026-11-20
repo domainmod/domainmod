@@ -206,7 +206,7 @@ class SslList extends ListQuery
     // The SSL Certificates list's columns, for ListQuery::tableSearchSql()
     protected function listColumns(array $settings)
     {
-        return new SslListColumns($settings, $this->field_columns);
+        return new SslListColumns($settings, $this->fields);
     }
 
 } //@formatter:on

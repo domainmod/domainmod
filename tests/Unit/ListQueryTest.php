@@ -289,10 +289,41 @@ class ListQueryTest extends TestCase
         $this->assertNotSame(ListQuery::savedListKey('SELECT 1'), ListQuery::savedListKey('SELECT 2'));
     }
 
-    public function testSavedListKeyIsTheStartOfTheQuerysSha1()
+    public function testSavedListKeyIsTheStartOfTheQueryAndParametersSha1()
     {
-        $this->assertSame(substr(sha1('SELECT 1'), 0, 12), ListQuery::savedListKey('SELECT 1'));
+        $this->assertSame(substr(sha1("SELECT 1\n" . serialize(array())), 0, 12), ListQuery::savedListKey('SELECT 1'));
         $this->assertMatchesRegularExpression('/^[0-9a-f]{12}$/', ListQuery::savedListKey(null));
+    }
+
+    // A Raw List link is checked against the saved list before anything is read
+    public function testTheRawListLinksStatus()
+    {
+        $sql = ' FROM domains AS d WHERE 1 = 1 AND dfd.`renew` = :cff0';
+        $params = array('cff0' => 1);
+        $link = array('dt_list' => ListQuery::savedListKey($sql, $params), 'dt_type' => 'domains', 'dt_cfk' => 'abc');
+
+        $this->assertSame('ok', ListQuery::rawLinkStatus($link, 'domains', 'domains', $sql, $params));
+        // An old bookmark, with none of the keys
+        $this->assertSame('unchecked', ListQuery::rawLinkStatus(array(), 'domains', 'domains', $sql, $params));
+        // Another tab saved the SSL list, or the same list with other values
+        $this->assertSame('mismatch', ListQuery::rawLinkStatus($link, 'domains', 'ssl-certs', $sql, $params));
+        $this->assertSame('mismatch', ListQuery::rawLinkStatus($link, 'domains', 'domains', $sql, array('cff0' => 0)));
+        $this->assertSame('mismatch', ListQuery::rawLinkStatus($link, 'domains', 'domains', null, $params));
+        // A link that names its list but has no custom field filters' key to check
+        $this->assertSame('mismatch', ListQuery::rawLinkStatus(array_diff_key($link, array('dt_cfk' => 1)), 'domains',
+            'domains', $sql, $params));
+        $this->assertSame('mismatch', ListQuery::rawLinkStatus(array('dt_cfk' => array('abc')) + $link, 'domains', 'domains',
+            $sql, $params));
+    }
+
+    // The custom field filters' values are bound parameters, so the same query with other values is another list
+    public function testSavedListKeyChangesWhenOnlyTheParametersChange()
+    {
+        $sql = ' FROM domains AS d WHERE 1 = 1 AND dfd.`renew` = :cff0';
+        $this->assertNotSame(ListQuery::savedListKey($sql, array('cff0' => 1)), ListQuery::savedListKey($sql, array('cff0' => 0)));
+        $this->assertSame(ListQuery::savedListKey($sql, array('cff0' => 1)), ListQuery::savedListKey($sql, array('cff0' => 1)));
+        // Text that isn't valid UTF-8 still gives its own key
+        $this->assertNotSame(ListQuery::savedListKey($sql, array('cff0' => "\xFF")), ListQuery::savedListKey($sql, array('cff0' => "\xFE")));
     }
 
     private function sslList()

@@ -88,7 +88,7 @@ if ($export_data === 1) {
         // Everything from here to the last row reads one snapshot of the database, so the count and the rows always
         // agree, however the data changes in the meantime (a Domains list starts it, since the snapshot is the list
         // reader's, but none of its rows are read)
-        $export->startSnapshot(new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], ''));
+        $export->startSnapshot(new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], array()));
 
         $total_rows = DomainMOD\Segment::resultsCount($pdo, $type, $_SESSION['s_user_id'], $segid);
 

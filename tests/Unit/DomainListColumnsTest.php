@@ -22,6 +22,7 @@
 namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\DomainListColumns;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\UnconnectedDatabase;
 use PHPUnit\Framework\TestCase;
 
@@ -101,7 +102,8 @@ class DomainListColumnsTest extends TestCase
     public function testColumnsFollowTheDisplaySettingsAndTheCurrentFields()
     {
         $columns = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1',
-            's_display_domain_tld' => '1', 's_display_domain_owner' => '1')), self::FIELDS_SQL);
+            's_display_domain_tld' => '1', 's_display_domain_owner' => '1')), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_expiry_date' => '1',
+            's_display_domain_tld' => '1', 's_display_domain_owner' => '1'))));
 
         // Text Areas, hidden fields, and fields that no longer exist get no column
         // No control column: the Domains list keeps every column and scrolls sideways instead of using Responsive
@@ -117,7 +119,7 @@ class DomainListColumnsTest extends TestCase
         foreach (DomainListColumns::OPTIONAL as $optional) {
             $all[$optional[0]] = '1';
         }
-        $columns = new DomainListColumns(self::settings($all + array('s_cdf_data' => array())), '');
+        $columns = new DomainListColumns(self::settings($all + array('s_cdf_data' => array())), array());
 
         $this->assertSame(array('domain', 'expiry', 'fee', 'tld', 'registrar', 'account', 'dns', 'ip', 'host',
             'category', 'owner'), self::keys($columns));
@@ -127,22 +129,23 @@ class DomainListColumnsTest extends TestCase
     public function testSortMapAndDefaultOrder()
     {
         $with_expiry = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1',
-            's_display_domain_account' => '1', 's_cdf_data' => array(self::field('note', 'Note', '2')))), self::FIELDS_SQL);
+            's_display_domain_account' => '1', 's_cdf_data' => array(self::field('note', 'Note', '2')))), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_expiry_date' => '1',
+            's_display_domain_account' => '1', 's_cdf_data' => array(self::field('note', 'Note', '2'))))));
 
         $this->assertSame(array(0 => array('d.domain'), 1 => array('d.expiry_date'), 2 => array('r.name', 'o.name', 'ra.username'),
             3 => array('dfd.note')), $with_expiry->sortMap());
         $this->assertSame(array(array(1, 'asc')), $with_expiry->defaultOrder());
 
-        $without_expiry = new DomainListColumns(self::settings(array('s_cdf_data' => array())), '');
+        $without_expiry = new DomainListColumns(self::settings(array('s_cdf_data' => array())), array());
         // When Expiry is hidden, the list sorts by Domain, the first column
         $this->assertSame(array(array(0, 'asc')), $without_expiry->defaultOrder());
     }
 
     public function testLayoutKeyChangesWithTheColumns()
     {
-        $one = new DomainListColumns(self::settings(array('s_display_domain_tld' => '1')), self::FIELDS_SQL);
-        $same = new DomainListColumns(self::settings(array('s_display_domain_tld' => '1')), self::FIELDS_SQL);
-        $other = new DomainListColumns(self::settings(array('s_display_domain_dns' => '1')), self::FIELDS_SQL);
+        $one = new DomainListColumns(self::settings(array('s_display_domain_tld' => '1')), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_tld' => '1'))));
+        $same = new DomainListColumns(self::settings(array('s_display_domain_tld' => '1')), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_tld' => '1'))));
+        $other = new DomainListColumns(self::settings(array('s_display_domain_dns' => '1')), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_dns' => '1'))));
 
         $this->assertMatchesRegularExpression('/^[0-9a-f]{12}$/', $one->layoutKey());
         $this->assertSame($one->layoutKey(), $same->layoutKey());
@@ -152,7 +155,8 @@ class DomainListColumnsTest extends TestCase
     public function testSearchExpressionsFollowTheVisibleColumns()
     {
         $columns = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1',
-            's_display_domain_tld' => '1', 's_display_domain_ip' => '1', 's_display_domain_owner' => '1')), self::FIELDS_SQL);
+            's_display_domain_tld' => '1', 's_display_domain_ip' => '1', 's_display_domain_owner' => '1')), FieldRows::of(self::FIELDS_SQL, self::settings(array('s_display_domain_expiry_date' => '1',
+            's_display_domain_tld' => '1', 's_display_domain_ip' => '1', 's_display_domain_owner' => '1'))));
 
         $expressions = $columns->searchExpressions();
 
@@ -168,7 +172,7 @@ class DomainListColumnsTest extends TestCase
 
     public function testSearchExpressionsWithOnlyTheDomain()
     {
-        $columns = new DomainListColumns(self::settings(array('s_cdf_data' => array())), '');
+        $columns = new DomainListColumns(self::settings(array('s_cdf_data' => array())), array());
 
         $this->assertSame(array('lower' => array('d.domain'), 'typed' => array(), 'encoded' => array()),
             $columns->searchExpressions());
@@ -176,7 +180,7 @@ class DomainListColumnsTest extends TestCase
 
     private function customCells($row_values)
     {
-        $columns = new DomainListColumns(self::settings(), self::FIELDS_SQL);
+        $columns = new DomainListColumns(self::settings(), FieldRows::of(self::FIELDS_SQL, self::settings()));
         $row = (object) array_merge(array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0'),
             $row_values);
         // the domain cell comes first
@@ -203,7 +207,7 @@ class DomainListColumnsTest extends TestCase
     public function testDomainExpiryAndFeeCells()
     {
         $columns = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1',
-            's_display_domain_fee' => '1', 's_cdf_data' => array())), '');
+            's_display_domain_fee' => '1', 's_cdf_data' => array())), array());
         $row = (object) array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0',
             'expiry_date' => '2027-01-01', 'total_cost' => '10.5', 'conversion' => '2', 'r_id' => 3, 'f_id' => 4);
 
@@ -212,19 +216,19 @@ class DomainListColumnsTest extends TestCase
 
         // A symbol after the amount, with a space, so losing either preference in the session copy fails
         $after = new DomainListColumns(self::settings(array('s_display_domain_fee' => '1', 's_cdf_data' => array(),
-            's_default_currency_symbol_order' => '1', 's_default_currency_symbol_space' => '1')), '');
+            's_default_currency_symbol_order' => '1', 's_default_currency_symbol_space' => '1')), array());
         $this->assertSame('<a href="../assets/edit/registrar-fee.php?rid=3&fee_id=4">21.00 $</a>',
             $after->cells($row, '2026-11-15')[1]);
 
         // A read-only user's session, through the same copy, gets the fee without the edit link
         $read_only = new DomainListColumns(self::settings(array('s_display_domain_fee' => '1', 's_cdf_data' => array(),
-            's_read_only' => '1')), '');
+            's_read_only' => '1')), array());
         $this->assertSame('$21.00', $read_only->cells($row, '2026-11-15')[1]);
     }
 
     public function testAnExpiredLiveDomainIsMarked()
     {
-        $columns = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1', 's_cdf_data' => array())), '');
+        $columns = new DomainListColumns(self::settings(array('s_display_domain_expiry_date' => '1', 's_cdf_data' => array())), array());
         $row = (object) array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0',
             'expiry_date' => '2026-11-14');
 
@@ -257,7 +261,7 @@ class DomainListColumnsTest extends TestCase
         foreach (array('tld', 'registrar', 'account', 'dns', 'ip', 'host', 'category', 'owner') as $key) {
             $settings[DomainListColumns::OPTIONAL[$key][0]] = '1';
         }
-        $columns = new DomainListColumns(self::settings($settings), '');
+        $columns = new DomainListColumns(self::settings($settings), array());
 
         $this->assertSame(array(
             '<a href="../assets/edit/registrar-fee.php?rid=11&fee_id=12"><bdi dir="ltr">.com</bdi></a>',
@@ -274,13 +278,39 @@ class DomainListColumnsTest extends TestCase
 
     public function testALongAccountUsernameIsShortened()
     {
-        $columns = new DomainListColumns(self::settings(array('s_display_domain_account' => '1', 's_cdf_data' => array())), '');
+        $columns = new DomainListColumns(self::settings(array('s_display_domain_account' => '1', 's_cdf_data' => array())), array());
 
         // 16 characters or more: the first 15, then an ellipsis
         $this->assertStringEndsWith('raid=14">sixteen-chars-x...</a>)',
             $columns->cells(self::assetRow('sixteen-chars-xyz'), '2026-11-15')[1]);
         $this->assertStringEndsWith('raid=14">sixteen-chars-x...</a>)',
             $columns->cells(self::assetRow('sixteen-chars-x!'), '2026-11-15')[1]);
+    }
+
+    // A custom field column's title and type come from the fields as they are now, and the session only says it's shown
+    public function testCustomColumnsFollowTheFreshFieldRows()
+    {
+        $settings = self::settings(array('s_cdf_data' => array(self::field('note', 'Old Title', '2'),
+            self::field('gone', 'Gone', '2'), self::field('was_text', 'Was Text', '2'))));
+        $fields = array(array('id' => 1, 'name' => 'Note', 'field_name' => 'note', 'type_id' => 2),
+            array('id' => 2, 'name' => 'Was Text', 'field_name' => 'was_text', 'type_id' => 3));
+        $columns = new DomainListColumns($settings, $fields);
+
+        // The deleted field and the one replaced by a Text Area have no column
+        $this->assertSame(array('domain', 'cf_note'), self::keys($columns));
+        $this->assertSame('Note', $columns->columns()[1]['title']);
+    }
+
+    // A shown field deleted and added again under the same name, as another type or not, changes the layout key
+    public function testTheLayoutKeyFollowsTheShownFieldsIdsAndTypes()
+    {
+        $settings = self::settings(array('s_cdf_data' => array(self::field('note', 'Note', '2'))));
+        $field = array('id' => 1, 'name' => 'Note', 'field_name' => 'note', 'type_id' => 2);
+        $key = (new DomainListColumns($settings, array($field)))->layoutKey();
+
+        $this->assertSame($key, (new DomainListColumns($settings, array(array('name' => 'Renamed') + $field)))->layoutKey());
+        $this->assertNotSame($key, (new DomainListColumns($settings, array(array('id' => 2) + $field)))->layoutKey());
+        $this->assertNotSame($key, (new DomainListColumns($settings, array(array('type_id' => 4) + $field)))->layoutKey());
     }
 
 } //@formatter:on

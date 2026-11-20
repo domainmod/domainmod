@@ -88,14 +88,26 @@ abstract class ListQuery
 
     protected $pdo;
     protected $user_id;
+    protected $fields;
     protected $field_columns;
 
-    // $field_columns is CustomField::getCustomFieldsSql() for the list's custom fields (the ones that exist now)
-    public function __construct(\PDO $pdo, $user_id, $field_columns)
+    /*
+     * $fields is the list's custom fields as they exist now (CustomField::getFilterFields()), read once by the page,
+     * from which the SELECT's custom field columns (CustomField::fieldsSql()), the list's columns, and its custom field
+     * filters are all built, so they describe the same fields
+     */
+    public function __construct(\PDO $pdo, $user_id, array $fields)
     {
         $this->pdo = $pdo;
         $this->user_id = (int) $user_id;
-        $this->field_columns = (string) $field_columns;
+        $this->fields = $fields;
+        $this->field_columns = CustomField::fieldsSql($fields, static::JOIN_ORDER[1][1]);
+    }
+
+    // The custom fields the list was built from (see the constructor)
+    public function fields()
+    {
+        return $this->fields;
     }
 
     /*
@@ -485,36 +497,55 @@ abstract class ListQuery
         return self::$export_index[$key];
     }
 
-    // How many rows match the filters ($filter_sql from the list's filterSql())
-    public function count($filter_sql)
+    // How many rows match the filters ($filter_sql from the list's filterSql(), and $filter_params its bound values)
+    public function count($filter_sql, array $filter_params = array())
     {
-        return (int) $this->pdo->query("SELECT count(*)" . $this->fromSql() . $filter_sql)->fetchColumn();
+        $stmt = $this->pdo->prepare("SELECT count(*)" . $this->fromSql() . $filter_sql);
+        $stmt->execute($filter_params);
+        $count = (int) $stmt->fetchColumn();
+        $stmt->closeCursor();
+        return $count;
+    }
+
+    /*
+     * Export's check that its row query still runs, before the file starts: the full query with LIMIT 0, so a custom
+     * field column that's gone (or a table whose definition changed after the snapshot began) fails here, while the
+     * export can still go back to the list, rather than in its first chunk
+     */
+    public function exportPreflight($filter_sql, array $params)
+    {
+        $stmt = $this->pdo->prepare($this->selectSql() . $this->fromSql() . $filter_sql . " LIMIT 0");
+        $stmt->execute($params);
+        $stmt->closeCursor();
     }
 
     /*
      * How many rows match the filters, and how many of those also match the search box ($search from searchSql()), as
      * array(total, filtered), counted in one pass over the rows rather than two
      */
-    public function counts($filter_sql, array $search)
+    public function counts($filter_sql, array $search, array $filter_params = array())
     {
         if ($search['sql'] === '') {
-            $total = $this->count($filter_sql);
+            $total = $this->count($filter_sql, $filter_params);
             return array($total, $total);
         }
 
         $stmt = $this->pdo->prepare("SELECT count(*) AS total, COALESCE(SUM(CASE WHEN 1 = 1" . $search['sql'] . " THEN 1 ELSE 0 END), 0) AS filtered"
             . $this->fromSql() . $filter_sql);
-        $stmt->execute($search['params']);
+        $stmt->execute($search['params'] + $filter_params);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return array((int) $row['total'], (int) $row['filtered']);
     }
 
-    // One page of rows. $order_sql comes from orderSql(), and $start and $length are checked whole numbers.
-    public function rows($filter_sql, array $search, $order_sql, $start, $length)
+    /*
+     * One page of rows. $order_sql comes from orderSql(), $start and $length are checked whole numbers, and
+     * $filter_params are the filters' bound values.
+     */
+    public function rows($filter_sql, array $search, $order_sql, $start, $length, array $filter_params = array())
     {
         $stmt = $this->pdo->prepare($this->selectSql() . $this->fromSql() . $filter_sql . $search['sql'] . $order_sql
             . " LIMIT " . max(0, (int) $start) . ", " . max(1, (int) $length));
-        $stmt->execute($search['params']);
+        $stmt->execute($search['params'] + $filter_params);
         return $stmt->fetchAll();
     }
 
@@ -600,8 +631,8 @@ abstract class ListQuery
         return count($tokens) > self::MAX_SEARCH_WORDS ? false : $tokens;
     }
 
-    // A word for LIKE, with \, %, and _ escaped so they match themselves
-    protected static function likeValue($word)
+    // A word for LIKE, with \, %, and _ escaped so they match themselves (also used by CustomFieldFilter)
+    public static function likeValue($word)
     {
         return '%' . addcslashes($word, '\\%_') . '%';
     }
@@ -714,10 +745,29 @@ abstract class ListQuery
                 'ks_i' => $last[2]));
     }
 
-    // A short key for the Raw List's saved query, so a search from one tab is never run on a list another tab saved since
-    public static function savedListKey($sql)
+    /*
+     * Whether a Raw List link ($get, raw.php's $_GET) matches the list saved in the session, before anything is read:
+     * 'unchecked' for a link that doesn't name its list (dt_list), such as an old bookmark, 'mismatch' when the saved
+     * list is of another type ($type, from the link's dt_type), or another list (dt_list against the saved query and its
+     * bound values, see savedListKey()), or the link has no custom field filters' key (dt_cfk) to check inside the
+     * snapshot, and otherwise 'ok'. $saved_from_sql is null when nothing usable is saved.
+     */
+    public static function rawLinkStatus(array $get, $type, $saved_type, $saved_from_sql, array $saved_params)
     {
-        return substr(sha1((string) $sql), 0, 12);
+        if (!is_string($get['dt_list'] ?? null)) return 'unchecked';
+        if ($saved_type !== $type || $saved_from_sql === null) return 'mismatch';
+        if (!hash_equals(self::savedListKey($saved_from_sql, $saved_params), $get['dt_list'])) return 'mismatch';
+        if (!is_string($get['dt_cfk'] ?? null)) return 'mismatch';
+        return 'ok';
+    }
+
+    /*
+     * A short key for the Raw List's saved query (its FROM and filters) and the filters' bound values, so the Raw List
+     * is never run on a list another tab saved since
+     */
+    public static function savedListKey($sql, array $params = array())
+    {
+        return substr(sha1((string) $sql . "\n" . serialize($params)), 0, 12);
     }
 
     /*

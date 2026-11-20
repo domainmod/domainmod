@@ -76,7 +76,7 @@ class SegmentFlagsTest extends TestCase
     public function testItIsOneTransactionWithABatchQueryAndOneUpdatePerBatch()
     {
         $pdo = $this->pdo(DomainList::SEGMENT_FLAG_BATCH + 3);
-        $list = new DomainList($pdo, 1, '');
+        $list = new DomainList($pdo, 1, array());
 
         $result = $list->writeSegmentFlags(7, " AND d.active IN ('1')", self::SEGMENT);
 
@@ -99,7 +99,7 @@ class SegmentFlagsTest extends TestCase
     public function testEachBatchIsTheSegmentsActiveRowsLockedInIdOrder()
     {
         $pdo = $this->pdo(3);
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
 
         $batch = preg_replace('/\s+/', ' ', $pdo->statementsWith('FROM segment_data')[0]['sql']);
         $this->assertStringContainsString("WHERE segment_id = :segid AND active = '1' AND id > :sg_last ORDER BY id ASC LIMIT "
@@ -122,7 +122,7 @@ class SegmentFlagsTest extends TestCase
     private function batchSql(array $index_rows)
     {
         $pdo = $this->pdo(3, self::SEGMENT, $this->indexRows($index_rows));
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
         return $pdo->statementsWith('FROM segment_data')[0]['sql'];
     }
 
@@ -152,7 +152,7 @@ class SegmentFlagsTest extends TestCase
         unset($rows['INFORMATION_SCHEMA'][0][0]['IGNORED']);
         $rows['INFORMATION_SCHEMA'][0][0]['IS_VISIBLE'] = 'NO';
         $pdo = $this->pdo(3, self::SEGMENT, $rows);
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
         $this->assertStringNotContainsString('FORCE INDEX', $pdo->statementsWith('FROM segment_data')[0]['sql']);
         $this->assertStringNotContainsString('FORCE INDEX', $this->batchSql(array(array('domain', 1, 'domain'))));
     }
@@ -160,7 +160,7 @@ class SegmentFlagsTest extends TestCase
     public function testEveryValueIsBoundAndNoUpdateHasASubquery()
     {
         $pdo = $this->pdo(4);
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, " AND d.active IN ('1')", self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, " AND d.active IN ('1')", self::SEGMENT);
 
         $update = $pdo->statementsWith('UPDATE segment_data')[0];
         $this->assertDoesNotMatchRegularExpression('/SELECT/i', $update['sql']);
@@ -185,7 +185,7 @@ class SegmentFlagsTest extends TestCase
         $pdo = $this->pdo(1, self::SEGMENT, array(
             'FROM segment_data' => array(array(array('id' => 1, 'domain' => 'a.com '))),
             'SELECT DISTINCT d.domain' => array(array(array('domain' => 'a.com')))));
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
 
         $update = $pdo->statementsWith('UPDATE segment_data')[0];
         $this->assertStringContainsString('CASE WHEN domain IN (:sm0)', $update['sql']);
@@ -195,7 +195,7 @@ class SegmentFlagsTest extends TestCase
     public function testABatchWithNoMatchesSetsEveryFlag()
     {
         $pdo = $this->pdo(2, self::SEGMENT, array('SELECT DISTINCT d.domain' => array(array())));
-        (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+        (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
 
         $update = $pdo->statementsWith('UPDATE segment_data')[0];
         $this->assertStringContainsString("SET filtered = '1'", $update['sql']);
@@ -205,7 +205,7 @@ class SegmentFlagsTest extends TestCase
     public function testTheMatchesComeFromTheOtherFiltersAndTheirParameters()
     {
         $pdo = $this->pdo(2);
-        $list = new DomainList($pdo, 1, '');
+        $list = new DomainList($pdo, 1, array());
         $filter_sql = " AND d.active IN ('1') AND (d.domain LIKE :sw0 ESCAPE '\\\\')";
 
         $list->writeSegmentFlags(7, $filter_sql, self::SEGMENT, array('sw0' => '%d%'));
@@ -220,7 +220,7 @@ class SegmentFlagsTest extends TestCase
     {
         $pdo = $this->pdo(4, "'a.com', 'b.com', 'c.com'");
 
-        $this->assertSame('changed', (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT));
+        $this->assertSame('changed', (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT));
         $this->assertSame('ROLLBACK', end($pdo->log)['sql']);
         $this->assertCount(0, $pdo->statementsWith('UPDATE segment_data'));
     }
@@ -229,7 +229,7 @@ class SegmentFlagsTest extends TestCase
     {
         $pdo = new RecordingPdo(array('LOCK IN SHARE MODE' => array(array())));
 
-        $this->assertSame('changed', (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT));
+        $this->assertSame('changed', (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT));
         $this->assertCount(0, $pdo->statementsWith('UPDATE segment_data'));
     }
 
@@ -248,7 +248,7 @@ class SegmentFlagsTest extends TestCase
             return array();
         }));
 
-        $this->assertSame('written', (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT));
+        $this->assertSame('written', (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT));
         $this->assertSame(2, $tries);
         $sql = array_column($pdo->log, 'sql');
         $this->assertSame(1, count(array_keys($sql, 'ROLLBACK')));
@@ -260,7 +260,7 @@ class SegmentFlagsTest extends TestCase
         $pdo = $this->pdo(2, self::SEGMENT, array('UPDATE segment_data' => $this->deadlock()));
 
         try {
-            (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+            (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
             $this->fail('The second deadlock is thrown');
         } catch (\PDOException $e) {
             $this->assertSame(1213, $e->errorInfo[1]);
@@ -278,7 +278,7 @@ class SegmentFlagsTest extends TestCase
         $pdo = $this->pdo(2, self::SEGMENT, array('UPDATE segment_data' => $error));
 
         try {
-            (new DomainList($pdo, 1, ''))->writeSegmentFlags(7, '', self::SEGMENT);
+            (new DomainList($pdo, 1, array()))->writeSegmentFlags(7, '', self::SEGMENT);
             $this->fail('The error is thrown');
         } catch (\PDOException $e) {
             $this->assertSame($error, $e);

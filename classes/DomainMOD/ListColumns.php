@@ -61,20 +61,25 @@ abstract class ListColumns
     }
 
     /*
-     * The custom field columns for $fields (the session's custom field list, s_cdf_data or s_csf_data), added to
-     * $columns. $current_fields_sql is the custom field columns that exist now (CustomField::getCustomFieldsSql()): the
-     * session can still list a field that's since been deleted, which would otherwise read a missing column.
+     * The custom field columns, added to $columns: one for each field the session's custom field list ($shown, the
+     * session's s_cdf_data or s_csf_data) shows, with its title and type taken from $fields, the list's custom fields as
+     * they exist now (CustomField::getFilterFields()), so a field deleted (or deleted and added again as another type)
+     * since the session's list was read never gets a column it no longer has. Text Areas get no column.
      */
-    protected function withCustomFields(array $columns, $fields, $current_fields_sql)
+    protected function withCustomFields(array $columns, $shown, array $fields)
     {
         $alias = static::FIELD_ALIAS;
-        preg_match_all('/' . $alias . '\.([A-Za-z0-9_]+)/', (string) $current_fields_sql, $matches);
-        $current_fields = $matches[1];
+        $current = array();
+        foreach ($fields as $field) {
+            $current[$field['field_name']] = $field;
+        }
 
-        foreach ((array) $fields as $field) {
-            // Text Areas get no column, and neither does a field that no longer exists
-            if (($field['value'] ?? '') != '1' || ($field['type_id'] ?? '') == '3') continue;
-            if (!in_array($field['field'] ?? '', $current_fields, true)) continue;
+        foreach ((array) $shown as $field) {
+            if (($field['value'] ?? '') != '1') continue;
+            $now = $current[$field['field'] ?? ''] ?? null;
+            if ($now === null || (int) $now['type_id'] === 3) continue;
+            $field = array_merge($field, array('name' => $now['name'], 'type_id' => (string) $now['type_id'],
+                'id' => (int) $now['id']));
             $columns[] = array('key' => 'cf_' . $field['field'], 'title' => $field['name'], 'sort' => array($alias . '.' . $field['field']),
                 'field' => $field);
         }
@@ -88,10 +93,17 @@ abstract class ListColumns
         return $this->columns;
     }
 
-    // A short hash of the visible columns in order, so a change made in another tab is noticed
+    /*
+     * A short hash of the visible columns in order, with each custom field column's field id and type, so a change made
+     * in another tab is noticed, including a shown field deleted and added again under the same name
+     */
     public function layoutKey()
     {
-        return substr(sha1(implode(',', array_column($this->columns, 'key'))), 0, 12);
+        $keys = array();
+        foreach ($this->columns as $column) {
+            $keys[] = isset($column['field']['id']) ? $column['key'] . ':' . $column['field']['id'] . ':' . $column['field']['type_id'] : $column['key'];
+        }
+        return substr(sha1(implode(',', $keys)), 0, 12);
     }
 
     /*
@@ -100,9 +112,9 @@ abstract class ListColumns
      * characters DataTables ignored (thousands separators, currency signs, percent signs, and a few letters). Empty
      * values come first when ascending and last when descending, as DataTables placed them. Only the rows the list's
      * filters leave are checked, as DataTables only saw those: $from_sql is the list's ListQuery::fromSql() followed by
-     * the filter conditions. Call it before sortMap().
+     * the filter conditions, and $params their bound values. Call it before sortMap().
      */
-    public function useNumericSort(\PDO $pdo, $from_sql)
+    public function useNumericSort(\PDO $pdo, $from_sql, array $params = array())
     {
         foreach ($this->columns as $index => $column) {
             if (!isset($column['field']) || $column['field']['type_id'] != '2') continue;
@@ -113,10 +125,13 @@ abstract class ListColumns
                          "\u{20BA}", 'r', 'R', 'f', 'F', 'k', 'K', 'Ƀ', 'ƀ', 'Ξ', 'ξ') as $character) {
                 $plain = "REPLACE(" . $plain . ", '" . $character . "', '')";
             }
-            $counts = $pdo->query("
+            $stmt = $pdo->prepare("
                 SELECT SUM(" . $name . " != '') AS filled,
                        SUM(" . $name . " != '' AND " . $plain . " NOT REGEXP '^[[:space:]]*[-+]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?[[:space:]]*$') AS other
-                " . $from_sql)->fetch(\PDO::FETCH_ASSOC);
+                " . $from_sql);
+            $stmt->execute($params);
+            $counts = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
             if ((int) $counts['filled'] > 0 && (int) $counts['other'] === 0) {
                 $this->columns[$index]['sort'] = array($name . " != ''", '(' . $plain . ') + 0');
             }

@@ -46,7 +46,7 @@ class ExportStreamTest extends TestCase
         $this->pdo = new RecordingPdo();
         $this->export = new RecordingExport($this->pdo);
         $this->export->begin('index.php?oid=2');
-        $this->list = new DomainList($this->pdo, 1, '');
+        $this->list = new DomainList($this->pdo, 1, array());
     }
 
     protected function tearDown(): void
@@ -236,7 +236,7 @@ class ExportStreamTest extends TestCase
             }));
         $this->export = new RecordingExport($this->pdo);
         $this->export->begin('index.php');
-        $list = new DomainList($this->pdo, 1, '');
+        $list = new DomainList($this->pdo, 1, array());
         $export = $this->export;
 
         try {

@@ -64,6 +64,8 @@ if ($system->authCheckResult() !== 'valid') {
 // The request's shape: every value is a single value, and order is a short list of column and direction pairs
 $single_keys = array('draw', 'start', 'length', 'layout', 'oid', 'did', 'sslpid', 'sslpaid', 'ssltid', 'sslipid',
     'sslpcid', 'is_active', 'search_for', 'daterange');
+// Every custom field filter key (current field or not), cff, and cfk are single values too
+$single_keys = array_merge($single_keys, DomainMOD\CustomFieldFilter::incomingKeys($_GET));
 if (!DomainMOD\ListQuery::requestShapeOk($_GET, $single_keys)) $respond(400, array('error' => $generic_error));
 $search = $_GET['search'] ?? array();
 $order = $_GET['order'] ?? array();
@@ -84,16 +86,33 @@ $settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
 $page_sizes = DomainMOD\SslList::pageSizes($_SESSION['s_number_of_ssl_certs'] ?? 50);
 session_write_close();
 
+/*
+ * The two checks of this tab's table against a read of the custom fields, in order, as a 409 reply's body, or null when
+ * both pass: first the custom field filters' key (cfk, see CustomFieldFilter::endpointOk()), so a filtered field deleted
+ * or replaced since the page loaded is never filtered on (the filter reply, whose Reload drops the custom field
+ * filters), then the column layout, so Display Settings or a shown field changed since then is noticed (the display
+ * settings reply, whose Reload keeps every filter)
+ */
+$conflict = function (array $fields) use ($settings) {
+    $conflict = DomainMOD\CustomFieldFilter::endpointConflict($_GET, $fields, 'sslfd',
+        (new DomainMOD\SslListColumns($settings, $fields))->layoutKey());
+    if ($conflict === 'filter') {
+        return array('error' => _('A custom field in your filters was changed or deleted. Reload the page to see the list without your custom field filters.'),
+            'reload' => true, 'reason' => 'filter');
+    }
+    if ($conflict === 'layout') {
+        return array('error' => _('Your display settings have changed. Reload the page to see them.'), 'reload' => true);
+    }
+    return null;
+};
+
 try {
 
     $pdo = $deeb->cnxx;
-    $sslfd_columns = (new DomainMOD\CustomField())->getCustomFieldsSql('ssl_cert_fields', 'sslfd');
-    $columns = new DomainMOD\SslListColumns($settings, $sslfd_columns);
-
-    // Display Settings or the custom fields changed after this tab drew its table, so its columns no longer line up
-    if (($_GET['layout'] ?? '') !== $columns->layoutKey()) {
-        $respond(409, array('error' => _('Your display settings have changed. Reload the page to see them.'), 'reload' => true));
-    }
+    $sslfd_fields = DomainMOD\CustomField::readFilterFields($pdo, 'ssl_cert_fields');
+    $conflict_reply = $conflict($sslfd_fields);
+    if ($conflict_reply !== null) $respond(409, $conflict_reply);
+    $columns = new DomainMOD\SslListColumns($settings, $sslfd_fields);
 
     $sort_map = $columns->sortMap();
     if (count($order) > count($sort_map)) $respond(400, array('error' => $generic_error));
@@ -105,15 +124,21 @@ try {
     $state = DomainMOD\SslList::normalizeState($_GET);
     list($start_date, $end_date) = $date->splitAndCheckRange($sanitize->text($_GET['daterange'] ?? ''));
 
-    $ssl_list = new DomainMOD\SslList($pdo, $user_id, $sslfd_columns);
-    $filter_sql = DomainMOD\SslList::filterSql($ssl_list->filterParts($state, $search_for, $start_date, $end_date));
+    // The custom field filters, checked as the page checks them, as bound parameters
+    $cf = new DomainMOD\CustomFieldFilter($sslfd_fields, 'sslfd');
+    $cf_state = $cf->normalize($_GET);
+    $cf_filter = $cf->conditions($cf_state);
+
+    $ssl_list = new DomainMOD\SslList($pdo, $user_id, $sslfd_fields);
+    $filter_sql = DomainMOD\SslList::filterSql($ssl_list->filterParts($state, $search_for, $start_date, $end_date))
+        . $cf_filter['sql'];
     $search_sql = $ssl_list->searchSql($search_tokens, $columns->searchExpressions());
 
     // Text custom fields of numbers sort as numbers, checked over the filtered certificates, as DataTables did
-    $columns->useNumericSort($pdo, $ssl_list->fromSql() . $filter_sql);
+    $columns->useNumericSort($pdo, $ssl_list->fromSql() . $filter_sql, $cf_filter['params']);
     $sort_map = $columns->sortMap();
 
-    list($records_total, $records_filtered) = $ssl_list->counts($filter_sql, $search_sql);
+    list($records_total, $records_filtered) = $ssl_list->counts($filter_sql, $search_sql, $cf_filter['params']);
 
     $start = DomainMOD\SslList::checkedStart($_GET['start'] ?? 0);
     $length = DomainMOD\SslList::checkedLength($_GET['length'] ?? '', $page_sizes);
@@ -121,8 +146,18 @@ try {
     if ($start < $records_filtered) {
         $order_sql = DomainMOD\SslList::orderSql($order_requests, $sort_map, $columns->defaultOrder());
         $today = $time->timeBasic();
-        foreach ($ssl_list->rows($filter_sql, $search_sql, $order_sql, $start, $length) as $row) {
+        foreach ($ssl_list->rows($filter_sql, $search_sql, $order_sql, $start, $length, $cf_filter['params']) as $row) {
             $data[] = $columns->cells($row, $today);
+        }
+    }
+
+    // A filtered field deleted and added again under the same name while the queries ran wouldn't make them fail, so
+    // with custom field filters on, the fields are read once more, and when they've changed, the checks run again
+    if ($cf_state) {
+        $fields_now = DomainMOD\CustomField::readFilterFields($pdo, 'ssl_cert_fields');
+        if (!$cf->sameFields($fields_now)) {
+            $conflict_reply = $conflict($fields_now);
+            if ($conflict_reply !== null) $respond(409, $conflict_reply);
         }
     }
 
@@ -131,6 +166,18 @@ try {
         'recordsFiltered' => $records_filtered, 'data' => $data));
 
 } catch (Throwable $e) {
+
+    // A custom field deleted after the fields were read makes a query fail on its missing column: the checks run again
+    // on a fresh read, and when both pass (a shown field that isn't filtered went), it's the display settings reply
+    if (DomainMOD\CustomFieldFilter::fieldsChangedError($e)) {
+        try {
+            $conflict_reply = $conflict(DomainMOD\CustomField::readFilterFields($deeb->cnxx, 'ssl_cert_fields'));
+        } catch (Throwable $ignored) {
+            $conflict_reply = null;
+        }
+        $respond(409, $conflict_reply ?? array('error' => _('Your display settings have changed. Reload the page to see them.'),
+            'reload' => true));
+    }
 
     (new DomainMOD\Log('/ssl/list-data.php'))->error('Unable to load the SSL Certificates list', array('Error' => $e->getMessage()));
     $respond(500, array('error' => $generic_error));

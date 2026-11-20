@@ -39,12 +39,28 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $_SESSION['s_raw_list_type'] = $_SESSION['s_raw_list_type'] ?? '';
-if ($_SESSION['s_raw_list_type'] == 'domains') {
+
+/*
+ * The Domains and SSL Certificates lists' Raw List links name the list they were made for: its saved query and bound
+ * values (dt_list, see ListQuery::savedListKey()), its type (dt_type), and its custom field filters' key (dt_cfk, see
+ * CustomFieldFilter::filterKey()). With a search in the table, they also carry the search box (dt_search) and the
+ * column layout (dt_layout), added by js/server-list.js, so the list matches the rows the table shows. A link is only
+ * run on the saved list it was made for, with the same custom fields, never on one another tab has saved since, and its
+ * page title and messages follow its own type. A plain link with none of them (an old bookmark) runs the saved list
+ * unchecked, as before.
+ */
+$raw_list_link = isset($_GET['dt_list']) && is_string($_GET['dt_list']);
+$raw_list_type = $_SESSION['s_raw_list_type'];
+if ($raw_list_link && in_array($_GET['dt_type'] ?? null, array('domains', 'ssl-certs'), true)) {
+    $raw_list_type = $_GET['dt_type'];
+}
+
+if ($raw_list_type == 'domains') {
 
     $page_title = _('Domains (Raw List)');
     $software_section = "domains";
 
-} elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
+} elseif ($raw_list_type == 'ssl-certs') {
 
     $page_title = _('SSL Certificates (Raw List)');
     $software_section = "ssl-certs";
@@ -64,71 +80,63 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 // keyboard scrolls it already), so the list needs no tabindex of its own.
 // The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
 unset($_SESSION['s_raw_list_query']);
-/*
- * The Domains and SSL Certificates lists' links carry the table's search box when it holds a search (dt_search, with
- * dt_layout and dt_list, added by js/server-list.js), so the list matches the rows the table shows. It's only run on
- * the saved list the link was made for, with the same columns, never on one another tab has saved since.
- */
-$table_search = array('sql' => '', 'params' => array(), 'stale' => false);
-$list_query = null;
-$list_settings = array();
-// The custom fields are only read for a table search on the saved list its link was made for, which can match them
-// (the names alone never need them)
-$raw_list_search = ($_GET['dt_search'] ?? '') !== '';
-$raw_list_search_saved = $raw_list_search && isset($_SESSION['s_raw_list_unordered_sql'])
-    && ($_GET['dt_list'] ?? '') === DomainMOD\ListQuery::savedListKey($_SESSION['s_raw_list_unordered_sql']);
-if ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
+
+if ($raw_list_type == 'ssl-certs') {
 
     $list_changed = _('The SSL Certificates list has changed since you searched it. Please reload the list and search again.');
     $list_reopen = _('The SSL Certificates list has changed since you opened it. Please reload the list and open Raw List again.');
-    $list_query = new DomainMOD\SslList($pdo, $_SESSION['s_user_id'] ?? 0,
-        $raw_list_search_saved ? (new DomainMOD\CustomField())->getCustomFieldsSql('ssl_cert_fields', 'sslfd') : '');
+    $list_class = 'DomainMOD\SslList';
+    $list_fields_table = 'ssl_cert_fields';
+    $list_alias = 'sslfd';
     $list_settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
 
 } else {
 
     $list_changed = _('The Domains list has changed since you searched it. Please reload the list and search again.');
     $list_reopen = _('The Domains list has changed since you opened it. Please reload the list and open Raw List again.');
-    if ($_SESSION['s_raw_list_type'] == 'domains') {
-
-        $list_query = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0,
-            $raw_list_search_saved ? (new DomainMOD\CustomField())->getCustomFieldsSql('domain_fields', 'dfd') : '');
-        $list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
-
-    }
-
-}
-
-if ($raw_list_search) {
-
-    if ($list_query !== null && $raw_list_search_saved) {
-
-        $table_search = $list_query->tableSearchSql($_GET['dt_search'], $_GET['dt_layout'] ?? '', $list_settings);
-
-    } else {
-
-        $table_search['stale'] = true;
-
-    }
+    $list_class = $raw_list_type == 'domains' ? 'DomainMOD\DomainList' : null;
+    $list_fields_table = 'domain_fields';
+    $list_alias = 'dfd';
+    $list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
 
 }
 
 // What's needed from the session is copied first, so the session can be closed before a long list is read, and the
 // user's other tabs aren't held up
+$raw_list_search = ($_GET['dt_search'] ?? '') !== '';
 $raw_list_saved = isset($_SESSION['s_raw_list_sql']);
 $raw_list_from_sql = $_SESSION['s_raw_list_from_sql'] ?? null;
+$raw_list_params = is_array($_SESSION['s_raw_list_params'] ?? null) ? $_SESSION['s_raw_list_params'] : array();
+$raw_list_filter_keys = is_array($_SESSION['s_raw_list_filter_keys'] ?? null) ? $_SESSION['s_raw_list_filter_keys'] : array();
+$raw_list_saved_type = $_SESSION['s_raw_list_type'];
 session_write_close();
 
-if ($table_search['stale']) {
+// The message the list shows instead, when its link no longer matches the saved list: "searched" with a table search,
+// "opened" without one
+$raw_list_mismatch = $raw_list_search ? $list_changed : $list_reopen;
+$raw_list_message = '';
+$raw_list_status = DomainMOD\ListQuery::rawLinkStatus($_GET, $raw_list_type, $raw_list_saved_type, $raw_list_from_sql,
+    $raw_list_params);
+if ($raw_list_status === 'mismatch') {
 
-    echo htmlspecialchars($list_changed, ENT_QUOTES, 'UTF-8') . "<BR>";
+    $raw_list_message = $raw_list_mismatch;
 
-} elseif ($list_query !== null && $raw_list_saved && $raw_list_from_sql === null) {
+} elseif ($raw_list_status === 'unchecked' && $raw_list_search) {
+
+    $raw_list_message = $list_changed;
+
+}
+
+if ($raw_list_message !== '') {
+
+    echo htmlspecialchars($raw_list_message, ENT_QUOTES, 'UTF-8') . "<BR>";
+
+} elseif ($list_class !== null && $raw_list_saved && $raw_list_from_sql === null) {
 
     // Saved by a version before the list was read in chunks, so it can't be read only by its names
     echo htmlspecialchars($list_reopen, ENT_QUOTES, 'UTF-8') . "<BR>";
 
-} elseif ($list_query !== null && $raw_list_from_sql !== null) {
+} elseif ($list_class !== null && $raw_list_from_sql !== null) {
 
     // Every output buffer that can be ended is ended, so a host that buffers output can't hold the whole list
     DomainMOD\Export::endOutputBuffers();
@@ -136,6 +144,8 @@ if ($table_search['stale']) {
     // The names only, in the list's export order, read in chunks inside one read-only snapshot (see
     // ListQuery::exportKeyBatches()), so a long list can't skip or repeat a row between chunks, or use up PHP's memory
     $in_snapshot = false;
+    $printed = false;
+    $list_query = null;
     $list_stopped = _('The list stopped early because of an error. Please reload the page to try again.');
 
     // An error PHP can't catch (such as its time limit) part way through still ends the list with the message
@@ -148,20 +158,57 @@ if ($table_search['stale']) {
 
     try {
 
+        $list_query = new $list_class($pdo, $_SESSION['s_user_id'] ?? 0, array());
         $list_query->beginSnapshot();
         $in_snapshot = true;
 
-        foreach ($list_query->exportKeyBatches($raw_list_from_sql . $table_search['sql'], $table_search['params'], null,
-            false) as $keys) {
+        /*
+         * The custom fields as the snapshot has them, read before anything is printed: the custom field filters' key
+         * must still match the link's (a filtered field deleted and added again under the same name keeps its column,
+         * so nothing else would notice), and the table search's columns and its layout check come from the same read.
+         * Inside the snapshot they can't change again.
+         */
+        $table_search = array('sql' => '', 'params' => array(), 'stale' => false);
+        $list_ok = true;
+        if ($raw_list_link) {
 
-            foreach ($keys as $key) {
+            $list_fields = DomainMOD\CustomField::readFilterFields($pdo, $list_fields_table);
+            $list_query = new $list_class($pdo, $_SESSION['s_user_id'] ?? 0, $list_fields);
 
-                echo $key['ks_name'] . "<BR>";
+            if (!hash_equals((new DomainMOD\CustomFieldFilter($list_fields, $list_alias))->filterKey($raw_list_filter_keys),
+                $_GET['dt_cfk'])) {
+
+                $list_ok = false;
+
+            } elseif ($raw_list_search) {
+
+                $table_search = $list_query->tableSearchSql($_GET['dt_search'], $_GET['dt_layout'] ?? '', $list_settings);
+                if ($table_search['stale']) $list_ok = false;
 
             }
 
-            DomainMOD\Export::flushOutput();
-            DomainMOD\Export::resetTimeLimit();
+        }
+
+        if ($list_ok) {
+
+            foreach ($list_query->exportKeyBatches($raw_list_from_sql . $table_search['sql'],
+                $raw_list_params + $table_search['params'], null, false) as $keys) {
+
+                foreach ($keys as $key) {
+
+                    echo $key['ks_name'] . "<BR>";
+                    $printed = true;
+
+                }
+
+                DomainMOD\Export::flushOutput();
+                DomainMOD\Export::resetTimeLimit();
+
+            }
+
+        } else {
+
+            echo htmlspecialchars($raw_list_mismatch, ENT_QUOTES, 'UTF-8') . "<BR>";
 
         }
 
@@ -174,7 +221,7 @@ if ($table_search['stale']) {
 
         $list_streaming = false;
 
-        if ($in_snapshot) {
+        if ($in_snapshot && $list_query !== null) {
 
             try {
                 $list_query->endSnapshot(false);
@@ -183,11 +230,21 @@ if ($table_search['stale']) {
 
         }
 
-        echo htmlspecialchars($list_stopped, ENT_QUOTES, 'UTF-8') . "<BR>";
+        // A custom field filter's column that's gone (or a table whose definition changed after the snapshot began)
+        // before any name was printed means the list has changed, not that it broke
+        if (!$printed && DomainMOD\CustomFieldFilter::fieldsChangedError($e)) {
 
-        try {
-            (new DomainMOD\Log('/raw.php'))->critical('The Raw List stopped early', array('Error' => $e->getMessage()));
-        } catch (Throwable $ignored) {
+            echo htmlspecialchars($raw_list_mismatch, ENT_QUOTES, 'UTF-8') . "<BR>";
+
+        } else {
+
+            echo htmlspecialchars($list_stopped, ENT_QUOTES, 'UTF-8') . "<BR>";
+
+            try {
+                (new DomainMOD\Log('/raw.php'))->critical('The Raw List stopped early', array('Error' => $e->getMessage()));
+            } catch (Throwable $ignored) {
+            }
+
         }
 
     }

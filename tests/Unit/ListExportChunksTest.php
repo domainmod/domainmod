@@ -24,6 +24,7 @@ namespace DomainMOD\Tests\Unit;
 use DomainMOD\DomainList;
 use DomainMOD\ListQuery;
 use DomainMOD\SslList;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\RecordingPdo;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -131,7 +132,7 @@ class ListExportChunksTest extends TestCase
 
     private function domainList()
     {
-        return new DomainList($this->pdo, 1, ', dfd.project_code');
+        return new DomainList($this->pdo, 1, FieldRows::of(', dfd.project_code'));
     }
 
     // Every row the reader yields, as array(asset id, field data row id), in order
@@ -321,7 +322,7 @@ class ListExportChunksTest extends TestCase
     public function testEachRowsSizeCountsItsNotesAndCustomFields()
     {
         $this->keys = $this->assets(1);
-        $this->exported(new SslList($this->pdo, 1, ', sslfd.order_ref, sslfd.issued_at'), 1000);
+        $this->exported(new SslList($this->pdo, 1, FieldRows::of(', sslfd.order_ref, sslfd.issued_at')), 1000);
 
         $this->assertStringContainsString('(COALESCE(LENGTH(sslc.notes), 0) + COALESCE(LENGTH(sslfd.order_ref), 0) + '
             . 'COALESCE(LENGTH(sslfd.issued_at), 0) + ' . ListQuery::EXPORT_ROW_BYTES . ') AS ks_bytes',
@@ -389,7 +390,7 @@ class ListExportChunksTest extends TestCase
                 return $rows;
             }));
 
-        $this->assertSame($expected, (new SslList($pdo, 1, ''))->exportKeysPerChunk());
+        $this->assertSame($expected, (new SslList($pdo, 1, array()))->exportKeysPerChunk());
     }
 
 } //@formatter:on

@@ -56,11 +56,12 @@ class DomainListColumns extends ListColumns
     const NAME_KEY = 'domain';
 
     /*
-     * $settings is sessionCopy()'s array. $current_fields is the custom field columns that exist now
-     * (CustomField::getCustomFieldsSql('domain_fields', 'dfd')): the session can still list a field that's since been
-     * deleted, which would otherwise read a missing column.
+     * $settings is sessionCopy()'s array. $fields is the list's custom fields as they exist now
+     * (CustomField::getFilterFields('domain_fields')), which give each custom field column its title and type: the
+     * session's list (s_cdf_data) only says which ones are shown, and can still list a field that's since been deleted
+     * or replaced.
      */
-    public function __construct(array $settings, $current_fields_sql)
+    public function __construct(array $settings, array $fields)
     {
         $this->settings = $settings;
         $this->layout = new Layout();
@@ -77,7 +78,7 @@ class DomainListColumns extends ListColumns
             }
         }
 
-        $this->columns = $this->withCustomFields($columns, $settings['s_cdf_data'] ?? array(), $current_fields_sql);
+        $this->columns = $this->withCustomFields($columns, $settings['s_cdf_data'] ?? array(), $fields);
     }
 
     /*

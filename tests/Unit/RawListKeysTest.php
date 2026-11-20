@@ -24,6 +24,7 @@ namespace DomainMOD\Tests\Unit;
 use DomainMOD\DomainList;
 use DomainMOD\ListQuery;
 use DomainMOD\SslList;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\RecordingPdo;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -51,7 +52,7 @@ class RawListKeysTest extends TestCase
     {
         $pdo = new RecordingPdo(array('AS ks_expiry' => array(array(array('ks_expiry' => '2027-01-01',
             'ks_name' => 'a', 'ks_id' => 1, 'ks_field_id' => 1, 'ks_bytes' => 10)))));
-        $list = new $class($pdo, 1, $field_columns);
+        $list = new $class($pdo, 1, FieldRows::of($field_columns));
         $saved_from_sql = $list->fromSql() . " AND 1 = 1";
 
         $names = array();

@@ -27,6 +27,12 @@ $flatpickr_codes = array('ar_SA' => 'ar', 'bn_BD' => 'bn', 'de_DE' => 'de', 'es_
     'nl_NL' => 'nl', 'pl_PL' => 'pl', 'pt_BR' => 'pt', 'pt_PT' => 'pt', 'ru_RU' => 'ru', 'tr_TR' => 'tr',
     'vi_VN' => 'vn', 'zh_CN' => 'zh', 'zh_TW' => 'zh-tw');
 $flatpickr_code = $flatpickr_codes[substr($_SESSION['s_default_language'] ?? '', 0, 5)] ?? 'default';
+
+// The inputs that get a date range picker, by name: daterange, unless the page sets $date_range_fields (such as the
+// lists' date custom field filters), each escaped for a CSS attribute selector
+$date_range_selector = implode(', ', array_map(function ($name) {
+    return 'input[name="' . addcslashes((string) $name, '"\\') . '"]';
+}, isset($date_range_fields) && is_array($date_range_fields) ? $date_range_fields : array('daterange')));
 ?>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/flatpickr/flatpickr.min.js'); ?>"></script>
 <?php if ($flatpickr_code !== 'default') { ?>
@@ -36,7 +42,7 @@ $flatpickr_code = $flatpickr_codes[substr($_SESSION['s_default_language'] ?? '',
     // The field's value is always a whole range, YYYY-MM-DD - YYYY-MM-DD (Date::splitAndCheckRange() reads the first
     // and last ten characters), or empty for no date filter. A range left half-picked when the calendar closes is
     // cleared, and picking the same day twice gives a one-day range.
-    document.querySelectorAll('input[name="daterange"]').forEach(function (input) {
+    document.querySelectorAll(<?php echo json_encode($date_range_selector, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>).forEach(function (input) {
 
         // A finished range is always written here, since Flatpickr writes a one-day range as a single date
         function writeRange(selected_dates, picker) {

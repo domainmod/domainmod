@@ -39,6 +39,8 @@ class FilterToolbar
     private $base_url;
     private $reset_url;
     private $filters = array();
+    private $carried = array();
+    private $carried_state = array();
 
     // $panel_id is the panel's id (such as domain-filters), $base_url the list's address (filters are added as a query
     // string), and $reset_url the address that clears every filter
@@ -80,6 +82,21 @@ class FilterToolbar
         );
     }
 
+    /*
+     * A key every address url() makes carries (and so every chip, the expand=1 link, stateUrl(), and exportUrl()),
+     * without a chip or a place in the count, such as the custom field set's key (cff)
+     */
+    public function carry($key, $value)
+    {
+        $this->carried[$key] = (string) $value;
+    }
+
+    // A key only stateUrl() and exportUrl() carry, beside the carry() keys, such as the custom field filters' key (cfk)
+    public function carryState($key, $value)
+    {
+        $this->carried_state[$key] = (string) $value;
+    }
+
     public function isActive($key)
     {
         return isset($this->filters[$key]);
@@ -97,6 +114,9 @@ class FilterToolbar
         foreach ($this->filters as $key => $filter) {
             if (!in_array($key, $without, true)) $query[$key] = $filter['value'];
         }
+        foreach ($this->carried as $key => $value) {
+            $query[$key] = $value;
+        }
         foreach ($extra as $key => $value) {
             $query[$key] = $value;
         }
@@ -107,15 +127,22 @@ class FilterToolbar
     /*
      * The list's address for the current state, always carrying $keyword_key and $range_key, empty when they're off, so
      * whatever reads it (an export, the no-JavaScript pager, or the list's data endpoint) takes them from its own
-     * request rather than the session, and another tab's filters can't leak in. $extra is added after them.
+     * request rather than the session, and another tab's filters can't leak in. The carryState() keys and $extra are
+     * added after them, and the filters in $without are left out.
      */
-    public function stateUrl($keyword_key = 'search_for', $range_key = 'daterange', array $extra = array())
+    public function stateUrl($keyword_key = 'search_for', $range_key = 'daterange', array $extra = array(), array $without = array())
     {
         $blanks = array();
-        if (!$this->isActive($keyword_key)) $blanks[$keyword_key] = '';
-        if (!$this->isActive($range_key)) $blanks[$range_key] = '';
+        if (!$this->isActive($keyword_key) || in_array($keyword_key, $without, true)) $blanks[$keyword_key] = '';
+        if (!$this->isActive($range_key) || in_array($range_key, $without, true)) $blanks[$range_key] = '';
 
-        return $this->url(array(), array_merge($blanks, $extra));
+        return $this->url($without, array_merge($blanks, $this->carried_state, $extra));
+    }
+
+    // The keys of the active filters, such as for leaving a group of them out of stateUrl()
+    public function activeKeys()
+    {
+        return array_keys($this->filters);
     }
 
     // The export address for the current state (see stateUrl())

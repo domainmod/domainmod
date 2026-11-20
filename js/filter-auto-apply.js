@@ -31,6 +31,10 @@
  *   picker clears a half-picked one), not when the first day of a range is picked.
  * - Moving to the Apply Filters button, out of the panel, or closing the panel doesn't apply a changed text field by
  *   itself: Apply Filters submits it as before, and leaving or closing the panel leaves it as before.
+ * - A custom field's two controls (cf_<field> and its Filled In menu, cfe_<field>) are paired, whether or not the change
+ *   applies at once: picking Filled in or Empty clears the value (a date range through its picker), and entering a value
+ *   (a whole range, for a date) sets the menu back to Any, so the last change always wins. A change counts as made when
+ *   either of the pair differs from how the page loaded.
  * The signal to open the panel again goes into sessionStorage for the next page load only (and only on the same list
  * within a minute), so it never reaches an address, a chip, the export, Clear all, the paging links, or a bookmark.
  * Without JavaScript, or on the no-JavaScript page (expand=1), the form works as before with Apply Filters.
@@ -52,6 +56,62 @@
     var initial = {};
     controls.forEach(function (control) {
         initial[control.name] = control.value;
+    });
+
+    // A custom field control's partner: the Filled In menu for a value control, and the value control for the menu
+    var partner = function (control) {
+        var name = control.name;
+        var other = name.indexOf('cfe_') === 0 ? 'cf_' + name.slice(4) : (name.indexOf('cf_') === 0 ? 'cfe_' + name.slice(3) : '');
+        if (other === '') return null;
+        var found = null;
+        controls.forEach(function (candidate) {
+            if (!found && candidate.name === other) found = candidate;
+        });
+        return found;
+    };
+
+    // Whether a control, or its custom field partner, has changed since the page loaded
+    var changed = function (control) {
+        var other = partner(control);
+        return control.value !== initial[control.name] || (other !== null && other.value !== initial[other.name]);
+    };
+
+    // Picking Filled in or Empty clears the field's value, and entering a value sets its menu back to Any
+    controls.forEach(function (control) {
+        var other = partner(control);
+        if (other === null) return;
+        if (control.name.indexOf('cfe_') === 0) {
+            control.addEventListener('change', function () {
+                if (control.value !== 'filled' && control.value !== 'empty' || other.value === '') return;
+                // Through the picker for a date range, so a calendar that's open can't write the range back as it closes
+                if (other._flatpickr) {
+                    other._flatpickr.clear();
+                } else {
+                    other.value = '';
+                }
+            });
+        } else if (other.tagName === 'SELECT') {
+            if (control._flatpickr) {
+                // A range counts as entered only once its calendar closes with two days (the page's own date range code
+                // clears a half-picked one)
+                control._flatpickr.config.onClose.push(function (selected_dates) {
+                    if (selected_dates.length === 2 && control.value !== '') other.value = '';
+                });
+            } else {
+                // Only text that isn't blank, since the list ignores a blank value (blank as PHP's trim() sees it, so a
+                // non-breaking space counts as text on both sides), and in a date range box (when its picker didn't
+                // load) only a whole range, since the list ignores anything else. Text still being composed (such as
+                // Japanese or Chinese input) counts once it's committed.
+                var is_range = control.closest('.domainmod-filter-range') !== null;
+                var entered = function (event) {
+                    if (event.isComposing) return;
+                    var value = control.value.replace(/^[ \t\n\r\0\x0B]+|[ \t\n\r\0\x0B]+$/g, '');
+                    if (is_range ? /^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/.test(control.value) : value !== '') other.value = '';
+                };
+                control.addEventListener('input', entered);
+                control.addEventListener('change', entered);
+            }
+        }
     });
 
     var readSignal = function () {
@@ -90,7 +150,7 @@
     // Applied once the focus has settled, so a text field left for the Apply Filters button, for somewhere outside the
     // panel, or by closing the panel (its close button, Escape, or a click on the backdrop) behaves as it did before
     var applySoon = function (control) {
-        if (submitting || control.value === initial[control.name]) return;
+        if (submitting || !changed(control)) return;
         setTimeout(function () {
             if (!panel.classList.contains('show') || panel.classList.contains('hiding')) return;
             var active = document.activeElement;
@@ -115,7 +175,7 @@
             var waiting = false;
             control.addEventListener('keydown', function (event) {
                 if (event.key === 'Enter') {
-                    if (control.value !== initial[control.name]) {
+                    if (changed(control)) {
                         event.preventDefault();
                         submitFrom(control);
                     }
@@ -181,7 +241,12 @@
         controls.forEach(function (candidate) {
             if (!control && candidate.name === signal.name) control = candidate;
         });
-        if (control) {
+        // A control inside a closed section (the last custom field filter was just cleared, so the section was drawn
+        // closed) can't take focus, so its section's summary does
+        var closed = control ? control.closest('details:not([open])') : null;
+        if (closed && closed.querySelector('summary')) {
+            closed.querySelector('summary').focus({preventScroll: true});
+        } else if (control) {
             control.focus({preventScroll: true});
             // Focus opens the date range picker's calendar, which isn't wanted on arrival
             if (control._flatpickr) control._flatpickr.close();

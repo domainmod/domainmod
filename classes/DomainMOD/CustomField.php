@@ -230,6 +230,50 @@ class CustomField
         return $columns;
     }
 
+    /*
+     * A list's custom fields as rows (id, name, field_name, and type_id), in name order, read in one query, for the
+     * list's SELECT columns (fieldsSql()), its custom field columns, and its custom field filters (CustomFieldFilter),
+     * so they all describe the same fields. $table_name is domain_fields or ssl_cert_fields. A field whose database
+     * name isn't letters and underscores is left out, since its name goes into the list's SQL.
+     */
+    public function getFilterFields($table_name)
+    {
+        return self::readFilterFields($this->deeb->cnxx, $table_name);
+    }
+
+    // getFilterFields() on a given connection, so a page can read the fields inside its own snapshot or transaction
+    public static function readFilterFields(\PDO $pdo, $table_name)
+    {
+        if (!in_array($table_name, array('domain_fields', 'ssl_cert_fields'), true)) {
+            throw new \InvalidArgumentException('Unknown custom field table');
+        }
+
+        $stmt = $pdo->query("
+            SELECT id, `name`, field_name, type_id
+            FROM " . $table_name . "
+            ORDER BY `name` ASC, id ASC");
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        $fields = array();
+        foreach ($rows as $row) {
+            if (!preg_match('/^[a-zA-Z_]+$/', (string) $row['field_name'])) continue;
+            $fields[] = array('id' => (int) $row['id'], 'name' => (string) $row['name'],
+                'field_name' => (string) $row['field_name'], 'type_id' => (int) $row['type_id']);
+        }
+        return $fields;
+    }
+
+    // The SELECT columns for a list's custom field rows (see getFilterFields()), as getCustomFieldsSql() writes them
+    public static function fieldsSql(array $fields, $column_prefix)
+    {
+        $columns = '';
+        foreach ($fields as $field) {
+            $columns .= ", " . $column_prefix . "." . $field['field_name'];
+        }
+        return $columns;
+    }
+
     public function getCDFData()
     {
         $custom_domain_field_data = array();

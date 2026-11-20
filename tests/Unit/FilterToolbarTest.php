@@ -169,4 +169,25 @@ class FilterToolbarTest extends TestCase
         $this->assertStringNotContainsString('expand=1', $html);
     }
 
+    // The custom field set's key (cff) goes on every address, and the filters' key (cfk) only on the state ones
+    public function testCarriedKeysHaveNoChipAndNoCount()
+    {
+        $toolbar = $this->toolbar();
+        $toolbar->addFilter('rid', 5, 0, 'Registrar');
+        $toolbar->addFilter('cf_note', 'x', '', '"x"', 'Note');
+        $toolbar->carry('cff', 'abc');
+        $toolbar->carryState('cfk', 'def');
+
+        $this->assertSame(2, $toolbar->activeCount());
+        $this->assertSame('index.php?rid=5&cf_note=x&cff=abc', $toolbar->url());
+        $this->assertSame('index.php?rid=5&cff=abc', $toolbar->url(array('cf_note')));
+        $this->assertSame('index.php?rid=5&cf_note=x&cff=abc&search_for=&daterange=&cfk=def', $toolbar->stateUrl());
+        $this->assertSame('index.php?rid=5&cf_note=x&cff=abc&search_for=&daterange=&cfk=def&export_data=1', $toolbar->exportUrl());
+        // The state without some filters (the custom field ones, for the filter Reload link)
+        $this->assertSame('index.php?rid=5&cff=abc&search_for=&daterange=&cfk=def',
+            $toolbar->stateUrl('search_for', 'daterange', array(), array('cf_note')));
+        $this->assertStringNotContainsString('cfk', $toolbar->toolbar());
+        $this->assertSame(array('rid', 'cf_note'), $toolbar->activeKeys());
+    }
+
 } //@formatter:on

@@ -54,11 +54,12 @@ class SslListColumns extends ListColumns
     const NAME_KEY = 'name';
 
     /*
-     * $settings is sessionCopy()'s array. $current_fields_sql is the custom field columns that exist now
-     * (CustomField::getCustomFieldsSql('ssl_cert_fields', 'sslfd')): the session can still list a field that's since
-     * been deleted, which would otherwise read a missing column.
+     * $settings is sessionCopy()'s array. $fields is the list's custom fields as they exist now
+     * (CustomField::getFilterFields('ssl_cert_fields')), which give each custom field column its title and type: the
+     * session's list (s_csf_data) only says which ones are shown, and can still list a field that's since been deleted
+     * or replaced.
      */
-    public function __construct(array $settings, $current_fields_sql)
+    public function __construct(array $settings, array $fields)
     {
         $this->settings = $settings;
         $this->layout = new Layout();
@@ -74,7 +75,7 @@ class SslListColumns extends ListColumns
             }
         }
 
-        $this->columns = $this->withCustomFields($columns, $settings['s_csf_data'] ?? array(), $current_fields_sql);
+        $this->columns = $this->withCustomFields($columns, $settings['s_csf_data'] ?? array(), $fields);
     }
 
     /*

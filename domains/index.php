@@ -215,10 +215,48 @@ if ($segid !== 0) {
 
 }
 
+/*
+ * The list's custom fields, read once, so the SELECT, the columns, Export, and the custom field filters all describe
+ * the same fields. The custom field filters come from the request only, never the session: the panel's form on a POST,
+ * otherwise the address, never the two mixed (the form posts to an address that can carry older ones), and for an
+ * export only its own address. A request whose fields have changed since its address or form was made (see
+ * CustomFieldFilter::requestOk()) loses them, and an export with custom field filters must carry their key (cfk), so
+ * an old tab never turns a replaced field's old value into a new filter.
+ */
+$dfd_fields = $customField->getFilterFields('domain_fields');
+$cf = new DomainMOD\CustomFieldFilter($dfd_fields, 'dfd');
+$cf_request = ($_SERVER['REQUEST_METHOD'] == 'POST' && $export_data !== 1) ? $_POST : $_GET;
+$cf_changed_message = _("A custom field in your filters was changed or deleted, so the list isn't filtered by your custom field filters.");
+if (!$cf->requestOk($cf_request) || ($export_data === 1 && DomainMOD\CustomFieldFilter::hasFilterKeys($cf_request)
+        && !isset($cf_request['cfk']))) {
+
+    $_SESSION['s_message_danger'] .= $cf_changed_message . '<BR>';
+
+    // An export goes back to the list without them, with the message, rather than exporting an old filter
+    if ($export_data === 1) {
+
+        header('Location: index.php?' . http_build_query(array_diff_key(DomainMOD\CustomFieldFilter::withoutFilterKeys($back_filters),
+            array('cff' => true, 'cfk' => true))));
+        exit;
+
+    }
+
+    $cf_request = DomainMOD\CustomFieldFilter::withoutFilterKeys($cf_request);
+
+}
+$cf_state = $cf->normalize($cf_request, $cf_dropped);
+if ($cf_dropped) {
+    $_SESSION['s_message_danger'] .= _("Some custom field filters were left out because there are too many or they're too long. Use fewer or shorter ones.") . '<BR>';
+}
+$cf_filter = $cf->conditions($cf_state);
+$cf_keys = DomainMOD\CustomFieldFilter::requestKeys($cf_state);
+// The custom field filters' keys for the addresses the page makes, so the next request can tell whether their fields
+// have changed since (see CustomFieldFilter::requestOk())
+$cf_carry = $cf_state ? array('cff' => $cf->fieldsKey()) : array();
+
 // The list's filters as SQL, from the same class as the list's data endpoint (domains/list-data.php), so the first
 // page, the pages fetched afterwards, the counts, Export, and the Raw List all agree
-$dfd_columns = $customField->getCustomFieldsSql('domain_fields', 'dfd');
-$domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_columns);
+$domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_fields);
 $list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid, 'rid' => $rid,
     'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active);
 $filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date,
@@ -232,7 +270,8 @@ if ($segid !== 0) {
     try {
 
         $segment_flags = $domain_list->writeSegmentFlags($segid,
-            DomainMOD\DomainList::filterSql(array('segid_string' => '') + $filter_parts), $segment_list);
+            DomainMOD\DomainList::filterSql(array('segid_string' => '') + $filter_parts) . $cf_filter['sql'], $segment_list,
+            $cf_filter['params'], $cf_state ? $cf->fieldsKey() : null);
 
     } catch (Throwable $e) {
 
@@ -240,6 +279,28 @@ if ($segid !== 0) {
         $segment_flags = 'failed';
         (new DomainMOD\Log('/domains/index.php'))->error('Unable to update the segment flags',
             array('Segment ID' => $segid, 'Error' => $e->getMessage()));
+
+    }
+
+    // The custom fields changed while the flags were being written, so the page loads once more without the custom
+    // field filters (an export goes back to the list the same way), and the next load writes the flags without them
+    if ($segment_flags === 'fields_changed') {
+
+        $_SESSION['s_message_danger'] .= $cf_changed_message . '<BR>';
+        if ($export_data === 1) {
+
+            header('Location: index.php?' . http_build_query(array_diff_key(DomainMOD\CustomFieldFilter::withoutFilterKeys($back_filters),
+                array('cff' => true, 'cfk' => true))));
+
+        } else {
+
+            header('Location: index.php?' . http_build_query(array_merge($list_state,
+                array_intersect_key($_GET, array('start' => true, 'length' => true)),
+                array('search_for' => htmlspecialchars_decode($filter_search_for, ENT_QUOTES), 'daterange' => $daterange,
+                    'expand' => $expand))));
+
+        }
+        exit;
 
     }
 
@@ -258,7 +319,7 @@ if ($segid !== 0) {
             header('Location: index.php?' . http_build_query(array_merge($list_state,
                 array_intersect_key($_GET, array('start' => true, 'length' => true)),
                 array('search_for' => htmlspecialchars_decode($filter_search_for, ENT_QUOTES), 'daterange' => $daterange,
-                    'expand' => $expand, 'segreload' => 1))));
+                    'expand' => $expand), $cf_keys, $cf_carry, array('segreload' => 1))));
             exit;
 
         } else {
@@ -304,17 +365,21 @@ $raw_list_from_sql = $domain_list->fromSql() . "
           $raid_string
           $range_string
           $tld_string
-          $search_string";
+          $search_string" . $cf_filter['sql'];
 $raw_list_sql = $domain_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\DomainList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'domains';
 $_SESSION['s_raw_list_sql'] = $sql;
 $_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
 $_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
+// The custom field filters' bound values, and their keys, for raw.php's checks (see raw.php)
+$_SESSION['s_raw_list_params'] = $cf_filter['params'];
+$_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
-    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string;
+    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $cf_filter['sql'];
+$list_filter_params = $cf_filter['params'];
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
 
@@ -322,9 +387,12 @@ $list_has_search = $search_string != '';
 // own inside its snapshot, so they aren't read twice.
 if ($export_data !== 1) {
 
-    $total_rows = $domain_list->count($list_filter_sql);
+    $total_rows = $domain_list->count($list_filter_sql, $list_filter_params);
 
-    $grand_total = $pdo->query("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql)->fetchColumn();
+    $stmt = $pdo->prepare("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql);
+    $stmt->execute($list_filter_params);
+    $grand_total = $stmt->fetchColumn();
+    $stmt->closeCursor();
 
     $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
         $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
@@ -493,6 +561,17 @@ if ($export_data == 1) {
 
         }
 
+        // The custom field filters, by field name, as their chips show them (names and values are the user's own text)
+        foreach ($cf->describe($cf_state) as $cf_described) {
+
+            $row_contents = array(
+                $export->protectFormula($cf_described['name'] . ':'),
+                $export->protectFormula($cf_described['label'])
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
         unset($row_contents);
         $count = 0;
 
@@ -541,23 +620,33 @@ if ($export_data == 1) {
         // rows always agree, however the data changes in the meantime
         $export->startSnapshot($domain_list);
 
+        // The custom fields as the snapshot has them, which must be the ones the page read (the headings, the cells,
+        // and the filters all come from that read), then the full row query once with LIMIT 0, the first query of the
+        // custom field data, so a column that's gone fails here, before the file starts, rather than in a chunk
+        if (!$cf->sameFields(DomainMOD\CustomField::readFilterFields($pdo, 'domain_fields'))) {
+
+            throw new RuntimeException('The custom fields changed while the export was being made');
+
+        }
+        $domain_list->exportPreflight($list_filter_sql . $table_search['sql'], $table_search['params'] + $list_filter_params);
+
         // With a table search, the export's count and total cost are for the rows it holds, and the domains the search
         // leaves out count as filtered in a segment's results
         $table_search_excluded = 0;
         if ($table_search['sql'] !== '') {
 
-            list($list_rows, $total_rows) = $domain_list->counts($list_filter_sql, $table_search);
+            list($list_rows, $total_rows) = $domain_list->counts($list_filter_sql, $table_search, $list_filter_params);
             $table_search_excluded = $list_rows - $total_rows;
 
         } else {
 
-            $total_rows = $domain_list->count($list_filter_sql);
+            $total_rows = $domain_list->count($list_filter_sql, $list_filter_params);
 
         }
 
         $stmt = $pdo->prepare("SELECT SUM(d.total_cost * cc.conversion)" . $domain_list->fromSql() . $list_filter_sql
             . $table_search['sql']);
-        $stmt->execute($table_search['params']);
+        $stmt->execute($table_search['params'] + $list_filter_params);
         $grand_total = $currency->format($stmt->fetchColumn(), $_SESSION['s_default_currency_symbol'],
             $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
         $stmt->closeCursor();
@@ -591,25 +680,20 @@ if ($export_data == 1) {
             $totalrows_missing = $stmt->fetchColumn();
 
             // Worked out from this export's own filters, not read back from the segment's stored flags
-            $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql) + $table_search_excluded;
+            $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql, $list_filter_params)
+                + $table_search_excluded;
 
             $number_of_domains = $snapshot_segment->number_of_domains;
             $temp_name = $snapshot_segment->name;
 
         }
 
-        // The rows' custom field columns, read in the snapshot like the headings and types below, so a field added or
-        // deleted in the meantime can't leave a heading without its column
-        $export_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'],
-            $customField->getCustomFieldsSql('domain_fields', 'dfd'));
+        // The custom fields' columns, headings, and types all come from the page's one read of them (checked against
+        // the snapshot above)
+        $dfd_types = array_column($dfd_fields, 'type_id', 'field_name');
+        $dfd_columns_array = array_column($dfd_fields, 'field_name');
 
-        // Each custom field's type, by field name
-        $dfd_types = $pdo->query("
-            SELECT field_name, type_id
-            FROM domain_fields")->fetchAll(PDO::FETCH_KEY_PAIR);
-
-        // The custom fields, creation types, and users, read once rather than once for each domain
-        $dfd_columns_array = $customField->getCustomFields('domain_fields');
+        // The creation types and users, read once rather than once for each domain
         $creation_type_names = DomainMOD\Export::creationTypeNames($pdo);
         $user_names = DomainMOD\Export::userNames($pdo);
 
@@ -757,18 +841,10 @@ if ($export_data == 1) {
         $row_contents[$count++] = _('Updated');
         $row_contents[$count++] = DomainMOD\Format::toUpper(_('Custom Fields'));
 
-        $result_field = $pdo->query("
-            SELECT `name`
-            FROM domain_fields
-            ORDER BY `name` ASC")->fetchAll();
+        // The headings are the fields' names, the user's own text
+        foreach ($dfd_fields as $row_field) {
 
-        if ($result_field) {
-
-            foreach ($result_field as $row_field) {
-
-                $row_contents[$count++] = $row_field->name;
-
-            }
+            $row_contents[$count++] = $export->protectFormula($row_field['name']);
 
         }
 
@@ -776,7 +852,7 @@ if ($export_data == 1) {
 
         $export->chunkWritten();
 
-        foreach ($export_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params']) as $result) {
+        foreach ($domain_list->exportChunks($list_filter_sql . $table_search['sql'], $table_search['params'] + $list_filter_params) as $result) {
 
             foreach ($result as $row) {
 
@@ -883,7 +959,7 @@ if ($export_data == 1) {
                     foreach ($dfd_columns_array as $column) {
 
                         // An empty Date or Time Stamp field is blank, as the list shows it
-                        if (in_array($dfd_types[$column] ?? '', array('4', '5')) && DomainMOD\Time::isUnset($row->{$column})) {
+                        if (in_array((string) ($dfd_types[$column] ?? ''), array('4', '5'), true) && DomainMOD\Time::isUnset($row->{$column})) {
 
                             $row_contents[$count++] = '';
 
@@ -992,7 +1068,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
  * pager's links), checked as the endpoint checks them, and a page past the end (an old link, after domains were
  * deleted) moves to the last one. A page always starts on a multiple of its size, as DataTables' own paging does.
  */
-$list_columns = new DomainMOD\DomainListColumns(DomainMOD\DomainListColumns::sessionCopy($_SESSION), $dfd_columns);
+$list_columns = new DomainMOD\DomainListColumns(DomainMOD\DomainListColumns::sessionCopy($_SESSION), $dfd_fields);
 $list_page_sizes = DomainMOD\DomainList::pageSizes($_SESSION['s_number_of_domains']);
 $list_length = DomainMOD\DomainList::checkedLength($_GET['length'] ?? '', $list_page_sizes);
 $list_start = DomainMOD\DomainList::checkedStart($_GET['start'] ?? 0);
@@ -1001,7 +1077,7 @@ if ($list_start >= $total_rows) $list_start = $total_rows > 0 ? (int) (floor(($t
 
 $result = $total_rows > 0 ? $domain_list->rows($list_filter_sql, array('sql' => '', 'params' => array()),
     DomainMOD\DomainList::orderSql(array(), $list_columns->sortMap(), $list_columns->defaultOrder()), $list_start,
-    $list_length) : array();
+    $list_length, $list_filter_params) : array();
 
 if ($segid !== 0) {
 
@@ -1052,6 +1128,28 @@ if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD'
     $filter_toolbar->addFilter('daterange', $_SESSION['s_start_date'] . ' - ' . $_SESSION['s_end_date'], '',
         sprintf(_('Expiring: %1$s to %2$s'), $_SESSION['s_start_date'], $_SESSION['s_end_date']));
 }
+// The custom field filters' chips, and the keys that let the next request check their fields: the field set's (cff)
+// on every address, and the filters' own (cfk) on the state and export addresses
+$cf->addChips($filter_toolbar, $cf_state);
+if ($cf_state) {
+    $filter_toolbar->carry('cff', $cf->fieldsKey());
+    $filter_toolbar->carryState('cfk', $cf->filterKey(array_keys($cf_keys)));
+}
+// The date range picker's inputs (see date-range-picker-footer.inc.php): Expiring Between and the date custom fields
+$date_range_fields = array_merge(array('daterange'), $cf->dateKeys());
+
+// The custom field filters for the filter menus' queries, which don't join the custom field data, by the domain id
+// each query names (see CustomFieldFilter::subquery()), and a menu's rows with their bound values
+$cf_menu_d = $cf->subquery($cf_state, DomainMOD\DomainList::FIELD_DATA_TABLE, DomainMOD\DomainList::FIELD_DATA_ID, 'd.id');
+$cf_menu_domains = $cf->subquery($cf_state, DomainMOD\DomainList::FIELD_DATA_TABLE, DomainMOD\DomainList::FIELD_DATA_ID,
+    'domains.id');
+$menu_rows = function ($sql, array $cf_menu) use ($pdo) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($cf_menu['params']);
+    $rows = $stmt->fetchAll();
+    $stmt->closeCursor();
+    return $rows;
+};
 
 if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
@@ -1163,7 +1261,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_registrar = $pdo->query("
+                $result_registrar = $menu_rows("
                 SELECT r.id, r.name
                 FROM registrars AS r, domains AS d
                 WHERE r.id = d.registrar_id
@@ -1178,8 +1276,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY r.name
-                ORDER BY r.name asc")->fetchAll();
+                ORDER BY r.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('rid', _('Registrar'), '', '', '');
                 echo $form->showDropdownOption('', _('Registrar') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1269,7 +1368,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_account = $pdo->query("
+                $result_account = $menu_rows("
                 SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
                 FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
                 WHERE ra.registrar_id = r.id
@@ -1286,8 +1385,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY r.name, o.name, ra.username
-                ORDER BY r.name asc, o.name asc, ra.username asc")->fetchAll();
+                ORDER BY r.name asc, o.name asc, ra.username asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('raid', _('Registrar Account'), '', '', '');
                 echo $form->showDropdownOption('', _('Registrar Account') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1382,7 +1482,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_dns = $pdo->query("
+                $result_dns = $menu_rows("
                 SELECT dns.id, dns.name
                 FROM dns AS dns, domains AS d
                 WHERE dns.id = d.dns_id
@@ -1397,8 +1497,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY dns.name
-                ORDER BY dns.name asc")->fetchAll();
+                ORDER BY dns.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('dnsid', _('DNS Profile'), '', '', '');
                 echo $form->showDropdownOption('', _('DNS Profile') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1493,7 +1594,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_ip = $pdo->query("
+                $result_ip = $menu_rows("
                 SELECT ip.id, ip.name, ip.ip
                 FROM ip_addresses AS ip, domains AS d
                 WHERE ip.id = d.ip_id
@@ -1508,8 +1609,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY ip.name
-                ORDER BY ip.name asc")->fetchAll();
+                ORDER BY ip.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('ipid', _('IP Address'), '', '', '');
                 echo $form->showDropdownOption('', _('IP Address') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1605,7 +1707,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_hosting = $pdo->query("
+                $result_hosting = $menu_rows("
                 SELECT h.id, h.name
                 FROM hosting AS h, domains AS d
                 WHERE h.id = d.hosting_id
@@ -1620,8 +1722,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY h.name
-                ORDER BY h.name asc")->fetchAll();
+                ORDER BY h.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('whid', _('Web Hosting Provider'), '', '', '');
                 echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1716,7 +1819,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_category = $pdo->query("
+                $result_category = $menu_rows("
                 SELECT c.id, c.name
                 FROM categories AS c, domains AS d
                 WHERE c.id = d.cat_id
@@ -1731,8 +1834,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY c.name
-                ORDER BY c.name asc")->fetchAll();
+                ORDER BY c.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('pcid', _('Category'), '', '', '');
                 echo $form->showDropdownOption('', _('Category') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1827,7 +1931,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_owner = $pdo->query("
+                $result_owner = $menu_rows("
                 SELECT o.id, o.name
                 FROM owners AS o, domains AS d
                 WHERE o.id = d.owner_id
@@ -1842,8 +1946,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_d['sql']}
                 GROUP BY o.name
-                ORDER BY o.name asc")->fetchAll();
+                ORDER BY o.name asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('oid', _('Owner'), '', '', '');
                 echo $form->showDropdownOption('', _('Owner') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -1938,7 +2043,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_tld = $pdo->query("
+                $result_tld = $menu_rows("
                 SELECT tld, count(*) AS total_tld_count
                 FROM domains" .
                     $is_active_string .
@@ -1951,9 +2056,10 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $raid_string .
                     $range_string .
                     $search_string .
-                    $segment_string . " 
+                    $segment_string .
+                    $cf_menu_domains['sql'] . "
                 GROUP BY tld 
-                ORDER BY tld asc")->fetchAll();
+                ORDER BY tld asc", $cf_menu_domains);
 
                 echo $form->showDropdownTop('tld', _('TLD'), '', '', '');
                 echo $form->showDropdownOption('', _('TLD') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -2023,7 +2129,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $segment_string = "";
                 }
 
-                $result_active = $pdo->query("
+                $result_active = $menu_rows("
                 SELECT active, count(*) AS total_count
                 FROM domains
                 WHERE id != '0'
@@ -2038,8 +2144,9 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  {$cf_menu_domains['sql']}
                 GROUP BY active
-                ORDER BY active asc")->fetchAll();
+                ORDER BY active asc", $cf_menu_domains);
 
                 echo $form->showDropdownTop('is_active', _('Status'), '', '', '');
                 echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
@@ -2089,7 +2196,10 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 echo $form->showDropdownBottom(''); ?>
 
                 <?php
-                echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', ''); ?>
+                echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
+
+                // CUSTOM FIELDS
+                echo $cf->panelHtml($form, $cf_state); ?>
 
                 <div class="d-flex flex-wrap gap-2 domainmod-filter-actions">
                     <?php echo $form->showSubmitButton(_('Apply filters'), '', ''); ?>
@@ -2124,7 +2234,7 @@ if ($segid !== 0) {
     $totalrows_missing = $stmt->fetchColumn();
 
     // Worked out from the list's own filters, not read back from the segment's stored flags
-    $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql);
+    $totalrows_filtered = $domain_list->segmentFilteredCount($segid, $list_filter_sql, $list_filter_params);
 
     // The segment's summary as facts, with a link to each of its three results lists (domains/results.php) that has any
     $segment_facts = array(
@@ -2153,8 +2263,13 @@ if ($result) {
     $layout->setPageAddAction(_('Add Domain'), 'add.php');
     $layout->addPageAddMenuItem(_('Add Domains Automatically'), $web_root . '/queue/intro.php', 'bi-magic');
     $layout->addPageAddMenuItem(_('CSV Importer'), $web_root . '/domains/csv-importer/', 'bi-filetype-csv');
-    // Both keep their ids, since js/server-list.js adds the table's search box to their links (dt_search)
-    $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
+    // Both keep their ids, since js/server-list.js adds the table's search box to their links (dt_search). The Raw List
+    // link always names the list it was made for, its saved query and bound values (dt_list), its type (dt_type), and
+    // its custom field filters' key (dt_cfk), so raw.php never shows another tab's list or an old custom field filter.
+    $raw_list_url = $web_root . '/raw.php?' . http_build_query(array(
+        'dt_list' => DomainMOD\DomainList::savedListKey($raw_list_from_sql, $list_filter_params), 'dt_type' => 'domains',
+        'dt_cfk' => $cf->filterKey(array_keys($cf_keys))));
+    $layout->addPageAction(_('Raw List'), $raw_list_url, 'bi-list-ul', array('target' => '_blank', 'id' => 'domain-list-raw'));
     // The export carries the filters the list is showing (FilterToolbar::exportUrl()), so it matches after Apply Filters too
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'domain-list-export')); ?>
 
@@ -2198,15 +2313,20 @@ if ($result) {
                 'signin' => _('Your session has ended. Please sign in again.'),
                 'signinLink' => _('Sign In'),
                 'reload' => _('Your display settings have changed. Reload the page to see them.'),
+                'filterReload' => _('A custom field in your filters was changed or deleted. Reload the page to see the list without your custom field filters.'),
                 'reloadLink' => _('Reload'),
                 'close' => _('Close'),
                 'paging' => sprintf(_('Pages of %s'), _('Domains')),
                 'scroll' => _('Domains'),
             ),
             'signinUrl' => $web_root . '/',
+            // Where each Reload link goes: the list's whole state when Display Settings changed, and the state without the
+            // custom field filters when one of their fields changed (see js/server-list.js)
+            'reloadUrl' => $list_state_url,
+            'filterReloadUrl' => $filter_toolbar->stateUrl('search_for', 'daterange', array(), array_keys($cf_keys)),
             // The links that follow the search box (by id), and what each carries with it (see raw.php)
             'searchLinks' => array(
-                'domain-list-raw' => array('dt_layout' => $list_columns->layoutKey(), 'dt_list' => DomainMOD\DomainList::savedListKey($raw_list_sql)),
+                'domain-list-raw' => array('dt_layout' => $list_columns->layoutKey()),
                 'domain-list-export' => array('dt_layout' => $list_columns->layoutKey()),
             ),
         );
@@ -2259,7 +2379,8 @@ if ($result) {
 
         // Domains exist but none are listed. Which empty state shows depends on why (see the empty states plan).
         $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $whid !== 0
-            || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE';
+            || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE'
+            || $cf_state !== array();
 
         // The list only shows domains that have a fee (it joins the fees to work out costs), so these counts leave
         // the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
@@ -2293,7 +2414,10 @@ if ($result) {
 
         } else {
 
-            $filtered_domains = (int) $pdo->query("SELECT count(*)" . $domains_without_fee_join . $list_filter_sql)->fetchColumn();
+            $stmt = $pdo->prepare("SELECT count(*)" . $domains_without_fee_join . $list_filter_sql);
+            $stmt->execute($list_filter_params);
+            $filtered_domains = (int) $stmt->fetchColumn();
+            $stmt->closeCursor();
 
             if ($filtered_domains > 0) {
 

@@ -181,14 +181,19 @@ class DomainList extends ListQuery
      * the two from deadlocking each other. Without it, the batches can also lock other segments' rows as they're read.
      * A lock wait timeout or a deadlock rolls it back and it's tried once more, and any other error (or a second
      * failure) is thrown, after the rollback. Returns 'written' when the flags are written.
+     *
+     * With custom field filters on, $fields_key is the page's CustomFieldFilter::fieldsKey(), and the custom fields are
+     * read once more just before the commit: when they've changed since the page read them (a filtered field replaced
+     * under the same name), the flags were worked out from the old filter, so it rolls back and returns
+     * 'fields_changed'.
      */
-    public function writeSegmentFlags($segid, $filter_sql, $segment, array $params = array())
+    public function writeSegmentFlags($segid, $filter_sql, $segment, array $params = array(), $fields_key = null)
     {
         for ($attempt = 1; ; $attempt++) {
 
             try {
 
-                return $this->writeSegmentFlagsOnce((int) $segid, $filter_sql, (string) $segment, $params);
+                return $this->writeSegmentFlagsOnce((int) $segid, $filter_sql, (string) $segment, $params, $fields_key);
 
             } catch (\PDOException $e) {
 
@@ -206,7 +211,7 @@ class DomainList extends ListQuery
     }
 
     // One try of writeSegmentFlags()
-    protected function writeSegmentFlagsOnce($segid, $filter_sql, $segment, array $params)
+    protected function writeSegmentFlagsOnce($segid, $filter_sql, $segment, array $params, $fields_key = null)
     {
         $pdo = $this->pdo;
         // Named where it exists, so the batches read only the segment's rows, in id order, even for a segment that holds
@@ -285,6 +290,18 @@ class DomainList extends ListQuery
             $stmt->execute($ids + $matches);
 
         } while (count($batch) === self::SEGMENT_FLAG_BATCH);
+
+        if ($fields_key !== null) {
+
+            $fields_now = new CustomFieldFilter(CustomField::readFilterFields($pdo, 'domain_fields'), 'dfd');
+            if (!hash_equals((string) $fields_key, $fields_now->fieldsKey())) {
+
+                $pdo->rollBack();
+                return 'fields_changed';
+
+            }
+
+        }
 
         $pdo->commit();
         return 'written';
@@ -409,7 +426,7 @@ class DomainList extends ListQuery
     // The Domains list's columns, for ListQuery::tableSearchSql()
     protected function listColumns(array $settings)
     {
-        return new DomainListColumns($settings, $this->field_columns);
+        return new DomainListColumns($settings, $this->fields);
     }
 
 } //@formatter:on

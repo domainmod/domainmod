@@ -24,6 +24,7 @@ namespace DomainMOD\Tests\Unit;
 use DomainMOD\Database;
 use DomainMOD\DomainListColumns;
 use DomainMOD\SslListColumns;
+use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\Instance;
 use PHPUnit\Framework\TestCase;
 
@@ -48,7 +49,7 @@ class ListHeaderCellsTest extends TestCase
     public function testTheDomainsListHasNoControlHeading()
     {
         // The Domains list keeps every column and scrolls sideways, so it has no Responsive details column
-        $cells = (new DomainListColumns(array('s_display_domain_tld' => '1'), ''))->headerCells();
+        $cells = (new DomainListColumns(array('s_display_domain_tld' => '1'), array()))->headerCells();
 
         $this->assertSame(array('<th class="domainmod-list-domain">Domain</th>', '<th class="domainmod-list-tld">TLD</th>'), $cells);
     }
@@ -56,7 +57,7 @@ class ListHeaderCellsTest extends TestCase
     public function testTheSslListHasNoControlHeading()
     {
         // The SSL Certificates list keeps every column and scrolls sideways, so it has no Responsive details column
-        $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), ''))->headerCells();
+        $cells = (new SslListColumns(array('s_display_ssl_expiry_date' => '1'), array()))->headerCells();
 
         $this->assertSame(array('<th class="domainmod-list-name">Name</th>', '<th class="domainmod-list-expiry">Expiry</th>'), $cells);
     }
@@ -67,7 +68,10 @@ class ListHeaderCellsTest extends TestCase
         $columns = new DomainListColumns(array('s_cdf_data' => array(
             array('field' => 'note', 'name' => 'Note', 'type_id' => '2', 'value' => '1'),
             array('field' => 'renew_date', 'name' => 'Renew Date', 'type_id' => '4', 'value' => '1'),
-        )), ', dfd.note, dfd.renew_date');
+        )), FieldRows::of(', dfd.note, dfd.renew_date', array('s_cdf_data' => array(
+            array('field' => 'note', 'name' => 'Note', 'type_id' => '2', 'value' => '1'),
+            array('field' => 'renew_date', 'name' => 'Renew Date', 'type_id' => '4', 'value' => '1'),
+        ))));
 
         $this->assertSame(array('<th class="domainmod-list-domain">Domain</th>', '<th class="domainmod-list-custom">Note</th>',
             '<th class="domainmod-list-custom">Renew Date</th>'), $columns->headerCells());
@@ -75,7 +79,7 @@ class ListHeaderCellsTest extends TestCase
 
     public function testEveryHeadingCellHasText()
     {
-        $cells = (new DomainListColumns(array(), ''))->headerCells();
+        $cells = (new DomainListColumns(array(), array()))->headerCells();
 
         foreach ($cells as $cell) {
             $this->assertNotSame('', trim(strip_tags($cell)));
