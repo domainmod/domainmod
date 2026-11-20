@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $ssl_queue_available) {
 
             $_SESSION['s_message_success'] .= _('Hostnames Added To Queue') . '<BR>';
 
-            header('Location: ' . $web_root . '/queue/ssl/');
+            header('Location: ' . $web_root . '/queue/');
             exit;
 
         } elseif ($outcome === 'full') {
@@ -291,7 +291,7 @@ if (!$ssl_queue_available) {
     </details><?php
 
     // Go Back and the main button in one row, Back on the start side (css/base.css)
-    echo '<div class="domainmod-back-next">' . $layout->linkButton($web_root . '/queue/ssl/', _('Go Back'), 'secondary', 'bi-arrow-left');
+    echo '<div class="domainmod-back-next">' . $layout->linkButton($web_root . '/queue/', _('Go Back'), 'secondary', 'bi-arrow-left');
     echo $form->showSubmitButton(_('Add SSL Certificates'), '', '');
     echo '</div>';
 

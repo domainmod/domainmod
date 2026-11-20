@@ -274,12 +274,66 @@ class LayoutHelpersTest extends TestCase
         $this->assertStringNotContainsString('delete', $html);
     }
 
+    public function testCardActionsAreANamedGroupWithoutThePageHeaderClass()
+    {
+        $layout = new Layout();
+        $layout->addPageAction('Export', 'ssl/index.php?export_data=1', 'bi-download');
+
+        $this->assertSame('<div class="d-flex flex-wrap align-items-center gap-2" role="group" aria-label="SSL Queue &lt;actions&gt;">'
+            . '<a class="btn btn-outline-secondary btn-sm" href="ssl/index.php?export_data=1"><i class="bi bi-download me-1" aria-hidden="true"></i>Export</a>'
+            . '</div>', $layout->renderCardActions('SSL Queue <actions>'));
+    }
+
+    public function testCardActionsAreEmptiedOnceDrawn()
+    {
+        $layout = new Layout();
+        $layout->setPageAddAction('Add Domains', 'add/');
+        $layout->addPageAddMenuItem('Add Domains Without an API', 'add/rdap.php', 'bi-list-check');
+        $layout->addPageAction('Export Domains', 'index.php?export_data=1', 'bi-download');
+        $first = $layout->renderCardActions('Domain Queue actions');
+
+        $this->assertStringContainsString('Add Domains Without an API', $first);
+        $this->assertStringContainsString('Export Domains', $first);
+
+        // The next card starts afresh, and so does the page header
+        $layout->setPageAddAction('Add SSL Certificates', 'add/ssl.php');
+        $second = $layout->renderCardActions('SSL Queue actions');
+        $this->assertStringContainsString('Add SSL Certificates', $second);
+        $this->assertStringNotContainsString('Add Domains', $second);
+        $this->assertStringNotContainsString('dropdown-toggle', $second);
+        $this->assertSame('', $layout->renderPageActions());
+        $this->assertSame('', $layout->renderCardActions('Nothing'));
+    }
+
+    public function testConfirmationsStayUniqueAcrossCardsAndThePageHeader()
+    {
+        $layout = new Layout();
+        $layout->addPageAction('Clear Completed', 'index.php?really_clear=1', 'bi-check2-all', array('confirm' => 'Clear the domains?'));
+        $layout->addPageAction('Export Domains', 'index.php?export_data=1', 'bi-download');
+        $domains = $layout->renderCardActions('Domain Queue actions');
+        $layout->addPageAction('Clear Completed', 'ssl/index.php?really_clear=1', 'bi-check2-all', array('confirm' => 'Clear the hosts?'));
+        $ssl = $layout->renderCardActions('SSL Queue actions');
+        $layout->addPageAction('Clear Log', 'clear.php', 'bi-trash', array('confirm' => 'Clear the log?'));
+        $page = $layout->renderPageActions();
+
+        $this->assertStringContainsString('data-bs-target="#domainmod-confirm-1"', $domains);
+        $this->assertStringContainsString('<div class="modal fade" id="domainmod-confirm-1"', $domains);
+        $this->assertStringContainsString('data-bs-target="#domainmod-confirm-3"', $ssl);
+        $this->assertStringContainsString('<div class="modal fade" id="domainmod-confirm-3"', $ssl);
+        $this->assertStringNotContainsString('id="domainmod-confirm-1"', $ssl);
+        $this->assertStringContainsString('<a href="ssl/index.php?really_clear=1" class="btn btn-danger">CLEAR COMPLETED</a>', $ssl);
+        $this->assertStringContainsString('data-bs-target="#domainmod-confirm-4"', $page);
+        $this->assertStringContainsString('<div class="modal fade" id="domainmod-confirm-4"', $page);
+        $this->assertStringContainsString('class="domainmod-page-actions d-flex', $page);
+    }
+
     private function clearPageActions()
     {
         $reflection = new \ReflectionClass(Layout::class);
         $reflection->setStaticPropertyValue('page_actions', array());
         $reflection->setStaticPropertyValue('page_add_action', null);
         $reflection->setStaticPropertyValue('page_add_menu', array());
+        $reflection->setStaticPropertyValue('card_action_count', 0);
     }
 
 } //@formatter:on

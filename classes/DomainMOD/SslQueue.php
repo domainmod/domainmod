@@ -107,6 +107,20 @@ class SslQueue
     }
 
     /*
+     * Whether the menu shows the Import Queue: only while either queue has rows, going by the session flags the queues
+     * set (s_domains_in_list_queue, s_domains_in_queue, and s_ssl_in_queue). Users reach the add pages from the Domains
+     * and SSL Certificates lists and the Dashboard.
+     */
+    public static function inMenu($session)
+    {
+        foreach (array('s_domains_in_list_queue', 's_domains_in_queue', 's_ssl_in_queue') as $flag) {
+            if (($session[$flag] ?? '') == '1') return true;
+        }
+
+        return false;
+    }
+
+    /*
      * The message for a result code, translated. An unknown code gives a general failure message, never the code.
      */
     public function getMessage($code)
@@ -545,10 +559,10 @@ class SslQueue
     }
 
     /*
-     * The Import Queue's tab badges: array(the Domain Queue's unfinished lists and domains, the SSL Queue's unfinished
-     * rows). Before the database update, the SSL Queue's count is 0.
+     * The counts beside the Import Queue page's two headings: array(the Domain Queue's unfinished lists and domains, the
+     * SSL Queue's unfinished rows). Before the database update, the SSL Queue's count is 0.
      */
-    public function tabCounts()
+    public function waitingCounts()
     {
         $pdo = $this->deeb->cnxx;
 
@@ -577,6 +591,90 @@ class SslQueue
         }
 
         return array($completed, count($rows));
+    }
+
+    /*
+     * The rows the Import Queue page lists and the export writes, newest first, with the imported certificate's details
+     * joined only while it still exists (a deleted one leaves the row without a link).
+     */
+    public function statusRows()
+    {
+        return $this->deeb->cnxx->query("
+            SELECT q.id, q.host, q.domain_name, q.wait_domain, q.expiry_date, q.issuer, q.processing, q.finished, q.failed,
+                q.already_in_ssl, q.already_in_queue, q.wait_for_domain, q.message, q.attempts, q.last_attempt, q.created_by,
+                q.insert_time,
+                c.id AS ssl_id, c.name, c.fee_id, f.id AS fee_row_id, p.id AS provider_id, p.name AS provider, t.id AS type_id,
+                t.type, u.first_name, u.last_name
+            FROM ssl_queue AS q
+            LEFT JOIN ssl_certs AS c ON q.new_ssl_id > 0 AND c.id = q.new_ssl_id
+            LEFT JOIN ssl_providers AS p ON c.ssl_provider_id = p.id
+            LEFT JOIN ssl_cert_types AS t ON c.type_id = t.id
+            LEFT JOIN ssl_fees AS f ON c.fee_id = f.id
+            LEFT JOIN users AS u ON q.created_by = u.id
+            ORDER BY q.insert_time DESC, q.id DESC")->fetchAll();
+    }
+
+    /*
+     * A row's status as plain text pieces, array(state, label, flag, detail): its state (see rowState()), its label, the
+     * "Not trusted" or "Expired" flag of an imported certificate, and the detail shown under it (a reason, or what it
+     * waits for). The Import Queue page's table and the export both use it.
+     */
+    public function statusParts($row)
+    {
+        $state = self::rowState($row);
+        $flag = '';
+        $detail = '';
+
+        if ($state === 'pending') {
+
+            $label = _('Pending');
+
+        } elseif ($state === 'waiting') {
+
+            $label = _('Waiting for the Domain');
+            // TRANSLATORS: Shown under "Waiting for the Domain" in the SSL Queue. %s is a domain.
+            $detail = sprintf(_('Waiting for %s to be added. This is checked on the next run.'), $row->wait_domain);
+
+        } elseif ($state === 'processing') {
+
+            $label = _('Processing');
+
+        } elseif ($state === 'retrying') {
+
+            $label = _('Retrying');
+            // TRANSLATORS: Shown under "Retrying" in the SSL Queue, before the reason. %1$s and %2$s are numbers, such as "Attempt 1 of 3 failed."
+            $detail = sprintf(_('Attempt %1$s of %2$s failed.'), (int) $row->attempts, self::MAX_ATTEMPTS) . ' '
+                . $this->getMessage((string) $row->message);
+
+        } elseif ($state === 'imported') {
+
+            $label = _('Imported');
+            if ($row->message === 'untrusted') $flag = _('Not trusted');
+            if ($row->message === 'expired') $flag = _('Expired');
+
+        } elseif ($state === 'already_in_queue') {
+
+            $label = _('Already in the Queue');
+
+        } elseif ($state === 'already_in_ssl') {
+
+            $label = sprintf(_('Already in %s'), SOFTWARE_TITLE);
+
+        } else {
+
+            $label = _('Failed');
+            $detail = $this->getMessage((string) $row->message);
+
+        }
+
+        return array($state, $label, $flag, $detail);
+    }
+
+    // The person who queued a row (a row with first_name and last_name), or [unknown] when they're gone
+    public static function addedBy($row)
+    {
+        if ($row->first_name === null) return '[' . Format::toLower(_('Unknown')) . ']';
+        return $row->first_name . ' ' . $row->last_name;
     }
 
     /*
@@ -627,13 +725,15 @@ class SslQueue
     }
 
     /*
-     * The SSL Queue page's notice while the queue is processing, built like DomainQueue::processingNotice(): with htmx
-     * it asks queue/ssl/processing.php every 5 seconds, and that page reloads the queue page once processing has ended.
+     * The SSL Queue's notice on the Import Queue page while the queue is processing, built like
+     * DomainQueue::processingNotice(): with htmx it asks queue/ssl/processing.php every 5 seconds, and that page reloads
+     * the queue page once processing has ended. It sits beside the Domain Queue's notice, so it has its own id and asks
+     * by its full path.
      */
     public function processingNotice()
     {
         ob_start(); ?>
-        <button type="button" id="domainmod-queue-processing" class="btn btn-secondary btn-lg" hx-get="processing.php" hx-trigger="every 5s" hx-swap="outerHTML">
+        <button type="button" id="domainmod-ssl-queue-processing" class="btn btn-secondary btn-lg" hx-get="<?php echo htmlspecialchars(WEB_ROOT . '/queue/ssl/processing.php', ENT_QUOTES, 'UTF-8'); ?>" hx-trigger="every 5s" hx-swap="outerHTML">
             <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<?php echo _('The Queue Is Currently Processing'); ?>
         </button><?php
         return ob_get_clean();

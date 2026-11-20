@@ -32,6 +32,8 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $assets = new DomainMOD\Assets();
 $queue = new DomainMOD\DomainQueue();
+$ssl_queue = new DomainMOD\SslQueue();
+$fee_status = new DomainMOD\FeeStatus();
 $user = new DomainMOD\User();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
@@ -45,6 +47,8 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 $queue_rdap_available = $queue->getRdapApiRegistrarId() > 0;
 $queue_fix_available = $queue->getEditedCreationTypeId() > 0;
+$ssl_queue_available = $ssl_queue->isAvailable();
+$read_only = ($_SESSION['s_read_only'] ?? '') == '1';
 
 $list_id = (int) ($_GET['list_id'] ?? 0);
 $dell = (int) ($_GET['dell'] ?? 0);
@@ -516,6 +520,60 @@ if ($really_deld === 1 && $domain_id !== 0) {
 
 }
 ?>
+<?php
+/*
+ * The menu shows the Import Queue only while either queue has rows, so its flags are worked out again before the header
+ * draws the menu: rows are cleared from this page, and imports happen in cron, where no session is updated. The Domain
+ * Queue's go by the rows the page lists.
+ */
+if ($result_lists) {
+    $_SESSION['s_domains_in_list_queue'] = '1';
+} else {
+    unset($_SESSION['s_domains_in_list_queue']);
+}
+if ($result_domains) {
+    $_SESSION['s_domains_in_queue'] = '1';
+} else {
+    unset($_SESSION['s_domains_in_queue']);
+}
+
+$ssl_rows = array();
+$ssl_queue_processing = false;
+
+if ($ssl_queue_available) {
+
+    // Checked before the rows are read, so a run that ends in between leaves the notice up (it then reloads the page)
+    // rather than showing a finished row as Processing with no notice
+    $ssl_queue_processing = $ssl_queue->isProcessing();
+
+    // The other indicators the SSL Queue's imports change are worked out again each time too
+    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows((new DomainMOD\QueryBuild())->missingFees('ssl_certs'));
+    $system->checkExistingAssets();
+    $ssl_queue->checkSslQueue();
+
+    $ssl_rows = $ssl_queue->statusRows();
+
+    // A row a run claimed after the check above keeps the notice up too, so it can't look stuck as Processing
+    foreach ($ssl_rows as $row) {
+        if (DomainMOD\SslQueue::freshClaim($row, time())) $ssl_queue_processing = true;
+    }
+
+}
+
+list($domain_waiting_count, $ssl_waiting_count) = $ssl_queue->waitingCounts();
+
+// A part's rows still waiting, after its heading: a badge, which screen readers hear as "(3 waiting)"
+$waiting_badge = function ($count) {
+
+    if ($count <= 0) return '';
+    // TRANSLATORS: Read out by screen readers after the Domain Queue's or the SSL Queue's heading on the Import Queue page. %s is a number.
+    $waiting = sprintf(ngettext('%s waiting', '%s waiting', $count), number_format($count));
+
+    return ' <span class="badge text-bg-secondary ms-1" aria-hidden="true">' . number_format($count) . '</span><span class="visually-hidden"> ('
+        . $waiting . ')</span>';
+
+};
+?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
@@ -524,7 +582,33 @@ if ($really_deld === 1 && $domain_id !== 0) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php require_once DIR_INC . '/layout/import-queue-tabs.inc.php'; ?>
+<?php
+/*
+ * The Import Queue's two parts on one page, each in its own card: the Domain Queue, then the SSL Queue once the database
+ * update has added it. Each card's actions are drawn in its header (see Layout::renderCardActions()), so it's clear
+ * which part they act on. More Info covers both, so it stays in the page header.
+ *
+ * The Domain Queue's actions. Read-only users can't add to or clear the queue, so Layout leaves those buttons out for
+ * them (the pages turn them away too).
+ */
+$layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
+if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
+// Clearing asks first (the confirmation names the queue, as both cards have one), then goes straight to the clear with
+// its CSRF token
+if ($result_domains) {
+    $layout->addPageAction(_('Clear Completed'), 'index.php?really_clear=1&' . $csrf->query(), 'bi-check2-all',
+        array('confirm' => array('title' => _('Domain Queue'), 'button' => _('Clear Completed'),
+            'message' => _('Are you sure you want to clear completed items from the queue?') . ' '
+                . _('Before clearing the queue you should review the results to make sure that everything is correct.'))));
+}
+if ($result_lists) $layout->addPageAction(_('Export Lists'), 'index.php?s=lists&export_data=1', 'bi-download');
+if ($result_domains) $layout->addPageAction(_('Export Domains'), 'index.php?s=domains&export_data=1', 'bi-download'); ?>
+<div class="card card-outline card-danger mb-5">
+    <div class="card-header d-flex flex-wrap align-items-center gap-2">
+        <h2 class="card-title me-auto"><?php echo _('Domain Queue') . $waiting_badge($domain_waiting_count); ?></h2>
+        <?php echo $layout->renderCardActions(_('Domain Queue actions')); ?>
+    </div>
+    <div class="card-body">
 <?php
 $queue->checkProcessingLists();
 $queue->checkProcessingDomains();
@@ -550,32 +634,9 @@ if ($queue_rdap_available) {
 
 <?php echo sprintf(_('See the %sDomain Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></p>
 <?php
-// The page's actions, drawn in the page header (see Layout::renderPageActions())
-// Read-only users can't add to or clear the queue, so they don't get those buttons (the pages turn them away too).
-// Layout leaves the add buttons out for them, and Clear Completed checks for itself below.
-$layout->setPageAddAction($queue_rdap_available ? _('Add Domains Using an API') : _('Add Domains To Queue'), $web_root . '/queue/add/');
-if ($queue_rdap_available) $layout->addPageAddMenuItem(_('Add Domains Without an API'), $web_root . '/queue/add/rdap.php', 'bi-list-check');
-// SSL imports wait for the database update that adds them
-if ((new DomainMOD\SslQueue())->isAvailable()) $layout->addPageAddMenuItem(_('Add SSL Certificates'), $web_root . '/queue/add/ssl.php', 'bi-lock');
-$_SESSION['s_domains_in_queue'] = $_SESSION['s_domains_in_queue'] ?? 0;
-$_SESSION['s_domains_in_list_queue'] = $_SESSION['s_domains_in_list_queue'] ?? 0;
-// Clearing asks first, then goes straight to the clear with its CSRF token
-if ($_SESSION['s_domains_in_queue'] == '1') {
-    $layout->addPageAction(_('Clear Completed'), 'index.php?really_clear=1&' . $csrf->query(), 'bi-check2-all',
-        array('confirm' => _('Are you sure you want to clear completed items from the queue?') . ' '
-            . _('Before clearing the queue you should review the results to make sure that everything is correct.')));
-}
-$layout->addPageAction(_('More Info'), 'intro.php', 'bi-info-circle');
-if ($_SESSION['s_domains_in_list_queue'] == '1') $layout->addPageAction(_('Export Lists'), 'index.php?s=lists&export_data=1', 'bi-download');
-if ($_SESSION['s_domains_in_queue'] == '1') $layout->addPageAction(_('Export Domains'), 'index.php?s=domains&export_data=1', 'bi-download'); ?>
-<?php
-if (!$result_lists) {
+if ($result_lists) { ?>
 
-    unset($_SESSION['s_domains_in_list_queue']);
-
-} else { ?>
-
-    <h2 class="h3"><?php echo _('Domain List Queue'); ?></h2>
+    <h3 class="h4"><?php echo _('Domain List Queue'); ?></h3>
     <table id="<?php echo $slug; ?>-lists" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -659,13 +720,15 @@ if (!$result_lists) {
     </table><?php
 }
 
-if (!$result_domains) {
+if ($result_domains) {
 
-    unset($_SESSION['s_domains_in_queue']);
+    // Beside the Domain List Queue, the domains get their own heading too
+    if ($result_lists) { ?>
 
-} else { ?>
+        <h3 class="h4 mt-5"><?php echo _('Domains'); ?></h3><?php
 
-    <h2 class="h3<?php echo $result_lists ? ' mt-5' : ''; ?>"><?php echo _('Domain Queue'); ?></h2>
+    } ?>
+
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
@@ -840,12 +903,152 @@ if (!$result_domains) {
     </table><?php
 }
 
-// With both queues empty, the page says so. Its actions are already in the button row above, so it repeats none
+// With both lists empty, the Domain Queue says so. Its actions are already in its header, so it repeats none
 if (!$result_lists && !$result_domains) {
 
-    echo $layout->emptyState('bi-inbox', _('The Domain Queue is empty'), sprintf(_('Domains you add automatically wait here while %s looks up their details.'), SOFTWARE_TITLE));
+    echo $layout->emptyState('bi-inbox', _('The Domain Queue is empty'), sprintf(_('Domains you add automatically wait here while %s looks up their details.'), SOFTWARE_TITLE), '', '', '', '', 3);
 
 } ?>
+    </div>
+</div>
+<?php
+if ($ssl_queue_available) {
+
+    /*
+     * The SSL Queue's actions, which lead to queue/ssl/index.php and come back here. Read-only users can't add, clear,
+     * or retry, so they don't get those buttons (the handlers turn them away too).
+     */
+    list($completed_count, $total_count) = DomainMOD\SslQueue::progressCounts($ssl_rows);
+    $failed_count = 0;
+    foreach ($ssl_rows as $row) {
+        // stale_choice rows ask for the hostname to be added again, so Retry Failed leaves them out
+        if (DomainMOD\SslQueue::rowState($row) === 'failed' && $row->message !== 'stale_choice') $failed_count++;
+    }
+
+    $layout->setPageAddAction(_('Add SSL Certificates'), $web_root . '/queue/add/ssl.php');
+    if ($completed_count > 0) {
+        $layout->addPageAction(_('Clear Completed'), 'ssl/index.php?really_clear=1&' . $csrf->query(), 'bi-check2-all',
+            array('confirm' => array('title' => _('SSL Queue'), 'button' => _('Clear Completed'),
+                'message' => _('Are you sure you want to clear completed items from the queue?') . ' '
+                    . _('Before clearing the queue you should review the results to make sure that everything is correct.'))));
+    }
+    if ($failed_count > 0 && !$read_only) $layout->addPageAction(_('Retry Failed'), 'ssl/index.php?really_retry=1&' . $csrf->query(), 'bi-arrow-repeat');
+    if ($ssl_rows) $layout->addPageAction(_('Export'), 'ssl/index.php?export_data=1', 'bi-download'); ?>
+    <div class="card card-outline card-danger mb-4">
+        <div class="card-header d-flex flex-wrap align-items-center gap-2">
+            <h2 class="card-title me-auto"><?php echo _('SSL Queue') . $waiting_badge($ssl_waiting_count); ?></h2>
+            <?php echo $layout->renderCardActions(_('SSL Queue actions')); ?>
+        </div>
+        <div class="card-body"><?php
+
+    if ($ssl_queue_processing) { ?>
+
+        <?php echo $ssl_queue->processingNotice(); ?><BR><BR><?php
+
+    } ?>
+    <p class="domainmod-intro"><?php echo sprintf(_("The SSL Queue reads the certificate of each site you add and adds it to %s as an SSL certificate, linked to its domain."), SOFTWARE_TITLE); ?>
+
+    <?php echo sprintf(_('See the %sImport Queue information page%s for more details.'), '<a href="intro.php">', '</a>'); ?></p>
+    <?php
+    if (!$ssl_rows) {
+
+        echo $layout->emptyState('bi-inbox', _('The SSL Queue is empty'), sprintf(_('Hostnames you add wait here while %s reads their certificates.'), SOFTWARE_TITLE), '', '', '', '', 3);
+
+    } else {
+
+        // Imported certificates with no fee are hidden from the SSL Certificates list, so the page says how many
+        $no_fee_count = 0;
+        foreach ($ssl_rows as $row) {
+            if (DomainMOD\SslQueue::rowState($row) === 'imported' && $row->ssl_id !== null && !$fee_status->hasFee($row)) $no_fee_count++;
+        }
+
+        if ($no_fee_count > 0) {
+
+            echo $system->showMessageWarning(sprintf(ngettext("%s imported SSL certificate has no fee yet, so it's hidden from the SSL Certificates list until its fee is added.",
+                "%s imported SSL certificates have no fee yet, so they're hidden from the SSL Certificates list until their fees are added.", $no_fee_count),
+                number_format($no_fee_count)));
+
+        } ?>
+
+        <p><?php
+            // TRANSLATORS: The SSL Queue's progress. %1$s and %2$s are numbers, such as "12 of 40 completed".
+            echo sprintf(ngettext('%1$s of %2$s completed', '%1$s of %2$s completed', $total_count), number_format($completed_count), number_format($total_count)); ?></p>
+
+        <table id="<?php echo $slug; ?>-hosts" class="<?php echo $datatable_class; ?>">
+            <thead>
+            <tr>
+                <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+                <th><?php echo _('Status'); ?></th>
+                <th><?php echo _('Host'); ?></th>
+                <th><?php echo _('Domain'); ?></th>
+                <th><?php echo _('Expiry Date'); ?></th>
+                <th><?php echo _('Issuer'); ?></th>
+                <th><?php echo _('Added By'); ?></th>
+                <th><?php echo _('Date Added'); ?></th><?php
+                if (!$read_only) { ?>
+                    <th><?php echo _('Delete'); ?></th><?php
+                } ?>
+            </tr>
+            </thead>
+            <tbody><?php
+
+            foreach ($ssl_rows as $row) {
+
+                list($state, $label, $flag, $detail) = $ssl_queue->statusParts($row);
+                $domain_shown = ($row->domain_name !== '') ? $row->domain_name : $row->wait_domain;
+                // Imported and Already in DomainMOD rows link to the certificate while it still exists
+                $linked = ($state === 'imported' || $state === 'already_in_ssl') && $row->ssl_id !== null; ?>
+
+                <tr>
+                <td></td>
+                <td><div class="domainmod-queue-status"><?php
+                    if ($state === 'imported') {
+                        echo $layout->highlightText('green', $label);
+                    } elseif ($state === 'failed' || $state === 'already_in_queue' || $state === 'already_in_ssl') {
+                        echo $layout->highlightText('red', $label);
+                    } else {
+                        echo $label;
+                    }
+                    if ($flag !== '') echo ' ' . $layout->highlightText('red', $flag);
+                    if ($detail !== '') echo '<BR>' . htmlspecialchars($detail, ENT_QUOTES, 'UTF-8');
+                    if ($state === 'imported' && $row->ssl_id !== null && !$fee_status->hasFee($row)) {
+                        echo '<BR>' . $fee_status->sslWarning($row, !$read_only);
+                    } ?></div>
+                </td>
+                <td><div class="domainmod-queue-host"><?php
+                    if ($linked) {
+                        echo '<a href="' . htmlspecialchars($web_root . '/ssl/edit.php?sslcid=' . (int) $row->ssl_id, ENT_QUOTES, 'UTF-8') . '">' . $layout->ltr($row->host) . '</a>';
+                    } else {
+                        echo $layout->ltr($row->host);
+                    } ?></div>
+                </td>
+                <td><?php echo ($domain_shown !== '') ? $layout->ltr($domain_shown) : '-'; ?></td>
+                <td><?php echo ($row->expiry_date !== '1970-01-01') ? $row->expiry_date : '-'; ?></td>
+                <td><?php echo ($row->issuer !== '') ? htmlspecialchars($unsanitize->text($row->issuer), ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+                <td><?php echo htmlspecialchars($unsanitize->text(DomainMOD\SslQueue::addedBy($row)), ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo $time->toUserTimezone($row->insert_time, 'Y-m-d H:i:s', '[' . DomainMOD\Format::toLower(_('Unknown')) . ']'); ?></td><?php
+                if (!$read_only) { ?>
+                    <td>
+                        <a class="btn btn-sm btn-outline-danger" href="ssl/index.php?del=1&id=<?php echo (int) $row->id; ?>" title="<?php echo _('Delete'); ?>"><i class="bi bi-trash" aria-hidden="true"></i><span class="visually-hidden"><?php
+                            // TRANSLATORS: Read out by screen readers for a Delete button in the SSL Queue. %s is a hostname, such as www.example.com.
+                            echo sprintf(_('Delete %s'), htmlspecialchars($row->host, ENT_QUOTES, 'UTF-8')); ?></span></a>
+                    </td><?php
+                } ?>
+                </tr><?php
+
+            } ?>
+
+            </tbody>
+        </table><?php
+
+    } ?>
+        </div>
+    </div><?php
+
+}
+
+// More Info covers both parts, so it's the page's own action, in the page header
+$layout->addPageAction(_('More Info'), 'intro.php', 'bi-info-circle'); ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
 </body>
 </html>

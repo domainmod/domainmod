@@ -409,7 +409,7 @@ if ($total_count_ssl_queue > 0) { ?>
         // TRANSLATORS: %1$s is a number of hostnames, and %2$s and %3$s wrap the link to the SSL Queue and must stay.
         echo sprintf(ngettext('Your SSL Queue has %1$s hostname waiting. See the %2$sSSL Queue%3$s for its progress.',
             'Your SSL Queue has %1$s hostnames waiting. See the %2$sSSL Queue%3$s for their progress.', $total_count_ssl_queue),
-            number_format($total_count_ssl_queue), '<a href="' . htmlspecialchars(WEB_ROOT . '/queue/ssl/', ENT_QUOTES, 'UTF-8') . '">', '</a>'); ?></p><?php
+            number_format($total_count_ssl_queue), '<a href="' . htmlspecialchars(WEB_ROOT . '/queue/', ENT_QUOTES, 'UTF-8') . '">', '</a>'); ?></p><?php
 
 }
 ?>

@@ -34,9 +34,10 @@ require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
 
-// Only the SSL Queue page's processing notice asks this page (with htmx), so anything else goes to the queue page
+// Only the SSL Queue's processing notice on the Import Queue page asks this page (with htmx), so anything else goes to
+// that page
 if (!$system->isHtmxRequest()) {
-    header("Location: index.php");
+    header("Location: ../");
     exit;
 }
 

@@ -32,6 +32,9 @@ class Layout
     private static $page_add_action = null;
     private static $page_add_menu = array();
 
+    // How many actions this page's cards have drawn (see renderCardActions()), so every confirmation's id is unique
+    private static $card_action_count = 0;
+
     // Where the header leaves room for the page's actions. The footer swaps it for renderPageActions(), so a page can
     // declare its actions after the header is drawn, once it knows whether they apply (such as Export only with rows).
     const PAGE_ACTIONS_MARKER = '<!--domainmod-page-actions-->';
@@ -143,6 +146,28 @@ class Layout
      */
     public function renderPageActions()
     {
+        return $this->renderActions(_('Page actions'), 'domainmod-page-actions ', self::$card_action_count);
+    }
+
+    /*
+     * The actions added so far (with addPageAction(), setPageAddAction(), and addPageAddMenuItem()), drawn for one card
+     * of a page with several parts, such as the Import Queue's Domain Queue and SSL Queue, so each part's actions sit in
+     * its own card header and it's clear which part they act on. They're drawn as renderPageActions() draws them, then
+     * emptied, so the next card's (and the page header's) start afresh. $label names the group, plain translated text.
+     */
+    public function renderCardActions($label)
+    {
+        $html = $this->renderActions($label, '', self::$card_action_count);
+        self::$card_action_count += count(self::$page_actions);
+        self::$page_actions = array();
+        self::$page_add_action = null;
+        self::$page_add_menu = array();
+        return $html;
+    }
+
+    // The actions as a named group (see renderPageActions()). $first is added to each confirmation's number.
+    private function renderActions($label, $class, $first)
+    {
         $outline = 'btn btn-outline-secondary btn-sm';
         $items = array();
         $confirmations = '';
@@ -150,7 +175,7 @@ class Layout
             if (empty($action['options']['confirm'])) {
                 $items[] = $this->pageActionLink($action, $outline);
             } else {
-                list($items[], $modal) = $this->pageActionConfirm($action, $index + 1, $outline);
+                list($items[], $modal) = $this->pageActionConfirm($action, $first + $index + 1, $outline);
                 $confirmations .= $modal;
             }
         }
@@ -171,8 +196,8 @@ class Layout
                 . '<ul class="dropdown-menu dropdown-menu-end">' . $menu . '</ul></div>';
         }
         if (!$items) return '';
-        return '<div class="domainmod-page-actions d-flex flex-wrap align-items-center gap-2" role="group" aria-label="'
-            . htmlspecialchars(_('Page actions'), ENT_QUOTES, 'UTF-8') . '">' . implode('', $items) . '</div>' . $confirmations;
+        return '<div class="' . $class . 'd-flex flex-wrap align-items-center gap-2" role="group" aria-label="'
+            . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">' . implode('', $items) . '</div>' . $confirmations;
     }
 
     /*

@@ -20,6 +20,5 @@
  */
 ?>
     <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/queue/"><?php echo _('Import Queue'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/queue/ssl/"><?php echo _('SSL Certificates'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

@@ -4,5 +4,15 @@
 #queue-main-domains thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
 #queue-main-domains tbody tr:hover { background-color: #cccccc; }
 #queue-main-domains tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
+#queue-main-hosts thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
+#queue-main-hosts tbody tr:hover { background-color: #cccccc; }
+#queue-main-hosts tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
 [data-bs-theme="dark"] #queue-main-lists tbody tr:hover { background-color: #343a40; }
 [data-bs-theme="dark"] #queue-main-domains tbody tr:hover { background-color: #343a40; }
+[data-bs-theme="dark"] #queue-main-hosts tbody tr:hover { background-color: #343a40; }
+/* The SSL Queue's status can carry a long reason (such as why a lookup failed), so it wraps within a limited width
+   instead of widening its column, and a long host wraps too. Together they fit a phone's width, so the status and host
+   stay in the table there, and the other columns go into each row's details. The widths are set on a block inside each
+   cell, since DataTables Responsive measures the cells' contents and a table cell's own max-width is ignored. */
+#queue-main-hosts .domainmod-queue-status { min-width: 5rem; max-width: 13rem; white-space: normal; overflow-wrap: anywhere; }
+#queue-main-hosts .domainmod-queue-host { min-width: 6rem; white-space: normal; overflow-wrap: anywhere; }

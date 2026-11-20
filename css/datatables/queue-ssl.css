@@ -1,4 +1,0 @@
-#queue-ssl-hosts thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
-#queue-ssl-hosts tbody tr:hover { background-color: #cccccc; }
-#queue-ssl-hosts tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
-[data-bs-theme="dark"] #queue-ssl-hosts tbody tr:hover { background-color: #343a40; }

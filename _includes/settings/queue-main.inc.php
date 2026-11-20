@@ -80,4 +80,39 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                             var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
                             if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Domain Queue')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }
+                      });
+
+                      domainmodTable(\'#' . $slug . '-hosts\', {
+                          "paging": true,
+                          "lengthChange": true,
+                          "lengthMenu": [ 25, 50, 75, 100, -1 ],
+                          "searching": true,
+                          "info": true,
+                          "autoWidth": true,
+                          "bAutoWidth": false,
+                          "responsive": {
+                               details: {
+                                         type: "column"
+                                        }
+                                        },
+                          "columnDefs": [ {
+                                           className: "control",
+                                           orderable: false,
+                                           targets:   0
+                                           }, {
+                                           responsivePriority: 1,
+                                           targets:   1
+                                           }, {
+                                           responsivePriority: 2,
+                                           targets:   2
+                                           } ],
+                          "ordering": true,
+                          "order": [[ 7, "desc" ]],
+                          "bSortClasses": false,
+                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "drawCallback": function (settings) {
+                            // Each paged table names its paging, so the navigation landmarks on the page can be told apart
+                            var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
+                            if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('SSL Queue')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
+                          }
                       });';
