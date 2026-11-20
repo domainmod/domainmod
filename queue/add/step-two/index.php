@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$ssl_queue = new DomainMOD\SslQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -46,6 +47,10 @@ $pdo = $deeb->cnxx;
 
 $new_raid = (int) ($_REQUEST['new_raid'] ?? 0);
 $raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
+// The SSL tick box, ticked when the form is first shown, and shown once the database update adds the SSL Queue. Its
+// lookups are only queued for a pasted list, never for domains the registrar supplies.
+$new_import_ssl = ($_SERVER['REQUEST_METHOD'] == 'POST') ? (int) isset($_POST['new_import_ssl']) : 1;
+$ssl_queue_available = $ssl_queue->isAvailable();
 
 // the chosen account's registrar details, empty until an account is chosen (the form can be submitted without one)
 $api_registrar_name = $registrar_notes = '';
@@ -403,6 +408,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $_SESSION['s_message_success'] .= _('Domains Added To Queue') . '<BR>';
 
+                        // The SSL certificate lookups, in their own transaction now the domains are committed (it never
+                        // throws)
+                        if ($ssl_queue_available && $new_import_ssl === 1) {
+
+                            list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $temp_owner_id, $_SESSION['s_user_id']);
+                            $_SESSION['s_message_success'] .= $ssl_success;
+                            $_SESSION['s_message_warning'] .= $ssl_warning;
+
+                        }
+
                         header('Location: ../../../queue/');
                         exit;
 
@@ -502,6 +517,11 @@ if ($new_raid !== 0) {
 
         echo $form->showInputTextarea('raw_domain_list', _('Domains to add (one per line)'), '', $unsanitize->text($raw_domain_list), '1', '', '');
     }
+
+    // With an optional list, the help says the lookups are only for the domains pasted here
+    $ssl_switch_help = _("Each certificate is read from the domain's site once the domain has been imported.");
+    if ($lists_domains == '1') $ssl_switch_help .= ' ' . _("Only the domains you paste are looked up, not the ones the registrar's API supplies.");
+    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), $ssl_switch_help, 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 
 } ?>
 <?php // Go Back and the main button in one row, Back on the start side (css/base.css) ?>

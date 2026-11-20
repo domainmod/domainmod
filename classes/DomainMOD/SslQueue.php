@@ -424,6 +424,117 @@ class SslQueue
         return array($hosts, $invalid);
     }
 
+    /*
+     * The domain paste pages' tick box: queues an SSL certificate lookup for each pasted domain, after the page's own
+     * transaction has committed, so a problem here can never undo or block the domain import. Through addHosts()'s exact
+     * mode, each new row (or pasted row it upgrades) waits for its own domain to be imported, with the domain page's
+     * owner, issuer matching, and the user's SSL defaults, and a host that already has an unfinished exact-domain row
+     * gets a finished "Already in the queue" row instead. Returns
+     * array(text to add to the success message, warning), each '' or translated HTML ending with <BR>. It never throws,
+     * and a list of more than MAX_HOSTS distinct domains adds no rows.
+     */
+    public function queueDomainLookups($domains, $owner_id, $created_by)
+    {
+        $hosts = array();
+        foreach ($domains as $domain) {
+            $host = Domain::normalize((string) $domain);
+            if ($host !== '') $hosts[$host] = true;
+        }
+        $hosts = array_keys($hosts);
+
+        if (count($hosts) > self::MAX_HOSTS) {
+
+            // TRANSLATORS: %1$s is a number, and %2$s is the name of the "Add SSL Certificates" action.
+            return array(sprintf(_('SSL certificate lookups are only added for lists of up to %1$s domains. You can add them from %2$s in parts.'),
+                number_format(self::MAX_HOSTS), _('Add SSL Certificates')) . '<BR>', '');
+
+        }
+
+        try {
+
+            $choices = $this->defaultChoices($owner_id);
+            if ($choices === null) throw new \RuntimeException('There is no SSL certificate type, category, or IP address to use');
+
+        } catch (\Throwable $e) {
+
+            $this->logError('Unable to read the SSL defaults for the SSL Queue', '', $e);
+            $choices = null;
+
+        }
+
+        $outcome = ($choices === null) ? 'failed' : $this->addHosts($hosts, $choices, true, $created_by);
+
+        if ($outcome === 'full') {
+
+            try {
+
+                $waiting = $this->countUnfinished();
+
+                return array('', sprintf(ngettext('The SSL Queue already has %s hostname waiting. Please wait for some to finish before adding more.',
+                    'The SSL Queue already has %s hostnames waiting. Please wait for some to finish before adding more.', $waiting),
+                    number_format($waiting)) . '<BR>');
+
+            } catch (\Throwable $e) {
+
+                $this->logError('Unable to count the SSL Queue\'s waiting rows', '', $e);
+
+            }
+
+        }
+
+        if ($outcome !== 'added') {
+
+            // TRANSLATORS: %s is the name of the "Add SSL Certificates" action.
+            return array('', sprintf(_("The domains were added to the queue, but their SSL certificate lookups couldn't be. You can add them from %s."),
+                _('Add SSL Certificates')) . '<BR>');
+
+        }
+
+        return array('', '');
+    }
+
+    /*
+     * The tick box's choices: the domain page's owner, issuer matching (account 0), and for the type, category, and IP
+     * address, the user's SSL default, then the system's, then the install's first row (the lowest id), since the
+     * defaults can be 0 or point to a row that's gone. Null when one of those tables has no rows at all, since a row
+     * queued with none would only fail when it's saved.
+     */
+    protected function defaultChoices($owner_id)
+    {
+        $choices = array('owner_id' => (int) $owner_id, 'account_id' => 0,
+            'type_id' => $this->defaultId('ssl_cert_types', array($_SESSION['s_default_ssl_type'] ?? 0, $_SESSION['s_system_default_ssl_type'] ?? 0)),
+            'cat_id' => $this->defaultId('categories', array($_SESSION['s_default_category_ssl'] ?? 0, $_SESSION['s_system_default_category_ssl'] ?? 0)),
+            'ip_id' => $this->defaultId('ip_addresses', array($_SESSION['s_default_ip_address_ssl'] ?? 0, $_SESSION['s_system_default_ip_address_ssl'] ?? 0)));
+
+        return (min($choices['type_id'], $choices['cat_id'], $choices['ip_id']) === 0) ? null : $choices;
+    }
+
+    // The first of $candidates that's a row of $table (a fixed name from this class), or the table's lowest id (0 when
+    // it has none)
+    protected function defaultId($table, $candidates)
+    {
+        foreach ($candidates as $candidate) {
+
+            if ((int) $candidate <= 0) continue;
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT id
+                FROM `" . $table . "`
+                WHERE id = :id");
+            $stmt->bindValue('id', (int) $candidate, \PDO::PARAM_INT);
+            $stmt->execute();
+            $found = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if ($found !== false) return (int) $found;
+
+        }
+
+        return (int) $this->deeb->cnxx->query("
+            SELECT MIN(id)
+            FROM `" . $table . "`")->fetchColumn();
+    }
+
     // The number of unfinished rows, for the cap message
     public function countUnfinished()
     {

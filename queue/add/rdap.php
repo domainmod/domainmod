@@ -35,6 +35,7 @@ $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $domain = new DomainMOD\Domain();
 $queue = new DomainMOD\DomainQueue();
+$ssl_queue = new DomainMOD\SslQueue();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -50,6 +51,9 @@ $rdap_api_registrar_id = $queue->getRdapApiRegistrarId();
 $max_domains = 1000;
 $raw_domain_list = isset($_POST['raw_domain_list']) ? $sanitize->text($_POST['raw_domain_list']) : '';
 $new_owner_id = (int) ($_POST['new_owner_id'] ?? ($_SESSION['s_default_owner_domains'] ?? 0));
+// The SSL tick box, ticked when the form is first shown, and shown once the database update adds the SSL Queue
+$new_import_ssl = ($_SERVER['REQUEST_METHOD'] == 'POST') ? (int) isset($_POST['new_import_ssl']) : 1;
+$ssl_queue_available = $ssl_queue->isAvailable();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
@@ -117,6 +121,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
             $_SESSION['s_message_success'] .= _('Domains Added To Queue') . '<BR>';
 
+            // The SSL certificate lookups, in their own transaction now the domains are committed (it never throws)
+            if ($ssl_queue_available && $new_import_ssl === 1) {
+
+                list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $new_owner_id, $_SESSION['s_user_id']);
+                $_SESSION['s_message_success'] .= $ssl_success;
+                $_SESSION['s_message_warning'] .= $ssl_warning;
+
+            }
+
             header('Location: ../../queue/');
             exit;
 
@@ -170,6 +183,7 @@ if (!$rdap_api_registrar_id) {
     $list_help = _("Neither RDAP nor WHOIS includes a domain's WHOIS privacy or auto-renewal status, so both will be set to No. You can update them afterwards using the Bulk Updater.") . ' '
         . _("Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import.");
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), $list_help, $unsanitize->text($raw_domain_list), '1', '', '');
+    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), _("Each certificate is read from the domain's site once the domain has been imported."), 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 
     // Go Back and the main button in one row, Back on the start side (css/base.css)
     echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left');
