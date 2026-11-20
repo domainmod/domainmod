@@ -69,6 +69,14 @@ class Time
         'US/Michigan' => 'America/Detroit', 'US/Mountain' => 'America/Denver', 'US/Pacific' => 'America/Los_Angeles',
         'US/Pacific-New' => 'America/Los_Angeles', 'US/Samoa' => 'Pacific/Pago_Pago', 'Zulu' => 'Etc/UTC');
 
+    /*
+     * The oldest IANA time zone data (tzdb) release DomainMOD expects PHP to have, written the way
+     * timezone_version_get() reports it: the year, then the release letter as a number (2026c is 2026.3). Older data can
+     * put times in some regions an hour off, so the System Information page warns about it. Raise it when a later time
+     * zone change matters enough to warn about (see IANA's release notes, https://data.iana.org/time-zones/tzdb/NEWS).
+     */
+    const MIN_TZDB_VERSION = '2026.3';
+
     // The time zone as a DateTimeZone. An older name this server's PHP doesn't accept is swapped for the zone it now
     // points to, and anything else PHP rejects (or an empty name) becomes UTC, so a saved setting never stops a page
     public static function zone($timezone)
@@ -80,6 +88,28 @@ class Time
     public static function isKnownZone($timezone)
     {
         return self::findZone($timezone) !== null;
+    }
+
+    // Whether PHP's time zone data is older than MIN_TZDB_VERSION. A version that can't be read (such as '0.system',
+    // which some builds report when they use the system's time zone data) counts as not out of date, since there's no
+    // telling. $version and $minimum are for tests. Without them, PHP's own version is checked against MIN_TZDB_VERSION.
+    public static function isTzdbOutdated($version = null, $minimum = self::MIN_TZDB_VERSION)
+    {
+        $have = self::tzdbVersion($version ?? timezone_version_get());
+        $need = self::tzdbVersion($minimum);
+
+        if ($have === null || $need === null) return false;
+
+        return $have[0] < $need[0] || ($have[0] === $need[0] && $have[1] < $need[1]);
+    }
+
+    // A time zone data version in timezone_version_get()'s form (such as '2026.10') as its year and release number, so
+    // they compare as numbers, or null if it isn't in that form
+    protected static function tzdbVersion($version)
+    {
+        if (!preg_match('/^([1-9][0-9]{3})\.([1-9][0-9]*)\z/', (string) $version, $matches)) return null;
+
+        return array((int) $matches[1], (int) $matches[2]);
     }
 
     // The time zone, directly or through LEGACY_ZONES, or null if PHP accepts neither name

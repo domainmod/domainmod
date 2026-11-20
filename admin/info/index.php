@@ -66,6 +66,15 @@ $connection_advice = ($connection_status !== 'encrypted (certificate checked)' &
       . ' ' . sprintf(_('See %sEncrypted Database Connections%s in the User Guide.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/database-encryption/">', '</a>')
     : '';
 
+// PHP's time zone data older than DomainMOD expects can put times in some regions an hour off. A PHP that reads the
+// system's data reports '0.system' and isn't warned about, so the advice only covers PHP's own copy. The versions and
+// the extension's name are left-to-right code, so they're isolated, as in the connection advice above.
+$timezone_advice = DomainMOD\Time::isTzdbOutdated()
+    ? sprintf(_('This server\'s time zone data (%1$s) is older than %2$s expects (%3$s), so times in some regions may be off. To fix it, update PHP or add the latest %4$s extension.'),
+        $layout->ltr(timezone_version_get()), SOFTWARE_TITLE, $layout->ltr(DomainMOD\Time::MIN_TZDB_VERSION),
+        '<bdi dir="ltr"><code>timezonedb</code></bdi>')
+    : '';
+
 // The system details, in the same grouped list as the requirements below them: each group's rows show a name and its
 // value. Values come from the server, so they're escaped, apart from the version's emphasis and the advice's code.
 // Left-to-right values (versions, addresses, paths, and the MySQL mode) are isolated with Layout::ltr(), so in a
@@ -96,6 +105,7 @@ $info_groups = array(
         array(_('Web Server Software'), $layout->ltr($_SERVER['SERVER_SOFTWARE'] ?? '')))),
     array('PHP', array(
         array(_('PHP Version'), $layout->ltr(phpversion())),
+        array(_('PHP Time Zone Database'), $layout->ltr(timezone_version_get()), $timezone_advice),
         array(_('PHP Error Log Location'), $layout->ltr(ini_get('error_log'))))),
     array(_('Database'), array(
         array(_('MySQL Version'), $layout->ltr($pdo->query('select version()')->fetchColumn())),
