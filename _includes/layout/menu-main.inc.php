@@ -221,12 +221,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/settings/password/" class="nav-link<?php if ($slug == "settings-password") echo " active"; ?>" aria-label="<?php echo _('Change Password'); ?>">
-                        <i class="nav-icon bi"></i>
-                        <p><?php echo _('Change Password') ?></p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/settings/display/" class="nav-link<?php if ($slug == "settings-display") echo " active"; ?>" aria-label="<?php echo _('Display Settings'); ?>">
                         <i class="nav-icon bi"></i>
                         <p><?php echo _('Display Settings') ?></p>
@@ -236,6 +230,12 @@
                     <a href="<?php echo $web_root; ?>/settings/defaults/" class="nav-link<?php if ($slug == "settings-defaults") echo " active"; ?>" aria-label="<?php echo _('User Defaults'); ?>">
                         <i class="nav-icon bi"></i>
                         <p><?php echo _('User Defaults') ?></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/settings/two-factor/" class="nav-link<?php if ($slug == "settings-two-factor") echo " active"; ?>" aria-label="<?php echo _('Security'); ?>">
+                        <i class="nav-icon bi"></i>
+                        <p><?php echo _('Security') ?></p>
                     </a>
                 </li>
             </ul>

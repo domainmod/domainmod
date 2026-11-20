@@ -309,6 +309,15 @@ if ($del === 1) {
 
     } else {
 
+        // With two-factor sign-in, the user's recovery codes and remembered devices go too, in one transaction that
+        // locks the user's row first, so nothing can add more while the user is being deleted
+        $two_factor = new DomainMOD\TwoFactor();
+        $two_factor_available = $two_factor->isAvailableNow();
+        if ($two_factor_available) {
+            $pdo->beginTransaction();
+            $two_factor->deleteUserDataIn($uid);
+        }
+
         $stmt = $pdo->prepare("
             DELETE FROM user_settings
             WHERE user_id = :user_id");
@@ -320,6 +329,8 @@ if ($del === 1) {
             WHERE id = :user_id");
         $stmt->bindValue('user_id', $uid, PDO::PARAM_INT);
         $stmt->execute();
+
+        if ($two_factor_available) $pdo->commit();
 
         $_SESSION['s_message_success'] .= sprintf(_('User %s %s (%s) deleted'), $new_first_name, $new_last_name, $new_username) . '<BR>';
 
@@ -457,7 +468,7 @@ echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php if ($uid == ($_SESSION['s_user_id'] ?? 0)) { // resetting your own password here would log you out ?>
-<?php echo sprintf(_('To change your own password, use %sChange Password%s under Settings.'), '<a href="' . WEB_ROOT . '/settings/password/">', '</a>'); ?><BR><BR>
+<?php echo sprintf(_('To change your own password, use the %sSecurity%s page under Settings.'), '<a href="' . WEB_ROOT . '/settings/two-factor/">', '</a>'); ?><BR><BR>
 <?php } else { ?>
 <?php // The two ways to reset the user's password, as outline buttons beside each other, wrapping on phones ?>
 <div class="d-flex flex-wrap gap-2 mb-3"><?php
@@ -465,6 +476,39 @@ $reset_csrf = (new DomainMOD\Csrf())->query();
 echo $layout->linkButton('reset-password.php?new_username=' . urlencode($new_username) . '&display=1&' . $reset_csrf, _('Reset and Display Password'));
 echo $layout->linkButton('reset-password.php?new_username=' . urlencode($new_username) . '&' . $reset_csrf, _('Reset and Email New Password to User')); ?>
 </div>
+<?php
+    // The user's two-factor sign-in, and the reset for a user who has it on (never on the demo)
+    $two_factor = new DomainMOD\TwoFactor();
+    $two_factor_state = $two_factor->isAvailableNow() ? $two_factor->getState($uid) : false;
+    if ($two_factor_state) {
+
+        $two_factor_on = $two_factor->isOn($two_factor_state);
+        ob_start();
+        echo '<div class="domainmod-span-all">' . $layout->factList(array(
+            array('label' => _('MFA'), 'value' => $two_factor_on ? _('On') : _('Off')),
+            array('label' => _('Turned On'), 'value' => $two_factor_on ? $time->toUserTimezone($two_factor_state['enabled_time'], 'Y-m-d H:i') : '', 'ltr' => true))) . '</div>';
+
+        // The reset's form wraps the card, so its button sits under the card like the app's other forms
+        $two_factor_reset = $two_factor_on && DEMO_INSTALLATION == false;
+        if ($two_factor_reset) {
+
+            echo '<div class="domainmod-span-all">';
+            echo $form->showCheckbox('confirm_reset', '1', _('Reset this user\'s MFA'), ((string) $two_factor_state['required'] === '1' ? _('Their other sessions are signed out. They set it up again at their next sign-in, since it\'s required for all users.') : _('Their other sessions are signed out. They can then sign in with their password alone, and set it up again under Settings.')), '', '', '');
+            echo '</div>';
+
+        }
+
+        $two_factor_card = $layout->formSection(_('MFA'), 'two-factor', ob_get_clean());
+        if ($two_factor_reset) {
+            echo '<form method="post" action="reset-two-factor.php" class="domainmod-form mb-5">' . $form->showCsrfField()
+                . $form->showInputHidden('uid', $uid) . $two_factor_card
+                . $form->showSubmitButton(_('Reset MFA'), '', '') . '</form>';
+        } else {
+            echo '<div class="domainmod-form">' . $two_factor_card . '</div>';
+        }
+
+    }
+?>
 <?php } ?>
 <?php
 $layout->dangerZone(_('User'), $new_first_name . ' ' . $new_last_name, 'edit.php?uid=' . $uid . '&del=1', _('Delete this user'), sprintf(_('This removes %s and their settings. It can\'t be undone. The admin user and your own account can\'t be deleted.'), '<strong>' . htmlentities(html_entity_decode($new_first_name . ' ' . $new_last_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2); ?>

@@ -82,28 +82,48 @@ if ($new_username != '') {
 
         // Resetting your own password here would log you out (a password change ends your other sessions, this one
         // included) before the new password could be shown, leaving the account locked out
-        $_SESSION['s_message_danger'] .= _('To change your own password, use Change Password under Settings.') . '<BR>';
+        $_SESSION['s_message_danger'] .= _('To change your own password, use the Security page under Settings.') . '<BR>';
 
-        header('Location: ' . WEB_ROOT . '/settings/password/');
+        header('Location: ' . WEB_ROOT . '/settings/two-factor/');
         exit;
 
     } else {
 
         $new_password = $user->generatePassword(30);
 
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET password = :new_password,
-                new_password = '1',
-                update_time = :timestamp
-            WHERE username = :username
-              AND email_address = :email_address");
-        $stmt->bindValue('new_password', $user->generateHash($new_password), PDO::PARAM_STR);
-        $timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
-        $stmt->bindValue('email_address', $result->email_address, PDO::PARAM_STR);
-        $stmt->execute();
+        // A new password also forgets the user's remembered devices (two-factor sign-in), in the same transaction
+        $two_factor = new DomainMOD\TwoFactor();
+        $changed = $two_factor->changePassword($result->id, function () use ($pdo, $time, $user, $new_password, $result) {
+
+            $stmt = $pdo->prepare("
+                UPDATE users
+                SET password = :new_password,
+                    new_password = '1',
+                    update_time = :timestamp
+                WHERE id = :user_id
+                  AND username = :username
+                  AND email_address = :email_address");
+            $stmt->bindValue('new_password', $user->generateHash($new_password), PDO::PARAM_STR);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('user_id', $result->id, PDO::PARAM_INT);
+            $stmt->bindValue('username', $result->username, PDO::PARAM_STR);
+            $stmt->bindValue('email_address', $result->email_address, PDO::PARAM_STR);
+            $stmt->execute();
+
+            return $stmt->rowCount() === 1;
+
+        });
+
+        if (!$changed) {
+
+            // The account changed after it was read (such as a new email address), so there's no new password to give
+            $_SESSION['s_message_danger'] .= _('The user changed while the password was being reset. Please try again.') . '<BR>';
+
+            header('Location: edit.php?uid=' . $result->id);
+            exit;
+
+        }
 
         if ($display == '1') {
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings/settings-password.inc.php
+ * /_includes/settings/two-factor.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Change Password');
-$breadcrumb = $page_title;
-$software_section = "settings";
-$slug = "settings-password";
+$page_title = _('MFA');
+$breadcrumb = "";
+$software_section = "login";
+$slug = "two-factor";

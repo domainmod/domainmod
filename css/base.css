@@ -1835,3 +1835,8 @@ html.domainmod-toasts-compact {
 .domainmod-filter-reopening .offcanvas-backdrop {
     transition: none;
 }
+/* The two-factor setup page's QR code (js/two-factor-qr.js) shrinks to fit a narrow screen, keeping its quiet zone */
+.domainmod-two-factor-qr canvas {
+    max-width: 100%;
+    height: auto;
+}

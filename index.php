@@ -54,6 +54,14 @@ if ($_SESSION['s_installation_mode'] === 1) {
 
 }
 
+// The sign-in form carries the security token too, so another site can't sign a visitor in to an account it chose
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check(WEB_ROOT . '/');
+
+}
+
 // Only a plain string counts (a crafted request could send an array, which the form below can't print back)
 $new_username = is_string($_POST['new_username'] ?? null) ? $_POST['new_username'] : '';
 $new_password = $_POST['new_password'] ?? '';
@@ -175,21 +183,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         }
 
-        $_SESSION['s_user_id'] = $user->getUserId($new_username);
-        $_SESSION['s_username'] = $new_username;
-        $_SESSION['s_stored_hash'] = $stored_hash;
+        $user_id = (int) $user->getUserId($new_username);
+        $now = time();
 
-        $_SESSION['s_system_db_version'] = $system->getDbVersion();
+        /*
+         * Two-factor sign-in, once the live database has it (before the upgrade nobody can have turned it on). If the
+         * version or the user's state can't be read, the sign-in is refused rather than skipping the second step.
+         */
+        $two_factor = new DomainMOD\TwoFactor();
+        try {
+            $two_factor_available = $two_factor->isAvailableNow();
+            $two_factor_state = $two_factor_available ? $two_factor->getState($user_id) : null;
+        } catch (\Throwable $e) {
+            $two_factor_available = true;
+            $two_factor_state = false;
+        }
 
-        $_SESSION['s_is_logged_in'] = 1;
+        $device_cookie = DomainMOD\TwoFactor::deviceCookieName();
+        $device_stamp = false;
+        if ($two_factor_available && $two_factor->isOn($two_factor_state) && DomainMOD\TwoFactor::canRememberDevices()
+            && isset($_COOKIE[$device_cookie])) {
 
-        // A new session ID and security token at sign-in, so neither can be carried over from before.
-        session_regenerate_id(true);
-        $csrf = new DomainMOD\Csrf();
-        $csrf->newToken();
+            // A remembered device skips the code, unless the secret can't be decrypted (that needs a recovery code)
+            if ($two_factor->decodeSecret($two_factor_state['secret'], $user_id) !== false) {
+                $device_stamp = $two_factor->findDevice($user_id, $stored_hash, $_COOKIE[$device_cookie], $now);
+            }
+            if ($device_stamp === false) {
+                setcookie($device_cookie, '', array('expires' => 1, 'path' => DomainMOD\TwoFactor::deviceCookiePath(),
+                    'secure' => true, 'httponly' => true, 'samesite' => 'Lax'));
+            }
 
-        header("Location: checks.php");
-        exit;
+        }
+
+        if ($two_factor_available && $two_factor_state === false) {
+
+            $_SESSION['s_message_danger'] .= _('Login Failed') . '<BR>';
+
+        } elseif ($two_factor_available && $two_factor->isOn($two_factor_state) && $device_stamp === false && !session_regenerate_id(true)) {
+
+            $_SESSION['s_message_danger'] .= _('Login Failed') . '<BR>';
+
+        } elseif ($two_factor_available && $two_factor->isOn($two_factor_state) && $device_stamp === false) {
+
+            // The code step, under the new session ID: nothing that signs the session in is set until the code is
+            // right (two-factor.php)
+            $_SESSION['s_two_factor_pending'] = array('user_id' => $user_id, 'username' => $new_username,
+                'password_hash' => $stored_hash, 'stamp' => (string) $two_factor_state['stamp'], 'time' => $now,
+                'wrong' => 0);
+            $csrf = new DomainMOD\Csrf();
+            $csrf->newToken();
+
+            header("Location: two-factor.php");
+            exit;
+
+        } else {
+
+            $two_factor_session = null;
+            if ($two_factor_available) {
+                $two_factor_session = array('stamp' => $device_stamp !== false ? $device_stamp : $two_factor_state['stamp'],
+                    'verified' => $device_stamp !== false ? 1 : 0);
+            }
+
+            if ($login->completeSignIn($user_id, $new_username, $stored_hash, $two_factor_session)) {
+
+                // The sign-in has just checked the password, so a restricted session's setup step (two-factor sign-in
+                // is required and not set up yet) doesn't ask for it again for the next 10 minutes
+                if ($two_factor_available && in_array('setup', $two_factor->pendingSteps($two_factor_state), true)) {
+                    $two_factor->grantPermission('setup', $user_id, $stored_hash, $two_factor_session['stamp'], $now);
+                }
+
+                header("Location: checks.php");
+                exit;
+
+            }
+
+            $_SESSION['s_message_danger'] .= _('Login Failed') . '<BR>';
+
+        }
 
     } else {
 
@@ -250,6 +320,7 @@ $new_password = "";
         } ?>
 
         <form action="" method="post">
+            <?php echo $form->showCsrfField(); ?>
             <div class="input-group has-validation mb-3">
                 <input type="text" class="form-control<?php echo $form->errorClass('new_username'); ?>" placeholder="<?php echo htmlspecialchars(_('Username'), ENT_QUOTES, 'UTF-8'); ?>" name="new_username" id="<?php echo $form->fieldId('new_username'); ?>" value="<?php echo htmlspecialchars($new_username, ENT_QUOTES, 'UTF-8'); // kept after a mistake, so only the password needs typing again ?>" maxlength="30"<?php echo $form->errorAttributes('new_username'); ?><?php if (!DomainMOD\System::$error_shown && $_SERVER['REQUEST_METHOD'] !== 'POST') echo ' autofocus'; // not when there's an error to read first ?>>
                 <?php echo $form->errorFeedback('new_username'); ?>

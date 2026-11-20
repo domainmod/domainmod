@@ -43,6 +43,15 @@ $dbpassword = 'dbPassword123';
 // https://example.com/cron.php?key=YourKeyHere. Use a long random value, and update your scheduled job to match.
 // $cron_key = '';
 
+// MFA Key (optional)
+// If you set a key, DomainMOD encrypts each user's MFA secret with it, so a copy of the database (such as a backup)
+// doesn't give away the second step. Secrets saved before the key was set are encrypted the next time each user signs
+// in with a code from their authenticator app, so backups taken before then still include them. Use a long random
+// value and keep it safe with your other settings: the key isn't in DomainMOD's backups. If the key is lost or changed,
+// users with MFA on need a recovery code or an administrator's reset to sign in, so use the same value when you move or
+// restore your installation.
+// $secret_key = '';
+
 // Installation Type (optional)
 // The Upgrade page (Administration > Upgrade) works out how DomainMOD was installed, so it can show the right upgrade
 // steps. If it gets it wrong, set it here: docker, git, zip, or softaculous.

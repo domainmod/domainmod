@@ -89,6 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $host = $dbhostname ?? '';
                 new DomainMOD\RestoreImport($filename, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
 
+                // Every user gets a new two-factor stamp (once the restored database has them), so sessions and
+                // remembered devices whose stamps the backup brought back end too
+                $two_factor = new DomainMOD\TwoFactor();
+                if ($two_factor->isAvailableNow()) $two_factor->newStampsForEveryone();
+
                 header("Location: " . WEB_ROOT . "/logout.php");
                 exit;
 

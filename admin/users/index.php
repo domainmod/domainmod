@@ -41,8 +41,13 @@ $pdo = $deeb->cnxx;
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
 
+// Whether each user has two-factor sign-in on, once the database has the column
+$two_factor = new DomainMOD\TwoFactor();
+$two_factor_available = $two_factor->isAvailableNow();
+$two_factor_column = $two_factor_available ? "u.two_factor_secret != '' AS two_factor_on" : "'0' AS two_factor_on";
+
 $result = $pdo->query("
-    SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.read_only, u.active, u.number_of_logins, u.last_login, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_language, us.default_currency, us.default_timezone
+    SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.read_only, u.active, u.number_of_logins, u.last_login, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_language, us.default_currency, us.default_timezone, " . $two_factor_column . "
     FROM users AS u, user_settings AS us
     WHERE u.id = us.user_id
     ORDER BY u.first_name, u.last_name, u.username, u.email_address")->fetchAll();
@@ -65,6 +70,7 @@ if ($export_data === 1) {
         _('Email Address'),
         _('Admin') . '?',
         _('Read-Only') . '?',
+        _('MFA'),
         _('Default Language'),
         _('Default Currency'),
         _('Default Timezone'),
@@ -128,6 +134,7 @@ if ($export_data === 1) {
                 $row->email_address,
                 $is_admin,
                 $is_read_only,
+                $row->two_factor_on == '1' ? _('On') : _('Off'),
                 $row->default_language,
                 $row->default_currency,
                 $row->default_timezone,
@@ -171,7 +178,10 @@ if ($result) { ?>
             <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('User'); ?></th>
             <th><?php echo _('Username'); ?></th>
-            <th><?php echo _('Email'); ?></th>
+            <th><?php echo _('Email'); ?></th><?php
+            if ($two_factor_available) { ?>
+            <th><?php echo _('MFA'); ?></th><?php
+            } ?>
         </tr>
         </thead>
         <tbody><?php
@@ -193,7 +203,10 @@ if ($result) { ?>
             </td>
             <td>
                 <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
-            </td>
+            </td><?php
+            if ($two_factor_available) { ?>
+            <td><?php echo $row->two_factor_on == '1' ? _('On') : _('Off'); ?></td><?php
+            } ?>
             </tr><?php
 
         } ?>

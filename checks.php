@@ -94,8 +94,7 @@ $_SESSION['s_last_name'] = $result->last_name;
 $_SESSION['s_email_address'] = $result->email_address;
 $_SESSION['s_is_new_password'] = $result->new_password;
 $_SESSION['s_number_of_logins'] = $result->number_of_logins;
-if ($result->admin == 1) $_SESSION['s_is_admin'] = 1;
-if ($result->read_only == '0') $_SESSION['s_read_only'] = '0';
+$login->setPermissions($result);
 
 // Tell admins about any sensitive files from an older version that couldn't be deleted automatically
 if (!empty($legacy_temp_files) && ($_SESSION['s_is_admin'] ?? 0) === 1) {
@@ -196,7 +195,13 @@ $system->checkExistingAssets();
 
 unset($_SESSION['s_installation_mode']);
 
-$login->setLastLogin($_SESSION['s_user_id']);
+// Once per sign-in, as a user sent to Change Password (or another sign-in step) comes back through here afterwards
+if (($_SESSION['s_last_login_recorded'] ?? 0) !== 1) {
+
+    $login->setLastLogin($_SESSION['s_user_id']);
+    $_SESSION['s_last_login_recorded'] = 1;
+
+}
 
 $_SESSION['s_version_error'] = $_SESSION['s_version_error'] ?? 0;
 if ($_SESSION['s_version_error'] != '1') {
@@ -231,7 +236,41 @@ if ($_SESSION['s_version_error'] != '1') {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes.') . '<BR>';
-        header("Location: settings/password/");
+        header("Location: settings/two-factor/");
+        exit;
+
+    }
+
+}
+
+/*
+ * The sign-in steps still to do, in order: Change Password (if the version check above skipped it), then two-factor
+ * setup or replacing a secret that can't be decrypted, then confirming the recovery codes. Each page comes back here
+ * while s_running_login_checks is set. System::authCheck() keeps every other page closed until they're done.
+ */
+$two_factor = new DomainMOD\TwoFactor();
+if ($two_factor->isAvailableNow()) {
+
+    $sign_in_steps = $two_factor->pendingSteps($two_factor->getState($_SESSION['s_user_id']));
+
+    if (in_array('password', $sign_in_steps, true)) {
+
+        $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+        $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes.') . '<BR>';
+        header("Location: settings/two-factor/");
+        exit;
+
+    } elseif ($sign_in_steps !== array()) {
+
+        // "Require MFA for All Users" is on, and this user hasn't set it up yet
+        if (in_array('setup', $sign_in_steps, true)) {
+
+            $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+            $_SESSION['s_message_danger'] .= _('An administrator requires MFA, so please set it up before continuing.') . '<BR>';
+
+        }
+
+        header("Location: settings/two-factor/");
         exit;
 
     }

@@ -12,3 +12,4 @@ Tom Select 2.6.2  https://registry.npmjs.org/tom-select/-/tom-select-2.6.2.tgz  
 htmx 2.0.11  https://registry.npmjs.org/htmx.org/-/htmx.org-2.0.11.tgz  sha256:165a2655073e9e6e55e307a7c74e8ebcdb76afb7701f9c16cfd106a13add408e
 Flatpickr 4.6.13  https://registry.npmjs.org/flatpickr/-/flatpickr-4.6.13.tgz  sha256:912da5a92aea3447d39ab83d83706c004c999ee9b013a6267fab3d8710e8a7a8
 Chart.js 4.6.1  https://registry.npmjs.org/chart.js/-/chart.js-4.6.1.tgz  sha256:9345dacdf4bb4c5d40321f4b9aafab6fe676d37a534fc0bc2d17c4c4e29c4f00
+qrcode-generator 2.0.4  https://registry.npmjs.org/qrcode-generator/-/qrcode-generator-2.0.4.tgz  sha256:02e2e18a99a90b02dad940851f59b7c3c5fd1ab79cbdece8595cb06328878159

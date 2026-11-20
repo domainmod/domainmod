@@ -639,6 +639,11 @@ class System
             $_SESSION['s_message_danger'] .= _('You must be logged in to access this area.') . '<BR>';
             header('Location: ' . WEB_ROOT . '/');
             exit;
+        } elseif ($result === 'steps_pending') {
+            // A sign-in step (such as Change Password or two-factor setup) is still to do, and checks.php sends the
+            // user to it
+            header('Location: ' . WEB_ROOT . '/checks.php');
+            exit;
         } elseif ($result === 'invalid') {
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
             $_SESSION['s_message_danger'] .= _('You must be logged in to access this area.') . '<BR>';
@@ -649,17 +654,18 @@ class System
 
     /*
      * authCheck()'s checks without its redirects, for a script that answers in JSON (such as domains/list-data.php):
-     * 'valid', 'signed_out' (no signed-in session), or 'invalid' (an incomplete session, or a user who's gone, inactive,
-     * or whose password has changed). A valid session's colour mode is refreshed, as authCheck() always has.
+     * 'valid', 'signed_out' (no signed-in session), 'invalid' (an incomplete session, or a user who's gone, inactive,
+     * or whose password or two-factor sign-in has changed), or 'steps_pending' (a sign-in step is still to do). A valid session's colour mode is refreshed, as authCheck() always has.
      */
     public function authCheckResult()
     {
         if (($_SESSION['s_is_logged_in'] ?? 0) != 1) return 'signed_out';
 
         $pdo = $this->deeb->cnxx;
-        // The colour mode comes along too, so a change saved in another browser shows on this one's next page
+        // The colour mode comes along too, so a change saved in another browser shows on this one's next page, and
+        // the database version, for the two-factor checks below
         $stmt = $pdo->prepare("
-            SELECT u.`password`, us.dark_mode
+            SELECT u.id, u.`password`, us.dark_mode, (SELECT db_version FROM settings LIMIT 1) AS db_version
             FROM users AS u
             LEFT JOIN user_settings AS us ON us.user_id = u.id
             WHERE u.username = :new_username
@@ -671,9 +677,45 @@ class System
         // An incomplete session, or a user who's gone or inactive, is logged out too
         $session_hash = $_SESSION['s_stored_hash'] ?? '';
         if ($session_hash === '' || $stored_hash === false || $session_hash != $stored_hash) return 'invalid';
+
+        $two_factor_result = $this->twoFactorResult((int) $result['id'], $result['db_version']);
+        if ($two_factor_result !== 'valid') return $two_factor_result;
+
         if ($result['dark_mode'] !== null) $_SESSION['s_dark_mode'] = (int) $result['dark_mode'];
 
         return 'valid';
+    }
+
+    /*
+     * Two-factor sign-in's part of authCheckResult(), from the live database version (never the session's, which can
+     * be out of date): before the database has it, a session that knew about it (one created on an upgraded database,
+     * such as before a restore from older backup) is invalid, and every other session is as before. After, see
+     * TwoFactor::sessionResult(). A version that can't be read fails closed.
+     */
+    protected function twoFactorResult($user_id, $db_version)
+    {
+        try {
+
+            if (!TwoFactor::isAvailableStrict($db_version)) {
+                return isset($_SESSION['s_two_factor_stamp']) ? 'invalid' : 'valid';
+            }
+
+            $two_factor = new TwoFactor();
+            return $two_factor->sessionResult($two_factor->getState($user_id), $_SESSION, $this->currentPage());
+
+        } catch (\Throwable $e) {
+
+            return 'invalid';
+
+        }
+    }
+
+    // This page's path from the install's root, such as /settings/password/index.php
+    protected function currentPage()
+    {
+        $script = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+        if (WEB_ROOT !== '' && strncmp($script, WEB_ROOT . '/', strlen(WEB_ROOT) + 1) === 0) $script = substr($script, strlen(WEB_ROOT));
+        return $script;
     }
 
     /*

@@ -185,18 +185,20 @@ class Form
      * first field of a page whose main job is entering something new (such as an Add page). It's left off when the page
      * is showing an error message (including one carried over from a redirect) or the form is shown again after a
      * submit, so the focus doesn't skip past the message. A mistake recorded for the field with addFieldError() shows
-     * under it, and the first such field on the page gets the focus instead. A password field is marked as a new
-     * password, so browsers don't fill in the user's saved DomainMOD sign-in. An empty $maxlength leaves the length
+     * under it, and the first such field on the page gets the focus instead. Set $is_password to '1' for a password field
+     * marked as a new password, so browsers don't fill in the user's saved DomainMOD sign-in, or to 'current' for the
+     * user's current password, which browsers can fill in. An empty $maxlength leaves the length
      * open, and $below is HTML shown under the field, inside its grid item (such as showSavedPassword()'s Remove box).
      */
     public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after, $autofocus = '', $dir = '', $below = '')
     {
+        $is_secret = $is_password == '1' || $is_password === 'current';
         ob_start();
             echo $before; ?>
             <div class="mb-3">
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <input type="<?php if ($is_password == '1') { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password == '1') { echo 'new-password'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_password == '1'); ?>
+                <input type="<?php if ($is_secret) { echo 'password'; } else { echo 'text'; } ?>" autocomplete="<?php if ($is_password === 'current') { echo 'current-password'; } elseif ($is_secret) { echo 'new-password'; } else { echo 'on'; } ?>" class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, $is_secret); ?>
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" <?php if ((string) $maxlength !== '') echo ' maxlength="' . $maxlength . '"'; ?><?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>>
                 <?php echo $this->errorFeedback($name); ?><?php echo $below; ?>
             </div><?php

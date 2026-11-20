@@ -47,7 +47,7 @@ $system->authCheck();
     echo $layout->landingTile('/settings/display/', _('Display Settings'), _('Columns, color mode, and how lists look'), 'bi-display', 'secondary', '', 2);
     echo $layout->landingTile('/settings/defaults/', _('User Defaults'), _('Your default assets for new domains and SSL certificates'), 'bi-person-gear', 'secondary', '', 2);
     echo $layout->landingTile('/settings/profile/', _('User Profile'), _('Your name, email, language, currency, and time zone'), 'bi-person-circle', 'secondary', '', 2);
-    echo $layout->landingTile('/settings/password/', _('Change Password'), _('Change the password you sign in with'), 'bi-key', 'secondary', '', 2); ?>
+    echo $layout->landingTile('/settings/two-factor/', _('Security'), _('Your password and MFA'), 'bi-shield-lock', 'secondary', '', 2); ?>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

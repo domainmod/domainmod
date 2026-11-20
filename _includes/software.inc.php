@@ -35,3 +35,5 @@ define('DB_SSL_CA', $dbsslca ?? '');
 define('CRON_KEY', isset($cron_key) ? trim((string) $cron_key) : '');
 // Optional installation type for the Upgrade page (see config.SAMPLE.inc.php). Older config files don't have one.
 define('INSTALL_TYPE', isset($install_type) ? strtolower(trim((string) $install_type)) : '');
+// Optional key that encrypts two-factor sign-in secrets (see config.SAMPLE.inc.php). Older config files don't have one.
+define('SECRET_KEY', isset($secret_key) ? trim((string) $secret_key) : '');

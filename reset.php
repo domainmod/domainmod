@@ -89,22 +89,30 @@ if ($reset_id > 0 || $reset_token !== '') {
 
         $new_password = $user->generatePassword(30);
 
-        // Matching on the old hash means only one request can use the link
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET `password` = :new_hash,
-                new_password = '1',
-                update_time = :timestamp
-            WHERE id = :user_id
-              AND `password` = :old_hash");
-        $stmt->bindValue('new_hash', $user->generateHash($new_password), PDO::PARAM_STR);
-        $bind_timestamp = $time->stamp();
-        $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('user_id', $result->id, PDO::PARAM_INT);
-        $stmt->bindValue('old_hash', $result->password, PDO::PARAM_STR);
-        $stmt->execute();
+        // Matching on the old hash means only one request can use the link. A new password also forgets the user's
+        // remembered devices (two-factor sign-in), in the same transaction.
+        $two_factor = new DomainMOD\TwoFactor();
+        $changed = $two_factor->changePassword($result->id, function () use ($pdo, $time, $user, $new_password, $result) {
 
-        if ($stmt->rowCount() !== 1) {
+            $stmt = $pdo->prepare("
+                UPDATE users
+                SET `password` = :new_hash,
+                    new_password = '1',
+                    update_time = :timestamp
+                WHERE id = :user_id
+                  AND `password` = :old_hash");
+            $stmt->bindValue('new_hash', $user->generateHash($new_password), PDO::PARAM_STR);
+            $bind_timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $bind_timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('user_id', $result->id, PDO::PARAM_INT);
+            $stmt->bindValue('old_hash', $result->password, PDO::PARAM_STR);
+            $stmt->execute();
+
+            return $stmt->rowCount() === 1;
+
+        });
+
+        if (!$changed) {
 
             $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
             $_SESSION['s_message_danger'] .= _('This password reset link is invalid or has expired.') . '<BR>';

@@ -43,6 +43,38 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 $pdo = $deeb->cnxx;
 
+/*
+ * "Require MFA for All Users", saved by its own form. TwoFactor::setRequired() checks the admin again in
+ * the database (the session's admin and read-only flags are only loaded at sign-in). Never on the demo.
+ */
+$two_factor = new DomainMOD\TwoFactor();
+$two_factor_available = $two_factor->isAvailableNow();
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['two_factor_form'] ?? '') === '1') {
+
+    if (DEMO_INSTALLATION == true || !$two_factor_available) {
+
+        $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
+
+    } else {
+
+        $two_factor_result = $two_factor->setRequired($_SESSION['s_user_id'], $_SESSION['s_stored_hash'] ?? '',
+            $_SESSION['s_two_factor_stamp'] ?? '', (int) ($_POST['new_two_factor_required'] ?? 0) === 1);
+
+        if ($two_factor_result === 'ok') {
+            $_SESSION['s_message_success'] .= _('The MFA setting was updated.') . '<BR>';
+        } elseif ($two_factor_result === 'not_on') {
+            $_SESSION['s_message_danger'] .= _('Turn on MFA for your own account (under Settings) before requiring it for everyone.') . '<BR>';
+        } else {
+            $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
+        }
+
+    }
+
+    header("Location: index.php");
+    exit;
+
+}
+
 $new_full_url = isset($_POST['new_full_url']) ? $sanitize->text($_POST['new_full_url']) : '';
 $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 $new_expiration_days = (int) ($_POST['new_expiration_days'] ?? 0);
@@ -221,6 +253,29 @@ echo $layout->formSection(_('SMTP Server Settings'), 'smtp', ob_get_clean());
 
 echo $form->showSubmitButton(_('Update System Settings'), '', '');
 echo $form->showFormBottom('');
+
+// Two-factor sign-in: the "require" setting, and what a database backup exposes (the secret key)
+if ($two_factor_available && DEMO_INSTALLATION == false) {
+
+    $two_factor_admin = $two_factor->getState($_SESSION['s_user_id']);
+    $secret_counts = $two_factor->secretCounts();
+    ob_start();
+    echo '<div class="domainmod-span-all">' . $layout->factList(array(
+        array('label' => _('Secret Key'), 'value' => $two_factor->hasSecretKey() ? _('Set') : _('Not set')),
+        array('label' => _('Secrets Stored Without Encryption'), 'value' => (string) $secret_counts['raw'], 'ltr' => true))) . '</div>';
+    if (!$two_factor->hasSecretKey() && $secret_counts['encrypted'] > 0) {
+        echo '<p class="domainmod-span-all text-danger">' . _("Some users' MFA secrets are encrypted, but no secret key is set in config.inc.php, so they need a recovery code to sign in. Set the same key again.") . '</p>';
+    } elseif ($two_factor_admin && $two_factor->isOn($two_factor_admin) && $two_factor->decodeSecret($two_factor_admin['secret'], $two_factor_admin['id']) === false) {
+        echo '<p class="domainmod-span-all text-danger">' . _('Your own MFA secret could not be decrypted, so the secret key in config.inc.php may have changed.') . '</p>';
+    }
+    echo '<p class="domainmod-span-all">' . _('Without a secret key, MFA secrets are stored without encryption, so a database backup includes them. Secrets saved before a key was set are encrypted the next time each user signs in with a code from their authenticator app.') . '</p>';
+    echo $form->showInputHidden('two_factor_form', '1');
+    echo $form->showSwitch(_('Require MFA for All Users'), _("Users who don't have it on can only change their password and set it up until they do. You need it on for your own account first."), 'new_two_factor_required', (int) ($two_factor_admin['required'] ?? 0), '<div class="domainmod-span-all mb-3">', '</div>');
+    // Its own form, set apart from System Settings above, with its button under its card like that form's
+    echo '<div class="mt-5">' . $form->showFormTop('') . $layout->formSection(_('Set Up MFA'), 'two-factor', ob_get_clean())
+        . $form->showSubmitButton(_('Update MFA Setting'), '', '') . $form->showFormBottom('') . '</div>';
+
+}
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

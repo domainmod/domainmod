@@ -50,6 +50,21 @@ class Login
         return $result;
     }
 
+    /*
+     * Puts the user's admin and read-only flags in the session, both ways, from getUserInfo()'s row. A session can
+     * outlive a change to them (it continues after its own password change), so they're set from the account as it is
+     * now rather than only ever raised.
+     */
+    public function setPermissions($user_info)
+    {
+        if ($user_info && $user_info->admin == 1) {
+            $_SESSION['s_is_admin'] = 1;
+        } else {
+            unset($_SESSION['s_is_admin']);
+        }
+        $_SESSION['s_read_only'] = $user_info && $user_info->read_only == '0' ? '0' : '1';
+    }
+
     public function getSystemSettings()
     {
         $pdo = $this->deeb->cnxx;
@@ -125,6 +140,53 @@ class Login
         $_SESSION['s_default_language_name'] = $result->language_name;
 
         return true;
+    }
+
+    /*
+     * The one place that sets a session as signed in (the sign-in page, and the two-factor step once its code is
+     * right): a new session ID and security token, so neither can be carried over from before, then the user's keys.
+     * Returns false, leaving the session signed out, if the ID can't be replaced. Otherwise the caller sends the user
+     * to checks.php.
+     *
+     * $two_factor is null before the database has two-factor sign-in, otherwise array('stamp' => the user's two-factor
+     * stamp as read, 'verified' => 1 if the second step was passed, or 0), which System::authCheckResult() checks.
+     * $id_replaced is true when the caller has already replaced the session ID for this sign-in (two-factor.php does
+     * it before using a code, so a recovery code is never spent on a sign-in that can't finish).
+     */
+    public function completeSignIn($user_id, $username, $stored_hash, $two_factor = null, $id_replaced = false)
+    {
+        if (!$id_replaced && !$this->regenerateSession()) return false;
+        (new Csrf())->newToken();
+
+        $_SESSION['s_user_id'] = $user_id;
+        $_SESSION['s_username'] = $username;
+        $_SESSION['s_stored_hash'] = $stored_hash;
+
+        $_SESSION['s_system_db_version'] = $this->getDbVersion();
+
+        if (is_array($two_factor)) {
+            $_SESSION['s_two_factor_stamp'] = (string) $two_factor['stamp'];
+            $_SESSION['s_two_factor_verified'] = (int) $two_factor['verified'];
+        } else {
+            unset($_SESSION['s_two_factor_stamp'], $_SESSION['s_two_factor_verified']);
+        }
+
+        $_SESSION['s_is_logged_in'] = 1;
+        // checks.php records the sign-in once
+        unset($_SESSION['s_last_login_recorded']);
+
+        return true;
+    }
+
+    // The database's version (System::getDbVersion())
+    protected function getDbVersion()
+    {
+        return (new System())->getDbVersion();
+    }
+
+    protected function regenerateSession()
+    {
+        return session_regenerate_id(true);
     }
 
     public function setLastLogin($user_id)
