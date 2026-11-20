@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                     $stmt = $pdo->prepare("
                         INSERT INTO currency_conversions
-                        (currency_id, user_id, conversion, insert_time, update_time)
+                        (currency_id, user_id, `conversion`, insert_time, update_time)
                         VALUES
                         (:temp_new_currency_id, :user_id, '1', :timestamp_insert, :timestamp_update)");
                     $stmt->bindValue('temp_new_currency_id', $temp_new_currency_id, PDO::PARAM_INT);

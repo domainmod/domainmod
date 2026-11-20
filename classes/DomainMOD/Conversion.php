@@ -266,7 +266,7 @@ class Conversion
 
             $stmt = $pdo->prepare("
                 UPDATE currency_conversions
-                SET conversion = :conversion_rate,
+                SET `conversion` = :conversion_rate,
                     update_time = :update_time
                 WHERE currency_id = :currency_id
                   AND user_id = :user_id");
@@ -285,7 +285,7 @@ class Conversion
 
             $stmt = $pdo->prepare("
                 INSERT INTO currency_conversions
-                (currency_id, user_id, conversion, insert_time)
+                (currency_id, user_id, `conversion`, insert_time)
                 VALUES
                 (:currency_id, :user_id, :conversion_rate, :update_time)");
             $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);

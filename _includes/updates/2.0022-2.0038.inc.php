@@ -973,15 +973,15 @@ if ($current_db_version === '2.0037') {
     foreach ($result as $row) {
 
         $result2 = $pdo->query("
-            SELECT id, conversion
+            SELECT id, `conversion`
             FROM currencies
-            WHERE conversion != '0'")->fetchAll();
+            WHERE `conversion` != '0'")->fetchAll();
 
         foreach ($result2 as $row2) {
 
             $stmt = $pdo->prepare("
                 INSERT INTO currency_conversions
-                (currency_id, user_id, conversion, insert_time, update_time)
+                (currency_id, user_id, `conversion`, insert_time, update_time)
                 VALUES
                 (:currency_id, :user_id, :conversion, :timestamp_insert, :timestamp_update)");
             $stmt->bindValue('currency_id', $row2->id, PDO::PARAM_INT);

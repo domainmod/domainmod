@@ -777,7 +777,7 @@ class Assets
 
         $stmt = $pdo->prepare("
             INSERT INTO currency_conversions
-            (currency_id, user_id, conversion, insert_time, update_time)
+            (currency_id, user_id, `conversion`, insert_time, update_time)
             VALUES
             (:currency_id, :user_id, '1', :timestamp_insert, :timestamp_update)");
         $stmt->bindValue('currency_id', $currency_id, \PDO::PARAM_INT);
