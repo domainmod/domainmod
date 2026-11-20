@@ -57,7 +57,8 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <div class="row g-3"><?php
     echo $layout->landingTile('/admin/scheduler/', _('Task Scheduler'), _('Scheduled tasks, when they run, and Run Now'), 'bi-clock-history', 'secondary');
     echo $layout->landingTile('/admin/maintenance/', _('Maintenance'), _('Clear the queues and the debug log'), 'bi-tools', 'secondary');
-    echo $layout->landingTile('/admin/backup/', _('Backup & Restore'), _('Back up the database, or restore a backup'), 'bi-archive', 'secondary'); ?>
+    echo $layout->landingTile('/admin/backup/', _('Backup & Restore'), _('Back up the database, or restore a backup'), 'bi-archive', 'secondary');
+    echo $layout->landingTile('/admin/upgrade/', _('Upgrade'), _('Check for a new version, and see how to upgrade'), 'bi-arrow-up-circle', 'secondary'); ?>
 </div>
 
 <h2 class="h5 mt-4"><?php echo _('Diagnostics'); ?></h2>

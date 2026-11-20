@@ -42,3 +42,8 @@ $dbpassword = 'dbPassword123';
 // cron.php only runs from the command line (php cron.php) or from a URL that includes the key, such as
 // https://example.com/cron.php?key=YourKeyHere. Use a long random value, and update your scheduled job to match.
 // $cron_key = '';
+
+// Installation Type (optional)
+// The Upgrade page (Administration > Upgrade) works out how DomainMOD was installed, so it can show the right upgrade
+// steps. If it gets it wrong, set it here: docker, git, zip, or softaculous.
+// $install_type = 'zip';

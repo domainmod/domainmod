@@ -40,16 +40,18 @@ class Goal
         $act_ip_address = $this->getIp();
         $act_agent = $this->getAgent();
         $act_language = $this->getLanguage();
+        list($install_columns, $install_values) = $this->installColumns();
 
         $stmt = $pdo->prepare("
             INSERT INTO goal_activity
-            (type, old_version, new_version, ip, agent, `language`, insert_time)
+            (type, old_version, new_version, ip, agent, `language`" . $install_columns . ", insert_time)
              VALUES
-            ('i', 'n/a', :act_software_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
+            ('i', 'n/a', :act_software_version, :act_ip_address, :act_agent, :act_language" . $install_values . ", :insert_time)");
         $stmt->bindValue('act_software_version', $act_software_version, \PDO::PARAM_STR);
         $stmt->bindValue('act_ip_address', $act_ip_address, \PDO::PARAM_STR);
         $stmt->bindValue('act_agent', $act_agent, \PDO::PARAM_LOB);
         $stmt->bindValue('act_language', $act_language, \PDO::PARAM_STR);
+        $this->bindInstallDetails($stmt, $install_columns);
         $bind_timestamp = $this->time->stamp();
         $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
         $stmt->execute();
@@ -63,17 +65,19 @@ class Goal
         $act_ip_address = $this->getIp();
         $act_agent = $this->getAgent();
         $act_language = $this->getLanguage();
+        list($install_columns, $install_values) = $this->installColumns();
 
         $stmt = $pdo->prepare("
             INSERT INTO goal_activity
-            (type, old_version, new_version, ip, agent, `language`, insert_time)
+            (type, old_version, new_version, ip, agent, `language`" . $install_columns . ", insert_time)
              VALUES
-            ('u', :act_old_version, :act_new_version, :act_ip_address, :act_agent, :act_language, :insert_time)");
+            ('u', :act_old_version, :act_new_version, :act_ip_address, :act_agent, :act_language" . $install_values . ", :insert_time)");
         $stmt->bindValue('act_old_version', $act_old_version, \PDO::PARAM_STR);
         $stmt->bindValue('act_new_version', $act_new_version, \PDO::PARAM_STR);
         $stmt->bindValue('act_ip_address', $act_ip_address, \PDO::PARAM_STR);
         $stmt->bindValue('act_agent', $act_agent, \PDO::PARAM_LOB);
         $stmt->bindValue('act_language', $act_language, \PDO::PARAM_STR);
+        $this->bindInstallDetails($stmt, $install_columns);
         $bind_timestamp = $this->time->stamp();
         $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
         $stmt->execute();
@@ -82,9 +86,11 @@ class Goal
     public function remote()
     {
         $pdo = $this->deeb->cnxx;
+        $has_install_details = $this->hasInstallColumns();
 
         $result = $pdo->query("
-            SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time
+            SELECT id, type, old_version, new_version, ip, agent, `language`, insert_time" .
+            ($has_install_details ? ", install_type, files_writable" : "") . "
             FROM goal_activity
             WHERE new_activity = '1'
             ORDER BY id ASC")->fetchAll();
@@ -109,6 +115,9 @@ class Goal
                 $goal_url = $base_url . '&ip=' . urlencode($row->ip) . '&a=' . urlencode($row->agent) . '&l=' .
                 urlencode($row->language) . '&ti=' . urlencode($row->insert_time) . '&tu=' .
                 urlencode($this->time->stamp());
+                if ($has_install_details) {
+                    $goal_url .= '&it=' . urlencode($row->install_type) . '&w=' . urlencode($row->files_writable);
+                }
                 $this->triggerGoal($goal_url);
 
             }
@@ -123,6 +132,67 @@ class Goal
         } else { // upgrade
             return 'https://domainmod.org/upgraded/index.php?ov=' . urlencode($old_version) . '&nv=' .
                 urlencode($new_version);
+        }
+    }
+
+    /*
+     * The install details for the activity's insert: the extra columns and their placeholders, or two empty strings
+     * when goal_activity doesn't have them yet (see hasInstallColumns()).
+     */
+    protected function installColumns()
+    {
+        if (!$this->hasInstallColumns()) return array('', '');
+
+        return array(', install_type, files_writable', ', :act_install_type, :act_files_writable');
+    }
+
+    // Binds the install details (getInstallDetails()) when the insert has their columns ($install_columns isn't empty)
+    protected function bindInstallDetails($stmt, $install_columns)
+    {
+        if ($install_columns === '') return;
+
+        list($act_install_type, $act_files_writable) = $this->getInstallDetails();
+        $stmt->bindValue('act_install_type', $act_install_type, \PDO::PARAM_STR);
+        $stmt->bindValue('act_files_writable', $act_files_writable, \PDO::PARAM_STR);
+    }
+
+    /*
+     * Whether goal_activity has the install_type and files_writable columns, which the 4.27.0 database update adds. An
+     * upgrade's activity is recorded from inside the database update, before the database's version changes, so the
+     * columns themselves are checked rather than the version. A failed check counts as no, so the activity is still
+     * recorded, without them.
+     */
+    protected function hasInstallColumns()
+    {
+        try {
+
+            $columns = $this->deeb->cnxx->query("SHOW COLUMNS FROM `goal_activity`")->fetchAll(\PDO::FETCH_COLUMN);
+            return in_array('install_type', $columns, true) && in_array('files_writable', $columns, true);
+
+        } catch (\Throwable $e) {
+
+            return false;
+
+        }
+    }
+
+    /*
+     * The kind of install (docker, git, zip, softaculous, or unknown) and whether the web server can write to its files
+     * (yes, no, or unknown), from InstallType. Anything that goes wrong makes them unknown, so it never stops an install
+     * or an upgrade.
+     */
+    protected function getInstallDetails()
+    {
+        try {
+
+            $install_type = new InstallType();
+            $detected = $install_type->detect(defined('INSTALL_TYPE') ? INSTALL_TYPE : '');
+            return array($detected['type'], $install_type->filesWritable());
+
+        } catch (\Throwable $e) {
+
+            return array('unknown', 'unknown');
+
         }
     }
 

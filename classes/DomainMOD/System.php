@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class System
 {
+    // The database version that adds settings.latest_version and latest_version_checked (see hasLatestVersion())
+    const LATEST_VERSION_DB_VERSION = '4.27.0';
+
     /*
      * Set once this page has shown an error message (showMessageDanger()), so a form below it doesn't take the focus
      * away from the message (see Form::showInputText())
@@ -429,25 +432,152 @@ class System
         return $this->deeb->cnxx->query("SHOW TABLES LIKE 'settings'")->fetchColumn();
     }
 
+    /*
+     * Checks GitHub for the newest release and saves the answer (see checkLatestVersion()). Returns the administrators'
+     * upgrade message when a newer version is available, otherwise 'No Upgrade Available'. A failed check changes
+     * nothing, so it answers from what was saved before.
+     */
     public function checkVersion($current_version)
     {
-        $pdo = $this->deeb->cnxx;
-        $live_version = $this->getLiveVersion();
+        $result = $this->checkLatestVersion($current_version);
 
-        if (version_compare($current_version, $live_version, '<') && $live_version != '') {
+        if ($result === 'available' || ($result === 'failed' && ($_SESSION['s_system_upgrade_available'] ?? '') == '1')) {
 
-            $pdo->query("UPDATE settings SET upgrade_available = '1'");
-            $_SESSION['s_system_upgrade_available'] = '1';
-            $message = $this->getUpgradeMessage();
-
-        } else {
-
-            $pdo->query("UPDATE settings SET upgrade_available = '0'");
-            $_SESSION['s_system_upgrade_available'] = '0';
-            $message = 'No Upgrade Available';
+            return $this->getUpgradeMessage();
 
         }
-        return $message;
+
+        return 'No Upgrade Available';
+    }
+
+    /*
+     * Checks GitHub for the newest release (getLiveVersion()) and saves what it found. Returns 'available' (a newer
+     * version than $current_version), 'current', or 'failed'. A successful check saves whether an upgrade is
+     * available, the newest version, and the time of the check, together. A failed or malformed answer changes
+     * nothing, so a short GitHub outage doesn't clear the "new version" notice. Before the database update that adds
+     * the version and time (see canUseLatestVersion()), only whether an upgrade is available is saved. A save that fails
+     * is logged and counts as a failed check, so it never stops sign-in, the Task Scheduler, or the Upgrade page.
+     */
+    public function checkLatestVersion($current_version)
+    {
+        $live_version = trim((string) $this->getLiveVersion());
+
+        if (!self::isReleaseVersion($live_version)) return 'failed';
+
+        $upgrade_available = version_compare((string) $current_version, $live_version, '<') ? 1 : 0;
+        $pdo = $this->deeb->cnxx;
+
+        try {
+
+            if ($this->canUseLatestVersion()) {
+
+                $stmt = $pdo->prepare("
+                    UPDATE settings
+                    SET upgrade_available = :upgrade_available,
+                        latest_version = :latest_version,
+                        latest_version_checked = :latest_version_checked");
+                $stmt->bindValue('upgrade_available', $upgrade_available, \PDO::PARAM_INT);
+                $stmt->bindValue('latest_version', $live_version, \PDO::PARAM_STR);
+                $stmt->bindValue('latest_version_checked', (new Time())->stamp(), \PDO::PARAM_STR);
+                $stmt->execute();
+
+            } else {
+
+                $stmt = $pdo->prepare("
+                    UPDATE settings
+                    SET upgrade_available = :upgrade_available");
+                $stmt->bindValue('upgrade_available', $upgrade_available, \PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
+        } catch (\Throwable $e) {
+
+            $this->logLatestVersionProblem('The latest version could not be saved', $e);
+            return 'failed';
+
+        }
+
+        $_SESSION['s_system_upgrade_available'] = (string) $upgrade_available;
+
+        return $upgrade_available === 1 ? 'available' : 'current';
+    }
+
+    // Whether a version read from GitHub's version.txt is a release's version (such as 4.27.0 or 4.24.02)
+    public static function isReleaseVersion($version)
+    {
+        return is_string($version) && preg_match('/^\d+\.\d+\.\d+$/', $version) === 1;
+    }
+
+    /*
+     * The newest release the last successful check found, and when (UTC), as array('version' => ..., 'checked' => ...),
+     * or null when they can't be read: before the database update that adds them, or when the read fails. Before the
+     * first successful check, the version is '' and the time is 1970-01-01 (see Time::isUnset()).
+     */
+    public function getLatestVersion()
+    {
+        try {
+
+            if (!$this->canUseLatestVersion()) return null;
+
+            $row = $this->deeb->cnxx->query("
+                SELECT latest_version, latest_version_checked
+                FROM settings")->fetch(\PDO::FETCH_ASSOC);
+
+            if (!is_array($row)) return null;
+
+            return array('version' => (string) $row['latest_version'], 'checked' => (string) $row['latest_version_checked']);
+
+        } catch (\Throwable $e) {
+
+            $this->logLatestVersionProblem('The latest version could not be read', $e);
+            return null;
+
+        }
+    }
+
+    /*
+     * Whether a database at this version has settings.latest_version and latest_version_checked. New code can arrive
+     * before the database update that adds them (and, before the version bump, SOFTWARE_VERSION is still the older
+     * version too), so they're used only once the database itself is at that version or later.
+     */
+    public static function hasLatestVersion($db_version)
+    {
+        return is_string($db_version) && $db_version !== ''
+            && version_compare($db_version, self::LATEST_VERSION_DB_VERSION, '>=');
+    }
+
+    // Whether the columns can be read and written now: the database has them, and no database upgrade is waiting. A
+    // failed check counts as no, so sign-in and the Task Scheduler carry on as before.
+    protected function canUseLatestVersion()
+    {
+        try {
+
+            $db_version = $this->getDbVersion();
+
+        } catch (\Throwable $e) {
+
+            $this->logLatestVersionProblem('The database version could not be read', $e);
+            return false;
+
+        }
+
+        return $db_version === SOFTWARE_VERSION && self::hasLatestVersion($db_version);
+    }
+
+    // Logs a problem with the saved latest version. Logging writes to the same database, which may be what failed, so a
+    // failed log write goes to PHP's own error log instead.
+    protected function logLatestVersionProblem($message, $e)
+    {
+        try {
+
+            $this->log->error($message, array('Error' => $e->getMessage()));
+
+        } catch (\Throwable $log_e) {
+
+            error_log('DomainMOD: ' . $message . ': ' . $e->getMessage());
+
+        }
     }
 
     public function getLiveVersion()
@@ -463,10 +593,13 @@ class System
             FROM settings")->fetchColumn();
     }
 
+    // The notice administrators see when a new version is available, linking to the Upgrade page (admin/upgrade/), which
+    // shows the steps for their kind of install
     public function getUpgradeMessage()
     {
-        return sprintf(_('A new version of %s is available for download.'), SOFTWARE_TITLE) . " <a target=\"_blank\"
-                href=\"http://domainmod.org/upgrade/\">" . _('Click here for upgrade instructions') . "</a>.<BR>";
+        return sprintf(_('A new version of %s is available for download.'), SOFTWARE_TITLE) . ' <a href="'
+            . htmlspecialchars(WEB_ROOT . '/admin/upgrade/', ENT_QUOTES, 'UTF-8') . '">'
+            . _('Click here for upgrade instructions') . '</a>.<BR>';
     }
 
     public function checkExistingAssets()

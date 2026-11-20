@@ -37,3 +37,7 @@
 *.zip       binary
 
 /tests      export-ignore
+
+# The commit a release was made from, filled in by git archive (the zip, GitHub's archive, and the Docker image), so
+# the Upgrade page can tell a zip install from a Git clone (DomainMOD\InstallType)
+/_includes/release-commit.txt  export-subst

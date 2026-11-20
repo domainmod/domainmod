@@ -33,3 +33,5 @@ define('DB_SSL_MODE', isset($dbsslmode) ? strtolower(trim((string) $dbsslmode)) 
 define('DB_SSL_CA', $dbsslca ?? '');
 // Optional Task Scheduler key (see config.SAMPLE.inc.php). Older config files don't have one.
 define('CRON_KEY', isset($cron_key) ? trim((string) $cron_key) : '');
+// Optional installation type for the Upgrade page (see config.SAMPLE.inc.php). Older config files don't have one.
+define('INSTALL_TYPE', isset($install_type) ? strtolower(trim((string) $install_type)) : '');

@@ -335,6 +335,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/upgrade/" class="nav-link<?php if ($slug == "admin-upgrade-main") echo " active"; ?>" aria-label="<?php echo _('Upgrade'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Upgrade') ?></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/debug-log/" class="nav-link<?php if ($slug == "admin-debug-log-main") echo " active"; ?>" aria-label="<?php echo _('Debug Log'); ?>">
                             <i class="nav-icon bi"></i>
                             <p><?php echo _('Debug Log') ?></p>
