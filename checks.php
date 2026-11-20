@@ -190,6 +190,10 @@ $queue = new DomainMOD\DomainQueue();
 $queue->checkListQueue();
 $queue->checkDomainQueue();
 
+// Check whether the SSL Queue has any rows (read only once the database update has added the table)
+$ssl_queue = new DomainMOD\SslQueue();
+$ssl_queue->checkSslQueue();
+
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets();
 

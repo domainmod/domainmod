@@ -954,15 +954,24 @@ if ($_SESSION['s_has_domain'] == '0') {
 // account at it, then domains, one step at a time (Layout::emptyState())
 $first_run_link = sprintf(_('See %sFirst Run%s in the User Guide for more.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/first-run/">', '</a>');
 
+// Add Domains Automatically can add the registrar and its account itself (RDAP import), and the Import Queue menu item
+// is hidden while the queues are empty, so the two setup messages below are the way in for users who can add domains.
+// It's only offered once the database has the RDAP source, as queue/intro.php checks.
+$automatic_link = '';
+if (($_SESSION['s_read_only'] ?? '') != '1' && ($_SESSION['s_has_registrar'] != '1' || $_SESSION['s_has_registrar_account'] != '1')
+    && (new DomainMOD\DomainQueue())->getRdapApiRegistrarId() > 0) {
+    $automatic_link = ' ' . sprintf(_('Or use %sAdd Domains Automatically%s, which can add the registrar and account for you.'), '<a href="' . htmlspecialchars($web_root . '/queue/intro.php', ENT_QUOTES, 'UTF-8') . '">', '</a>');
+}
+
 if ($_SESSION['s_has_registrar'] != '1') {
 
-    echo $layout->emptyState('bi-building', _('Add a registrar first'), _('Domains belong to a registrar account, so start by adding the registrar you use.') . ' ' . $first_run_link, '/assets/add/registrar.php', _('Add Registrar'), '/domains/csv-importer/', _('Import from a CSV file instead'), 2, true, true);
+    echo $layout->emptyState('bi-building', _('Add a registrar first'), _('Domains belong to a registrar account, so start by adding the registrar you use.') . $automatic_link . ' ' . $first_run_link, '/assets/add/registrar.php', _('Add Registrar'), '/domains/csv-importer/', _('Import from a CSV file instead'), 2, true, true);
 
 }
 
 if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
 
-    echo $layout->emptyState('bi-person-badge', _('Add a registrar account next'), _('Add the account you hold at that registrar.') . ' ' . $first_run_link, '/assets/add/registrar-account.php', _('Add Registrar Account'));
+    echo $layout->emptyState('bi-person-badge', _('Add a registrar account next'), _('Add the account you hold at that registrar.') . $automatic_link . ' ' . $first_run_link, '/assets/add/registrar-account.php', _('Add Registrar Account'));
 
 }
 
