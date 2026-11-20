@@ -1,0 +1,8 @@
+# Deny web access to DomainMOD's temporary files, when Apache reads this file (AllowOverride).
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
