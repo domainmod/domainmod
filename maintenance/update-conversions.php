@@ -47,5 +47,7 @@ if ($system->isHtmxRequest()) {
     exit;
 }
 
-header("Location: index.php");
+// The Reporting page's reminder link asks to come back to Reporting. Only that fixed page is allowed, so the address
+// can't send anyone elsewhere.
+header('Location: ' . (($_GET['return'] ?? '') === 'reporting' ? '../reporting/' : 'index.php'));
 exit;

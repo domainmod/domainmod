@@ -49,7 +49,7 @@ $report = $_REQUEST['report'] ?? '';
 <?php
 // Read-only users can't update the conversion rates, so they don't get the reminder to
 if (($_SESSION['s_read_only'] ?? '') != '1') {
-    echo $layout->calloutTop() . sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?' . (new DomainMOD\Csrf())->query() . '">', '</a>') . $layout->calloutBottom();
+    echo $layout->calloutTop() . sprintf(_('Before running any reports you should %supdate the conversion rates%s.'), '<a href="' . $web_root . '/maintenance/update-conversions.php?return=reporting&amp;' . (new DomainMOD\Csrf())->query() . '">', '</a>') . $layout->calloutBottom();
 } ?>
 <h2 class="h5 mb-3"><?php echo _('Renewals'); ?></h2>
 <div class="row g-3"><?php
