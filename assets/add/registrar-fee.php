@@ -46,16 +46,19 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$rid = (int) ($_REQUEST['rid'] ?? 0);
+// An ID sent as anything but digits (such as an array, which an (int) cast would turn into 1) counts as 0, which
+// finds nothing
+$rid = is_string($_REQUEST['rid'] ?? null) && ctype_digit($_REQUEST['rid']) ? (int) $_REQUEST['rid'] : 0;
 // Opened from the Domain Fees report's Missing Fees, the page goes back there once the fee is added (the only return
 // it accepts)
 $return = ($_REQUEST['return'] ?? '') === 'missing' ? 'missing' : '';
-// A TLD or currency sent as anything but text (such as an array) counts as empty, like the fees below
-$tld = is_string($_GET['tld'] ?? null) ? $sanitize->text($_GET['tld']) : '';
-if ($tld != '') {
-    $new_tld = $tld;
-} else {
+// A TLD or currency sent as anything but text (such as an array) counts as empty, like the fees below. The link's TLD
+// (from Missing Fees) only fills the field when the form first shows. Once it's posted, the TLD typed in the form is
+// the one saved, even though the form's address still carries the link's.
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_tld = is_string($_POST['new_tld'] ?? null) ? $sanitize->text($_POST['new_tld']) : '';
+} else {
+    $new_tld = is_string($_GET['tld'] ?? null) ? $sanitize->text($_GET['tld']) : '';
 }
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
 // A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
@@ -65,6 +68,25 @@ $new_transfer_fee = is_string($_POST['new_transfer_fee'] ?? '0') ? trim($_POST['
 $new_privacy_fee = is_string($_POST['new_privacy_fee'] ?? '0') ? trim($_POST['new_privacy_fee'] ?? '0') : '';
 $new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
 $new_currency = is_string($_POST['new_currency'] ?? null) ? $sanitize->text($_POST['new_currency']) : '';
+
+// The fee is added under this registrar, so it has to exist (a bad link, or a registrar deleted since the form was
+// opened, adds nothing)
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM registrars
+    WHERE id = :rid");
+$stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+$stmt->execute();
+$registrar_found = $stmt->fetchColumn() !== false;
+$stmt->closeCursor();
+
+if (!$registrar_found) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That registrar no longer exists.') . '<BR>';
+    header("Location: ../registrars.php");
+    exit;
+
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

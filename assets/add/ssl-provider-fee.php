@@ -46,15 +46,19 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 $pdo = $deeb->cnxx;
 
-$sslpid = (int) ($_REQUEST['sslpid'] ?? 0);
+// An ID sent as anything but digits (such as an array, which an (int) cast would turn into 1) counts as 0, which
+// finds nothing
+$sslpid = is_string($_REQUEST['sslpid'] ?? null) && ctype_digit($_REQUEST['sslpid']) ? (int) $_REQUEST['sslpid'] : 0;
 // Opened from the SSL Fees report's Missing Fees, the page goes back there once the fee is added (the only return it
 // accepts)
 $return = ($_REQUEST['return'] ?? '') === 'missing' ? 'missing' : '';
-$type_id = (int) ($_GET['type_id'] ?? 0);
-if ($type_id !== 0) {
-    $new_type_id = $type_id;
+// The link's SSL Type (from Missing Fees) is only chosen when the form first shows. Once it's posted, the type chosen
+// in the form is the one saved, even though the form's address still carries the link's.
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $new_type_id = is_string($_POST['new_type_id'] ?? null) && ctype_digit($_POST['new_type_id'])
+        ? (int) $_POST['new_type_id'] : 0;
 } else {
-    $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
+    $new_type_id = is_string($_GET['type_id'] ?? null) && ctype_digit($_GET['type_id']) ? (int) $_GET['type_id'] : 0;
 }
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
 // A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
@@ -64,6 +68,25 @@ $new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc
 // A currency posted as anything but text (such as an array) counts as empty, like the fees above
 $new_currency = is_string($_POST['new_currency'] ?? null) ? $sanitize->text($_POST['new_currency']) : '';
 
+// The fee is added under this SSL provider, so it has to exist (a bad link, or a provider deleted since the form was
+// opened, adds nothing)
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM ssl_providers
+    WHERE id = :sslpid");
+$stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+$stmt->execute();
+$provider_found = $stmt->fetchColumn() !== false;
+$stmt->closeCursor();
+
+if (!$provider_found) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That SSL provider no longer exists.') . '<BR>';
+    header("Location: ../ssl-providers.php");
+    exit;
+
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Initial and Renewal are required (marked with an asterisk), Misc is optional
@@ -71,7 +94,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'new_misc_fee' => array($new_misc_fee, false));
     $has_errors = false;
 
-    if ($new_type_id === 0) {
+    // The SSL Type has to be one in the list, since the fee is saved with its ID (the empty choice, a type deleted
+    // since the form was opened, and a hand-made request can each send one that isn't)
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM ssl_cert_types
+        WHERE id = :new_type_id");
+    $stmt->bindValue('new_type_id', $new_type_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $type_found = $stmt->fetchColumn() !== false;
+    $stmt->closeCursor();
+
+    if (!$type_found) {
 
         $form->addFieldError('new_type_id', _('Choose the SSL Type'));
         $has_errors = true;

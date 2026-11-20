@@ -46,10 +46,13 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
-$fee_id = (int) ($_REQUEST['fee_id'] ?? 0);
-$rid = (int) ($_REQUEST['rid'] ?? 0);
-// A TLD posted as anything but text (such as an array) counts as empty, like the fees below
-$new_tld = is_string($_POST['new_tld'] ?? null) ? $sanitize->text($_POST['new_tld']) : '';
+// An ID sent as anything but digits (such as an array, which an (int) cast would turn into 1) counts as 0, which
+// finds nothing. The fee's ID comes from the link on GET and from the form's hidden field on POST.
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $fee_id = is_string($_POST['fee_id'] ?? null) && ctype_digit($_POST['fee_id']) ? (int) $_POST['fee_id'] : 0;
+} else {
+    $fee_id = is_string($_GET['fee_id'] ?? null) && ctype_digit($_GET['fee_id']) ? (int) $_GET['fee_id'] : 0;
+}
 // The fees as typed, so a refused one shows again in its field (each is checked and turned into a number on submit)
 // A fee posted as anything but text (such as an array) counts as empty, as the login form's fields do
 $new_initial_fee = is_string($_POST['new_initial_fee'] ?? '0') ? trim($_POST['new_initial_fee'] ?? '0') : '';
@@ -57,12 +60,40 @@ $new_renewal_fee = is_string($_POST['new_renewal_fee'] ?? '0') ? trim($_POST['ne
 $new_transfer_fee = is_string($_POST['new_transfer_fee'] ?? '0') ? trim($_POST['new_transfer_fee'] ?? '0') : '';
 $new_privacy_fee = is_string($_POST['new_privacy_fee'] ?? '0') ? trim($_POST['new_privacy_fee'] ?? '0') : '';
 $new_misc_fee = is_string($_POST['new_misc_fee'] ?? '0') ? trim($_POST['new_misc_fee'] ?? '0') : '';
-$new_currency_id = (int) ($_POST['new_currency_id'] ?? 0);
+$new_currency_id = is_string($_POST['new_currency_id'] ?? null) && ctype_digit($_POST['new_currency_id'])
+    ? (int) $_POST['new_currency_id'] : 0;
 $has_errors = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
+
+}
+
+// The registrar and TLD come from the fee's own row, never the request, so the page always shows (and saves) the fee
+// it was opened for
+$stmt = $pdo->prepare("
+    SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
+    FROM fees
+    WHERE id = :fee_id");
+$stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+$stmt->execute();
+$fee_row = $stmt->fetch();
+$stmt->closeCursor();
+
+if (!$fee_row) {
+
+    // a bad link, or a fee deleted since the form was opened
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That fee no longer exists.') . '<BR>';
+    header("Location: ../registrars.php");
+    exit;
+
+}
+
+$rid = (int) $fee_row->registrar_id;
+$new_tld = $fee_row->tld;
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Initial, Renewal, and Transfer are required (marked with an asterisk), Privacy and Misc are optional
     $fee_fields = array('new_initial_fee' => array($new_initial_fee, true), 'new_renewal_fee' => array($new_renewal_fee, true),
@@ -76,6 +107,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $form->addFieldError($fee_field, $fee_error);
             $has_errors = true;
         }
+
+    }
+
+    // The currency has to be one in the list, since the fee is saved with its ID (the empty choice, shown when the
+    // saved currency isn't in the list, and a hand-made request can both send one that isn't)
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM currencies
+        WHERE id = :new_currency_id");
+    $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $currency_found = $stmt->fetchColumn() !== false;
+    $stmt->closeCursor();
+
+    if (!$currency_found) {
+
+        $form->addFieldError('new_currency_id', _('Choose the Currency'));
+        $has_errors = true;
+        // the fee's saved currency shows again, rather than the refused one
+        $new_currency_id = (int) $fee_row->currency_id;
 
     }
 
@@ -93,9 +144,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
         $pdo->beginTransaction();
 
-        $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
-        // the stored form, so a fee entered as xn--p1ai or DE matches domains under рф or de
-        $new_tld = $sanitize->text(DomainMOD\Domain::normalizeTld(htmlspecialchars_decode($new_tld, ENT_QUOTES)));
+        // Lock the fee's row and read it again, so a fee deleted since the form was opened is refused, and the
+        // domains are relinked by the registrar and TLD it has now
+        $stmt = $pdo->prepare("
+                SELECT registrar_id, tld
+                FROM fees
+                WHERE id = :fee_id
+                FOR UPDATE");
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $locked_fee = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if (!$locked_fee) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That fee no longer exists.') . '<BR>';
+            header("Location: ../registrars.php");
+            exit;
+
+        }
+
+        $rid = (int) $locked_fee->registrar_id;
+        $new_tld = $locked_fee->tld;
 
         $stmt = $pdo->prepare("
                 UPDATE fees
@@ -106,8 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
                     misc_fee = :new_misc_fee,
                     currency_id = :new_currency_id,
                     update_time = :timestamp
-                WHERE registrar_id = :rid
-                  AND tld = :new_tld");
+                WHERE id = :fee_id");
         $stmt->bindValue('new_initial_fee', strval($new_initial_fee), PDO::PARAM_STR);
         $stmt->bindValue('new_renewal_fee', strval($new_renewal_fee), PDO::PARAM_STR);
         $stmt->bindValue('new_transfer_fee', strval($new_transfer_fee), PDO::PARAM_STR);
@@ -115,35 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
         $stmt->bindValue('new_misc_fee', strval($new_misc_fee), PDO::PARAM_STR);
         $stmt->bindValue('new_currency_id', $new_currency_id, PDO::PARAM_INT);
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
         $stmt->execute();
-
-        // use the ID of the fee that was just updated, not the posted one (a form opened before an upgrade can name
-        // a fee row that has since been merged into this one)
-        $stmt = $pdo->prepare("
-                SELECT id
-                FROM fees
-                WHERE registrar_id = :rid
-                  AND tld = :new_tld
-                LIMIT 1");
-        $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
-        $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
-        $stmt->execute();
-        $fee_id = (int) $stmt->fetchColumn();
-        $stmt->closeCursor();
-
-        if ($fee_id === 0) {
-
-            if ($pdo->InTransaction()) $pdo->rollback();
-
-            $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-            $_SESSION['s_message_danger'] .= sprintf(_('No fee has been set up for %s.'), $new_tld) . '<BR>';
-
-            header("Location: ../registrar-fees.php?rid=" . $rid);
-            exit;
-
-        }
 
         $stmt = $pdo->prepare("
                 UPDATE domains
@@ -179,11 +222,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
         if ($pdo->InTransaction()) $pdo->commit();
 
-        $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated.'), $new_tld) . '<BR>';
-
-        header("Location: ../registrar-fees.php?rid=" . $rid);
-        exit;
-
     } catch (Exception $e) {
 
         if ($pdo->InTransaction()) $pdo->rollback();
@@ -198,29 +236,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
     }
 
+    // The save links every domain with this registrar and TLD, including ones that had no fee, so the missing fees
+    // banner goes once the last one is linked
+    $queryB = new DomainMOD\QueryBuild();
+
+    $sql = $queryB->missingFees('domains');
+    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
+
+    $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been updated.'), $new_tld) . '<BR>';
+
+    header("Location: ../registrar-fees.php?rid=" . $rid);
+    exit;
+
 } elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
-    $stmt = $pdo->prepare("
-        SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
-        FROM fees
-        WHERE id = :fee_id");
-    $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
-
-    if ($result) {
-
-        $rid = $result->registrar_id;
-        $new_tld = $result->tld;
-        $new_initial_fee = $result->initial_fee;
-        $new_renewal_fee = $result->renewal_fee;
-        $new_transfer_fee = $result->transfer_fee;
-        $new_privacy_fee = $result->privacy_fee;
-        $new_misc_fee = $result->misc_fee;
-        $new_currency_id = $result->currency_id;
-
-    }
+    $new_initial_fee = $fee_row->initial_fee;
+    $new_renewal_fee = $fee_row->renewal_fee;
+    $new_transfer_fee = $fee_row->transfer_fee;
+    $new_privacy_fee = $fee_row->privacy_fee;
+    $new_misc_fee = $fee_row->misc_fee;
+    $new_currency_id = (int) $fee_row->currency_id;
 
 }
 ?>
@@ -254,19 +289,25 @@ if ($result) {
 
     echo $form->showDropdownTop('new_currency_id', _('Currency'), '', '', '');
 
+    // A saved currency that isn't in the list (only a hand-made request could have saved one) selects an empty
+    // option, so saving needs a currency chosen rather than quietly taking the first one
+    if (!in_array($new_currency_id, array_map('intval', array_column($result, 'id')), true)) {
+
+        echo $form->showDropdownOption('', _('Choose the Currency'), '');
+
+    }
+
     foreach ($result as $row) {
 
         echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->currency . ')', $new_currency_id);
 
     }
 
-    echo $form->showDropdownBottom('');
+    echo $form->showDropdownBottom('', 'new_currency_id');
 
 }
 
 echo $form->showInputHidden('fee_id', $fee_id);
-echo $form->showInputHidden('rid', $rid);
-echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 ?>
