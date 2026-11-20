@@ -607,26 +607,38 @@ if ($export_data == 1) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
-// Double check to make sure there are still no SSL certs in the system
-if ($_SESSION['s_has_ssl_cert'] == '0') {
+// Double check to make sure there are still no SSL certs in the system, and likewise for the domains, SSL providers, and
+// SSL accounts the empty states below depend on, since the Import Queue adds them in cron, where no session is updated
+$queryB = new DomainMOD\QueryBuild();
+foreach (array('s_has_ssl_cert' => 'ssl_certs', 's_has_domain' => 'domains', 's_has_ssl_provider' => 'ssl_providers',
+             's_has_ssl_account' => 'ssl_accounts') as $asset_flag => $asset_table) {
 
-    $queryB = new DomainMOD\QueryBuild();
-    $sql_asset_check = $queryB->singleAsset('ssl_certs');
-    $_SESSION['s_has_ssl_cert'] = $system->checkForRows($sql_asset_check);
+    if (($_SESSION[$asset_flag] ?? '0') == '0') {
+
+        $sql_asset_check = $queryB->singleAsset($asset_table);
+        $_SESSION[$asset_flag] = $system->checkForRows($sql_asset_check);
+
+    }
 
 }
+
+// The SSL Queue can do the missing setup itself (it adds the provider and account), so once the database update has
+// added it, the empty states below offer it as their second action when there's a domain for it to link to (checked
+// now, since a session's flag can still say there's one after another user deleted it)
+$ssl_import_available = (new DomainMOD\SslQueue())->isAvailable();
+$ssl_import_action = ($ssl_import_available && $system->checkForRows($queryB->singleAsset('domains')) == '1') ? '/queue/add/ssl.php' : '';
 
 // Before anything exists, the list walks a new user through the order things are added in: an SSL provider, then an
 // account at it, then a domain, then certificates, one step at a time (Layout::emptyState())
 if ($_SESSION['s_has_ssl_provider'] != '1') {
 
-    echo $layout->emptyState('bi-shield-check', _('Add an SSL provider first'), _('SSL certificates belong to an SSL provider account, so start by adding the company you buy them from.'), '/assets/add/ssl-provider.php', _('Add SSL Provider'));
+    echo $layout->emptyState('bi-shield-check', _('Add an SSL provider first'), _('SSL certificates belong to an SSL provider account, so start by adding the company you buy them from.'), '/assets/add/ssl-provider.php', _('Add SSL Provider'), $ssl_import_action, _('Add SSL Certificates Automatically'), 2, true, true);
 
 }
 
 if ($_SESSION['s_has_ssl_account'] != '1' && $_SESSION['s_has_ssl_provider'] == '1') {
 
-    echo $layout->emptyState('bi-person-badge', _('Add an SSL provider account next'), _('Add the account you hold at that SSL provider.'), '/assets/add/ssl-provider-account.php', _('Add SSL Account'));
+    echo $layout->emptyState('bi-person-badge', _('Add an SSL provider account next'), _('Add the account you hold at that SSL provider.'), '/assets/add/ssl-provider-account.php', _('Add SSL Account'), $ssl_import_action, _('Add SSL Certificates Automatically'), 2, true, true);
 
 }
 
@@ -639,7 +651,7 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' &
 
 if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
 
-    echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Certificate'));
+    echo $layout->emptyState('bi-shield-lock', _('No SSL certificates yet'), _('Add the SSL certificates you want to keep track of.'), '/ssl/add.php', _('Add SSL Certificate'), $ssl_import_action, _('Add SSL Certificates Automatically'), 2, true, true);
     $ready_for_ssl_certs = 1;
 
 } elseif ($_SESSION['s_has_ssl_cert'] == '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
@@ -1555,6 +1567,7 @@ if ($result) {
      * users.
      */
     $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
+    if ($ssl_import_available) $layout->addPageAddMenuItem(_('Add SSL Certificates Automatically'), $web_root . '/queue/add/ssl.php', 'bi-magic');
     $layout->addPageAction(_('Raw List'), $web_root . '/raw.php', 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
@@ -1646,6 +1659,7 @@ if ($result) {
     if ($ready_for_ssl_certs === 1 && $_SESSION['s_has_ssl_cert'] == '1') {
 
         $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
+        if ($ssl_import_available) $layout->addPageAddMenuItem(_('Add SSL Certificates Automatically'), $web_root . '/queue/add/ssl.php', 'bi-magic');
 
     }
 

@@ -392,6 +392,26 @@ if ($total_count_processing || $total_count_pending || $total_count_finished) { 
 
     </div><?php
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SSL Queue (a short line while hostnames are waiting, once the database update has added it)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$ssl_queue = new DomainMOD\SslQueue();
+$total_count_ssl_queue = $ssl_queue->isAvailable() ? $ssl_queue->countUnfinished() : 0;
+
+if ($total_count_ssl_queue > 0) { ?>
+
+    <div class="row">
+        <h2 class="h4 mt-4 pt-2"><?php echo _('SSL Queue'); ?></h2>
+    </div>
+
+    <p><?php
+        // TRANSLATORS: %1$s is a number of hostnames, and %2$s and %3$s wrap the link to the SSL Queue and must stay.
+        echo sprintf(ngettext('Your SSL Queue has %1$s hostname waiting. See the %2$sSSL Queue%3$s for its progress.',
+            'Your SSL Queue has %1$s hostnames waiting. See the %2$sSSL Queue%3$s for their progress.', $total_count_ssl_queue),
+            number_format($total_count_ssl_queue), '<a href="' . htmlspecialchars(WEB_ROOT . '/queue/ssl/', ENT_QUOTES, 'UTF-8') . '">', '</a>'); ?></p><?php
+
+}
 ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
