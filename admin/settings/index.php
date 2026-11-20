@@ -50,7 +50,8 @@ $new_email_signature = (int) ($_POST['new_email_signature'] ?? 0);
 $new_currency_converter = isset($_POST['new_currency_converter']) ? $sanitize->text($_POST['new_currency_converter']) : '';
 $new_use_smtp = (int) ($_POST['new_use_smtp'] ?? 0);
 $new_smtp_server = isset($_POST['new_smtp_server']) ? $sanitize->text($_POST['new_smtp_server']) : '';
-$new_smtp_protocol = $_POST['new_smtp_protocol'] ?? '';
+// TLS, SSL, or none (empty), for a server such as a local relay that has no encryption.
+$new_smtp_protocol = in_array($_POST['new_smtp_protocol'] ?? '', array('tls', 'ssl', ''), true) ? ($_POST['new_smtp_protocol'] ?? '') : 'tls';
 $new_smtp_port = (int) ($_POST['new_smtp_port'] ?? 0);
 $new_smtp_email_address = isset($_POST['new_smtp_email_address']) ? $sanitize->text($_POST['new_smtp_email_address']) : '';
 $new_smtp_username = isset($_POST['new_smtp_username']) ? $sanitize->text($_POST['new_smtp_username']) : '';
@@ -60,8 +61,11 @@ $new_smtp_password = isset($_POST['new_smtp_password']) ? $sanitize->text($_POST
 $new_smtp_password_remove = (int) ($_POST['new_smtp_password_remove'] ?? 0) === 1 && $new_smtp_password === '';
 $new_debug_mode = (int) ($_POST['new_debug_mode'] ?? 0);
 $new_local_php_log = (int) ($_POST['new_local_php_log'] ?? 0);
+// A username and password are never sent without encryption, so signing in needs TLS or SSL.
+$smtp_sign_in_unencrypted = $new_smtp_protocol === '' && ($new_smtp_username !== '' || $new_smtp_password !== '');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_full_url != '' && $new_expiration_days !== 0 &&
+    !$smtp_sign_in_unencrypted) {
 
     // An empty SMTP Password field keeps the saved password, so the column is only set when one is typed or its
     // Remove box is ticked
@@ -122,8 +126,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != '' && $new_ful
         if ($new_full_url == "") $form->addFieldError('new_full_url', sprintf(_('Enter the full URL of your %s installation'), SOFTWARE_TITLE));
         if ($new_email_address == "") $form->addFieldError('new_email_address', _('Enter the system email address'));
         if ($new_expiration_days == "") $form->addFieldError('new_expiration_days', _('Enter the number of days to display in expiration emails'));
+        if ($smtp_sign_in_unencrypted) $form->addFieldError('new_smtp_username', _('Choose TLS or SSL to sign in to the SMTP server, or leave the username and password blank.'));
         // A typed password isn't put back in the field, so it has to be typed again
-        if ($new_smtp_password !== '') $form->addFieldError('new_smtp_password', _('Enter the new value again'));
+        if ($new_smtp_password !== '' && !$smtp_sign_in_unencrypted) $form->addFieldError('new_smtp_password', _('Enter the new value again'));
+        if ($new_smtp_password !== '' && $smtp_sign_in_unencrypted) $form->addFieldError('new_smtp_password', _('Choose TLS or SSL and enter the new value again, or leave it blank.'));
 
     } else {
 
@@ -202,13 +208,14 @@ echo $form->showSwitch(_('Local PHP Log') . '',
 ob_start();
 echo $form->showSwitch(_('Use SMTP Server') . '?', sprintf(_("If the instance of PHP running on your %s server isn't configured to send mail, you can use an external SMTP server to send system emails."), SOFTWARE_TITLE), 'new_use_smtp', $new_use_smtp, '<div class="domainmod-span-all mb-3">', '</div>');
 echo $form->showInputText('new_smtp_server', _('SMTP Server') . ' (255)', _('If you plan on using an external SMTP server, enter the server name here.'), $unsanitize->text($new_smtp_server), '100', '', '', '', '');
-echo $form->showRadioTop(_('SMTP Server Protocol'), '', '');
+echo $form->showRadioTop(_('SMTP Server Protocol'), sprintf(_('Choose %s only for a server that has no encryption and needs no sign-in, such as a local relay.'), _('None')), '');
 echo $form->showRadioOption('new_smtp_protocol', 'tls', _('TLS'), $new_smtp_protocol, '', '');
 echo $form->showRadioOption('new_smtp_protocol', 'ssl', _('SSL'), $new_smtp_protocol, '', '');
+echo $form->showRadioOption('new_smtp_protocol', '', _('None'), $new_smtp_protocol, '', '');
 echo $form->showRadioBottom('');
 echo $form->showInputText('new_smtp_port', _('SMTP Server Port') . ' (5)', '', $new_smtp_port, '5', '', '', '', '');
 echo $form->showInputText('new_smtp_email_address', _('SMTP Email Address') . ' (100)', '', $unsanitize->text($new_smtp_email_address), '100', '', '', '', '');
-echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
+echo $form->showInputText('new_smtp_username', _('SMTP Username') . ' (100)', _('This is usually the same as the SMTP Email Address.') . ' ' . _('Leave it blank if your SMTP server doesn\'t need you to sign in.'), $unsanitize->text($new_smtp_username), '100', '', '', '', '');
 echo $form->showSavedPassword('new_smtp_password', _('SMTP Password') . ' (255)', $has_saved_smtp_password, '255', $new_smtp_password_remove);
 echo $layout->formSection(_('SMTP Server Settings'), 'smtp', ob_get_clean());
 

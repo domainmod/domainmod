@@ -358,7 +358,7 @@ class Form
     {
         ob_start();
             echo $before; ?>
-            <div class="mb-3"><strong><?php echo $text_to_display; ?></strong><BR><?php echo $subtext; ?><?php
+            <div class="mb-3"><strong><?php echo $text_to_display; ?></strong><BR><?php if ($subtext != '') echo $subtext . '<BR>'; ?><?php
         return ob_get_clean();
     }
 

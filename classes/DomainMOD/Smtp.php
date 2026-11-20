@@ -52,7 +52,10 @@ class Smtp
         $mail->SMTPSecure = $this->protocol;
         $mail->Host = $this->server;
         $mail->Port = $this->port;
-        $mail->SMTPAuth = true;
+        // A server that takes mail without signing in (such as a local relay) has no username set. With no protocol,
+        // PHPMailer doesn't switch to TLS on its own either, so a relay with a self-signed certificate can be used.
+        $mail->SMTPAuth = (string) $this->username !== '';
+        if ((string) $this->protocol === '') $mail->SMTPAutoTLS = false;
         $mail->Username = $this->username;
         $mail->Password = $this->password;
         $mail->setFrom($this->email_address, SOFTWARE_TITLE);
@@ -63,6 +66,17 @@ class Smtp
             _('Subject') => $subject, _('Server') => $this->server, _('Port') => $this->port, _('Protocol') => $this->protocol,
             _('Username') => $this->format->obfusc($this->username), _('Password') => $this->format->obfusc($this->password),
             _('CharSet') => EMAIL_ENCODING_TYPE);
+
+        // A username and password are never sent without encryption (System Settings only saves them with TLS or SSL,
+        // so this only happens with settings saved some other way, such as an older version that saved any protocol).
+        if ($mail->SMTPAuth && !in_array((string) $this->protocol, array('tls', 'ssl'), true)) {
+
+            $log_extra[_('Error')] = _('An SMTP username is set, but the protocol isn\'t TLS or SSL, so nothing was sent. In the System Settings, choose TLS or SSL, or leave the username and password blank.');
+            $log_message = $email_title . ' ' . _('Email :: SEND FAILED');
+            $this->log->error($log_message, $log_extra);
+            return false;
+
+        }
 
         if ($mail->send()) {
 
