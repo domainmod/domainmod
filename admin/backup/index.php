@@ -87,15 +87,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $password = $dbpassword ?? '';
                 $database = $dbname ?? '';
                 $host = $dbhostname ?? '';
-                new DomainMOD\RestoreImport($filename, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
+                // A backup that's been cut short is turned down before anything changes, so no one is signed out
+                $restore_started = false;
+
+                try {
+
+                    DomainMOD\RestoreImport::checkFile($filename);
+                    $restore_started = true;
+                    new DomainMOD\RestoreImport($filename, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
+
+                } catch (Exception $e) {
+
+                    // The restore didn't finish, so say so here (logging out would lose the message). Once it has
+                    // started, sessions still end below, since the part that ran may have brought back other users and
+                    // stamps.
+                    $restore_error = $e;
+
+                }
 
                 // Every user gets a new two-factor stamp (once the restored database has them), so sessions and
                 // remembered devices whose stamps the backup brought back end too
-                $two_factor = new DomainMOD\TwoFactor();
-                if ($two_factor->isAvailableNow()) $two_factor->newStampsForEveryone();
+                try {
 
-                header("Location: " . WEB_ROOT . "/logout.php");
-                exit;
+                    $two_factor = new DomainMOD\TwoFactor();
+                    if ($restore_started && $two_factor->isAvailableNow()) $two_factor->newStampsForEveryone();
+
+                } catch (Exception $e) {
+
+                    // After a failed restore the database may not have its users or version, which is reported above,
+                    // along with the sessions that couldn't be ended
+                    if (!isset($restore_error)) throw $e;
+                    $stamps_failed = true;
+
+                }
+
+                if (!isset($restore_error)) {
+
+                    header("Location: " . WEB_ROOT . "/logout.php");
+                    exit;
+
+                }
+
+                try {
+
+                    $log_message = sprintf('Unable to restore %s data', SOFTWARE_TITLE);
+                    // Only the message: the exception's trace can show the database password passed to RestoreImport
+                    $log_extra = array('Error' => $restore_error->getMessage());
+                    $log->critical($log_message, $log_extra);
+
+                } catch (Exception $e) {
+
+                    // The part of the restore that ran may have broken the log table too, and the error is still
+                    // shown below
+
+                }
+
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                $_SESSION['s_message_danger'] .= sprintf(_("The restore didn't finish: %s"), htmlspecialchars($restore_error->getMessage(), ENT_QUOTES, 'UTF-8')) . '<BR>';
+                $_SESSION['s_message_danger'] .= ($restore_started ? _('Your database may now be partly restored, so restore a complete backup before going on.') : _('Nothing was changed.')) . '<BR>';
+                if (isset($stamps_failed)) $_SESSION['s_message_danger'] .= _("Signed-in sessions couldn't be ended, so other users may still be signed in.") . '<BR>';
 
             }
 
