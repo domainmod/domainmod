@@ -37,6 +37,7 @@ $form = new DomainMOD\Form();
 $domain = new DomainMOD\Domain();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
+$ssl_queue = new DomainMOD\SslQueue();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -1006,9 +1007,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
 
+                            // a current read, after the domains are locked by their delete, so a certificate an SSL
+                            // Queue import committed meanwhile is deleted too
                             $sql = "SELECT id
                                     FROM ssl_certs
-                                    WHERE domain_id IN (" . $in_list . ")";
+                                    WHERE domain_id IN (" . $in_list . ")
+                                    FOR UPDATE";
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
                             $result_ssl = $stmt->fetchAll();
@@ -1034,6 +1038,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                         WHERE ssl_id IN (" . $in_list . ")";
                                 $stmt = $pdo->prepare($sql);
                                 $stmt->execute($ssl_id_list);
+
+                                $ssl_queue->deleteStatus($ssl_id_list);
 
                             }
 

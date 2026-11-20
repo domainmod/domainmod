@@ -24,31 +24,658 @@ namespace DomainMOD;
 /*
  * The SSL Queue: hostnames whose certificates are read in the background (by the ssl-queue scheduled task) and added
  * as SSL certificates. Its tables come with the 4.27.0 database update, so nothing here uses them before then.
+ *
+ * Rows are added by addHosts() (the paste page, and the domain paste pages' tick box), released or failed while they
+ * wait for their domain by releaseWaiting(), and looked up and imported by process(). Adding, releasing, claiming, and
+ * saving all hold the SSL Queue's named lock, and a whole run holds its own run lock, so two runs never overlap.
  */
 class SslQueue
 {
     public $deeb;
     public $log;
+    public $sanitize;
     public $system;
+    public $time;
 
     // The database version that adds the SSL Queue's tables
     const AVAILABLE_FROM = '4.27.0';
 
-    // Test-only hook, null outside tests: a callable($event) that process() calls at its start ('start') and when it
-    // returns early before the database update ('unavailable')
+    const MAX_HOSTS = 1000;        // distinct hostnames per submission
+    const MAX_WAITING = 10000;     // unfinished rows the whole queue holds
+    const CANDIDATES = 500;        // rows read per run
+    const BATCH = 50;              // rows looked up per run
+    const BUDGET = 120;            // seconds a run may spend on lookups
+    const MAX_ATTEMPTS = 3;        // retryable failures before a row fails
+    const CLAIM_TIMEOUT = 900;     // seconds after which a claim is one a stopped run left behind
+    const WAIT_DAYS = 7;           // days a row waits for its domain to be imported
+    const MAX_NAME_LENGTH = 100;   // characters ssl_certs.name holds
+    const LOCK_WAIT = 10;          // seconds to wait for the SSL Queue's named lock
+
+    // The result codes that are retried, and the ones that fail a row straight away
+    public static $retry_codes = array('timeout', 'save_failed', 'local_error');
+    public static $failure_codes = array('no_dns', 'not_public', 'no_connect', 'no_tls', 'name_mismatch', 'not_yet_valid',
+        'bad_certificate', 'no_domain', 'domain_not_imported', 'stale_choice', 'ambiguous_domain', 'name_too_long');
+
+    /*
+     * Test-only hooks, null outside tests:
+     * - $test_trace: a callable($event) that process() calls at its start ('start'), when it returns early before the
+     *   database update ('unavailable'), and when another run holds the run lock ('locked').
+     * - $test_add_failure: when true, addHosts() throws inside its transaction after writing its first row, so the
+     *   rollback can be tested.
+     */
     public static $test_trace = null;
+    public static $test_add_failure = null;
+
+    protected $queue_locked = false;
+    protected $queued_domains = null; // the Domain Queue's unfinished, valid domains, read once per add or waiting check
 
     public function __construct()
     {
         $this->deeb = Database::getInstance();
         $this->log = new Log('class.sslqueue');
+        $this->sanitize = new Sanitize();
         $this->system = new System();
+        $this->time = new Time();
     }
 
     // Whether the database has been updated to a version with the SSL Queue's tables
     public function isAvailable()
     {
         return version_compare((string) $this->system->getDbVersion(), self::AVAILABLE_FROM, '>=');
+    }
+
+    /*
+     * Sets the s_ssl_in_queue session flag while the queue has any rows (it shows the Import Queue menu item to read-only
+     * users), and returns '1' or '0', as DomainQueue::checkDomainQueue() does.
+     */
+    public function checkSslQueue()
+    {
+        $result = $this->isAvailable() ? $this->deeb->cnxx->query("
+            SELECT id
+            FROM ssl_queue
+            LIMIT 1")->fetchColumn() : false;
+
+        if (!$result) {
+
+            unset($_SESSION['s_ssl_in_queue']);
+            return '0';
+
+        }
+
+        $_SESSION['s_ssl_in_queue'] = '1';
+        return '1';
+    }
+
+    /*
+     * The message for a result code, translated. An unknown code gives a general failure message, never the code.
+     */
+    public function getMessage($code)
+    {
+        if ($code === '' || $code === 'ok') {
+            $message = '';
+        } elseif ($code === 'untrusted') {
+            $message = _("Imported, but the certificate isn't trusted.");
+        } elseif ($code === 'expired') {
+            $message = _('Imported, but the certificate has expired.');
+        } elseif ($code === 'name_mismatch') {
+            $message = _("The site's certificate doesn't cover this hostname (it's often the hosting company's shared certificate).");
+        } elseif ($code === 'not_yet_valid') {
+            $message = _("This certificate isn't valid yet. Retry it after its start date.");
+        } elseif ($code === 'no_dns') {
+            $message = _("This hostname doesn't resolve.");
+        } elseif ($code === 'not_public') {
+            $message = _("This hostname resolves to an address that isn't public, so it can't be checked.");
+        } elseif ($code === 'no_connect') {
+            $message = _('Nothing answered on port 443.');
+        } elseif ($code === 'no_tls') {
+            $message = _("The site answered on port 443, but not with TLS.");
+        } elseif ($code === 'timeout') {
+            $message = _('The lookup ran out of time.');
+        } elseif ($code === 'no_domain') {
+            $message = _("This hostname's domain isn't in DomainMOD. Add the domain first, then retry.");
+        } elseif ($code === 'domain_not_imported') {
+            $message = _("The Domain Queue didn't import this hostname's domain.");
+        } elseif ($code === 'stale_choice') {
+            $message = _('Something chosen when this hostname was queued has changed or been deleted. Delete this queue entry and add the hostname again.');
+        } elseif ($code === 'local_error') {
+            $message = _("DomainMOD couldn't write a temporary file to check this certificate. Check that PHP's temporary folder is writable.");
+        } elseif ($code === 'ambiguous_domain') {
+            $message = _('More than one domain in DomainMOD has this name. Remove the extra one, then retry.');
+        } elseif ($code === 'name_too_long') {
+            $message = _('This hostname is longer than the 100 characters an SSL certificate name can hold.');
+        } elseif ($code === 'bad_certificate') {
+            $message = _("A date in this certificate can't be stored.");
+        } elseif ($code === 'save_failed') {
+            $message = _("The certificate couldn't be saved.");
+        } else {
+            $message = _('The lookup failed.');
+        }
+
+        return $message;
+    }
+
+    /*
+     * The columns to write to a claimed row after a lookup result that isn't a success: a pacing deferral puts it back
+     * as it was before the claim (attempts, message, and the claim's last_attempt kept), a retryable code counts an
+     * attempt and fails the row on the third, and any other code fails it straight away. Every result clears the claim.
+     */
+    public static function afterResult($row, $code)
+    {
+        if ($code === 'deferred') return array('processing' => 0);
+
+        if (in_array($code, self::$retry_codes, true)) {
+
+            $attempts = min(255, (int) $row->attempts + 1);
+            if ($attempts < self::MAX_ATTEMPTS) return array('processing' => 0, 'attempts' => $attempts, 'message' => $code);
+
+            return array('processing' => 0, 'attempts' => $attempts, 'message' => $code, 'finished' => 1, 'failed' => 1,
+                'wait_for_domain' => 0);
+
+        }
+
+        return array('processing' => 0, 'message' => $code, 'finished' => 1, 'failed' => 1, 'wait_for_domain' => 0);
+    }
+
+    // The columns written to a row a stopped run left claimed: a timeout, so one attempt is counted and a row that stops
+    // the run every time fails after MAX_ATTEMPTS
+    public static function afterCrash($row)
+    {
+        return self::afterResult($row, 'timeout');
+    }
+
+    // The columns Retry Failed writes, so the row is Pending again
+    public static function afterRetry($row)
+    {
+        return array('processing' => 0, 'finished' => 0, 'failed' => 0, 'attempts' => 0, 'message' => '',
+            'wait_for_domain' => 0);
+    }
+
+    /*
+     * A row's state from its flags: pending, waiting, processing, retrying, imported, already_in_queue, already_in_ssl,
+     * or failed (see the plan's row state table).
+     */
+    public static function rowState($row)
+    {
+        if ((int) $row->finished === 1) {
+
+            if ((int) $row->failed === 1) return 'failed';
+            if ((int) $row->already_in_queue === 1) return 'already_in_queue';
+            if ((int) $row->already_in_ssl === 1) return 'already_in_ssl';
+            return 'imported';
+
+        }
+
+        if ((int) $row->processing === 1) return 'processing';
+        if ((int) $row->wait_for_domain === 1) return 'waiting';
+        if ((int) $row->attempts > 0) return 'retrying';
+
+        return 'pending';
+    }
+
+    /*
+     * The longest of $domain_names (stored forms) that is the host itself or a parent of it at a label boundary, or ''.
+     * Names are compared in their ASCII (punycode) form, so a host stored in punycode matches a parent stored in Unicode.
+     */
+    public static function bestMatch($host, $domain_names)
+    {
+        $ascii_host = strtolower(Domain::forApi($host));
+        $best = '';
+        $best_length = 0;
+
+        foreach ($domain_names as $name) {
+
+            $ascii_name = strtolower(Domain::forApi($name));
+            if ($ascii_name === '') continue;
+
+            if (($ascii_host === $ascii_name || str_ends_with($ascii_host, '.' . $ascii_name)) && strlen($ascii_name) > $best_length) {
+
+                $best = (string) $name;
+                $best_length = strlen($ascii_name);
+
+            }
+
+        }
+
+        return $best;
+    }
+
+    /*
+     * The stored forms of the host and each parent of it at a label boundary (with at least two labels), as every name
+     * in domains and domain_queue was stored, for the database to match with domain IN (...).
+     */
+    public static function storedSuffixes($host)
+    {
+        $labels = explode('.', strtolower(Domain::forApi($host)));
+        $forms = array();
+
+        for ($i = 0; $i < count($labels) - 1; $i++) {
+
+            $form = Domain::normalize(implode('.', array_slice($labels, $i)));
+            if ($form !== '' && !in_array($form, $forms, true)) $forms[] = $form;
+
+        }
+
+        return $forms;
+    }
+
+    /*
+     * Adds hostnames (in their stored form) to the queue in one transaction, under the SSL Queue's named lock, and
+     * returns 'added', 'full' (the backlog cap stopped the new unfinished rows), or 'failed' (an error, logged, with
+     * nothing changed). It never redirects or prints anything.
+     *
+     * $choices holds owner_id, account_id (0 to match each certificate's issuer), type_id, cat_id, and ip_id. With a
+     * chosen account, the owner and provider are the account's. $exact is true for the domain paste pages' tick box:
+     * each new row then waits for its own domain to be imported.
+     */
+    public function addHosts($hosts, $choices, $exact, $created_by)
+    {
+        $pdo = $this->deeb->cnxx;
+        $hosts = array_values(array_unique(array_filter(array_map('strval', $hosts), 'strlen')));
+        if (!$hosts) return 'added';
+        $this->queued_domains = null;
+
+        try {
+
+            $this->getQueueLock();
+            $pdo->beginTransaction();
+
+            $choices = $this->resolveChoices($choices);
+            if ($choices === null) throw new \RuntimeException('The chosen SSL provider account no longer exists');
+
+            $now = $this->time->stamp();
+            $actions = array();
+            $new_rows = 0;
+
+            foreach ($hosts as $host) {
+
+                $action = $exact ? $this->planExact($host) : $this->planPasted($host);
+                $actions[] = array($host, $action);
+                if ($action[0] === 'pending' || $action[0] === 'waiting' || $action[0] === 'new_exact') $new_rows++;
+
+            }
+
+            $unfinished = (int) $pdo->query("
+                SELECT COUNT(*)
+                FROM ssl_queue
+                WHERE finished = '0'")->fetchColumn();
+
+            $full = $new_rows > 0 && $unfinished + $new_rows > self::MAX_WAITING;
+
+            if ($full && !$exact) {
+
+                $pdo->rollback();
+                $this->releaseQueueLock();
+                return 'full';
+
+            }
+
+            $written = 0;
+
+            foreach ($actions as $entry) {
+
+                list($host, $action) = $entry;
+                $kind = $action[0];
+
+                if ($full && in_array($kind, array('pending', 'waiting', 'new_exact'), true)) continue;
+
+                if ($kind === 'upgrade') {
+
+                    // applied only when the row is still unclaimed and unfinished, otherwise a new exact-domain row
+                    if (!$this->upgradeRow($action[1], $host, $choices, $now)) {
+
+                        if ($full) continue;
+                        $kind = 'new_exact';
+
+                    } else {
+
+                        $written++;
+                        $this->testFailure($written);
+                        continue;
+
+                    }
+
+                }
+
+                $row = array('host' => $host, 'created_by' => (int) $created_by, 'insert_time' => $now) + $choices;
+
+                if ($kind === 'already_in_queue') {
+                    $row += array('finished' => 1, 'already_in_queue' => 1);
+                } elseif ($kind === 'no_domain' || $kind === 'ambiguous_domain') {
+                    $row += array('finished' => 1, 'failed' => 1, 'message' => $kind);
+                } elseif ($kind === 'pending') {
+                    $row += array('domain_id' => $action[1], 'domain_name' => $action[2]);
+                } elseif ($kind === 'waiting') {
+                    $row += array('wait_for_domain' => 1, 'wait_domain' => $action[1], 'wait_since' => $now);
+                } else {
+                    $row += array('wait_for_domain' => 1, 'wait_domain' => $host, 'wait_since' => $now, 'exact_domain' => 1);
+                }
+
+                $this->insertRow($row);
+                $written++;
+                $this->testFailure($written);
+
+            }
+
+            $pdo->commit();
+
+        } catch (\Throwable $e) {
+
+            $this->cleanUp();
+            $this->logError('Unable to add hostnames to the SSL Queue', count($hosts) . ' hostnames', $e);
+
+            return 'failed';
+
+        }
+
+        // committed, so a failure from here on doesn't make the submission fail
+        $this->cleanUp();
+
+        // the hosts are queued by now, so a problem setting the menu's flag doesn't make the submission fail
+        try {
+
+            $this->checkSslQueue();
+
+        } catch (\Throwable $e) {
+
+            $this->logError('Unable to check whether the SSL Queue has rows', '', $e);
+
+        }
+
+        return $full ? 'full' : 'added';
+    }
+
+    // The number of unfinished rows, for the cap message
+    public function countUnfinished()
+    {
+        return (int) $this->deeb->cnxx->query("
+            SELECT COUNT(*)
+            FROM ssl_queue
+            WHERE finished = '0'")->fetchColumn();
+    }
+
+    /*
+     * The row's choices as stored: a chosen account is read (and locked) for its owner and provider, and the provider is
+     * 0 when matching by issuer. Null when the chosen account no longer exists.
+     */
+    protected function resolveChoices($choices)
+    {
+        $resolved = array('owner_id' => (int) ($choices['owner_id'] ?? 0), 'account_id' => (int) ($choices['account_id'] ?? 0),
+            'provider_id' => 0, 'type_id' => (int) ($choices['type_id'] ?? 0), 'cat_id' => (int) ($choices['cat_id'] ?? 0),
+            'ip_id' => (int) ($choices['ip_id'] ?? 0));
+
+        if ($resolved['account_id'] === 0) return $resolved;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT owner_id, ssl_provider_id
+            FROM ssl_accounts
+            WHERE id = :account_id
+            FOR UPDATE");
+        $stmt->bindValue('account_id', $resolved['account_id'], \PDO::PARAM_INT);
+        $stmt->execute();
+        $account = $stmt->fetch();
+        $stmt->closeCursor();
+        if (!$account) return null;
+
+        $resolved['owner_id'] = (int) $account->owner_id;
+        $resolved['provider_id'] = (int) $account->ssl_provider_id;
+
+        return $resolved;
+    }
+
+    /*
+     * What to do with a pasted host: array('already_in_queue'), array('pending', domain id, domain name),
+     * array('waiting', the Domain Queue's domain), array('ambiguous_domain'), or array('no_domain').
+     */
+    protected function planPasted($host)
+    {
+        if ($this->unfinishedRows($host)) return array('already_in_queue');
+
+        list($status, $domain_id, $domain_name) = $this->findDomain($host, false, false);
+        if ($status === 'one') return array('pending', $domain_id, $domain_name);
+        if ($status === 'many') return array('ambiguous_domain');
+
+        $queued = $this->findQueuedDomain($host, false);
+        if ($queued !== '') return array('waiting', $queued);
+
+        // the Domain Queue may have imported the domain between the two reads, so domains is read once more (a current
+        // read, since a plain read inside the transaction only sees the first read's snapshot)
+        list($status, $domain_id, $domain_name) = $this->findDomain($host, false, true);
+        if ($status === 'one') return array('pending', $domain_id, $domain_name);
+        if ($status === 'many') return array('ambiguous_domain');
+
+        return array('no_domain');
+    }
+
+    /*
+     * What to do with a tick-box domain: array('already_in_queue') when it already has an unfinished exact-domain row,
+     * array('upgrade', row id) for an unfinished, unclaimed pasted row, or array('new_exact').
+     */
+    protected function planExact($host)
+    {
+        $rows = $this->unfinishedRows($host);
+
+        foreach ($rows as $row) {
+            if ((int) $row->exact_domain === 1) return array('already_in_queue');
+        }
+
+        foreach ($rows as $row) {
+            if ((int) $row->processing === 0) return array('upgrade', (int) $row->id);
+        }
+
+        return array('new_exact');
+    }
+
+    // The host's unfinished rows, locked
+    protected function unfinishedRows($host)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id, exact_domain, processing
+            FROM ssl_queue
+            WHERE host = :host
+              AND finished = '0'
+            ORDER BY id
+            FOR UPDATE");
+        $stmt->bindValue('host', $host, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /*
+     * Changes a pasted row to wait for the exact domain, with the tick box's choices, starting afresh. Applied only when
+     * the row is still unclaimed and unfinished, and returns whether it was.
+     */
+    protected function upgradeRow($id, $host, $choices, $now)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE ssl_queue
+            SET exact_domain = '1',
+                wait_for_domain = '1',
+                wait_domain = :host,
+                wait_since = :now,
+                domain_id = '0',
+                domain_name = '',
+                owner_id = :owner_id,
+                account_id = :account_id,
+                provider_id = :provider_id,
+                type_id = :type_id,
+                cat_id = :cat_id,
+                ip_id = :ip_id,
+                attempts = '0',
+                message = ''
+            WHERE id = :id
+              AND processing = '0'
+              AND finished = '0'");
+        $stmt->bindValue('host', $host, \PDO::PARAM_STR);
+        $stmt->bindValue('now', $now, \PDO::PARAM_STR);
+        foreach (array('owner_id', 'account_id', 'provider_id', 'type_id', 'cat_id', 'ip_id') as $column) {
+            $stmt->bindValue($column, $choices[$column], \PDO::PARAM_INT);
+        }
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    protected function insertRow($row)
+    {
+        $columns = array_keys($row);
+        $stmt = $this->deeb->cnxx->prepare("
+            INSERT INTO ssl_queue
+            (`" . implode('`, `', $columns) . "`)
+            VALUES
+            (:" . implode(', :', $columns) . ")");
+
+        foreach ($row as $column => $value) {
+            $stmt->bindValue($column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+    }
+
+    protected function testFailure($written)
+    {
+        if (self::$test_add_failure && $written === 1) throw new \RuntimeException('Test failure after the first row');
+    }
+
+    /*
+     * The host's domain in domains: array('one', id, name), array('many', 0, ''), or array('none', 0, ''). With $exact,
+     * only a domain named exactly the host counts, otherwise the longest parent at a label boundary. With $current, it's
+     * a current read (FOR UPDATE), for inside a transaction.
+     */
+    protected function findDomain($host, $exact, $current)
+    {
+        $forms = $exact ? array_filter(array(Domain::normalize($host))) : self::storedSuffixes($host);
+        if (!$forms) return array('none', 0, '');
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id, domain
+            FROM domains
+            WHERE domain IN (" . implode(', ', array_fill(0, count($forms), '?')) . ")
+            ORDER BY id" . ($current ? "
+            FOR UPDATE" : ""));
+        $stmt->execute(array_values($forms));
+        $rows = $stmt->fetchAll();
+
+        $names = array();
+        foreach ($rows as $row) $names[] = $row->domain;
+        $best = $exact ? ($names ? Domain::normalize($host) : '') : self::bestMatch($host, $names);
+        if ($best === '') return array('none', 0, '');
+
+        $matches = array();
+        foreach ($rows as $row) {
+            if (strtolower(Domain::forApi($row->domain)) === strtolower(Domain::forApi($best))) $matches[] = $row;
+        }
+
+        if (count($matches) > 1) return array('many', 0, '');
+        if (!$matches) return array('none', 0, '');
+
+        return array('one', (int) $matches[0]->id, (string) $matches[0]->domain);
+    }
+
+    /*
+     * The domain an unfinished, valid Domain Queue row has for the host (the host itself, or the longest parent at a
+     * label boundary, or only the host itself with $exact), or ''. A freshly queued RDAP row counts whatever its
+     * ready_to_import is, since it's 0 while the row waits for its lookup.
+     */
+    protected function findQueuedDomain($host, $exact)
+    {
+        $forms = $exact ? array_filter(array(Domain::normalize($host))) : self::storedSuffixes($host);
+        if (!$forms) return '';
+
+        $this->loadQueuedDomains();
+        $names = array();
+        foreach ($forms as $form) {
+            if (isset($this->queued_domains[$form])) $names[] = $form;
+        }
+
+        return self::bestMatch($host, $names);
+    }
+
+    // domain_queue has no index on domain, so its unfinished, valid domains are read once (per add, waiting check, or
+    // claim) rather than once per hostname
+    protected function loadQueuedDomains()
+    {
+        if ($this->queued_domains !== null) return;
+
+        $this->queued_domains = array_flip($this->deeb->cnxx->query("
+            SELECT DISTINCT domain
+            FROM domain_queue
+            WHERE finished = '0'
+              AND invalid_domain = '0'")->fetchAll(\PDO::FETCH_COLUMN));
+    }
+
+    /*
+     * Releases or fails the rows waiting for their domain, under the SSL Queue's named lock. A row whose wait_domain is
+     * now in domains (as exactly one record) is released, keeping its attempts and message. One that's still in the
+     * Domain Queue (an unfinished, valid row) keeps waiting for up to WAIT_DAYS from wait_since. Otherwise it fails
+     * with domain_not_imported, after domains is read once more. The Domain Queue is read once, before the rows, since
+     * domain_queue has no index on domain: a domain queued again during the check is only seen by the next one, and a
+     * row that fails meanwhile can be put back with Retry Failed. $now (Y-m-d H:i:s, UTC) is for tests.
+     */
+    public function releaseWaiting($now = null)
+    {
+        $pdo = $this->deeb->cnxx;
+        $now = $now ?? $this->time->stamp();
+        $cutoff = gmdate('Y-m-d H:i:s', strtotime($now . ' UTC') - self::WAIT_DAYS * 86400);
+
+        $rows = $pdo->query("
+            SELECT id, wait_domain, exact_domain, wait_since
+            FROM ssl_queue
+            WHERE wait_for_domain = '1'
+            ORDER BY id")->fetchAll();
+        if (!$rows) return;
+
+        $this->queued_domains = null;
+        $this->loadQueuedDomains();
+
+        foreach ($rows as $row) {
+
+            try {
+
+                $this->getQueueLock();
+                $pdo->beginTransaction();
+
+                list($status, $domain_id, $domain_name) = $this->findDomain($row->wait_domain, true, true);
+
+                if ($status === 'none' && $row->wait_since > $cutoff && $this->findQueuedDomain($row->wait_domain, true) !== '') {
+
+                    $pdo->rollback();
+                    $this->releaseQueueLock();
+                    continue;
+
+                }
+
+                if ($status === 'none') {
+
+                    // the Domain Queue may have imported the domain and finished its row between the reads
+                    list($status, $domain_id, $domain_name) = $this->findDomain($row->wait_domain, true, true);
+
+                }
+
+
+                if ($status === 'one') {
+                    $values = array('wait_for_domain' => 0, 'domain_id' => $domain_id, 'domain_name' => $domain_name);
+                } elseif ($status === 'many') {
+                    $values = array('wait_for_domain' => 0, 'finished' => 1, 'failed' => 1, 'message' => 'ambiguous_domain');
+                } else {
+                    $values = array('wait_for_domain' => 0, 'finished' => 1, 'failed' => 1, 'message' => 'domain_not_imported');
+                }
+
+                $this->updateRow((int) $row->id, $values, "wait_for_domain = '1' AND wait_domain = :wait_domain AND exact_domain = :exact_domain",
+                    array('wait_domain' => $row->wait_domain, 'exact_domain' => (int) $row->exact_domain));
+
+                $pdo->commit();
+                $this->releaseQueueLock();
+
+            } catch (\Throwable $e) {
+
+                $this->cleanUp();
+                $this->logError('Unable to release a waiting row in the SSL Queue', $row->wait_domain, $e);
+
+            }
+
+        }
     }
 
     // The ssl-queue task's run. Until the database update it does nothing, so cron and Run Now are safe either way.
@@ -60,6 +687,825 @@ class SslQueue
 
             $this->trace('unavailable');
             return;
+
+        }
+
+        if (!$this->getRunLock()) {
+
+            $this->trace('locked');
+            return;
+
+        }
+
+        try {
+
+            $this->resetAbandonedClaims();
+            $this->releaseWaiting();
+            $this->processCandidates();
+
+        } finally {
+
+            $this->releaseRunLock();
+
+        }
+    }
+
+    // Rows a stopped run left claimed for more than CLAIM_TIMEOUT count as a timeout (one attempt), and can be picked up
+    protected function resetAbandonedClaims()
+    {
+        $pdo = $this->deeb->cnxx;
+        $cutoff = gmdate('Y-m-d H:i:s', time() - self::CLAIM_TIMEOUT);
+
+        $stmt = $pdo->prepare("
+            SELECT id, attempts
+            FROM ssl_queue
+            WHERE processing = '1'
+              AND last_attempt < :cutoff");
+        $stmt->bindValue('cutoff', $cutoff, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        foreach ($stmt->fetchAll() as $row) {
+
+            try {
+
+                $this->getQueueLock();
+                $this->updateRow((int) $row->id, self::afterCrash($row), "processing = '1' AND last_attempt < :cutoff",
+                    array('cutoff' => $cutoff));
+                $this->releaseQueueLock();
+
+            } catch (\Throwable $e) {
+
+                $this->cleanUp();
+                $this->logError('Unable to reset an abandoned row in the SSL Queue', (string) $row->id, $e);
+
+            }
+
+        }
+    }
+
+    protected function processCandidates()
+    {
+        $pdo = $this->deeb->cnxx;
+
+        // never-tried rows first (oldest first), then retries, least recently tried first
+        $candidates = $pdo->query("
+            SELECT id
+            FROM ssl_queue
+            WHERE wait_for_domain = '0'
+              AND processing = '0'
+              AND finished = '0'
+              AND attempts < '" . self::MAX_ATTEMPTS . "'
+            ORDER BY (last_attempt > '1970-01-01 00:00:00'), last_attempt, id
+            LIMIT " . self::CANDIDATES)->fetchAll(\PDO::FETCH_COLUMN);
+        if (!$candidates) return;
+
+        $started = microtime(true);
+        $budget = $this->budget($started);
+        $lookup = new SslLookup();
+        $attempted = 0;
+
+        foreach ($candidates as $id) {
+
+            if ($attempted >= self::BATCH || $started + $budget - microtime(true) < SslLookup::MIN_LOOKUP_TIME) break;
+
+            try {
+
+                $this->getQueueLock();
+
+                // waiting for the lock can use time, so the budget is checked again before the claim
+                if ($started + $budget - microtime(true) < SslLookup::MIN_LOOKUP_TIME) {
+
+                    $this->releaseQueueLock();
+                    break;
+
+                }
+
+                $row = $this->claim((int) $id);
+
+                if (!$row) {
+
+                    $this->releaseQueueLock();
+                    continue;
+
+                }
+
+                $attempted++;
+                $this->queued_domains = null;
+                $row = $this->prepareClaimed($row);
+                $noted = $row ? $this->noteRevisions($row) : array();
+                $this->releaseQueueLock();
+
+                if (!$row) continue;
+
+                // the reads since the claim took time too
+                if ($started + $budget - microtime(true) < SslLookup::MIN_LOOKUP_TIME) {
+
+                    $this->writeResult($row, 'deferred');
+                    break;
+
+                }
+
+                $deadline = min(microtime(true) + SslLookup::DEADLINE, $started + $budget);
+                list($code, $details) = $lookup->fetch($row->host, $deadline, (int) $row->exact_domain === 1);
+
+                if (in_array($code, SslLookup::$saved_codes, true)) {
+                    $this->import($row, $code, $details, $noted);
+                } else {
+                    $this->writeResult($row, $code);
+                }
+
+            } catch (\Throwable $e) {
+
+                $this->cleanUp();
+                $this->logError('Unable to process a row in the SSL Queue', (string) $id, $e);
+
+            }
+
+        }
+    }
+
+    // The run's time budget: BUDGET, cut down by max_execution_time the way the Domain Queue's RDAP import does it
+    protected function budget($started)
+    {
+        $budget = self::BUDGET;
+        $max_execution_time = (int) ini_get('max_execution_time');
+
+        if ($max_execution_time > 0) {
+
+            // keep a quarter of what's left (at most a minute) for the rest of the run
+            $remaining = $max_execution_time - ($started - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $started));
+            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4)));
+
+        }
+
+        return $budget;
+    }
+
+    // Claims a Pending or Retrying row and returns it as it is now, or null when another run or a change got there first
+    protected function claim($id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE ssl_queue
+            SET processing = '1',
+                last_attempt = :now
+            WHERE id = :id
+              AND processing = '0'
+              AND finished = '0'
+              AND wait_for_domain = '0'");
+        $stmt->bindValue('now', $this->time->stamp(), \PDO::PARAM_STR);
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        if ($stmt->rowCount() !== 1) return null;
+
+        return $this->getRow($id);
+    }
+
+    public function getRow($id)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT *
+            FROM ssl_queue
+            WHERE id = :id");
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $stmt->closeCursor();
+
+        return $row ?: null;
+    }
+
+    /*
+     * Finds the claimed row's domain from its current settings, and returns the row ready for its lookup, or null when
+     * it waits or fails here (its claim then cleared). A stored domain_id is kept, and fails the row with stale_choice
+     * when that domain is gone or renamed. An exact-domain row only ever looks for its own wait_domain.
+     */
+    protected function prepareClaimed($row)
+    {
+        $exact = (int) $row->exact_domain === 1;
+        $target = $exact ? (string) $row->wait_domain : (string) $row->host;
+
+        if ((int) $row->domain_id > 0) {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                SELECT domain
+                FROM domains
+                WHERE id = :id");
+            $stmt->bindValue('id', (int) $row->domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $name = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            if ($name === false || (string) $name !== (string) $row->domain_name) {
+
+                $this->writeResult($row, 'stale_choice');
+                return null;
+
+            }
+
+            return $row;
+
+        }
+
+        list($status, $domain_id, $domain_name) = $this->findDomain($target, $exact, false);
+
+        if ($status === 'many') {
+
+            $this->writeResult($row, 'ambiguous_domain');
+            return null;
+
+        }
+
+        if ($status === 'one') {
+
+            $this->updateRow((int) $row->id, array('domain_id' => $domain_id, 'domain_name' => $domain_name));
+            $row->domain_id = $domain_id;
+            $row->domain_name = $domain_name;
+            return $row;
+
+        }
+
+        $queued = $this->findQueuedDomain($target, $exact);
+
+        if ($queued !== '') {
+
+            $this->updateRow((int) $row->id, array('processing' => 0, 'wait_for_domain' => 1, 'wait_domain' => $queued,
+                'wait_since' => $this->time->stamp()));
+            return null;
+
+        }
+
+        // the Domain Queue may have imported the domain and finished its row between the two reads
+        list($status, $domain_id, $domain_name) = $this->findDomain($target, $exact, false);
+
+        if ($status === 'one') {
+
+            $this->updateRow((int) $row->id, array('domain_id' => $domain_id, 'domain_name' => $domain_name));
+            $row->domain_id = $domain_id;
+            $row->domain_name = $domain_name;
+            return $row;
+
+        }
+
+        $this->writeResult($row, $status === 'many' ? 'ambiguous_domain' : 'no_domain');
+        return null;
+    }
+
+    /*
+     * array(revision, name) of every certificate on the row's domain named for the host (or, for a tick-box row, for
+     * its www. name too), with the revision of its status row (null for none): the records a name match could pick at
+     * save time. The name is kept as well, since a record with no status row can be renamed with no revision to show it.
+     */
+    protected function noteRevisions($row)
+    {
+        $wanted = array(strtolower(Domain::forApi($row->host)));
+        if ((int) $row->exact_domain === 1) $wanted[] = strtolower(Domain::forApi('www.' . $row->host));
+
+        $noted = array();
+
+        foreach ($this->certificatesNamed((int) $row->domain_id, $wanted, false) as $certificate) {
+            $noted[(int) $certificate->id] = array(($certificate->revision === null) ? null : (int) $certificate->revision,
+                (string) $certificate->name);
+        }
+
+        return $noted;
+    }
+
+    /*
+     * The domain's certificates whose name (normalised, and a valid hostname) is one of the ASCII names in $wanted,
+     * lowest id first, with their status row's revision (null for none). With $lock, the certificates and status rows
+     * stay locked until the transaction ends.
+     */
+    protected function certificatesNamed($domain_id, $wanted, $lock)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT c.id, c.`name`, s.revision, s.fingerprint
+            FROM ssl_certs AS c
+            LEFT JOIN ssl_cert_status AS s ON s.ssl_id = c.id
+            WHERE c.domain_id = :domain_id
+            ORDER BY c.id" . ($lock ? "
+            FOR UPDATE" : ""));
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $matches = array();
+
+        foreach ($stmt->fetchAll() as $certificate) {
+
+            $ascii = $this->asciiHostname((new Unsanitize())->text($certificate->name));
+            if ($ascii !== '' && in_array($ascii, $wanted, true)) $matches[] = $certificate;
+
+        }
+
+        return $matches;
+    }
+
+    // A typed certificate name as an ASCII hostname (normalised, without a final dot), or '' when it isn't one
+    public function asciiHostname($name)
+    {
+        $normalized = Domain::normalize($name);
+        if ($normalized === '') return '';
+
+        $ascii = strtolower(Domain::forApi($normalized));
+        return ((new Rdap())->isHostname($ascii) && strpos($ascii, '.') !== false) ? $ascii : '';
+    }
+
+    // Whether an ASCII hostname is the domain itself or under it
+    public static function isUnder($ascii_host, $domain_name)
+    {
+        $ascii_domain = strtolower(Domain::forApi($domain_name));
+        return $ascii_domain !== '' && ($ascii_host === $ascii_domain || str_ends_with($ascii_host, '.' . $ascii_domain));
+    }
+
+    /*
+     * Saves a lookup that came with a certificate, in one transaction under the SSL Queue's named lock: the queue row and
+     * every id the certificate uses are locked and rechecked, then the certificate is matched to an existing record
+     * (by name, then fingerprint) or inserted. Any error rolls back and counts as save_failed.
+     */
+    protected function import($row, $code, $details, $noted)
+    {
+        $pdo = $this->deeb->cnxx;
+        $ssl_assets = new SslAssets();
+        $outcome = '';
+
+        try {
+
+            $this->getQueueLock();
+            $pdo->beginTransaction();
+
+            $outcome = $this->importLocked($row, $code, $details, $noted, $ssl_assets);
+
+            if ($outcome === 'saved') {
+                $pdo->commit();
+            } else {
+                $pdo->rollback();
+            }
+
+        } catch (\Throwable $e) {
+
+            $this->cleanUp();
+            $this->logError('Unable to save a certificate from the SSL Queue', $row->host, $e);
+            $outcome = 'save_failed';
+
+        } finally {
+
+            // a failed release (such as a lost connection) doesn't hide the import's outcome
+            try {
+                $ssl_assets->release();
+            } catch (\Throwable $e) {
+                // the database releases the lock when the connection ends
+            }
+
+            $this->cleanUp();
+
+        }
+
+        if ($outcome === 'saved') {
+
+            // the session flags for whoever ran it (Run Now), as ssl/add.php sets them after a manual add
+            $_SESSION['s_missing_ssl_fees'] = $this->system->checkForRows((new QueryBuild())->missingFees('ssl_certs'));
+            $this->system->checkExistingAssets();
+
+        } elseif ($outcome !== 'gone') {
+
+            $this->writeResult($row, $outcome);
+
+        }
+    }
+
+    /*
+     * The import's work inside its transaction. Returns 'saved', 'gone' (the row is no longer this run's claim, so
+     * nothing is written), or a failure code to write to the row once the transaction is rolled back.
+     */
+    protected function importLocked($row, $code, $details, $noted, $ssl_assets)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $current = $this->lockRow('ssl_queue', 'id', (int) $row->id, '*');
+        if (!$current || (int) $current->processing !== 1 || (int) $current->finished !== 0) return 'gone';
+
+        // every id the certificate will use, locked and rechecked, since any can be deleted or changed while the lookup runs
+        $domain = $this->lockRow('domains', 'id', (int) $row->domain_id, 'domain');
+        if (!$domain || (string) $domain->domain !== (string) $row->domain_name) return 'stale_choice';
+
+        foreach (array(array('owners', $row->owner_id), array('ssl_cert_types', $row->type_id),
+                     array('categories', $row->cat_id), array('ip_addresses', $row->ip_id)) as $check) {
+            if (!$this->lockRow($check[0], 'id', (int) $check[1], 'id')) return 'stale_choice';
+        }
+
+        $account = null;
+
+        if ((int) $row->account_id > 0) {
+
+            $account = $this->lockRow('ssl_accounts', 'id', (int) $row->account_id, 'ssl_provider_id, owner_id');
+            if (!$account || (int) $account->ssl_provider_id !== (int) $row->provider_id || (int) $account->owner_id !== (int) $row->owner_id
+                || !$this->lockRow('ssl_providers', 'id', (int) $row->provider_id, 'id')) {
+                return 'stale_choice';
+            }
+
+        }
+
+        $served_ascii = strtolower(Domain::forApi($details['host']));
+        $now = $this->time->stamp();
+
+        // 1. An existing record: the lowest id named for the host, then the lowest id holding the fingerprint
+        $by_name = $this->certificatesNamed((int) $row->domain_id, array($served_ascii), true);
+        $match_id = $by_name ? (int) $by_name[0]->id : 0;
+
+        if ($match_id === 0 && $details['fingerprint'] !== '') {
+
+            $stmt = $pdo->prepare("
+                SELECT c.id, c.`name`
+                FROM ssl_certs AS c
+                JOIN ssl_cert_status AS s ON s.ssl_id = c.id
+                WHERE c.domain_id = :domain_id
+                  AND s.fingerprint = :fingerprint
+                ORDER BY c.id
+                FOR UPDATE");
+            $stmt->bindValue('domain_id', (int) $row->domain_id, \PDO::PARAM_INT);
+            $stmt->bindValue('fingerprint', $details['fingerprint'], \PDO::PARAM_STR);
+            $stmt->execute();
+
+            foreach ($stmt->fetchAll() as $certificate) {
+
+                // only a record whose name still belongs to its domain
+                $ascii = $this->asciiHostname((new Unsanitize())->text($certificate->name));
+
+                if ($ascii !== '' && self::isUnder($ascii, $domain->domain)) {
+
+                    $match_id = (int) $certificate->id;
+                    break;
+
+                }
+
+            }
+
+        }
+
+        if ($match_id > 0) {
+
+            if ($by_name) {
+
+                // the status row describes the latest lookup, unless the record or its status row changed while this lookup
+                // ran (then the newer result is kept, and only the link is made)
+                $revision = ($by_name[0]->revision === null) ? null : (int) $by_name[0]->revision;
+                if (isset($noted[$match_id]) && $noted[$match_id] === array($revision, (string) $by_name[0]->name)) {
+                    $this->writeStatus($match_id, $details, $code, false);
+                }
+
+            }
+
+            $this->finishRow((int) $row->id, $code, $details, $match_id, true);
+            return 'saved';
+
+        }
+
+        // 2. A new record's name must fit, never cut short
+        if (mb_strlen($details['host']) > self::MAX_NAME_LENGTH) return 'name_too_long';
+
+        // 3. The provider and account, then the certificate
+        if ($account) {
+
+            $provider_id = (int) $account->ssl_provider_id;
+            $account_id = (int) $row->account_id;
+            $owner_id = (int) $account->owner_id;
+
+        } else {
+
+            list($provider_id, $account_id, $owner_id) = $ssl_assets->resolve($details['issuer'], (int) $row->owner_id, (int) $row->created_by);
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT id, (renewal_fee + misc_fee) AS total_cost
+            FROM ssl_fees
+            WHERE ssl_provider_id = :provider_id
+              AND type_id = :type_id");
+        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
+        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $fee = $stmt->fetch();
+        $stmt->closeCursor();
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_certs
+            (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date, fee_id,
+             total_cost, notes, active, fee_fixed, creation_type_id, created_by, insert_time)
+            VALUES
+            (:owner_id, :provider_id, :account_id, :domain_id, :name, :type_id, :ip_id, :cat_id, :expiry_date, :fee_id,
+             :total_cost, :notes, :active, :fee_fixed, :creation_type_id, :created_by, :insert_time)");
+        $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain_id', (int) $row->domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('name', $details['host'], \PDO::PARAM_STR);
+        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
+        $stmt->bindValue('ip_id', (int) $row->ip_id, \PDO::PARAM_INT);
+        $stmt->bindValue('cat_id', (int) $row->cat_id, \PDO::PARAM_INT);
+        $stmt->bindValue('expiry_date', $details['expiry_date'], \PDO::PARAM_STR);
+        $stmt->bindValue('fee_id', $fee ? (int) $fee->id : 0, \PDO::PARAM_INT);
+        $stmt->bindValue('total_cost', strval($fee ? $fee->total_cost : 0), \PDO::PARAM_STR);
+        $stmt->bindValue('notes', $this->importNote($details, $code), \PDO::PARAM_LOB);
+        $stmt->bindValue('active', $code === 'expired' ? 0 : 1, \PDO::PARAM_INT);
+        $stmt->bindValue('fee_fixed', $fee ? 1 : 0, \PDO::PARAM_INT);
+        $stmt->bindValue('creation_type_id', $this->system->getCreationTypeId('Queue'), \PDO::PARAM_INT);
+        $stmt->bindValue('created_by', (int) $row->created_by, \PDO::PARAM_INT);
+        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
+        $stmt->execute();
+        $ssl_id = (int) $pdo->lastInsertId('id');
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_cert_field_data
+            (ssl_id, insert_time)
+            VALUES
+            (:ssl_id, :insert_time)");
+        $stmt->bindValue('ssl_id', $ssl_id, \PDO::PARAM_INT);
+        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $this->writeStatus($ssl_id, $details, $code, true);
+        $this->finishRow((int) $row->id, $code, $details, $ssl_id, false);
+
+        return 'saved';
+    }
+
+    /*
+     * One row of $table by its key, locked until the transaction ends, or null. $table, $key, and $columns are only ever
+     * fixed names from this class.
+     */
+    protected function lockRow($table, $key, $id, $columns)
+    {
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT " . $columns . "
+            FROM `" . $table . "`
+            WHERE `" . $key . "` = :id
+            FOR UPDATE");
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $stmt->closeCursor();
+
+        return $row ?: null;
+    }
+
+    // The dated line added to an imported certificate's notes (stored in English, as Refresh's note lines are)
+    public function importNote($details, $code)
+    {
+        // an issuer that already ends with a full stop (such as "Entrust, Inc.") doesn't get a second one
+        $issuer = ($details['issuer'] !== '') ? $details['issuer'] : 'unknown';
+        $note = $this->time->timeBasic() . ' - Imported by the SSL Queue from ' . $details['host'] . '. Issuer: '
+            . rtrim($issuer, '.') . '. Names: ' . implode(', ', $details['names']) . '.';
+
+        if ($code === 'untrusted') {
+            $note .= ' Not trusted: ' . ($details['reason'] === 'self_signed' ? 'self-signed' : 'not trusted') . '.';
+        } elseif ($code === 'expired') {
+            $note .= ' Not trusted: expired.';
+        }
+
+        return $this->sanitize->text($note);
+    }
+
+    /*
+     * Text from a certificate as it's stored: escaped as typed text is (several pages print stored names without
+     * escaping), and cut to $length characters without splitting an escape. The text is already cleaned by SslLookup.
+     */
+    public function storedText($text, $length)
+    {
+        $text = rtrim(mb_substr((string) $text, 0, $length));
+        $escaped = $this->sanitize->text($text);
+
+        while (mb_strlen($escaped) > $length && $text !== '') {
+
+            $text = mb_substr($text, 0, mb_strlen($text) - 1);
+            $escaped = $this->sanitize->text(rtrim($text));
+
+        }
+
+        return $escaped;
+    }
+
+    // The DNS names as stored: one per line, each escaped on its own, cut at a line to fit the TEXT column
+    public function storedNames($names)
+    {
+        $stored = '';
+
+        foreach ($names as $name) {
+
+            $line = $this->storedText($name, 255);
+            if (strlen($stored) + strlen($line) + 1 > 60000) break;
+            $stored .= ($stored === '' ? '' : "\n") . $line;
+
+        }
+
+        return $stored;
+    }
+
+    /*
+     * Creates or updates a certificate's status row from a lookup, adding one to its revision. $set_refreshed also sets
+     * refreshed_issuer (an import or a Refresh), which the queue's name-match updates never change.
+     */
+    public function writeStatus($ssl_id, $details, $code, $set_refreshed)
+    {
+        $issuer = $this->storedText($details['issuer'], 255);
+        $refreshed = $set_refreshed ? ",
+                refreshed_issuer = VALUES(refreshed_issuer)" : "";
+
+        $stmt = $this->deeb->cnxx->prepare("
+            INSERT INTO ssl_cert_status
+            (ssl_id, host, fingerprint, issuer, refreshed_issuer, `names`, valid_from, valid_to, trusted, last_check,
+             last_result, revision)
+            VALUES
+            (:ssl_id, :host, :fingerprint, :issuer, :refreshed_issuer, :names, :valid_from, :valid_to, :trusted, :last_check,
+             :last_result, '1')
+            ON DUPLICATE KEY UPDATE
+                host = VALUES(host),
+                fingerprint = VALUES(fingerprint),
+                issuer = VALUES(issuer)" . $refreshed . ",
+                `names` = VALUES(`names`),
+                valid_from = VALUES(valid_from),
+                valid_to = VALUES(valid_to),
+                trusted = VALUES(trusted),
+                last_check = VALUES(last_check),
+                last_result = VALUES(last_result),
+                revision = revision + 1");
+        $stmt->bindValue('ssl_id', $ssl_id, \PDO::PARAM_INT);
+        $stmt->bindValue('host', $details['host'], \PDO::PARAM_STR);
+        $stmt->bindValue('fingerprint', $details['fingerprint'], \PDO::PARAM_STR);
+        $stmt->bindValue('issuer', $issuer, \PDO::PARAM_STR);
+        $stmt->bindValue('refreshed_issuer', $set_refreshed ? $issuer : null, $set_refreshed ? \PDO::PARAM_STR : \PDO::PARAM_NULL);
+        $stmt->bindValue('names', $this->storedNames($details['names']), \PDO::PARAM_LOB);
+        $stmt->bindValue('valid_from', gmdate('Y-m-d H:i:s', (int) $details['valid_from']), \PDO::PARAM_STR);
+        $stmt->bindValue('valid_to', gmdate('Y-m-d H:i:s', (int) $details['valid_to']), \PDO::PARAM_STR);
+        $stmt->bindValue('trusted', $details['trusted'] ? 1 : 0, \PDO::PARAM_INT);
+        $stmt->bindValue('last_check', $this->time->stamp(), \PDO::PARAM_STR);
+        $stmt->bindValue('last_result', $code, \PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    // Completes a row with the lookup's details, imported or matched to an existing record
+    protected function finishRow($id, $code, $details, $ssl_id, $already_in_ssl)
+    {
+        $this->updateRow($id, array('processing' => 0, 'finished' => 1, 'already_in_ssl' => $already_in_ssl ? 1 : 0,
+            'new_ssl_id' => $ssl_id, 'expiry_date' => $details['expiry_date'], 'issuer' => $this->storedText($details['issuer'], 255),
+            'fingerprint' => $details['fingerprint'], 'message' => $code));
+    }
+
+    // Writes a result that isn't a success to a claimed row (afterResult()), clearing its claim
+    protected function writeResult($row, $code)
+    {
+        $this->updateRow((int) $row->id, self::afterResult($row, $code), "processing = '1'");
+    }
+
+    /*
+     * Updates one row. $where adds conditions (with their own values in $where_values), so a write only applies to a row
+     * still in the state it was read in. Column names are only ever fixed names from this class. Returns the rows changed.
+     */
+    protected function updateRow($id, $values, $where = '', $where_values = array())
+    {
+        $sets = array();
+        foreach (array_keys($values) as $column) $sets[] = "`" . $column . "` = :set_" . $column;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE ssl_queue
+            SET " . implode(', ', $sets) . "
+            WHERE id = :id" . ($where !== '' ? " AND " . $where : ""));
+
+        foreach ($values as $column => $value) {
+            $stmt->bindValue('set_' . $column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        foreach ($where_values as $name => $value) {
+            $stmt->bindValue($name, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
+    /*
+     * Deletes the status rows of certificates being deleted, inside the caller's transaction. Before the database update
+     * there's no table, so nothing is done.
+     */
+    public function deleteStatus($ssl_ids)
+    {
+        $ssl_ids = array_values(array_map('intval', $ssl_ids));
+        if (!$ssl_ids || !$this->isAvailable()) return;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            DELETE FROM ssl_cert_status
+            WHERE ssl_id IN (" . implode(', ', array_fill(0, count($ssl_ids), '?')) . ")");
+        $stmt->execute($ssl_ids);
+    }
+
+    /*
+     * Clears a certificate's lookup details after its name or domain changed (inside the caller's transaction), so a
+     * later import of the old host can't match it, adding one to the revision so a Refresh in progress notices.
+     */
+    public function resetStatus($ssl_id)
+    {
+        if (!$this->isAvailable()) return;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE ssl_cert_status
+            SET host = '',
+                fingerprint = '',
+                issuer = '',
+                refreshed_issuer = NULL,
+                `names` = '',
+                valid_from = '1970-01-01 00:00:00',
+                valid_to = '1970-01-01 00:00:00',
+                trusted = '0',
+                last_check = '1970-01-01 00:00:00',
+                last_result = '',
+                revision = revision + 1
+            WHERE ssl_id = :ssl_id");
+        $stmt->bindValue('ssl_id', (int) $ssl_id, \PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    /*
+     * The SSL Queue's named lock (held by addHosts(), releaseWaiting(), the claim, the save, Retry Failed, Clear
+     * Completed, and Delete), taken once and kept until releaseQueueLock().
+     */
+    public function getQueueLock()
+    {
+        if ($this->queue_locked) return;
+
+        $stmt = $this->deeb->cnxx->prepare("SELECT GET_LOCK(:lock_name, " . self::LOCK_WAIT . ")");
+        $stmt->bindValue('lock_name', $this->lockName('domainmod_ssl_queue_'), \PDO::PARAM_STR);
+        $stmt->execute();
+        if ((string) $stmt->fetchColumn() !== '1') throw new \RuntimeException('Unable to get the SSL Queue lock');
+
+        $this->queue_locked = true;
+    }
+
+    public function releaseQueueLock()
+    {
+        if (!$this->queue_locked) return;
+
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("SELECT RELEASE_LOCK(:lock_name)");
+            $stmt->bindValue('lock_name', $this->lockName('domainmod_ssl_queue_'), \PDO::PARAM_STR);
+            $stmt->execute();
+
+        } finally {
+
+            $this->queue_locked = false;
+
+        }
+    }
+
+    // The run lock, taken without waiting, so two runs never look rows up side by side
+    protected function getRunLock()
+    {
+        $stmt = $this->deeb->cnxx->prepare("SELECT GET_LOCK(:lock_name, 0)");
+        $stmt->bindValue('lock_name', $this->lockName('domainmod_ssl_queue_run_'), \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return (string) $stmt->fetchColumn() === '1';
+    }
+
+    protected function releaseRunLock()
+    {
+        $stmt = $this->deeb->cnxx->prepare("SELECT RELEASE_LOCK(:lock_name)");
+        $stmt->bindValue('lock_name', $this->lockName('domainmod_ssl_queue_run_'), \PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    // Named locks are shared by every database on the server, so the name includes a short hash of this database's name
+    protected function lockName($prefix)
+    {
+        return $prefix . substr(md5(DB_NAME), 0, 12);
+    }
+
+    // After an error: rolls back any open transaction and releases the SSL Queue's named lock, and a failure doing either
+    // (such as a lost connection) doesn't stop the caller returning its own result
+    protected function cleanUp()
+    {
+        try {
+            if ($this->deeb->cnxx->inTransaction()) $this->deeb->cnxx->rollback();
+        } catch (\Throwable $e) {
+            // nothing more can be done
+        }
+
+        try {
+            $this->releaseQueueLock();
+        } catch (\Throwable $e) {
+            // nothing more can be done
+        }
+    }
+
+    // Logging never stops the run
+    protected function logError($log_message, $item, $error)
+    {
+        try {
+
+            $log_extra = array('Item' => $item, 'Error' => $error->getMessage());
+            $this->log->critical($log_message, $log_extra);
+
+        } catch (\Throwable $e) {
+
+            // nothing more can be done
 
         }
     }

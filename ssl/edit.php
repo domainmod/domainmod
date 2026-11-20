@@ -35,6 +35,7 @@ $form = new DomainMOD\Form();
 $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 $assets = new DomainMOD\Assets();
+$ssl_queue = new DomainMOD\SslQueue();
 
 $timestamp = $time->stamp();
 
@@ -81,17 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
-            // the record may have been deleted while the form was open; then nothing is saved
+            // If the record was deleted while the form was open, nothing is saved. A record that's found stays locked
+            // until the save ends, so its stored name and domain can be compared with the saved ones below.
             $stmt = $pdo->prepare("
-                SELECT id
+                SELECT id, `name`, domain_id
                 FROM ssl_certs
-                WHERE id = :record_id");
+                WHERE id = :record_id
+                FOR UPDATE");
             $stmt->bindValue('record_id', $sslcid, PDO::PARAM_INT);
             $stmt->execute();
-            $record_exists = $stmt->fetchColumn();
+            $stored_record = $stmt->fetch();
             $stmt->closeCursor();
 
-            if (!$record_exists) {
+            if (!$stored_record) {
 
                 if ($pdo->InTransaction()) $pdo->rollback();
                 $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That SSL certificate no longer exists.') . '<BR>';
@@ -208,6 +211,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
             $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
             $stmt->execute();
+
+            // A new name or domain means the certificate's last lookup describes another site, so its details are cleared.
+            // The values are compared as stored (the database can cut a name that's too long), not as posted.
+            $stmt = $pdo->prepare("
+                SELECT `name`, domain_id
+                FROM ssl_certs
+                WHERE id = :sslcid");
+            $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+            $stmt->execute();
+            $saved_record = $stmt->fetch();
+            $stmt->closeCursor();
+
+            if (!$saved_record || (string) $saved_record->name !== (string) $stored_record->name
+                || (int) $saved_record->domain_id !== (int) $stored_record->domain_id) {
+                $ssl_queue->resetStatus($sslcid);
+            }
 
             $result = $pdo->query("
                 SELECT field_name
@@ -384,6 +403,8 @@ if ($del === 1) {
             WHERE ssl_id = :sslcid");
         $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
         $stmt->execute();
+
+        $ssl_queue->deleteStatus(array($sslcid));
 
         $temp_type = $assets->getSslType($new_type_id);
 
