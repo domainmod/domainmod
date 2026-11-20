@@ -69,6 +69,8 @@ $search_for = isset($_REQUEST['search_for']) ? $sanitize->text($_REQUEST['search
 $from_dropdown = (int) ($_REQUEST['from_dropdown'] ?? 0);
 $expand = (int) ($_REQUEST['expand'] ?? 0);
 $daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterange']) : '';
+// The Registry Status filter (DomainMOD\DomainStatus), only once the 4.27.0 database update has added its columns
+$lock = DomainMOD\DomainList::normalizeLock($_REQUEST['lock'] ?? '');
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
@@ -257,8 +259,10 @@ $cf_carry = $cf_state ? array('cff' => $cf->fieldsKey()) : array();
 // The list's filters as SQL, from the same class as the list's data endpoint (domains/list-data.php), so the first
 // page, the pages fetched afterwards, the counts, Export, and the Raw List all agree
 $domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_fields);
+// Whether Export adds the registry status columns (DomainMOD\DomainStatus), which come with the 4.27.0 database update
+$export_status = $domain_list->hasStatusColumns();
 $list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid, 'rid' => $rid,
-    'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active);
+    'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active, 'lock' => $lock);
 $filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date,
     $segment_list);
 
@@ -349,6 +353,7 @@ $raid_string = $filter_parts['raid_string'];
 $range_string = $filter_parts['range_string'];
 $tld_string = $filter_parts['tld_string'];
 $search_string = $filter_parts['search_string'];
+$lock_string = $filter_parts['lock_string'];
 
 // Export and the Raw List come out in the list's default order (DomainList::EXPORT_ORDER_SQL). The Raw List also keeps
 // the query without its order, so it can add the table's search box when its link carries one, and without its
@@ -365,7 +370,8 @@ $raw_list_from_sql = $domain_list->fromSql() . "
           $raid_string
           $range_string
           $tld_string
-          $search_string" . $cf_filter['sql'];
+          $search_string
+          $lock_string" . $cf_filter['sql'];
 $raw_list_sql = $domain_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\DomainList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'domains';
@@ -378,7 +384,8 @@ $_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
-    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $cf_filter['sql'];
+    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $lock_string
+    . $cf_filter['sql'];
 $list_filter_params = $cf_filter['params'];
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
@@ -546,6 +553,16 @@ if ($export_data == 1) {
             $row_contents = array(
                 _('Owner') . ':',
                 $temp_owner
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($lock !== '') {
+
+            $row_contents = array(
+                _('Registry Status') . ':',
+                DomainMOD\DomainStatus::filterChoices()[$lock]
             );
             $search_filter_rows[] = $row_contents;
 
@@ -823,6 +840,10 @@ if ($export_data == 1) {
         $row_contents[$count++] = _('Function');
         $row_contents[$count++] = _('Renewal Status');
         $row_contents[$count++] = _('WHOIS Status');
+        // The registry status columns (DomainMOD\DomainStatus) come with the 4.27.0 database update
+        if ($export_status) {
+            foreach (DomainMOD\DomainStatus::exportHeadings() as $heading) $row_contents[$count++] = $heading;
+        }
         $row_contents[$count++] = _('Registrar');
         $row_contents[$count++] = _('Registrar Account');
         $row_contents[$count++] = _('Username');
@@ -932,6 +953,9 @@ if ($export_data == 1) {
                 $row_contents[$count++] = $row->function;
                 $row_contents[$count++] = $autorenew_status;
                 $row_contents[$count++] = $privacy_status;
+                if ($export_status) {
+                    foreach (DomainMOD\DomainStatus::exportValues($row) as $value) $row_contents[$count++] = $value;
+                }
                 $row_contents[$count++] = $row->registrar_name;
                 $row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . '(' . $row->username . ')';
                 $row_contents[$count++] = $row->username;
@@ -1120,6 +1144,7 @@ if ($pcid !== 0) $filter_toolbar->addFilter('pcid', $pcid, 0, $filter_name("SELE
 if ($oid !== 0) $filter_toolbar->addFilter('oid', $oid, 0, $filter_name("SELECT `name` FROM owners WHERE id = :id", $oid), _('Owner'));
 if ($tld != '') $filter_toolbar->addFilter('tld', $tld, '', '.' . $tld, _('TLD'));
 $filter_toolbar->addFilter('is_active', $is_active, 'LIVE', $status_names[$is_active] ?? $is_active, _('Status'));
+if ($lock !== '') $filter_toolbar->addFilter('lock', $lock, '', DomainMOD\DomainStatus::filterChoices()[$lock], _('Registry Status'));
 if ($_SESSION['s_search_for'] != '') {
     $filter_keyword = DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']);
     $filter_toolbar->addFilter('search_for', $filter_keyword, '', '"' . $filter_keyword . '"', _('Keyword Search'));
@@ -1159,7 +1184,11 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
     echo $filter_toolbar->toolbar($filter_expanded);
     echo $filter_toolbar->panelTop($filter_expanded);
 
-        echo $form->showFormTop(''); ?>
+        echo $form->showFormTop('');
+
+        // The Registry Status filter's condition for the menus below, which name the domains table d, or don't alias it
+        $lock_string_d = DomainMOD\DomainStatus::filterCondition($lock, 'd.');
+        $lock_string_plain = DomainMOD\DomainStatus::filterCondition($lock, ''); ?>
 
         <div><?php
                 // SEGMENT
@@ -1276,6 +1305,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY r.name
                 ORDER BY r.name asc", $cf_menu_d);
@@ -1385,6 +1415,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY r.name, o.name, ra.username
                 ORDER BY r.name asc, o.name asc, ra.username asc", $cf_menu_d);
@@ -1497,6 +1528,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY dns.name
                 ORDER BY dns.name asc", $cf_menu_d);
@@ -1609,6 +1641,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY ip.name
                 ORDER BY ip.name asc", $cf_menu_d);
@@ -1722,6 +1755,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY h.name
                 ORDER BY h.name asc", $cf_menu_d);
@@ -1834,6 +1868,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY c.name
                 ORDER BY c.name asc", $cf_menu_d);
@@ -1946,6 +1981,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY o.name
                 ORDER BY o.name asc", $cf_menu_d);
@@ -2057,6 +2093,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $range_string .
                     $search_string .
                     $segment_string .
+                    $lock_string_plain .
                     $cf_menu_domains['sql'] . "
                 GROUP BY tld 
                 ORDER BY tld asc", $cf_menu_domains);
@@ -2144,6 +2181,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $tld_string
                   $search_string
                   $segment_string
+                  $lock_string_plain
                   {$cf_menu_domains['sql']}
                 GROUP BY active
                 ORDER BY active asc", $cf_menu_domains);
@@ -2193,7 +2231,22 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 }
                 echo $form->showDropdownOption('ALL', DomainMOD\Format::toUpper(_('All')), $is_active);
                 echo $filter_toolbar->keepOption('is_active', array_merge(array('LIVE', 'ALL'), array_map('strval', array_column($result_active, 'active'))));
-                echo $form->showDropdownBottom(''); ?>
+                echo $form->showDropdownBottom('');
+
+
+                // REGISTRY STATUS (DomainMOD\DomainStatus): a fixed list, once the 4.27.0 database update is done
+                if ($domain_list->hasStatusColumns()) {
+
+                    echo $form->showDropdownTop('lock', _('Registry Status'), '', '', '');
+                    echo $form->showDropdownOption('', _('Registry Status') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
+                    foreach (DomainMOD\DomainStatus::filterChoices() as $lock_value => $lock_label) {
+
+                        echo $form->showDropdownOption($lock_value, $lock_label, $lock);
+
+                    }
+                    echo $form->showDropdownBottom('');
+
+                } ?>
 
                 <?php
                 echo $form->showInputText('daterange', _('Expiring Between'), '', $daterange, '23', '', '', '', '');
@@ -2380,7 +2433,7 @@ if ($result) {
         // Domains exist but none are listed. Which empty state shows depends on why (see the empty states plan).
         $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $whid !== 0
             || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE'
-            || $cf_state !== array();
+            || $cf_state !== array() || $lock !== '';
 
         // The list only shows domains that have a fee (it joins the fees to work out costs), so these counts leave
         // the fees out, to tell "nothing matches" apart from "hidden until they have a fee"

@@ -44,9 +44,13 @@ $system->authCheck();
 $pdo = $deeb->cnxx;
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
+// The transfer lock and registry status reasons come with the 4.27.0 database update (DomainMOD\DomainStatus)
+$status_available = DomainMOD\DomainStatus::isAvailable($pdo);
 // Which domains the list shows: all of them, or those a tile counts (anything else shows all)
 $show = (string) ($_GET['show'] ?? 'all');
-if (!in_array($show, array('all', 'overdue', 'autorenew', 'privacy', 'nofee'), true)) $show = 'all';
+$show_values = array('all', 'overdue', 'autorenew', 'privacy', 'nofee');
+if ($status_available) $show_values = array_merge($show_values, array('lock', 'registry'));
+if (!in_array($show, $show_values, true)) $show = 'all';
 
 $expiration_days = (int) $pdo->query("
     SELECT expiration_days
@@ -55,7 +59,7 @@ $expiration_days = (int) $pdo->query("
 $today = $time->timeBasic();
 $risk_days = DomainMOD\Reporting::AT_RISK_DAYS;
 $risk_end = $time->timeBasicPlusDays($risk_days);
-$at_risk = $reporting->atRiskDomains($reporting->renewalDomains($time->timeBasicPlusDays($risk_days + 1)), $today, $risk_end);
+$at_risk = $reporting->atRiskDomains($reporting->renewalDomainsWithStatus($time->timeBasicPlusDays($risk_days + 1)), $today, $risk_end);
 
 // Why each domain is listed (it can be more than one)
 $is_overdue = function ($row) use ($today) {
@@ -66,6 +70,11 @@ $conditions = array(
     'autorenew' => function ($row) use ($is_overdue) { return !$is_overdue($row) && $row->autorenew != '1'; },
     'privacy' => function ($row) use ($is_overdue) { return !$is_overdue($row) && $row->privacy != '1'; },
     'nofee' => function ($row) { return !$row->has_fee || !$row->has_rate; });
+if ($status_available) {
+    // A transfer lock only matters for a domain still to renew, while the registry's hold or deletion matters for every one
+    $conditions['lock'] = function ($row) use ($is_overdue) { return !$is_overdue($row) && (int) $row->transfer_lock === DomainMOD\DomainStatus::LOCK_OFF; };
+    $conditions['registry'] = function ($row) { return (int) $row->registry_problem === 1; };
+}
 
 $counts = array();
 foreach ($conditions as $key => $condition) {
@@ -109,6 +118,10 @@ $reasons = array(
     'autorenew' => array(_('Auto-Renewal Off'), _('Auto-renewal is off'), 'warning'),
     'privacy' => array(_('Privacy Off'), _('Privacy is off'), 'secondary'),
     'nofee' => array(_('No Fee or Rate'), _('No fee, or no conversion rate for its currency'), 'secondary'));
+if ($status_available) {
+    $reasons['lock'] = array(_('Transfer Lock Off'), _('The transfer lock is off'), 'warning');
+    $reasons['registry'] = array(_('Registry Hold or Deletion'), _('The registry has it on hold or is deleting or restoring it'), 'danger');
+}
 
 $row_reasons = function ($row) use ($conditions) {
     $keys = array();
@@ -118,7 +131,21 @@ $row_reasons = function ($row) use ($conditions) {
     return $keys;
 };
 
-$intro = sprintf(_('Domains expiring in the next %1$s days with auto-renewal or privacy off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, sprintf(ngettext('%s day', '%s days', $expiration_days), $expiration_days));
+$expiration_days_text = sprintf(ngettext('%s day', '%s days', $expiration_days), $expiration_days);
+if ($status_available) {
+    $intro = sprintf(_('This report lists live domains expiring in the next %1$s days that have auto-renewal, privacy, or the transfer lock turned off, are on hold at the registry, or are being deleted or restored by the registry. The report also includes all live domains past their expiry date.'), $risk_days) . ' ' . sprintf(_('This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
+} else {
+    $intro = sprintf(_('Domains expiring in the next %1$s days with auto-renewal or privacy off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
+}
+
+// Domains without a transfer lock that expire later aren't listed here, so a line links to all of them on the Domains
+// list, counted by the list's own query (the same joins and filters), so the number matches what the link shows
+$unlocked_count = 0;
+if ($status_available) {
+    $unlocked_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], array());
+    $unlocked_count = $unlocked_list->count(DomainMOD\DomainList::filterSql($unlocked_list->filterParts(
+        DomainMOD\DomainList::normalizeState(array('is_active' => 'LIVE')), '', '', '')) . DomainMOD\DomainStatus::filterCondition('unlocked'));
+}
 
 if ($export_data === 1 && $list) {
 
@@ -199,8 +226,16 @@ echo '</p>'; ?>
     echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Auto-Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Privacy Off (%s days)'), $risk_days), $counts['privacy'], 'secondary', 'bi-incognito', '/reporting/domains/at-risk.php?show=privacy#domain-list', _('At-Risk Domains'));
-    echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains')); ?>
-</div>
+    echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains'));
+    if ($status_available) {
+        echo $dashboard->displayPanel(sprintf(_('Transfer Lock Off (%s days)'), $risk_days), $counts['lock'], 'warning', 'bi-unlock', '/reporting/domains/at-risk.php?show=lock#domain-list', _('At-Risk Domains'));
+        echo $dashboard->displayPanel(_('Registry Hold or Deletion'), $counts['registry'], 'danger', 'bi-slash-circle', '/reporting/domains/at-risk.php?show=registry#domain-list', _('At-Risk Domains'));
+    } ?>
+</div><?php
+if ($unlocked_count > 0) {
+    echo '<p>' . htmlspecialchars(sprintf(ngettext('%s live domain has no transfer lock.', '%s live domains have no transfer lock.', $unlocked_count), number_format($unlocked_count)), ENT_QUOTES, 'UTF-8')
+        . ' <a href="' . WEB_ROOT . '/domains/?lock=unlocked">' . _('View on the Domains list') . '</a></p>';
+} ?>
 
 <h2 class="h4 mt-4" id="domain-list"><?php echo $show === 'all' ? _('All At-Risk Domains') : $reasons[$show][0]; ?></h2><?php
 

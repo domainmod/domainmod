@@ -25,7 +25,9 @@ namespace DomainMOD;
  * Refreshes one domain's details on request (the Refresh Domain box on the domain edit page). The registrar's API is
  * tried first, then public RDAP data, and WHOIS for TLDs without an RDAP server, the same way the Domain Queue's RDAP
  * import works. Changes are applied straight away and listed for the user. The expiry date and DNS profile can come
- * from any source, while WHOIS privacy and auto renewal only come from a registrar API that reports them.
+ * from any source, while WHOIS privacy and auto renewal only come from a registrar API that reports them. The registry
+ * status codes and transfer lock (DomainStatus) always come from RDAP: with the RDAP lookup itself, or, after a registrar
+ * API answer, from one extra status-only RDAP lookup.
  */
 class DomainRefresh
 {
@@ -33,6 +35,8 @@ class DomainRefresh
     public $domain;
     public $log;
     public $queue;
+    public $status_available = false; // whether the lock status columns are there (DomainStatus::isAvailable())
+    public $failed_started = '';      // when this refresh's lookup started, if its status codes couldn't be read
     public $time;
 
     const DEADLINE = 45;           // seconds for the whole lookup
@@ -113,6 +117,8 @@ class DomainRefresh
         if ($wait !== '') return array(false, array($wait), array('summary' => $wait, 'reasons' => array(), 'changes' => array(), 'notes' => array()));
 
         $deadline = microtime(true) + self::DEADLINE;
+        $this->status_available = DomainStatus::isAvailable($this->deeb->cnxx);
+        $this->failed_started = '';
         $source = '';
         $fallback_lines = array();
         $details = null;
@@ -136,6 +142,11 @@ class DomainRefresh
                     $fallback_lines[] = _("Your registrar's API didn't return this domain's details, so public RDAP and WHOIS data was used instead.");
                 } else {
                     $source = 'registrar';
+                    // The API doesn't give the registry's status codes, so they come from one status-only RDAP lookup
+                    if ($this->status_available) {
+                        $details['status'] = $this->fetchStatusOnly($row, $deadline);
+                        if ($details['status'] === null) $details['notes'][] = _("The lock status couldn't be checked this time.");
+                    }
                 }
 
             }
@@ -150,6 +161,7 @@ class DomainRefresh
 
             if ($details === null) {
 
+                $this->saveFailedStatus((int) $row->id);
                 $failed = sprintf(_("Domain %s couldn't be refreshed."), $domain_html);
                 return array(false, array_merge(array($failed), $fallback_lines, array($error)),
                     array('summary' => $failed, 'reasons' => array($error), 'changes' => array(), 'notes' => $fallback_lines));
@@ -160,6 +172,7 @@ class DomainRefresh
 
         // 3. Compare with the domain as it is now, and apply any changes.
         list($success, $lines, $parts) = $this->apply($row, $user_id, $source, $details);
+        $this->saveFailedStatus((int) $row->id);
 
         if (!$success) {
 
@@ -203,7 +216,8 @@ class DomainRefresh
     protected function getDomainRow($domain_id, $lock)
     {
         $stmt = $this->deeb->cnxx->prepare("
-            SELECT d.id, d.domain, d.tld, d.expiry_date, d.dns_id, d.privacy, d.autorenew, d.notes, d.account_id,
+            SELECT d.id, d.domain, d.tld, d.expiry_date, d.dns_id, d.privacy, d.autorenew, d.notes, d.account_id," . ($this->status_available ? "
+                d.transfer_lock, d.epp_status, d.epp_status_time," : "") . "
                 ra.registrar_id, r.api_registrar_id, ar.name AS api_registrar_name, ra.username, ra.`password`,
                 ra.account_id AS api_account_id, ra.reseller_id, ra.api_app_name, ra.api_key, ra.api_secret,
                 ra.api_ip_id, IFNULL(ip.ip, '') AS api_ip
@@ -321,7 +335,7 @@ class DomainRefresh
 
         $unreported = self::$unreported_fields[$api_name] ?? array();
         $details = array('expiry_date' => '', 'name_servers' => $dns_servers, 'privacy' => null, 'autorenew' => null,
-            'notes' => array());
+            'notes' => array(), 'status' => null);
 
         if ($this->isDate($expiration_date)) {
             $details['expiry_date'] = $expiration_date;
@@ -354,19 +368,23 @@ class DomainRefresh
             return array('', null, _("RDAP and WHOIS couldn't be tried, because the lookup ran out of time. Please try again later."), '');
         }
 
-        $rdap = new Rdap();
-        $lookup = $rdap->lookup($row->domain, $deadline);
+        $started = gmdate('Y-m-d H:i:s');
+        $lookup = $this->rdap()->lookup($row->domain, $deadline);
+        if (!in_array($lookup['status'], array('ok', 'no_server'), true)) $this->failed_started = $started;
 
         if ($lookup['status'] === 'not_found') return array('', null, _("The domain wasn't found in RDAP."), '');
         if ($lookup['status'] === 'rate_limited') return array('', null, _('The RDAP server is limiting requests. Please try again later.'), '');
-        if ($lookup['status'] === 'ok') return array('rdap', $this->publicDetails($lookup, 'rdap'), '', '');
+        if ($lookup['status'] === 'ok') return array('rdap', $this->publicDetails($lookup, 'rdap', $started), '', '');
         if ($lookup['status'] !== 'no_server') return array('', null, _('The RDAP lookup failed. Please try again later.'), '');
 
         // No RDAP server for the TLD, so try WHOIS.
         $whois_line = $this->tldMessage(_("RDAP isn't available for .%s domains, so WHOIS was used instead."), $row->tld);
         $whois = new Whois();
+        $started = gmdate('Y-m-d H:i:s');
         list($found, $server) = $whois->serverFor(Domain::forApi($row->domain), $deadline);
 
+        // IANA couldn't be asked which WHOIS server to use, or the TLD has neither, so the check failed
+        if (!$found || $server === '') $this->failed_started = $started;
         if (!$found) return array('', null, $this->tldMessage(_("The WHOIS server for .%s domains couldn't be found. Please try again later."), $row->tld), '');
         if ($server === '') return array('', null, $this->tldMessage(_('Neither RDAP nor WHOIS is available for .%s domains.'), $row->tld), '');
 
@@ -374,9 +392,11 @@ class DomainRefresh
             return array('', null, _('The WHOIS lookup failed. Please try again later.'), $whois_line);
         }
 
+        $started = gmdate('Y-m-d H:i:s');
         $lookup = $whois->lookup($row->domain, $deadline);
+        if ($lookup['status'] !== 'ok') $this->failed_started = $started;
 
-        if ($lookup['status'] === 'ok') return array('whois', $this->publicDetails($lookup, 'whois'), '', $whois_line);
+        if ($lookup['status'] === 'ok') return array('whois', $this->publicDetails($lookup, 'whois', $started), '', $whois_line);
         if ($lookup['status'] === 'not_found') return array('', null, _("The domain wasn't found in WHOIS."), $whois_line);
         if ($lookup['status'] === 'rate_limited') return array('', null, _('The WHOIS server is limiting requests. Please try again later.'), $whois_line);
         if (!empty($lookup['connection_failed'])) return array('', null, _("WHOIS couldn't be reached (your server may block port 43)."), $whois_line);
@@ -384,11 +404,24 @@ class DomainRefresh
         return array('', null, _('The WHOIS lookup failed. Please try again later.'), $whois_line);
     }
 
-    // RDAP and WHOIS give the expiry date and name servers only, so WHOIS privacy and auto renewal are left alone.
-    protected function publicDetails($lookup, $source)
+    /*
+     * RDAP and WHOIS don't give WHOIS privacy or auto renewal, so those are left alone. Both give the expiry date and
+     * name servers, and RDAP also gives the status codes (see statusRead()), while a WHOIS lookup records the lock status
+     * as Unknown. $started is when the lookup started (UTC).
+     */
+    protected function publicDetails($lookup, $source, $started = '')
     {
         $details = array('expiry_date' => '', 'name_servers' => $lookup['name_servers'] ?? array(), 'privacy' => null,
-            'autorenew' => null, 'notes' => array());
+            'autorenew' => null, 'notes' => array(), 'status' => null);
+
+        if ($this->status_available) {
+            $details['status'] = $source === 'whois' ? array('read' => 'whois', 'codes' => array(), 'started' => $started)
+                : $this->statusRead($lookup, $started);
+            if ($details['status'] === null) {
+                $details['notes'][] = _("The lock status couldn't be checked this time.");
+                $this->failed_started = $started;
+            }
+        }
 
         if ($this->isDate((string) ($lookup['expiry_date'] ?? ''))) {
             $details['expiry_date'] = $lookup['expiry_date'];
@@ -399,6 +432,99 @@ class DomainRefresh
         }
 
         return $details;
+    }
+
+    /*
+     * A completed status read from an RDAP lookup, as array('read' => found or none, 'codes', 'started'), or null when
+     * it can't be saved (a lookup that failed, or an incomplete read). $started is when the lookup started (UTC).
+     */
+    protected function statusRead($lookup, $started)
+    {
+        if (($lookup['status'] ?? '') !== 'ok' || !in_array($lookup['status_read'] ?? '', array('found', 'none'), true)) return null;
+
+        return array('read' => $lookup['status_read'],
+            'codes' => $lookup['status_read'] === 'found' ? DomainStatus::ordered($lookup['statuses'] ?? array()) : array(),
+            'started' => $started);
+    }
+
+    /*
+     * After a registrar API answer, one status-only RDAP lookup for the registry's status codes (its expiry date and
+     * name servers are ignored, since the API's answer wins for those), when at least MIN_LOOKUP_TIME is left. A TLD
+     * without an RDAP server is recorded as Unknown, as a WHOIS lookup is. Returns statusRead()'s array, or null when the
+     * status couldn't be checked. Anything it throws is logged and treated as a check that couldn't be done, so the API's
+     * details are still saved.
+     */
+    protected function fetchStatusOnly($row, $deadline)
+    {
+        $started = '';
+
+        try {
+
+            if ($deadline - microtime(true) < self::MIN_LOOKUP_TIME) return null;
+
+            $started = gmdate('Y-m-d H:i:s');
+            $lookup = $this->rdap()->lookup($row->domain, $deadline, true);
+
+            if (($lookup['status'] ?? '') === 'no_server') return array('read' => 'whois', 'codes' => array(), 'started' => $started);
+
+            $status = $this->statusRead($lookup, $started);
+            if ($status === null) $this->failed_started = $started;
+            return $status;
+
+        } catch (\Throwable $e) {
+
+            if ($started !== '') $this->failed_started = $started;
+
+            try {
+                $this->log->error('Unable to check a domain\'s lock status after its registrar API answered',
+                    array('Domain' => $row->domain, 'Error' => get_class($e)));
+            } catch (\Throwable $log_error) {
+            }
+
+            return null;
+
+        }
+    }
+
+    /*
+     * Records that this refresh's lookup couldn't read the status codes (see $failed_started), as the domain's
+     * epp_status_failed_time, so the edit page and the list can say so. It's only saved when that lookup started after
+     * both the last successful read and the last failure saved, in one statement, so an older failure never replaces a
+     * newer result, whatever order two refreshes finish in. The saved statuses and their date are left as they are. A
+     * failure to save it is logged and doesn't change the refresh's result.
+     */
+    protected function saveFailedStatus($domain_id)
+    {
+        if (!$this->status_available || $this->failed_started === '') return;
+
+        try {
+
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE domains
+                SET epp_status_failed_time = :started
+                WHERE id = :domain_id
+                  AND epp_status_time < :started_after_read
+                  AND epp_status_failed_time < :started_after_failure");
+            $stmt->bindValue('started', $this->failed_started, \PDO::PARAM_STR);
+            $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+            $stmt->bindValue('started_after_read', $this->failed_started, \PDO::PARAM_STR);
+            $stmt->bindValue('started_after_failure', $this->failed_started, \PDO::PARAM_STR);
+            $stmt->execute();
+
+        } catch (\Throwable $e) {
+
+            try {
+                $this->log->error('Unable to record a failed lock status check', array('Domain ID' => $domain_id, 'Error' => get_class($e)));
+            } catch (\Throwable $log_error) {
+            }
+
+        }
+    }
+
+    // The RDAP client (replaced in tests)
+    protected function rdap()
+    {
+        return new Rdap();
     }
 
     /*
@@ -495,11 +621,58 @@ class DomainRefresh
 
             }
 
-            // Nothing changed, so nothing is written.
+            /*
+             * The lock status is saved only when this lookup started after the one already saved, so whichever of two
+             * overlapping refreshes started later wins, whatever order they're saved in (DomainStatus::isNewer()). Every
+             * completed read is saved, even with the same codes, so the date says when they were last confirmed.
+             */
+            $status = $this->status_available ? ($details['status'] ?? null) : null;
+            $status_write = false;
+
+            if ($status !== null) {
+
+                if (DomainStatus::isNewer($status['started'], $row->epp_status_time)) {
+
+                    $status_write = true;
+                    $status_changes = DomainStatus::changes(array('transfer_lock' => (int) $row->transfer_lock,
+                        'codes' => DomainStatus::fromColumn($row->epp_status), 'time' => $row->epp_status_time), $status);
+                    $changes = array_merge($changes, $status_changes['lines']);
+                    $note_changes = array_merge($note_changes, $status_changes['notes']);
+                    $notes_lines = array_merge($notes_lines, $status_changes['info']);
+
+                } else {
+
+                    $notes_lines[] = _("The lock status wasn't updated, because a check made at the same time or later was already saved.");
+
+                }
+
+            }
+
+            // Nothing changed, so nothing is written, apart from a lock status read, which is saved quietly (without
+            // a note or a new update time).
             if (empty($changes)) {
 
-                $pdo->rollback();
                 $no_changes = _('No changes were made.');
+
+                if ($status_write) {
+
+                    $stmt = $pdo->prepare("
+                        UPDATE domains
+                        SET transfer_lock = :transfer_lock,
+                            epp_status = :epp_status,
+                            epp_status_time = :epp_status_time
+                        WHERE id = :domain_id");
+                    $this->bindStatus($stmt, $status);
+                    $stmt->bindValue('domain_id', (int) $row->id, \PDO::PARAM_INT);
+                    $stmt->execute();
+                    $pdo->commit();
+
+                } else {
+
+                    $pdo->rollback();
+
+                }
+
                 return array(true, array_merge(array($no_changes), $notes_lines),
                     array('reasons' => array($no_changes), 'changes' => array(), 'notes' => $notes_lines));
 
@@ -539,7 +712,10 @@ class DomainRefresh
                     privacy = :privacy,
                     autorenew = :autorenew,
                     notes = :notes,
-                    update_time = :update_time" . $sql_fees . "
+                    update_time = :update_time" . $sql_fees . ($status_write ? ",
+                    transfer_lock = :transfer_lock,
+                    epp_status = :epp_status,
+                    epp_status_time = :epp_status_time" : "") . "
                 WHERE id = :domain_id");
             $stmt->bindValue('expiry_date', $new['expiry_date'], \PDO::PARAM_STR);
             $stmt->bindValue('dns_id', $new['dns_id'], \PDO::PARAM_INT);
@@ -552,6 +728,7 @@ class DomainRefresh
                 $stmt->bindValue('fee_fixed', $fee_id ? 1 : 0, \PDO::PARAM_INT);
                 $stmt->bindValue('total_cost', strval($total_cost), \PDO::PARAM_STR);
             }
+            if ($status_write) $this->bindStatus($stmt, $status);
             $stmt->bindValue('domain_id', (int) $row->id, \PDO::PARAM_INT);
             $stmt->execute();
 
@@ -572,6 +749,15 @@ class DomainRefresh
             return array(false, array($not_updated), array('reasons' => array($not_updated), 'changes' => array(), 'notes' => array()));
 
         }
+    }
+
+    // Binds a status read's transfer_lock, epp_status, and epp_status_time (the time its lookup started)
+    protected function bindStatus($stmt, $status)
+    {
+        $codes = DomainStatus::ordered($status['codes']);
+        $stmt->bindValue('transfer_lock', DomainStatus::lockFor($codes), \PDO::PARAM_INT);
+        $stmt->bindValue('epp_status', DomainStatus::toColumn($codes), \PDO::PARAM_STR);
+        $stmt->bindValue('epp_status_time', $status['started'], \PDO::PARAM_STR);
     }
 
     /*

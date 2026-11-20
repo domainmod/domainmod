@@ -48,12 +48,30 @@ class Reporting
      */
     public function renewalDomains($end_date, $start_date = '')
     {
+        return $this->renewalDomainRows($end_date, $start_date, false);
+    }
+
+    /*
+     * renewalDomains() with each domain's transfer_lock and a registry_problem flag (1 when the registry has it on hold
+     * or is deleting or restoring it, see DomainStatus), for At-Risk Domains and the Dashboard's At Risk tile. Before
+     * the 4.27.0 database update adds the columns, it returns exactly what renewalDomains() returns.
+     */
+    public function renewalDomainsWithStatus($end_date, $start_date = '')
+    {
+        return $this->renewalDomainRows($end_date, $start_date, DomainStatus::isAvailable(Database::getInstance()->cnxx));
+    }
+
+    // The statement behind renewalDomains() and renewalDomainsWithStatus(), with the status columns when $with_status
+    private function renewalDomainRows($end_date, $start_date, $with_status)
+    {
         $pdo = Database::getInstance()->cnxx;
+        $status_columns = $with_status ? ", d.transfer_lock, (" . DomainStatus::findInSet(array_merge(DomainStatus::HOLD_CODES,
+            DomainStatus::DELETION_CODES), 'd.epp_status') . ") AS registry_problem" : "";
 
         $stmt = $pdo->prepare("
             SELECT d.id, d.domain, d.expiry_date, d.autorenew, d.privacy, r.name AS registrar_name,
                 o.name AS owner_name, ra.username, (f.id IS NOT NULL) AS has_fee, (cc.id IS NOT NULL) AS has_rate,
-                d.total_cost * cc.conversion AS converted_cost
+                d.total_cost * cc.conversion AS converted_cost" . $status_columns . "
             FROM domains AS d
             LEFT JOIN registrars AS r ON d.registrar_id = r.id
             LEFT JOIN registrar_accounts AS ra ON d.account_id = ra.id
@@ -188,13 +206,18 @@ class Reporting
 
     /*
      * The At-Risk Domains from renewalDomains() rows: every overdue domain, and every domain expiring from $today
-     * through $risk_end (the next 30 days) with auto-renewal or privacy off
+     * through $risk_end (the next 30 days) with auto-renewal or privacy off. With renewalDomainsWithStatus() rows, a
+     * domain in that window without a transfer lock, or that the registry has on hold or is deleting or restoring, is
+     * at risk too (an overdue one is listed anyway).
      */
     public function atRiskDomains($rows, $today, $risk_end)
     {
         return array_values(array_filter($rows, function ($row) use ($today, $risk_end) {
             if ($row->expiry_date < $today) return true;
-            return $row->expiry_date <= $risk_end && ($row->autorenew != '1' || $row->privacy != '1');
+            if ($row->expiry_date > $risk_end) return false;
+            if ($row->autorenew != '1' || $row->privacy != '1') return true;
+            return isset($row->transfer_lock) && ((int) $row->transfer_lock === DomainStatus::LOCK_OFF
+                || (int) $row->registry_problem === 1);
         }));
     }
 

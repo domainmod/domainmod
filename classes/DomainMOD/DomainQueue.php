@@ -707,12 +707,22 @@ class DomainQueue
              */
             try {
 
+                // the lock status is saved with the time its lookup started (see DomainStatus::isNewer())
+                $status_started = gmdate('Y-m-d H:i:s');
+                $status_source = 'rdap';
                 $lookup = $rdap->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
 
                 if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
 
                     $this->releaseRdapRow($row->id, ($lookup['status'] === 'rate_limited') ? 'retry_rate_limited' : 'retry_error');
                     if ($server !== '') $skipped_servers[$server] = true;
+                    continue;
+
+                } elseif ($lookup['status'] === 'mismatch') {
+
+                    // the server answered for another domain: retried like an error, but the server isn't skipped, so
+                    // other domains on it are still looked up
+                    $this->releaseRdapRow($row->id, 'retry_error');
                     continue;
 
                 } elseif ($lookup['status'] === 'no_server') {
@@ -736,6 +746,8 @@ class DomainQueue
                     }
 
                     $whois_queries[$whois_server] = ($whois_queries[$whois_server] ?? 0) + 1;
+                    $status_started = gmdate('Y-m-d H:i:s');
+                    $status_source = 'whois';
                     $lookup = $whois->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
 
                     if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
@@ -865,6 +877,7 @@ class DomainQueue
                         }
 
                         $this->updateNewDomainId($row->id, $new_domain_id);
+                        $this->saveImportedStatus((int) $new_domain_id, $status_source, $lookup, $status_started);
                         $this->markFinishedDomain($row->id, $row->domain, $lookup['expiry_date'], $dns_id, $ip_id,
                             $cat_id, $hosting_id, '0', '0');
 
@@ -1111,6 +1124,47 @@ class DomainQueue
 
         $layout = new Layout();
         return str_replace(htmlspecialchars('.' . $tld, ENT_QUOTES, 'UTF-8'), $layout->ltr('.' . $tld), $html);
+    }
+
+    /*
+     * Sets a domain imported through RDAP's lock status from the lookup that imported it, as Refresh does (see
+     * DomainStatus): a completed RDAP read (found or none) is saved, a WHOIS import is Unknown, and an incomplete read
+     * only saves when the lookup ran, so the domain shows Couldn't Check. $started is when the lookup started (UTC). It runs inside the
+     * import's transaction, and only once the 4.27.0 database update has added the columns.
+     */
+    protected function saveImportedStatus($domain_id, $source, $lookup, $started)
+    {
+        if (!DomainStatus::isAvailable($this->deeb->cnxx)) return;
+
+        if ($source === 'whois') {
+            $codes = array();
+        } elseif (in_array($lookup['status_read'] ?? '', array('found', 'none'), true)) {
+            $codes = $lookup['status_read'] === 'found' ? DomainStatus::ordered($lookup['statuses'] ?? array()) : array();
+        } else {
+
+            // the codes couldn't be read, so the new domain shows Couldn't Check, with when the lookup ran
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE domains
+                SET epp_status_failed_time = :epp_status_failed_time
+                WHERE id = :domain_id");
+            $stmt->bindValue('epp_status_failed_time', $started, \PDO::PARAM_STR);
+            $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+            $stmt->execute();
+            return;
+
+        }
+
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE domains
+            SET transfer_lock = :transfer_lock,
+                epp_status = :epp_status,
+                epp_status_time = :epp_status_time
+            WHERE id = :domain_id");
+        $stmt->bindValue('transfer_lock', DomainStatus::lockFor($codes), \PDO::PARAM_INT);
+        $stmt->bindValue('epp_status', DomainStatus::toColumn($codes), \PDO::PARAM_STR);
+        $stmt->bindValue('epp_status_time', $started, \PDO::PARAM_STR);
+        $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     // Logging never stops the run (see processQueueListRow())

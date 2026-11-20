@@ -54,6 +54,11 @@ $new_display_dw_intro_page = (int) ($_POST['new_display_dw_intro_page'] ?? 0);
 // a form loaded before that update can't hide the checklist by leaving the box out
 $getting_started_offered = ($_POST['getting_started_offered'] ?? '') === '1';
 $new_display_getting_started = (int) ($_POST['new_display_getting_started'] ?? 0) === 1 ? 1 : 0;
+// The Transfer Lock column's setting (DomainMOD\DomainStatus), saved only when the form offered it (from the 4.27.0
+// database update on), so a form loaded before that update can't change it
+$domain_lock_available = DomainMOD\DomainStatus::isAvailable($pdo);
+$domain_lock_offered = $domain_lock_available && ($_POST['domain_lock_offered'] ?? '') === '1';
+$new_display_domain_lock = '0';
 // The colour mode: 0 Light, 1 Dark, or 2 Auto (which follows the system setting)
 $new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 2);
 if (!in_array($new_dark_mode, array(0, 1, 2), true)) $new_dark_mode = 2;
@@ -119,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (in_array("host", $domain_column_options)) { $new_display_domain_host = '1'; } else { $new_display_domain_host = '0'; }
     if (in_array("category", $domain_column_options)) { $new_display_domain_category = '1'; } else { $new_display_domain_category = '0'; }
     if (in_array("owner", $domain_column_options)) { $new_display_domain_owner = '1'; } else { $new_display_domain_owner = '0'; }
+    if (in_array("lock", $domain_column_options)) { $new_display_domain_lock = '1'; } else { $new_display_domain_lock = '0'; }
 
     if (in_array("expiry", $ssl_column_options)) { $new_display_ssl_expiry_date = '1'; } else { $new_display_ssl_expiry_date = '0'; }
     if (in_array("fee", $ssl_column_options)) { $new_display_ssl_fee = '1'; } else { $new_display_ssl_fee = '0'; }
@@ -219,6 +225,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     $user->setDarkMode();
 
+    if ($domain_lock_offered) {
+
+        $stmt = $pdo->prepare("
+            UPDATE user_settings
+            SET display_domain_lock = :new_display_domain_lock
+            WHERE user_id = :user_id");
+        $stmt->bindValue('new_display_domain_lock', $new_display_domain_lock, PDO::PARAM_INT);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_display_domain_lock'] = $new_display_domain_lock;
+
+    }
+
     if ($getting_started_offered && $user->setGettingStartedDisplay($_SESSION['s_user_id'], $new_display_getting_started)) {
 
         $_SESSION['s_display_getting_started'] = $new_display_getting_started;
@@ -283,6 +303,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
         $new_display_getting_started = $user->getGettingStartedDisplay($_SESSION['s_user_id']) ?? 1;
 
+        if ($domain_lock_available) {
+
+            $stmt = $pdo->prepare("
+                SELECT display_domain_lock
+                FROM user_settings
+                WHERE user_id = :user_id");
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $new_display_domain_lock = (string) $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+        }
+
     }
 
 }
@@ -318,7 +351,9 @@ echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_domain_
 echo $form->showMultipleSelectOption(_('Web Host'), 'host', $new_display_domain_host);
 echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_domain_category);
 echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_domain_owner);
+if ($domain_lock_available) echo $form->showMultipleSelectOption(_('Transfer Lock'), 'lock', $new_display_domain_lock);
 echo $form->showMultipleSelectBottom('');
+if ($domain_lock_available) echo $form->showInputHidden('domain_lock_offered', '1');
 
 echo $form->showMultipleSelectTop('custom_domain_fields', _('Custom Domain Fields to Display'), '');
 

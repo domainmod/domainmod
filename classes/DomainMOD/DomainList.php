@@ -78,9 +78,9 @@ class DomainList extends ListQuery
 
     /*
      * The list's filters, checked the way the page has always checked them: the id filters as whole numbers, the TLD
-     * checked and turned into its stored form (so xn--p1ai finds domains under рф), and the status from a fixed list,
-     * falling back to Live. $request holds the raw values (a missing key, or one that isn't a single value, counts as
-     * no filter).
+     * checked and turned into its stored form (so xn--p1ai finds domains under рф), the status from a fixed list,
+     * falling back to Live, and the Registry Status (see normalizeLock()). $request holds the raw values (a missing key,
+     * or one that isn't a single value, counts as no filter).
      */
     public static function normalizeState(array $request)
     {
@@ -108,7 +108,19 @@ class DomainList extends ListQuery
         $is_active = $single('is_active');
         $state['is_active'] = in_array($is_active, self::VALID_IS_ACTIVE, true) ? $is_active : 'LIVE';
 
+        $state['lock'] = self::normalizeLock($request['lock'] ?? '');
+
         return $state;
+    }
+
+    /*
+     * The Registry Status filter's value (see DomainStatus::FILTERS), or '' for none: anything else, or any value before
+     * the 4.27.0 database update adds the columns it filters on, is no filter
+     */
+    public static function normalizeLock($value)
+    {
+        $lock = DomainStatus::normalizeFilter($value);
+        return ($lock !== '' && DomainStatus::isAvailable()) ? $lock : '';
     }
 
     /*
@@ -153,6 +165,8 @@ class DomainList extends ListQuery
         $parts['tld_string'] = $state['tld'] != '' ? " AND d.tld = " . $pdo->quote($state['tld']) . " " : '';
 
         $parts['search_string'] = $keyword != '' ? " AND " . self::keywordCondition($pdo, 'd.domain', $keyword) . " " : '';
+
+        $parts['lock_string'] = DomainStatus::filterCondition($state['lock'] ?? '');
 
         return $parts;
     }
@@ -381,7 +395,8 @@ class DomainList extends ListQuery
     {
         return $parts['is_active_string'] . $parts['segid_string'] . $parts['pcid_string'] . $parts['oid_string']
             . $parts['dnsid_string'] . $parts['ipid_string'] . $parts['whid_string'] . $parts['rid_string']
-            . $parts['raid_string'] . $parts['range_string'] . $parts['tld_string'] . $parts['search_string'];
+            . $parts['raid_string'] . $parts['range_string'] . $parts['tld_string'] . $parts['search_string']
+            . ($parts['lock_string'] ?? '');
     }
 
     // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
@@ -410,10 +425,17 @@ class DomainList extends ListQuery
               AND cc.user_id = '" . $this->user_id . "'";
     }
 
-    // The columns every row has, plus the current custom fields
+    // Whether the domains table has the registry status columns (see DomainStatus::isAvailable())
+    public function hasStatusColumns()
+    {
+        return DomainStatus::isAvailable($this->pdo);
+    }
+
+    // The columns every row has, plus the registry status columns (under their ds1_ aliases, once the 4.27.0 database
+    // update adds them) and the current custom fields
     public function selectSql()
     {
-        return "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $this->field_columns;
+        return "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
     }
 
     // The search box's conditions (see ListQuery::searchSql()), where the domain always shows, so it always also matches

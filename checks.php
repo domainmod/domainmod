@@ -150,6 +150,8 @@ $_SESSION['s_default_ssl_provider'] = $result->default_ssl_provider;
 $_SESSION['s_number_of_domains'] = $result->number_of_domains;
 $_SESSION['s_number_of_ssl_certs'] = $result->number_of_ssl_certs;
 $_SESSION['s_display_domain_owner'] = $result->display_domain_owner;
+// The Transfer Lock column (DomainMOD\DomainStatus) comes with the 4.27.0 database update, and is off until then
+$_SESSION['s_display_domain_lock'] = $result->display_domain_lock ?? '0';
 $_SESSION['s_display_domain_registrar'] = $result->display_domain_registrar;
 $_SESSION['s_display_domain_account'] = $result->display_domain_account;
 $_SESSION['s_display_domain_expiry_date'] = $result->display_domain_expiry_date;

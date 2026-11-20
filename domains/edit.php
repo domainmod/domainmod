@@ -156,6 +156,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
         }
 
         echo '</div>';
+
+        // The Registry Status card, redrawn from the saved row, replaces the page's (an out-of-band swap)
+        if (DomainMOD\DomainStatus::isAvailable($pdo)) {
+            $status_row = DomainMOD\DomainStatus::savedRow($pdo, $did);
+            if ($status_row) echo DomainMOD\DomainStatus::editCard($status_row, true, true);
+        }
         exit;
 
     }
@@ -542,17 +548,29 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
 
     $refresh = new DomainMOD\DomainRefresh();
     $refresh_api_name = $refresh->registrarApiName($did);
+    // Refresh also checks the transfer lock status once the 4.27.0 database update is done (DomainMOD\DomainStatus)
+    $refresh_checks_lock = DomainMOD\DomainStatus::isAvailable($pdo);
 
     if ($refresh_api_name !== '') {
 
         $refresh_source = sprintf(_('Updates the expiry date, DNS servers, WHOIS privacy, and auto-renewal from your %s API.'), htmlentities($refresh_api_name, ENT_QUOTES, 'UTF-8'));
-        $refresh_details = sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto-renewal status using your %s API, and update them here."), $refresh_api_name) . ' ' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.") . ' ' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+        $refresh_details = sprintf(_("Look up this domain's current expiry date, DNS servers, WHOIS privacy, and auto-renewal status using your %s API, and update them here."), $refresh_api_name) . ' ' . _("Some registrars' APIs don't report every one of these, and anything not reported is left as it is.");
+        if ($refresh_checks_lock) {
+            $refresh_details .= ' ' . _("If the API can't be used, Refresh uses public RDAP or WHOIS data.") . ' ' . _("WHOIS privacy and auto-renewal status aren't available this way, so they're left as they are.");
+        } else {
+            $refresh_details .= ' ' . _("If the API can't be used, public RDAP and WHOIS data is used instead, which only updates the expiry date and DNS servers.");
+        }
 
     } else {
 
         $refresh_source = _('Updates the expiry date and DNS servers from public RDAP and WHOIS data.');
         $refresh_details = _("Look up this domain's current expiry date and DNS servers using public RDAP and WHOIS data, and update them here. WHOIS privacy and auto-renewal status aren't available this way, so they're left as they are.");
 
+    }
+
+    if ($refresh_checks_lock) {
+        $refresh_source .= ' ' . _('Also checks the transfer lock status using RDAP.');
+        $refresh_details .= ' ' . _("Refresh also checks the transfer lock status using RDAP, where it's available.");
     } ?>
 
     <div class="domainmod-refresh-row d-flex flex-wrap align-items-center justify-content-end gap-2">
@@ -663,6 +681,13 @@ if ($result) {
 echo $form->showSwitch(_('Auto-Renewal') . '?', '', 'new_autorenew', $new_autorenew, '<div class="mb-3">', '</div>');
 echo $form->showSwitch(_('Privacy Enabled') . '?', '', 'new_privacy', $new_privacy, '<div class="mb-3">', '</div>');
 echo $layout->formSection(_('Registration'), 'registration', ob_get_clean());
+
+// The registry's status codes and transfer lock (DomainMOD\DomainStatus), read-only, from the saved row (read on its
+// own, so after a save that fails validation it still shows what's saved, not the posted form)
+if (DomainMOD\DomainStatus::isAvailable($pdo)) {
+    $status_row = DomainMOD\DomainStatus::savedRow($pdo, $did);
+    if ($status_row) echo DomainMOD\DomainStatus::editCard($status_row, ($_SESSION['s_read_only'] ?? '') != '1');
+}
 
 // The saved fee for the domain's TLD at its registrar, or what's missing, with a link to edit or add it for users who
 // can edit fees (DomainMOD\FeeStatus)

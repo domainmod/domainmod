@@ -29,6 +29,7 @@ namespace DomainMOD;
 class Rdap
 {
     public $log;
+    public $redirected = false; // whether the last fetch() followed a redirect
 
     // State shared by every Rdap object in this PHP process (one cron run or page load)
     protected static $bootstrap = null;
@@ -50,15 +51,31 @@ class Rdap
 
     /*
      * Looks up one domain. $deadline is an absolute time (microtime(true)) by which every request must finish; no new
-     * request starts after it. Returns status (ok, not_found, no_server, rate_limited, or error), expiry_date (Y-m-d or
-     * ''), name_servers, registrar_name, registrar_iana_id, registrar_url, and message (plain text, never taken from
+     * request starts after it. Returns status (ok, not_found, no_server, rate_limited, mismatch, or error), expiry_date
+     * (Y-m-d or ''), name_servers, registrar_name, registrar_iana_id, registrar_url, statuses (the registry status codes,
+     * see DomainStatus), status_read (found, none, or incomplete, see below), and message (plain text, never taken from
      * the response).
+     *
+     * A record is only used when it's really the domain asked for (see matchesDomain()). A registry record that isn't is
+     * a failed lookup with the status mismatch, which callers treat like error for that domain, except that it never
+     * marks the server as failing.
+     *
+     * The statuses come from the registry's record. Only when it has no known codes ('none') are the registrar's (its
+     * record linked as "related") used instead. status_read is 'found' (known codes), 'none' (no known codes in the
+     * registry's record, nor in the registrar's when it links one), or 'incomplete' (the registry's status couldn't be
+     * read safely, or it had none and its registrar's record couldn't be read, or a referral was malformed), and only
+     * 'found' and 'none' may be saved.
+     *
+     * $status_only is for a lookup made only for the statuses (after a registrar API answer): it follows the registrar
+     * link only after a 'none' registry read, and never adds to the list of failed registrar servers, since it runs on
+     * whatever time is left.
      */
-    public function lookup($domain, $deadline = null)
+    public function lookup($domain, $deadline = null, $status_only = false)
     {
         $deadline = $deadline ?? (microtime(true) + 30);
         $result = array('status' => 'error', 'expiry_date' => '', 'name_servers' => array(), 'registrar_name' => '',
-            'registrar_iana_id' => '', 'registrar_url' => '', 'message' => '');
+            'registrar_iana_id' => '', 'registrar_url' => '', 'statuses' => array(), 'status_read' => 'incomplete',
+            'message' => '');
 
         // registries take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
         $ascii_domain = Domain::forApi($domain);
@@ -89,7 +106,7 @@ class Rdap
 
         }
 
-        list($status, $data) = $this->fetchJson($server . 'domain/' . rawurlencode($ascii_domain), $deadline);
+        list($status, $data, $object) = $this->fetchJson($server . 'domain/' . rawurlencode($ascii_domain), $deadline);
 
         if ($status !== 'ok') {
 
@@ -99,38 +116,110 @@ class Rdap
 
         }
 
+        // the registry's answer to the exact URL asked for may leave out the domain's name, but a record reached
+        // through a redirect has to name it
+        if (!$this->matchesDomain($object, $ascii_domain, !$this->redirected)) {
+
+            $result['status'] = 'mismatch';
+            $result['message'] = $this->statusMessage('mismatch');
+            return $result;
+
+        }
+
+        // a status-only lookup's caller ignores the other details, so they aren't read
         $result['status'] = 'ok';
-        $result['expiry_date'] = $this->expiryFrom($data);
-        $result['name_servers'] = $this->nameServersFrom($data);
-        list($result['registrar_name'], $result['registrar_iana_id'], $result['registrar_url']) = $this->registrarFrom($data);
+        if (!$status_only) {
+            $result['expiry_date'] = $this->expiryFrom($data);
+            $result['name_servers'] = $this->nameServersFrom($data);
+            list($result['registrar_name'], $result['registrar_iana_id'], $result['registrar_url']) = $this->registrarFrom($data);
+        }
+        list($status_read, $statuses) = $object->status_read;
 
         /*
          * A registry can push its expiry date a year ahead during the auto-renew grace period, so the registrar's own
          * RDAP record (linked as "related") is preferred when it answers, with at least 5 seconds left. A registrar
          * server that failed or limited requests isn't asked again in this process; the registry's answer is kept
-         * either way.
+         * either way. The same link gives the statuses after a 'none' registry read, and a status-only lookup follows
+         * it only for that.
          */
-        $related = $this->relatedLink($data);
+        list($related, $rejected) = $object->related;
         $related_host = strtolower((string) parse_url($related, PHP_URL_HOST));
+        $wanted = !$status_only || $status_read === 'none';
+        $followed = false;
 
-        if ($related !== '' && !isset(self::$failed_registrar_hosts[$related_host]) && $deadline - microtime(true) >= 5) {
+        if ($related !== '' && $wanted && !isset(self::$failed_registrar_hosts[$related_host]) && $deadline - microtime(true) >= 5) {
 
-            list($registrar_status, $registrar_data) = $this->fetchJson($related, $deadline);
+            $followed = true;
+            list($registrar_status, $registrar_data, $registrar_object) = $this->fetchJson($related, $deadline);
 
-            if ($registrar_status === 'ok') {
+            // a registrar record has to name the domain, since it was reached through a link from the response
+            if ($registrar_status === 'ok' && $this->matchesDomain($registrar_object, $ascii_domain, false)) {
 
-                $registrar_expiry = $this->expiryFrom($registrar_data);
-                if ($registrar_expiry !== '') $result['expiry_date'] = $registrar_expiry;
+                if (!$status_only) {
 
-            } elseif ($registrar_status !== 'not_found') {
+                    $registrar_expiry = $this->expiryFrom($registrar_data);
+                    if ($registrar_expiry !== '') $result['expiry_date'] = $registrar_expiry;
 
-                self::$failed_registrar_hosts[$related_host] = true;
+                }
+
+                if ($status_read === 'none') list($status_read, $statuses) = $registrar_object->status_read;
+
+            } else {
+
+                // a record for another domain is ignored for everything, and only a server that failed is remembered
+                if ($registrar_status !== 'ok' && $registrar_status !== 'not_found' && !$status_only) {
+                    self::$failed_registrar_hosts[$related_host] = true;
+                }
+
+                if ($status_read === 'none') $status_read = 'incomplete';
 
             }
 
         }
 
+        // With no known codes, a registrar link that wasn't followed (a server that failed earlier, or too little time
+        // left) or a referral that was rejected or malformed means the registrar's codes couldn't be checked
+        if (!$followed && $status_read === 'none' && ($related !== '' || $rejected)) $status_read = 'incomplete';
+
+        $result['statuses'] = ($status_read === 'found') ? $statuses : array();
+        $result['status_read'] = $status_read;
+
         return $result;
+    }
+
+    /*
+     * Whether a record ($object, the names fetchJson() kept from it) is the domain asked for:
+     * objectClassName is "domain", and its ldhName (lower case, without a trailing dot) is the punycode form looked up,
+     * or, when there's no ldhName, its unicodeName turns into that form. A name that's there but isn't a string makes it
+     * a mismatch. A record with neither name matches only when $nameless_ok (the registry's direct answer).
+     */
+    protected function matchesDomain($object, $ascii_domain, $nameless_ok)
+    {
+        if (!($object instanceof \stdClass) || ($object->objectClassName ?? null) !== 'domain') return false;
+
+        $has_ldh = property_exists($object, 'ldhName');
+        $has_unicode = property_exists($object, 'unicodeName');
+        if (($has_ldh && !is_string($object->ldhName)) || ($has_unicode && !is_string($object->unicodeName))) return false;
+
+        $wanted = strtolower($ascii_domain);
+
+        if ($has_ldh) return strtolower(rtrim($object->ldhName, '.')) === $wanted;
+        if ($has_unicode) return strtolower(rtrim(Domain::forApi(rtrim($object->unicodeName, '.')), '.')) === $wanted;
+
+        return (bool) $nameless_ok;
+    }
+
+    // A record's raw JSON body's statuses: array(read, codes), as DomainStatus::fromRdap() reads them
+    protected function statusesFrom($body)
+    {
+        return $this->statusesFromObject(json_decode((string) $body, false, 32));
+    }
+
+    // The same, from a body already decoded with JSON objects kept as objects
+    protected function statusesFromObject($object)
+    {
+        if (!($object instanceof \stdClass)) return array('incomplete', array());
+        return DomainStatus::fromRdap($object->status ?? null, property_exists($object, 'status'));
     }
 
     // The RDAP base URL (ending in "/") for the domain's TLD, or '' if the bootstrap has none
@@ -162,6 +251,8 @@ class Rdap
     {
         if ($status === 'not_found') {
             $message = 'Domain not found in RDAP';
+        } elseif ($status === 'mismatch') {
+            $message = 'The RDAP server answered for a different domain';
         } elseif ($status === 'rate_limited') {
             $message = 'The RDAP server is limiting requests';
         } else {
@@ -254,24 +345,83 @@ class Rdap
         return $map ?: null;
     }
 
-    // Fetches and decodes an RDAP response: array(status, data)
+    /*
+     * Fetches and decodes an RDAP response: array(status, data, record), where data is the record as arrays and record
+     * holds what the checks that need to tell a list from an object read from it, decoded with JSON objects kept as
+     * objects: its objectClassName, ldhName, and unicodeName (for matchesDomain()), status_read (statusesFromObject()),
+     * and related (relatedLink()). A body that isn't a JSON object or array, or is nested more than 32 deep, is an
+     * error. A JSON array decodes, but it isn't a domain record, so matchesDomain() turns it down.
+     */
     protected function fetchJson($url, $deadline)
     {
         list($status, $body) = $this->fetch($url, $deadline, self::LOOKUP_MAX_BYTES, true);
-        if ($status !== 'ok') return array($status, null);
+        if ($status !== 'ok') return array($status, null, null);
+
+        // Everything the checks need from the object form is read straight away, and only small results are kept, so
+        // the object form is let go of before the array form is decoded and a large response is never held twice
+        $object = json_decode($body, false, 32);
+
+        $record = new \stdClass();
+        $record->status_read = array('incomplete', array());
+        $record->related = array('', false);
+
+        // PHP's object decoder refuses a property name starting with a NUL character, which the array decoder takes. A
+        // record like that is still used (as it was before the statuses were read), but its status can't be checked
+        // safely, so the status read is incomplete.
+        if ($object === null) {
+
+            $data = json_decode($body, true, 32);
+            if (!is_array($data) || array_is_list($data)) return is_array($data) ? array('ok', array(), $record) : array('error', null, null);
+
+            foreach (array('objectClassName', 'ldhName', 'unicodeName') as $name) {
+                if (array_key_exists($name, $data)) $record->$name = is_string($data[$name]) ? $data[$name] : false;
+            }
+            // the registrar link is still followed for its expiry date (the incomplete status read keeps its codes out)
+            $record->related = array('', true);
+            foreach ((is_array($data['links'] ?? null) && array_is_list($data['links'])) ? $data['links'] : array() as $link) {
+                if (!is_array($link) || ($link['rel'] ?? null) !== 'related') continue;
+                $href = $link['href'] ?? null;
+                $type = $link['type'] ?? null;
+                if (!is_string($href) || ($type !== null && !is_string($type))) continue;
+                $type = strtolower((string) $type);
+                if ($type !== '' && strpos($type, 'rdap') === false && strpos($type, 'json') === false) continue;
+                if (stripos($href, 'https://') === 0 && stripos($href, '/domain/') !== false) {
+                    $record->related = array($href, true);
+                    break;
+                }
+            }
+            return array('ok', $data, $record);
+
+        }
+
+        if (!is_array($object) && !($object instanceof \stdClass)) return array('error', null, null);
+
+        // A top-level JSON array isn't a domain record (it has no objectClassName), so it isn't decoded again
+        if (is_array($object)) return array('ok', array(), $record);
+
+        // The names are kept only as strings, and one that's there but isn't a string becomes false, so
+        // matchesDomain() still sees it as there and malformed
+        foreach (array('objectClassName', 'ldhName', 'unicodeName') as $name) {
+            if (property_exists($object, $name)) $record->$name = is_string($object->$name) ? $object->$name : false;
+        }
+        $record->status_read = $this->statusesFromObject($object);
+        $record->related = $this->relatedLink($object);
+        unset($object);
 
         $data = json_decode($body, true, 32);
-        return is_array($data) ? array('ok', $data) : array('error', null);
+        return is_array($data) ? array('ok', $data, $record) : array('error', null, null);
     }
 
     /*
      * One HTTPS GET with the destination checks: https on port 443, a hostname (not an IP literal) that resolves only
      * to public addresses, with the checked address pinned so DNS can't swap it; redirects followed by hand (at most
-     * three, each checked the same way); the body capped while it streams. Returns array(status, body). Also used by
-     * Whois for its HTTPS requests to IANA.
+     * three, each checked the same way); the body capped while it streams. Returns array(status, body), and sets
+     * $redirected when it followed a redirect. Also used by Whois for its HTTPS requests to IANA.
      */
     public function fetch($url, $deadline, $max_bytes, $paced)
     {
+        $this->redirected = false;
+
         for ($hop = 0; $hop <= self::MAX_REDIRECTS; $hop++) {
 
             $parts = parse_url($url);
@@ -345,6 +495,7 @@ class Rdap
             if (in_array($http_code, array(301, 302, 303, 307, 308), true) && $location !== '') {
 
                 $url = $this->absoluteUrl($location, $parts);
+                $this->redirected = true;
                 continue;
 
             }
@@ -612,25 +763,54 @@ class Rdap
         return array('', '', '');
     }
 
-    // The registrar's RDAP URL from a "related" link, or ''
-    protected function relatedLink($data)
+    /*
+     * The registrar's RDAP URL from a "related" link, and whether anything was rejected or malformed: array(url or '',
+     * rejected), from the record decoded with JSON objects kept as objects. links must be a JSON array. The first entry
+     * that's an object with rel "related", an https /domain/ URL, and an RDAP, JSON, or missing type (null counts as
+     * missing) is followed. Rejected: a links value that isn't an array, an entry that isn't an object, a rel that's there
+     * but isn't a string, a "related" entry whose href or type is there but isn't a string (null counts as missing), and
+     * a "related" entry of an RDAP, JSON, or missing type that fails the URL checks. A well-formed link of another type
+     * (such as a text/html page) isn't a referral, so it's simply ignored.
+     */
+    protected function relatedLink($object)
     {
-        foreach ((array) ($data['links'] ?? array()) as $link) {
+        if (!($object instanceof \stdClass) || !property_exists($object, 'links')) return array('', false);
+        if (!is_array($object->links)) return array('', true);
 
-            if (!is_array($link) || ($link['rel'] ?? '') !== 'related') continue;
+        $rejected = false;
 
-            $href = $link['href'] ?? '';
-            $type = strtolower((string) ($link['type'] ?? ''));
-            $is_rdap_type = ($type === '' || strpos($type, 'rdap') !== false || strpos($type, 'json') !== false);
+        foreach ($object->links as $link) {
 
-            if (is_string($href) && stripos($href, 'https://') === 0 && $is_rdap_type && stripos($href, '/domain/') !== false) {
-
-                return $href;
-
+            if (!($link instanceof \stdClass)) {
+                $rejected = true;
+                continue;
             }
+
+            $rel = property_exists($link, 'rel') ? $link->rel : '';
+            if (!is_string($rel)) {
+                $rejected = true;
+                continue;
+            }
+            if ($rel !== 'related') continue;
+
+            $href = $link->href ?? null;
+            $type = $link->type ?? null;
+            if (($href !== null && !is_string($href)) || ($type !== null && !is_string($type))) {
+                $rejected = true;
+                continue;
+            }
+
+            $type = strtolower((string) $type);
+            if ($type !== '' && strpos($type, 'rdap') === false && strpos($type, 'json') === false) continue;
+
+            if (is_string($href) && stripos($href, 'https://') === 0 && stripos($href, '/domain/') !== false) {
+                return array($href, $rejected);
+            }
+
+            $rejected = true;
 
         }
 
-        return '';
+        return array('', $rejected);
     }
 } //@formatter:on

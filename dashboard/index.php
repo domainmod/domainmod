@@ -50,7 +50,8 @@ $pdo = $deeb->cnxx;
 // the Domain Renewals and At-Risk Domains reports, and the SSL certificates renewing in them, as SSL Renewals
 // counts them
 $today = $time->timeBasic();
-$renewal_rows = $reporting->renewalDomains($reporting->renewalChartEnd($today));
+// (with each domain's lock and registry status, so the At Risk tile counts what the At-Risk Domains report lists)
+$renewal_rows = $reporting->renewalDomainsWithStatus($reporting->renewalChartEnd($today));
 $renewal_cert_rows = $reporting->renewalCerts($reporting->renewalChartEnd($today));
 $at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->timeBasicPlusDays(DomainMOD\Reporting::AT_RISK_DAYS)));
 ?>

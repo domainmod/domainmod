@@ -43,12 +43,13 @@ class DomainListColumns extends ListColumns
         'ip' => array('s_display_domain_ip', array('ip.name', 'ip.ip')),
         'host' => array('s_display_domain_host', array('h.name')),
         'category' => array('s_display_domain_category', array('cat.name')),
-        'owner' => array('s_display_domain_owner', array('o.name')));
+        'owner' => array('s_display_domain_owner', array('o.name')),
+        'lock' => array('s_display_domain_lock', array('d.transfer_lock', 'd.epp_status_time')));
 
     // The session values the columns and cells read, copied by sessionCopy()
     const SESSION_KEYS = array('s_display_domain_expiry_date', 's_display_domain_fee', 's_display_domain_tld',
         's_display_domain_registrar', 's_display_domain_account', 's_display_domain_dns', 's_display_domain_ip',
-        's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_cdf_data',
+        's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_display_domain_lock', 's_cdf_data',
         's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
         's_default_currency_symbol_space', 's_read_only');
 
@@ -71,9 +72,12 @@ class DomainListColumns extends ListColumns
         $titles = array('expiry' => _('Expiry'),
             'fee' => _('Fee') . ' (' . ($settings['s_default_currency'] ?? '') . ')',
             'tld' => _('TLD'), 'registrar' => _('Registrar'), 'account' => _('Account'), 'dns' => _('DNS'),
-            'ip' => _('IP'), 'host' => _('Host'), 'category' => _('Category'), 'owner' => _('Owner'));
+            'ip' => _('IP'), 'host' => _('Host'), 'category' => _('Category'), 'owner' => _('Owner'),
+            'lock' => _('Transfer Lock'));
         foreach (self::OPTIONAL as $key => $optional) {
             if (($settings[$optional[0]] ?? '') == '1') {
+                // The Transfer Lock column's columns come with the 4.27.0 database update, whatever the session says
+                if ($key === 'lock' && !DomainStatus::isAvailable()) continue;
                 $columns[] = array('key' => $key, 'title' => $titles[$key], 'sort' => $optional[1]);
             }
         }
@@ -138,6 +142,8 @@ class DomainListColumns extends ListColumns
                 if ($row->privacy == '1') {
                     $html .= '&nbsp;' . $layout->statusBadge(_('Private WHOIS Characters'), _('Private WHOIS Registration'), 'muted', 'bi-shield-lock-fill');
                 }
+                // On Hold, Being Deleted, or Being Restored at the registry, whether or not the Transfer Lock column is on
+                if (isset($row->ds1_epp_status)) $html .= DomainStatus::problemBadges($row);
                 return $html;
 
             case 'expiry':
@@ -186,6 +192,9 @@ class DomainListColumns extends ListColumns
 
             case 'owner':
                 return '<a href="../assets/edit/account-owner.php?oid=' . $row->o_id . '">' . $row->owner_name . '</a>';
+
+            case 'lock':
+                return DomainStatus::listCell($row);
 
             default:
                 return $this->customFieldCell($column['field'], $row);

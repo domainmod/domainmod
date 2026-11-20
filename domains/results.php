@@ -148,6 +148,11 @@ if ($export_data === 1) {
                 _('Inserted'),
                 _('Updated')
             );
+            // The registry status columns (DomainMOD\DomainStatus) go after WHOIS Status, once the 4.27.0 database
+            // update adds them
+            $export_status = DomainMOD\DomainStatus::isAvailable($pdo);
+            $status_at = array_search(_('WHOIS Status'), $row_contents, true) + 1;
+            if ($export_status) array_splice($row_contents, $status_at, 0, DomainMOD\DomainStatus::exportHeadings());
             $export->writeRow($export_file, $row_contents);
 
         } elseif ($type == "missing") {
@@ -238,6 +243,7 @@ if ($export_data === 1) {
                         $time->toUserTimezone($row->insert_time),
                         $time->toUserTimezone($row->update_time)
                     );
+                    if ($export_status) array_splice($row_contents, $status_at, 0, DomainMOD\DomainStatus::exportValues($row));
                     $export->writeDataRow($export_file, $row_contents);
 
                 }
