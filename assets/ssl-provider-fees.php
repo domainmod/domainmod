@@ -40,8 +40,30 @@ require_once DIR_INC . '/settings/assets-ssl-provider-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$sslpid = (int) ($_GET['sslpid'] ?? 0);
-$export_data = (int) ($_GET['export_data'] ?? 0);
+// An ID sent as anything but digits (such as an array, which an (int) cast would turn into 1) counts as 0, which
+// finds nothing
+$sslpid = is_string($_GET['sslpid'] ?? null) && ctype_digit($_GET['sslpid']) ? (int) $_GET['sslpid'] : 0;
+$export_data = is_string($_GET['export_data'] ?? null) && ctype_digit($_GET['export_data'])
+    ? (int) $_GET['export_data'] : 0;
+
+// The fees listed are this SSL provider's, so it has to exist (a bad link, or a provider deleted since the link was
+// made, sends the user back to the SSL provider list)
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM ssl_providers
+    WHERE id = :sslpid");
+$stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+$stmt->execute();
+$ssl_provider_found = $stmt->fetchColumn() !== false;
+$stmt->closeCursor();
+
+if (!$ssl_provider_found) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That SSL provider no longer exists.') . '<BR>';
+    header("Location: ssl-providers.php");
+    exit;
+
+}
 
 $ssl_provider_name = $assets->getSslProvider($sslpid);
 

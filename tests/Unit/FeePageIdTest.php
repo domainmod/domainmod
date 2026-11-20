@@ -41,6 +41,8 @@ class FeePageIdTest extends TestCase
             'edit registrar fee' => array('assets/edit/registrar-fee.php'),
             'add SSL provider fee' => array('assets/add/ssl-provider-fee.php'),
             'edit SSL provider fee' => array('assets/edit/ssl-provider-fee.php'),
+            'registrar fee list' => array('assets/registrar-fees.php'),
+            'SSL provider fee list' => array('assets/ssl-provider-fees.php'),
         );
     }
 
@@ -79,6 +81,12 @@ class FeePageIdTest extends TestCase
             'edit SSL provider fee' => array('assets/edit/ssl-provider-fee.php', array(
                 'fee_id' => array(array('POST', 'fee_id'), array('GET', 'fee_id')),
                 'new_currency_id' => array(array('POST', 'new_currency_id')))),
+            'registrar fee list' => array('assets/registrar-fees.php', array(
+                'rid' => array(array('GET', 'rid')),
+                'export_data' => array(array('GET', 'export_data')))),
+            'SSL provider fee list' => array('assets/ssl-provider-fees.php', array(
+                'sslpid' => array(array('GET', 'sslpid')),
+                'export_data' => array(array('GET', 'export_data')))),
         );
     }
 
@@ -415,6 +423,35 @@ class FeePageIdTest extends TestCase
         $this->assertBeforePostHandling($source, $lookup_at, $branch_at);
         $this->assertStringContainsString("_('That registrar no longer exists.')", $branch);
         $this->assertMatchesRegularExpression('/header\("Location: \.\.\/registrars\.php"\);\s*exit;\s*$/', $branch);
+    }
+
+    // Each fee list, its fee table, the table its owner is in, the owner's ID, the refusal message, and where it sends
+    // the user
+    public static function feeLists()
+    {
+        return array(
+            'registrar fee list' => array('assets/registrar-fees.php', 'fees', 'registrars', 'rid',
+                "_('That registrar no longer exists.')", 'registrars\\.php'),
+            'SSL provider fee list' => array('assets/ssl-provider-fees.php', 'ssl_fees', 'ssl_providers', 'sslpid',
+                "_('That SSL provider no longer exists.')", 'ssl-providers\\.php'),
+        );
+    }
+
+    // A registrar or provider that isn't found sends the user back before the fees are read or exported, so a bad ID
+    // never lists (or downloads) anything
+    #[DataProvider('feeLists')]
+    public function testTheFeeListRefusesAnUnknownOwner($page, $fee_table, $table, $parameter, $message, $redirect)
+    {
+        $source = self::source($page);
+        $fees = strpos($source, 'FROM ' . $fee_table . ' AS f');
+        $this->assertNotFalse($fees);
+        $lookup_at = $this->lookupBefore($source, $table, $parameter, $fees);
+        list($branch, $branch_at) = $this->refusalBranch($source, $lookup_at);
+        $this->assertSame(0, self::depthAt($source, $lookup_at));
+        $this->assertSame(0, self::depthAt($source, $branch_at));
+        $this->assertLessThan($fees, $branch_at);
+        $this->assertStringContainsString($message, $branch);
+        $this->assertMatchesRegularExpression('/header\("Location: ' . $redirect . '"\);\s*exit;\s*$/', $branch);
     }
 
     // The field is set from the request only in one branch on the request method: from the posted key on POST, and

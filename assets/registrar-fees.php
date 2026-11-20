@@ -40,8 +40,30 @@ require_once DIR_INC . '/settings/assets-registrar-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-$rid = (int) ($_GET['rid'] ?? 0);
-$export_data = (int) ($_GET['export_data'] ?? 0);
+// An ID sent as anything but digits (such as an array, which an (int) cast would turn into 1) counts as 0, which
+// finds nothing
+$rid = is_string($_GET['rid'] ?? null) && ctype_digit($_GET['rid']) ? (int) $_GET['rid'] : 0;
+$export_data = is_string($_GET['export_data'] ?? null) && ctype_digit($_GET['export_data'])
+    ? (int) $_GET['export_data'] : 0;
+
+// The fees listed are this registrar's, so it has to exist (a bad link, or a registrar deleted since the link was
+// made, sends the user back to the registrar list)
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM registrars
+    WHERE id = :rid");
+$stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+$stmt->execute();
+$registrar_found = $stmt->fetchColumn() !== false;
+$stmt->closeCursor();
+
+if (!$registrar_found) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That registrar no longer exists.') . '<BR>';
+    header("Location: registrars.php");
+    exit;
+
+}
 
 $registrar_name = $assets->getRegistrar($rid);
 
