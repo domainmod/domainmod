@@ -57,7 +57,7 @@ class Api
 
         } else {
 
-            return $result;
+            return (new Unsanitize())->text((string) $result);
 
         }
     }
@@ -85,7 +85,8 @@ class Api
 
         } else {
 
-            return array($result->api_key, $result->api_secret);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->api_key), $unsanitize->text((string) $result->api_secret));
 
         }
     }
@@ -113,7 +114,8 @@ class Api
 
         } else {
 
-            return array($result->username, $result->api_key);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->username), $unsanitize->text((string) $result->api_key));
 
         }
     }
@@ -141,7 +143,9 @@ class Api
 
         } else {
 
-            return array($result->username, $result->api_app_name, $result->api_secret);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->username),
+                $unsanitize->text((string) $result->api_app_name), $unsanitize->text((string) $result->api_secret));
 
         }
     }
@@ -170,7 +174,9 @@ class Api
 
         } else {
 
-            return array($result->username, $result->api_key, $result->ip);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->username), $unsanitize->text((string) $result->api_key),
+                $result->ip);
 
         }
     }
@@ -198,7 +204,8 @@ class Api
 
         } else {
 
-            return array($result->reseller_id, $result->api_key);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->reseller_id), $unsanitize->text((string) $result->api_key));
 
         }
     }
@@ -226,7 +233,7 @@ class Api
 
         } else {
 
-            return $result->account_id;
+            return (new Unsanitize())->text((string) $result->account_id);
 
         }
     }
@@ -254,7 +261,8 @@ class Api
 
         } else {
 
-            return array($result->username, $result->password);
+            $unsanitize = new Unsanitize();
+            return array($unsanitize->text((string) $result->username), $unsanitize->text((string) $result->password));
 
         }
     }
