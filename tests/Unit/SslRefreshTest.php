@@ -128,9 +128,9 @@ class SslRefreshTest extends TestCase
 
     public function testTheRefusalsNameTheHostnameRule()
     {
-        $this->assertSame("Refresh needs this certificate's name to be the hostname it's installed on, such as www.example.com.",
+        $this->assertSame("Refresh needs this certificate's Host / Label to be the hostname it's installed on, such as example.com.",
             $this->refresh()->refusalMessage('label', 'Office & Shop', 'example.com'));
-        $this->assertSame('This certificate\'s name, <bdi dir="ltr">www.example.net</bdi>, isn\'t part of its domain, <bdi dir="ltr">example.com</bdi>. Link the certificate to the right domain, set its Domain to None, or change its name. Then refresh the certificate.',
+        $this->assertSame('This certificate\'s Host / Label, <bdi dir="ltr">www.example.net</bdi>, isn\'t part of its domain, <bdi dir="ltr">example.com</bdi>. Link the certificate to the right domain, set its Domain to None, or change its Host / Label. Then refresh the certificate.',
             $this->refresh()->refusalMessage('outside', 'www.example.net', 'example.com'));
         $this->assertStringContainsString('<bdi dir="ltr">a&amp;b.example.net</bdi>',
             $this->refresh()->refusalMessage('outside', 'a&b.example.net', 'example.com'));

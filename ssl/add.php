@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $form->addFieldError('new_name', _('Enter a name for the SSL certificate'));
+            $form->addFieldError('new_name', _('Enter the SSL certificate\'s Host / Label'));
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
             $form->addFieldError('datepick', _('The expiry date you entered is invalid'));

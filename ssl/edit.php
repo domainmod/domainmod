@@ -424,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $form->addFieldError('new_name', _('Enter the SSL certificate name'));
+            $form->addFieldError('new_name', _('Enter the SSL certificate\'s Host / Label'));
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
             $form->addFieldError('datepick', _('The expiry date you entered is invalid'));
@@ -625,7 +625,7 @@ if (($_SESSION['s_read_only'] ?? '') != '1' && $refresh_record && $ssl_queue->is
     list($refresh_host_status, $refresh_host) = $refresh->hostCheck($saved_name, $saved_domain);
 
     if ($refresh_host_status === 'ok') {
-        // TRANSLATORS: %s is the hostname whose certificate Refresh reads, such as www.example.com.
+        // TRANSLATORS: %s is the hostname whose certificate Refresh reads, such as example.com.
         $refresh_source = sprintf(_('Updates the expiry date and status from the certificate %s serves now.'), $layout->ltr($refresh_host));
     } else {
         $refresh_source = $refresh->refusalMessage($refresh_host_status, $saved_name, $saved_domain);
@@ -688,7 +688,7 @@ echo $form->showFormTop('');
 // whose menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is
 // a matter of moving its lines between these blocks.
 ob_start();
-echo $form->showInputText('new_name', _('Host') . ' / Label (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
+echo $form->showInputText('new_name', _('Host') . ' / ' . _('Label') . ' (100)', '', $unsanitize->text($new_name), '100', '', '1', '', '');
 
 $stmt = $pdo->prepare("
     SELECT id, domain

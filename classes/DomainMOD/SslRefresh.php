@@ -168,12 +168,12 @@ class SslRefresh
     public function refusalMessage($status, $plain_name, $domain_name)
     {
         if ($status === 'label') {
-            return _("Refresh needs this certificate's name to be the hostname it's installed on, such as www.example.com.");
+            return _("Refresh needs this certificate's Host / Label to be the hostname it's installed on, such as example.com.");
         }
 
         $layout = new Layout();
-        // TRANSLATORS: %1$s is the SSL certificate's name, and %2$s is the domain it's linked to.
-        return sprintf(_("This certificate's name, %1\$s, isn't part of its domain, %2\$s. Link the certificate to the right domain, set its Domain to None, or change its name. Then refresh the certificate."),
+        // TRANSLATORS: %1$s is the SSL certificate's Host / Label, and %2$s is the domain it's linked to.
+        return sprintf(_("This certificate's Host / Label, %1\$s, isn't part of its domain, %2\$s. Link the certificate to the right domain, set its Domain to None, or change its Host / Label. Then refresh the certificate."),
             $layout->ltr($plain_name), $layout->ltr($domain_name));
     }
 

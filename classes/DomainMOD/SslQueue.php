@@ -156,7 +156,7 @@ class SslQueue
         } elseif ($code === 'local_error') {
             $message = _("DomainMOD couldn't write a temporary file to check this certificate. Check that PHP's temporary folder is writable.");
         } elseif ($code === 'name_too_long') {
-            $message = _('This hostname is longer than the 100 characters an SSL certificate name can hold.');
+            $message = _('This hostname is longer than the 100 characters an SSL certificate\'s Host / Label can hold.');
         } elseif ($code === 'bad_certificate') {
             $message = _("A date in this certificate can't be stored.");
         } elseif ($code === 'save_failed') {

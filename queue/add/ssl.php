@@ -259,7 +259,7 @@ if (!$ssl_queue_available) {
     $host_list_shown = $unsanitize->text($raw_host_list);
     if (preg_match('/^(\r\n|\r|\n)/', $host_list_shown)) $host_list_shown = "\n" . $host_list_shown;
     echo $form->showInputTextarea('raw_host_list', sprintf(_('Hostnames to add (one per line, up to %s)'), number_format($max_hosts)),
-        _('Each line can be a hostname, such as www.example.com, or an https:// address.'), $host_list_shown, '1', '', '', '', 'ltr');
+        _('Each line can be a hostname, such as example.com, or an https:// address.'), $host_list_shown, '1', '', '', '', 'ltr');
 
     // The rest of the defaults in a box that starts closed, so the page stays short (it opens when one has a mistake)
     $defaults_error = ($form->errorClass('new_type_id') . $form->errorClass('new_cat_id') . $form->errorClass('new_ip_id')) !== ''; ?>

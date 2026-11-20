@@ -1032,7 +1032,7 @@ if ($ssl_queue_available) {
                 if (!$read_only) { ?>
                     <td>
                         <a class="btn btn-sm btn-outline-danger" href="ssl/index.php?del=1&id=<?php echo (int) $row->id; ?>" title="<?php echo _('Delete'); ?>"><i class="bi bi-trash" aria-hidden="true"></i><span class="visually-hidden"><?php
-                            // TRANSLATORS: Read out by screen readers for a Delete button in the SSL Queue. %s is a hostname, such as www.example.com.
+                            // TRANSLATORS: Read out by screen readers for a Delete button in the SSL Queue. %s is a hostname, such as example.com.
                             echo sprintf(_('Delete %s'), htmlspecialchars($row->host, ENT_QUOTES, 'UTF-8')); ?></span></a>
                     </td><?php
                 } ?>

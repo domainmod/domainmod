@@ -47,7 +47,7 @@ class SslQueueMessageTest extends TestCase
             'timeout' => 'The lookup ran out of time.',
             'stale_choice' => 'Something chosen when this hostname was queued has changed or been deleted. Delete this queue entry and add the hostname again.',
             'local_error' => "DomainMOD couldn't write a temporary file to check this certificate. Check that PHP's temporary folder is writable.",
-            'name_too_long' => 'This hostname is longer than the 100 characters an SSL certificate name can hold.',
+            'name_too_long' => 'This hostname is longer than the 100 characters an SSL certificate\'s Host / Label can hold.',
             'bad_certificate' => "A date in this certificate can't be stored.",
             'save_failed' => "The certificate couldn't be saved.");
 
