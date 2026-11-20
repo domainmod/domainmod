@@ -29,6 +29,7 @@ class Conversion
     public $time;
 
     const RATE_RETRY_AFTER = 3600; // after a failed rate lookup for a missing currency, wait an hour before trying again.
+    const RATE_MAX = 99999999.9999; // The largest rate currency_conversions.conversion (DECIMAL(12,4)) can store.
 
     public function __construct()
     {
@@ -86,7 +87,7 @@ class Conversion
 
                 }
 
-                if (!is_numeric($conversion_rate) || (float) $conversion_rate <= 0) {
+                if (!self::validRate($conversion_rate)) {
 
                     if ($failed_file !== '') @touch($failed_file);
 
@@ -110,6 +111,13 @@ class Conversion
             $release->execute();
 
         }
+    }
+
+    // Whether a rate lookup gave a usable rate: a failed one gives false, null, or 0, and a broken answer can give text,
+    // a negative number, INF, or a rate too big to store.
+    public static function validRate($conversion_rate)
+    {
+        return is_numeric($conversion_rate) && (float) $conversion_rate > 0 && (float) $conversion_rate <= self::RATE_MAX;
     }
 
     // The file that marks a failed rate lookup for a currency pair. It's named after the rate service too, so choosing a
@@ -149,6 +157,7 @@ class Conversion
     public function updateRates($default_currency, $user_id, $from_cron = false)
     {
         $result_message = '';
+        $skipped = 0;
         $pdo = $this->deeb->cnxx;
         $result = $this->getActiveCurrencies();
 
@@ -165,6 +174,19 @@ class Conversion
             foreach ($result as $row) {
 
                 $conversion_rate = $row->currency == $default_currency ? 1 : $this->getConvRate($row->currency, $default_currency, $from_cron);
+
+                // A failed lookup's rate (0, for example, which would zero every fee in the currency) isn't saved, and
+                // the rate saved before is kept (a missing one is added by ensureRates() once a lookup works).
+                if (!self::validRate($conversion_rate)) {
+
+                    $log_message = 'Unable to get a conversion rate for a user currency, so it wasn\'t changed';
+                    $log_extra = array('User ID' => $user_id, 'Currency' => $row->currency, 'Default Currency' =>
+                        $default_currency);
+                    $this->log->warning($log_message, $log_extra);
+                    $skipped++;
+                    continue;
+
+                }
 
                 $bind_currency_id = $row->id;
                 $stmt->execute();
@@ -189,7 +211,15 @@ class Conversion
 
             }
 
-            $result_message = _('Conversion Rates updated') . '<BR>';
+            if ($skipped === 0) {
+
+                $result_message = _('Conversion Rates updated') . '<BR>';
+
+            } else {
+
+                $result_message = _('Some conversion rates couldn\'t be fetched, so they weren\'t changed.') . '<BR>';
+
+            }
 
         }
 
@@ -288,7 +318,20 @@ class Conversion
 
         $api_key = '';
         $currency = new \GJClasses\Currency($converter_source, $api_key);
-        return $currency->getConvRate($from_currency, $to_currency);
+
+        // A lookup that throws (on an answer in an unexpected shape, for example) is handled like any other failed one.
+        try {
+
+            return $currency->getConvRate($from_currency, $to_currency);
+
+        } catch (\Throwable $e) {
+
+            $log_message = 'Conversion rate lookup failed';
+            $log_extra = array('From Currency' => $from_currency, 'To Currency' => $to_currency, 'Error' => $e->getMessage());
+            $this->log->warning($log_message, $log_extra);
+            return false;
+
+        }
     }
 
     public function checkForConvRate($user_id, $currency)
