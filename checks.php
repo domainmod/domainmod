@@ -260,6 +260,10 @@ $ssl_queue->checkSslQueue();
 $system->checkExistingAssets();
 
 unset($_SESSION['s_installation_mode']);
+// The installer's answers are only for the installer and the first sign-in after it, so its language can't outlast
+// that sign-in (see init.inc.php)
+unset($_SESSION['s_installation_language'], $_SESSION['s_installation_currency'],
+    $_SESSION['s_installation_timezone']);
 
 // Once per sign-in, as a user sent to Change Password (or another sign-in step) comes back through here afterwards
 if (($_SESSION['s_last_login_recorded'] ?? 0) !== 1) {

@@ -43,7 +43,14 @@ if ($_SESSION['s_system_local_php_log'] == '1') {
 }
 
 // Language Settings
-if (isset($_SESSION['s_installation_language'])) {
+// A signed-in user's own language always comes first. The language chosen in the installer is only for the installer
+// and the first sign-in after it, since checks.php clears it once that sign-in has loaded the user's settings, but a
+// session from before that can still hold it.
+if (($_SESSION['s_is_logged_in'] ?? '') == 1 && isset($_SESSION['s_default_language'])) {
+
+    define('DEFAULT_LANGUAGE', $_SESSION['s_default_language']);
+
+} elseif (isset($_SESSION['s_installation_language'])) {
 
     define('DEFAULT_LANGUAGE', $_SESSION['s_installation_language']);
 
