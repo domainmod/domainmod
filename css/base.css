@@ -648,7 +648,8 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
    keep at least 3:1 (icons) or 4.5:1 (text) contrast on the cards and on striped table rows. DomainMOD's main colour,
    which AdminLTE takes from Bootstrap's red (data-lte-primary="danger"), is a calmer brand red, #B8434E, which keeps
    white text at 5.3:1. Bootstrap's secondary grey is a light Polar Night blue-grey (#B5BDCD), so .text-secondary text
-   keeps 4.5:1 on the page, the cards, and striped rows. */
+   keeps 4.5:1 on the page, the cards, and striped rows. Inline code is Bootstrap's dark mode pink lightened to
+   #EEAACB, which keeps 4.5:1 there too, since Bootstrap's own pink falls short of it on the page (WCAG 1.4.3). */
 [data-bs-theme="dark"],
 [data-bs-theme="dark"][data-lte-primary] {
     --bs-body-bg: #3b4252;
@@ -703,6 +704,7 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
     --bs-form-valid-border-color: #a3be8c;
     --bs-form-invalid-color: #e6adb2;
     --bs-form-invalid-border-color: #d98e95;
+    --bs-code-color: #eeaacb;
     --lte-primary-hover: #a23b45;
     --lte-primary-hover-border: #a23b45;
     --lte-primary-active: #8f343d;
@@ -1684,6 +1686,14 @@ main > a:not([class]) {
     --bs-btn-hover-border-color: #565e64;
     --bs-btn-active-bg: #565e64;
     --bs-btn-active-border-color: #565e64;
+}
+
+/* The main content area (header.inc.php) can take focus: AdminLTE lets it scroll, so Chromium makes it focusable, and
+   it's where the "Skip to main content" link and a click on the page's background land. Once the keyboard had been
+   used, the browser drew a focus ring around the whole area (most noticeable in dark mode), so it has none. It isn't a
+   control, and the controls inside it keep their own focus rings. */
+.app-main:focus {
+    outline: none;
 }
 
 /* The page header (header.inc.php): the breadcrumb on its own small line just above the title, at the start, and the
