@@ -642,9 +642,14 @@ class Dynadot
     }
 
     // A RESTful expiry (milliseconds since the epoch, a number or a string of digits) as a date, or '' for anything
-    // else, including a time after 9999-12-31
+    // else, including a time after 9999-12-31. On 32-bit PHP (the official Docker image's armhf build), json_decode()
+    // gives a number of milliseconds as a float, which is exact for every date that counts here.
     public function processRestExpiry($expiry_result)
     {
+        if (PHP_INT_SIZE < 8 && is_float($expiry_result) && is_finite($expiry_result) && $expiry_result >= 0
+            && floor($expiry_result) === $expiry_result) {
+            $expiry_result = sprintf('%.0f', $expiry_result);
+        }
         $digits = RegistrarResponse::text($expiry_result);
         if (!ctype_digit($digits)) return '';
         $digits = ltrim($digits, '0');
@@ -781,7 +786,18 @@ class Dynadot
         $expiry_result = RegistrarResponse::text($expiry_result);
         if (!ctype_digit($expiry_result) || strlen($expiry_result) < 4) return '';
         $expiry_formatted = substr($expiry_result, 0, -3);
-        return gmdate("Y-m-d", (int) $expiry_formatted);
+        if (PHP_INT_SIZE >= 8 || (string) (int) $expiry_formatted === $expiry_formatted) {
+            return gmdate("Y-m-d", (int) $expiry_formatted);
+        }
+
+        // On 32-bit PHP, (int) stops at 2038, and DateTimeImmutable works with 64-bit times
+        $expiry_formatted = ltrim($expiry_formatted, '0');
+        if ($expiry_formatted === '') $expiry_formatted = '0';
+        try {
+            return (new \DateTimeImmutable('@' . $expiry_formatted))->format('Y-m-d');
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 
     public function processDns($dns_result)

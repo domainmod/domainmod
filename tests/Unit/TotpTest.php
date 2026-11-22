@@ -72,6 +72,53 @@ class TotpTest extends TestCase
         $this->assertNotSame($totp->code(self::RFC_SECRET, 1), $totp->code(self::RFC_SECRET, 2 ** 32 + 1));
     }
 
+    // Each step against its eight counter bytes, written out, so these hold on 32-bit PHP (where pack()'s 64-bit codes
+    // don't exist and a step past 2^31 is a float) as well as on 64-bit PHP
+    public static function counterBytes()
+    {
+        return array(
+            'zero' => array(0, '0000000000000000'),
+            'the RFC 6238 step past 2038' => array(666666666, '0000000027bc86aa'),
+            'the largest 32-bit int' => array(2147483647, '000000007fffffff'),
+            'just past the 32-bit int range' => array(2 ** 31, '0000000080000000'),
+            'the largest four-byte step' => array(2 ** 32 - 1, '00000000ffffffff'),
+            'a step past four bytes' => array(2 ** 32 + 1, '0000000100000001'),
+            'a step as a float' => array(4294967296.0, '0000000100000000'),
+            '2^53, past which floats skip whole numbers' => array(2 ** 53, '0020000000000000'),
+            'minus one' => array(-1, 'ffffffffffffffff'));
+    }
+
+    #[DataProvider('counterBytes')]
+    public function testTheCounterIsEightBigEndianBytesOnAnyPhp($step, $hex)
+    {
+        $hash = hash_hmac('sha1', hex2bin($hex), self::RFC_SECRET, true);
+        $offset = ord($hash[19]) & 0x0f;
+        $binary = hexdec(bin2hex(substr($hash, $offset, 4))) - (ord($hash[$offset]) & 0x80 ? 2147483648 : 0);
+        $expected = str_pad((string) fmod($binary, 1000000), 6, '0', STR_PAD_LEFT);
+
+        $this->assertSame($expected, (new Totp())->code(self::RFC_SECRET, $step));
+    }
+
+    // A step that isn't an int is cut toward zero first, as pack() did, on any PHP
+    public function testAStepThatIsntAnIntIsReadAsAWholeNumber()
+    {
+        $totp = new Totp();
+        $this->assertSame($totp->code(self::RFC_SECRET, 5), $totp->code(self::RFC_SECRET, '5'));
+        $this->assertSame($totp->code(self::RFC_SECRET, 5), $totp->code(self::RFC_SECRET, 5.9));
+        $this->assertSame($totp->code(self::RFC_SECRET, 0), $totp->code(self::RFC_SECRET, -0.5));
+    }
+
+    // A float time (such as RFC 6238's test time past 2038) must still give the right int step
+    public function testAStepFromAFloatTimeIsAnInt()
+    {
+        $totp = new Totp();
+        $this->assertSame(666666666, $totp->step(20000000000.0));
+        $this->assertSame(66666666, $totp->step(2000000009.5));
+        $this->assertSame(1, $totp->step(59.9));
+        // 64-bit PHP casts it as it always has (with PHP's own warning), and 32-bit PHP gives the same step
+        if (PHP_INT_SIZE < 8) $this->assertSame(0, $totp->step(INF));
+    }
+
     public static function base32Vectors()
     {
         return array(

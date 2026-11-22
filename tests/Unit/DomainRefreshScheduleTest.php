@@ -147,6 +147,19 @@ class DomainRefreshScheduleTest extends TestCase
         $this->assertSame(strtotime($expiry . ' 00:00:00 UTC') - 60 * S::DAY, S::nextCheck($status, $expiry));
     }
 
+    public function testAnExpiryPast2038StaysWeekly()
+    {
+        // On 32-bit PHP (the official Docker image's armhf build), strtotime() gives false past 2038, which made the
+        // window start 0, so the domain was checked every day. The window start is a float there, as the literal is.
+        $expiry = '2040-06-01';
+        $this->assertSame(2222121600 - 60 * S::DAY, S::windowStart($expiry));
+        $this->assertSame(self::NOW + 7 * S::DAY, S::nextDueAfterSuccess($expiry, self::NOW));
+        $status = $this->statusRow(array('last_success' => S::stamp(self::NOW - 3600), 'next_due' => S::stamp(self::NOW + 7 * S::DAY - 3600)));
+        $this->assertSame(self::NOW + 7 * S::DAY - 3600, S::nextCheck($status, $expiry));
+        $this->assertFalse(S::isDue($status, $expiry, self::NOW + S::DAY));
+        $this->assertSame(0, S::windowStart('2040-13-01'));
+    }
+
     public function testEachOutcomesColumns()
     {
         $now = self::NOW;

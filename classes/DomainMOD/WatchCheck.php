@@ -126,11 +126,20 @@ class WatchCheck
         return gmdate('Y-m-d H:i:s', (int) floor($time));
     }
 
+    /*
+     * A stored time or date as a timestamp (0 when unset or unreadable). It's read with DateTimeImmutable, since
+     * strtotime() gives false on 32-bit PHP (the official Docker image's armhf build) for a time past 2038, such as an
+     * expiry date years away. A time past PHP's int range comes back as a float, which is exact for these times.
+     */
     protected static function time($stamp)
     {
         if (WatchLifecycle::isUnset($stamp)) return 0;
-        $time = strtotime(substr((string) $stamp, 0, 19) . ' UTC');
-        return $time === false ? 0 : $time;
+        try {
+            $unix = (new \DateTimeImmutable(substr((string) $stamp, 0, 19) . ' UTC'))->format('U');
+        } catch (\Exception $e) {
+            return 0;
+        }
+        return (string) (int) $unix === $unix ? (int) $unix : (float) $unix;
     }
 
     /*

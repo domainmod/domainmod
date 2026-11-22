@@ -297,9 +297,9 @@ class SslLookup
         $details['fingerprint'] = strtolower((string) @openssl_x509_fingerprint($cert, 'sha256'));
         $details['issuer'] = $this->issuerName($parsed);
         $details['names'] = $this->cleanNames((array) $dns_names);
-        $details['valid_from'] = (int) $parsed['validFrom_time_t'];
-        $details['valid_to'] = (int) $parsed['validTo_time_t'];
-        $details['expiry_date'] = gmdate('Y-m-d', $details['valid_to']);
+        $details['valid_from'] = $this->certificateTime($parsed, 'validFrom');
+        $details['valid_to'] = $this->certificateTime($parsed, 'validTo');
+        $details['expiry_date'] = self::utcDate('Y-m-d', $details['valid_to']);
 
         if ($code === 'expired') {
 
@@ -339,11 +339,11 @@ class SslLookup
             return 'name_mismatch';
         }
 
-        $valid_from = $parsed['validFrom_time_t'] ?? null;
-        $valid_to = $parsed['validTo_time_t'] ?? null;
+        $valid_from = $this->certificateTime($parsed, 'validFrom');
+        $valid_to = $this->certificateTime($parsed, 'validTo');
 
         // PHP gives -1 when it can't convert a certificate's date
-        if (!is_int($valid_from) || !is_int($valid_to) || $valid_from === -1 || $valid_to === -1
+        if (!$this->isTime($valid_from) || !$this->isTime($valid_to) || $valid_from === -1 || $valid_to === -1
             || $valid_from < self::MIN_STORED_TIME
             || $valid_from > self::MAX_STORED_TIME || $valid_to < self::MIN_STORED_TIME || $valid_to > self::MAX_STORED_TIME) {
 
@@ -358,6 +358,57 @@ class SslLookup
         if ($now < $valid_from) return 'not_yet_valid';
 
         return 'within_dates';
+    }
+
+    /*
+     * A certificate's start or end ('validFrom' or 'validTo') as a Unix time, from the array openssl_x509_parse() gave.
+     * 64-bit PHP's own time is used as it is. On 32-bit PHP (the official Docker image's armhf build) that time is -1,
+     * or cut to 32 bits, for any date outside 1901 to 2038, so there every date is read from the certificate's own text
+     * whenever it can be, as an int, or as a whole-number float past the int range. PHP's own value is used only when
+     * the text can't be read.
+     */
+    public function certificateTime($parsed, $field)
+    {
+        $time = $parsed[$field . '_time_t'] ?? null;
+        if (PHP_INT_SIZE >= 8 || !is_string($parsed[$field] ?? null)) return $time;
+
+        $read = $this->asn1Time($parsed[$field]);
+        return $read === false ? $time : $read;
+    }
+
+    /*
+     * A certificate date in its ASN.1 text form, UTCTime (YYMMDDHHMMSSZ, with years 50 to 99 in the 1900s and 00 to 49
+     * in the 2000s, as RFC 5280 sets out) or GeneralizedTime (YYYYMMDDHHMMSSZ), as a Unix time: an int, or a
+     * whole-number float when it's past PHP's int range (on 32-bit PHP). False for anything else. DateTimeImmutable
+     * works with 64-bit times on any PHP, so this never goes through a 32-bit int.
+     */
+    public function asn1Time($text)
+    {
+        if (!is_string($text) || preg_match('/^([0-9]{2}|[0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})Z$/D', $text, $parts) !== 1) {
+            return false;
+        }
+
+        $year = (int) $parts[1];
+        if (strlen($parts[1]) === 2) $year += $year < 50 ? 2000 : 1900;
+        list(, , $month, $day, $hour, $minute, $second) = array_map('intval', $parts);
+        if (!checkdate($month, $day, $year) || $hour > 23 || $minute > 59 || $second > 59) return false;
+
+        $date = (new \DateTimeImmutable('@0'))->setDate($year, $month, $day)->setTime($hour, $minute, $second);
+        $unix = $date->format('U');
+        return (string) (int) $unix === $unix ? (int) $unix : (float) $unix;
+    }
+
+    // An int time, or on 32-bit PHP a whole-number float time past the int range
+    private function isTime($time)
+    {
+        return is_int($time) || (PHP_INT_SIZE < 8 && is_float($time) && is_finite($time) && floor($time) === $time);
+    }
+
+    // gmdate() for a time from certificateTime(), which on 32-bit PHP can be a float past the int range
+    public static function utcDate($format, $time)
+    {
+        if (is_int($time)) return gmdate($format, $time);
+        return (new \DateTimeImmutable('@' . sprintf('%.0f', $time)))->format($format);
     }
 
     /*

@@ -2118,8 +2118,8 @@ class SslQueue
         $stmt->bindValue('issuer', $issuer, \PDO::PARAM_STR);
         $stmt->bindValue('refreshed_issuer', $set_refreshed ? $issuer : null, $set_refreshed ? \PDO::PARAM_STR : \PDO::PARAM_NULL);
         $stmt->bindValue('names', $this->storedNames($details['names']), \PDO::PARAM_LOB);
-        $stmt->bindValue('valid_from', gmdate('Y-m-d H:i:s', (int) $details['valid_from']), \PDO::PARAM_STR);
-        $stmt->bindValue('valid_to', gmdate('Y-m-d H:i:s', (int) $details['valid_to']), \PDO::PARAM_STR);
+        $stmt->bindValue('valid_from', SslLookup::utcDate('Y-m-d H:i:s', $details['valid_from']), \PDO::PARAM_STR);
+        $stmt->bindValue('valid_to', SslLookup::utcDate('Y-m-d H:i:s', $details['valid_to']), \PDO::PARAM_STR);
         $stmt->bindValue('trusted', $details['trusted'] ? 1 : 0, \PDO::PARAM_INT);
         $stmt->bindValue('last_check', $this->time->stamp(), \PDO::PARAM_STR);
         $stmt->bindValue('last_result', $code, \PDO::PARAM_STR);

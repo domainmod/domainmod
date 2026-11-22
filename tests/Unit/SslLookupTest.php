@@ -226,24 +226,105 @@ class SslLookupTest extends TestCase
         $parsed = openssl_x509_parse($made['cert']);
         list(, $names) = $lookup->dnsNames($made['pem']);
 
-        $parsed['validFrom_time_t'] = gmmktime(0, 0, 0, 1, 1, 500);
+        // 0500-01-01 00:00:00 UTC, written out since gmmktime() can't give it on 32-bit PHP (this literal is a float
+        // there). 32-bit PHP reads the date's text, 64-bit PHP its time.
+        $parsed['validFrom_time_t'] = -46388678400;
+        $parsed['validFrom'] = '05000101000000Z';
 
         $this->assertSame('bad_certificate', $lookup->classify($parsed, $names, 'www.example.com', time()));
         $this->assertSame('name_mismatch', $lookup->classify($parsed, $names, 'shop.example.com', time()));
 
-        // a start after the expiry
+        // a start after the expiry, at fixed times (32-bit PHP reads the text, 64-bit PHP the times)
         $backwards = openssl_x509_parse($made['cert']);
-        $backwards['validFrom_time_t'] = $backwards['validTo_time_t'] + 86400;
-        $this->assertSame('bad_certificate', $lookup->classify($backwards, $names, 'www.example.com', $backwards['validTo_time_t'] + 3600));
+        $backwards['validTo_time_t'] = 1797850791;
+        $backwards['validTo'] = '261221105951Z';
+        $backwards['validFrom_time_t'] = 1797850791 + 86400;
+        $backwards['validFrom'] = '261222105951Z';
+        $this->assertSame('bad_certificate', $lookup->classify($backwards, $names, 'www.example.com', 1797850791 + 3600));
 
-        // PHP gives -1 for a date it can't convert
+        // PHP gives -1 for a date it can't convert (and on 32-bit PHP, the date's own text is unreadable too)
         $unconverted = openssl_x509_parse($made['cert']);
         $unconverted['validFrom_time_t'] = -1;
+        $unconverted['validFrom'] = 'not a date';
         $this->assertSame('bad_certificate', $lookup->classify($unconverted, $names, 'www.example.com', time()));
 
         $unconverted = openssl_x509_parse($made['cert']);
         $unconverted['validTo_time_t'] = -1;
+        $unconverted['validTo'] = 'not a date';
         $this->assertSame('bad_certificate', $lookup->classify($unconverted, $names, 'www.example.com', time()));
+    }
+
+    // 32-bit PHP (the armhf Docker image) gives -1, or a time cut to 32 bits, for a certificate date past 2038, so the
+    // date comes from its text
+    public function testACertificateThatEndsAfter2038IsWithinItsDates()
+    {
+        $made = TestCertificates::make(array('cn' => 'self.example.com', 'san' => array('DNS.1 = self.example.com'), 'days' => 9000));
+        $lookup = new SslLookup();
+        $parsed = openssl_x509_parse($made['cert']);
+        list(, $names) = $lookup->dnsNames($made['pem']);
+        $valid_to = $lookup->asn1Time($parsed['validTo']);
+
+        $this->assertGreaterThan(2147483647, $valid_to);
+        $this->assertSame('within_dates', $lookup->classify($parsed, $names, 'self.example.com', time()));
+
+        list($code, $details) = $lookup->resultFromCertificate($made['cert'], array($made['cert']), 'self.example.com', time());
+        $this->assertSame('untrusted', $code);
+        $this->assertGreaterThan(2147483647, $details['valid_to']);
+        if (PHP_INT_SIZE >= 8) {
+            // 64-bit PHP's own time, which a time zone's daylight saving gap can move, so it's the expected date there
+            $this->assertSame(gmdate('Y-m-d', $parsed['validTo_time_t']), $details['expiry_date']);
+        } else {
+            // UTCTime (YYMMDDHHMMSSZ) until 2049, GeneralizedTime (YYYYMMDDHHMMSSZ) from 2050
+            $text = $parsed['validTo'];
+            $year = strlen($text) === 13 ? '20' . substr($text, 0, 2) : substr($text, 0, 4);
+            $this->assertSame($year . '-' . substr($text, -11, 2) . '-' . substr($text, -9, 2), $details['expiry_date']);
+        }
+    }
+
+    // 32-bit PHP gives -1, or the time cut to 32 bits where the C library's time is 64-bit, for a date past 2038
+    public function testOnlyThirtyTwoBitPhpReadsTheDateText()
+    {
+        $lookup = new SslLookup();
+        foreach (array(-1, -1722108505) as $php_time) {
+            $parsed = array('validTo_time_t' => $php_time, 'validTo' => '20510713105951Z');
+            $this->assertSame(PHP_INT_SIZE >= 8 ? $php_time : 2572858791, $lookup->certificateTime($parsed, 'validTo'));
+        }
+
+        // Text it can't read leaves PHP's own value
+        $parsed = array('validTo_time_t' => 1797850791, 'validTo' => '261221105951.5Z');
+        $this->assertSame(1797850791, $lookup->certificateTime($parsed, 'validTo'));
+        $this->assertNull($lookup->certificateTime(array(), 'validTo'));
+    }
+
+    public static function asn1Times()
+    {
+        // The literals past 2^31 are floats on 32-bit PHP, as asn1Time() gives there
+        return array(
+            'UTCTime in the 2000s' => array('491231235959Z', 2524607999),
+            'UTCTime in the 1900s' => array('500101000000Z', -631152000),
+            'GeneralizedTime past 2038' => array('20510713105951Z', 2572858791),
+            'the start of Unix time' => array('19700101000000Z', 0),
+            'the latest stored time' => array('99991231235959Z', 253402300799),
+            'before the earliest stored time' => array('05000101000000Z', -46388678400),
+            'a day that doesn\'t exist' => array('20510230000000Z', false),
+            'an hour that doesn\'t exist' => array('20510713245951Z', false),
+            'a digit short' => array('2051071310595Z', false),
+            'an offset instead of Z' => array('20510713105951+0000', false),
+            'not text' => array(array('20510713105951Z'), false));
+    }
+
+    #[DataProvider('asn1Times')]
+    public function testAsn1TimesAreReadWithoutA32BitInt($text, $expected)
+    {
+        $this->assertSame($expected, (new SslLookup())->asn1Time($text));
+    }
+
+    public function testUtcDateTakesATimePastThe32BitIntRange()
+    {
+        $this->assertSame('9999-12-31 23:59:59', SslLookup::utcDate('Y-m-d H:i:s', 253402300799.0));
+        $this->assertSame('2051-07-13', SslLookup::utcDate('Y-m-d', 2572858791.0));
+        $this->assertSame('1970-01-01 00:00:00', SslLookup::utcDate('Y-m-d H:i:s', 0));
+        $this->assertSame(gmdate('Y-m-d H:i:s', 1797850791), SslLookup::utcDate('Y-m-d H:i:s', 1797850791));
     }
 
     public function testASelfSignedCertificateIsUntrusted()

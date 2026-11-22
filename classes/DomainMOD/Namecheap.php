@@ -125,7 +125,7 @@ class Namecheap
         if ($array_results[0]['@attributes']['Status'] == "OK") {
 
             // get expiration date
-            $expiration_date = date('Y-m-d', strtotime($array_results[0]['CommandResponse']['DomainGetInfoResult']['DomainDetails']['ExpiredDate']));
+            $expiration_date = $this->processExpiry($array_results[0]['CommandResponse']['DomainGetInfoResult']['DomainDetails']['ExpiredDate']);
 
             // get dns servers
             $dns_result = $array_results[0]['CommandResponse']['DomainGetInfoResult']['DnsDetails']['Nameserver'];
@@ -183,6 +183,12 @@ class Namecheap
         $xml = simplexml_load_string($api_result);
         $json = json_encode((array($xml)), true);
         return json_decode($json, true);
+    }
+
+    // Namecheap's expiry date (such as 06/01/2040) as a date in PHP's time zone.
+    public function processExpiry($expiry_result)
+    {
+        return RegistrarResponse::expiryDate($expiry_result, true);
     }
 
     public function processDns($dns_result)

@@ -117,4 +117,41 @@ class RegistrarResponse
         return is_string($value) || is_int($value) ? (string) $value : '';
     }
 
+    // An expiry date or time from a registrar, read as strtotime() reads it, as a date in UTC (or in PHP's time zone
+    // when $local is true). A string it can't read gives the Unix epoch's date (1970-01-01 in UTC), and anything else
+    // goes to strtotime() as before (so an empty XML element, which converts to an array, fails). On 32-bit PHP (the official Docker image's armhf build), strtotime()
+    // gives false and a warning for a time past 2038, so a string is read with DateTimeImmutable there instead, which
+    // works with 64-bit times and reads every string as strtotime() does, except that it reads an empty one as now.
+    public static function expiryDate($value, $local = false)
+    {
+        if (PHP_INT_SIZE < 8 && is_string($value) && $value !== '') {
+            try {
+                $zone = $local ? date_default_timezone_get() : 'UTC';
+                return (new \DateTimeImmutable($value))->setTimezone(new \DateTimeZone($zone))->format('Y-m-d');
+            } catch (\Exception $e) {
+                $value = '';
+            }
+        }
+        $time = strtotime($value);
+        return $local ? date('Y-m-d', $time) : gmdate('Y-m-d', $time);
+    }
+
+    // A Unix time in seconds from a registrar as a date in UTC, as gmdate() gives it. On 32-bit PHP, gmdate() can't
+    // take a time past 2038 (a numeric string, or the float json_decode() gives for a larger number), so a whole number
+    // of seconds outside PHP's int range is read with DateTimeImmutable instead.
+    public static function expiryDateFromSeconds($value)
+    {
+        if (PHP_INT_SIZE < 8 && (is_float($value) || (is_string($value) && is_numeric($value)))) {
+            $seconds = (float) $value;
+            if (is_finite($seconds) && floor($seconds) === $seconds && ($seconds > PHP_INT_MAX || $seconds < PHP_INT_MIN)) {
+                try {
+                    return (new \DateTimeImmutable('@' . sprintf('%.0f', $seconds)))->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // too large for any PHP, so gmdate() refuses it as before
+                }
+            }
+        }
+        return gmdate('Y-m-d', $value);
+    }
+
 } //@formatter:on

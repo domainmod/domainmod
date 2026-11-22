@@ -289,6 +289,8 @@ class WatchCheckTest extends TestCase
         $this->assertSame(604800, WatchCheck::interval($this->known(array('expiry_date' => '2028-01-01')), $t, false));
         $this->assertSame(strtotime('2027-03-13 00:00:00 UTC') - $t, WatchCheck::interval($this->known(array('expiry_date' => '2027-05-12')), $t, false));
         $this->assertSame(86400, WatchCheck::interval($this->known(array('expiry_date' => '2027-04-01')), $t, false));
+        // Weekly for an expiry past 2038, on 32-bit PHP too, where strtotime() gives false for it
+        $this->assertSame(604800, WatchCheck::interval($this->known(array('expiry_date' => '2040-06-01')), $t, false));
         // No expiry date published: weekly
         $this->assertSame(604800, WatchCheck::interval($this->known(array('expiry_date' => '1970-01-01')), $t, false));
         // Pending delete with a fast slot: two-hourly, then hourly from the start of its window, even past its end

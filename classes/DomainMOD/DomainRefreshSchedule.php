@@ -82,13 +82,22 @@ class DomainRefreshSchedule
         return (string) $expiry_date <= self::nearExpiryDate($now);
     }
 
-    // When the domain enters its near-expiry window (00:00 UTC, NEAR_EXPIRY_DAYS before its expiry date), or 0 for a
-    // date that can't be read (which the candidate query's comparison also treats as near)
+    /*
+     * When the domain enters its near-expiry window (00:00 UTC, NEAR_EXPIRY_DAYS before its expiry date), or 0 for a
+     * date that can't be read (which the candidate query's comparison also treats as near). It's read with
+     * DateTimeImmutable, since strtotime() gives false on 32-bit PHP (the official Docker image's armhf build) for a
+     * date past 2038. A time past PHP's int range comes back as a float, which is exact for these dates.
+     */
     public static function windowStart($expiry_date)
     {
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $expiry_date)) return 0;
-        $time = strtotime($expiry_date . ' 00:00:00 UTC');
-        return $time === false ? 0 : max(0, (int) $time - self::NEAR_EXPIRY_DAYS * self::DAY);
+        try {
+            $unix = (new \DateTimeImmutable($expiry_date . ' 00:00:00 UTC'))->format('U');
+        } catch (\Exception $e) {
+            return 0;
+        }
+        $time = (string) (int) $unix === $unix ? (int) $unix : (float) $unix;
+        return max(0, $time - self::NEAR_EXPIRY_DAYS * self::DAY);
     }
 
     // When a domain is due after a success that started at $started: a day later near expiry, otherwise a week later,

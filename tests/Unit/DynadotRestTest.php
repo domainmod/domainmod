@@ -187,6 +187,19 @@ class DynadotRestTest extends TestCase
         $this->assertSame('', $d->processRestExpiry(null));
     }
 
+    // 32-bit PHP (the armhf Docker image) decodes the milliseconds as a float, and (int) stops there at 2038
+    public function testExpiryPast2038AndAsAFloatOnAnyPhp()
+    {
+        $d = $this->dynadot();
+        $this->assertSame('2051-07-13', $d->processRestExpiry('2572858791000'));
+        $this->assertSame('2051-07-13', $d->processExpiry('2572858791000'));
+        $this->assertSame('2051-07-13', $d->processExpiry('0002572858791000'));
+        $this->assertSame('2038-01-19', $d->processExpiry('2147483647000'));
+        $this->assertSame('2027-11-20', $d->processRestExpiry(json_decode('1826724874060')));
+        $this->assertSame('', $d->processRestExpiry(1826724874060.5));
+        $this->assertSame('', $d->processRestExpiry(-1826724874060.0));
+    }
+
     public function testOnlyCredentialRefusalsCount()
     {
         $d = $this->dynadot();

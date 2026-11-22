@@ -84,17 +84,52 @@ class Totp
     // HOTP: the step is the counter, as a 64-bit big-endian number
     public function code($secret, $step, $digits = self::DIGITS)
     {
-        $hash = hash_hmac('sha1', pack('J', $step), $secret, true);
+        $hash = hash_hmac('sha1', $this->counter($step), $secret, true);
         $offset = ord($hash[19]) & 0x0f;
+        // The top bit is dropped before the shift, so the 31-bit result is never negative on 32-bit PHP either
         $binary = ((ord($hash[$offset]) & 0x7f) << 24) | (ord($hash[$offset + 1]) << 16)
             | (ord($hash[$offset + 2]) << 8) | ord($hash[$offset + 3]);
 
         return str_pad((string) ($binary % (10 ** $digits)), $digits, '0', STR_PAD_LEFT);
     }
 
+    /*
+     * The counter as eight big-endian bytes, packed as two 32-bit halves, since pack()'s 64-bit codes don't exist on
+     * 32-bit PHP (the official Docker image's armhf build). pack() keeps the low 32 bits of each half. A step past
+     * 32-bit PHP's int range arrives as a float, which is exact up to 2^53.
+     */
+    private function counter($step)
+    {
+        if (PHP_INT_SIZE >= 8) {
+            $step = (int) $step;
+            return pack('N2', $step >> 32, $step);
+        }
+
+        if (is_int($step)) return pack('N2', $step < 0 ? -1 : 0, $step);
+
+        $step = (float) $step;
+        $step = $step < 0 ? ceil($step) : floor($step);
+        $high = floor($step / 4294967296);
+        return pack('N2', $this->wrap32($high), $this->wrap32($step - $high * 4294967296));
+    }
+
+    // A whole number's low 32 bits as an int that fits on 32-bit PHP, for pack()
+    private function wrap32($number)
+    {
+        $number = fmod($number, 4294967296);
+        if ($number < 0) $number += 4294967296;
+        return (int) ($number >= 2147483648 ? $number - 4294967296 : $number);
+    }
+
+    // A float time (such as RFC 6238's test time past 2038) gives an int step on 32-bit PHP until the year 4010
     public function step($unix_time)
     {
-        return intdiv((int) $unix_time, self::PERIOD);
+        if (PHP_INT_SIZE >= 8 || is_int($unix_time)) return intdiv((int) $unix_time, self::PERIOD);
+
+        $step = (float) $unix_time / self::PERIOD;
+        if (!is_finite($step)) return 0; // as (int) gives on 64-bit PHP
+        $step = $step < 0 ? ceil($step) : floor($step);
+        return $step >= PHP_INT_MIN && $step <= PHP_INT_MAX ? (int) $step : $step;
     }
 
     // Spaces removed, and only six digits count

@@ -185,8 +185,7 @@ class Enom
 
     public function processExpiry($expiry_result)
     {
-        $unix_expiration_date = strtotime($expiry_result);
-        return gmdate("Y-m-d", $unix_expiration_date);
+        return RegistrarResponse::expiryDate($expiry_result);
     }
 
     public function processDns($dns_result)

@@ -117,7 +117,7 @@ class ResellerClub
 
     public function processExpiry($expiry_result)
     {
-        return gmdate("Y-m-d", $expiry_result);
+        return RegistrarResponse::expiryDateFromSeconds($expiry_result);
     }
 
     public function processDns($dns_result)
