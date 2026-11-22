@@ -139,9 +139,12 @@ if (DEMO_INSTALLATION == false) {
 
                 } else {
 
+                    $conversion_skipped = 0;
+
                     foreach ($result_conversion as $row_conversion) {
 
                         $conversion->updateRates($row_conversion->default_currency, $row_conversion->user_id);
+                        $conversion_skipped += $conversion->skipped;
 
                     }
 
@@ -152,7 +155,17 @@ if (DEMO_INSTALLATION == false) {
                 $log_message = sprintf('[%s]' . _('Update Conversion Rates'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
 
-                $_SESSION['s_message_success'] .= _('Conversion Rates Updated') . '<BR>';
+                // A lookup that failed for any user is a warning, not a success
+                if (($conversion_skipped ?? 0) > 0) {
+
+                    $_SESSION['s_message_warning'] = ($_SESSION['s_message_warning'] ?? '')
+                        . _('Some conversion rates couldn\'t be fetched, so they weren\'t changed.') . '<BR>';
+
+                } else {
+
+                    $_SESSION['s_message_success'] .= _('Conversion Rates Updated') . '<BR>';
+
+                }
 
             } elseif ($result->slug == 'check-new-version') {
 

@@ -1185,28 +1185,28 @@ class LiveDns
     // The Live DNS filter's choices, by value (see FILTERS)
     public static function filterChoices()
     {
-        return array('any' => _('Any difference'), 'ns' => _('Name servers differ'), 'ip' => _('IP differs'),
-            'nodns' => _('No DNS'), 'failed' => _('Check failed'), 'unchecked' => _('Not checked'));
+        return array('any' => _('Any Difference'), 'ns' => _('Name Servers Differ'), 'ip' => _('IP Differs'),
+            'nodns' => _('No DNS'), 'failed' => _('Check Failed'), 'unchecked' => _('Not Checked'));
     }
 
     // Each badge's name, and its icon and colour on the Domains list
     public static function badge($state)
     {
         $badges = array(
-            'unchecked' => array(_('Not checked'), 'bi-dash-circle', 'text-body-secondary'),
-            'failed' => array(_('Check failed'), 'bi-exclamation-circle', 'text-body-secondary'),
+            'unchecked' => array(_('Not Checked'), 'bi-dash-circle', 'text-body-secondary'),
+            'failed' => array(_('Check Failed'), 'bi-exclamation-circle', 'text-body-secondary'),
             'no_dns' => array(_('No DNS'), 'bi-x-circle', 'text-danger-emphasis'),
-            'both' => array(_('Both differ'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
-            'ns' => array(_('Name servers differ'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
-            'ip' => array(_('IP differs'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
-            'no_addresses' => array(_('No addresses'), 'bi-slash-circle', 'text-warning-emphasis'),
-            'not_set' => array(_('Not set'), 'bi-dash-circle', 'text-body-secondary'),
+            'both' => array(_('Both Differ'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
+            'ns' => array(_('Name Servers Differ'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
+            'ip' => array(_('IP Differs'), 'bi-exclamation-triangle', 'text-warning-emphasis'),
+            'no_addresses' => array(_('No Addresses'), 'bi-slash-circle', 'text-warning-emphasis'),
+            'not_set' => array(_('Not Set'), 'bi-dash-circle', 'text-body-secondary'),
             'incomplete' => array(_('Incomplete'), 'bi-question-circle', 'text-body-secondary'),
             'ok' => array(_('OK'), 'bi-check-circle', 'text-success-emphasis'));
         return $badges[$state] ?? $badges['unchecked'];
     }
 
-    // A Domains list row's badge state and suffix, from its ldc1_ columns (no row for the current name is Not checked)
+    // A Domains list row's badge state and suffix, from its ldc1_ columns (no row for the current name is Not Checked)
     protected static function rowBadge($row)
     {
         $list_state = $row->ldc1_list_state ?? null;

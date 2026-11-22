@@ -64,11 +64,24 @@
 #hosting-main > tbody > tr:hover > td {
     background: var(--bs-secondary-bg);
 }
-/* A cut-short cell opens up in full while it has keyboard focus. With JavaScript off, there's no tooltip or keyboard
-   stop for a cut-short value, so long values wrap instead (the table only gets DataTables' dataTable class once the
-   script has started it). They also wrap when the main pointer can't hover, such as on a phone or tablet. */
-#hosting-main:not(.dataTable) > tbody > tr > td,
-#hosting-main > tbody > tr > td:focus-within {
+/* With JavaScript off, there's no tooltip or keyboard stop for a cut-short value, so long values wrap instead (the
+   table only gets DataTables' dataTable class once the script has started it). They also wrap when the main pointer
+   can't hover, such as on a phone or tablet. */
+#hosting-main:not(.dataTable) > tbody > tr > td {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+/* A cut-short cell opens up in full while it, or the link in it, has keyboard focus, but not on a mouse click, which
+   would move the link out from under the pointer before the click lands (the cell itself is a keyboard stop when it has
+   no link, see js/server-list.js) */
+#hosting-main > tbody > tr > td:focus-visible {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+/* In its own rule, so a browser without :has() keeps the ones above */
+#hosting-main > tbody > tr > td:has(:focus-visible) {
     overflow: visible;
     overflow-wrap: anywhere;
     white-space: normal;

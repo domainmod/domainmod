@@ -39,7 +39,10 @@ $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? '');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
-$_SESSION['s_message_success'] .= $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']) . '<BR>';
+$result_message = $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']) . '<BR>';
+// A lookup that failed is a warning, not a success
+$message_type = $conversion->skipped > 0 ? 's_message_warning' : 's_message_success';
+$_SESSION[$message_type] = ($_SESSION[$message_type] ?? '') . $result_message;
 
 // An htmx request gets just the result message, shown in the task list's card, instead of a redirect
 if ($system->isHtmxRequest()) {

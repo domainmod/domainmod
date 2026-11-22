@@ -155,7 +155,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                 }
 
-                $_SESSION['s_message_success'] .= $conversion->updateRates($new_currency, $_SESSION['s_user_id']) . '<BR>';
+                $result_message = $conversion->updateRates($new_currency, $_SESSION['s_user_id']) . '<BR>';
+                // A lookup that failed is a warning, not a success
+                $message_type = $conversion->skipped > 0 ? 's_message_warning' : 's_message_success';
+                $_SESSION[$message_type] = ($_SESSION[$message_type] ?? '') . $result_message;
 
             }
 

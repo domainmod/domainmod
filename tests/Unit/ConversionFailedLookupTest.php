@@ -65,6 +65,8 @@ class ConversionFailedLookupTest extends TestCase
 
         $this->assertSame("Some conversion rates couldn't be fetched, so they weren't changed.<BR>",
             $conversion->updateRates('USD', 5));
+        // So the callers show the message as a warning, not a success (found at 4.27.0's [K])
+        $this->assertSame(1, $conversion->skipped);
 
         // Only the default currency (1) and the rate that worked are saved.
         $this->assertCount(2, $pdo->queriesWith('UPDATE currency_conversions'));
@@ -95,6 +97,7 @@ class ConversionFailedLookupTest extends TestCase
         $conversion->log->expects($this->never())->method('warning');
 
         $this->assertSame('Conversion Rates updated<BR>', $conversion->updateRates('USD', 5));
+        $this->assertSame(0, $conversion->skipped);
 
         $this->assertSame(array('1', '1.38', '0.92'), $pdo->savedRates);
     }

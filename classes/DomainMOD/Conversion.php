@@ -26,6 +26,7 @@ class Conversion
     public $currency;
     public $deeb;
     public $log;
+    public $skipped = 0; // How many rates the last updateRates() couldn't fetch (its message is then a warning).
     public $time;
 
     const RATE_RETRY_AFTER = 3600; // after a failed rate lookup for a missing currency, wait an hour before trying again.
@@ -163,6 +164,7 @@ class Conversion
     {
         $result_message = '';
         $skipped = 0;
+        $this->skipped = 0;
         $pdo = $this->deeb->cnxx;
         $result = $this->getActiveCurrencies();
 
@@ -227,6 +229,8 @@ class Conversion
             }
 
         }
+
+        $this->skipped = $skipped;
 
         return $result_message;
     }

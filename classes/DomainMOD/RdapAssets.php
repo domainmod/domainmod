@@ -269,9 +269,14 @@ class RdapAssets
         return $ids;
     }
 
+    /*
+     * A name as compared: unescaped first (only what Sanitize::text() escapes), since names are stored HTML-escaped but
+     * older or imported rows can hold the plain form (Let&#039;s Encrypt and Let's Encrypt are the same provider)
+     */
     protected function comparable($name)
     {
-        return mb_strtolower(trim(preg_replace('/\s+/u', ' ', (string) $name) ?? ''));
+        $name = (new Unsanitize())->text((string) $name);
+        return mb_strtolower(trim(preg_replace('/\s+/u', ' ', $name) ?? ''));
     }
 
     protected function createRegistrar($stored, $url, $created_by)

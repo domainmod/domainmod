@@ -200,14 +200,14 @@ class LiveDnsListTest extends TestCase
         $this->assertSame(array(LiveDns::LIST_SORT), $columns->columns()[1]['sort']);
 
         $cell = $columns->cells($this->row(array('ldc1_list_state' => 'ns', 'ldc1_result' => 'timeout', 'ldc1_stale_sets' => 'mx')), '2026-11-20')[1];
-        $this->assertStringContainsString('Name servers differ', $cell);
+        $this->assertStringContainsString('Name Servers Differ', $cell);
         $this->assertStringContainsString('bi-exclamation-triangle', $cell);
-        $this->assertStringContainsString('data-bs-title="Name servers differ (last check failed)"', $cell);
+        $this->assertStringContainsString('data-bs-title="Name Servers Differ (last check failed)"', $cell);
         $this->assertStringContainsString('edit.php?did=9#domainmod-section-live-dns', $cell);
 
         // No row for the domain's current name (a NULL from the left join)
         $cell = $columns->cells($this->row(array('ldc1_list_state' => null, 'ldc1_result' => null, 'ldc1_stale_sets' => null)), '2026-11-20')[1];
-        $this->assertStringContainsString('Not checked', $cell);
+        $this->assertStringContainsString('Not Checked', $cell);
         $this->assertStringNotContainsString('data-bs-title', $cell);
     }
 
@@ -216,9 +216,9 @@ class LiveDnsListTest extends TestCase
         $this->assertSame('OK', LiveDns::exportText($this->row(array('ldc1_list_state' => 'ok', 'ldc1_result' => 'ok', 'ldc1_stale_sets' => ''))));
         $this->assertSame('No DNS (last check was incomplete)', LiveDns::exportText($this->row(array('ldc1_list_state' => 'no_dns',
             'ldc1_result' => 'no_dns', 'ldc1_stale_sets' => 'www_aaaa'))));
-        $this->assertSame('Check failed (last check failed)', LiveDns::exportText($this->row(array('ldc1_list_state' => 'failed',
+        $this->assertSame('Check Failed (last check failed)', LiveDns::exportText($this->row(array('ldc1_list_state' => 'failed',
             'ldc1_result' => 'failed', 'ldc1_stale_sets' => 'ns,a,aaaa,www_a,www_aaaa,mx'))));
-        $this->assertSame('Not checked', LiveDns::exportText($this->row(array('ldc1_list_state' => null))));
+        $this->assertSame('Not Checked', LiveDns::exportText($this->row(array('ldc1_list_state' => null))));
     }
 
     public function testNoColumnWithoutTheTableWhateverTheSessionSays()
