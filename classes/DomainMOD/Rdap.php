@@ -34,6 +34,22 @@ class Rdap
     // IANA download or the registrar's record), so a caller can tell a lookup that asked the registry from one a time
     // guard stopped before it did
     public $domain_request_sent = false;
+    // Whether the last lookup() returned without sending that request because its deadline ran out first (in fetch()'s
+    // time checks before the request, straight after a slow host name lookup, or in its bootstrap download), so a caller
+    // can put the domain off instead of counting a failure
+    public $deadline_stopped = false;
+    // A documented limit: through a proxy (one named in cURL's environment, even for a host NO_PROXY exempts, or one
+    // that answered a CONNECT), only the registry's own HTTP answer counts as delivered, so a request whose answer never
+    // came counts as not delivered. Its only effect is in the scheduled refresh: one more public attempt (public_next
+    // stays) and no batch slot used, while the lookup is still recorded as a failure.
+    // Whether the last lookup()'s request for the domain reached the registry (some of it was sent, or it got an
+    // HTTP answer), unlike $domain_request_sent, which is set when the attempt starts: a refused connection or a failed
+    // certificate check leaves it false
+    public $domain_request_delivered = false;
+    // Whether the last fetch() stopped before sending because of its deadline, and whether a request it sent was cut
+    // off when the deadline came (rather than the server failing to answer in its own time)
+    public $last_fetch_stopped = false;
+    public $last_fetch_cut_short = false;
 
     // Whether the TLD => server map in memory is a stale cached file kept after a failed refresh (shared, as the map is)
     public static $bootstrap_stale = false;
@@ -44,6 +60,12 @@ class Rdap
 
     // State shared by every Rdap object in this PHP process (one cron run or page load)
     protected static $bootstrap = null;
+    /*
+     * The bootstrap of one attempt (one domain's refresh, one queue row, or one watched domain) whose download the
+     * caller's deadline cut off: array('map', 'cut_off'). It isn't kept for the rest of the request, so the next attempt
+     * with more time tries the download again, and newAttempt() clears it (see bootstrap()).
+     */
+    protected static $attempt_bootstrap = null;
     protected static $last_request = array();          // when each RDAP server was last asked
     protected static $failed_registrar_hosts = array(); // registrar servers that failed or limited requests this run
     // Set while lookup() fetches the domain's own record, so fetch() can mark when that request starts
@@ -60,6 +82,33 @@ class Rdap
     public function __construct()
     {
         $this->log = new Log('class.rdap');
+    }
+
+    /*
+     * Starts a new attempt: a bootstrap download that an earlier attempt's deadline cut off is tried again by the next
+     * call that needs it (see bootstrap()). Every task calls it before each item it looks up, so no item inherits
+     * another's cutoff.
+     */
+    public static function newAttempt()
+    {
+        self::$attempt_bootstrap = null;
+    }
+
+    // Whether this attempt has no bootstrap because its download was cut off by the deadline (with no copy on disk to
+    // use instead), so a lookup can't go on without it, but nothing failed
+    public static function bootstrapCutOff()
+    {
+        return self::$bootstrap === null && is_array(self::$attempt_bootstrap) && self::$attempt_bootstrap['cut_off'];
+    }
+
+    /*
+     * Whether this attempt's bootstrap download was cut off by the deadline at all (even when an expired copy on disk
+     * serves the attempt instead), so a TLD that copy doesn't name can't be taken as one without RDAP: a newer copy might
+     * name it
+     */
+    public static function downloadCutOff()
+    {
+        return self::$bootstrap === null && is_array(self::$attempt_bootstrap);
     }
 
     /*
@@ -93,6 +142,8 @@ class Rdap
             'registration_date' => '', 'deletion_date' => '', 'expiry_source' => '', 'redirected' => false,
             'message' => '');
         $this->domain_request_sent = false;
+        $this->deadline_stopped = false;
+        $this->domain_request_delivered = false;
 
         // registries take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
         $ascii_domain = Domain::forApi($domain);
@@ -108,12 +159,22 @@ class Rdap
         // a temporary error, not a TLD without RDAP
         if (!$this->bootstrap($deadline)) {
 
+            $this->deadline_stopped = self::bootstrapCutOff();
             $result['message'] = 'The RDAP bootstrap file is unavailable';
             return $result;
 
         }
 
         $server = $this->serverFor($ascii_domain, $deadline);
+
+        // An expired copy that doesn't name the TLD, after a download the deadline cut off, settles nothing
+        if ($server === '' && self::downloadCutOff()) {
+
+            $this->deadline_stopped = true;
+            $result['message'] = 'The RDAP bootstrap file is unavailable';
+            return $result;
+
+        }
 
         if ($server === '') {
 
@@ -133,6 +194,8 @@ class Rdap
 
         if ($status !== 'ok') {
 
+            // Stopped by the deadline before the request for the domain was sent, so nothing was asked of the registry
+            if (!$this->domain_request_sent && $this->last_fetch_stopped) $this->deadline_stopped = true;
             $result['status'] = $status;
             $result['message'] = $this->statusMessage($status);
             return $result;
@@ -294,6 +357,7 @@ class Rdap
     protected function bootstrap($deadline)
     {
         if (self::$bootstrap !== null) return self::$bootstrap;
+        if (self::$attempt_bootstrap !== null) return self::$attempt_bootstrap['map'];
 
         // Stale until a fresh copy is in memory: a cached file past its age whose refresh failed, or that waits out the
         // retry period after a failure
@@ -323,6 +387,17 @@ class Rdap
                 }
 
                 $cached = $downloaded;
+
+            } elseif ($this->last_fetch_stopped || $this->last_fetch_cut_short) {
+
+                /*
+                 * The caller's deadline stopped the download (before it was sent, or while the request was under way), so
+                 * IANA didn't fail: no hour's wait starts, and the result is kept only for this attempt, so a later caller
+                 * with more time tries again. An expired copy on disk still serves this attempt.
+                 */
+                self::$bootstrap_stale = (bool) $cached;
+                self::$attempt_bootstrap = array('map' => $cached ?: array(), 'cut_off' => !$cached);
+                return self::$attempt_bootstrap['map'];
 
             } else {
 
@@ -460,6 +535,8 @@ class Rdap
     public function fetch($url, $deadline, $max_bytes, $paced)
     {
         $this->redirected = false;
+        $this->last_fetch_stopped = false;
+        $this->last_fetch_cut_short = false;
 
         for ($hop = 0; $hop <= self::MAX_REDIRECTS; $hop++) {
 
@@ -476,16 +553,18 @@ class Rdap
             if (filter_var(trim($host, '[]'), FILTER_VALIDATE_IP) !== false || !$this->isHostname($host)) return array('error', '');
 
             // PHP's resolver has no per-call timeout, so only start it with at least 5 seconds left
-            if ($deadline - microtime(true) < 5) return array('error', '');
+            if ($deadline - microtime(true) < 5) return $this->stopped();
 
             // The test hook answers without the network, so nothing is resolved
             $address = self::$test_fetch !== null ? '192.0.2.1' : $this->publicAddress($host);
+            // A host name lookup that used up the time is a cutoff, checked before an empty answer counts as a failure
+            if ($address === '' && $deadline - microtime(true) < 1) return $this->stopped();
             if ($address === '') return array('error', '');
 
             if ($paced) $this->pace($host);
 
             $remaining = $deadline - microtime(true);
-            if ($remaining < 1) return array('error', '');
+            if ($remaining < 1) return $this->stopped();
 
             // The domain's own request starts here (a redirect it follows is still that request)
             if ($this->tracking_domain_request) $this->domain_request_sent = true;
@@ -494,6 +573,7 @@ class Rdap
 
                 list($http_code, $body, $location) = array_pad(array_values((array) call_user_func(self::$test_fetch, $url)), 3, '');
                 $http_code = (int) $http_code;
+                if ($this->tracking_domain_request && $http_code > 0) $this->domain_request_delivered = true;
                 $body = (string) $body;
                 $location = (string) $location;
                 if (strlen($body) > $max_bytes) return array('error', '');
@@ -538,8 +618,40 @@ class Rdap
 
             });
 
+            $request_started = microtime(true);
             $curl_result = curl_exec($handle);
             $http_code = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
+            /*
+             * A request that timed out when the caller's deadline came, rather than in the server's own time: the timer
+             * that ran out (the connect timeout until the TLS handshake finished, otherwise the whole timeout) was
+             * shortened to fit the deadline (whole seconds, rounded down), so it's less than its usual 10 or 20 seconds
+             */
+            $handshake_done = curl_getinfo($handle, CURLINFO_APPCONNECT_TIME) > 0;
+            /*
+             * The request's bytes went out (CURLINFO_REQUEST_SIZE counts what was sent), or it was answered. When a proxy
+             * may be in use (cURL reads one from the environment, or it answered a CONNECT), the size also counts the
+             * CONNECT bytes, so only the registry's own answer through an opened (2xx) tunnel counts, and a request
+             * whose answer never came is taken as not delivered
+             */
+            $proxy_code = (int) curl_getinfo($handle, CURLINFO_HTTP_CONNECTCODE);
+            $proxied = $proxy_code !== 0 || (string) (getenv('https_proxy') ?: getenv('HTTPS_PROXY') ?: getenv('all_proxy') ?: getenv('ALL_PROXY')) !== '';
+            $delivered = !$proxied ? ($http_code > 0 || curl_getinfo($handle, CURLINFO_REQUEST_SIZE) > 0)
+                : (($proxy_code === 0 || ($proxy_code >= 200 && $proxy_code < 300)) && $http_code > 0);
+            if ($this->tracking_domain_request && $delivered) {
+                $this->domain_request_delivered = true;
+            }
+            $usual_limit = $handshake_done ? 20 : 10;
+            $timer = (int) max(1, min($usual_limit, $remaining));
+            if ($curl_result === false && curl_errno($handle) === CURLE_OPERATION_TIMEDOUT && $timer < $usual_limit
+                && microtime(true) - $request_started >= $timer - 0.5) {
+                $this->last_fetch_cut_short = true;
+                // The deadline ended the domain's own first connection before its TLS handshake finished, so its
+                // request never reached the registry (as a WHOIS connection the deadline ends)
+                if ($usual_limit === 10 && $hop === 0 && $this->tracking_domain_request) {
+                    $this->domain_request_sent = false;
+                    $this->last_fetch_stopped = true;
+                }
+            }
             // No curl_close(): it has done nothing since PHP 8.0 and is deprecated in 8.5
 
             if ($too_big) return array('error', '');
@@ -569,6 +681,13 @@ class Rdap
 
         }
 
+        return array('error', '');
+    }
+
+    // fetch()'s answer when its deadline stopped it before the request was sent
+    protected function stopped()
+    {
+        $this->last_fetch_stopped = true;
         return array('error', '');
     }
 

@@ -44,11 +44,9 @@ class WatchCheck
     const WATCH_BATCH = 50;
     const RUN_NOW_BUDGET = 20;
     const CHECK_NOW_BUDGET = 30;
-    /*
-     * The time the tasks that run before this one (the Domain Queue's RDAP import and the SSL Queue) leave for it while
-     * it has work to do (see reserveFor()). This is the seam the scheduled refresh's turn cycle replaces.
-     */
-    const WATCH_RESERVE = 15;
+    // The time it needs left in the request when it starts on its turn in a cron run with a time limit (see
+    // Scheduler::turn()): a lookup needs MIN_LOOKUP_TIME, and the run keeps a quarter of what's left
+    const WATCH_NEEDS = 20;
     // A lookup is only started with at least this many seconds left, as Refresh does
     const MIN_LOOKUP_TIME = 10;
     // Lookups to one TLD server per run (WHOIS uses DomainQueue::WHOIS_PER_SERVER)
@@ -94,9 +92,6 @@ class WatchCheck
     protected $rdap = null;
     protected $whois = null;
 
-    // Set by Run Now, which runs only the task chosen, so the other tasks leave no reserve for this one
-    public static $single_task = false;
-
     // Whether a save in this run met another request's write (errors 1020 and 1213, see hadConflict())
     protected $had_conflict = false;
 
@@ -139,34 +134,15 @@ class WatchCheck
     }
 
     /*
-     * The seconds the tasks that run before Check Watch List leave for it (WATCH_RESERVE when it has work to do, see
-     * reserveNeeded(), and 0 otherwise). It's the one place the reserve is decided: when the scheduled refresh's turn
-     * cycle is built, it replaces this fixed reserve, and this method and its two callers (DomainQueue and SslQueue)
-     * become the watch list's turn.
-     */
-    public static function reserveFor(\PDO $pdo)
-    {
-        try {
-            return self::reserveNeeded($pdo) ? self::WATCH_RESERVE : 0;
-        } catch (\Throwable $e) {
-            return 0;
-        }
-    }
-
-    /*
      * Whether a scheduled run would have work: an entry now live in Domains to archive, or an entry its selection would
-     * pick (worked out by the same code the run uses). False, without a query, before the database update that adds the
-     * Watch List, while it's turned off in System Settings (WatchList::isEnabled()), and during Run Now, and false when
-     * the task isn't active or isn't due in this run.
+     * pick (worked out by the same code the run uses), for the turns the tasks take in a cron run with a time limit (see
+     * Scheduler::turn(), which reads whether the task is on and due from the run's own task list). False, without a
+     * query of the list, before the database update that adds the Watch List, and while it's turned off in System
+     * Settings (WatchList::isEnabled()).
      */
     public static function reserveNeeded(\PDO $pdo)
     {
-        if (self::$single_task || !WatchList::isEnabled()) return false;
-        $stmt = $pdo->prepare("SELECT active, next_run FROM scheduler WHERE slug = 'watch-list' LIMIT 1");
-        $stmt->execute();
-        $task = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-        if (!$task || (string) $task['active'] !== '1' || (string) $task['next_run'] > gmdate('Y-m-d H:i:s')) return false;
+        if (!WatchList::isEnabled()) return false;
         $check = new self($pdo);
         $moved = $check->movedCandidates();
         if ($moved) return true;
@@ -527,15 +503,22 @@ class WatchCheck
             'deletion_date' => '', 'registrar_name' => '', 'registrar_iana_id' => '', 'registrar_url' => '',
             'statuses' => array());
         $state += array('servers' => array(), 'failed' => array());
+        // Each watched domain is its own attempt, so a bootstrap download another's deadline cut off is tried again
+        Rdap::newAttempt();
         if ($deadline - microtime(true) < self::MIN_LOOKUP_TIME) return $answer;
 
         $ascii = Domain::forApi($row['domain']);
         $rdap = $this->rdap();
 
-        // Without IANA's bootstrap file nothing can be looked up yet: a failure, but never a definite "no source"
-        if (!$rdap->hasBootstrap($deadline)) return array('kind' => 'failure', 'source' => 'rdap', 'result' => 'no_bootstrap') + $answer;
+        // Without IANA's bootstrap file nothing can be looked up yet: a failure, but never a definite "no source". A
+        // download the deadline cut off failed nothing, so the entry is simply left for a later run
+        if (!$rdap->hasBootstrap($deadline)) {
+            return Rdap::bootstrapCutOff() ? $answer : array('kind' => 'failure', 'source' => 'rdap', 'result' => 'no_bootstrap') + $answer;
+        }
 
         $server = $rdap->serverFor($ascii, $deadline);
+        // An expired copy that doesn't name the TLD, after a cut-off download, can't say the TLD has no RDAP server
+        if ($server === '' && Rdap::downloadCutOff()) return $answer;
         if ($server !== '') {
             $key = 'rdap:' . strtolower((string) parse_url($server, PHP_URL_HOST));
             if (isset($state['failed'][$key])) return array('result' => 'server_failed') + $answer;
@@ -546,6 +529,12 @@ class WatchCheck
             $answer['started'] = $this->now();
             $answer['source'] = 'rdap';
             $lookup = $rdap->lookup($row['domain'], $deadline);
+            // Stopped by the deadline before the registry was asked: nothing failed
+            if ($rdap->deadline_stopped) {
+                // nothing was sent, so it doesn't use up the server's share
+                $state['servers'][$key]--;
+                return $answer;
+            }
             $answer['request_sent'] = $rdap->domain_request_sent;
             return $this->fromRdap($lookup, $answer, $state, $key);
         }
@@ -555,7 +544,7 @@ class WatchCheck
         $stale = Rdap::$bootstrap_stale;
         $whois = $this->whois();
         list($found, $whois_server) = $whois->serverFor($ascii, $deadline);
-        if (!$found) return array('kind' => 'failure', 'source' => 'whois', 'result' => 'no_whois_info') + $answer;
+        if (!$found) return $whois->discovery_cut_off ? $answer : array('kind' => 'failure', 'source' => 'whois', 'result' => 'no_whois_info') + $answer;
         if ($whois_server === '') {
             return array('kind' => $stale ? 'failure' : 'no_source', 'source' => 'whois',
                 'result' => $stale ? 'stale_bootstrap' : 'no_source') + $answer;
@@ -570,6 +559,10 @@ class WatchCheck
         $answer['started'] = $this->now();
         $answer['source'] = 'whois';
         $lookup = $whois->lookup($row['domain'], $deadline);
+        if ($whois->deadline_stopped) {
+            $state['servers'][$key]--;
+            return $answer;
+        }
         $answer['request_sent'] = $whois->domain_request_sent;
         return $this->fromWhois($lookup, $answer, $state, $key);
     }

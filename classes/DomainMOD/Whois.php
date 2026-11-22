@@ -35,6 +35,19 @@ class Whois
     // Whether the last lookup() started its query to the TLD's WHOIS server (never set by the IANA lookup of which
     // server to ask), as Rdap::$domain_request_sent does for RDAP
     public $domain_request_sent = false;
+    /*
+     * Whether the last lookup() returned without sending its query because its deadline ran out first (the wait between
+     * queries, the time checks before connecting, a slow host name lookup, a connection attempt the deadline ended, or
+     * an IANA lookup the deadline cut off), as Rdap::$deadline_stopped does for RDAP, so a caller can put the domain off
+     * instead of counting a failure
+     */
+    public $deadline_stopped = false;
+    // Whether the last serverFor() couldn't ask IANA because the caller's deadline cut the request off (before or after
+    // it was sent), which starts no wait and caches nothing, so a later caller with more time asks again
+    public $discovery_cut_off = false;
+    // Whether the last lookup() wrote its query to the TLD's WHOIS server in full (so the server was really asked, even
+    // if it then closed the connection without a reply)
+    public $query_written = false;
 
     // State shared by every Whois object in this PHP process (one cron run or page load)
     protected static $servers = null;      // TLD => WHOIS server ('' for none) and when it was looked up
@@ -69,6 +82,8 @@ class Whois
             'registrar_iana_id' => '', 'registrar_url' => '', 'registration_date' => '', 'message' => '',
             'connection_failed' => false, 'replied' => false);
         $this->domain_request_sent = false;
+        $this->deadline_stopped = false;
+        $this->query_written = false;
 
         $ascii_domain = Domain::forApi($domain);
 
@@ -83,6 +98,7 @@ class Whois
 
         if (!$found) {
 
+            $this->deadline_stopped = $this->discovery_cut_off;
             $result['message'] = 'The WHOIS server for this TLD could not be found';
             return $result;
 
@@ -96,8 +112,9 @@ class Whois
 
         }
 
-        list($status, $response, $connection_failed) = $this->query($server, $ascii_domain, $deadline);
+        list($status, $response, $connection_failed, $stopped) = $this->query($server, $ascii_domain, $deadline);
         $result['replied'] = $response !== '';
+        $this->deadline_stopped = $stopped;
 
         if ($status !== 'ok') {
 
@@ -117,6 +134,7 @@ class Whois
     public function serverFor($ascii_domain, $deadline = null)
     {
         $deadline = $deadline ?? (microtime(true) + 30);
+        $this->discovery_cut_off = false;
         $tld = strtolower(substr(strrchr('.' . $ascii_domain, '.'), 1));
         if ($tld === '' || !$this->rdap->isHostname($tld)) return array(true, '');
 
@@ -146,6 +164,14 @@ class Whois
 
         list($status, $body) = $this->rdap->fetch('https://www.iana.org/domains/root/db/' . rawurlencode($tld) . '.html',
             $deadline, self::IANA_MAX_BYTES, false);
+
+        // The caller's deadline cut the request off (IANA didn't fail), so no wait starts and nothing is cached
+        if ($status !== 'ok' && ($this->rdap->last_fetch_stopped || $this->rdap->last_fetch_cut_short)) {
+
+            $this->discovery_cut_off = true;
+            return array(false, '');
+
+        }
 
         if ($status !== 'ok') {
 
@@ -197,10 +223,11 @@ class Whois
     }
 
     /*
-     * One WHOIS query: array(status, response, connection_failed). On an error, response holds whatever arrived
-     * before it (only to show the server replied, never parsed). The whole transfer is bounded by the deadline (the
-     * time left is applied before every write and read), and a timeout, a read error, or a response over the size cap
-     * is an error, so a partial response is never parsed.
+     * One WHOIS query: array(status, response, connection_failed, deadline_stopped). On an error, response holds whatever
+     * arrived before it (only to show the server replied, never parsed). The whole transfer is bounded by the deadline
+     * (the time left is applied before every write and read), and a timeout, a read error, or a response over the size
+     * cap is an error, so a partial response is never parsed. deadline_stopped is true when the deadline ran out before
+     * the query was written (see $deadline_stopped), and connection_failed is then false.
      */
     protected function query($server, $ascii_domain, $deadline)
     {
@@ -211,23 +238,31 @@ class Whois
         } else {
 
             // PHP's resolver has no per-call timeout, so only start it with at least 5 seconds left
-            if ($deadline - microtime(true) < 5) return array('error', '', false);
+            if ($deadline - microtime(true) < 5) return array('error', '', false, true);
             $address = $this->rdap->publicAddress($server);
+            // A host name lookup that used up the time is a cutoff, checked before an empty answer counts as a failure
+            if ($address === '' && $deadline - microtime(true) < 1) return array('error', '', false, true);
             $target = ($address === '') ? '' : ((strpos($address, ':') !== false) ? '[' . $address . ']' : $address) . ':' . self::PORT;
 
         }
 
-        if ($target === '') return array('error', '', true);
+        if ($target === '') return array('error', '', true, false);
 
-        if (!$this->pace($server, $deadline)) return array('error', '', false);
+        if (!$this->pace($server, $deadline)) return array('error', '', false, true);
 
         $remaining = $deadline - microtime(true);
-        if ($remaining < 1) return array('error', '', false);
+        if ($remaining < 1) return array('error', '', false, true);
 
         // The query to the TLD's server starts here
         $this->domain_request_sent = true;
 
         $handle = @stream_socket_client('tcp://' . $target, $error_number, $error_message, min(10, $remaining));
+
+        // A connection attempt that the deadline ended (rather than one the server refused) never sent the query
+        if ($handle === false && $deadline - microtime(true) < 0.5) {
+            $this->domain_request_sent = false;
+            return array('error', '', false, true);
+        }
 
         if ($handle === false) {
 
@@ -235,18 +270,36 @@ class Whois
             $log_extra = array('Server' => $server, 'Error' => $error_number . ': ' . $error_message);
             $this->log->notice($log_message, $log_extra);
 
-            return array('error', '', true);
+            return array('error', '', true, false);
 
         }
 
         $query = sprintf(self::$query_formats[$server] ?? '%s', $ascii_domain) . "\r\n";
 
-        if (!$this->setTimeout($handle, $deadline) || @fwrite($handle, $query) !== strlen($query)) {
+        if (!$this->setTimeout($handle, $deadline)) {
 
+            // The deadline passed before the query could be written
             fclose($handle);
-            return array('error', '', true);
+            $this->domain_request_sent = false;
+            return array('error', '', false, true);
 
         }
+
+        if (@fwrite($handle, $query) !== strlen($query)) {
+
+            // A write the deadline ended (its stream timeout, set from the time left, ran out) never finished sending
+            // the query, while one the server cut off is a connection failure
+            $timed_out = !empty(stream_get_meta_data($handle)['timed_out']);
+            fclose($handle);
+            if ($timed_out) {
+                $this->domain_request_sent = false;
+                return array('error', '', false, true);
+            }
+            return array('error', '', true, false);
+
+        }
+
+        $this->query_written = true;
 
         $response = '';
 
@@ -255,7 +308,7 @@ class Whois
             if (!$this->setTimeout($handle, $deadline)) {
 
                 fclose($handle);
-                return array('error', $response, false);
+                return array('error', $response, false, false);
 
             }
 
@@ -265,7 +318,7 @@ class Whois
             if ($chunk === false || !empty($meta['timed_out'])) {
 
                 fclose($handle);
-                return array('error', $response, $response === '');
+                return array('error', $response, $response === '', false);
 
             }
 
@@ -274,7 +327,7 @@ class Whois
             if (strlen($response) > self::RESPONSE_MAX_BYTES) {
 
                 fclose($handle);
-                return array('error', $response, false);
+                return array('error', $response, false, false);
 
             }
 
@@ -282,12 +335,12 @@ class Whois
 
         fclose($handle);
 
-        if ($response === '') return array('error', '', true);
+        if ($response === '') return array('error', '', true, false);
 
         // some servers answer in ISO-8859-1
         if (!mb_check_encoding($response, 'UTF-8')) $response = mb_convert_encoding($response, 'UTF-8', 'ISO-8859-1');
 
-        return array('ok', $response, false);
+        return array('ok', $response, false, false);
     }
 
     // Applies the time left before the deadline to the next read or write (false once it has passed)

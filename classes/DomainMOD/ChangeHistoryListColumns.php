@@ -95,7 +95,7 @@ class ChangeHistoryListColumns extends ListColumns
      * that's always on the page (#domainmod-change-history), so an in-place Refresh can replace it with an out-of-band
      * swap ($oob). Before the database update that adds the history, it's an empty wrapper.
      */
-    public static function editSection(\PDO $pdo, $type, $id, $oob = false)
+    public static function editSection(\PDO $pdo, $type, $id, $oob = false, $intro = '')
     {
         $wrapper = '<div id="domainmod-change-history"' . ($oob ? ' hx-swap-oob="true"' : '') . '>';
         if (!ChangeHistory::isAvailable($pdo)) return $wrapper . '</div>';
@@ -111,11 +111,15 @@ class ChangeHistoryListColumns extends ListColumns
             return $row->operation_id;
         }, $rows)));
 
+        // An optional line above the table, already escaped (the domain edit page's automatic check status, see
+        // DomainRefresh::statusLine())
+        $body = $intro !== '' ? '<p class="domainmod-span-all mb-2">' . $intro . '</p>' : '';
+
         if (!$rows) {
-            $body = '<p class="domainmod-span-all mb-2">' . $esc(_('No changes recorded yet.')) . '</p>';
+            $body .= '<p class="domainmod-span-all mb-2">' . $esc(_('No changes recorded yet.')) . '</p>';
         } else {
             // The scroll region's own name, since the section around it is already named Change History
-            $body = '<div class="domainmod-span-all domainmod-scroll-table domainmod-history-section mb-2" tabindex="0" role="region" aria-label="'
+            $body .= '<div class="domainmod-span-all domainmod-scroll-table domainmod-history-section mb-2" tabindex="0" role="region" aria-label="'
                 . $esc(array('ssl' => _('Recent changes to this SSL certificate'),
                     'hosting' => _('Recent changes to this hosting service'),
                     'watch' => _('Recent changes to this watched domain'))[$type] ?? _('Recent changes to this domain'))

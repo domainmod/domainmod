@@ -685,8 +685,8 @@ class RestoreRecovery
     }
 
     /*
-     * The restore's cleanup: the Change History's check, the Watch List's, then every user's new two-factor stamp (so
-     * sessions opened before the restore end), each safe to run twice
+     * The restore's cleanup: the Change History's check, the Watch List's, the Refresh Domains task's, then every user's
+     * new two-factor stamp (so sessions opened before the restore end), each safe to run twice
      */
     public static function cleanup($restore_id)
     {
@@ -694,6 +694,7 @@ class RestoreRecovery
         self::historyCleanup($pdo, $restore_id);
         ChangeHistory::forgetAvailability();
         self::watchCleanup($pdo, $restore_id);
+        self::refreshCleanup($pdo, $restore_id);
 
         /*
          * Every user gets a new two-factor stamp, so sessions opened before the restore end. Only a restored database that
@@ -768,6 +769,99 @@ class RestoreRecovery
         }
 
         WatchList::resetAvailable();
+    }
+
+    /*
+     * The Refresh Domains task after a restore of a 4.27.0 or later database (an older one leaves domain_refresh_status
+     * alone: the next Upgrade Database drops and creates it, and DomainRefresh::scheduleAvailable() is false until then).
+     * A missing domain_refresh_status, or one without every column this version creates, is created again empty. One
+     * that's there is emptied unless the Change History's check kept the restored history (a full backup whose manifest
+     * row counts match, domain_refresh_status and domains included, and an import that succeeded), since otherwise its
+     * rows may name another portfolio's domains (emptying only means every domain is checked again from the start).
+     * Then the task's scheduler row is added, off, when the restored scheduler has none (skipped without a scheduler
+     * table), and unless the history was kept, an existing one is turned off, so a restore that stopped part-way can't
+     * leave the task checking a portfolio that isn't the one restored. The decision is the one historyCleanup() saved
+     * under the restore id (see historyKept()), so a retry after a crash makes the same choice.
+     */
+    public static function refreshCleanup(\PDO $pdo, $restore_id)
+    {
+        $version = self::restoredVersion($pdo);
+        if ($version === null || version_compare($version, DomainRefresh::AVAILABLE_FROM, '<')) return;
+
+        $kept = self::historyKept($pdo, $restore_id);
+
+        $stmt = $pdo->query("
+            SELECT TABLE_NAME, COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME IN ('domain_refresh_status', 'scheduler')");
+        $columns = array();
+        foreach ($stmt->fetchAll(\PDO::FETCH_NUM) as $row) $columns[$row[0]][] = strtolower($row[1]);
+        $stmt->closeCursor();
+
+        if (!isset($columns['domain_refresh_status']) || array_diff(DomainRefresh::STATUS_COLUMNS, $columns['domain_refresh_status'])) {
+            $pdo->exec("DROP TABLE IF EXISTS `domain_refresh_status`");
+            $pdo->exec(DomainRefresh::tableSql());
+        } elseif (!$kept) {
+            $pdo->exec("TRUNCATE TABLE `domain_refresh_status`");
+        }
+
+        if (isset($columns['scheduler'])) {
+            $exists = (int) $pdo->query("SELECT count(*) FROM scheduler WHERE slug = 'domain-refresh'")->fetchColumn() > 0;
+            if (!$exists) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO scheduler
+                    (`name`, description, `interval`, expression, slug, sort_order, is_running, active, `timezone`, next_run,
+                     insert_time)
+                     VALUES
+                    (:name, :description, 'Every 10 Minutes', '*/10 * * * *', 'domain-refresh', '120', '0', '0', 'UTC',
+                     :next_run, :insert_time)");
+                $stmt->bindValue('name', DomainRefresh::TASK_NAME, \PDO::PARAM_STR);
+                $stmt->bindValue('description', DomainRefresh::TASK_DESCRIPTION, \PDO::PARAM_STR);
+                $stmt->bindValue('next_run', (new Scheduler())->getNextRun('*/10 * * * *', 'UTC'), \PDO::PARAM_STR);
+                $stmt->bindValue('insert_time', gmdate('Y-m-d H:i:s'), \PDO::PARAM_STR);
+                $stmt->execute();
+            } elseif (!$kept) {
+                $pdo->exec("UPDATE scheduler SET active = '0' WHERE slug = 'domain-refresh'");
+            }
+        }
+
+        DomainRefresh::resetScheduleAvailable();
+    }
+
+    /*
+     * Whether historyCleanup() kept the restored history for this restore: the reason it saved in the verdict ('' when
+     * kept), or else the one its restore marker records, never its return value (a retry after a crash returns early).
+     * With no saved decision, the history counts as not kept.
+     */
+    public static function historyKept(\PDO $pdo, $restore_id)
+    {
+        $result = self::readResult($restore_id, true);
+        if (is_array($result) && array_key_exists('reason', $result)) return (string) $result['reason'] === '';
+
+        $stmt = $pdo->query("
+            SELECT count(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'change_operations'
+              AND COLUMN_NAME = 'note_code'");
+        $has_markers = (int) $stmt->fetchColumn() > 0;
+        $stmt->closeCursor();
+        if (!$has_markers) return false;
+
+        $stmt = $pdo->prepare("
+            SELECT `action`
+            FROM change_operations
+            WHERE source = 'restore'
+              AND note_code = :note_code
+            ORDER BY id DESC
+            LIMIT 1");
+        $stmt->bindValue('note_code', 'restore:' . $restore_id, \PDO::PARAM_STR);
+        $stmt->execute();
+        $reason = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $reason !== false && (string) $reason === '';
     }
 
     /*

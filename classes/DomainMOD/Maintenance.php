@@ -102,7 +102,8 @@ class Maintenance
         if (Hosting::isAvailable($pdo)) {
 
             try {
-                $hosting_ran = $this->updateHostingFees(Hosting::TASK_WAIT, (int) $user_id);
+                // A cron run (no user) waits only as long as its time limit allows (see Hosting::taskWait())
+                $hosting_ran = $this->updateHostingFees(Hosting::taskWait('cleanup', (int) $user_id === 0), (int) $user_id);
             } catch (\Throwable $e) {
                 $this->log->error('Unable to update the hosting fees', array('Error' => $e->getMessage()));
                 $hosting_ran = false;
@@ -116,6 +117,15 @@ class Maintenance
         // The Change History's pruning, and any custom field columns a delete or add left part-way
         (new ChangeHistory($pdo))->prune();
         $this->dropOrphanCustomFieldColumns();
+        // Refresh Domains schedules whose domain is gone (a failure is logged, so the rest of the run goes on)
+        try {
+            DomainRefresh::deleteOrphanStatus($pdo);
+        } catch (\Throwable $e) {
+            try {
+                $this->log->warning('Unable to delete orphaned Refresh Domains schedules', array('Error' => $e->getMessage()));
+            } catch (\Throwable $log_error) {
+            }
+        }
 
         // The result: the completed message, and the hosting fee step's skipped line ('' when it ran, or when the
         // database doesn't have the hosting tables yet), which cron.php logs and Run Now shows as a warning

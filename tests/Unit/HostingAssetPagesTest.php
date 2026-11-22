@@ -131,7 +131,8 @@ class HostingAssetPagesTest extends TestCase
     {
         $source = $this->source('classes/DomainMOD/Maintenance.php');
         $cleanup = substr($source, strpos($source, 'public function performCleanup('), 6000);
-        $this->assertSame(1, substr_count($cleanup, '$this->updateHostingFees(Hosting::TASK_WAIT'));
+        // waiting only as long as a cron run's time limit allows (see Hosting::taskWait())
+        $this->assertSame(1, substr_count($cleanup, '$this->updateHostingFees(Hosting::taskWait(\'cleanup\', (int) $user_id === 0)'));
         // after the domain and SSL fee steps have committed, never inside their transaction
         $this->assertLessThan(strpos($cleanup, '$this->updateHostingFees('), strpos($cleanup, '$pdo->commit();'));
         $this->assertStringNotContainsString("deleteUnusedFees('hosting_fees'", $source);

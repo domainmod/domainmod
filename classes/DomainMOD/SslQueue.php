@@ -45,6 +45,7 @@ class SslQueue
     const CANDIDATES = 500;        // rows read per run
     const BATCH = 50;              // rows looked up per run
     const BUDGET = 120;            // seconds a run may spend on lookups
+    const SSL_QUEUE_NEEDS = 20;    // seconds it needs left in the request on its turn (see Scheduler::turn())
     const MAX_ATTEMPTS = 3;        // retryable failures before a row fails
     const CLAIM_TIMEOUT = 900;     // seconds after which a claim is one a stopped run left behind
     const WAIT_DAYS = 7;           // days a row waits for its domain to be imported
@@ -1493,6 +1494,21 @@ class SslQueue
         }
     }
 
+    // Whether a scheduled run would have a row to look up (for the turns the tasks take, see Scheduler::turn())
+    public function hasWork()
+    {
+        if (!$this->isAvailable()) return false;
+
+        return $this->deeb->cnxx->query("
+            SELECT id
+            FROM ssl_queue
+            WHERE wait_for_domain = '0'
+              AND processing = '0'
+              AND finished = '0'
+              AND attempts < '" . self::MAX_ATTEMPTS . "'
+            LIMIT 1")->fetchColumn() !== false;
+    }
+
     // The run's time budget: BUDGET, cut down by max_execution_time the way the Domain Queue's RDAP import does it
     protected function budget($started)
     {
@@ -1501,10 +1517,11 @@ class SslQueue
 
         if ($max_execution_time > 0) {
 
-            // keep a quarter of what's left (at most a minute) for the rest of the run, and the Watch List's reserve while
-            // it has work to do (see WatchCheck::reserveFor())
+            // keep a quarter of what's left (at most a minute) for the rest of the run, and on a later task's turn, that
+            // task's needs (see Scheduler::reserveFor())
             $remaining = $max_execution_time - ($started - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $started));
-            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4) - WatchCheck::reserveFor($this->deeb->cnxx)));
+            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4)));
+            $budget = min($budget, max(0, $remaining - Scheduler::reserveFor('ssl-queue')));
 
         }
 

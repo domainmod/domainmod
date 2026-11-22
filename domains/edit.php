@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
         }
 
         // The Change History section, redrawn with the refresh's changes, replaces the page's (an out-of-band swap)
-        echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, true);
+        echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, true, DomainMOD\DomainRefresh::statusLine($pdo, $did));
         exit;
 
     }
@@ -589,6 +589,9 @@ if ($del === 1) {
         $stmt->bindValue('did', $did, PDO::PARAM_INT);
         $stmt->execute();
 
+        // The Refresh Domains task's schedule for it (its history stays)
+        (new DomainMOD\DomainRefresh())->deleteStatus(array($did));
+
         $maint->updateSegments();
 
         $system->checkExistingAssets();
@@ -945,7 +948,7 @@ echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
 // The domain's Change History, read-only and outside the form
-echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did);
+echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, false, DomainMOD\DomainRefresh::statusLine($pdo, $did));
 
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);

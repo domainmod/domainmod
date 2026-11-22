@@ -1285,6 +1285,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
 
+                            // The Refresh Domains task's schedules for them (their history stays)
+                            (new DomainMOD\DomainRefresh())->deleteStatus($domain_id_list);
+
 
                         }
 

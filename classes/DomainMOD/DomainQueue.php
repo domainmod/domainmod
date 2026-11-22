@@ -811,10 +811,11 @@ class DomainQueue
 
         if ($max_execution_time > 0) {
 
-            // keep a quarter of what's left (at most a minute) for the rest of the run, and the Watch List's reserve while
-            // it has work to do (see WatchCheck::reserveFor())
+            // keep a quarter of what's left (at most a minute) for the rest of the run, and on a later task's turn, that
+            // task's needs (see Scheduler::reserveFor())
             $remaining = $max_execution_time - ($started - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $started));
-            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4) - WatchCheck::reserveFor($this->deeb->cnxx)));
+            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4)));
+            $budget = min($budget, max(0, $remaining - Scheduler::reserveFor('domain-queue')));
 
         }
 
@@ -831,6 +832,9 @@ class DomainQueue
         foreach ($result as $row) {
 
             if ($attempted >= self::RDAP_BATCH || microtime(true) - $started >= $budget) break;
+
+            // each row is its own attempt, so a bootstrap download an earlier row's deadline cut off is tried again
+            Rdap::newAttempt();
 
             // the bootstrap download (the first time serverFor() needs it) also counts against the budget
             $ascii_domain = Domain::forApi($row->domain);
@@ -880,7 +884,15 @@ class DomainQueue
                 $status_source = 'rdap';
                 $lookup = $rdap->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
 
-                if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
+                if ($rdap->deadline_stopped) {
+
+                    // the budget ran out before the registry was asked, so the server isn't skipped, and a WHOIS count
+                    // the row already has is kept
+                    $failures = $this->getWhoisFailures($row->id);
+                    $this->releaseRdapRow($row->id, $failures > 0 ? 'retry_whois_error|' . $failures : 'retry_error');
+                    continue;
+
+                } elseif ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
 
                     $this->releaseRdapRow($row->id, ($lookup['status'] === 'rate_limited') ? 'retry_rate_limited' : 'retry_error');
                     if ($server !== '') $skipped_servers[$server] = true;
@@ -916,15 +928,27 @@ class DomainQueue
                     $whois_queries[$whois_server] = ($whois_queries[$whois_server] ?? 0) + 1;
                     $status_started = gmdate('Y-m-d H:i:s');
                     $status_source = 'whois';
-                    $lookup = $whois->lookup($row->domain, min(microtime(true) + 30, $started + $budget));
+                    $whois_deadline = min(microtime(true) + 30, $started + $budget);
+                    $lookup = $whois->lookup($row->domain, $whois_deadline);
 
-                    if ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
+                    if ($whois->deadline_stopped) {
+
+                        // the budget ran out before the query was sent: the row waits for the next run with its count
+                        // as it was, and the server isn't skipped or charged for it
+                        $whois_queries[$whois_server]--;
+                        $this->releaseRdapRow($row->id, 'retry_whois_error|' . $failures);
+                        continue;
+
+                    } elseif ($lookup['status'] === 'rate_limited' || $lookup['status'] === 'error') {
 
                         $skipped_servers['whois:' . $whois_server] = true;
 
                         // only a connection that couldn't be made counts (some hosts block port 43), any reply resets the
-                        // count, and a lookup that never tried to connect (too little time left) leaves it as it was
-                        if ($lookup['connection_failed']) {
+                        // count, and a lookup that never tried to connect (too little time left) leaves it as it was, as
+                        // does a query that was written but whose reply the deadline cut off (a server that closes the
+                        // connection without a reply while time is left still counts)
+                        $reply_cut_off = $whois->query_written && $whois_deadline - microtime(true) < 0.5;
+                        if ($lookup['connection_failed'] && !$reply_cut_off) {
                             $failures++;
                         } elseif ($lookup['replied']) {
                             $failures = 0;
@@ -1114,6 +1138,32 @@ class DomainQueue
     }
 
     // The id of the RDAP source in api_registrars, or 0 before the database update that adds it
+    // Whether the RDAP import has a row waiting (for the turns the tasks take, see Scheduler::turn())
+    public function hasRdapWork()
+    {
+        $rdap_api_registrar_id = $this->getRdapApiRegistrarId();
+        if (!$rdap_api_registrar_id) return false;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT id
+            FROM domain_queue
+            WHERE api_registrar_id = :api_registrar_id
+              AND account_id = '0'
+              AND processing = '0'
+              AND ready_to_import = '0'
+              AND finished = '0'
+              AND copied_to_history = '0'
+              AND already_in_domains = '0'
+              AND already_in_queue = '0'
+            LIMIT 1");
+        $stmt->bindValue('api_registrar_id', $rdap_api_registrar_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $found = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $found !== false;
+    }
+
     public function getRdapApiRegistrarId()
     {
         return (int) $this->deeb->cnxx->query("

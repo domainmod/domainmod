@@ -70,9 +70,6 @@ if (DEMO_INSTALLATION == false) {
 
     } else {
 
-        // Run Now runs only this task, so the queues leave no time for the Watch List (see WatchCheck::reserveFor())
-        DomainMOD\WatchCheck::$single_task = true;
-
         try {
 
             $started = $time->stamp();
@@ -222,6 +219,27 @@ if (DEMO_INSTALLATION == false) {
                 $log->notice($log_message);
 
                 $_SESSION['s_message_success'] .= _('SSL Queue Processed') . '<BR>';
+
+            } elseif ($result->slug == 'domain-refresh') {
+
+                $log_message = sprintf('[%s]' . _('Refresh Domains'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                // One batch with a shorter budget, even while the task is off (Run Now never takes turns)
+                $refresh = new DomainMOD\DomainRefresh();
+                $schedule->isRunning($id);
+                $refresh_summary = $refresh->refreshDue(true);
+                $schedule->finishTask($id, $started);
+                if ($refresh->hadConflict()) {
+                    $_SESSION['s_message_danger'] .= _("Someone else changed a domain at the same time, so Refresh Domains couldn't finish part of its work. Those domains are checked again on a later run.") . '<BR>';
+                }
+
+                $log_message = sprintf('[%s]' . _('Refresh Domains'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message, $refresh_summary);
+
+                $_SESSION['s_message_success'] .= _('Domains Refreshed') . '<BR>'
+                    . sprintf(ngettext('%s domain checked.', '%s domains checked.', $refresh_summary['checked']), number_format($refresh_summary['checked'])) . '<BR>'
+                    . sprintf(ngettext('%s domain changed.', '%s domains changed.', $refresh_summary['changed']), number_format($refresh_summary['changed'])) . '<BR>';
 
             } elseif ($result->slug == 'watch-list') {
 

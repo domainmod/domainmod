@@ -170,6 +170,24 @@ class Hosting
         return $got;
     }
 
+    /*
+     * How long a scheduled task waits for the hosting lock: TASK_WAIT, but in a cron run ($scheduled) with a time limit
+     * (max_execution_time), never past what's left of the request less a quarter of it (at most a minute, as the lookup
+     * tasks keep) and less the time Scheduler::reserveFor() keeps for one lookup task still to come in the run (the
+     * turn's owner until it starts, or in a run with no owner, the due turn task with the largest needs that hasn't
+     * started yet), so a busy lock can't use up the run's time. $slug is the task's scheduler slug.
+     */
+    public static function taskWait($slug, $scheduled, $now = null)
+    {
+        $max_execution_time = (int) ini_get('max_execution_time');
+        if (!$scheduled || $max_execution_time <= 0) return self::TASK_WAIT;
+
+        $now = $now ?? microtime(true);
+        $remaining = $max_execution_time - ($now - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $now));
+        $wait = $remaining - min(60, $remaining / 4) - Scheduler::reserveFor($slug);
+        return (int) max(0, min(self::TASK_WAIT, floor($wait)));
+    }
+
     // Lets go of the hosting lock (a failure, such as a lost connection, is ignored: the lock goes with it)
     public static function unlock(\PDO $pdo)
     {

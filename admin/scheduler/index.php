@@ -80,6 +80,9 @@ $result = $pdo->query("
         echo $schedule->taskCard($task);
     } ?>
 </div>
+<p class="text-body-secondary small mt-3 mb-0"><?php
+// TRANSLATORS: The two %s wrap the link to the Task Scheduler section of the User Guide and must stay.
+echo sprintf(_('See %sTask Scheduler%s in the User Guide for what each task does.'), '<a target="_blank" href="https://domainmod.org/docs/userguide/administration/#task-scheduler">', '</a>'); ?></p>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>
 </html>

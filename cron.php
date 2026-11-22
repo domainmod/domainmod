@@ -102,16 +102,30 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
 
     } else {
 
+        // With a time limit, the tasks that look domains up take turns when more than one has work (see
+        // DomainMOD\Scheduler::turn())
+        $schedule->turn(array_map(function ($task_row) {
+            return $task_row->slug;
+        }, $result));
+
         foreach ($result as $row) {
 
+            // Another contested run has claimed this task, so it's left to that run (see
+            // DomainMOD\Scheduler::leftToOtherRun()).
+            if ($schedule->leftToOtherRun($row->slug)) continue;
+
             // Another run has this task, so it's left to that run.
-            if (!$schedule->getTaskLock($row->id)) continue;
+            if (!$schedule->getTaskLock($row->id)) {
+                $schedule->releaseClaim($row->slug);
+                continue;
+            }
 
             try {
 
                 // Read the task again now that it's locked, since another run may have just finished it.
                 $task = $schedule->getTask($row->id);
                 if (!$task || $task->active != '1' || $task->next_run > $time->stamp()) continue;
+                DomainMOD\Scheduler::noteRan($row->slug);
 
                 $started = $time->stamp();
                 $log_extra = array('Task ID' => $row->id, 'Name' => $row->name, 'Slug' => $row->slug, 'Expression' => $row->expression, 'Active' => $row->active, 'Next Run' => $task->next_run);
@@ -233,6 +247,19 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
                     $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('End')));
                     $log->notice($log_message);
 
+                } elseif ($row->slug == 'domain-refresh') {
+
+                    $log_message = sprintf('[%s]' . _('Refresh Domains'), DomainMOD\Format::toUpper(_('Start')));
+                    $log->notice($log_message, $log_extra);
+
+                    $refresh = new DomainMOD\DomainRefresh();
+                    $schedule->isRunning($row->id);
+                    $refresh_summary = $refresh->refreshDue();
+                    $schedule->finishTask($row->id, $started);
+
+                    $log_message = sprintf('[%s]' . _('Refresh Domains'), DomainMOD\Format::toUpper(_('End')));
+                    $log->notice($log_message, $refresh_summary);
+
                 } elseif ($row->slug == 'watch-list') {
 
                     $log_message = sprintf('[%s]' . _('Check Watch List'), DomainMOD\Format::toUpper(_('Start')));
@@ -256,10 +283,14 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
             } finally {
 
                 $schedule->releaseTaskLock($row->id);
+                // Another contested run can now try this task, if it's still due.
+                $schedule->releaseClaim($row->slug);
 
             }
 
         }
+
+        $schedule->finishTurn();
 
     }
 

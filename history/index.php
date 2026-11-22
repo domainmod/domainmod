@@ -128,7 +128,7 @@ $range_names = array('today' => _('Today'), '7' => _('Last 7 Days'), '30' => _('
     'all' => _('All Time'), 'custom' => _('Custom Range'));
 $source_names = array();
 foreach (DomainMOD\ChangeHistory::SOURCES as $source_code) {
-    if (in_array($source_code, array('restore', 'system', 'api', 'scheduled_refresh'), true)) continue;
+    if (in_array($source_code, array('restore', 'system', 'api'), true)) continue;
     $source_names[$source_code] = DomainMOD\ChangeHistoryListColumns::sourceText($source_code, '', '');
 }
 

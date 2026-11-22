@@ -23,6 +23,7 @@ namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\Date;
 use DomainMOD\Hosting;
+use DomainMOD\Scheduler;
 use DomainMOD\Tests\Support\FakeDatabase;
 use DomainMOD\Tests\Support\RecordingPdo;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -383,6 +384,48 @@ class HostingTest extends TestCase
         $this->assertSame(array(1, 5, 3, 4, 0), array_keys(Hosting::statusOptions()));
         $this->assertSame('Cancelled', Hosting::statusName(0));
         $this->assertSame('', Hosting::statusName(9));
+    }
+
+    /*
+     * The System Cleanup's hosting fee step waits for the hosting lock only as long as a cron run with a time limit can
+     * spare, leaving the needs of a lookup task still to come in the run (Scheduler::reserveFor()). Run Now and a run
+     * with no limit wait the full TASK_WAIT.
+     */
+    public function testTheCleanupsLockWaitFitsTheCronRunsTimeAndTurn()
+    {
+        $turn = new \ReflectionProperty(Scheduler::class, 'turn');
+        $max_execution_time = ini_get('max_execution_time');
+        $request_time = $_SERVER['REQUEST_TIME_FLOAT'] ?? null;
+        try {
+            ini_set('max_execution_time', '0');
+            $this->assertSame(Hosting::TASK_WAIT, Hosting::taskWait('cleanup', true));
+
+            ini_set('max_execution_time', '30');
+            $_SERVER['REQUEST_TIME_FLOAT'] = 1000.0;
+            $this->assertSame(Hosting::TASK_WAIT, Hosting::taskWait('cleanup', false, 1000.0));
+            $this->assertSame(22, Hosting::taskWait('cleanup', true, 1000.0));
+            // on the Watch List's turn, before it has run: its needs are left too
+            $turn->setValue(null, array('owner' => 'watch-list', 'ran' => array()));
+            $this->assertSame(2, Hosting::taskWait('cleanup', true, 1000.0));
+            // once the owner has run, nothing more is kept for it
+            $turn->setValue(null, array('owner' => 'ssl-queue', 'ran' => array('ssl-queue' => true)));
+            $this->assertSame(22, Hosting::taskWait('cleanup', true, 1000.0));
+            // never below zero
+            $turn->setValue(null, array('owner' => 'watch-list', 'ran' => array()));
+            $this->assertSame(0, Hosting::taskWait('cleanup', true, 1025.0));
+            // a run with no owner leaves the needs of a lookup task due later in it, but not of one that has run
+            $turn->setValue(null, array('owner' => '', 'ran' => array(), 'due' => array('watch-list')));
+            $this->assertSame(2, Hosting::taskWait('cleanup', true, 1000.0));
+            $turn->setValue(null, array('owner' => '', 'ran' => array('ssl-queue' => true), 'due' => array('ssl-queue')));
+            $this->assertSame(22, Hosting::taskWait('cleanup', true, 1000.0));
+            $turn->setValue(null, array('owner' => '', 'ran' => array(), 'due' => array('ssl-queue')));
+            $this->assertSame(2, Hosting::taskWait('cleanup', true, 1000.0));
+            $this->assertSame(Hosting::TASK_WAIT, Hosting::taskWait('cleanup', false, 1000.0));
+        } finally {
+            $turn->setValue(null, null);
+            ini_set('max_execution_time', $max_execution_time);
+            if ($request_time === null) unset($_SERVER['REQUEST_TIME_FLOAT']); else $_SERVER['REQUEST_TIME_FLOAT'] = $request_time;
+        }
     }
 
     public function testHostingDateUsesTheZone()

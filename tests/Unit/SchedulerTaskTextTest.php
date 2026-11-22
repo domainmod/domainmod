@@ -21,6 +21,7 @@
 //@formatter:off
 namespace DomainMOD\Tests\Unit;
 
+use DomainMOD\DomainRefresh;
 use DomainMOD\Scheduler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -58,6 +59,13 @@ class SchedulerTaskTextTest extends TestCase
         // The stored text is ignored for a known task, so a name stored in the installer's language doesn't show
         $this->assertSame($name, Scheduler::taskText($slug, 'name', 'Stored name'));
         $this->assertSame($description, Scheduler::taskText($slug, 'description', 'Stored <BR>description'));
+    }
+
+    // The Refresh Domains task's translated description reads as the English text the database stores
+    // (DomainRefresh::TASK_DESCRIPTION)
+    public function testTheRefreshDomainsDescriptionMatchesTheStoredText()
+    {
+        $this->assertSame(DomainRefresh::TASK_DESCRIPTION, Scheduler::taskText('domain-refresh', 'description', ''));
     }
 
     public function testAnUnknownTaskShowsItsStoredTextAsPlainText()
