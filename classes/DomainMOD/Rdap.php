@@ -30,11 +30,24 @@ class Rdap
 {
     public $log;
     public $redirected = false; // whether the last fetch() followed a redirect
+    // Whether the last lookup() started its request for the domain itself to the TLD's RDAP server (never set by the
+    // IANA download or the registrar's record), so a caller can tell a lookup that asked the registry from one a time
+    // guard stopped before it did
+    public $domain_request_sent = false;
+
+    // Whether the TLD => server map in memory is a stale cached file kept after a failed refresh (shared, as the map is)
+    public static $bootstrap_stale = false;
+
+    // Test-only hook: when set, fetch() calls it with each URL instead of the network, and it returns array(HTTP status,
+    // body, Location), so the test harness can play RDAP answers (a direct 404, a redirect, a record) without a server
+    public static $test_fetch = null;
 
     // State shared by every Rdap object in this PHP process (one cron run or page load)
     protected static $bootstrap = null;
     protected static $last_request = array();          // when each RDAP server was last asked
     protected static $failed_registrar_hosts = array(); // registrar servers that failed or limited requests this run
+    // Set while lookup() fetches the domain's own record, so fetch() can mark when that request starts
+    protected $tracking_domain_request = false;
 
     const BOOTSTRAP_URL = 'https://data.iana.org/rdap/dns.json';
     const BOOTSTRAP_MAX_AGE = 604800;   // 7 days
@@ -53,8 +66,10 @@ class Rdap
      * Looks up one domain. $deadline is an absolute time (microtime(true)) by which every request must finish; no new
      * request starts after it. Returns status (ok, not_found, no_server, rate_limited, mismatch, or error), expiry_date
      * (Y-m-d or ''), name_servers, registrar_name, registrar_iana_id, registrar_url, statuses (the registry status codes,
-     * see DomainStatus), status_read (found, none, or incomplete, see below), and message (plain text, never taken from
-     * the response).
+     * see DomainStatus), status_read (found, none, or incomplete, see below), registration_date and deletion_date (Y-m-d
+     * or '', the registration and deletion events), expiry_source (registrar when the registrar's record gave the expiry
+     * date, registry when the registry's did, or '' with no date), redirected (whether the registry's answer came
+     * through a redirect), and message (plain text, never taken from the response).
      *
      * A record is only used when it's really the domain asked for (see matchesDomain()). A registry record that isn't is
      * a failed lookup with the status mismatch, which callers treat like error for that domain, except that it never
@@ -75,7 +90,9 @@ class Rdap
         $deadline = $deadline ?? (microtime(true) + 30);
         $result = array('status' => 'error', 'expiry_date' => '', 'name_servers' => array(), 'registrar_name' => '',
             'registrar_iana_id' => '', 'registrar_url' => '', 'statuses' => array(), 'status_read' => 'incomplete',
+            'registration_date' => '', 'deletion_date' => '', 'expiry_source' => '', 'redirected' => false,
             'message' => '');
+        $this->domain_request_sent = false;
 
         // registries take the punycode form of the domain (xn--mnchen-3ya.de for münchen.de)
         $ascii_domain = Domain::forApi($domain);
@@ -106,7 +123,13 @@ class Rdap
 
         }
 
-        list($status, $data, $object) = $this->fetchJson($server . 'domain/' . rawurlencode($ascii_domain), $deadline);
+        $this->tracking_domain_request = true;
+        try {
+            list($status, $data, $object) = $this->fetchJson($server . 'domain/' . rawurlencode($ascii_domain), $deadline);
+        } finally {
+            $this->tracking_domain_request = false;
+        }
+        $result['redirected'] = $this->redirected;
 
         if ($status !== 'ok') {
 
@@ -118,7 +141,7 @@ class Rdap
 
         // the registry's answer to the exact URL asked for may leave out the domain's name, but a record reached
         // through a redirect has to name it
-        if (!$this->matchesDomain($object, $ascii_domain, !$this->redirected)) {
+        if (!$this->matchesDomain($object, $ascii_domain, !$result['redirected'])) {
 
             $result['status'] = 'mismatch';
             $result['message'] = $this->statusMessage('mismatch');
@@ -130,6 +153,9 @@ class Rdap
         $result['status'] = 'ok';
         if (!$status_only) {
             $result['expiry_date'] = $this->expiryFrom($data);
+            $result['expiry_source'] = $result['expiry_date'] !== '' ? 'registry' : '';
+            $result['registration_date'] = $this->eventDate($data, 'registration');
+            $result['deletion_date'] = $this->eventDate($data, 'deletion');
             $result['name_servers'] = $this->nameServersFrom($data);
             list($result['registrar_name'], $result['registrar_iana_id'], $result['registrar_url']) = $this->registrarFrom($data);
         }
@@ -158,7 +184,10 @@ class Rdap
                 if (!$status_only) {
 
                     $registrar_expiry = $this->expiryFrom($registrar_data);
-                    if ($registrar_expiry !== '') $result['expiry_date'] = $registrar_expiry;
+                    if ($registrar_expiry !== '') {
+                        $result['expiry_date'] = $registrar_expiry;
+                        $result['expiry_source'] = 'registrar';
+                    }
 
                 }
 
@@ -266,6 +295,10 @@ class Rdap
     {
         if (self::$bootstrap !== null) return self::$bootstrap;
 
+        // Stale until a fresh copy is in memory: a cached file past its age whose refresh failed, or that waits out the
+        // retry period after a failure
+        self::$bootstrap_stale = false;
+
         $cache_file = DIR_TEMP . '/rdap-dns.json';
         $failed_file = DIR_TEMP . '/rdap-dns.failed';
 
@@ -294,12 +327,18 @@ class Rdap
             } else {
 
                 @touch($failed_file);
+                self::$bootstrap_stale = (bool) $cached;
 
                 $log_message = 'Unable to refresh the RDAP bootstrap file';
                 $log_extra = array('Using Cached Copy' => $cached ? 'Yes' : 'No');
                 $this->log->warning($log_message, $log_extra);
 
             }
+
+        } elseif (!$fresh) {
+
+            // A stale cached copy, during the hour after a failed refresh
+            self::$bootstrap_stale = (bool) $cached;
 
         }
 
@@ -439,13 +478,36 @@ class Rdap
             // PHP's resolver has no per-call timeout, so only start it with at least 5 seconds left
             if ($deadline - microtime(true) < 5) return array('error', '');
 
-            $address = $this->publicAddress($host);
+            // The test hook answers without the network, so nothing is resolved
+            $address = self::$test_fetch !== null ? '192.0.2.1' : $this->publicAddress($host);
             if ($address === '') return array('error', '');
 
             if ($paced) $this->pace($host);
 
             $remaining = $deadline - microtime(true);
             if ($remaining < 1) return array('error', '');
+
+            // The domain's own request starts here (a redirect it follows is still that request)
+            if ($this->tracking_domain_request) $this->domain_request_sent = true;
+
+            if (self::$test_fetch !== null) {
+
+                list($http_code, $body, $location) = array_pad(array_values((array) call_user_func(self::$test_fetch, $url)), 3, '');
+                $http_code = (int) $http_code;
+                $body = (string) $body;
+                $location = (string) $location;
+                if (strlen($body) > $max_bytes) return array('error', '');
+                if (in_array($http_code, array(301, 302, 303, 307, 308), true) && $location !== '') {
+                    $url = $this->absoluteUrl($location, $parts);
+                    $this->redirected = true;
+                    continue;
+                }
+                if ($http_code === 200) return array('ok', $body);
+                if ($http_code === 404) return array('not_found', '');
+                if ($http_code === 429) return array('rate_limited', '');
+                return array('error', '');
+
+            }
 
             $body = '';
             $too_big = false;
@@ -676,9 +738,16 @@ class Rdap
     // The expiration event as a UTC Y-m-d date, or '' if there's none or it can't be read
     protected function expiryFrom($data)
     {
+        return $this->eventDate($data, 'expiration');
+    }
+
+    // An event's date (such as expiration, registration, or deletion) as a UTC Y-m-d date, or '' if there's none or it
+    // can't be read
+    protected function eventDate($data, $action)
+    {
         foreach ((array) ($data['events'] ?? array()) as $event) {
 
-            if (!is_array($event) || ($event['eventAction'] ?? '') !== 'expiration') continue;
+            if (!is_array($event) || ($event['eventAction'] ?? '') !== $action) continue;
 
             $date = $event['eventDate'] ?? '';
 

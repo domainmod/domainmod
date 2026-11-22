@@ -49,9 +49,10 @@ class ChangeHistoryOperation
     protected $time;
     protected $operation_id = 0;
     protected $has_rows = false;
-    protected $created = array('domain' => array(), 'ssl' => array());
+    // Per item type (every type in ChangeHistory::ITEM_TYPES, filled in by the constructor)
+    protected $created = array();
     protected $custom_fields = array();
-    protected $fee_currencies = array('domain' => array(), 'ssl' => array());
+    protected $fee_currencies = array();
     protected $names = array();
     // Named locks the action holds until it's released (see holdNamedLock())
     protected $named_locks = array();
@@ -76,6 +77,10 @@ class ChangeHistoryOperation
         // When the action's changes happened: set with its first change row, after its locks, so two actions on one
         // item read in the order their changes were made (see ensureOperation())
         $this->time = '';
+        foreach (array_keys(ChangeHistory::ITEM_TYPES) as $type) {
+            $this->created[$type] = array();
+            $this->fee_currencies[$type] = array();
+        }
 
         // Both item types' custom field definitions are read (shared-locked) first, before any item or field data row
         // is locked or inserted, in the lock order every writer follows, so a custom field delete can't deadlock with it.
@@ -205,6 +210,7 @@ class ChangeHistoryOperation
      */
     public function captureCosts($type, $where_sql = '', array $params = array())
     {
+        if (ChangeHistory::ITEM_TYPES[$type]['fee_table'] === '') throw new \LogicException('This item type has no costs');
         if (!$this->enabled) return null;
 
         // One branch, or several (an array of array(where SQL, bound values)), each read through its own index with direct
@@ -282,6 +288,9 @@ class ChangeHistoryOperation
      */
     public function compareCosts($capture, $detail = '')
     {
+        if (isset($capture['type']) && ChangeHistory::ITEM_TYPES[$capture['type']]['fee_table'] === '') {
+            throw new \LogicException('This item type has no costs');
+        }
         if (!$this->enabled || $capture === null) return;
         if (isset($capture['memory'])) {
             $this->compare($capture['memory'], $detail);
@@ -510,10 +519,12 @@ class ChangeHistoryOperation
         $this->named_locks = array();
     }
 
-    // The custom fields of an item type, read once per action, shared-locked so a field can't be deleted under it
+    // The custom fields of an item type, read once per action, shared-locked so a field can't be deleted under it (an
+    // item type without custom fields, such as a watched domain, has none, read without a query)
     protected function customFields($type)
     {
         if (isset($this->custom_fields[$type])) return $this->custom_fields[$type];
+        if (ChangeHistory::ITEM_TYPES[$type]['fields'] === '') return $this->custom_fields[$type] = array();
 
         $stmt = $this->pdo->query("
             SELECT id, `name`, field_name, type_id
@@ -581,7 +592,9 @@ class ChangeHistoryOperation
 
             // Each value's alias is numbered (v0, v1, ...), and a long value's hash and lengths add a letter (v0h), so no
             // field's name can ever produce another field's alias
-            $columns = array('i.id AS item_id', 'i.`' . $info['name'] . '` AS item_name', 'i.fee_id AS item_fee_id');
+            // An item type without fees (a watched domain) has no fee_id
+            $columns = array('i.id AS item_id', 'i.`' . $info['name'] . '` AS item_name',
+                $info['fee_table'] !== '' ? 'i.fee_id AS item_fee_id' : '0 AS item_fee_id');
             $aliases = array();
             $long = array();
             foreach ($fields as $field => $kind) {
@@ -900,8 +913,10 @@ class ChangeHistoryOperation
 
             }
 
-            // A field back where it started, with no row of its own, needs none
-            if (ChangeHistory::same($kind, $old, $new)) continue;
+            // A field back where it started, with no row of its own, needs none (for text, only when its display is the same
+            // too, as for a merged row above, since record() can change the display alone, such as a registrar's IANA ID)
+            if (ChangeHistory::same($kind, $old, $new) && ($kind !== 'text' || (string) $old['d'] === (string) $new['d']
+                || substr($change['field'], 0, 3) === 'cf:')) continue;
             $rows[] = $this->row($change['type'], $change['id'], $change['name'], 'update', $change['field'], $old_value,
                 $new_value, (string) $old['d'], (string) $new['d'], $kind === 'long' ? (string) $old['h'] : '',
                 $kind === 'long' ? (int) $old['l'] : 0, '', $change['via'], implode(',', array_unique($detail)));

@@ -59,6 +59,24 @@ $new_privacy = (int) ($_POST['new_privacy'] ?? 0);
 $new_active = (int) ($_POST['new_active'] ?? 0);
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 
+/*
+ * Adding a domain from the Watch List (watch=ID, from a watched domain's "I own this now"): the entry is read by its id,
+ * and its domain, known expiry date, and notes fill in the form when it's first shown. The id travels in a hidden field,
+ * and an add of that entry's own domain is recorded with the Watch List as its source. Nothing is archived from the link
+ * alone: the Watch List archives the entry once the domain is live here. While the Watch List is turned off in System
+ * Settings, the link is ignored.
+ */
+$watch_id = (int) ($_POST['watch'] ?? ($_GET['watch'] ?? 0));
+$watch_entry = null;
+if ($watch_id > 0 && DomainMOD\WatchList::isEnabled()) {
+    $watch_entry = (new DomainMOD\WatchCheck($pdo))->entry($watch_id);
+    if ($watch_entry && $_SERVER['REQUEST_METHOD'] != 'POST') {
+        $new_domain = $watch_entry['domain'];
+        if (!DomainMOD\Time::isUnset($watch_entry['expiry_date'])) $new_expiry_date = $watch_entry['expiry_date'];
+        $new_notes = $watch_entry['notes'];
+    }
+}
+
 // Custom Fields. Their values are kept in their own array, keyed by field name, so a field named like one of the
 // settings above (such as notes) can't overwrite it (see DomainMOD\CustomField::inputName()).
 $custom_field = new DomainMOD\CustomField();
@@ -97,8 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                 $pdo->beginTransaction();
 
-                // The add is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
-                $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
+                // The add is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory), with the
+                // Watch List as its source when it's that watched domain's own name
+                $from_watch = $watch_entry && (string) $watch_entry['domain'] === (string) $new_domain;
+                $history_op = (new DomainMOD\ChangeHistory($pdo))->start($from_watch ? DomainMOD\ChangeHistory::SOURCE_WATCH_LIST
+                    : DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id'], $from_watch ? 'watch_move' : '');
 
                 $tld = $domain->getTld($new_domain);
 
@@ -341,6 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
+if ($watch_entry) echo $form->showInputHidden('watch', $watch_id);
 // The fields in titled cards, the same way as the edit domain page. Each card's fields are built first, so a card
 // whose menus all have nothing to choose from is left out rather than drawn empty. Moving a field to another card is
 // a matter of moving its lines between these blocks.

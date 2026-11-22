@@ -1501,9 +1501,10 @@ class SslQueue
 
         if ($max_execution_time > 0) {
 
-            // keep a quarter of what's left (at most a minute) for the rest of the run
+            // keep a quarter of what's left (at most a minute) for the rest of the run, and the Watch List's reserve while
+            // it has work to do (see WatchCheck::reserveFor())
             $remaining = $max_execution_time - ($started - (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? $started));
-            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4)));
+            $budget = min($budget, max(0, $remaining - min(60, $remaining / 4) - WatchCheck::reserveFor($this->deeb->cnxx)));
 
         }
 

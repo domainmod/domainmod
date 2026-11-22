@@ -114,8 +114,9 @@ class ChangeHistoryList extends ListQuery
 
     /*
      * The filters from a request, checked: each is its default when it's missing or not one of its allowed values.
-     * type (domain or ssl), id (an item's id, only with type), life (a delete row's id, only with type and id), name (an
-     * item name search), source, user, field, op (one action), range (a preset, or custom with daterange's two dates).
+     * type (domain, ssl, or watch), id (an item's id, only with type), life (a delete row's id, only with type and id),
+     * name (an item name search), source, user, field (a custom field only for a type that has them), op (one action),
+     * range (a preset, or custom with daterange's two dates).
      */
     public static function normalizeState(array $get)
     {
@@ -127,7 +128,7 @@ class ChangeHistoryList extends ListQuery
             return $value === false ? 0 : (int) $value;
         };
 
-        $type = in_array($text('type'), array('domain', 'ssl'), true) ? $text('type') : '';
+        $type = in_array($text('type'), array('domain', 'ssl', 'watch'), true) ? $text('type') : '';
         $id = $type !== '' ? $int('id') : 0;
         $life = $id !== 0 ? $int('life') : 0;
         // A life that's given but isn't a whole number names no kept delete row, so it shows nothing (-1), never the
@@ -135,6 +136,8 @@ class ChangeHistoryList extends ListQuery
         if ($id !== 0 && $life === 0 && array_key_exists('life', $get)) $life = -1;
         $source = in_array($text('source'), ChangeHistory::SOURCES, true) ? $text('source') : '';
         $field = preg_match('/^(cf:)?[a-z_]{1,60}$/i', $text('field')) ? $text('field') : '';
+        // Watched domains have no custom fields, so a custom field filter would hide every row
+        if ($type === 'watch' && strpos($field, 'cf:') === 0) $field = '';
         $range = in_array($text('range'), self::RANGES, true) ? $text('range') : self::DEFAULT_RANGE;
         // A custom range is two valid dates, the first not after the second. Dates that were given but don't make one
         // fall back to the default range, and range_invalid says so (the page shows a message).

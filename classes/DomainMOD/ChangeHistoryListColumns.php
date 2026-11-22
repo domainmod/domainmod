@@ -116,7 +116,8 @@ class ChangeHistoryListColumns extends ListColumns
         } else {
             // The scroll region's own name, since the section around it is already named Change History
             $body = '<div class="domainmod-span-all domainmod-scroll-table domainmod-history-section mb-2" tabindex="0" role="region" aria-label="'
-                . $esc($type === 'ssl' ? _('Recent changes to this SSL certificate') : _('Recent changes to this domain'))
+                . $esc(array('ssl' => _('Recent changes to this SSL certificate'),
+                    'watch' => _('Recent changes to this watched domain'))[$type] ?? _('Recent changes to this domain'))
                 . '"><table class="table table-sm mb-0"><thead><tr>';
             foreach ($columns->columns() as $column) $body .= '<th scope="col">' . $esc($column['title']) . '</th>';
             $body .= '</tr></thead><tbody>';
@@ -126,7 +127,9 @@ class ChangeHistoryListColumns extends ListColumns
             $body .= '</tbody></table></div>';
         }
 
-        $link_text = $type === 'ssl' ? _('See all changes to this SSL certificate') : _('See all changes to this domain');
+        $link_texts = array('ssl' => _('See all changes to this SSL certificate'),
+            'watch' => _('See all changes to this watched domain'));
+        $link_text = $link_texts[$type] ?? _('See all changes to this domain');
         $body .= '<p class="domainmod-span-all mb-2"><a href="' . $esc(WEB_ROOT . '/history/?' . http_build_query(array(
             'type' => $type, 'id' => (int) $id, 'range' => 'all'))) . '">' . $esc($link_text) . '</a></p>';
 
@@ -230,6 +233,7 @@ class ChangeHistoryListColumns extends ListColumns
 
     public static function typeName($type)
     {
+        if ($type === 'watch') return _('Watched Domain');
         return $type === 'ssl' ? _('SSL Certificate') : _('Domain');
     }
 
@@ -237,13 +241,14 @@ class ChangeHistoryListColumns extends ListColumns
     public static function itemUrl($row)
     {
         if ($row->change_type === 'delete' || (int) ($row->last_delete_id ?? 0) > (int) $row->id) return '';
-        return WEB_ROOT . ($row->item_type === 'ssl' ? '/ssl/edit.php?sslcid=' : '/domains/edit.php?did=') . (int) $row->item_id;
+        $pages = array('ssl' => '/ssl/edit.php?sslcid=', 'watch' => '/watch/edit.php?wid=');
+        return WEB_ROOT . ($pages[$row->item_type] ?? '/domains/edit.php?did=') . (int) $row->item_id;
     }
 
     protected function itemCell($row)
     {
         $name = $this->plain($row->item_name);
-        $text = $row->item_type === 'domain' ? $this->layout->ltr($name) : $this->esc($name);
+        $text = $row->item_type === 'domain' || $row->item_type === 'watch' ? $this->layout->ltr($name) : $this->esc($name);
         $url = self::itemUrl($row);
         if ($url !== '') return '<a href="' . $this->esc($url) . '">' . $text . '</a>';
         $text .= ' <span class="text-body-secondary">(' . $this->esc(_('Deleted')) . ')</span>';
@@ -307,6 +312,11 @@ class ChangeHistoryListColumns extends ListColumns
             'owner_id' => _('Owner'), 'expiry_date' => _('Expiry Date'), 'cat_id' => _('Category'),
             'ip_id' => _('IP Address'), 'notes' => _('Notes'),
             'active' => $type === 'ssl' ? _('Certificate Status') : _('Domain Status'), 'total_cost' => _('Cost'));
+        if ($type === 'watch') {
+            return array('stage' => _('Stage'), 'expiry_date' => _('Expiry Date'), 'registrar' => _('Registrar'),
+                'statuses' => _('Registry Status'), 'reason' => _('Reason'), 'notes' => _('Notes'), 'archived' => _('Archived'),
+                'moved_domain_id' => _('Moved to Domain'));
+        }
         if ($type === 'ssl') {
             return $shared + array('name' => _('Host') . ' / ' . _('Label'), 'domain_id' => _('Domain'),
                 'ssl_provider_id' => _('SSL Provider'), 'type_id' => _('Certificate Type'), 'issuer' => _('Issuer'));
@@ -352,7 +362,10 @@ class ChangeHistoryListColumns extends ListColumns
         if (!is_array($snapshot)) return array();
 
         $names = self::fieldNames($row->item_type) + array('fact:insert_time' => _('Added On'),
-            'fact:creation_type_id' => _('Creation Type'), 'fact:created_by' => _('Created By'), 'fact:tld' => _('TLD'));
+            'fact:creation_type_id' => _('Creation Type'), 'fact:created_by' => _('Created By'), 'fact:tld' => _('TLD'),
+            'fact:stage' => _('Stage'), 'fact:statuses' => _('Registry Status'), 'fact:expiry_date' => _('Expiry Date'),
+            'fact:registration_date' => _('Registration Date'), 'fact:registrar_name' => _('Registrar'),
+            'fact:registrar_iana_id' => _('Registrar IANA ID'), 'fact:moved_domain_id' => _('Moved to Domain'));
         $lines = array();
         foreach ($snapshot as $key => $entry) {
             if (!is_array($entry)) continue;
@@ -372,7 +385,19 @@ class ChangeHistoryListColumns extends ListColumns
                 }
                 // A TLD as it's written, with its dot
                 if ($key === 'fact:tld' && $value !== '' && $value[0] !== '.') $value = '.' . $value;
-                $lines[] = array($names[$key], $value);
+                // A watched domain's last known state, read as its page shows it
+                if ($key === 'fact:stage') $value = WatchLifecycle::stageLabel($value);
+                if ($key === 'fact:statuses') $value = implode("\n", DomainStatus::fromColumn($value));
+                if ($key === 'fact:expiry_date' || $key === 'fact:registration_date') $value = Time::isUnset($value) ? '' : $value;
+                // An unset expiry date reads as the watched domain's page shows it, unless the domain wasn't registered
+                // or hadn't been checked yet, when the page shows none
+                if ($key === 'fact:expiry_date' && $value === '') {
+                    $stage = is_array($snapshot['fact:stage'] ?? null) ? (string) ($snapshot['fact:stage']['v'] ?? '') : '';
+                    if (!in_array($stage, array('', 'not_registered', 'unknown'), true)) $value = _('Expiry date not published.');
+                }
+                if ($key === 'fact:registrar_name') $value = $this->plain($value);
+                if ($key === 'fact:moved_domain_id') $value = (int) $value === 0 ? _('None') : '#' . (int) $value;
+                $lines[] = array($names[$key] ?? $key, $value);
                 continue;
             }
             if (strpos($key, 'cf:') === 0) {
@@ -406,6 +431,20 @@ class ChangeHistoryListColumns extends ListColumns
             return $this->plain($value);
         }
         $kind = ChangeHistory::FIELDS[$type][$field] ?? 'text';
+
+        // A watched domain's fields (see WatchCheck and WatchList)
+        if ($type === 'watch') {
+            if ($field === 'stage') return WatchLifecycle::stageLabel($value);
+            if ($field === 'reason') return WatchList::reasonLabel($value);
+            if ($field === 'archived') return (int) $value === 1 ? _('Yes') : _('No');
+            if ($field === 'moved_domain_id') return (int) $value === 0 ? _('None') : '#' . (int) $value;
+            if ($field === 'expiry_date') return Time::isUnset($value) ? '' : $value;
+            if ($field === 'statuses') return $value === '' ? _('None') : implode("\n", DomainStatus::fromColumn($value));
+            if ($field === 'registrar') {
+                // TRANSLATORS: a registrar's name and its IANA Registrar ID, such as "Example Registrar (IANA ID 1234)"
+                return $display !== '' ? sprintf(_('%1$s (IANA ID %2$s)'), $this->plain($value), $display) : $this->plain($value);
+            }
+        }
 
         if ($field === 'active') return self::statusName($type, (int) $value);
         // The lock and registry problems by the names the Domains list and the edit page use (DomainMOD\DomainStatus)
@@ -518,6 +557,13 @@ class ChangeHistoryListColumns extends ListColumns
                 . '</summary><div class="domainmod-history-text" tabindex="0" role="region" aria-label="' . $this->esc($region) . '">'
                 . $this->esc($full) . '</div></details>' : '';
             return $summary . $shortened . $details;
+        }
+
+        // A watched domain's statuses, one code per line
+        if ($row->item_type === 'watch' && $field === 'statuses') {
+            return implode('<br>', array_map(function ($code) {
+                return $this->esc($code);
+            }, explode("\n", $this->valueText('watch', $field, $value, $display)))) . $shortened;
         }
 
         if ($field === 'dns_servers' || $field === 'live_ns') {
@@ -664,7 +710,20 @@ class ChangeHistoryListColumns extends ListColumns
             'ssl_type_delete' => _('SSL Type Deleted'),
             'cleanup' => _('System Cleanup'),
             'update_domain_fees' => _('Update Domain Fees'),
-            'update_ssl_fees' => _('Update SSL Fees'));
+            'update_ssl_fees' => _('Update SSL Fees'),
+            'watch_check' => _('Scheduled Check'),
+            'watch_check_now' => _('Check Now'),
+            'watch_add' => _('Domains Added'),
+            'watch_edit' => _('Details Saved'),
+            'watch_archive' => _('Archived'),
+            'watch_unarchive' => _('Unarchived'),
+            'watch_delete' => _('Deleted'),
+            'watch_bulk_archive' => _('Archive Selected'),
+            'watch_bulk_unarchive' => _('Unarchive Selected'),
+            'watch_bulk_delete' => _('Delete Selected'),
+            'watch_bulk_reason' => _('Change Reason'),
+            'watch_moved' => _('Now in Domains'),
+            'watch_move' => _('Added to Domains'));
     }
 
     protected function sourceCell($row)

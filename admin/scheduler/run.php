@@ -70,6 +70,9 @@ if (DEMO_INSTALLATION == false) {
 
     } else {
 
+        // Run Now runs only this task, so the queues leave no time for the Watch List (see WatchCheck::reserveFor())
+        DomainMOD\WatchCheck::$single_task = true;
+
         try {
 
             $started = $time->stamp();
@@ -215,6 +218,30 @@ if (DEMO_INSTALLATION == false) {
                 $log->notice($log_message);
 
                 $_SESSION['s_message_success'] .= _('SSL Queue Processed') . '<BR>';
+
+            } elseif ($result->slug == 'watch-list') {
+
+                $log_message = sprintf('[%s]' . _('Check Watch List'), DomainMOD\Format::toUpper(_('Start')));
+                $log->notice($log_message, $log_extra);
+
+                $watch_check = new DomainMOD\WatchCheck($pdo);
+                $schedule->isRunning($id);
+                $watch_summary = $watch_check->run(true);
+                $schedule->finishTask($id, $started);
+                if ($watch_check->hadConflict()) {
+                    $_SESSION['s_message_danger'] .= _("Someone else changed a watched domain at the same time, so the Watch List check couldn't finish part of its work.") . '<BR>';
+                }
+
+                $log_message = sprintf('[%s]' . _('Check Watch List'), DomainMOD\Format::toUpper(_('End')));
+                $log->notice($log_message, $watch_summary);
+
+                // Turned off in System Settings, the task does nothing (see WatchCheck::run()), and says so as a warning,
+                // which the htmx Run Now's result shows (System::htmxTaskResult())
+                if (empty($watch_summary['off'])) {
+                    $_SESSION['s_message_success'] .= _('Watch List Checked') . '<BR>';
+                } else {
+                    $_SESSION['s_message_warning'] .= _('The Watch List is turned off in System Settings, so nothing was checked.') . '<BR>';
+                }
 
             }
 

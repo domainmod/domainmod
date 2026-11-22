@@ -22,7 +22,7 @@
 namespace DomainMOD;
 
 /*
- * The Change History of domains and SSL certificates: one row in change_operations per action (one Save, one bulk
+ * The Change History of domains, SSL certificates, and watched domains (the Watch List): one row in change_operations per action (one Save, one bulk
  * action, one import, one fee change), and one row in change_history per field that changed (or per item created or
  * deleted). Every write site calls start() inside its own transaction, so a change and its history commit or roll back
  * together (see ChangeHistoryOperation). This class holds what's recorded and how values compare, and the history's
@@ -72,19 +72,22 @@ class ChangeHistory
 
     /*
      * Each item type: its table, the column with its name, its custom field data table and that table's item id column,
-     * its custom field definitions, and its fee table
+     * its custom field definitions, and its fee table. A watched domain has no custom fields and no fees, so those are ''.
      */
     const ITEM_TYPES = array(
         'domain' => array('table' => 'domains', 'name' => 'domain', 'field_data' => 'domain_field_data',
             'field_id' => 'domain_id', 'fields' => 'domain_fields', 'fee_table' => 'fees'),
         'ssl' => array('table' => 'ssl_certs', 'name' => 'name', 'field_data' => 'ssl_cert_field_data',
-            'field_id' => 'ssl_id', 'fields' => 'ssl_cert_fields', 'fee_table' => 'ssl_fees'));
+            'field_id' => 'ssl_id', 'fields' => 'ssl_cert_fields', 'fee_table' => 'ssl_fees'),
+        'watch' => array('table' => 'watch_domains', 'name' => 'domain', 'field_data' => '', 'field_id' => '', 'fields' => '',
+            'fee_table' => ''));
 
     /*
      * The recorded columns of each item type, and how each compares: 'text' as stored, 'long' (notes) by hash and length,
      * 'date' as Y-m-d (an unset date as blank), 'id' and 'int' as whole numbers (an id also keeps the referenced asset's name), and 'cost' as a
      * two-decimal amount with its fee's currency. Everything else (fee_id, fee_fixed, tld, the insert-only columns,
-     * update_time, and the registry status columns) isn't recorded.
+     * update_time, and the registry status columns) isn't recorded. A watched domain's check results (its stage, expiry
+     * date, registrar, and statuses) are recorded with ChangeHistoryOperation::record() by WatchCheck, not compared.
      */
     const FIELDS = array(
         'domain' => array('domain' => 'text', 'account_id' => 'id', 'owner_id' => 'id', 'registrar_id' => 'id',
@@ -93,18 +96,25 @@ class ChangeHistory
             'total_cost' => 'cost'),
         'ssl' => array('name' => 'text', 'domain_id' => 'id', 'account_id' => 'id', 'owner_id' => 'id',
             'ssl_provider_id' => 'id', 'type_id' => 'id', 'ip_id' => 'id', 'cat_id' => 'id', 'expiry_date' => 'date',
-            'notes' => 'long', 'active' => 'int', 'total_cost' => 'cost'));
+            'notes' => 'long', 'active' => 'int', 'total_cost' => 'cost'),
+        'watch' => array('reason' => 'text', 'notes' => 'long', 'archived' => 'int'));
 
     // The fields that follow the account: recorded only when they change without the account changing
-    const FOLLOWS_ACCOUNT = array('domain' => array('owner_id', 'registrar_id'), 'ssl' => array('owner_id', 'ssl_provider_id'));
+    const FOLLOWS_ACCOUNT = array('domain' => array('owner_id', 'registrar_id'), 'ssl' => array('owner_id', 'ssl_provider_id'),
+        'watch' => array());
 
-    // The insert-only facts a create or delete snapshot keeps
+    /*
+     * The facts a create or delete snapshot keeps: the insert-only ones, and for a watched domain what its checks last
+     * found, so a deleted entry's last known state can still be read
+     */
     const SNAPSHOT_FACTS = array('domain' => array('creation_type_id', 'created_by', 'insert_time', 'tld'),
-        'ssl' => array('creation_type_id', 'created_by', 'insert_time'));
+        'ssl' => array('creation_type_id', 'created_by', 'insert_time'),
+        'watch' => array('tld', 'stage', 'statuses', 'expiry_date', 'registration_date', 'registrar_name',
+            'registrar_iana_id', 'moved_domain_id', 'created_by', 'insert_time'));
 
     // Fields that aren't columns, recorded with ChangeHistoryOperation::record() by the code that owns them
     const EXTRA_FIELDS = array('dns_servers', 'transfer_lock', 'registry_problem', 'epp_status', 'live_ns', 'live_ips',
-        'issuer');
+        'issuer', 'stage', 'registrar', 'statuses', 'moved_domain_id');
 
     // Column names that are never recorded, whatever list they turn up in (a unit test checks the lists against it)
     const DENY = array('password', 'api_key', 'api_secret', 'api_app_name', 'username', 'email_address', 'secret',
@@ -130,7 +140,7 @@ class ChangeHistory
             'registrar_accounts', 'registrars', 'scheduler', 'segment_data', 'segments', 'settings', 'ssl_accounts',
             'ssl_cert_field_data', 'ssl_cert_fields', 'ssl_cert_status', 'ssl_cert_types', 'ssl_certs', 'ssl_fees',
             'ssl_providers', 'ssl_queue', 'ssl_queue_history', 'timezones', 'user_recovery_codes',
-            'user_remembered_devices', 'user_settings', 'users'));
+            'user_remembered_devices', 'user_settings', 'users', 'watch_domains'));
 
     // Whether the history is on, by connection, worked out once per request (see isAvailable())
     protected static $available = array();

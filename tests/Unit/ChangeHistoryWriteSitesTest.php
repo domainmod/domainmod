@@ -24,8 +24,8 @@ namespace DomainMOD\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 
 /*
- * A safety net for the Change History: every PHP file that writes the item tables (domains, ssl_certs, and their custom
- * field data), deletes fee rows (which can take an item's cost currency away), or writes a table named by a variable,
+ * A safety net for the Change History: every PHP file that writes the item tables (domains, ssl_certs, their custom
+ * field data, and watch_domains), deletes fee rows (which can take an item's cost currency away), or writes a table named by a variable,
  * must be a site that records its changes or an exempt one, so a new write can't skip the history. Code review still
  * checks the write sites by hand.
  */
@@ -46,7 +46,7 @@ class ChangeHistoryWriteSitesTest extends TestCase
         'classes/DomainMOD/DomainQueue.php', 'classes/DomainMOD/DomainRefresh.php', 'classes/DomainMOD/Maintenance.php',
         'classes/DomainMOD/SslQueue.php', 'classes/DomainMOD/SslRefresh.php', 'domains/add.php', 'domains/edit.php',
         'maintenance/update-domain-fees.php', 'maintenance/update-ssl-fees.php', 'queue/edit/index.php', 'ssl/add.php',
-        'ssl/edit.php');
+        'ssl/edit.php', 'classes/DomainMOD/WatchList.php', 'classes/DomainMOD/WatchCheck.php');
 
     // The files that write these tables without recording them, and why
     const EXEMPT = array(
@@ -65,7 +65,7 @@ class ChangeHistoryWriteSitesTest extends TestCase
     // as "Update domains" doesn't match)
     const VERBS = '(INSERT INTO|UPDATE|DELETE FROM|REPLACE INTO|ALTER TABLE|insert into|update|delete from|replace into|alter table)';
 
-    const WRITES = '/' . self::VERBS . '\s+`?(domains|ssl_certs|domain_field_data|ssl_cert_field_data)\b'
+    const WRITES = '/' . self::VERBS . '\s+`?(domains|ssl_certs|domain_field_data|ssl_cert_field_data|watch_domains)\b'
         . '|(DELETE FROM|delete from)\s+`?(fees|ssl_fees)\b|' . self::VERBS . '\s+`?"\s*\.\s*\$/';
 
     private function files()
@@ -111,9 +111,9 @@ class ChangeHistoryWriteSitesTest extends TestCase
             $this->assertGreaterThanOrEqual(preg_match_all('/\$history_op = \(new (?:DomainMOD\\\\)?ChangeHistory\(/', $source),
                 substr_count($source, '$history_op->finish();'), $path);
             // Every insert of an item is recorded as a create (its snapshot is written by finish())
-            $this->assertLessThanOrEqual(substr_count($source, '->created('), preg_match_all('/(INSERT INTO|insert into)\s+`?(domains|ssl_certs)\b/', $source), $path);
+            $this->assertLessThanOrEqual(substr_count($source, '->created('), preg_match_all('/(INSERT INTO|insert into)\s+`?(domains|ssl_certs|watch_domains)\b/', $source), $path);
             // and every delete of an item as a delete row with its snapshot (deleting() before the DELETE)
-            $this->assertLessThanOrEqual(substr_count($source, '->deleting('), preg_match_all('/(DELETE|delete)\s+(?:\w+\s+)?(FROM|from)\s+`?(domains|ssl_certs)\b/', $source), $path);
+            $this->assertLessThanOrEqual(substr_count($source, '->deleting('), preg_match_all('/(DELETE|delete)\s+(?:\w+\s+)?(FROM|from)\s+`?(domains|ssl_certs|watch_domains)\b/', $source), $path);
             // The custom field delete names its action $op
             if ($path === 'classes/DomainMOD/CustomFieldSchema.php') {
                 $this->assertSame(substr_count($source, '$op = (new ChangeHistory('), substr_count($source, '$op->finish();'), $path);

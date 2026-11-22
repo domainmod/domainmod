@@ -685,14 +685,15 @@ class RestoreRecovery
     }
 
     /*
-     * The restore's cleanup: the Change History's check, then every user's new two-factor stamp (so sessions opened
-     * before the restore end), each safe to run twice
+     * The restore's cleanup: the Change History's check, the Watch List's, then every user's new two-factor stamp (so
+     * sessions opened before the restore end), each safe to run twice
      */
     public static function cleanup($restore_id)
     {
         $pdo = Database::getInstance()->cnxx;
         self::historyCleanup($pdo, $restore_id);
         ChangeHistory::forgetAvailability();
+        self::watchCleanup($pdo, $restore_id);
 
         /*
          * Every user gets a new two-factor stamp, so sessions opened before the restore end. Only a restored database that
@@ -713,6 +714,60 @@ class RestoreRecovery
         // stamps are renewed directly, whatever the restored version says.
         if (self::restoredVersion($pdo) === null) return;
         (new TwoFactor())->newStampsForEveryone();
+    }
+
+    /*
+     * The Watch List after a restore of a 4.27.0 or later database (an older one leaves watch_domains alone: the next
+     * Upgrade Database empties it, and WatchList::isAvailable() is false until then). A missing watch_domains (a
+     * restore that failed part-way) is created empty, so no page or task queries a missing table. One that's there is
+     * emptied unless the verdict says the dump was complete, its import succeeded, and it held watch_domains, since
+     * otherwise its rows may be the overwritten install's, which the task would go on looking up. Then the Check Watch
+     * List task is added when the restored scheduler has none, leaving an existing one, enabled or not, as it is. Without a scheduler table (an import that died part-way), that step is
+     * skipped.
+     */
+    public static function watchCleanup(\PDO $pdo, $restore_id)
+    {
+        $version = self::restoredVersion($pdo);
+        if ($version === null || version_compare($version, WatchList::AVAILABLE_FROM, '<')) return;
+
+        $stmt = $pdo->query("
+            SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME IN ('watch_domains', 'scheduler')");
+        $tables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+
+        // Read strictly, as the Change History's check does: a verdict that can't be read leaves the flag for a later
+        // recovery rather than emptying a table that may have been restored in full
+        $result = self::readResult($restore_id, true);
+        $replaced = is_array($result) && !empty($result['complete']) && !empty($result['import_ok'])
+            && in_array('watch_domains', (array) ($result['tables'] ?? array()), true);
+
+        if (!in_array('watch_domains', $tables, true)) {
+            $pdo->exec(WatchList::tableSql());
+        } elseif (!$replaced) {
+            $pdo->exec("TRUNCATE TABLE `watch_domains`");
+        }
+
+        if (in_array('scheduler', $tables, true)) {
+            $exists = (int) $pdo->query("SELECT count(*) FROM scheduler WHERE slug = 'watch-list'")->fetchColumn() > 0;
+            if (!$exists) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO scheduler
+                    (`name`, description, `interval`, expression, slug, sort_order, is_running, active, `timezone`, next_run,
+                     insert_time)
+                     VALUES
+                    ('Check Watch List', :description, 'Every 10 Minutes', '*/10 * * * *', 'watch-list', '130', '0', '1',
+                     'UTC', :next_run, :insert_time)");
+                $stmt->bindValue('description', WatchList::TASK_DESCRIPTION, \PDO::PARAM_STR);
+                $stmt->bindValue('next_run', (new Scheduler())->getNextRun('*/10 * * * *', 'UTC'), \PDO::PARAM_STR);
+                $stmt->bindValue('insert_time', gmdate('Y-m-d H:i:s'), \PDO::PARAM_STR);
+                $stmt->execute();
+            }
+        }
+
+        WatchList::resetAvailable();
     }
 
     /*

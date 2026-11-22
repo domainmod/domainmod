@@ -130,6 +130,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['history_form'] ?? '') === '
 
 }
 
+/*
+ * "Use the Watch List", saved by its own form, once the database update has added the Watch List
+ * (WatchList::isAvailable()). Off hides the Watch List and stops its checks, and keeps its entries (see
+ * WatchList::isEnabled()). The administrator and read-only flags are read as the database has them now, with the user's
+ * row locked in the same transaction as the save, as for the Change History setting. Never on the demo, where the
+ * Watch List can't be changed either.
+ */
+$watch_available = DomainMOD\WatchList::isAvailable() && DEMO_INSTALLATION == false;
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['watch_form'] ?? '') === '1') {
+
+    $new_use_watch_list = (int) ($_POST['new_use_watch_list'] ?? 0) === 1 ? 1 : 0;
+    $watch_saved = false;
+    if ($watch_available) {
+
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare("
+                SELECT admin, read_only
+                FROM users
+                WHERE id = :user_id
+                  AND active = '1'
+                FOR UPDATE");
+            $stmt->bindValue('user_id', (int) $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $watch_user = $stmt->fetch();
+            $stmt->closeCursor();
+            if ($watch_user && (int) $watch_user->admin === 1 && (int) $watch_user->read_only === 0) {
+                $stmt = $pdo->prepare("
+                    UPDATE settings
+                    SET use_watch_list = :use_watch_list,
+                        update_time = :update_time");
+                $stmt->bindValue('use_watch_list', $new_use_watch_list, PDO::PARAM_INT);
+                $stmt->bindValue('update_time', $time->stamp(), PDO::PARAM_STR);
+                $stmt->execute();
+                $watch_saved = true;
+            }
+            $pdo->commit();
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollback();
+            throw $e;
+        }
+
+    }
+
+    if ($watch_saved) {
+        $_SESSION['s_message_success'] .= _('The Watch List setting was updated.') . '<BR>';
+    } else {
+        $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
+    }
+
+    header("Location: index.php");
+    exit;
+
+}
+
 $new_full_url = isset($_POST['new_full_url']) ? $sanitize->text($_POST['new_full_url']) : '';
 $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 $new_expiration_days = (int) ($_POST['new_expiration_days'] ?? 0);
@@ -347,6 +402,17 @@ if ($history_available) {
     echo $form->showDropdownBottom('</div>');
     echo '<div class="mt-5">' . $form->showFormTop('') . $layout->formSection(_('Change History'), 'change-history', ob_get_clean())
         . $form->showSubmitButton(_('Update Change History Setting'), '', '') . $form->showFormBottom('') . '</div>';
+
+}
+
+// Whether the Watch List is in use (see above)
+if ($watch_available) {
+
+    ob_start();
+    echo $form->showInputHidden('watch_form', '1');
+    echo $form->showSwitch(_('Use the Watch List'), _('Turn this off to hide the Watch List from every user and stop its checks. Your watched domains are kept, so turning it back on brings everything back.'), 'new_use_watch_list', DomainMOD\WatchList::isEnabled() ? 1 : 0, '<div class="domainmod-span-all mb-3">', '</div>');
+    echo '<div class="mt-5">' . $form->showFormTop('') . $layout->formSection(_('Watch List'), 'watch-list', ob_get_clean())
+        . $form->showSubmitButton(_('Update Watch List Setting'), '', '') . $form->showFormBottom('') . '</div>';
 
 }
 ?>

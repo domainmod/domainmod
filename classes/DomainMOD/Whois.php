@@ -32,6 +32,9 @@ class Whois
 {
     public $log;
     public $rdap;
+    // Whether the last lookup() started its query to the TLD's WHOIS server (never set by the IANA lookup of which
+    // server to ask), as Rdap::$domain_request_sent does for RDAP
+    public $domain_request_sent = false;
 
     // State shared by every Whois object in this PHP process (one cron run or page load)
     protected static $servers = null;      // TLD => WHOIS server ('' for none) and when it was looked up
@@ -63,8 +66,9 @@ class Whois
     {
         $deadline = $deadline ?? (microtime(true) + 30);
         $result = array('status' => 'error', 'expiry_date' => '', 'name_servers' => array(), 'registrar_name' => '',
-            'registrar_iana_id' => '', 'registrar_url' => '', 'message' => '', 'connection_failed' => false,
-            'replied' => false);
+            'registrar_iana_id' => '', 'registrar_url' => '', 'registration_date' => '', 'message' => '',
+            'connection_failed' => false, 'replied' => false);
+        $this->domain_request_sent = false;
 
         $ascii_domain = Domain::forApi($domain);
 
@@ -220,6 +224,9 @@ class Whois
         $remaining = $deadline - microtime(true);
         if ($remaining < 1) return array('error', '', false);
 
+        // The query to the TLD's server starts here
+        $this->domain_request_sent = true;
+
         $handle = @stream_socket_client('tcp://' . $target, $error_number, $error_message, min(10, $remaining));
 
         if ($handle === false) {
@@ -310,15 +317,16 @@ class Whois
     }
 
     /*
-     * The details in a WHOIS response: status (ok, not_found, or rate_limited), expiry_date, name_servers,
-     * registrar_name, and registrar_iana_id. An expiry date always wins, so a full record whose notices mention "no
-     * match" or rate limits is never treated as a failure.
+     * The details in a WHOIS response: status (ok, not_found, or rate_limited), expiry_date, registration_date,
+     * name_servers, registrar_name, and registrar_iana_id. An expiry date always wins, so a full record whose notices
+     * mention "no match" or rate limits is never treated as a failure.
      */
     public function parse($response, $ascii_domain)
     {
         $lines = preg_split('/\r\n|\r|\n/', $response);
 
         $expiry_date = '';
+        $registration_date = '';
         $name_servers = array();
         $registrar_name = '';
         $registrar_iana_id = '';
@@ -371,6 +379,10 @@ class Whois
 
                 $expiry_date = $this->dateFrom(trim($matches[2]));
 
+            } elseif ($registration_date === '' && preg_match('/^(Creation Date|Created On|Created|Registered On|Registration Date|Registration Time|Domain Registration Date|Registered|created|\[Created on\])\s*:?\s*(.+)$/i', $trimmed, $matches)) {
+
+                $registration_date = $this->dateFrom(trim($matches[2]));
+
             } elseif (preg_match('/^(Name Server|nserver|\[Name Server\])\s*:?\s*(.+)$/i', $trimmed, $matches)) {
 
                 $this->addNameServer($name_servers, trim($matches[2]));
@@ -387,8 +399,8 @@ class Whois
 
         }
 
-        $details = array('status' => 'ok', 'expiry_date' => $expiry_date, 'name_servers' => $name_servers,
-            'registrar_name' => $registrar_name, 'registrar_iana_id' => $registrar_iana_id);
+        $details = array('status' => 'ok', 'expiry_date' => $expiry_date, 'registration_date' => $registration_date,
+            'name_servers' => $name_servers, 'registrar_name' => $registrar_name, 'registrar_iana_id' => $registrar_iana_id);
 
         if ($expiry_date !== '') return $details;
 

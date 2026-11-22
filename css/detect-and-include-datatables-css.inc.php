@@ -34,6 +34,7 @@ switch ($slug ?? '') {
     case 'queue-main':
     case 'segments-main':
     case 'ssl-main':
+    case 'watch-main':
         $include_datatable_css = 1;
         break;
 }

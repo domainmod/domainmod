@@ -1292,6 +1292,11 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
     min-width: 0;
     overflow-wrap: anywhere;
 }
+/* A short note placed straight after a fact list (Layout::factList()), such as the Watch List's confirmation note,
+   sits as close as the list's own rows instead of after the list's bottom margin */
+.domainmod-facts-note {
+    margin-top: -1rem;
+}
 @media (min-width: 576px) {
     .domainmod-facts:not(.domainmod-facts-stacked) {
         grid-template-columns: max-content minmax(0, 1fr);

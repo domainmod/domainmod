@@ -55,6 +55,14 @@ $new_owner_id = (int) ($_POST['new_owner_id'] ?? ($_SESSION['s_default_owner_dom
 $new_import_ssl = ($_SERVER['REQUEST_METHOD'] == 'POST') ? (int) isset($_POST['new_import_ssl']) : 1;
 $ssl_queue_available = $ssl_queue->isAvailable();
 
+// Importing a domain from the Watch List (watch=ID, from a watched domain's "I own this now"): the entry is read by its
+// id, and its domain fills in the list when the form is first shown (not while the Watch List is turned off)
+$watch_id = (int) ($_GET['watch'] ?? 0);
+if ($watch_id > 0 && $_SERVER['REQUEST_METHOD'] != 'POST' && DomainMOD\WatchList::isEnabled()) {
+    $watch_entry = (new DomainMOD\WatchCheck($pdo))->entry($watch_id);
+    if ($watch_entry) $raw_domain_list = $watch_entry['domain'];
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
 
     $format = new DomainMOD\Format();

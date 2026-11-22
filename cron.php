@@ -230,6 +230,19 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
                     $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('End')));
                     $log->notice($log_message);
 
+                } elseif ($row->slug == 'watch-list') {
+
+                    $log_message = sprintf('[%s]' . _('Check Watch List'), DomainMOD\Format::toUpper(_('Start')));
+                    $log->notice($log_message, $log_extra);
+
+                    $watch_check = new DomainMOD\WatchCheck($pdo);
+                    $schedule->isRunning($row->id);
+                    $watch_summary = $watch_check->run();
+                    $schedule->finishTask($row->id, $started);
+
+                    $log_message = sprintf('[%s]' . _('Check Watch List'), DomainMOD\Format::toUpper(_('End')));
+                    $log->notice($log_message, $watch_summary);
+
                 } else {
 
                     $log_message = 'There are results, but no matching slugs';

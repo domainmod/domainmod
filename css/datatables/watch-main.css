@@ -1,0 +1,115 @@
+/*
+ * The Watch List (watch/index.php), styled as the Domains list (domains-main.css): every column in a box that scrolls
+ * sideways, with the domain (and its tick box) kept in view at the start, dense rows, small headings, hairlines between
+ * the rows with a light stripe, and long values cut short with "…". js/server-list.js gives a cut-short cell its full text as a
+ * tooltip, and a cell shows in full while it has keyboard focus. The colours come from the theme's variables, so they
+ * follow light and dark mode, and the sides are logical, so they mirror in right-to-left languages. The scroll box
+ * itself (domainmod-list-scroll) is in base.css.
+ */
+/* The table is as wide as its columns need, and at least as wide as its box. When there's room to spare, the short
+   columns stay as narrow as their values, and the rest goes to the longer text columns. */
+#watch-main {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    margin: 0;
+    font-size: .8125rem;
+}
+#watch-main > :is(thead, tbody) > tr > :is(.domainmod-list-select, .domainmod-list-domain, .domainmod-list-stage,
+    .domainmod-list-expiry, .domainmod-list-registered, .domainmod-list-added, .domainmod-list-checked,
+    .domainmod-list-next) {
+    inline-size: 1%;
+}
+/* The headings are 12px (.75rem), large enough that a browser's usual minimum font size doesn't enlarge them, and stay
+   on one line. */
+#watch-main > thead > tr > th {
+    padding: .5rem;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color);
+    background: var(--bs-tertiary-bg);
+    box-shadow: none;
+    color: var(--bs-secondary-color);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+/* Bootstrap's and DataTables' stripes are drawn as a shadow inside each cell, so they're turned off for these. A
+   cell is at most 18rem wide, and on a phone at most 40vw, so with the pinned first column (at most 45vw) it always
+   fits in the box and can be scrolled fully into view. */
+#watch-main > tbody > tr > td {
+    max-inline-size: min(18rem, 40vw);
+    padding: .3125rem .5rem;
+    overflow: hidden;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color-translucent);
+    background: var(--bs-body-bg);
+    box-shadow: none;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+#watch-main > tbody > tr:nth-of-type(even) > td {
+    background: color-mix(in srgb, var(--bs-tertiary-bg) 60%, var(--bs-body-bg));
+}
+#watch-main > tbody > tr:hover > td {
+    background: var(--bs-secondary-bg);
+}
+/* A cut-short cell opens up in full while it has keyboard focus. With JavaScript off, there's no tooltip or keyboard
+   stop for a cut-short value, so long values wrap instead (the table only gets DataTables' dataTable class once the
+   script has started it). They also wrap when the main pointer can't hover, such as on a phone or tablet. */
+#watch-main:not(.dataTable) > tbody > tr > td,
+#watch-main > tbody > tr > td:focus-within {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+@media (hover: none) {
+    #watch-main > tbody > tr > td {
+        overflow: visible;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+}
+/* The domain can still wrap where text normally wraps, such as at a hyphen, but it only breaks inside a word when it
+   can't fit on a line. */
+#watch-main > tbody > tr > td.domainmod-list-domain {
+    overflow-wrap: break-word;
+}
+/* A divider between columns, none after the last */
+#watch-main > :is(thead, tbody) > tr > :not(:last-child) {
+    border-inline-end: 1px solid var(--bs-border-color-translucent);
+}
+/* The domain stays in view at the start as the box scrolls, after its tick box when there is one. Like the first
+   column of a .domainmod-scroll-table (see css/base.css), it's at most 45vw wide (and, like the other cells, at most
+   18rem), so on a narrow phone it never covers the columns scrolling under it. */
+#watch-main > :is(thead, tbody) > tr > :is(.domainmod-list-select, .domainmod-list-domain) {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    max-inline-size: min(18rem, 45vw);
+}
+#watch-main > :is(thead, tbody) > tr > .domainmod-list-select {
+    inline-size: 2.25rem;
+    min-inline-size: 2.25rem;
+    max-inline-size: 2.25rem;
+    text-align: center;
+}
+#watch-main > :is(thead, tbody) > tr > .domainmod-list-select + .domainmod-list-domain {
+    inset-inline-start: 2.25rem;
+    max-inline-size: min(18rem, 40vw);
+}
+/* The message for a search with no matches spans the whole table, so it starts at the start edge, where the box
+   starts scrolled to, instead of being centred across columns that may be out of view */
+#watch-main > tbody > tr > td.dt-empty {
+    position: static;
+    text-align: start;
+}
+#watch-main > tbody > tr > td.domainmod-list-domain {
+    font-weight: 600;
+}
+/* The dates and times are in tabular figures, so the rows line up */
+#watch-main > :is(thead, tbody) > tr > :is(.domainmod-list-expiry, .domainmod-list-registered, .domainmod-list-drop,
+    .domainmod-list-added, .domainmod-list-checked, .domainmod-list-next) {
+    font-variant-numeric: tabular-nums;
+}

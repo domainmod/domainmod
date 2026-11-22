@@ -59,6 +59,19 @@
             </a>
         </li>
         <?php } ?>
+        <?php
+        // The Watch List, once the database update that adds it has run, unless it's turned off in System Settings (see
+        // DomainMOD\WatchList::isEnabled())
+        if (DomainMOD\WatchList::isEnabled()) { ?>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/watch/" class="nav-link<?php if ($software_section == "watch") echo " active"; ?>" aria-label="<?php echo _('Watch List'); ?>">
+                <i class="nav-icon bi bi-binoculars"></i>
+                <p>
+                    <?php echo _('Watch List'); ?>
+                </p>
+            </a>
+        </li>
+        <?php } ?>
         <li class="nav-item">
             <a href="<?php echo $web_root; ?>/bulk/" class="nav-link<?php if ($software_section == "bulk") echo " active"; ?>" aria-label="<?php echo _('Bulk Updater'); ?>">
                 <i class="nav-icon bi bi-files"></i>

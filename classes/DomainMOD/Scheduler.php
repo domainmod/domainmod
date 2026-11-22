@@ -565,6 +565,9 @@ class Scheduler
             'data-warehouse-build' => array(
                 'name' => _('Data Warehouse Build'),
                 'description' => _('Rebuilds the Data Warehouse, so it has the latest information from your servers.')),
+            'watch-list' => array(
+                'name' => _('Check Watch List'),
+                'description' => _('Checks the domains on the Watch List with public RDAP and WHOIS servers, a few at a time: weekly while a domain is far from expiry, daily near and after expiry, and more often once deletion is pending.')),
         );
 
         if (isset($texts[$slug][$field])) return $texts[$slug][$field];
@@ -580,6 +583,7 @@ class Scheduler
     {
         $intervals = array(
             'Every 5 Minutes' => _('Every 5 Minutes'),
+            'Every 10 Minutes' => _('Every 10 Minutes'),
             'Daily' => _('Daily'),
         );
 

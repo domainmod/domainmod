@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // When the type changes, a What Changed choice the new type doesn't have is dropped, so it can't hide every row while
     // the menu shows All (with the type unchanged, a deleted custom field's choice stays, as keepOption() keeps it)
     if ($posted['type'] !== '' && $posted['field'] !== '' && $posted['type'] !== ($post['type_was'] ?? '')) {
-        if (strpos($posted['field'], 'cf:') === 0) {
+        if (strpos($posted['field'], 'cf:') === 0 && $posted['type'] !== 'watch') {
             $posted_fields = DomainMOD\CustomField::readFilterFields($pdo, $posted['type'] === 'ssl' ? 'ssl_cert_fields' : 'domain_fields');
             $posted_names = array_map('strtolower', array_column($posted_fields, 'field_name'));
             if (!in_array(strtolower(substr($posted['field'], 3)), $posted_names, true)) $posted['field'] = '';
@@ -121,7 +121,7 @@ $range_names = array('today' => _('Today'), '7' => _('Last 7 Days'), '30' => _('
     'all' => _('All Time'), 'custom' => _('Custom Range'));
 $source_names = array();
 foreach (DomainMOD\ChangeHistory::SOURCES as $source_code) {
-    if (in_array($source_code, array('restore', 'system', 'api', 'watch_list', 'scheduled_refresh'), true)) continue;
+    if (in_array($source_code, array('restore', 'system', 'api', 'scheduled_refresh'), true)) continue;
     $source_names[$source_code] = DomainMOD\ChangeHistoryListColumns::sourceText($source_code, '', '');
 }
 
@@ -221,36 +221,40 @@ if ($export_data === 1 && $history_available) {
 
 }
 
-// What Changed: the recorded fields of the chosen type, by their edit forms' labels. With both types, a field that
-// reads differently for each lists both labels, and an SSL certificate's own field is marked as one
-$field_types = $state['type'] !== '' ? array($state['type']) : array('domain', 'ssl');
+// What Changed: the recorded fields of the chosen type, by their edit forms' labels. With every type, a field that
+// reads differently for each lists each label, and an SSL certificate's or a watched domain's own field is marked as one
+$field_types = $state['type'] !== '' ? array($state['type']) : array('domain', 'ssl', 'watch');
 $field_labels = array();
 foreach ($field_types as $field_type) {
     foreach (DomainMOD\ChangeHistoryListColumns::fieldNames($field_type) as $field_code => $field_label) {
-        if (isset(DomainMOD\ChangeHistory::FIELDS[$field_type][$field_code]) || in_array($field_code, array('dns_servers', 'issuer', 'transfer_lock', 'registry_problem', 'epp_status'), true)) {
+        if (isset(DomainMOD\ChangeHistory::FIELDS[$field_type][$field_code]) || in_array($field_code, array('dns_servers', 'issuer', 'transfer_lock', 'registry_problem', 'epp_status', 'stage', 'expiry_date', 'registrar', 'statuses', 'moved_domain_id'), true)) {
             $field_labels[$field_code][$field_type] = $field_label;
         }
     }
 }
 $field_choices = array();
 foreach ($field_labels as $field_code => $labels) {
-    if (count($field_types) === 1 || count(array_unique($labels)) === 1 && count($labels) === 2) {
+    if (count($field_types) === 1 || count(array_unique($labels)) === 1 && count($labels) > 1) {
         $field_choices[$field_code] = reset($labels);
-    } elseif (count($labels) === 2) {
-        $field_choices[$field_code] = implode(' / ', $labels);
+    } elseif (count($labels) > 1) {
+        $field_choices[$field_code] = implode(' / ', array_unique($labels));
+    } elseif (isset($labels['domain'])) {
+        $field_choices[$field_code] = $labels['domain'];
     } else {
-        $field_choices[$field_code] = isset($labels['ssl'])
-            ? sprintf('%1$s (%2$s)', $labels['ssl'], _('SSL Certificate')) : $labels['domain'];
+        $field_choices[$field_code] = sprintf('%1$s (%2$s)', reset($labels),
+            DomainMOD\ChangeHistoryListColumns::typeName((string) key($labels)));
     }
 }
 asort($field_choices);
-// The chosen type's custom fields too, by their names now (a deleted field's choice is kept with keepOption() below)
+// The chosen type's custom fields too, by their names now (a deleted field's choice is kept with keepOption() below).
+// Watched domains have no custom fields.
 $custom_field_choices = array();
 foreach ($field_types as $field_type) {
+    if ($field_type === 'watch') continue;
     $custom_table = $field_type === 'ssl' ? 'ssl_cert_fields' : 'domain_fields';
     foreach (DomainMOD\CustomField::readFilterFields($pdo, $custom_table) as $custom_field_row) {
         $custom_label = DomainMOD\FilterToolbar::decode($custom_field_row['name']);
-        if (count($field_types) === 2) {
+        if (count($field_types) > 1) {
             $custom_label = sprintf('%1$s (%2$s)', $custom_label, DomainMOD\ChangeHistoryListColumns::typeName($field_type));
         }
         // By the field name in lowercase, as the filter compares it (Region and region are one choice)
@@ -449,6 +453,7 @@ if (!$history_available) {
     echo $form->showDropdownOption('', _('Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), $state['type']);
     echo $form->showDropdownOption('domain', _('Domain'), $state['type']);
     echo $form->showDropdownOption('ssl', _('SSL Certificate'), $state['type']);
+    echo $form->showDropdownOption('watch', _('Watched Domain'), $state['type']);
     echo $form->showDropdownBottom('');
 
     echo $form->showInputText('name', _('Item Name'), '', $state['name'], '200', '', '', '', '');
