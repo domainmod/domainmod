@@ -154,7 +154,60 @@ if ($del === 1) {
 
         try {
 
+            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
             $pdo->beginTransaction();
+
+            /*
+             * The checks above run again inside the transaction, as locking reads, in the lock order every writer uses:
+             * the items first, then the items still pointing at this SSL provider's fees (captured for the Change History,
+             * whose costs lose their currency when those fees go), and only then the assets. Each check that finds
+             * something refuses with the same message as above.
+             */
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_ASSET, $_SESSION['s_user_id'], 'ssl_provider_delete');
+            // One fee change at a time (the fee pages take the same lock first), so they never deadlock
+            $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+            $history_refused = '';
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM ssl_certs
+                WHERE ssl_provider_id = :sslpid
+                LIMIT 1
+                FOR UPDATE");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
+            if ($stmt->fetchColumn()) $history_refused = _('This SSL Provider has SSL Certificates associated with it and cannot be deleted.');
+            $stmt->closeCursor();
+            $history_costs = $history_refused === '' ? $history_op->captureCosts('ssl', " AND i.fee_id IN (SELECT id FROM ssl_fees WHERE ssl_provider_id = :history_asset_id)", array('history_asset_id' => $sslpid)) : null;
+
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM ssl_accounts
+                WHERE ssl_provider_id = :sslpid
+                LIMIT 1
+                FOR UPDATE");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
+            $history_refused = $stmt->fetchColumn() ? _('This SSL Provider has Accounts associated with it and cannot be deleted.') : $history_refused;
+            $stmt->closeCursor();
+
+            if ($history_refused !== '') {
+
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] .= $history_refused . '<BR>';
+                header("Location: ssl-provider.php?sslpid=" . $sslpid);
+                exit;
+
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM ssl_fees
+                WHERE ssl_provider_id = :sslpid
+                FOR UPDATE");
+            $stmt->bindValue('sslpid', $sslpid, PDO::PARAM_INT);
+            $stmt->execute();
+            $stmt->closeCursor();
 
             $stmt = $pdo->prepare("
                 DELETE FROM ssl_fees
@@ -175,6 +228,9 @@ if ($del === 1) {
             $stmt->execute();
 
             $system->checkExistingAssets();
+
+            $history_op->compareCosts($history_costs);
+            $history_op->finish();
 
             if ($pdo->InTransaction()) $pdo->commit();
 

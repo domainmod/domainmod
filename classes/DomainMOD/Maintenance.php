@@ -34,20 +34,78 @@ class Maintenance
         $this->time = new Time();
     }
 
-    public function performCleanup()
+    // $user_id is who started it (Run Now on the Task Scheduler page), or 0 for DomainMOD itself (cron)
+    public function performCleanup($user_id = 0)
     {
-        $this->lowercaseDomains();
-        $this->lowercaseTlds();
-        $this->updateTlds();
-        $this->updateSegments();
-        $this->updateAllFees();
+        /*
+         * The steps that change items run in one transaction, recorded in the Change History as one maintenance action:
+         * the domain names the clean-up lowercases (captured first, only the ones it changes), and every cost the fee
+         * recalculation really moves (captured into temporary tables, see ChangeHistoryOperation::captureCosts()), so an
+         * ordinary day records nothing
+         */
+        $pdo = $this->deeb->cnxx;
+        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+        $pdo->beginTransaction();
+
+        try {
+
+            $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_MAINTENANCE, (int) $user_id, 'cleanup');
+            // One fee change at a time (the fee pages take the same lock first), so they never deadlock
+            $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+            $stmt = $pdo->query("
+                SELECT id
+                FROM domains
+                WHERE BINARY domain <> BINARY LOWER(domain)
+                ORDER BY id
+                FOR UPDATE");
+            $history_names = $history_op->capture('domain', array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN)),
+                array('domain'), false);
+            $stmt->closeCursor();
+            $history_domain_costs = $history_op->captureCosts('domain');
+            $history_ssl_costs = $history_op->captureCosts('ssl');
+
+            $this->lowercaseDomains();
+            $this->lowercaseTlds();
+            $this->updateTlds();
+            $this->updateSegments();
+            $this->updateAllFees();
+
+            $history_op->compare($history_names);
+            $history_op->compareCosts($history_domain_costs);
+            $history_op->compareCosts($history_ssl_costs);
+            $history_op->finish();
+
+            $pdo->commit();
+
+        } catch (\Throwable $e) {
+
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $e;
+
+        }
+
         $this->deleteUnusedFees('fees', 'domains');
         $this->deleteUnusedFees('ssl_fees', 'ssl_certs');
+        // The fee work is done, so the action (and its fee-change lock) goes before the steps that don't touch fees
+        $history_op = null;
         $this->zeroInvalidIpIds();
+
+        // The Change History's pruning, and any custom field columns a delete or add left part-way
+        (new ChangeHistory($pdo))->prune();
+        $this->dropOrphanCustomFieldColumns();
 
         $result_message = _('Maintenance Completed') . '<BR>';
 
         return $result_message;
+    }
+
+    // Custom field columns with no definition row, left by a delete or add that stopped part-way (see CustomFieldSchema)
+    public function dropOrphanCustomFieldColumns()
+    {
+        $pdo = $this->deeb->cnxx;
+        CustomFieldSchema::dropOrphans($pdo, 'domain');
+        CustomFieldSchema::dropOrphans($pdo, 'ssl');
     }
 
     public function lowercaseDomains()
@@ -207,7 +265,33 @@ class Maintenance
         }
     }
 
-    public function updateDomainFee($domain_id)
+    /*
+     * For a write that ends with updateDomainFee() (adding a domain): locks the domains that share its registrar and TLD,
+     * in id order, and captures their cost for the Change History, before the caller's own insert, so two adds at once
+     * queue rather than deadlock. Returns what updateDomainFee() needs to record their cost changes.
+     */
+    public function captureFeePeers(ChangeHistoryOperation $op, $registrar_id, $tld)
+    {
+        // The TLD as its VARCHAR(50) column stores it, since updateDomainFee() goes by the stored value
+        $tld = mb_substr((string) $tld, 0, 50, 'UTF-8');
+        // The fee-change named lock first (an add recalculates fees, as the fee pages do), so two adds, or an add and a fee
+        // change, queue here instead of each taking a gap or row lock and then deadlocking on the other's. It's held until
+        // the action finishes, which is short.
+        $op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+
+        // The group's domains, locked and their costs captured into a temporary table (see
+        // ChangeHistoryOperation::captureCosts()), so a large group never fills PHP's memory. They stay locked, so no
+        // other domain joins the group before updateDomainFee() runs.
+        return array('op' => $op, 'costs' => $op->captureCosts('domain', array(array(" AND i.registrar_id = :peer_registrar_id AND i.tld = :peer_tld",
+            array('peer_registrar_id' => (int) $registrar_id, 'peer_tld' => (string) $tld)))));
+    }
+
+    /*
+     * Gives a domain its fee and cost, and recalculates the cost of every domain with the same registrar and TLD. With
+     * $peers (from captureFeePeers()), the other domains' cost changes are recorded in the same action, marked as a side
+     * effect (the group's domains were locked by the capture, so the updates reach only those and this one).
+     */
+    public function updateDomainFee($domain_id, $peers = null)
     {
         $pdo = $this->deeb->cnxx;
 
@@ -319,6 +403,8 @@ class Maintenance
             }
 
         }
+
+        if ($peers !== null) $peers['op']->compareCosts($peers['costs'], 'side_effect');
     }
 
     public function updateSslFees()

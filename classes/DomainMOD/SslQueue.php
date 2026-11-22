@@ -56,6 +56,9 @@ class SslQueue
     public static $failure_codes = array('no_dns', 'not_public', 'no_connect', 'no_tls', 'name_mismatch', 'not_yet_valid',
         'bad_certificate', 'stale_choice', 'name_too_long');
 
+    // Whether a save in this run met another request's write (errors 1020 and 1213, see hadConflict())
+    protected $had_conflict = false;
+
     /*
      * Test-only hooks, null outside tests:
      * - $test_trace: a callable($event) that process() calls at its start ('start'), when it returns early before the
@@ -1326,10 +1329,22 @@ class SslQueue
 
                 $this->cleanUp();
                 $this->logError('Unable to release a waiting row in the SSL Queue', $row->wait_domain, $e);
+                // The row keeps waiting, and a conflict is noted for hadConflict(), as an import's is
+                if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) $this->had_conflict = true;
 
             }
 
         }
+    }
+
+    /*
+     * Whether a write in this run met another request's and was rolled back: a certificate's save (it counts as
+     * save_failed, tried again while it has attempts left), or a waiting row's release (it keeps waiting). The rest of
+     * the run goes on, so this is reported after it rather than ending it.
+     */
+    public function hadConflict()
+    {
+        return $this->had_conflict;
     }
 
     // The ssl-queue task's run. Until the database update it does nothing, so cron and Run Now are safe either way.
@@ -1716,7 +1731,8 @@ class SslQueue
      * every id the certificate uses are locked and rechecked, then the certificate is matched to an existing record
      * (by name, then fingerprint, then a certificate with no domain named for the host) or inserted. The certificates
      * with no domain are read after the lock and before the transaction, so the read sees everything committed by then.
-     * Any error rolls back and counts as save_failed.
+     * Any error rolls back and counts as save_failed (tried again next run). A save that met another request's write is
+     * also noted for hadConflict(), so Run Now can say so.
      */
     protected function import($row, $code, $details, $noted)
     {
@@ -1744,6 +1760,7 @@ class SslQueue
             $this->cleanUp();
             $this->logError('Unable to save a certificate from the SSL Queue', $row->host, $e);
             $outcome = 'save_failed';
+            if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) $this->had_conflict = true;
 
         } finally {
 
@@ -1779,6 +1796,10 @@ class SslQueue
     protected function importLocked($row, $code, $details, $noted, $ssl_assets, $candidates)
     {
         $pdo = $this->deeb->cnxx;
+
+        // The import is recorded in the Change History, in this transaction, started before any row is locked, so it
+        // takes the custom field definitions' locks first, as every writer does
+        $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_SSL_QUEUE, (int) $row->created_by);
 
         $current = $this->lockRow('ssl_queue', 'id', (int) $row->id, '*');
         if (!$current || (int) $current->processing !== 1 || (int) $current->finished !== 0) return 'gone';
@@ -1966,6 +1987,10 @@ class SslQueue
 
         $this->writeStatus($ssl_id, $details, $code, true);
         $this->finishRow((int) $row->id, $code, $details, $ssl_id, false);
+
+        // The import's create row, with a snapshot that includes the issuer the status row now holds
+        $history_op->created('ssl', $ssl_id);
+        $history_op->finish();
 
         return 'saved';
     }

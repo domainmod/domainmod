@@ -129,6 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_ssl'] ?? '') === '1
         }
 
         echo '</div>';
+
+        // The Change History section, redrawn with the refresh's changes, replaces the page's (an out-of-band swap)
+        echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'ssl', $sslcid, true);
         exit;
 
     }
@@ -179,6 +182,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
 
             $pdo->beginTransaction();
+
+            // The Save is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
 
             // The domain is optional, and 0 is None. A chosen domain may have been deleted while the form was open, and
             // then nothing is saved. The read locks the domain row before the certificate's own (below), the same order
@@ -234,6 +240,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
 
             }
+
+            // The certificate as it was (already locked above), so only what this Save really changes is recorded
+            $history_before = $history_op->capture('ssl', array($sslcid));
 
             // The stored domain as the page shows it: a stored id with no domains row counts as no domain (0), so saving
             // such a certificate unchanged (it shows None and posts 0) doesn't count as a new domain below
@@ -355,13 +364,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (!$saved_record || (string) $saved_record->name !== (string) $stored_record->name
                 || (int) $saved_record->domain_id !== $stored_domain_id) {
+                // The issuer the reset clears is recorded going to none, read under the status row's lock first
+                if ($history_op->enabled()) {
+                    $stmt = $pdo->prepare("
+                        SELECT refreshed_issuer
+                        FROM ssl_cert_status
+                        WHERE ssl_id = :sslcid
+                        FOR UPDATE");
+                    $stmt->bindValue('sslcid', $sslcid, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $old_issuer = (string) $stmt->fetchColumn();
+                    $stmt->closeCursor();
+                    if ($old_issuer !== '') $history_op->record('ssl', $sslcid, 'issuer', $old_issuer, '');
+                }
                 $ssl_queue->resetStatus($sslcid);
             }
 
             $result = $pdo->query("
                 SELECT field_name
                 FROM ssl_cert_fields
-                ORDER BY `name`")->fetchAll();
+                ORDER BY `name`
+                LOCK IN SHARE MODE")->fetchAll();
 
             if ($result) {
 
@@ -395,6 +418,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = $queryB->missingFees('ssl_certs');
             $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
+            $history_op->compare($history_before);
+            $history_op->finish();
+
             if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s updated'), $new_name) . '<BR>';
@@ -411,13 +437,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->rollback();
 
-            $log_message = 'Unable to update SSL certificate';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
+            // Another request changed the same rows at the same moment: nothing was saved, and the form shows again with
+            // what was typed (see domainmod_restore_is_conflict())
+            if (domainmod_restore_is_conflict($e)) {
+                $_SESSION['s_message_danger'] .= domainmod_restore_conflict_form_message() . '<BR>';
+            } else {
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+                $log_message = 'Unable to update SSL certificate';
+                $log_extra = array('Error' => $e);
+                $log->critical($log_message, $log_extra);
 
-            throw $e;
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
+            }
 
         }
 
@@ -524,6 +558,9 @@ if ($del === 1) {
 
         $pdo->beginTransaction();
 
+        // The delete is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
+
         // the record may have been deleted while the form was open; then nothing is saved
         $stmt = $pdo->prepare("
             SELECT id
@@ -543,6 +580,9 @@ if ($del === 1) {
 
         }
 
+        // The delete row, with a snapshot read under the certificate's lock
+        $history_op->deleting('ssl', array($sslcid));
+
         $stmt = $pdo->prepare("
             DELETE FROM ssl_certs
             WHERE id = :sslcid");
@@ -561,10 +601,12 @@ if ($del === 1) {
 
         $system->checkExistingAssets();
 
+        $history_op->finish();
+
         if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-        $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s (%s) deleted'), $new_name, $temp_type) . '<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('SSL Certificate %s (%s) deleted.'), $new_name, $temp_type) . '<BR>';
 
         header("Location: index.php");
         exit;
@@ -914,6 +956,9 @@ echo $layout->formSection(_('Custom Fields'), 'custom-fields', ob_get_clean());
 echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
+
+// The certificate's Change History, read-only and outside the form
+echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'ssl', $sslcid);
 
 $layout->dangerZone(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1', _('Delete this SSL certificate'), sprintf(_('This removes %s and its details from %s. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>', SOFTWARE_TITLE));
 ?>

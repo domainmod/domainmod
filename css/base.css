@@ -1858,3 +1858,24 @@ html.domainmod-toasts-compact {
     max-width: 100%;
     height: auto;
 }
+
+/* The Change History's notes and snapshots (DomainMOD\ChangeHistoryListColumns) keep their line breaks */
+.domainmod-history-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+/* A notes change's preview in a list cell stays short however long its lines are (the whole text is a click away) */
+.domainmod-history-preview {
+    display: block;
+    max-block-size: 20em;
+    overflow: hidden;
+}
+/* The edit pages' Change History table keeps readable columns on a narrow screen and scrolls sideways in its region */
+.domainmod-history-section > table {
+    min-width: 42rem;
+}
+/* An opened snapshot or full text scrolls inside its row, so one long item never pushes the rest of the history away */
+.domainmod-history-details[open] > :not(summary) {
+    max-block-size: 30em;
+    overflow: auto;
+}

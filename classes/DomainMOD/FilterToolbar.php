@@ -41,6 +41,7 @@ class FilterToolbar
     private $filters = array();
     private $carried = array();
     private $carried_state = array();
+    private $together = array();
 
     // $panel_id is the panel's id (such as domain-filters), $base_url the list's address (filters are added as a query
     // string), and $reset_url the address that clears every filter
@@ -97,6 +98,15 @@ class FilterToolbar
         $this->carried_state[$key] = (string) $value;
     }
 
+    /*
+     * Keys that go when $key's chip is removed, as filters or carried keys, such as an item picked by id on the Change
+     * History page, which is named by its type, id, and life together
+     */
+    public function removeTogether($key, array $keys)
+    {
+        $this->together[$key] = $keys;
+    }
+
     public function isActive($key)
     {
         return isset($this->filters[$key]);
@@ -110,12 +120,15 @@ class FilterToolbar
     // The list's address with the current state, leaving out the keys in $without, and adding (or replacing) $extra
     public function url(array $without = array(), array $extra = array())
     {
+        foreach ($without as $key) {
+            $without = array_merge($without, $this->together[$key] ?? array());
+        }
         $query = array();
         foreach ($this->filters as $key => $filter) {
             if (!in_array($key, $without, true)) $query[$key] = $filter['value'];
         }
         foreach ($this->carried as $key => $value) {
-            $query[$key] = $value;
+            if (!in_array($key, $without, true)) $query[$key] = $value;
         }
         foreach ($extra as $key => $value) {
             $query[$key] = $value;

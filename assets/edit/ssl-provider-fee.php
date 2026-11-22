@@ -135,9 +135,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
     try {
 
+        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         $pdo->beginTransaction();
 
         $timestamp = $time->stamp();
+
+        /*
+         * The change is one Change History action (see DomainMOD\ChangeHistory::feeScope()). Every item it can change is
+         * captured and locked first, from the fee's keys as they are now, and only then the fee row below, so items are
+         * always locked before fees, as every other writer does. If the locked fee no longer has the same keys, nothing is
+         * saved.
+         */
+        $stmt = $pdo->prepare("
+                SELECT ssl_provider_id, type_id
+                FROM ssl_fees
+                WHERE id = :fee_id");
+        $stmt->bindValue('fee_id', $fee_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $history_keys = $stmt->fetch();
+        $stmt->closeCursor();
+        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_ASSET, $_SESSION['s_user_id'],
+            'ssl_fee_edit', $history_keys ? DomainMOD\ChangeHistory::feeNote($pdo, 'ssl', $history_keys->ssl_provider_id, $history_keys->type_id) : '', 'fee');
+        $history_costs = null;
+        if ($history_keys) {
+            // One fee change at a time, so two fee pages never deadlock over items in each other's groups
+            $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+            $history_costs = $history_op->captureCosts('ssl', DomainMOD\ChangeHistory::feeScope('ssl', $history_keys->ssl_provider_id, $history_keys->type_id, $fee_id));
+        }
 
         // Lock the fee's row and read it again, so a fee deleted since the form was opened is refused, and the
         // certificates are relinked by the SSL provider and type it has now
@@ -162,6 +187,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
         $sslpid = (int) $locked_fee->ssl_provider_id;
         $new_type_id = (int) $locked_fee->type_id;
+
+        if (!$history_keys || (string) $history_keys->ssl_provider_id !== (string) $locked_fee->ssl_provider_id
+            || (string) $history_keys->type_id !== (string) $locked_fee->type_id) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('The fee changed while it was being saved. Please try again.') . '<BR>';
+            header("Location: ../ssl-providers.php");
+            exit;
+
+        }
 
         $stmt = $pdo->prepare("
                 UPDATE ssl_fees
@@ -202,6 +237,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
         $stmt->execute();
 
         $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+
+        $history_op->compareCosts($history_costs);
+        $history_op->finish();
 
         if ($pdo->InTransaction()) $pdo->commit();
 

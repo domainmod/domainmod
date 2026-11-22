@@ -26,6 +26,8 @@ class Domain
     public $deeb;
     public $log;
     public $time;
+    // The Change History action an import's addDomain() calls note their new domains in (see Csv::parse())
+    public $history_op = null;
 
     // IDNA options for converting domain names in both directions: UTS #46 nontransitional processing, with the
     // hostname rules (letters, digits, and hyphens in each label) and the Bidi and ContextJ checks
@@ -449,6 +451,7 @@ class Domain
         $stmt->execute();
 
         $temp_domain_id = $pdo->lastInsertId('id');
+        if ($this->history_op !== null) $this->history_op->created('domain', $temp_domain_id);
 
         $stmt = $pdo->prepare("
                     INSERT INTO domain_field_data
@@ -462,7 +465,8 @@ class Domain
         $result = $pdo->query("
                     SELECT field_name
                     FROM domain_fields
-                    ORDER BY `name`")->fetchAll();
+                    ORDER BY `name`
+                    LOCK IN SHARE MODE")->fetchAll();
 
         if ($result) {
 
@@ -497,12 +501,27 @@ class Domain
     /*
      * Keeps the SSL certificates of deleted domains, without a domain (domain_id 0), and returns how many were changed.
      * Their lookup status rows are kept, since their names, and so the sites they describe, haven't changed. It
-     * starts no transaction and locks no domain itself: the domain deletes call it inside their transaction, after
-     * deleting the domain rows, so the domains are locked first and its update then locks the certificates, in the
-     * same order as the SSL Queue and SSL Refresh.
+     * starts no transaction and locks no domain itself: the domain deletes call it (through unlinkSslCertificatesRecorded())
+     * inside their transaction, after locking the domains and before deleting them, so the domains are locked first and
+     * its update then locks the certificates, in the same order as the SSL Queue and SSL Refresh.
      */
-    public function unlinkSslCertificates(array $domain_ids)
+    public function unlinkSslCertificates(array $domain_ids, $ssl_ids = null)
     {
+        // With $ssl_ids (a page of certificates already locked and captured, see unlinkSslCertificatesRecorded()), only
+        // those are changed
+        if ($ssl_ids !== null) {
+            $ssl_ids = array_values(array_map('intval', $ssl_ids));
+            if (!$ssl_ids) return 0;
+            $stmt = $this->deeb->cnxx->prepare("
+                UPDATE ssl_certs
+                SET domain_id = 0,
+                    update_time = :update_time
+                WHERE id IN (" . implode(',', $ssl_ids) . ")");
+            $stmt->bindValue('update_time', $this->time->stamp(), \PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->rowCount();
+        }
+
         $domain_ids = array_values(array_map('intval', $domain_ids));
         if (!$domain_ids) return 0;
 
@@ -523,6 +542,116 @@ class Domain
         $stmt->execute();
 
         return $stmt->rowCount();
+    }
+
+    /*
+     * Unlinks the SSL certificates of domains about to be deleted, recording each unlink in the Change History. The
+     * certificates' ids looked up before the transaction started ($known_ssl_ids, as the Bulk Updater does) are locked
+     * first, through the primary key in ascending id order across every domain, as every writer locks them. Then each
+     * domain's certificates are locked, one domain at a time in ascending id, in keyset pages of 1,000 through the
+     * (domain_id) index (named with FORCE INDEX when one exists, so each page is a seek in id order), which also finds a
+     * certificate linked since the lookup. Once every certificate is locked, they're captured, unlinked, and compared,
+     * 1,000 at a time, domain by domain. The domains go in the order $domain_ids gives them when $in_order is set (such
+     * as the order a list was pasted, so the history lists them that way), otherwise in ascending domain id, and each
+     * domain's certificates go in ascending certificate id. Each certificate gets a domain_id row from the domain to
+     * none in the same action, marked as a side effect. It runs after the domains are locked and snapshotted
+     * and before they're deleted, so the domain's name can still be read for the history. Returns how many certificates
+     * were unlinked.
+     */
+    public function unlinkSslCertificatesRecorded(array $domain_ids, ChangeHistoryOperation $op, array $known_ssl_ids = array(), $in_order = false)
+    {
+        $pdo = $this->deeb->cnxx;
+        $domain_ids = array_values(array_unique(array_map('intval', $domain_ids)));
+        $lock_order = $domain_ids;
+        sort($lock_order);
+        if (!$in_order) $domain_ids = $lock_order;
+        $index = self::sslDomainIndexName($pdo);
+        $unlinked = 0;
+
+        $known_ssl_ids = array_values(array_unique(array_map('intval', $known_ssl_ids)));
+        sort($known_ssl_ids);
+        foreach (array_chunk($known_ssl_ids, 1000) as $chunk) {
+            $pdo->query("
+                SELECT id
+                FROM ssl_certs FORCE INDEX (PRIMARY)
+                WHERE id IN (" . implode(',', $chunk) . ")
+                ORDER BY id
+                FOR UPDATE")->closeCursor();
+        }
+
+        // Each domain's certificates, locked in ascending domain id (keyset pages through the domain_id index)
+        $certificates = array();
+        foreach ($lock_order as $domain_id) {
+
+            $certificates[$domain_id] = array();
+            $last = 0;
+            while (true) {
+
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM ssl_certs" . ($index !== '' ? " FORCE INDEX (`" . str_replace('`', '``', $index) . "`)" : '') . "
+                    WHERE domain_id = :domain_id
+                      AND id > :last
+                    ORDER BY id
+                    LIMIT 1000
+                    FOR UPDATE");
+                $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+                $stmt->bindValue('last', $last, \PDO::PARAM_INT);
+                $stmt->execute();
+                $ssl_ids = array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN));
+                $stmt->closeCursor();
+                if (!$ssl_ids) break;
+
+                $certificates[$domain_id] = array_merge($certificates[$domain_id], $ssl_ids);
+                $last = end($ssl_ids);
+                if (count($ssl_ids) < 1000) break;
+
+            }
+
+        }
+
+        // Then recorded and unlinked domain by domain, 1,000 at a time (all already locked)
+        foreach ($domain_ids as $domain_id) {
+            foreach (array_chunk($certificates[$domain_id] ?? array(), 1000) as $ssl_ids) {
+                $before = $op->capture('ssl', $ssl_ids, array('domain_id'), false);
+                $unlinked += $this->unlinkSslCertificates(array(), $ssl_ids);
+                $op->compare($before, 'side_effect');
+            }
+        }
+
+        return $unlinked;
+    }
+
+    // The ssl_certs index whose only column is domain_id (usable, not ignored or invisible), or '' when there's none
+    protected static function sslDomainIndexName(\PDO $pdo)
+    {
+        try {
+            $rows = $pdo->query("
+                SELECT *
+                FROM `INFORMATION_SCHEMA`.`STATISTICS`
+                WHERE `TABLE_SCHEMA` = DATABASE()
+                  AND `TABLE_NAME` = 'ssl_certs'")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return '';
+        }
+
+        $indexes = array();
+        foreach ($rows as $row) {
+            $row = array_change_key_case($row, CASE_LOWER);
+            $name = (string) $row['index_name'];
+            $indexes[$name]['columns'][(int) $row['seq_in_index']] = strtolower((string) $row['column_name']);
+            $indexes[$name]['usable'] = ($indexes[$name]['usable'] ?? true)
+                && strtoupper((string) ($row['ignored'] ?? 'NO')) !== 'YES'
+                && strtoupper((string) ($row['is_visible'] ?? 'YES')) !== 'NO';
+        }
+
+        $found = '';
+        foreach ($indexes as $name => $index) {
+            if ($index['usable'] && $index['columns'] === array(1 => 'domain_id') && ($found === '' || $name === 'domain_id')) {
+                $found = (string) $name;
+            }
+        }
+        return $found;
     }
 
 } //@formatter:on

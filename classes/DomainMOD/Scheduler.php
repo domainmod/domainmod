@@ -557,7 +557,7 @@ class Scheduler
                 'description' => sprintf(_("Retrieves the current currency conversion rates and updates every user's costs, which keeps the financial information in %s accurate. Users can set their currency in their User Profile."), SOFTWARE_TITLE)),
             'cleanup' => array(
                 'name' => _('System Cleanup'),
-                'description' => _('Converts domains to lowercase, checks that every TLD is correct, and records the status of each domain in your segments, which keeps segment filtering up to date. It also checks the domain, SSL certificate, and fee data against each other, and deletes unused fees.')),
+                'description' => _('Converts domains to lowercase, checks that every TLD is correct, and records the status of each domain in your segments, which keeps segment filtering up to date. It also checks the domain, SSL certificate, and fee data against each other, and deletes unused fees. Finally, it removes change history older than the retention period set in System Settings.')),
             'check-new-version' => array(
                 'name' => _('Check For New Version'),
                 /* TRANSLATORS: %s is the software's name, DomainMOD */

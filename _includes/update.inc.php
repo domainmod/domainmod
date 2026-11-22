@@ -20,6 +20,10 @@
  */
 ?>
 <?php
+// Both entry points hold the restore lock exclusively before they get here (see DomainMOD\RestoreLock::forUpgrade()),
+// so no restore, item write, or scheduled task runs alongside a migration
+if (domainmod_restore_lock_mode() !== 'exclusive') throw new RuntimeException('The upgrade has to hold the restore lock');
+
 $current_db_version = $system->getDbVersion();
 
 $previous_version = $current_db_version;

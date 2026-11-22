@@ -98,6 +98,8 @@ class DomainQueueStaleProcessingTest extends TestCase
 
     public function testADomainIsMarkedReadyAndImportedInOneTransaction()
     {
+        // The fee-change lock's name includes the database's name, which the app always defines
+        if (!defined('DB_NAME')) define('DB_NAME', 'domainmod_test');
         $pdo = $this->importDatabase();
         $this->queue($pdo, array('', '2030-01-01', array('ns1.example.com'), '0', '1'))->processQueueDomain();
 
@@ -216,6 +218,7 @@ class DomainQueueStaleProcessingTest extends TestCase
             private $in_transaction = false;
 
             public function query($sql) { $statement = $this->prepare($sql); $this->events[] = $sql; return $statement; }
+            public function exec($sql) { $this->events[] = $sql; return 0; }
 
             // Each statement keeps its own SQL and answer, since the import prepares two before running either
             public function prepare($sql)
@@ -268,7 +271,9 @@ class DomainQueueStaleProcessingTest extends TestCase
                 'account_id' => 1, 'domain' => 'example.com', 'tld' => 'com', 'expiry_date' => '2030-01-01',
                 'cat_id' => 5, 'dns_id' => 4, 'ip_id' => 3, 'hosting_id' => 6, 'autorenew' => '1', 'privacy' => '0',
                 'created_by' => 1, 'insert_time' => '2026-01-01 00:00:00')),
-            'AND creation_type_id = :creation_type_id' => '42'));
+            'AND creation_type_id = :creation_type_id' => '42',
+            // The import holds the fee-change lock until its transaction ends
+            'GET_LOCK(' => '1'));
     }
 
     private function row($id, $api_registrar_name)

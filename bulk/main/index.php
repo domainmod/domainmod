@@ -62,6 +62,109 @@ $new_autorenew = (int) ($_POST['new_autorenew'] ?? 0);
 $new_privacy = (int) ($_POST['new_privacy'] ?? 0);
 $new_active = (int) ($_POST['new_active'] ?? 0);
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+
+/*
+ * For the Change History: locks the domains on the list in id order and reads their recorded columns before an action's
+ * statements, for compare() once they've run: only the fields the action writes (and the notes when a note was typed,
+ * or when the action always adds its own line, as Force Renew does), so a large list holds as little as it can.
+ */
+/*
+ * The listed domains' ids by lower-case name, read before the action's transaction starts (a plain read inside it would
+ * open its snapshot early), so the action can lock them by id in ascending order, as every writer does
+ */
+$bulk_known_ids = array();
+$bulk_lookup_ids = function (array $domain_names) use ($pdo) {
+    $known = array();
+    foreach (array_chunk(array_values(array_unique($domain_names)), 60000) as $names) {
+        $stmt = $pdo->prepare("
+            SELECT id, domain
+            FROM domains
+            WHERE domain IN (" . implode(', ', array_fill(0, count($names), '?')) . ")");
+        $stmt->execute($names);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) $known[strtolower((string) $row['domain'])][] = (int) $row['id'];
+        $stmt->closeCursor();
+    }
+    return $known;
+};
+
+/*
+ * Locks the listed domains, inside the action's transaction, and returns their ids in ascending order: first by primary
+ * key in ascending id order (an IN() on the domain index would lock them in name order instead), keeping only rows that
+ * still have a listed name, then a locking read by name for every listed name, which only adds rows that appeared since
+ * the lookup (a domain added or renamed), so every row with a listed name is included, duplicates too
+ */
+$bulk_lock_ids = function (array $domain_names) use ($pdo, &$bulk_known_ids) {
+    $wanted = array();
+    foreach ($domain_names as $name) $wanted[strtolower((string) $name)] = (string) $name;
+    $ids = array();
+    foreach ($wanted as $key => $name) {
+        foreach ($bulk_known_ids[$key] ?? array() as $id) $ids[] = $id;
+    }
+    $ids = array_values(array_unique($ids));
+    sort($ids);
+
+    $locked = array();
+    foreach (array_chunk($ids, 1000) as $chunk) {
+        $stmt = $pdo->query("
+            SELECT id, domain
+            FROM domains FORCE INDEX (PRIMARY)
+            WHERE id IN (" . implode(',', $chunk) . ")
+            ORDER BY id
+            FOR UPDATE");
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            if (isset($wanted[strtolower((string) $row['domain'])])) $locked[(int) $row['id']] = true;
+        }
+        $stmt->closeCursor();
+    }
+
+    foreach (array_chunk(array_values($wanted), 60000) as $names) {
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM domains
+            WHERE domain IN (" . implode(', ', array_fill(0, count($names), '?')) . ")
+            ORDER BY id
+            FOR UPDATE");
+        $stmt->execute($names);
+        foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $id) $locked[(int) $id] = true;
+        $stmt->closeCursor();
+    }
+
+    $ids = array_keys($locked);
+    sort($ids);
+    return $ids;
+};
+
+/*
+ * Locked ids in the order their domains were pasted (then by id, with rows that appeared since the lookup last), so
+ * Change History lists the action's rows in that order. Only for recording: the locks are taken by $bulk_lock_ids, in
+ * its order.
+ */
+$bulk_pasted_order = function (array $ids, array $domain_names) use (&$bulk_known_ids) {
+    $position = array();
+    foreach ($domain_names as $name) {
+        foreach ($bulk_known_ids[strtolower((string) $name)] ?? array() as $id) {
+            if (!isset($position[(int) $id])) $position[(int) $id] = count($position);
+        }
+    }
+    usort($ids, function ($a, $b) use ($position) {
+        return array($position[(int) $a] ?? PHP_INT_MAX, (int) $a) <=> array($position[(int) $b] ?? PHP_INT_MAX, (int) $b);
+    });
+    return $ids;
+};
+
+$bulk_history_capture = function (DomainMOD\ChangeHistoryOperation $op, array $domain_names) use ($new_notes, $action, $bulk_lock_ids, $bulk_pasted_order) {
+    // The listed domains, locked by $bulk_lock_ids, then captured in the order they were pasted
+    $ids = $bulk_pasted_order($bulk_lock_ids($domain_names), $domain_names);
+    // The fields each action writes (every status action writes only the status)
+    $action_fields = array('RENEW' => array('expiry_date'), 'FR' => array('expiry_date', 'active', 'notes'),
+        'CPC' => array('cat_id'), 'CDNS' => array('dns_id'), 'CIP' => array('ip_id'), 'CWH' => array('hosting_id'),
+        'CRA' => array('account_id', 'owner_id', 'registrar_id', 'total_cost'), 'AURNE' => array('autorenew'),
+        'AURND' => array('autorenew'), 'PRVE' => array('privacy', 'total_cost'), 'PRVD' => array('privacy', 'total_cost'),
+        'CED' => array('expiry_date'), 'AN' => array('notes'));
+    $fields = $action_fields[$action] ?? array('active');
+    if ($new_notes !== '') $fields[] = 'notes';
+    return $op->capture('domain', $ids, array_values(array_unique($fields)), false);
+};
 $new_renewal_years = (int) ($_POST['new_renewal_years'] ?? 0);
 $is_submitted = (int) ($_POST['is_submitted'] ?? 0);
 
@@ -138,11 +241,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
             } else {
 
+                // The listed domains' ids, before any action's transaction starts (see $bulk_lock_ids)
+                if ($action != 'AD') $bulk_known_ids = $bulk_lookup_ids($domain_array);
+                // and, for a delete, their certificates' ids, so they're locked in id order too (see
+                // DomainMOD\Domain::unlinkSslCertificatesRecorded())
+                $bulk_known_ssl_ids = array();
+                if ($action == 'DD' && $bulk_known_ids) {
+                    foreach (array_chunk(array_merge(...array_values($bulk_known_ids)), 1000) as $bulk_chunk) {
+                        $bulk_known_ssl_ids = array_merge($bulk_known_ssl_ids, array_map('intval', $pdo->query("
+                            SELECT id
+                            FROM ssl_certs
+                            WHERE domain_id IN (" . implode(',', array_map('intval', $bulk_chunk)) . ")")->fetchAll(PDO::FETCH_COLUMN)));
+                    }
+                }
+
                 if ($action == "RENEW") {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_RENEW', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         foreach ($domain_array as $each_domain) {
 
@@ -151,6 +274,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -215,7 +341,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_AD', $new_notes);
 
                             $stmt = $pdo->prepare("
                                 SELECT owner_id, registrar_id
@@ -332,6 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                 $temp_fee_id = 0;
 
                                 $temp_domain_id = $pdo->lastInsertId('id');
+                                $history_op->created('domain', $temp_domain_id);
 
                                 $stmt = $pdo->prepare("
                                     INSERT INTO domain_field_data
@@ -345,7 +477,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                 $result = $pdo->query("
                                     SELECT field_name
                                     FROM domain_fields
-                                    ORDER BY `name`")->fetchAll();
+                                    ORDER BY `name`
+                                    LOCK IN SHARE MODE")->fetchAll();
 
                                 if ($result) {
 
@@ -382,6 +515,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             $maint->updateTlds();
 
+                            $history_op->finish();
+
                             if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Domains added') . '<BR>';
@@ -406,7 +541,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_FR', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
                         $sql = "SELECT domain, expiry_date
@@ -463,6 +604,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
+                        $history_op->compare($history_before);
+                        $history_op->finish();
+
                         if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains Fully Renewed') . '<BR>';
@@ -492,7 +636,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CPC', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             if ($new_notes != "") {
 
@@ -532,6 +682,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
+                            $history_op->compare($history_before);
+                            $history_op->finish();
+
                             if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Category Changed') . '<BR>';
@@ -563,7 +716,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CDNS', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             if ($new_notes != "") {
 
@@ -602,6 +761,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                 }
 
                             }
+
+                            $history_op->compare($history_before);
+                            $history_op->finish();
 
                             if ($pdo->InTransaction()) $pdo->commit();
 
@@ -634,7 +796,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CIP', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             if ($new_notes != "") {
 
@@ -674,6 +842,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
+                            $history_op->compare($history_before);
+                            $history_op->finish();
+
                             if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('IP Address Changed') . '<BR>';
@@ -705,7 +876,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_AN', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             $stmt = $pdo->prepare("
                                 UPDATE domains
@@ -721,6 +898,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                 $stmt->execute();
 
                             }
+
+                            $history_op->compare($history_before);
+                            $history_op->finish();
 
                             if ($pdo->InTransaction()) $pdo->commit();
 
@@ -753,7 +933,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CRA', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             $stmt = $pdo->prepare("
                                 SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
@@ -879,6 +1065,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $sql = $queryB->missingFees('domains');
                             $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
+                            $history_op->compare($history_before);
+                            $history_op->finish();
+
                             if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Registrar Account Changed') . '<BR>';
@@ -910,7 +1099,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CWH', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             if ($new_notes != "") {
 
@@ -950,6 +1145,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             }
 
+                            $history_op->compare($history_before);
+                            $history_op->finish();
+
                             if ($pdo->InTransaction()) $pdo->commit();
 
                             $_SESSION['s_message_success'] .= _('Web Hosting Provider Changed') . '<BR>';
@@ -974,27 +1172,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_DD', $new_notes);
 
                         $unlinked_ssl_certs = 0;
 
-                        $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                        $sql = "SELECT id
-                                FROM domains
-                                WHERE domain IN (" . $in_list . ")";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->execute($domain_array);
-                        $result = $stmt->fetchAll();
+                        // The listed domains, locked in ascending id order (see $bulk_lock_ids)
+                        $domain_id_list = $bulk_lock_ids($domain_array);
 
-                        if ($result) {
+                        if ($domain_id_list) {
 
-                            $domain_id_list = array();
-
-                            foreach ($result as $row) {
-
-                                $domain_id_list[] = $row->id;
-
-                            }
+                            // Each domain's delete row, with a snapshot read under its lock, then its SSL certificates, which are
+                            // kept without a domain: locked after the domains, a page at a time, each recorded going from its
+                            // domain to none (while the domains' names can still be read)
+                            // In the order they were pasted (the domains are all locked already, and the known certificates
+                            // are locked first, by id)
+                            $pasted_ids = $bulk_pasted_order($domain_id_list, $domain_array);
+                            $history_op->deleting('domain', $pasted_ids, true);
+                            $unlinked_ssl_certs = $domain->unlinkSslCertificatesRecorded($pasted_ids, $history_op, $bulk_known_ssl_ids, true);
 
                             $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
 
@@ -1008,14 +1207,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
 
-                            // The domains' SSL certificates are kept, without a domain, after the domains are
-                            // locked by their delete, so a certificate an SSL Queue import committed meanwhile is kept
-                            // too
-                            $unlinked_ssl_certs = $domain->unlinkSslCertificates($domain_id_list);
 
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1044,7 +1241,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_E', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1083,6 +1286,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1106,7 +1312,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_S', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1145,6 +1357,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1168,7 +1383,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_A', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1207,6 +1428,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1230,7 +1454,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_T', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1269,6 +1499,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1292,7 +1525,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_PRg', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1331,6 +1570,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1354,7 +1596,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_PRn', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1393,6 +1641,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1416,7 +1667,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_PO', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1455,6 +1712,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         }
 
                         $maint->updateSegments();
+
+                        $history_op->compare($history_before);
+                        $history_op->finish();
 
                         if ($pdo->InTransaction()) $pdo->commit();
 
@@ -1478,7 +1738,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_AURNE', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1518,6 +1784,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
+                        $history_op->compare($history_before);
+                        $history_op->finish();
+
                         if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Auto-Renewal') . '<BR>';
@@ -1540,7 +1809,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_AURND', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1578,6 +1853,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         }
 
+                        $history_op->compare($history_before);
+                        $history_op->finish();
+
                         if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Manual Renewal') . '<BR>';
@@ -1600,7 +1878,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_PRVE', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1658,6 +1942,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         $maint->updateSegments();
 
+                        $history_op->compare($history_before);
+                        $history_op->finish();
+
                         if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Private WHOIS') . '<BR>';
@@ -1680,7 +1967,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                     try {
 
+                        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                        $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                         $pdo->beginTransaction();
+
+                        // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_PRVD', $new_notes);
+                        $history_before = $bulk_history_capture($history_op, $domain_array);
 
                         if ($new_notes != "") {
 
@@ -1736,6 +2029,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         }
 
+                        $history_op->compare($history_before);
+                        $history_op->finish();
+
                         if ($pdo->InTransaction()) $pdo->commit();
 
                         $_SESSION['s_message_success'] .= _('Domains marked as Public WHOIS') . '<BR>';
@@ -1765,7 +2061,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                         try {
 
+                            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                             $pdo->beginTransaction();
+
+                            // The action is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CED', $new_notes);
+                            $history_before = $bulk_history_capture($history_op, $domain_array);
 
                             if ($new_notes != "") {
 
@@ -1804,6 +2106,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                                 }
 
                             }
+
+                            $history_op->compare($history_before);
+                            $history_op->finish();
 
                             if ($pdo->InTransaction()) $pdo->commit();
 

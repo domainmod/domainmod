@@ -26,6 +26,126 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+/*
+ * The restore lock (see _includes/restore-gate.inc.php), taken before the first database read. A restore or Finish
+ * Restore takes it exclusively, and anything else takes it shared. While the restore flag is there (a restore that died
+ * with nobody holding the lock), the page takes it exclusively too, and shows only Finish Restore.
+ */
+$restore_post = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+// A POST from a session that isn't signed in, has no administrator access (as cached at sign-in), or lacks its security
+// token never takes the exclusive lock (it's refused below, as any page refuses it)
+$restore_token_valid = $restore_post && (new DomainMOD\Csrf())->isValid();
+$restore_refused_post = $restore_post && (($_SESSION['s_is_logged_in'] ?? 0) != 1 || ($_SESSION['s_is_admin'] ?? 0) != 1
+    || !$restore_token_valid);
+// A signed-in session with its token but without the cached flag (a sign-in that stopped at the upgrade notice, such as
+// on a database whose version doesn't match, never caches it) has its access checked live under the shared lock below,
+// and moves on to the exclusive lock only if it's an administrator who isn't read-only
+$restore_live_check = $restore_refused_post && ($_SESSION['s_is_logged_in'] ?? 0) == 1 && $restore_token_valid
+    && ($_SESSION['s_is_admin'] ?? 0) != 1;
+// A session whose administrator access was checked live for a restore (below) may also finish that restore, if it died:
+// its marker holds the user and that restore's own id, which the flag must still hold
+$restore_marker = $_SESSION['s_restore_admin_checked'] ?? null;
+$restore_admin_session = ($_SESSION['s_is_logged_in'] ?? 0) == 1 && (($_SESSION['s_is_admin'] ?? 0) == 1
+    || (is_array($restore_marker) && (int) ($restore_marker['user'] ?? 0) === (int) ($_SESSION['s_user_id'] ?? -1)
+        && is_string($restore_marker['restore'] ?? null) && $restore_marker['restore'] === DomainMOD\RestoreRecovery::flagId()));
+if ($restore_refused_post) $restore_post = false;
+// A restore and Finish Restore keep their files in temp/, so neither starts while it isn't writable (everything else
+// goes on with the database lock in place of the lock file)
+if ($restore_post && !DomainMOD\RestoreLock::restoreReady()) {
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . htmlspecialchars(DomainMOD\RestoreLock::restoreMessage(), ENT_QUOTES, 'UTF-8') . '<BR>';
+    header('Location: ' . WEB_ROOT . '/admin/backup/');
+    exit;
+}
+if ($restore_post) {
+
+    $restore_lock = DomainMOD\RestoreLock::exclusive();
+    if ($restore_lock['state'] === 'busy') domainmod_restore_refuse(DomainMOD\RestoreLock::message($restore_lock['flag']));
+    // A restore or Finish Restore never runs without the exclusive lock, the lock file's included
+    if (($restore_lock['reason'] ?? '') === 'database') domainmod_restore_refuse(domainmod_restore_db_unreachable_message('restore'));
+    if ($restore_lock['state'] !== 'held') domainmod_restore_refuse(domainmod_restore_lock_error_message());
+    if (!domainmod_restore_holds_file_exclusive()) domainmod_restore_refuse(DomainMOD\RestoreLock::restoreMessage());
+
+} else {
+
+    $restore_lock = domainmod_restore_lock(false);
+    if ($restore_lock['state'] === 'busy') domainmod_restore_refuse(DomainMOD\RestoreLock::message($restore_lock['flag']));
+    // As the gate does: neither the lock file nor the database lock can be used safely (such as a temp folder that
+    // can't be searched, where the flag can't be checked)
+    if ($restore_lock['state'] === 'error') domainmod_restore_refuse(domainmod_restore_lock_error_message());
+    // A POST without its token, or any request from a session that isn't an administrator's (as cached at sign-in, or
+    // checked live for its own restore), never moves on to the exclusive lock, so it can't hold up an administrator's
+    // Finish Restore (access is checked again live once the exclusive lock is held)
+    if ($restore_lock['flag'] && (!$restore_admin_session || ($restore_refused_post && !$restore_token_valid))) {
+        domainmod_restore_refuse(DomainMOD\RestoreLock::message(true));
+    }
+    // A session let in by its earlier live check only (not the flag cached at sign-in) is checked live again before it
+    // takes the exclusive lock, so an account that's lost its access since can't hold up an administrator's Finish Restore
+    if ($restore_lock['flag'] && ($_SESSION['s_is_admin'] ?? 0) != 1) {
+        try {
+            $restore_auth = new DomainMOD\System();
+            $restore_flags = $restore_auth->authCheckResult() === 'valid' ? $restore_auth->authFlags() : array('admin' => 0, 'read_only' => 1);
+        } catch (Throwable $e) {
+            // Tables a dead restore left that the check can't read: the restore message, which says how to finish it
+            $restore_flags = array('admin' => 0, 'read_only' => 1);
+        }
+        if ($restore_flags['admin'] !== 1 || $restore_flags['read_only'] !== 0) domainmod_restore_refuse(DomainMOD\RestoreLock::message(true));
+    }
+    if ($restore_lock['state'] === 'held' && $restore_lock['flag']) {
+        domainmod_restore_unlock();
+        $restore_lock = DomainMOD\RestoreLock::exclusive();
+        // A lock that can't be taken at all (such as a lock file this user can't open) is a permissions problem, not a
+        // busy one, so it's named
+        if ($restore_lock['state'] === 'error') domainmod_restore_refuse(($restore_lock['reason'] ?? '') === 'database'
+            ? domainmod_restore_db_unreachable_message('restore') : DomainMOD\RestoreLock::restoreMessage());
+        if ($restore_lock['state'] !== 'held') domainmod_restore_refuse(DomainMOD\RestoreLock::message($restore_lock['flag']));
+        // Finish Restore is only offered where it can run
+        if (!domainmod_restore_holds_file_exclusive() || !DomainMOD\RestoreLock::restoreReady()) {
+            domainmod_restore_refuse(DomainMOD\RestoreLock::restoreMessage());
+        }
+        // A Finish Restore from the session whose access was checked live for the restore goes ahead (the live checks
+        // below still apply)
+        if ($restore_refused_post && $restore_token_valid) {
+            $restore_post = true;
+            $restore_refused_post = false;
+            $restore_live_check = false;
+        }
+    }
+    if ($restore_live_check && $restore_lock['state'] === 'held' && !$restore_lock['flag']) {
+        // The same sign-in and access check every page makes (the session itself is valid, and the account is an
+        // active administrator who isn't read-only), read live
+        $restore_auth = new DomainMOD\System();
+        $restore_valid = $restore_auth->authCheckResult() === 'valid';
+        $restore_flags = $restore_valid ? $restore_auth->authFlags() : array('admin' => 0, 'read_only' => 1);
+        // A session that's no longer valid goes on as a page view, whose sign-in check signs it out with its own message.
+        // Anyone else is told why nothing happened.
+        if ($restore_valid && ($restore_flags['admin'] !== 1 || $restore_flags['read_only'] !== 0)) {
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . htmlspecialchars(_("Only an administrator who isn't read-only can restore a backup."), ENT_QUOTES, 'UTF-8') . '<BR>';
+            header('Location: ' . WEB_ROOT . '/admin/backup/');
+            exit;
+        }
+    }
+    // A valid administrator's session then goes on to the restore
+    if ($restore_live_check && $restore_lock['state'] === 'held' && !$restore_lock['flag'] && ($restore_valid ?? false)) {
+        if (!DomainMOD\RestoreLock::restoreReady()) {
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . htmlspecialchars(DomainMOD\RestoreLock::restoreMessage(), ENT_QUOTES, 'UTF-8') . '<BR>';
+            header('Location: ' . WEB_ROOT . '/admin/backup/');
+            exit;
+        }
+        // As for any restore: the exclusive lock, the lock file's included
+        domainmod_restore_unlock();
+        $restore_lock = DomainMOD\RestoreLock::exclusive();
+        if ($restore_lock['state'] === 'busy') domainmod_restore_refuse(DomainMOD\RestoreLock::message($restore_lock['flag']));
+        if (($restore_lock['reason'] ?? '') === 'database') domainmod_restore_refuse(domainmod_restore_db_unreachable_message('restore'));
+        if ($restore_lock['state'] !== 'held') domainmod_restore_refuse(domainmod_restore_lock_error_message());
+        if (!domainmod_restore_holds_file_exclusive()) domainmod_restore_refuse(DomainMOD\RestoreLock::restoreMessage());
+        // Remembered once the restore itself starts (see below)
+        $restore_via_live_check = true;
+        $restore_post = true;
+        $restore_refused_post = false;
+    }
+
+}
+
 $deeb = DomainMOD\Database::getInstance();
 $system = new DomainMOD\System();
 $log = new DomainMOD\Log('/admin/backup/index.php');
@@ -33,16 +153,51 @@ $layout = new DomainMOD\Layout();
 $form = new DomainMOD\Form();
 
 require_once DIR_INC . '/head.inc.php';
-require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/admin-backup-main.inc.php';
+/*
+ * The sign-in and administrator checks, from the database as it is now (never the session's cached flags), so a restore
+ * that removed someone's administrator access also removes their right to finish a restore. While a restore that died
+ * part-way has left tables the checks can't read, the page says how to finish it on the server instead of failing.
+ */
+$restore_unreadable = _("A restore didn't finish, and its database can't be read yet. Finish it on the server with php restore.php --recover.");
+try {
+    require_once DIR_INC . '/debug.inc.php';
+    require_once DIR_INC . '/settings/admin-backup-main.inc.php';
+    // With the flag up, a session the restored database can't confirm (such as a settings table with no row yet) gets
+    // the recovery message rather than being signed out, since signing in again is refused until the restore finishes
+    if ($restore_lock['flag'] && $system->authCheckResult() === 'invalid') domainmod_restore_refuse($restore_unreadable);
+    $system->authCheck();
+} catch (PDOException $e) {
+    if (!$restore_lock['flag']) throw $e;
+    domainmod_restore_refuse($restore_unreadable);
+}
+$auth_flags = $system->authFlags();
+$system->checkAdminUser($auth_flags['admin']);
+// Read-only users can't restore or finish a restore
+if ($restore_post && $auth_flags['read_only'] !== 0) {
 
-$system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
-if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+    $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
+    header('Location: ' . WEB_ROOT . '/admin/backup/');
+    exit;
+
+}
 $pdo = $deeb->cnxx;
 
+// Restores are off while temp/ isn't writable (everything else goes on, with the database lock where it's needed)
+domainmod_restore_warn_admin();
+
+// What's left of an earlier restore: its flag (it died part-way) or a staged copy's record (it died during its scan).
+// What the Finish Restore form is shown for: the flag's own value (see RestoreRecovery::finishValue()), or the staged
+// record's token. A flag without an id is given one when the page is shown to an administrator who can finish it, never
+// on a POST, so a posted form is always checked against the flag as it was shown.
+$restore_flag_value = DomainMOD\RestoreRecovery::finishValue(!$restore_post && $auth_flags['read_only'] === 0);
+$restore_flag_id = DomainMOD\RestoreRecovery::flagId();
+$restore_staged = DomainMOD\RestoreRecovery::stagedRecord();
+$restore_finish_for = $restore_flag_value !== '' ? $restore_flag_value
+    : ($restore_staged !== null && ($restore_staged['kind'] ?? '') === DomainMOD\RestoreRecovery::KIND_WEB ? 'staged:' . ($restore_staged['token'] ?? '') : '');
+
 // Remove any files left in the web-accessible temp folder by older versions, and warn about any that can't be deleted
-$legacy_temp_files = $system->removeLegacyTempFiles();
+$legacy_temp_files = $restore_flag_id === '' ? $system->removeLegacyTempFiles() : array();
 
 if (!empty($legacy_temp_files)) {
 
@@ -51,9 +206,80 @@ if (!empty($legacy_temp_files)) {
 
 }
 
+// Adds messages to the session, which a long restore has let go of (see below), so the next page shows them
+$add_messages = function (array $messages, $key = 's_message_danger') {
+    if (session_status() !== PHP_SESSION_ACTIVE) @session_start();
+    $_SESSION[$key] = $_SESSION[$key] ?? '';
+    foreach ($messages as $message) {
+        if ($message !== '') $_SESSION[$key] .= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '<BR>';
+    }
+};
+
 use iamdual\Uploader;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($restore_post && isset($_POST['finish_restore'])) {
+
+    /*
+     * Finish Restore: only for the state the form was shown for, so a form left open from an earlier state can't act on
+     * a later restore. The session is let go of first, so a Sign Out in another tab isn't held behind the recovery. A
+     * value that isn't a string (a crafted form) is refused like one from an earlier state.
+     */
+    $finish_restore_posted = is_string($_POST['finish_restore']) ? $_POST['finish_restore'] : '';
+    if ($restore_finish_for !== '' && hash_equals($restore_finish_for, $finish_restore_posted)) {
+
+        // The restore's own files have to be readable here, or a verified import would be judged unverified
+        if (!DomainMOD\RestoreRecovery::canRecoverHere()) {
+            clearstatcache();
+            $_SESSION['s_message_danger'] .= (is_writable(DIR_TEMP)
+                ? _("The restore's files in the temp folder can't be read by the web server, so the restore can't be finished here. Run php restore.php --recover on the server.")
+                : _("The web server can't write to DomainMOD's temp folder, so the restore can't be finished. Make the folder writable by the web server, then try again.")) . '<BR>';
+            header("Location: " . WEB_ROOT . "/admin/backup/");
+            exit;
+        }
+
+        session_write_close();
+        $recovery = DomainMOD\RestoreRecovery::recover(DomainMOD\RestoreRecovery::KIND_WEB);
+        if ($recovery['ok'] && $restore_flag_id !== '') {
+            /*
+             * A finished recovery signs the administrator out straight away, as a finished restore does, and the sign-in
+             * page says how it went, once (see logout.php): finished, or finished with a database that may be partly
+             * restored, with the recovery's own notices. The lock goes first, so waiting for the session (another tab
+             * may hold it while it waits for the lock) can't hold both up.
+             */
+            domainmod_restore_unlock();
+            if (session_status() !== PHP_SESSION_ACTIVE) @session_start();
+            $_SESSION['s_restore_signin'] = !empty($recovery['imported'])
+                ? array('danger' => $recovery['notices'], 'success' => array(_('The restore was finished. Please sign in again.')))
+                : array('danger' => array_merge($recovery['notices'], array(_('The restore was finished, but your database may now be partly restored, so restore a complete backup before going on.'),
+                    _('Please sign in again.'))), 'success' => array());
+            header("Location: " . WEB_ROOT . "/logout.php");
+            exit;
+        }
+        // A staged copy left without a restore was only cleared up, so the administrator stays signed in
+        if ($recovery['ok']) $add_messages($recovery['notices']);
+        if (!$recovery['ok']) {
+            $add_messages(array(_("The restore couldn't be finished. Please check the server's error log, then try again.")));
+            // Shown in this response, since the clean-up may already have given every user a new two-factor stamp
+            $restore_failed = true;
+            // The form shown again carries the flag's value as it is now, since the recovery may have given it an id
+            $restore_flag_value = DomainMOD\RestoreRecovery::finishValue();
+            if ($restore_flag_value !== '') $restore_finish_for = $restore_flag_value;
+        }
+
+    }
+
+    if (empty($restore_failed)) {
+        header("Location: " . WEB_ROOT . "/admin/backup/");
+        exit;
+    }
+
+} elseif ($restore_post && $restore_finish_for !== '') {
+
+    // A restore can't start while an earlier one is waiting to be finished
+    header("Location: " . WEB_ROOT . "/admin/backup/");
+    exit;
+
+} elseif ($restore_post) {
 
     try {
 
@@ -63,8 +289,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $upload->allowed_extensions(array("sql"));
             $upload->max_size(50); // in MB
 
-            // Import straight from PHP's upload file, which PHP deletes when the request ends, rather than moving it
-            // into the web-accessible temp folder
+            // The upload is copied into PHP's temporary folder for the restore (see DomainMOD\RestoreRecovery), never into
+            // the web-accessible temp folder, and neither may be inside the web root
             if ($upload->get_tmp_name() !== null && $upload->get_tmp_name() !== '' && $system->isInsideWebRoot(dirname($upload->get_tmp_name()))) {
 
                 // Don't process an upload that PHP stored somewhere web-accessible
@@ -74,6 +300,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
                 $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s upload folder (upload_tmp_dir) is inside your web root. Please move it outside your web root and try again.') . '<BR>';
+
+            } elseif ($system->isInsideWebRoot(sys_get_temp_dir())) {
+
+                // Don't copy the backup for the restore somewhere web-accessible
+                $log_message = 'Restore refused because PHP\'s temporary folder is web-accessible';
+                $log_extra = array('Temporary folder' => sys_get_temp_dir());
+                $log->critical($log_message, $log_extra);
+
+                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+                $_SESSION['s_message_danger'] .= _('This file can\'t be processed because PHP\'s temporary folder (sys_temp_dir) is inside your web root. Please move it outside your web root and try again.') . '<BR>';
 
             } elseif (!$upload->check() || !is_uploaded_file($upload->get_tmp_name())) {
 
@@ -87,42 +323,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $password = $dbpassword ?? '';
                 $database = $dbname ?? '';
                 $host = $dbhostname ?? '';
-                // A backup that's been cut short is turned down before anything changes, so no one is signed out
-                $restore_started = false;
 
-                try {
-
-                    DomainMOD\RestoreImport::checkFile($filename);
-                    $restore_started = true;
-                    new DomainMOD\RestoreImport($filename, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
-
-                } catch (Exception $e) {
-
-                    // The restore didn't finish, so say so here (logging out would lose the message). Once it has
-                    // started, sessions still end below, since the part that ran may have brought back other users and
-                    // stamps.
-                    $restore_error = $e;
-
+                // A session let in by the live check is remembered as this restore's, so it can finish the restore if
+                // it dies part-way (see $restore_admin_session, which checks it live again then), and forgotten below
+                // if the restore never left a flag
+                $restore_id = bin2hex(random_bytes(16));
+                if (!empty($restore_via_live_check)) {
+                    $_SESSION['s_restore_admin_checked'] = array('user' => (int) ($_SESSION['s_user_id'] ?? 0), 'restore' => $restore_id);
                 }
 
-                // Every user gets a new two-factor stamp (once the restored database has them), so sessions and
-                // remembered devices whose stamps the backup brought back end too
-                try {
+                // The session is let go of once the checks above have passed, so a Sign Out in another tab isn't held
+                // behind the restore
+                session_write_close();
 
-                    $two_factor = new DomainMOD\TwoFactor();
-                    if ($restore_started && $two_factor->isAvailableNow()) $two_factor->newStampsForEveryone();
+                /*
+                 * The restore (see DomainMOD\RestoreRecovery::restore()): any earlier restore's recovery, a private copy
+                 * of the upload, its scan, the flag, the import, the verdict, and the cleanup (which also gives every user
+                 * a new two-factor stamp, ending every session). A backup that's been cut short is turned down before
+                 * anything changes, so no one is signed out.
+                 */
+                $restore = DomainMOD\RestoreRecovery::restore($filename, sys_get_temp_dir(), DomainMOD\RestoreRecovery::KIND_WEB,
+                    function ($copy) use ($username, $password, $database, $host, $deeb) {
+                        new DomainMOD\RestoreImport($copy, $username, $password, $database, $host, $deeb->connection_options, $deeb->certificate_checked);
+                    }, $restore_id);
 
-                } catch (Exception $e) {
+                if ($restore['error'] === '') {
 
-                    // After a failed restore the database may not have its users or version, which is reported above,
-                    // along with the sessions that couldn't be ended
-                    if (!isset($restore_error)) throw $e;
-                    $stamps_failed = true;
-
-                }
-
-                if (!isset($restore_error)) {
-
+                    // The sign-in page then says the restore finished (see logout.php). The lock goes first, so
+                    // waiting for the session (another tab may hold it while it waits for the lock) can't hold both up.
+                    domainmod_restore_unlock();
+                    if (session_status() !== PHP_SESSION_ACTIVE) @session_start();
+                    $_SESSION['s_restore_signin'] = array('danger' => array(),
+                        'success' => array(_('The restore finished. Please sign in again.')));
                     header("Location: " . WEB_ROOT . "/logout.php");
                     exit;
 
@@ -132,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $log_message = sprintf('Unable to restore %s data', SOFTWARE_TITLE);
                     // Only the message: the exception's trace can show the database password passed to RestoreImport
-                    $log_extra = array('Error' => $restore_error->getMessage());
+                    $log_extra = array('Error' => $restore['error']);
                     $log->critical($log_message, $log_extra);
 
                 } catch (Exception $e) {
@@ -142,10 +374,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
-                $_SESSION['s_message_danger'] .= sprintf(_("The restore didn't finish: %s"), htmlspecialchars($restore_error->getMessage(), ENT_QUOTES, 'UTF-8')) . '<BR>';
-                $_SESSION['s_message_danger'] .= ($restore_started ? _('Your database may now be partly restored, so restore a complete backup before going on.') : _('Nothing was changed.')) . '<BR>';
-                if (isset($stamps_failed)) $_SESSION['s_message_danger'] .= _("Signed-in sessions couldn't be ended, so other users may still be signed in.") . '<BR>';
+                // Shown in this response, since a restore that started gave every user a new two-factor stamp, which
+                // ends this session on its next request
+                $restore_failed = true;
+                // A flag the restore left (an import or a clean-up that didn't finish) shows Finish Restore in this
+                // response too, rather than the upload form the gate would refuse
+                $restore_flag_id = DomainMOD\RestoreRecovery::flagId();
+                if ($restore_flag_id === '' && !empty($restore_via_live_check)) {
+                    if (session_status() !== PHP_SESSION_ACTIVE) @session_start();
+                    unset($_SESSION['s_restore_admin_checked']);
+                }
+                if ($restore_flag_id !== '') $restore_finish_for = DomainMOD\RestoreRecovery::finishValue();
+                // and a staged copy it couldn't remove is shown as the page shows one on its next visit (the Finish
+                // Restore form names the copy, so its notice isn't repeated in the messages)
+                $restore_staged = DomainMOD\RestoreRecovery::stagedRecord();
+                $restore_notices = $restore['notices'];
+                if ($restore_finish_for === '' && $restore_staged !== null && ($restore_staged['kind'] ?? '') === DomainMOD\RestoreRecovery::KIND_WEB) {
+                    $restore_finish_for = 'staged:' . ($restore_staged['token'] ?? '');
+                    $restore_notices = array_diff($restore_notices, array(DomainMOD\RestoreRecovery::stagedNotice()));
+                }
+
+                $add_messages(DomainMOD\RestoreRecovery::failureLines($restore, true));
+                $add_messages($restore_notices);
 
             }
 
@@ -161,6 +411,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
 
+    if (empty($restore_failed)) {
+        header("Location: " . WEB_ROOT . "/admin/backup/");
+        exit;
+    }
+
+}
+
+// The Change History's share of the database, shown beside the backup, since it's in every backup
+$history_share = '';
+// Not after a failed restore, whose database may not answer (its messages are shown without it)
+if ($restore_finish_for === '' && empty($restore_failed) && DomainMOD\ChangeHistory::isAvailable($pdo)) {
+
+    $stmt = $pdo->prepare("
+        SELECT SUM(data_length + index_length) AS total,
+               SUM(CASE WHEN table_name IN ('change_history', 'change_operations') THEN data_length + index_length ELSE 0 END) AS history
+        FROM information_schema.TABLES
+        WHERE table_schema = :dbname");
+    $stmt->bindValue('dbname', $dbname, PDO::PARAM_STR);
+    $stmt->execute();
+    $sizes = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    if ($sizes && (float) $sizes['total'] > 0) {
+        $history_share = sprintf(_('Change history: %1$s MB of %2$s MB'), number_format((float) $sizes['history'] / 1048576, 1),
+            number_format((float) $sizes['total'] / 1048576, 1));
+    }
+
+}
+
+// A staged copy the Finish Restore form can't clear (the command line's) is named in a message, since the form is only
+// shown for the web's own
+if ($restore_staged !== null && $restore_finish_for === '') {
+
+    $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
+    $staged_notice = htmlspecialchars(DomainMOD\RestoreRecovery::stagedNotice(), ENT_QUOTES, 'UTF-8');
+    if (strpos($_SESSION['s_message_danger'], $staged_notice) === false) $_SESSION['s_message_danger'] .= $staged_notice . '<BR>';
+
 }
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
@@ -172,6 +458,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 
+<?php
+if ($restore_finish_for !== '') {
+
+    // An earlier restore didn't finish: only Finish Restore is shown until it has
+    ob_start(); ?>
+<p class="domainmod-span-all"><?php echo $restore_flag_id !== '' ? _("A restore didn't finish.") : htmlspecialchars(DomainMOD\RestoreRecovery::stagedNotice(), ENT_QUOTES, 'UTF-8'); ?></p>
+<?php if ($auth_flags['read_only'] !== 0) { // A read-only administrator can't finish it, so they're told who can ?>
+<p class="domainmod-span-all"><?php echo _("An administrator who isn't read-only can finish it here, or it can be finished on the server with php restore.php --recover."); ?></p>
+<?php } elseif (!DomainMOD\RestoreLock::restoreReady()) { // Finish Restore can't run here until temp/ is fixed ?>
+<p class="domainmod-span-all"><?php echo htmlspecialchars(DomainMOD\RestoreLock::restoreMessage(), ENT_QUOTES, 'UTF-8'); ?></p>
+<?php } else { ?>
+<input type="hidden" name="finish_restore" value="<?php echo htmlspecialchars($restore_finish_for, ENT_QUOTES, 'UTF-8'); ?>">
+<div class="domainmod-span-all mb-3"><?php echo $layout->showButton('submit', _('Finish Restore')); ?></div>
+<?php } ?><?php
+    $finish_fields = ob_get_clean(); ?>
+<form action="" method="post" class="domainmod-form">
+<?php echo $form->showCsrfField(); ?>
+<?php echo $layout->formSection(_('Finish Restore'), 'finish-restore', $finish_fields); ?>
+</form>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
+</body>
+</html>
+<?php
+    exit;
+
+} ?>
 <div class="domainmod-intro">
 <p><?php
 echo sprintf(_('This page enables you to perform complete backups and restores of your %s database.'), SOFTWARE_TITLE) . ' ';
@@ -188,6 +500,9 @@ ob_start(); ?>
     <dt><?php echo _('Database Backup File'); ?></dt>
     <dd class="mb-0"><?php echo $layout->ltr('domainmod-backup.sql'); ?></dd>
 </dl>
+<?php if ($history_share !== '') { ?>
+<p class="domainmod-span-all form-text mb-3"><?php echo htmlspecialchars($history_share, ENT_QUOTES, 'UTF-8'); ?></p>
+<?php } ?>
 <div class="domainmod-span-all mb-3"><?php echo $layout->linkButton('download/', _('Backup Entire Database'), 'primary'); ?></div><?php
 echo '<div class="domainmod-form">' . $layout->formSection(_('Back Up'), 'backup', ob_get_clean()) . '</div>';
 

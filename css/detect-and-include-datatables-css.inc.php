@@ -25,6 +25,7 @@ switch ($slug ?? '') {
     case 'dw-list-zones':
     case 'dw-main':
     case 'dw-servers':
+    case 'history-main':
     case 'reporting-domain-costs':
     case 'reporting-domain-fees':
     case 'reporting-main':

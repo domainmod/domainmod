@@ -167,10 +167,13 @@ if (file_exists($full_filename)) {
 
         // htmx tasks (see Layout::htmxTaskLink() and DomainQueue::processingNotice()). A real result carries the
         // X-DomainMOD-Result header. Anything else, such as the sign-in page or the page a failed check redirected to,
-        // isn't swapped in, and a message says it didn't work instead. A link is marked busy while its task runs.
+        // isn't swapped in, and a message says it didn't work instead. The restore gate's 503 (a restore or upgrade) and
+        // database-conflict 409 carry X-DomainMOD-Refused (see _includes/restore-gate.inc.php) and say why in plain text,
+        // so that text is shown instead (the Refresh pages show it in their result area themselves, see
+        // js/domain-refresh.js). A link is marked busy while its task runs.
         var htmx_error = <?php echo json_encode(_("That didn't work. Please reload the page and try again.")); ?>;
         var htmx_error_close = <?php echo json_encode(_('Close')); ?>;
-        var showHtmxError = function (element, target) {
+        var showHtmxError = function (element, target, message) {
             // The same slim alert as the page messages (System::slimMessage()). It's added after the page loads, so its
             // role="alert" is announced, and the shared announcer doesn't read it again.
             var alert = document.createElement('div');
@@ -181,7 +184,7 @@ if (file_exists($full_filename)) {
             icon.setAttribute('aria-hidden', 'true');
             var text = document.createElement('div');
             text.className = 'domainmod-message-text';
-            text.textContent = htmx_error;
+            text.textContent = message || htmx_error;
             var close = document.createElement('button');
             close.type = 'button';
             close.className = 'btn-close';
@@ -201,10 +204,15 @@ if (file_exists($full_filename)) {
             }
         };
         document.addEventListener('htmx:beforeSwap', function (event) {
-            if (event.detail.xhr.getResponseHeader('X-DomainMOD-Result') === '1') return;
+            var xhr = event.detail.xhr;
+            if (xhr.getResponseHeader('X-DomainMOD-Result') === '1') return;
             event.detail.shouldSwap = false;
             event.detail.isError = false;
-            showHtmxError(event.detail.elt, event.detail.target);
+            // Only the gate's own answer (plain text, marked), as on the Refresh pages: a page put in its place, such as a
+            // proxy's, gets the general message
+            var refused = (xhr.status === 503 || xhr.status === 409) && xhr.getResponseHeader('X-DomainMOD-Refused') === '1'
+                && (xhr.getResponseHeader('Content-Type') || '').indexOf('text/plain') === 0;
+            showHtmxError(event.detail.elt, event.detail.target, refused ? xhr.responseText.trim() : '');
         });
         document.addEventListener('htmx:sendError', function (event) {
             showHtmxError(event.detail.elt, event.detail.target);

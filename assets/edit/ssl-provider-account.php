@@ -68,7 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         try {
 
+            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
             $pdo->beginTransaction();
+
+            // One asset action, started before the account's row is locked, so its wait for the custom field
+            // definitions (see DomainMOD\ChangeHistory::start()) never holds the account, as the SSL Queue starts its
+            // action first too
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_ASSET, $_SESSION['s_user_id'], 'ssl_account_edit');
 
             // the record may have been deleted while the form was open; then nothing is saved
             $stmt = $pdo->prepare("
@@ -88,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
 
             }
+
 
             // An empty Password field keeps the saved password, so the column is only set when one is typed or its
             // Remove box is ticked
@@ -119,20 +127,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
             $stmt->execute();
 
-            $stmt = $pdo->prepare("
-                UPDATE ssl_certs
-                SET owner_id = :new_owner_id,
-                    ssl_provider_id = :new_ssl_provider_id
-                WHERE account_id = :new_sslpaid");
-            $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
-            $stmt->execute();
+            /*
+             * The account's items, captured and locked after the account's own row is saved (the SSL Queue also locks an
+             * account before its items), before the account moves them to its new owner or SSL provider, so the Change History
+             * records each one that changes, in the asset action started above
+             */
+            // The account's items a keyset page of 1,000 at a time: locked, captured, moved, and compared, so PHP holds one
+            // page at once however large the account is
+            $history_last = 0;
+            do {
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM ssl_certs
+                    WHERE account_id = :account_id
+                      AND id > :last_id
+                    ORDER BY id
+                    LIMIT 1000
+                    FOR UPDATE");
+                $stmt->bindValue('account_id', $new_sslpaid, PDO::PARAM_INT);
+                $stmt->bindValue('last_id', $history_last, PDO::PARAM_INT);
+                $stmt->execute();
+                $history_chunk = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+                $stmt->closeCursor();
+                if (!$history_chunk) break;
+                $history_last = end($history_chunk);
+
+                $history_before = $history_op->capture('ssl', $history_chunk, array('account_id', 'owner_id', 'ssl_provider_id'), false);
+                $stmt = $pdo->prepare("
+                    UPDATE ssl_certs
+                    SET owner_id = :new_owner_id,
+                        ssl_provider_id = :new_ssl_provider_id
+                    WHERE account_id = :new_sslpaid
+                      AND id IN (" . implode(',', $history_chunk) . ")");
+                $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_ssl_provider_id', $new_ssl_provider_id, PDO::PARAM_INT);
+                $stmt->bindValue('new_sslpaid', $new_sslpaid, PDO::PARAM_INT);
+                $stmt->execute();
+                $history_op->compare($history_before);
+            } while (count($history_chunk) === 1000);
 
             $sslpaid = $new_sslpaid;
 
             $temp_ssl_provider = $assets->getSslProvider($new_ssl_provider_id);
             $temp_owner = $assets->getOwner($new_owner_id);
+
+            $history_op->finish();
 
             if ($pdo->InTransaction()) $pdo->commit();
 

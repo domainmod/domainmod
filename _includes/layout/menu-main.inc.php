@@ -83,6 +83,14 @@
                 </p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/history/" class="nav-link<?php if ($software_section == "history") echo " active"; ?>" aria-label="<?php echo _('Change History'); ?>">
+                <i class="nav-icon bi bi-clock-history"></i>
+                <p>
+                    <?php echo _('Change History'); ?>
+                </p>
+            </a>
+        </li>
         <?php // The fee reports live in Reporting and the fee and rate updates in Maintenance, but they're listed under
         // Assets, so Assets is open and highlighted on those pages. Read-only users can't update fees or rates, so
         // those items are left out for them. ?>

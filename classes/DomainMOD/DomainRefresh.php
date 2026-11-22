@@ -542,6 +542,10 @@ class DomainRefresh
 
             $pdo->beginTransaction();
 
+            // The Change History's action starts before the domain is locked, so its wait for the custom field
+            // definitions (see ChangeHistory::start()) never holds the domain's lock, as every recorded writer does
+            $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_REFRESH, $user_id, 'domain_refresh');
+
             $row = $this->getDomainRow((int) $before->id, true);
 
             if (!$row) {
@@ -562,6 +566,16 @@ class DomainRefresh
                 return array(false, array($changed), array('reasons' => array($changed), 'changes' => array(), 'notes' => array()));
 
             }
+
+            /*
+             * The refresh is recorded in the Change History (its action started above), in this transaction: the fields
+             * Refresh owns, compared before and after (not the notes, since its dated note line says what the change
+             * rows already say, and not the DNS profile, since its DNS servers are recorded instead, so a profile
+             * created by the refresh doesn't add a second row)
+             */
+            $history_before = $history_op->capture('domain', array((int) $row->id),
+                array('expiry_date', 'privacy', 'autorenew', 'total_cost'), false);
+            $history_dns = null;
 
             $changes = array();      // lines for the user
             $note_changes = array(); // sentences for the domain's notes (stored in English)
@@ -589,6 +603,8 @@ class DomainRefresh
                     if ($new_dns_id !== (int) $row->dns_id) {
 
                         $new['dns_id'] = $new_dns_id;
+                        $history_dns = array($current_profile ? implode("\n", $current_profile['servers']) : '',
+                            implode("\n", $dns_servers));
                         $old_name = $this->html($current_profile ? $current_profile['name'] : '');
                         $new_name = $this->html($this->getDnsProfileName($new_dns_id));
 
@@ -628,6 +644,7 @@ class DomainRefresh
              */
             $status = $this->status_available ? ($details['status'] ?? null) : null;
             $status_write = false;
+            $status_history = array(); // field => array(old, new), by DomainStatus::changes()'s rules
 
             if ($status !== null) {
 
@@ -639,6 +656,7 @@ class DomainRefresh
                     $changes = array_merge($changes, $status_changes['lines']);
                     $note_changes = array_merge($note_changes, $status_changes['notes']);
                     $notes_lines = array_merge($notes_lines, $status_changes['info']);
+                    $status_history = $status_changes['history'];
 
                 } else {
 
@@ -665,6 +683,9 @@ class DomainRefresh
                     $this->bindStatus($stmt, $status);
                     $stmt->bindValue('domain_id', (int) $row->id, \PDO::PARAM_INT);
                     $stmt->execute();
+                    // A quiet read can still change the registry status codes, which the history keeps
+                    $this->recordStatus($history_op, (int) $row->id, $status, $status_history);
+                    $history_op->finish();
                     $pdo->commit();
 
                 } else {
@@ -732,6 +753,13 @@ class DomainRefresh
             $stmt->bindValue('domain_id', (int) $row->id, \PDO::PARAM_INT);
             $stmt->execute();
 
+            if ($history_dns !== null) {
+                $history_op->record('domain', (int) $row->id, 'dns_servers', $history_dns[0], $history_dns[1], $source);
+            }
+            $this->recordStatus($history_op, (int) $row->id, $status, $status_history);
+            $history_op->compare($history_before, '', $source);
+            $history_op->finish();
+
             $pdo->commit();
 
             return array(true, array_merge($changes, $cost_lines, $notes_lines),
@@ -745,9 +773,21 @@ class DomainRefresh
             $log_extra = array('Domain' => $before->domain, 'Error' => $e);
             $this->log->critical($log_message, $log_extra);
 
-            $not_updated = _("The domain couldn't be updated. Please try again.");
+            // Another request changed the same rows at the same moment (see domainmod_restore_is_conflict())
+            $not_updated = (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e))
+                ? domainmod_restore_conflict_refresh_message() : _("The domain couldn't be updated. Please try again.");
             return array(false, array($not_updated), array('reasons' => array($not_updated), 'changes' => array(), 'notes' => array()));
 
+        }
+    }
+
+    // Records a status read's history entries from DomainStatus::changes() (the lock, On Hold or Being Deleted, and the
+    // registry status codes), marked as read from RDAP or WHOIS
+    protected function recordStatus(ChangeHistoryOperation $history_op, $domain_id, $status, array $status_history)
+    {
+        $via = (($status['read'] ?? '') === 'whois') ? 'whois' : 'rdap';
+        foreach ($status_history as $field => $values) {
+            $history_op->record('domain', $domain_id, $field, (string) $values[0], (string) $values[1], $via);
         }
     }
 

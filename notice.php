@@ -44,6 +44,9 @@ if (DomainMOD\Notice::showsUpgrade($action, $_SESSION['s_system_db_version'] ?? 
     // Only an administrator who isn't read-only gets the button. Anyone else is asked to have one run the upgrade.
     if ($notice->userCanRunUpgrade($_SESSION['s_user_id'] ?? 0)) {
 
+        // The upgrade runs with the database lock if temp/ isn't writable, but restores stay off until it is, which the
+        // notice says above its button (this page shows no page messages)
+        $restore_temp_warning = !DomainMOD\RestoreLock::restoreReady();
         $notice->dbUpgrade();
 
     } else {
@@ -73,7 +76,9 @@ require_once DIR_INC . '/layout/header-bare.inc.php'; ?>
     <div class="card-header">
         <h2 class="card-title fs-5"><i class="bi bi-info-circle text-danger me-2" aria-hidden="true"></i><?php echo $_SESSION['s_notice_page_title']; ?></h2>
     </div>
-    <div class="card-body"><?php echo $_SESSION['s_notice']; ?></div>
+    <div class="card-body"><?php
+        if (!empty($restore_temp_warning)) echo $system->showMessageWarning(htmlspecialchars(domainmod_restore_fallback_message(), ENT_QUOTES, 'UTF-8'));
+        echo $_SESSION['s_notice']; ?></div>
 </div>
 <?php require_once DIR_INC . '/layout/footer-bare.inc.php'; ?>
 </body>

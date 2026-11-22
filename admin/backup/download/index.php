@@ -37,9 +37,33 @@ $log = new DomainMOD\Log('/admin/backup/download/index.php');
 require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+// The administrator flag as the database has it now (see System::authFlags()), not the session's cached one
+$system->checkAdminUser($system->authFlags()['admin']);
+// The dump never runs without the request's shared restore lock (the bootstrap takes it, see restore-gate.inc.php)
+if (domainmod_restore_lock_mode() === '') domainmod_restore_refuse(domainmod_restore_lock_error_message());
 
 $download_filename = 'domainmod-backup.sql';
+
+/*
+ * The request's shared restore lock (taken by the bootstrap, see _includes/restore-gate.inc.php) is held until the dump
+ * has finished, so a restore can't start part-way through it. Both item types' custom field locks are held for the whole
+ * dump too (domain fields, then SSL fields, each with a short wait), so a field can't be added or deleted while the dump
+ * reads the table definitions. If either can't be had, nothing is dumped.
+ */
+$pdo = $deeb->cnxx;
+$custom_field_locks = array();
+foreach (array('domain', 'ssl') as $custom_field_type) {
+
+    if (!DomainMOD\ChangeHistory::lockCustomFields($pdo, $custom_field_type, 5)) {
+
+        foreach ($custom_field_locks as $held_type) DomainMOD\ChangeHistory::unlockCustomFields($pdo, $held_type);
+        domainmod_restore_refuse(DomainMOD\RestoreLock::message(false));
+
+    }
+    $custom_field_locks[] = $custom_field_type;
+
+}
+$backup_version = (string) $system->getDbVersion();
 
 // Remove any files left in the web-accessible temp folder by older versions (a file that can't be deleted is logged)
 $system->removeLegacyTempFiles();
@@ -85,13 +109,31 @@ try {
     $dump = new IMysqldump\Mysqldump('mysql:host=' . $dbhostname . ';dbname=' . $dbname, $dbusername, $dbpassword, $DumpSettings,
         // Not persistent: PHP's persistent connection cache ignores TLS options, so it could reuse an older connection
         array(PDO::ATTR_PERSISTENT => false) + $deeb->connection_options);
+    // The rows Ifsnop itself writes for each table (inside its own snapshot), for the manifest the restore checks
+    $table_counts = array();
+    $dump->setInfoHook(function ($object, $info) use (&$table_counts) {
+        if ($object === 'table') $table_counts[(string) $info['name']] = (int) $info['rowCount'];
+    });
     $dump->start($backup_file);
+    // The dump read through its own connection, so the lock is checked before the backup is finished: a database lock
+    // lost meanwhile (its connection killed) means a restore or an upgrade could have run alongside, and the file is
+    // thrown away instead
+    if (!domainmod_restore_lock_still_held()) {
+        throw new DomainMOD\RestoreLockException(_("The backup couldn't be finished, since DomainMOD's restore lock was lost while it ran. Please try again."));
+    }
+    DomainMOD\RestoreRecovery::addManifest($backup_file, $table_counts, $backup_version);
+    foreach ($custom_field_locks as $held_type) DomainMOD\ChangeHistory::unlockCustomFields($pdo, $held_type);
 
 } catch (Exception $e) {
 
-    $log_message = sprintf('Unable to backup %s data', SOFTWARE_TITLE);
-    $log_extra = array('Error' => $e);
-    $log->critical($log_message, $log_extra);
+    // Logging never replaces the backup's own error, even when the database connection was lost
+    try {
+        $log_message = sprintf('Unable to backup %s data', SOFTWARE_TITLE);
+        $log_extra = array('Error' => $e);
+        $log->critical($log_message, $log_extra);
+    } catch (\Throwable $log_error) {
+        // nothing more can be done
+    }
 
     throw $e;
 

@@ -69,8 +69,10 @@ function domainmodServerList(selector) {
     var message_kind = '';
     var showMessage = function (kind, text, link_text, link_url) {
         if (!message_area) return;
-        // The generic message never replaces the session or display settings message, which say what to do
+        // The generic message never replaces the session or display settings message, which say what to do, and a busy
+        // message (a restore or an upgrade) replaces only the generic one
         if (message_kind !== '' && kind === 'error') return;
+        if (kind === 'busy' && message_kind !== '' && message_kind !== 'error' && message_kind !== 'busy') return;
         message_kind = kind;
         // The same slim alert as the page messages (System::slimMessage()), added after the page loads, so its
         // role="alert" is announced
@@ -229,8 +231,13 @@ function domainmodServerList(selector) {
             if (cell.classList.contains('control') || cell.classList.contains('child')) return;
             if (cell.scrollWidth > cell.clientWidth) {
                 var copy = cell.cloneNode(true);
-                copy.querySelectorAll('.visually-hidden').forEach(function (hidden) {
+                // Neither screen reader text nor a closed disclosure's contents (the Change History's details) go in
+                copy.querySelectorAll('.visually-hidden, details:not([open]) > :not(summary)').forEach(function (hidden) {
                     hidden.remove();
+                });
+                // A line break reads as a space, so two lines don't run together
+                copy.querySelectorAll('br').forEach(function (line_break) {
+                    line_break.replaceWith(' ');
                 });
                 cell.title = copy.textContent.replace(/\s+/g, ' ').trim();
             } else {
@@ -337,8 +344,8 @@ function domainmodServerList(selector) {
 
     api.on('xhr', function (event, settings, json, xhr) {
         if (json !== null && xhr && xhr.status >= 200 && xhr.status < 300) {
-            // A good answer clears an earlier "That didn't work", but never the session or settings message
-            if (message_kind === 'error' && message_area) {
+            // A good answer clears an earlier "That didn't work" or busy message, but never the session or settings message
+            if ((message_kind === 'error' || message_kind === 'busy') && message_area) {
                 message_area.replaceChildren();
                 message_kind = '';
             }
@@ -358,6 +365,9 @@ function domainmodServerList(selector) {
                 config.filterReloadUrl || window.location.href);
         } else if (status === 409 && answer && answer.reload) {
             showMessage('reload', messages.reload, messages.reloadLink, config.reloadUrl || window.location.href);
+        } else if (status === 503 && answer && typeof answer.error === 'string' && answer.error !== '') {
+            // A restore or an upgrade is running (see _includes/restore-gate.inc.php), so its own message says so
+            showMessage('busy', answer.error);
         } else {
             showMessage('error', messages.error);
         }

@@ -39,7 +39,24 @@ $csrf = new DomainMOD\Csrf();
 $csrf->check($_SERVER['HTTP_REFERER'] ?? '');
 $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
-$maint->updateSslFees();
+// The recalculation runs in one transaction, and every cost it really moves is recorded in the Change History
+$pdo = DomainMOD\Database::getInstance()->cnxx;
+// REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+$pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+$pdo->beginTransaction();
+try {
+    $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_MAINTENANCE, $_SESSION['s_user_id'], 'update_ssl_fees');
+    // One fee change at a time (the fee pages take the same lock first), so they never deadlock
+    $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+    $history_costs = $history_op->captureCosts('ssl');
+    $maint->updateSslFees();
+    $history_op->compareCosts($history_costs);
+    $history_op->finish();
+    $pdo->commit();
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    throw $e;
+}
 
 $queryB = new DomainMOD\QueryBuild();
 

@@ -34,6 +34,24 @@ if (CRON_KEY !== '' && PHP_SAPI !== 'cli' && !hash_equals(CRON_KEY, is_string($_
 
 }
 
+/*
+ * The restore lock (see _includes/restore-gate.inc.php), before the database version check, the due-task query, or any
+ * scheduler bookkeeping, held for the whole run, so tasks are always chosen, run, and finished against one database. A
+ * restore that died part-way is finished here first, but only from the command line or with a configured key that
+ * matched above (so an anonymous request can never start it), and only when this process can clear the flag. Where the
+ * lock file can't be used, the database lock stands in for it. While a restore is running, or neither lock can be used
+ * safely, the whole run is skipped, and every task is due again next time.
+ */
+if (domainmod_restore_flag_exists() && (PHP_SAPI === 'cli' || CRON_KEY !== '') && DomainMOD\RestoreRecovery::canRecoverHere()) {
+    DomainMOD\RestoreRecovery::fromCron();
+}
+$cron_lock = domainmod_restore_lock(false);
+if ($cron_lock['state'] !== 'held' || $cron_lock['flag']) {
+    error_log('DomainMOD: scheduled tasks skipped (' . ($cron_lock['flag'] ? 'a restore is in progress or didn\'t finish'
+        : ($cron_lock['state'] === 'busy' ? 'the restore lock is busy' : 'neither temp/restore.lock nor the database lock can be used')) . ')');
+    exit;
+}
+
 $conversion = new DomainMOD\Conversion();
 $deeb = DomainMOD\Database::getInstance();
 $log = new DomainMOD\Log('/cron.php');
@@ -104,11 +122,17 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
                     $log->notice($log_message, $log_extra);
 
                     $schedule->isRunning($row->id);
-                    $maint->performCleanup();
-                    $schedule->finishTask($row->id, $started);
-
-                    $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
-                    $log->notice($log_message);
+                    try {
+                        $maint->performCleanup();
+                        $schedule->finishTask($row->id, $started);
+                        $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
+                        $log->notice($log_message);
+                    } catch (DomainMOD\RestoreLockException $e) {
+                        // The fee-change lock stayed busy (such as during a long CSV import): the clean-up stays due for
+                        // the next run, and this run goes on to the other tasks
+                        $schedule->isFinished($row->id);
+                        $log->warning('Cleanup Tasks skipped, since DomainMOD was busy', array('Error' => $e->getMessage()));
+                    }
 
                 } elseif ($row->slug == 'expiration-email') {
 

@@ -39,8 +39,18 @@ class Database
         $this->cnxx->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         $this->cnxx->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->cnxx->setAttribute(self::mysqlAttribute('USE_BUFFERED_QUERY'), true);
-
+        // MariaDB 11.6 and later refuse a locking read of a row changed since the transaction's snapshot (error 1020)
+        // unless this is off. DomainMOD's writes rely on locking reads seeing the latest committed rows, as they always
+        // have, so it's turned off for this connection wherever the server has it (an older server or MySQL doesn't, and
+        // that's fine).
+        // Only MariaDB is asked, so MySQL never logs an unknown variable for every request.
         $this->db_details = strtolower($this->cnxx->getAttribute(\PDO::ATTR_SERVER_VERSION));
+        if (strpos($this->db_details, 'mariadb') !== false) {
+            try {
+                $this->cnxx->exec("SET SESSION innodb_snapshot_isolation = OFF");
+            } catch (\PDOException $e) {
+            }
+        }
     }
 
     // PHP 8.4 added Pdo\Mysql::ATTR_*, and PHP 8.5 deprecates the old PDO::MYSQL_ATTR_* names
@@ -140,7 +150,17 @@ class Database
     {
         if (!isset(self::$instance)) {
             $object = __CLASS__;
-            self::$instance = new $object;
+            try {
+                self::$instance = new $object;
+            } catch (\Throwable $e) {
+                // A request waiting to take the restore gate's database lock answers busy instead (see
+                // _includes/restore-gate.inc.php)
+                if (function_exists('domainmod_restore_db_connect_failed')) domainmod_restore_db_connect_failed();
+                throw $e;
+            }
+            // A request the restore gate let through without its lock file takes the database lock now, before any query
+            // (see _includes/restore-gate.inc.php)
+            if (function_exists('domainmod_restore_db_connected')) domainmod_restore_db_connected(self::$instance->cnxx);
         }
         return self::$instance;
     }

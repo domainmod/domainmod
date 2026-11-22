@@ -199,55 +199,21 @@ if ($del === 1) {
 
         try {
 
-            $pdo->beginTransaction();
+            /*
+             * Every item's non-empty value is recorded in the Change History, in the same transaction that deletes the
+             * definition row, and the columns are dropped after it (see DomainMOD\CustomFieldSchema)
+             */
+            $deleted_field = DomainMOD\CustomFieldSchema::delete($pdo, 'domain', $cdfid, $_SESSION['s_user_id']);
 
-            // the record may have been deleted while the form was open; then nothing is saved
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM domain_fields
-                WHERE id = :record_id");
-            $stmt->bindValue('record_id', $cdfid, PDO::PARAM_INT);
-            $stmt->execute();
-            $record_exists = $stmt->fetchColumn();
-            $stmt->closeCursor();
+            if ($deleted_field === null) {
 
-            if (!$record_exists) {
-
-                if ($pdo->InTransaction()) $pdo->rollback();
                 $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
                 header("Location: ../domain-fields/");
                 exit;
 
             }
 
-            $stmt = $pdo->prepare("
-                SELECT `name`, field_name
-                FROM domain_fields
-                WHERE id = :cdfid");
-            $stmt->bindValue('cdfid', $cdfid, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch();
-            $stmt->closeCursor();
-
-            if ($result) {
-
-                $pdo->query("
-                    ALTER TABLE `domain_field_data`
-                    DROP `" . $result->field_name . "`");
-
-                $stmt = $pdo->prepare("
-                    DELETE FROM domain_fields
-                    WHERE id = :cdfid");
-                $stmt->bindValue('cdfid', $cdfid, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $pdo->query("
-                    ALTER TABLE `user_settings`
-                    DROP `dispcdf_" . $result->field_name . "`");
-
-            }
-
-            if ($pdo->InTransaction()) $pdo->commit();
+            $result = (object) array('name' => $deleted_field[0], 'field_name' => $deleted_field[1]);
 
             $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 

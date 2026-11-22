@@ -69,6 +69,9 @@ bindtextdomain(LOCALES_DOMAIN, DIR_LOCALES);
 bind_textdomain_codeset(LOCALES_DOMAIN, DEFAULT_ENCODING_TYPE);
 textdomain(LOCALES_DOMAIN);
 
+// The restore gate: every request takes the restore lock shared before anything reads the database (see the file)
+require_once __DIR__ . '/restore-gate.inc.php';
+
 // If the /helpers/init.php file exists, load it
 $full_filename = __DIR__ . '/../helpers/init.php';
 if (file_exists($full_filename)) require_once $full_filename;

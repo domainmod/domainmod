@@ -81,13 +81,28 @@ if (DEMO_INSTALLATION == false) {
                 $log->notice($log_message, $log_extra);
 
                 $schedule->isRunning($id);
-                $maint->performCleanup();
-                $schedule->finishTask($id, $started);
+                $cleanup_busy = false;
+                try {
+                    // Recorded in the Change History as this administrator's
+                    $maint->performCleanup((int) ($_SESSION['s_user_id'] ?? 0));
+                } catch (DomainMOD\RestoreLockException $e) {
+                    // The fee-change lock stayed busy (such as during a long CSV import): the task isn't left marked as
+                    // running, it stays due (as cron.php leaves it), and the busy message is shown with the result
+                    $schedule->isFinished($id);
+                    $_SESSION['s_message_danger'] .= htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '<BR>';
+                    $cleanup_busy = true;
+                }
 
-                $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
-                $log->notice($log_message);
+                if (!$cleanup_busy) {
 
-                $_SESSION['s_message_success'] .= _('System Cleanup Performed') . '<BR>';
+                    $schedule->finishTask($id, $started);
+
+                    $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
+                    $log->notice($log_message);
+
+                    $_SESSION['s_message_success'] .= _('System Cleanup Performed') . '<BR>';
+
+                }
 
             } elseif ($result->slug == 'expiration-email') {
 
@@ -174,6 +189,9 @@ if (DEMO_INSTALLATION == false) {
                 $queue->processQueueList();
                 $queue->processQueueDomain();
                 $schedule->finishTask($id, $started);
+                if ($queue->hadConflict()) {
+                    $_SESSION['s_message_danger'] .= _("Someone else changed a domain at the same time, so the Domain Queue couldn't finish part of its work. The Domain Queue shows what's left to do.") . '<BR>';
+                }
 
                 $log_message = sprintf('[%s]' . _('Process Domain Queue'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);
@@ -189,6 +207,9 @@ if (DEMO_INSTALLATION == false) {
                 $schedule->isRunning($id);
                 $ssl_queue->process();
                 $schedule->finishTask($id, $started);
+                if ($ssl_queue->hadConflict()) {
+                    $_SESSION['s_message_danger'] .= _("Someone else changed a certificate or domain at the same time, so the SSL Queue couldn't finish part of its work. The SSL Queue shows what's left to do.") . '<BR>';
+                }
 
                 $log_message = sprintf('[%s]' . _('Process SSL Queue'), DomainMOD\Format::toUpper(_('End')));
                 $log->notice($log_message);

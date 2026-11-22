@@ -35,6 +35,21 @@ if (PHP_SAPI !== 'cli') {
 
 }
 
+/*
+ * The upgrade's restore lock, before anything reads the database, held exclusively through every version block (see
+ * DomainMOD\RestoreLock::forUpgrade()): the database lock, and the lock file too when it exists or can be created.
+ * Where it can't lock an existing one, the upgrade stops (run it as the web server's user then). A lock file created
+ * here belongs to this user, so run it as the web server's user, or restores stay off until the web server can write
+ * the file (administrators are told).
+ */
+$upgrade_lock_problem = DomainMOD\RestoreLock::forUpgrade(false);
+if ($upgrade_lock_problem !== '') {
+
+    echo $upgrade_lock_problem . "\r\n\r\n";
+    exit(1);
+
+}
+
 $deeb = DomainMOD\Database::getInstance();
 $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/update.php');

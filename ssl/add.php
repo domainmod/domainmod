@@ -76,6 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
+            // The add is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
+
             // The domain is optional, and 0 is None. A chosen domain may have been deleted while the form was open, and
             // then nothing is saved. The read locks the domain row, so a domain delete running at the same moment waits
             // for this save, and its unlink then sees the new certificate. A negative id, which only a changed form can
@@ -180,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute();
 
             $temp_ssl_id = $pdo->lastInsertId('id');
+            $history_op->created('ssl', $temp_ssl_id);
 
             $stmt = $pdo->prepare("
                 INSERT INTO ssl_cert_field_data
@@ -193,7 +197,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $pdo->query("
                 SELECT field_name
                 FROM ssl_cert_fields
-                ORDER BY `name`")->fetchAll();
+                ORDER BY `name`
+                LOCK IN SHARE MODE")->fetchAll();
 
             if ($result) {
 
@@ -225,6 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $system->checkExistingAssets();
 
+            $history_op->finish();
+
             if ($pdo->InTransaction()) $pdo->commit();
 
             // The certificate links to its edit page, and the form stays here for the next one
@@ -239,13 +246,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->rollback();
 
-            $log_message = 'Unable to add SSL certificate';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
+            // Another request changed the same rows at the same moment: nothing was saved, and the form shows again with
+            // what was typed (see domainmod_restore_is_conflict())
+            if (domainmod_restore_is_conflict($e)) {
+                $_SESSION['s_message_danger'] .= domainmod_restore_conflict_form_message() . '<BR>';
+            } else {
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+                $log_message = 'Unable to add SSL certificate';
+                $log_extra = array('Error' => $e);
+                $log->critical($log_message, $log_extra);
 
-            throw $e;
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
+            }
 
         }
 

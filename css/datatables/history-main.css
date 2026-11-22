@@ -1,0 +1,111 @@
+/*
+ * The Change History list (history/index.php), styled as the Domains list (domains-main.css): every column in a box
+ * that scrolls sideways, with the time kept in view at the start, dense rows, small headings, hairlines between the rows
+ * with a light stripe, and long values cut short with "…". js/server-list.js gives a cut-short cell its full text as a
+ * tooltip, and a cell shows in full while it has keyboard focus. The colours come from the theme's variables, so they
+ * follow light and dark mode, and the sides are logical, so they mirror in right-to-left languages. The scroll box
+ * itself (domainmod-list-scroll) is in base.css.
+ */
+/* The table is as wide as its columns need, and at least as wide as its box. When there's room to spare, the short
+   columns (the time, type, and user) stay as narrow as their values, and the rest goes to the longer text columns. */
+#history-main {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    margin: 0;
+    font-size: .8125rem;
+}
+#history-main > :is(thead, tbody) > tr > .domainmod-list-when,
+#history-main > :is(thead, tbody) > tr > .domainmod-list-type,
+#history-main > :is(thead, tbody) > tr > .domainmod-list-by {
+    inline-size: 1%;
+}
+/* The headings are 12px (.75rem), large enough that a browser's usual minimum font size doesn't enlarge them, and stay
+   on one line. */
+#history-main > thead > tr > th {
+    padding: .5rem;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color);
+    background: var(--bs-tertiary-bg);
+    box-shadow: none;
+    color: var(--bs-secondary-color);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+/* Bootstrap's and DataTables' stripes are drawn as a shadow inside each cell, so they're turned off for these. A
+   cell is at most 18rem wide, and on a phone at most 40vw, so with the pinned first column (at most 45vw) it always
+   fits in the box and can be scrolled fully into view. */
+#history-main > tbody > tr > td {
+    max-inline-size: min(18rem, 40vw);
+    padding: .3125rem .5rem;
+    overflow: hidden;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color-translucent);
+    background: var(--bs-body-bg);
+    box-shadow: none;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+#history-main > tbody > tr:nth-of-type(even) > td {
+    background: color-mix(in srgb, var(--bs-tertiary-bg) 60%, var(--bs-body-bg));
+}
+#history-main > tbody > tr:hover > td {
+    background: var(--bs-secondary-bg);
+}
+/* A cut-short cell opens up in full while it has keyboard focus. With JavaScript off, there's no tooltip or keyboard
+   stop for a cut-short value, so long values wrap instead (the table only gets DataTables' dataTable class once the
+   script has started it). They also wrap when the main pointer can't hover, such as on a phone or tablet. */
+#history-main:not(.dataTable) > tbody > tr > td,
+#history-main > tbody > tr > td:focus-within {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+@media (hover: none) {
+    #history-main > tbody > tr > td {
+        overflow: visible;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+}
+/* The short columns (When, Type, and By) can still wrap where text normally wraps, such as at a space or a hyphen, but they only break inside a word when it can't fit on a line. */
+#history-main > tbody > tr > td.domainmod-list-when,
+#history-main > tbody > tr > td.domainmod-list-type,
+#history-main > tbody > tr > td.domainmod-list-by {
+    overflow-wrap: break-word;
+}
+/* A divider between columns, none after the last */
+#history-main > :is(thead, tbody) > tr > :not(:last-child) {
+    border-inline-end: 1px solid var(--bs-border-color-translucent);
+}
+/* The time stays in view at the start as the box scrolls. Like the first column of a .domainmod-scroll-table (see
+   css/base.css), it's at most 45vw wide (and, like the other cells, at most 18rem), so on a narrow phone it never
+   covers the columns scrolling under it. */
+#history-main > :is(thead, tbody) > tr > :first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    max-inline-size: min(18rem, 45vw);
+}
+/* The message for a search with no matches spans the whole table, so it starts at the start edge, where the box
+   starts scrolled to, instead of being centred across columns that may be out of view */
+#history-main > tbody > tr > td.dt-empty {
+    position: static;
+    text-align: start;
+}
+#history-main > tbody > tr > td.domainmod-list-item {
+    font-weight: 600;
+}
+/* The time is in tabular figures, so the rows line up */
+#history-main > :is(thead, tbody) > tr > .domainmod-list-when {
+    font-variant-numeric: tabular-nums;
+}
+/* A snapshot or a note's full text, opened with its summary, wraps rather than being cut short */
+#history-main > tbody > tr > td:has(details[open]) {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}

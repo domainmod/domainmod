@@ -62,7 +62,21 @@ class Csv
     {
         if (!$this->checkColumns($filename)) return false;
 
+        // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+        $this->deeb->cnxx->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         $this->deeb->cnxx->beginTransaction();
+
+        /*
+         * The import is one Change History action, in this transaction: a create row for each new domain (its snapshot
+         * taken at the end, after the fee recalculation), and a cost row for each domain already there whose cost the
+         * recalculation after the loop changes. The existing domains' costs are captured first, before any fee or
+         * domain is added, so a fee the import creates under a deleted fee's old id reads as "no prior currency".
+         */
+        $history_op = (new ChangeHistory($this->deeb->cnxx))->start(ChangeHistory::SOURCE_CSV_IMPORT, $user_id);
+        // One fee change at a time (the import adds fees, and the fee pages take the same lock first)
+        $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+        $history_costs = $history_op->captureCosts('domain');
+        $this->domainadd->domain->history_op = $history_op;
 
         $user_currency = $this->user->getDefaultCurrency($user_id);
 
@@ -170,6 +184,8 @@ class Csv
         }
 
         $this->maint->updateDomainFees();
+        $history_op->compareCosts($history_costs);
+        $this->domainadd->domain->history_op = null;
 
         $this->conversion->updateRates($user_currency, $user_id);
 
@@ -178,6 +194,8 @@ class Csv
         $_SESSION['s_has_registrar'] = 1;
         $_SESSION['s_has_registrar_account'] = 1;
         $_SESSION['s_has_domain'] = 1;
+
+        $history_op->finish();
 
         if ($this->deeb->cnxx->InTransaction()) $this->deeb->cnxx->commit();
 

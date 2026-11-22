@@ -46,7 +46,20 @@ $pdo = $deeb->cnxx;
 
 try {
 
+    // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+    $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
     $pdo->beginTransaction();
+
+    /*
+     * The change is one Change History action: every item's cost and fee currency is captured first (into a temporary
+     * table, see DomainMOD\ChangeHistoryOperation::captureCosts()), since a group's items are all given its new fee,
+     * and an old item can still point at a deleted fee whose id a new fee row reuses (it then had no prior currency)
+     */
+    $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_ASSET, $_SESSION['s_user_id'], 'zero_out_ssl_fees');
+    // One fee change at a time, so two fee pages never deadlock over items in each other's groups
+    $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+    $history_costs = $history_op->captureCosts('ssl');
+
 
     $result = $pdo->query("
     SELECT ssl_provider_id, type_id
@@ -103,6 +116,10 @@ try {
     $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
 
     $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+
+    $history_op->compareCosts($history_costs);
+    $history_op->finish();
 
     if ($pdo->InTransaction()) $pdo->commit();
 

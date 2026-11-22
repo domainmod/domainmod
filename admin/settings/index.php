@@ -75,6 +75,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['two_factor_form'] ?? '') ==
 
 }
 
+/*
+ * How long the Change History is kept, saved by its own form, and only once the database update has added the setting
+ * (ChangeHistory::isAvailable()), so the page keeps working before then. 0 is Forever.
+ */
+$history_available = DomainMOD\ChangeHistory::isAvailable($pdo);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['history_form'] ?? '') === '1') {
+
+    $new_history_retention = filter_var($_POST['new_history_retention_months'] ?? '', FILTER_VALIDATE_INT);
+
+    // The administrator and read-only flags as the database has them now, since a shorter setting lets the next System
+    // Cleanup remove history for good, read with the user's row locked in the same transaction as the save, so access removed meanwhile counts
+    $history_saved = false;
+    if ($history_available && in_array($new_history_retention, DomainMOD\ChangeHistory::RETENTION_CHOICES, true)) {
+
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare("
+                SELECT admin, read_only
+                FROM users
+                WHERE id = :user_id
+                  AND active = '1'
+                FOR UPDATE");
+            $stmt->bindValue('user_id', (int) $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $history_user = $stmt->fetch();
+            $stmt->closeCursor();
+            if ($history_user && (int) $history_user->admin === 1 && (int) $history_user->read_only === 0) {
+                $stmt = $pdo->prepare("
+                    UPDATE settings
+                    SET history_retention_months = :history_retention_months,
+                        update_time = :update_time");
+                $stmt->bindValue('history_retention_months', $new_history_retention, PDO::PARAM_INT);
+                $stmt->bindValue('update_time', $time->stamp(), PDO::PARAM_STR);
+                $stmt->execute();
+                $history_saved = true;
+            }
+            $pdo->commit();
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollback();
+            throw $e;
+        }
+
+    }
+
+    if ($history_saved) {
+        $_SESSION['s_message_success'] .= _('The Change History setting was updated.') . '<BR>';
+    } else {
+        $_SESSION['s_message_danger'] .= _('You are not authorized to perform that action.') . '<BR>';
+    }
+
+    header("Location: index.php");
+    exit;
+
+}
+
 $new_full_url = isset($_POST['new_full_url']) ? $sanitize->text($_POST['new_full_url']) : '';
 $new_email_address = isset($_POST['new_email_address']) ? $sanitize->text($_POST['new_email_address']) : '';
 $new_expiration_days = (int) ($_POST['new_expiration_days'] ?? 0);
@@ -274,6 +329,24 @@ if ($two_factor_available && DEMO_INSTALLATION == false) {
     // Its own form, set apart from System Settings above, with its button under its card like that form's
     echo '<div class="mt-5">' . $form->showFormTop('') . $layout->formSection(_('Set Up MFA'), 'two-factor', ob_get_clean())
         . $form->showSubmitButton(_('Update MFA Setting'), '', '') . $form->showFormBottom('') . '</div>';
+
+}
+
+// How long the Change History is kept (see above)
+if ($history_available) {
+
+    $history_retention = DomainMOD\ChangeHistory::retentionMonths($pdo);
+    ob_start();
+    echo $form->showInputHidden('history_form', '1');
+    echo $form->showDropdownTop('new_history_retention_months', _('Keep change history for'), _('Older changes are removed by the daily System Cleanup task. A shorter time keeps backups smaller.'), '', '<div class="domainmod-span-all mb-3">');
+    foreach (DomainMOD\ChangeHistory::RETENTION_CHOICES as $retention_months) {
+        $retention_label = $retention_months === 0 ? _('Forever')
+            : sprintf(ngettext('%s Year', '%s Years', $retention_months / 12), $retention_months / 12);
+        echo $form->showDropdownOption($retention_months, $retention_label, $history_retention);
+    }
+    echo $form->showDropdownBottom('</div>');
+    echo '<div class="mt-5">' . $form->showFormTop('') . $layout->formSection(_('Change History'), 'change-history', ob_get_clean())
+        . $form->showSubmitButton(_('Update Change History Setting'), '', '') . $form->showFormBottom('') . '</div>';
 
 }
 ?>

@@ -50,6 +50,8 @@ class DomainQueue
 
     // Whether domain_queue_list has its last_attempt column (added in 4.27.0), worked out once per request
     protected static $list_last_attempt = null;
+    // Whether an import in this run met another request's write (see hadConflict())
+    protected static $had_conflict = false;
 
     public function __construct()
     {
@@ -62,6 +64,15 @@ class DomainQueue
         $this->schedule = new Scheduler();
         $this->system = new System();
         $this->time = new Time();
+    }
+
+    /*
+     * Whether an import in this run met another request's write and was rolled back (the row stays in the queue, as for
+     * any failed attempt). The rest of the run goes on, so this is reported after it rather than ending it.
+     */
+    public function hadConflict()
+    {
+        return self::$had_conflict;
     }
 
     public function processQueueList()
@@ -167,6 +178,9 @@ class DomainQueue
             }
 
         } catch (\Throwable $e) {
+
+            // A write that met another request's (errors 1020 and 1213) is noted for hadConflict(), so Run Now can say so
+            if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) self::$had_conflict = true;
 
             // Recovery must never stop the other lists: roll back only if the transaction is still open (the server
             // may have rolled it back already, e.g. after a deadlock), log after the rollback so the entry is kept,
@@ -512,7 +526,15 @@ class DomainQueue
             if ($expiration_date != '' && $expiration_date != '0000-00-00' && $expiration_date != '1970-01-01'
                 && $dns_servers != '' && $privacy_status != '' && $autorenew_status != '') {
 
+                // REPEATABLE READ, so the import's locking reads' next-key locks hold even on a server whose default is READ
+                // COMMITTED
+                $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                 $pdo->beginTransaction();
+
+                // The fee-change lock, held until this method returns (after the commit or rollback below), since
+                // importToMainDb()'s action ends before this transaction commits
+                $queue_fee_lock = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_QUEUE, (int) $row->created_by);
+                $queue_fee_lock->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
 
                 $created_by = $row->created_by;
                 list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
@@ -571,6 +593,9 @@ class DomainQueue
             }
 
         } catch (\Throwable $e) {
+
+            // A write that met another request's (errors 1020 and 1213) is noted for hadConflict(), so Run Now can say so
+            if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) self::$had_conflict = true;
 
             // as for a list (see processQueueListRow()), recovery must never stop the other domains
             try {
@@ -828,6 +853,7 @@ class DomainQueue
             } catch (\Throwable $e) {
 
                 $this->logRdapError('Unable to claim an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
+                if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) self::$had_conflict = true;
                 $claimed = false;
 
             }
@@ -937,7 +963,10 @@ class DomainQueue
             } catch (\Throwable $e) {
 
                 $this->logRdapError('Unable to process an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
-                $this->releaseRdapRow($row->id, 'retry_error');
+                // A write that met another request's isn't a failed lookup, so the row says DomainMOD was busy
+                $conflict = function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e);
+                if ($conflict) self::$had_conflict = true;
+                $this->releaseRdapRow($row->id, $conflict ? 'retry_busy' : 'retry_error');
                 continue;
 
             }
@@ -950,10 +979,21 @@ class DomainQueue
             }
 
             $imported = false;
+            $rdap_fee_lock = null;
+            $rdap_busy = false;
 
             try {
 
+                // REPEATABLE READ, so the import's locking reads' next-key locks hold even on a server whose default is READ
+                // COMMITTED
+                $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                 $pdo->beginTransaction();
+
+                // The fee-change lock first, before the registrar and its account are found or created, as the CSV
+                // import takes it before creating assets, so a registrar delete never waits on this import's new account
+                // while this import waits on its lock (importToMainDb() takes it again, and it's let go below)
+                $rdap_fee_lock = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_QUEUE, (int) $row->created_by);
+                $rdap_fee_lock->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
 
                 list($registrar_id, $account_id) = $rdap_assets->resolve($lookup['registrar_name'],
                     $lookup['registrar_iana_id'], $lookup['registrar_url'], $row->owner_id, $row->created_by);
@@ -1046,12 +1086,21 @@ class DomainQueue
                 $rdap_assets->forget();
                 $this->logRdapError('Unable to save an RDAP domain in the Domain Queue, will retry', $row->domain, $e);
                 $imported = false;
+                // A busy fee-change lock isn't a failed lookup, so the row says DomainMOD was busy, as it does for a
+                // save that met another request's write (also noted for hadConflict())
+                if ($e instanceof RestoreLockException) $rdap_busy = true;
+                if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) {
+                    $rdap_busy = true;
+                    self::$had_conflict = true;
+                }
 
             }
 
+            // Lets go of the fee-change lock, after the commit or rollback
+            $rdap_fee_lock = null;
             $this->releaseRdapLock();
 
-            if (!$imported) $this->releaseRdapRow($row->id, 'retry_error');
+            if (!$imported) $this->releaseRdapRow($row->id, $rdap_busy ? 'retry_busy' : 'retry_error');
 
         }
 
@@ -1227,6 +1276,8 @@ class DomainQueue
             $message = _('Will retry: the RDAP lookup failed');
         } elseif ($code_parts[0] === 'retry_lock') {
             $message = _('Will retry: another Domain Queue run was busy');
+        } elseif ($code_parts[0] === 'retry_busy') {
+            $message = _('Will retry: DomainMOD was busy');
         } elseif ($code_parts[0] === 'no_lookup') {
             $message = sprintf(_('Neither RDAP nor WHOIS is available for .%s domains'), $code_parts[1] ?? '');
         } elseif ($code_parts[0] === 'whois_no_expiry') {
@@ -1998,6 +2049,14 @@ class DomainQueue
 
             foreach ($result as $row) {
 
+                /*
+                 * The import is recorded in the Change History, in the caller's transaction (one per domain): a create
+                 * row for the new domain, and a cost row for each domain with the same registrar and TLD whose cost
+                 * updateDomainFee() recalculates, captured and locked before the insert
+                 */
+                $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_QUEUE, (int) $row->created_by);
+                $fee_peers = $this->maint->captureFeePeers($history_op, (int) $row->registrar_id, (string) $row->tld);
+
                 $bind_owner_id = $row->owner_id;
                 $bind_registrar_id = $row->registrar_id;
                 $bind_account_id = $row->account_id;
@@ -2014,11 +2073,13 @@ class DomainQueue
                 $stmt->execute();
 
                 $new_domain_id = $pdo->lastInsertId('id');
+                $history_op->created('domain', $new_domain_id);
 
                 $stmt2->execute();
 
                 // update domain's fees
-                $this->maint->updateDomainFee($new_domain_id);
+                $this->maint->updateDomainFee($new_domain_id, $fee_peers);
+                $history_op->finish();
 
                 $sql = $this->queryB->missingFees('domains');
                 $_SESSION['s_missing_domain_fees'] = $this->system->checkForRows($sql);
@@ -2374,6 +2435,7 @@ class DomainQueue
                     } catch (\Throwable $rollback_error) {
                     }
 
+                    if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) self::$had_conflict = true;
                     $log_message = 'Unable to copy a Domain Queue result to the history table';
                     $log_extra = array('Domain' => $row->domain, 'Error' => $e->getMessage());
                     $this->log->error($log_message, $log_extra);

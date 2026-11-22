@@ -166,7 +166,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             try {
 
+                // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                 $pdo->beginTransaction();
+
+                // The fee add is one Change History action, started before the fee row is inserted, and one fee change at
+                // a time (every writer of fees takes this lock before any item or fee lock), so fee writers never deadlock
+                $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_ASSET,
+                    $_SESSION['s_user_id'], 'registrar_fee_add', DomainMOD\ChangeHistory::feeNote($pdo, 'domain', $rid, $new_tld), 'fee');
+                $history_op->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
+
+                // Checked again under the lock (the check above is a plain read), so two adds of the same fee can't both
+                // insert one. A shared lock is enough, since every fee writer holds the fee-change lock, and it waits for
+                // another add's row that isn't committed yet without blocking the recorder's own shared reads of fees.
+                $stmt = $pdo->prepare("
+                    SELECT id
+                    FROM fees
+                    WHERE registrar_id = :rid
+                      AND tld = :new_tld
+                    LIMIT 1
+                    LOCK IN SHARE MODE");
+                $stmt->bindValue('rid', $rid, PDO::PARAM_INT);
+                $stmt->bindValue('new_tld', $new_tld, PDO::PARAM_STR);
+                $stmt->execute();
+                $existing_fee_id = $stmt->fetchColumn();
+                $stmt->closeCursor();
+                if ($existing_fee_id) throw new DomainException((string) $existing_fee_id);
 
                 $currency = new DomainMOD\Currency();
                 $currency_id = $currency->getCurrencyId($new_currency);
@@ -188,6 +213,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute();
 
                 $new_fee_id = $pdo->lastInsertId('id');
+
+                /*
+                 * The change is one Change History action (see DomainMOD\ChangeHistory::feeScope()): the items the new fee
+                 * is given to, and any old item still pointing at a deleted fee whose id the new row reuses, captured and
+                 * locked now. No fee row had this id before the insert, so its items had no prior currency.
+                 */
+                $history_op->setFeeCurrencies('domain', array($new_fee_id => ''));
+                $history_costs = $history_op->captureCosts('domain', DomainMOD\ChangeHistory::feeScope('domain', $rid, $new_tld, $new_fee_id));
 
                 $stmt = $pdo->prepare("
                     UPDATE domains
@@ -226,6 +259,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $conversion->updateRates($_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
+
+                $history_op->compareCosts($history_costs);
+                $history_op->finish();
+
                 if ($pdo->InTransaction()) $pdo->commit();
 
                 $_SESSION['s_message_success'] .= sprintf(_('The fee for %s has been added.'), $new_tld) . '<BR>';
@@ -237,6 +274,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header("Location: ../registrar-fees.php?rid=" . $rid);
                 }
                 exit;
+
+            } catch (DomainException $e) {
+
+                // Another administrator added the same fee meanwhile, so nothing is added and it's offered for editing
+                if ($pdo->InTransaction()) $pdo->rollback();
+                $_SESSION['s_message_danger'] .= _('A fee for this TLD already exists.') . ' [<a href=\'' . WEB_ROOT .
+                    '/assets/edit/registrar-fee.php?rid=' . $rid . '&fee_id=' . urlencode($e->getMessage()) .
+                    '\'>' . DomainMOD\Format::toLower(_('Edit Fee')) . '</a>]<BR>';
 
             } catch (Exception $e) {
 

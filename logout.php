@@ -26,10 +26,12 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
-$system = new DomainMOD\System();
-
-require_once DIR_INC . '/debug.inc.php';
-
+// Signing out never touches the database, so it always works, even during a restore or an upgrade (this file takes no
+// restore lock, see _includes/restore-gate.inc.php)
+// A web restore or Finish Restore that finished leaves its sign-in messages in the session before sending the
+// administrator here (admin/backup/index.php), so the sign-in page can show them, once. Only the server sets them, so
+// they can't be supplied from outside.
+$restore_signin = is_array($_SESSION['s_restore_signin'] ?? null) ? $_SESSION['s_restore_signin'] : null;
 $_SESSION = array();
 
 if (ini_get("session.use_cookies")) {
@@ -40,6 +42,18 @@ if (ini_get("session.use_cookies")) {
 }
 
 session_destroy();
+
+if ($restore_signin !== null) {
+    // A new session, with a new id, holding only the messages
+    session_id(session_create_id());
+    session_start();
+    foreach (array('danger' => 's_message_danger', 'success' => 's_message_success') as $kind => $key) {
+        $_SESSION[$key] = '';
+        foreach ((array) ($restore_signin[$kind] ?? array()) as $message) {
+            if ((string) $message !== '') $_SESSION[$key] .= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') . '<BR>';
+        }
+    }
+}
 
 header('Location: ' . $web_root . "/");
 exit;

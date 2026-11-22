@@ -70,7 +70,9 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
     echo $layout->landingTile('/reporting/ssl/at-risk.php', _('At-Risk SSL Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning');
     // To show this tile to admins only (as the sidebar's Data Warehouse section is), wrap it in
     // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }
-    echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info'); ?>
+    echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info');
+    // The Change History filtered to domains (its default range is the last 30 days)
+    echo $layout->landingTile('/history/?type=domain', _('Recent Domain Changes'), _('What changed on your domains in the last 30 days'), 'bi-clock-history', 'info'); ?>
 </div>
 <div class="row g-3 mt-4"><?php
     echo $layout->landingLinks(_('Domain Costs'), array(

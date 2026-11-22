@@ -73,69 +73,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
         try {
 
-            $pdo->beginTransaction();
+            // The columns first and the definition row last, with the custom field lock held (see
+            // DomainMOD\CustomFieldSchema), so nothing ever sees a definition whose column is missing
+            if (!DomainMOD\CustomFieldSchema::add($pdo, 'ssl', $new_name, $new_field_name, $new_description, $new_field_type_id,
+                $new_notes, $_SESSION['s_user_id'], $time->stamp())) {
 
-            $stmt = $pdo->prepare("
-                INSERT INTO ssl_cert_fields
-                (`name`, field_name, description, type_id, notes, created_by, insert_time)
-                VALUES
-            (:new_name, :new_field_name, :new_description, :new_field_type_id, :new_notes, :created_by, :timestamp)");
-            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
-            $stmt->bindValue('new_field_name', $new_field_name, PDO::PARAM_STR);
-            $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
-            $stmt->bindValue('new_field_type_id', $new_field_type_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
-            $stmt->bindValue('created_by', $_SESSION['s_user_id'], PDO::PARAM_INT);
-            $timestamp = $time->stamp();
-            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-            $stmt->execute();
+                $form->addFieldError('new_field_name', _('The Database Field Name you entered already exists'));
 
-            if ($new_field_type_id === 1) { // Check Box
+            } else {
 
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'";
+                $_SESSION['s_csf_data'] = $custom_field->getCSFData();
 
-            } elseif ($new_field_type_id === 2) { // Text
+                $_SESSION['s_message_success'] .= sprintf(_('Custom SSL Field %s (%s) added'), $new_name, $new_field_name) . '<BR>';
 
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-
-            } elseif ($new_field_type_id === 3) { // Text Area
-
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-
-            } elseif ($new_field_type_id === 4) { // Date
-
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` DATE NOT NULL DEFAULT '1970-01-01'";
-
-            } elseif ($new_field_type_id === 5) { // Time Stamp
-
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00'";
-
-            } elseif ($new_field_type_id === 6) { // URL
-
-                $sql = "ALTER TABLE `ssl_cert_field_data`
-                        ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+                header("Location: ../ssl-fields/");
+                exit;
 
             }
-
-            $pdo->query($sql);
-
-            $pdo->query("
-                ALTER TABLE `user_settings`
-                ADD `dispcsf_" . $new_field_name . "` TINYINT(1) NOT NULL DEFAULT '0'");
-
-            if ($pdo->InTransaction()) $pdo->commit();
-
-            $_SESSION['s_csf_data'] = $custom_field->getCSFData();
-
-            $_SESSION['s_message_success'] .= sprintf(_('Custom SSL Field %s (%s) added'), $new_name, $new_field_name) . '<BR>';
-
-            header("Location: ../ssl-fields/");
-            exit;
 
         } catch (Exception $e) {
 

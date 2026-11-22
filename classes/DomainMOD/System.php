@@ -34,6 +34,8 @@ class System
 
     public $deeb;
     public $log;
+    // The signed-in user's flags from the last valid authCheckResult() (see authFlags())
+    protected $auth_flags = array('admin' => 0, 'read_only' => 1);
     public $layout;
     public $sanitize;
 
@@ -659,13 +661,14 @@ class System
      */
     public function authCheckResult()
     {
+        $this->auth_flags = array('admin' => 0, 'read_only' => 1);
         if (($_SESSION['s_is_logged_in'] ?? 0) != 1) return 'signed_out';
 
         $pdo = $this->deeb->cnxx;
         // The colour mode comes along too, so a change saved in another browser shows on this one's next page, and
         // the database version, for the two-factor checks below
         $stmt = $pdo->prepare("
-            SELECT u.id, u.`password`, us.dark_mode, (SELECT db_version FROM settings LIMIT 1) AS db_version
+            SELECT u.id, u.`password`, u.admin, u.read_only, us.dark_mode, (SELECT db_version FROM settings LIMIT 1) AS db_version
             FROM users AS u
             LEFT JOIN user_settings AS us ON us.user_id = u.id
             WHERE u.username = :new_username
@@ -683,7 +686,19 @@ class System
 
         if ($result['dark_mode'] !== null) $_SESSION['s_dark_mode'] = (int) $result['dark_mode'];
 
+        $this->auth_flags = array('admin' => (int) $result['admin'], 'read_only' => (int) $result['read_only']);
         return 'valid';
+    }
+
+    /*
+     * The signed-in user's administrator and read-only flags as the database has them now, from the same row the last
+     * valid authCheckResult() authenticated, never the values the session cached at sign-in (so a restore that removed
+     * someone's administrator access also removes their right to finish a restore). Both are 0 and 1 respectively until
+     * a check has passed.
+     */
+    public function authFlags()
+    {
+        return $this->auth_flags;
     }
 
     /*
@@ -742,7 +757,8 @@ class System
      * The Ready to Install step and install/go.php use it, so nothing installs with an answer missing (such as when
      * someone opens the last step directly, or their session has expired).
      */
-    public function installFirstMissingStep()
+    // Reads the session only, so the installer can check it before it waits for the restore lock (install/go.php)
+    public static function installFirstMissingStep()
     {
         $steps = array(
             'language' => array('s_installation_language'),

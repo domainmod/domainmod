@@ -26,6 +26,25 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+/*
+ * The restore lock (see _includes/restore-gate.inc.php), taken before anything reads the database. Every sign-in
+ * comes through here, and only an upgrade request takes the lock exclusively: it's recognised without the database, by
+ * its upgrade action and its security token checked against the session (not the session's administrator flag, which
+ * this page sets only after the upgrade, on a fresh sign-in), and the sign-in and live administrator checks below
+ * then run under the lock. Everything else takes it shared, as any page does.
+ */
+$upgrade_request = ($_GET['u'] ?? '') === '1' && ($_SESSION['s_is_logged_in'] ?? 0) == 1 && (new DomainMOD\Csrf())->isValid();
+if ($upgrade_request) {
+    // The session is let go while the lock is waited for, so a restore in another tab that needs this session to send
+    // its answer (Backup & Restore, see there) never waits on this request while it waits on the restore
+    session_write_close();
+    $upgrade_lock_problem = DomainMOD\RestoreLock::forUpgrade(true);
+    @session_start();
+    if ($upgrade_lock_problem !== '') domainmod_restore_refuse($upgrade_lock_problem);
+} else {
+    domainmod_restore_gate();
+}
+
 $deeb = DomainMOD\Database::getInstance();
 $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/checks.php');
@@ -60,12 +79,24 @@ $upgrade_approved = $_GET['u'] ?? '';
  * them to have an administrator run it, even if they ask for the upgrade directly.
  */
 $_SESSION['s_system_db_version'] = $_SESSION['s_system_db_version'] ?? '';
+// An upgrade request decides from the database's own version, read under the upgrade's lock, never the version the
+// session cached at sign-in, and refreshes the cached one from it
+if ($upgrade_request) $_SESSION['s_system_db_version'] = (string) $system->getDbVersion();
 $upgrade_waiting = $_SESSION['s_system_db_version'] !== SOFTWARE_VERSION;
 if ($upgrade_waiting && $upgrade_approved == '1') {
 
     $notice = new DomainMOD\Notice();
     if (!$notice->userCanRunUpgrade($_SESSION['s_user_id'] ?? 0)) $upgrade_approved = '';
 
+}
+
+// An upgrade request that won't upgrade (nothing is waiting, or this user can't run it) lets go of the exclusive lock
+// and starts again as an ordinary sign-in check, under the shared lock like any page, so it never holds other requests
+// up, and everything it then reads (the session's check included) comes after any restore that ran in between
+if ($upgrade_request && !($upgrade_waiting && $upgrade_approved == '1')) {
+    domainmod_restore_unlock();
+    header('Location: ' . WEB_ROOT . '/checks.php');
+    exit;
 }
 
 if ($upgrade_waiting && $upgrade_approved != '1') {

@@ -162,6 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
             $status_row = DomainMOD\DomainStatus::savedRow($pdo, $did);
             if ($status_row) echo DomainMOD\DomainStatus::editCard($status_row, true, true);
         }
+
+        // The Change History section, redrawn with the refresh's changes, replaces the page's (an out-of-band swap)
+        echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, true);
         exit;
 
     }
@@ -193,11 +196,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pdo->beginTransaction();
 
-            // the record may have been deleted while the form was open; then nothing is saved
+            // The Save is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
+
+            // The record may have been deleted while the form was open, and then nothing is saved. A locking read, so it
+            // never opens the transaction's snapshot before the capture's locking read of the same row.
             $stmt = $pdo->prepare("
                 SELECT id
                 FROM domains
-                WHERE id = :record_id");
+                WHERE id = :record_id
+                FOR UPDATE");
             $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
             $stmt->execute();
             $record_exists = $stmt->fetchColumn();
@@ -211,6 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
 
             }
+
+            // The domain as it was, locked, so only what this Save really changes is recorded
+            $history_before = $history_op->capture('domain', array($did));
 
             $stmt = $pdo->prepare("
                 SELECT registrar_id, owner_id
@@ -321,7 +332,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $pdo->query("
                 SELECT field_name
                 FROM domain_fields
-                ORDER BY `name`")->fetchAll();
+                ORDER BY `name`
+                LOCK IN SHARE MODE")->fetchAll();
 
             if ($result) {
 
@@ -357,6 +369,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = $queryB->missingFees('domains');
             $_SESSION['s_missing_domain_fees'] = $system->checkForRows($sql);
 
+            $history_op->compare($history_before);
+            $history_op->finish();
+
             if ($pdo->InTransaction()) $pdo->commit();
 
             $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain) . '<BR>';
@@ -373,13 +388,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->rollback();
 
-            $log_message = 'Unable to edit domain';
-            $log_extra = array('Error' => $e);
-            $log->critical($log_message, $log_extra);
+            // Another request changed the same rows at the same moment: nothing was saved, and the form shows again with
+            // what was typed (see domainmod_restore_is_conflict())
+            if (domainmod_restore_is_conflict($e)) {
+                $_SESSION['s_message_danger'] .= domainmod_restore_conflict_form_message() . '<BR>';
+            } else {
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+                $log_message = 'Unable to edit domain';
+                $log_extra = array('Error' => $e);
+                $log->critical($log_message, $log_extra);
 
-            throw $e;
+                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                throw $e;
+
+            }
 
         }
 
@@ -463,11 +486,16 @@ if ($del === 1) {
 
         $pdo->beginTransaction();
 
-        // the record may have been deleted while the form was open; then nothing is saved
+        // The delete is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+        $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
+
+        // The domain may have been deleted while the form was open, and then nothing is saved. A domain that's found is
+        // locked, before its certificates, as every writer does
         $stmt = $pdo->prepare("
             SELECT id
             FROM domains
-            WHERE id = :record_id");
+            WHERE id = :record_id
+            FOR UPDATE");
         $stmt->bindValue('record_id', $did, PDO::PARAM_INT);
         $stmt->execute();
         $record_exists = $stmt->fetchColumn();
@@ -482,6 +510,13 @@ if ($del === 1) {
 
         }
 
+        // The domain's delete row, with a snapshot read under its lock, then its SSL certificates, which are kept
+        // without a domain: locked after the domain, a page at a time, each recorded going from the domain to none
+        // (while the domain's name can still be read)
+        $history_op->deleting('domain', array($did));
+        $domain = new DomainMOD\Domain();
+        $unlinked_ssl_certs = $domain->unlinkSslCertificatesRecorded(array($did), $history_op);
+
         $stmt = $pdo->prepare("
             DELETE FROM domains
             WHERE id = :did");
@@ -494,19 +529,16 @@ if ($del === 1) {
         $stmt->bindValue('did', $did, PDO::PARAM_INT);
         $stmt->execute();
 
-        // The domain's SSL certificates are kept, without a domain (after the domain row is deleted, so the domain is
-        // locked before its certificates)
-        $domain = new DomainMOD\Domain();
-        $unlinked_ssl_certs = $domain->unlinkSslCertificates(array($did));
-
         $maint->updateSegments();
 
         $system->checkExistingAssets();
 
+        $history_op->finish();
+
         if ($pdo->InTransaction()) $pdo->commit();
 
         $_SESSION['s_message_success'] = $_SESSION['s_message_success'] ?? '';
-        $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted'), $new_domain) . '<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('Domain %s deleted.'), $new_domain) . '<BR>';
 
         if ($unlinked_ssl_certs > 0) {
             // TRANSLATORS: %s is the number of SSL certificates that were linked to the deleted domain or domains.
@@ -858,6 +890,9 @@ echo $form->showInputHidden('new_domain', $new_domain);
 echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
+
+// The domain's Change History, read-only and outside the form
+echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did);
 
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);

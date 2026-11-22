@@ -93,7 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             try {
 
+                // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                 $pdo->beginTransaction();
+
+                // The add is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+                $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_USER, $_SESSION['s_user_id']);
 
                 $tld = $domain->getTld($new_domain);
 
@@ -118,6 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $new_registrar_id = $result->registrar_id;
                 $new_owner_id = $result->owner_id;
+
+                // The domains whose cost updateDomainFee() recalculates with this one's, locked before the insert
+                $fee_peers = $maint->captureFeePeers($history_op, $new_registrar_id, $tld);
 
                 if ($new_privacy === 1) {
 
@@ -183,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute();
 
                 $temp_domain_id = $pdo->lastInsertId('id');
+                $history_op->created('domain', $temp_domain_id);
 
                 $stmt = $pdo->prepare("
                     INSERT INTO domain_field_data
@@ -196,7 +205,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $result = $pdo->query("
                     SELECT field_name
                     FROM domain_fields
-                    ORDER BY `name`")->fetchAll();
+                    ORDER BY `name`
+                    LOCK IN SHARE MODE")->fetchAll();
 
                 if ($result) {
 
@@ -222,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $maint->updateDomainFee($temp_domain_id);
+                $maint->updateDomainFee($temp_domain_id, $fee_peers);
 
                 $queryB = new DomainMOD\QueryBuild();
                 $sql = $queryB->missingFees('domains');
@@ -231,6 +241,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $maint->updateSegments();
 
                 $system->checkExistingAssets();
+
+                $history_op->finish();
 
                 if ($pdo->InTransaction()) $pdo->commit();
 
@@ -246,13 +258,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($pdo->InTransaction()) $pdo->rollback();
 
-                $log_message = 'Unable to add domain';
-                $log_extra = array('Error' => $e);
-                $log->critical($log_message, $log_extra);
+                // Another request changed the same rows at the same moment: nothing was saved, and the form shows again with
+                // what was typed (see domainmod_restore_is_conflict())
+                if (domainmod_restore_is_conflict($e)) {
+                    $_SESSION['s_message_danger'] .= domainmod_restore_conflict_form_message() . '<BR>';
+                } else {
 
-                $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+                    $log_message = 'Unable to add domain';
+                    $log_extra = array('Error' => $e);
+                    $log->critical($log_message, $log_extra);
 
-                throw $e;
+                    $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+                    throw $e;
+
+                }
 
             }
 

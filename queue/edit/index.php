@@ -86,7 +86,12 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 
         try {
 
+            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
             $pdo->beginTransaction();
+
+            // The import is recorded in the Change History, in the same transaction (see DomainMOD\ChangeHistory)
+            $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_QUEUE, $_SESSION['s_user_id'], 'queue_edit');
 
             /*
              * Lock the queue row and check it again, so a second submit of the form (or another user fixing the same
@@ -229,6 +234,9 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 
             }
 
+            // The domains whose cost updateDomainFee() recalculates with this one's, locked before the insert
+            $fee_peers = $maint->captureFeePeers($history_op, $new_registrar_id, $tld);
+
             // the same note the queue gives the domains it imports, marked as edited by hand
             $temp_notes = $time->timeBasic() . ' - Inserted by Queue (edited manually).';
             if ($new_notes != '') $temp_notes .= "\r\n" . $new_notes;
@@ -265,6 +273,7 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $stmt->execute();
 
             $temp_domain_id = $pdo->lastInsertId('id');
+            $history_op->created('domain', $temp_domain_id);
 
             $stmt = $pdo->prepare("
                 INSERT INTO domain_field_data
@@ -278,7 +287,8 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $result = $pdo->query("
                 SELECT field_name
                 FROM domain_fields
-                ORDER BY `name`")->fetchAll();
+                ORDER BY `name`
+                LOCK IN SHARE MODE")->fetchAll();
 
             if ($result) {
 
@@ -341,7 +351,7 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $stmt->bindValue('qid', $qid, PDO::PARAM_INT);
             $stmt->execute();
 
-            $maint->updateDomainFee($temp_domain_id);
+            $maint->updateDomainFee($temp_domain_id, $fee_peers);
 
             $queryB = new DomainMOD\QueryBuild();
             $sql = $queryB->missingFees('domains');
@@ -350,6 +360,8 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $maint->updateSegments();
 
             $system->checkExistingAssets();
+
+            $history_op->finish();
 
             if ($pdo->InTransaction()) $pdo->commit();
 

@@ -222,6 +222,26 @@
     refresh_form.addEventListener('htmx:beforeRequest', hideTooltip);
     result_area.addEventListener('htmx:afterSettle', hideTooltip);
     refresh_form.addEventListener('htmx:afterRequest', unlockFields);
+    // A restore or upgrade's 503 message, or a conflict's 409 (plain text, see _includes/restore-gate.inc.php), is shown
+    // in the result area.
+    // htmx fires htmx:beforeSwap on the target, so it's handled here, and stopped before the page's own handler on the
+    // document (in the footer) adds its own alert as well.
+    result_area.addEventListener('htmx:beforeSwap', function (event) {
+        var xhr = event.detail ? event.detail.xhr : null;
+        // Only the gate's own answer (plain text, marked with X-DomainMOD-Refused): another 503 or 409, such as a
+        // proxy's page, gets the general message
+        if (!xhr || (xhr.status !== 503 && xhr.status !== 409) || !xhr.responseText
+            || xhr.getResponseHeader('X-DomainMOD-Refused') !== '1'
+            || (xhr.getResponseHeader('Content-Type') || '').indexOf('text/plain') !== 0) return;
+        event.detail.shouldSwap = false;
+        event.detail.isError = false;
+        event.stopPropagation();
+        var message = document.createElement('div');
+        message.className = 'alert alert-danger py-2 mb-0';
+        message.setAttribute('role', 'alert');
+        message.textContent = xhr.responseText;
+        result_area.replaceChildren(message);
+    });
 
     // Clear a field's mistake (from a failed Save), since it now holds the saved value
     var clearError = function (field) {

@@ -37,6 +37,8 @@ require_once DIR_INC . '/settings/admin-info.inc.php';
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 $pdo = $deeb->cnxx;
+// Restores are off while temp/ isn't writable, which administrators are told here (see _includes/restore-gate.inc.php)
+domainmod_restore_warn_admin();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>

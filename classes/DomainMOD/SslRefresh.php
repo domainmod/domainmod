@@ -35,6 +35,8 @@ class SslRefresh
     public $queue;
     public $sanitize;
     public $time;
+    // The user refreshing, for the Change History (set by refresh())
+    protected $history_user_id = 0;
 
     const DEADLINE = 45;           // seconds for the lookup, as DomainRefresh allows
     const SAME_CERT_GAP = 30;      // seconds between refreshes of the same certificate, per session
@@ -59,6 +61,9 @@ class SslRefresh
      */
     public function refresh($ssl_id, $user_id, $expected_name, $expected_domain_id)
     {
+        // Who the Change History says refreshed it (see apply())
+        $this->history_user_id = (int) $user_id;
+
         if (!$this->queue->isAvailable()) {
             $unavailable = _('Refresh becomes available after the next database update.');
             return $this->result(false, $unavailable, array(), array(), array());
@@ -249,6 +254,10 @@ class SslRefresh
 
             $pdo->beginTransaction();
 
+            // The Change History's action starts before anything is locked, so its wait for the custom field definitions
+            // (see ChangeHistory::start()) never holds this certificate's locks, as every recorded writer does
+            $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_REFRESH, $this->history_user_id, 'ssl_refresh');
+
             $has_domain = ($before->domain !== null);
             $domain = $has_domain ? $this->lockRow("SELECT domain FROM domains WHERE id = :id FOR UPDATE", (int) $before->domain_id) : null;
             $current = $this->lockRow("SELECT `name`, domain_id, account_id, expiry_date, active, notes FROM ssl_certs WHERE id = :id FOR UPDATE", (int) $before->id);
@@ -279,12 +288,27 @@ class SslRefresh
 
             $compared = $this->compare($current, $code, $details, $status ? $status->refreshed_issuer : null);
 
+            /*
+             * The refresh is recorded in the Change History (its action started above), in this transaction: the expiry
+             * date and status (not the dated note line, which says what the change rows already say), and the issuer,
+             * written before either commit below. A first lookup (no issuer recorded yet) is a change only when the
+             * history already knows an issuer for this certificate's current life, such as one a Save's rename cleared.
+             */
+            $history_before = $history_op->capture('ssl', array((int) $before->id), array('expiry_date', 'active'), false);
+            // Both sides as the status row stores them (escaped, see SslQueue::storedText()), as compare() compares them
+            $old_issuer = $status ? $status->refreshed_issuer : null;
+            $new_issuer = $this->queue->storedText($compared['issuer'], 255);
+            if ($history_op->enabled() && (string) $old_issuer !== $new_issuer
+                && ($old_issuer !== null || ChangeHistory::knowsIssuer($pdo, (int) $before->id))) {
+                $history_op->record('ssl', (int) $before->id, 'issuer', (string) $old_issuer, $new_issuer, 'tls');
+            }
+
             // A successful lookup always updates the status row, with the issuer in the same cleaned form compared above
             $details['issuer'] = $compared['issuer'];
             $this->queue->writeStatus((int) $before->id, $details, $code, true);
 
             if (empty($compared['changes'])) {
-
+                $history_op->finish();
                 $pdo->commit();
                 return array(true, array(_('No changes were made.')), array());
 
@@ -308,6 +332,9 @@ class SslRefresh
             $stmt->bindValue('update_time', $this->time->stamp(), \PDO::PARAM_STR);
             $stmt->bindValue('ssl_id', (int) $before->id, \PDO::PARAM_INT);
             $stmt->execute();
+
+            $history_op->compare($history_before, '', 'tls');
+            $history_op->finish();
 
             $pdo->commit();
 
@@ -334,6 +361,10 @@ class SslRefresh
 
             }
 
+            // Another request changed the same rows at the same moment (see domainmod_restore_is_conflict())
+            if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) {
+                return array(false, array(domainmod_restore_conflict_refresh_message()), array());
+            }
             return array(false, array(_("The SSL certificate couldn't be updated. Please try again.")), array());
 
         }

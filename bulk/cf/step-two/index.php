@@ -142,10 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                 try {
 
+                    // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+                    $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
                     $pdo->beginTransaction();
 
                     $in_list = str_repeat('?, ', count($domain_array) - 1) . '?';
-                    $sql = "SELECT id
+                    $sql = "SELECT id, domain
                             FROM domains
                             WHERE domain IN (" . $in_list . ")";
                     $stmt = $pdo->prepare($sql);
@@ -153,32 +155,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                     $result = $stmt->fetchAll();
 
                     $domain_id_list = array();
+                    $domain_names = array();
 
                     foreach ($result as $row) {
 
                         $domain_id_list[] = $row->id;
+                        $domain_names[(int) $row->id] = strtolower((string) $row->domain);
 
                     }
+
+                    // In the order the domains were pasted (then by id), so Change History lists the rows in that order.
+                    // The capture below still takes its locks in ascending id order.
+                    $pasted = array();
+                    foreach ($domain_array as $pasted_name) {
+                        if (!isset($pasted[strtolower((string) $pasted_name)])) $pasted[strtolower((string) $pasted_name)] = count($pasted);
+                    }
+                    usort($domain_id_list, function ($a, $b) use ($domain_names, $pasted) {
+                        return array($pasted[$domain_names[(int) $a]] ?? PHP_INT_MAX, (int) $a)
+                            <=> array($pasted[$domain_names[(int) $b]] ?? PHP_INT_MAX, (int) $b);
+                    });
                     $in_list = str_repeat('?, ', count($domain_id_list) - 1) . '?';
 
                     $temp_name = '';
 
+                    // Read with a shared lock, so the field can't be deleted while this runs, and the write below and the
+                    // Change History both use it as it is now
                     $stmt = $pdo->prepare("
                         SELECT `name`, field_name
                         FROM domain_fields
-                        WHERE id = :id");
+                        WHERE id = :id
+                        LOCK IN SHARE MODE");
                     $stmt->bindValue('id', $id, PDO::PARAM_INT);
                     $stmt->execute();
 
                     $result = $stmt->fetch();
                     $stmt->closeCursor();
 
-                    if ($result) {
+                    if (!$result) {
 
-                        $temp_name = $result->name;
-                        $temp_field_name = $result->field_name;
+                        if ($pdo->InTransaction()) $pdo->rollback();
+                        $_SESSION['s_message_danger'] .= _('That custom field no longer exists.') . '<BR>';
+                        header('Location: ../step-one/');
+                        exit;
 
                     }
+
+                    $temp_name = $result->name;
+                    $temp_field_name = $result->field_name;
+
+                    // The change is recorded in the Change History, in the same transaction: the one custom field and the
+                    // notes, which the same submission can add to (see DomainMOD\ChangeHistory)
+                    $history_op = (new DomainMOD\ChangeHistory($pdo))->start(DomainMOD\ChangeHistory::SOURCE_BULK, $_SESSION['s_user_id'], 'bulk_CF', $new_notes);
+                    // The notes only when this submission adds one
+                    $history_before = $history_op->capture('domain', $domain_id_list, $new_notes !== '' ? array('notes') : array(),
+                        array($temp_field_name));
 
                     $stmt = $pdo->prepare("
                         UPDATE domain_field_data
@@ -203,6 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                         $stmt->execute($full_array);
 
                     }
+
+                    $history_op->compare($history_before);
+                    $history_op->finish();
 
                     if ($pdo->InTransaction()) $pdo->commit();
 
