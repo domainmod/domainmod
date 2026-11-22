@@ -93,7 +93,7 @@ class RestoreGateTest extends TestCase
         $swap = substr($swap, 0, strpos($swap, '});'));
         $this->assertStringContainsString("var refused = (xhr.status === 503 || xhr.status === 409) && xhr.getResponseHeader('X-DomainMOD-Refused') === '1'\n"
             . "                && (xhr.getResponseHeader('Content-Type') || '').indexOf('text/plain') === 0;", $swap);
-        $this->assertStringContainsString("showHtmxError(event.detail.elt, event.detail.target, refused ? xhr.responseText.trim() : '');",
+        $this->assertStringContainsString("showHtmxError(event.detail.elt, event.detail.target, refused ? xhr.responseText.trim() : '',",
             $swap);
 
         // The Refresh pages show the same marked answers (503 and 409) in their result area themselves, and stop them

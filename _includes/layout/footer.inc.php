@@ -174,11 +174,13 @@ if (file_exists($full_filename)) {
         // js/domain-refresh.js). A link is marked busy while its task runs.
         var htmx_error = <?php echo json_encode(_("That didn't work. Please reload the page and try again.")); ?>;
         var htmx_error_close = <?php echo json_encode(_('Close')); ?>;
-        var showHtmxError = function (element, target, message) {
+        var showHtmxError = function (element, target, message, control) {
             // The same slim alert as the page messages (System::slimMessage()). It's added after the page loads, so its
-            // role="alert" is announced, and the shared announcer doesn't read it again.
+            // role="alert" is announced, and the shared announcer doesn't read it again. control is the link or form that
+            // sent the request, when element is the target htmx fired the event on.
+            control = control || element;
             var alert = document.createElement('div');
-            alert.className = 'alert alert-danger alert-dismissible d-flex align-items-start gap-2 py-2 domainmod-message';
+            alert.className = 'alert alert-danger alert-dismissible d-flex align-items-start gap-2 py-2 domainmod-message domainmod-htmx-error';
             alert.setAttribute('role', 'alert');
             var icon = document.createElement('i');
             icon.className = 'bi bi-exclamation-octagon-fill domainmod-message-icon';
@@ -201,7 +203,20 @@ if (file_exists($full_filename)) {
                 element.replaceWith(copy);
                 copy.insertAdjacentElement('afterend', alert);
             } else if (target) {
-                target.insertAdjacentElement('afterbegin', alert);
+                // A result area (its content swapped, with the control outside it) holds only the latest answer, so the
+                // message replaces an earlier result or message, as a new result would. Anywhere else, such as Run Now's
+                // card (swapped whole) or the Look up button's own place, the content stays, and the message takes the
+                // place of any earlier one at the start, so repeated failures don't stack.
+                var swap_element = control.closest('[hx-swap]');
+                var swapped_whole = swap_element !== null && swap_element.getAttribute('hx-swap').indexOf('outerHTML') === 0;
+                if (!swapped_whole && !target.contains(control)) {
+                    target.replaceChildren(alert);
+                } else {
+                    Array.prototype.slice.call(target.children).forEach(function (child) {
+                        if (child.classList.contains('domainmod-htmx-error')) child.remove();
+                    });
+                    target.insertAdjacentElement('afterbegin', alert);
+                }
             }
         };
         document.addEventListener('htmx:beforeSwap', function (event) {
@@ -213,7 +228,8 @@ if (file_exists($full_filename)) {
             // proxy's, gets the general message
             var refused = (xhr.status === 503 || xhr.status === 409) && xhr.getResponseHeader('X-DomainMOD-Refused') === '1'
                 && (xhr.getResponseHeader('Content-Type') || '').indexOf('text/plain') === 0;
-            showHtmxError(event.detail.elt, event.detail.target, refused ? xhr.responseText.trim() : '');
+            showHtmxError(event.detail.elt, event.detail.target, refused ? xhr.responseText.trim() : '',
+                event.detail.requestConfig ? event.detail.requestConfig.elt : null);
         });
         document.addEventListener('htmx:sendError', function (event) {
             showHtmxError(event.detail.elt, event.detail.target);
