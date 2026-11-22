@@ -152,8 +152,9 @@ $day_summary = function ($day) {
 
 $show_names = array('all' => _('All'), 'domains' => _('Domains'), 'ssl' => _('SSL Certificates'));
 
-// The day lists' columns, and each one's name as its cells' data-label, which phones show before each value
-$list_columns = array(_('Type'), _('Name'), _('Registrar or Provider'), _('Account'), _('Renewal Cost'));
+// The list's columns, and each one's name as its cells' data-label, which phones show before each value (the Date
+// column's cells are row headers, which phones show as each row's heading instead)
+$list_columns = array(_('Date'), _('Type'), _('Name'), _('Registrar or Provider'), _('Account'), _('Renewal Cost'));
 $list_labels = array_map(function ($column) {
     return htmlspecialchars($column, ENT_QUOTES, 'UTF-8');
 }, $list_columns);
@@ -344,33 +345,49 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
     <h2 class="h4 mt-4" id="renewal-list"><?php echo sprintf(_('Renewals in %s'), $month_label); ?></h2>
     <p class="small text-body-secondary d-md-none"><?php echo _('The calendar shows on wider screens.'); ?></p><?php
 
-    if ($items) {
-        foreach ($days as $date => $day) { ?>
-            <h3 class="h5 mt-3" id="renewals-<?php echo $date; ?>"><?php echo $date . ', ' . $weekday_of($date); ?><?php
-                if ($date < $today) { ?> <span class="badge text-bg-danger fs-6 align-middle"><?php echo _('Overdue'); ?></span><?php } ?></h3>
-            <div class="table-responsive">
-            <table class="table table-striped table-sm domainmod-calendar-list domainmod-stack-table" role="table">
-                <thead role="rowgroup">
-                <tr role="row"><?php
-                    foreach ($list_columns as $index => $column) { ?>
-                    <th scope="col" role="columnheader"<?php echo $index === 4 ? ' class="text-sm-end"' : ''; ?>><?php echo $column; ?></th><?php
-                    } ?>
-                </tr>
-                </thead>
-                <tbody role="rowgroup"><?php
-                foreach ($day['items'] as $item) { ?>
-                    <tr role="row">
-                        <td role="cell" data-label="<?php echo $list_labels[0]; ?>"><?php echo $type_name($item); ?></td>
-                        <td role="cell" data-label="<?php echo $list_labels[1]; ?>"><a href="<?php echo $item_url($item); ?>"><?php echo $html($item['name']); ?></a></td>
-                        <td role="cell" data-label="<?php echo $list_labels[2]; ?>"><?php echo $html($item['provider']); ?></td>
-                        <td role="cell" data-label="<?php echo $list_labels[3]; ?>"><?php echo $html($item['owner']); ?> (<?php echo $html($item['username']); ?>)</td>
-                        <td role="cell" data-label="<?php echo $list_labels[4]; ?>" class="text-sm-end"><?php echo $cost_text($item); ?></td>
-                    </tr><?php
+    if ($items) { ?>
+        <div class="table-responsive">
+        <table class="table table-striped table-sm domainmod-calendar-list domainmod-stack-table" role="table">
+            <?php // TRANSLATORS: The hidden caption of the Renewal Calendar's table of the month's renewals. %s is a month and year, such as "December 2026". ?>
+            <caption class="visually-hidden"><?php echo sprintf(_('Renewals in %s, by date'), $month_label); ?></caption>
+            <thead role="rowgroup">
+            <tr role="row"><?php
+                foreach ($list_columns as $index => $column) { ?>
+                <th scope="col" role="columnheader"<?php echo $index === 5 ? ' class="text-sm-end"' : ''; ?>><?php echo $column; ?></th><?php
                 } ?>
-                </tbody>
-            </table>
-            </div><?php
-        }
+            </tr>
+            </thead>
+            <tbody role="rowgroup"><?php
+            foreach ($days as $date => $day) {
+                // The day's date. A day before today shows in red (the theme's darker or lighter red, which keeps its contrast
+                // in light and dark mode), after a red warning icon, and its first row also tells screen readers it's overdue,
+                // so they hear it once per day.
+                $is_overdue = $date < $today;
+                $date_text = ($is_overdue ? '<i class="bi bi-exclamation-triangle text-danger" aria-hidden="true"></i> ' : '') . $date . ', ' . $weekday_of($date);
+                $date_class = 'd-block d-sm-table-cell' . ($is_overdue ? ' text-danger-emphasis' : '');
+                foreach ($day['items'] as $index => $item) { ?>
+                    <tr role="row"><?php
+                        /*
+                         * Each row's date is its row header. The date shows on the day's first row, which the calendar's
+                         * "+N more" links jump to. On the day's other rows it shows only on phones, where each row stacks
+                         * on its own, and is visually hidden on wider screens, so screen readers still hear it.
+                         */
+                        if ($index === 0) { ?>
+                            <th scope="row" role="rowheader" id="renewals-<?php echo $date; ?>" class="<?php echo $date_class; ?>"><?php echo $date_text; ?><?php echo $is_overdue ? '<span class="visually-hidden">, ' . _('Overdue') . '</span>' : ''; ?></th><?php
+                        } else { ?>
+                            <th scope="row" role="rowheader" class="<?php echo $date_class; ?>"><span class="d-sm-none"><?php echo $date_text; ?></span><span class="visually-hidden d-none d-sm-inline"><?php echo $date_text; ?></span></th><?php
+                        } ?>
+                        <td role="cell" data-label="<?php echo $list_labels[1]; ?>"><?php echo $type_name($item); ?></td>
+                        <td role="cell" data-label="<?php echo $list_labels[2]; ?>"><a href="<?php echo $item_url($item); ?>"><?php echo $html($item['name']); ?></a></td>
+                        <td role="cell" data-label="<?php echo $list_labels[3]; ?>"><?php echo $html($item['provider']); ?></td>
+                        <td role="cell" data-label="<?php echo $list_labels[4]; ?>"><?php echo $html($item['owner']); ?> (<?php echo $html($item['username']); ?>)</td>
+                        <td role="cell" data-label="<?php echo $list_labels[5]; ?>" class="text-sm-end"><?php echo $cost_text($item); ?></td>
+                    </tr><?php
+                }
+            } ?>
+            </tbody>
+        </table>
+        </div><?php
     } else {
         // TRANSLATORS: The heading when the Renewal Calendar's month has nothing to renew. %s is a month and year, such as "December 2026".
         echo $layout->emptyState('bi-calendar-check', sprintf(_('No renewals in %s'), $month_label), $empty_texts[$show], '', '', '', '', 3);
