@@ -856,7 +856,7 @@ class Scheduler
 
         if ($state === 'stale') {
 
-            $message = sprintf(_("The Task Scheduler hasn't run since %s, so expiry emails aren't being sent and the Domain Queue isn't being processed. Check that the cron job for cron.php is still running every 10 minutes, and that its address includes the key if you've given cron.php one. See the %sUser Guide%s for how to set it up."),
+            $message = sprintf(_("The Task Scheduler hasn't run since %s, so expiry emails aren't being sent and the Import Queue isn't being processed. Check that the cron job for cron.php is still running every 10 minutes, and that its address includes the key if you've given cron.php one. See the %sUser Guide%s for how to set it up."),
                 $this->time->toUserTimezone($last_run, 'Y-m-d H:i'), $guide_link, '</a>');
 
             if ($page === 'dashboard') {
