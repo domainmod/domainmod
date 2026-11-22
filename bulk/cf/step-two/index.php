@@ -308,8 +308,14 @@ if ($done != '1') {
 
         $text = _('Domains to update (one per line)');
 
-        // The field being updated, as the heading over the form (its name is stored escaped, as every custom field's is)
-        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', '<h2 class="h5">' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</h2>', '');
+        // The field being updated, as the heading over the form (its name is stored escaped, as every custom field's is),
+        // then a search box that adds existing domains to the list, and the list's count under it
+        $before_list = '<h2 class="h5">' . $custom_field->getName('domain_fields', $id) . ' (' . $custom_field->getType($type_id) . ')</h2>'
+            . $form->showDomainPicker('raw_domain_list', _('Find a domain to add to the list'),
+                _('Type part of a domain name, then pick it to add it to the list below. You can also type or paste domains straight into the list.'),
+                WEB_ROOT . '/domains/name-search.php');
+        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', $before_list,
+            $form->showDomainListCount('raw_domain_list'));
 
     }
 
@@ -457,5 +463,6 @@ if ($done != '1') {
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/bulk-domain-picker.js'); ?>"></script>
 </body>
 </html>

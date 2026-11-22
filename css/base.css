@@ -372,6 +372,35 @@ a.btn:hover {
 .focus .ts-control {
     box-shadow: none;
 }
+/* The Bulk Updater's domain picker (js/bulk-domain-picker.js): each result's status greyed beside its name, and in the
+   highlighted option's white text, where the grey would be too faint on the main colour. The match is underlined in
+   the row's own colour, since white text, and dark mode's text, are too faint on Tom Select's pale yellow. Long names
+   wrap instead of being cut off, so two that differ near the end can be told apart on a phone. */
+.domainmod-domain-picker-status {
+    color: var(--bs-secondary-color);
+}
+.ts-dropdown .active .domainmod-domain-picker-status {
+    color: inherit;
+}
+.ts-wrapper.domainmod-domain-picker .ts-dropdown .highlight {
+    background: none;
+    color: inherit;
+    text-decoration: underline;
+}
+.ts-wrapper.domainmod-domain-picker .ts-dropdown .option {
+    overflow-wrap: anywhere;
+}
+/* The picker's more-matches line, at the foot of the open dropdown, set apart from the results */
+.domainmod-domain-picker-more {
+    padding: 3px .75rem;
+    border-top: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+}
+/* The Bulk Updater list's count, just under the list (the list's own spacing is under its field) */
+.domainmod-domain-list-count {
+    margin-top: -.75rem;
+    margin-bottom: 1rem;
+}
 /* htmx's indicators (its own styles are turned off, since the CSP blocks the style tag it would insert): a spinner
    shows only while its request runs, and a link is shown as busy while its task runs (the footer's script marks it
    aria-busy) */

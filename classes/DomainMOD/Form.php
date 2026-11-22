@@ -263,6 +263,57 @@ class Form
         return ob_get_clean();
     }
 
+    /*
+     * The Bulk Updater's domain picker (js/bulk-domain-picker.js), for the domain list textarea named $name: a search
+     * box that finds domains as you type ($search_url, domains/name-search.php) and adds the one picked to the list. The
+     * box has no name, so it's never submitted, and the list stays the one field the form sends. It's hidden until the
+     * script has set it up, so without JavaScript the page is just the list. The messages the script shows and reads
+     * out are written here, translated.
+     */
+    public function showDomainPicker($name, $label, $help, $search_url)
+    {
+        $id = $this->fieldId($name) . '-picker';
+        $data = array(
+            'list' => $this->fieldId($name),
+            'search-url' => $search_url,
+            // A result as a screen reader reads it: its name, then its status
+            'option' => _('%1$s, %2$s'),
+            'searching' => _('Searching…'),
+            'no-results' => _('No matching domains.'),
+            'cut-off' => _('This search matches too many domains to check. Keep typing to narrow it.'),
+            'added' => _('Added %s to the list.'),
+            'already' => _('%s is already on the list.'),
+            'signin' => _('Your session has ended. Please sign in again.'),
+            'error' => _("That didn't work. Please reload the page and try again."),
+        );
+        $attributes = '';
+        foreach ($data as $key => $value) {
+            $attributes .= ' data-' . $key . '="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '"';
+        }
+        ob_start(); ?>
+            <div class="mb-3 domainmod-domain-picker-field" hidden>
+                <label class="form-label" for="<?php echo $id; ?>" id="<?php echo $id; ?>-label"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></label>
+                <div class="form-text mt-0 mb-1" id="<?php echo $id; ?>-help"><?php echo htmlspecialchars($help, ENT_QUOTES, 'UTF-8'); ?></div>
+                <select class="form-select domainmod-domain-picker" id="<?php echo $id; ?>" aria-describedby="<?php echo $id; ?>-help"<?php echo $attributes; ?>></select>
+                <div class="domainmod-domain-picker-more" id="<?php echo $id; ?>-more" hidden><?php
+                    echo htmlspecialchars(_('More domains match. Keep typing to narrow the list.'), ENT_QUOTES, 'UTF-8'); ?></div>
+            </div><?php
+        return ob_get_clean();
+    }
+
+    /*
+     * How many domains are on the Bulk Updater's list (the textarea named $name), under it, kept up to date by
+     * js/bulk-domain-picker.js as lines are picked, typed, or pasted. One per line that isn't blank, before the server
+     * removes duplicates, so it's a guide. Hidden until the script fills it in.
+     */
+    public function showDomainListCount($name)
+    {
+        ob_start(); ?>
+            <div class="form-text domainmod-domain-list-count" data-list="<?php echo $this->fieldId($name); ?>" hidden><?php
+                echo htmlspecialchars(_('Domains on the list:'), ENT_QUOTES, 'UTF-8'); ?> <span class="domainmod-domain-list-number">0</span></div><?php
+        return ob_get_clean();
+    }
+
     public function showInputHidden($name, $value)
     {
         ob_start(); ?>

@@ -2330,6 +2330,7 @@ if ($done != "1") {
 
         }
 
+        $after_list = '';
         if ($action == "AD") {
 
             $text = _('Domains to add (one per line)');
@@ -2338,9 +2339,16 @@ if ($done != "1") {
 
             $text = _('Domains to update (one per line)');
 
+            // A search box that adds existing domains to the list, and the list's count (new domains can't be picked,
+            // so Add Domains has neither)
+            $before_list .= $form->showDomainPicker('raw_domain_list', _('Find a domain to add to the list'),
+                _('Type part of a domain name, then pick it to add it to the list below. You can also type or paste domains straight into the list.'),
+                WEB_ROOT . '/domains/name-search.php');
+            $after_list = $form->showDomainListCount('raw_domain_list');
+
         }
 
-        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', $before_list, '');
+        echo $form->showInputTextarea('raw_domain_list', $text, '', $unsanitize->text($raw_domain_list), '1', $before_list, $after_list);
 
     }
 
@@ -2854,5 +2862,6 @@ if ($done != "1") {
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/bulk-domain-picker.js'); ?>"></script>
 </body>
 </html>
