@@ -76,6 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
+        // The live DNS states of the domains using this IP Address, worked out again one domain at a time
+        DomainMOD\LiveDns::recompareMany($pdo, DomainMOD\LiveDns::domainsUsing($pdo, 'ip_id', $ipid));
+
         $_SESSION['s_message_success'] .= sprintf(_('IP Address %s (%s) updated'), $new_name, $new_ip) . '<BR>';
 
         header("Location: ../ip-addresses.php");

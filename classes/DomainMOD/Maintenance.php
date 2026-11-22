@@ -126,6 +126,16 @@ class Maintenance
             } catch (\Throwable $log_error) {
             }
         }
+        // Live DNS checks whose domain is gone or was renamed, then every check's states worked out again, so a recompare
+        // that was skipped is repaired (a failure is logged, so the rest of the run goes on)
+        try {
+            LiveDns::cleanup($pdo);
+        } catch (\Throwable $e) {
+            try {
+                $this->log->warning('Unable to clean up the Live DNS checks', array('Error' => $e->getMessage()));
+            } catch (\Throwable $log_error) {
+            }
+        }
 
         // The result: the completed message, and the hosting fee step's skipped line ('' when it ran, or when the
         // database doesn't have the hosting tables yet), which cron.php logs and Run Now shows as a warning

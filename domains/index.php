@@ -85,6 +85,8 @@ $expand = (int) ($_REQUEST['expand'] ?? 0);
 $daterange = isset($_REQUEST['daterange']) ? $sanitize->text($_REQUEST['daterange']) : '';
 // The Registry Status filter (DomainMOD\DomainStatus), only once the 4.27.0 database update has added its columns
 $lock = DomainMOD\DomainList::normalizeLock($_REQUEST['lock'] ?? '');
+// The Live DNS filter (DomainMOD\LiveDns), only once the 4.27.0 database update has added its table
+$livedns = DomainMOD\DomainList::normalizeLiveDns($_REQUEST['livedns'] ?? '');
 
 list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
@@ -275,8 +277,10 @@ $cf_carry = $cf_state ? array('cff' => $cf->fieldsKey()) : array();
 $domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_fields);
 // Whether Export adds the registry status columns (DomainMOD\DomainStatus), which come with the 4.27.0 database update
 $export_status = $domain_list->hasStatusColumns();
+// and the Live DNS column (DomainMOD\LiveDns), which comes with it too
+$export_live_dns = $domain_list->hasLiveDns();
 $list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'hsid' => $hsid, 'rid' => $rid,
-    'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active, 'lock' => $lock);
+    'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active, 'lock' => $lock, 'livedns' => $livedns);
 $filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date,
     $segment_list);
 
@@ -368,6 +372,7 @@ $range_string = $filter_parts['range_string'];
 $tld_string = $filter_parts['tld_string'];
 $search_string = $filter_parts['search_string'];
 $lock_string = $filter_parts['lock_string'];
+$livedns_string = $filter_parts['livedns_string'];
 
 // Export and the Raw List come out in the list's default order (DomainList::EXPORT_ORDER_SQL). The Raw List also keeps
 // the query without its order, so it can add the table's search box when its link carries one, and without its
@@ -385,7 +390,8 @@ $raw_list_from_sql = $domain_list->fromSql() . "
           $range_string
           $tld_string
           $search_string
-          $lock_string" . $cf_filter['sql'];
+          $lock_string
+          $livedns_string" . $cf_filter['sql'];
 $raw_list_sql = $domain_list->selectSql() . $raw_list_from_sql;
 $sql = $raw_list_sql . DomainMOD\DomainList::EXPORT_ORDER_SQL;
 $_SESSION['s_raw_list_type'] = 'domains';
@@ -399,7 +405,7 @@ $_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
     . $hsid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $lock_string
-    . $cf_filter['sql'];
+    . $livedns_string . $cf_filter['sql'];
 $list_filter_params = $cf_filter['params'];
 $list_has_range = $range_string != '';
 $list_has_search = $search_string != '';
@@ -575,6 +581,16 @@ if ($export_data == 1) {
             $row_contents = array(
                 _('Registry Status') . ':',
                 DomainMOD\DomainStatus::filterChoices()[$lock]
+            );
+            $search_filter_rows[] = $row_contents;
+
+        }
+
+        if ($livedns !== '') {
+
+            $row_contents = array(
+                _('Live DNS') . ':',
+                DomainMOD\LiveDns::filterChoices()[$livedns]
             );
             $search_filter_rows[] = $row_contents;
 
@@ -863,7 +879,8 @@ if ($export_data == 1) {
         $row_contents[$count++] = _('IP Address Name');
         $row_contents[$count++] = _('IP Address');
         $row_contents[$count++] = _('IP Address rDNS');
-        // The hosting service comes with the 4.27.0 database update
+        // The Live DNS column (DomainMOD\LiveDns) and the hosting service come with the 4.27.0 database update
+        if ($export_live_dns) $row_contents[$count++] = _('Live DNS');
         if ($hosting_available) $row_contents[$count++] = _('Hosting Service');
         $row_contents[$count++] = _('Category');
         $row_contents[$count++] = _('Category Stakeholder');
@@ -976,6 +993,7 @@ if ($export_data == 1) {
                 $row_contents[$count++] = $row->ip_name;
                 $row_contents[$count++] = $row->ip;
                 $row_contents[$count++] = $row->rdns;
+                if ($export_live_dns) $row_contents[$count++] = DomainMOD\LiveDns::exportText($row);
                 if ($hosting_available) $row_contents[$count++] = $row->service_name ?? '';
                 $row_contents[$count++] = $row->category_name;
                 $row_contents[$count++] = $row->stakeholder;
@@ -1158,6 +1176,7 @@ if ($oid !== 0) $filter_toolbar->addFilter('oid', $oid, 0, $filter_name("SELECT 
 if ($tld != '') $filter_toolbar->addFilter('tld', $tld, '', '.' . $tld, _('TLD'));
 $filter_toolbar->addFilter('is_active', $is_active, 'LIVE', $status_names[$is_active] ?? $is_active, _('Status'));
 if ($lock !== '') $filter_toolbar->addFilter('lock', $lock, '', DomainMOD\DomainStatus::filterChoices()[$lock], _('Registry Status'));
+if ($livedns !== '') $filter_toolbar->addFilter('livedns', $livedns, '', DomainMOD\LiveDns::filterChoices()[$livedns], _('Live DNS'));
 if ($_SESSION['s_search_for'] != '') {
     $filter_keyword = DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']);
     $filter_toolbar->addFilter('search_for', $filter_keyword, '', '"' . $filter_keyword . '"', _('Keyword Search'));
@@ -1199,9 +1218,10 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
         echo $form->showFormTop('');
 
-        // The Registry Status filter's condition for the menus below, which name the domains table d, or don't alias it
+        // The Registry Status filter's condition for the menus below, which name the domains table d
         $lock_string_d = DomainMOD\DomainStatus::filterCondition($lock, 'd.');
-        ?>
+        // and the Live DNS filter's, the same way
+        $livedns_string_d = DomainMOD\LiveDns::filterCondition($livedns, 'd'); ?>
 
         <div><?php
                 // SEGMENT
@@ -1315,6 +1335,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY r.name
                 ORDER BY r.name asc", $cf_menu_d);
@@ -1421,6 +1442,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY r.name, o.name, ra.username
                 ORDER BY r.name asc, o.name asc, ra.username asc", $cf_menu_d);
@@ -1530,6 +1552,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY dns.name
                 ORDER BY dns.name asc", $cf_menu_d);
@@ -1639,6 +1662,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY ip.name
                 ORDER BY ip.name asc", $cf_menu_d);
@@ -1757,6 +1781,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                       $search_string
                       $segment_string
                       $lock_string_d
+                      $livedns_string_d
                       {$cf_menu_d['sql']}
                     GROUP BY hs.id", $cf_menu_d);
                     $service_menu = DomainMOD\Hosting::serviceLabels($pdo, array_map('intval', array_column($result_service, 'id')));
@@ -1870,6 +1895,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY c.name
                 ORDER BY c.name asc", $cf_menu_d);
@@ -1979,6 +2005,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY o.name
                 ORDER BY o.name asc", $cf_menu_d);
@@ -2087,6 +2114,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     $search_string .
                     $segment_string .
                     $lock_string_d .
+                    $livedns_string_d .
                     $cf_menu_d['sql'] . "
                 GROUP BY tld 
                 ORDER BY tld asc", $cf_menu_d);
@@ -2171,6 +2199,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $search_string
                   $segment_string
                   $lock_string_d
+                  $livedns_string_d
                   {$cf_menu_d['sql']}
                 GROUP BY active
                 ORDER BY active asc", $cf_menu_d);
@@ -2231,6 +2260,20 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                     foreach (DomainMOD\DomainStatus::filterChoices() as $lock_value => $lock_label) {
 
                         echo $form->showDropdownOption($lock_value, $lock_label, $lock);
+
+                    }
+                    echo $form->showDropdownBottom('');
+
+                }
+
+                // LIVE DNS (DomainMOD\LiveDns): a fixed list of badges, once the 4.27.0 database update is done
+                if ($domain_list->hasLiveDns()) {
+
+                    echo $form->showDropdownTop('livedns', _('Live DNS'), '', '', '');
+                    echo $form->showDropdownOption('', _('Live DNS') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
+                    foreach (DomainMOD\LiveDns::filterChoices() as $livedns_value => $livedns_label) {
+
+                        echo $form->showDropdownOption($livedns_value, $livedns_label, $livedns);
 
                     }
                     echo $form->showDropdownBottom('');
@@ -2422,7 +2465,7 @@ if ($result) {
         // Domains exist but none are listed. Which empty state shows depends on why (see the empty states plan).
         $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $hsid !== 0
             || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE'
-            || $cf_state !== array() || $lock !== '';
+            || $cf_state !== array() || $lock !== '' || $livedns !== '';
 
         // The list only shows domains that have a fee (it joins the fees to work out costs), so these counts leave
         // the fees out, to tell "nothing matches" apart from "hidden until they have a fee"

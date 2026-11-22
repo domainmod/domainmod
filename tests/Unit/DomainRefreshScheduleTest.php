@@ -23,6 +23,9 @@ namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\DomainRefresh;
 use DomainMOD\DomainRefreshSchedule as S;
+use DomainMOD\LiveDns;
+use DomainMOD\Tests\Support\Instance;
+use DomainMOD\Tests\Support\QuotingPdo;
 use PHPUnit\Framework\TestCase;
 
 /*
@@ -216,6 +219,96 @@ class DomainRefreshScheduleTest extends TestCase
         $this->assertSame(array(1, 2, 4), $waits);
     }
 
+    // A live DNS check that needs another try brings a success's next check to a day after its lookup started, never
+    // later than the usual date, so a near-expiry check isn't pushed back
+    public function testALiveDnsRetryIsDueWithinADay()
+    {
+        $week = S::nextDueAfterSuccess($this->date(300), self::NOW);
+        $this->assertSame(self::NOW + S::DAY, S::withDnsRetry($week, self::NOW));
+        // A refresh at 18:00 whose domain enters its window at the next midnight keeps the earlier date
+        $evening = strtotime(gmdate('Y-m-d', self::NOW) . ' 18:00:00 UTC');
+        $expiry = gmdate('Y-m-d', $evening + 61 * S::DAY);
+        $window = S::nextDueAfterSuccess($expiry, $evening);
+        $this->assertSame(strtotime($expiry . ' 00:00:00 UTC') - 60 * S::DAY, $window);
+        $this->assertLessThan($evening + S::DAY, $window);
+        $this->assertSame($window, S::withDnsRetry($window, $evening));
+    }
+
+    // saveOutcome()'s Live DNS retry: a success gets the one-day retry ('due'), forced when the DNS step had no time or
+    // couldn't save, and otherwise left to the stored observation (read by the write); a failure, or a success while Live
+    // DNS isn't available, gets none
+    public function testASuccessCarriesTheLiveDnsRetryToTheWrite()
+    {
+        $pdo = new QuotingPdo();
+        $refresh = Instance::withoutConstructor(CapturingRefresh::class, array('deeb' => (object) array('cnxx' => $pdo)));
+        $known = function ($class, $live_dns) use ($pdo) {
+            $property = new \ReflectionProperty($class, $class === DomainRefresh::class ? 'schedule_available' : 'available');
+            $values = $property->getValue();
+            $values[spl_object_id($pdo)] = $live_dns;
+            $property->setValue(null, $values);
+        };
+        $known(DomainRefresh::class, true);
+        $known(LiveDns::class, true);
+        $save = new \ReflectionMethod(DomainRefresh::class, 'saveOutcome');
+        $row = (object) array('id' => 3, 'domain' => 'example.com');
+        $outcome = function ($kind, $dns) {
+            return array('kind' => $kind, 'result' => 'ok', 'source' => 'rdap', 'started' => self::NOW,
+                'expiry_date' => gmdate('Y-m-d', self::NOW + 300 * S::DAY), 'looked_up' => true, 'public_done' => true,
+                'dns' => array('state' => $dns));
+        };
+
+        try {
+            foreach (array('no_time' => true, 'save_failed' => true, 'complete' => false, 'incomplete' => false,
+                         'unavailable' => false, 'not_run' => false) as $dns => $force) {
+                $save->invoke($refresh, $row, $outcome(S::SUCCESS, $dns), null, false);
+                $retry = end($refresh->writes)[7];
+                $this->assertSame(array('due' => S::stamp(self::NOW + S::DAY), 'force' => $force), $retry, $dns);
+            }
+            $save->invoke($refresh, $row, $outcome(S::FAILURE, 'no_time'), null, false);
+            $this->assertNull(end($refresh->writes)[7]);
+
+            LiveDns::resetAvailable();
+            $known(LiveDns::class, false);
+            $writes = count($refresh->writes);
+            $save->invoke($refresh, $row, $outcome(S::SUCCESS, 'no_time'), null, false);
+            $this->assertCount($writes + 1, $refresh->writes);
+            $this->assertNull(end($refresh->writes)[7]);
+        } finally {
+            LiveDns::resetAvailable();
+            DomainRefresh::resetScheduleAvailable();
+        }
+    }
+
+    // A scheduled write refused because another refresh wrote first still lets a stored Live DNS observation pull the
+    // next check forward, while a refused success, or an outcome whose DNS step stored nothing, doesn't
+    public function testARefusedScheduledWriteStillPullsTheLiveDnsRetry()
+    {
+        $pdo = new QuotingPdo();
+        $refresh = Instance::withoutConstructor(CapturingRefresh::class, array('deeb' => (object) array('cnxx' => $pdo)));
+        $property = new \ReflectionProperty(DomainRefresh::class, 'schedule_available');
+        $property->setValue(null, array(spl_object_id($pdo) => true));
+        $save = new \ReflectionMethod(DomainRefresh::class, 'saveOutcome');
+        $row = (object) array('id' => 3, 'domain' => 'example.com');
+        $outcome = function ($kind, $dns) {
+            return array('kind' => $kind, 'result' => 'rdap_failed', 'source' => 'rdap', 'started' => self::NOW,
+                'expiry_date' => '2028-01-01', 'looked_up' => true, 'public_done' => true, 'dns' => array('state' => $dns));
+        };
+
+        try {
+            $refresh->written = false;
+            $save->invoke($refresh, $row, $outcome(S::FAILURE, 'incomplete'), $this->statusRow(), true);
+            // only while the domain is still live, the task's rule
+            $this->assertSame(array(array(3, 'example.com', true)), $refresh->pulls);
+            $save->invoke($refresh, $row, $outcome(S::FAILURE, 'not_run'), $this->statusRow(), true);
+            $save->invoke($refresh, $row, $outcome(S::SUCCESS, 'incomplete'), null, true);
+            $refresh->written = true;
+            $save->invoke($refresh, $row, $outcome(S::FAILURE, 'complete'), $this->statusRow(), true);
+            $this->assertCount(1, $refresh->pulls);
+        } finally {
+            DomainRefresh::resetScheduleAvailable();
+        }
+    }
+
     public function testTheTableMatchesTheInstaller()
     {
         $source = preg_replace('/\s+/', ' ', file_get_contents(dirname(__DIR__, 2) . '/install/go.php'));
@@ -224,5 +317,25 @@ class DomainRefreshScheduleTest extends TestCase
             $this->assertStringContainsString('`' . $column . '`', DomainRefresh::tableSql());
         }
         $this->assertSame(array_merge(array('domain_id'), array_keys(S::COLUMNS), array('revision')), DomainRefresh::STATUS_COLUMNS);
+    }
+}
+
+// DomainRefresh with its status write captured instead of run
+class CapturingRefresh extends DomainRefresh
+{
+    public $writes = array();
+    public $written = true;
+    public $pulls = array();
+
+    protected function pullDnsRetry($domain_id, $domain, $require_live = false)
+    {
+        $this->pulls[] = array($domain_id, $domain, $require_live);
+    }
+
+    protected function writeStatus($domain_id, $domain, array $columns, $success, $revision, $started, $require_live,
+                                   $dns_retry = null)
+    {
+        $this->writes[] = func_get_args() + array(7 => null);
+        return $this->written;
     }
 }

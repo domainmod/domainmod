@@ -141,7 +141,8 @@ class ChangeHistory
      */
     const BACKUP_TABLES = array(
         '4.27.0' => array('api_registrars', 'categories', 'change_history', 'change_operations', 'creation_types',
-            'currencies', 'currency_conversions', 'custom_field_types', 'dns', 'domain_field_data', 'domain_fields',
+            'currencies', 'currency_conversions', 'custom_field_types', 'dns', 'domain_dns_check',
+            'domain_field_data', 'domain_fields',
             'domain_queue', 'domain_queue_history', 'domain_queue_list', 'domain_queue_list_history', 'domain_queue_temp',
             'domain_refresh_status',
             'domains', 'dw_servers', 'fees', 'goal_activity', 'hosting', 'hosting_fees', 'hosting_provider_accounts',

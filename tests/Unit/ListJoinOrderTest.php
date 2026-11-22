@@ -24,6 +24,7 @@ namespace DomainMOD\Tests\Unit;
 use DomainMOD\DomainList;
 use DomainMOD\Hosting;
 use DomainMOD\ListQuery;
+use DomainMOD\LiveDns;
 use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FakeDatabase;
 use DomainMOD\Tests\Support\Instance;
@@ -74,12 +75,14 @@ class ListJoinOrderTest extends TestCase
     {
         (new \ReflectionProperty(ListQuery::class, 'fixed_join_order'))->setValue(null, array());
         Hosting::forgetAvailability();
+        LiveDns::resetAvailable();
     }
 
     protected function tearDown(): void
     {
         (new \ReflectionProperty(ListQuery::class, 'fixed_join_order'))->setValue(null, array());
         Hosting::forgetAvailability();
+        LiveDns::resetAvailable();
     }
 
     // The list's own version checks (ListQuery::dbVersion()), apart from Hosting::isAvailable()'s
@@ -103,8 +106,8 @@ class ListJoinOrderTest extends TestCase
         return array($list, $database);
     }
 
-    // The index check's rows for every index the list's fixed join order uses, less the $missing table.index names (the
-    // custom field data index is field_data.asset_id), plus some unrelated ones
+    // The index check's rows for every index the list's fixed join order can use, less the $missing table.index names
+    // (the custom field data index is field_data.asset_id), plus some unrelated ones
     protected static function indexRows($class, array $missing)
     {
         $rows = array(array('table_name' => $class::FIELD_DATA_TABLE, 'index_name' => 'PRIMARY', 'column_name' => 'id'),
@@ -112,7 +115,13 @@ class ListJoinOrderTest extends TestCase
         if (!in_array('field_data.asset_id', $missing, true)) {
             $rows[] = array('table_name' => $class::FIELD_DATA_TABLE, 'index_name' => 'any_name', 'column_name' => $class::FIELD_DATA_ID);
         }
-        foreach ($class::JOIN_ORDER as $table) {
+        // with the joins the Domains list adds once the 4.27.0 update is done (see DomainList::joinOrder())
+        $tables = $class::JOIN_ORDER;
+        if ($class === DomainList::class) {
+            $tables[] = DomainList::SERVICE_JOIN;
+            $tables[] = array('domain_dns_check', 'ldc', 'PRIMARY', DomainList::LIVE_DNS_JOIN);
+        }
+        foreach ($tables as $table) {
             if ($table[2] === '' || in_array($table[0] . '.' . $table[2], $missing, true)) continue;
             $rows[] = array('table_name' => $table[0], 'index_name' => $table[2], 'column_name' => 'id');
         }
@@ -325,14 +334,15 @@ class ListJoinOrderTest extends TestCase
         // Another Domains list on the same connection uses the answer already found
         $same = Instance::withoutConstructor(DomainList::class, array('pdo' => $database, 'user_id' => 7, 'field_columns' => ''));
         $this->assertTrue($same->fixedJoinOrder());
-        $this->assertCount(1, self::listVersionChecks($database));
+        // The join order's version check, and Live DNS's (see DomainList::joinOrder()), each once for the connection
+        $this->assertCount(2, self::listVersionChecks($database));
         $this->assertCount(1, $database->queriesWith('STATISTICS'));
 
         // A list on another connection checks that one's database
         list($another, $another_database) = $this->onDatabase(DomainList::class, '4.25.0', 1);
         $this->assertFalse($another->fixedJoinOrder());
         $this->assertSame(self::DOMAINS_FROM, $another->fromSql());
-        $this->assertCount(1, self::listVersionChecks($another_database));
+        $this->assertCount(2, self::listVersionChecks($another_database));
 
         // The SSL list checks its own tables, even on a connection the Domains list has checked
         $ssl = Instance::withoutConstructor(SslList::class, array('pdo' => $database, 'user_id' => 7, 'field_columns' => ''));

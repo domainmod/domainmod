@@ -1565,6 +1565,35 @@ class DomainQueue
     }
 
     /*
+     * The existing DNS profile holding exactly these name servers (order ignored, compared the way Live DNS compares a
+     * profile with live servers, see LiveDns::sameServers()), as array('id' => ..., 'name' => ...), or null. Read-only:
+     * it never creates a profile or locks a row, so the edit page's Live DNS section can suggest one. Profile 1 ("[no
+     * dns]") is never suggested, and with more than 10 servers no profile can hold them. Unlike findOrCreateDnsProfile(),
+     * the profile's servers are normalised first (trailing dots, case, and Unicode names) and duplicates are ignored.
+     * When several match, the one read last in findOrCreateDnsProfile()'s order (the least recently updated) is used.
+     */
+    public function findDnsProfile(array $dns_servers)
+    {
+        if (!$dns_servers || count($dns_servers) > 10) return null;
+
+        $result = $this->deeb->cnxx->query("
+            SELECT id, `name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10
+            FROM dns
+            WHERE id <> '1'
+            ORDER BY update_time DESC, insert_time DESC")->fetchAll();
+
+        $match = null;
+        foreach ($result as $row) {
+            $servers = array($row->dns1, $row->dns2, $row->dns3, $row->dns4, $row->dns5, $row->dns6, $row->dns7, $row->dns8,
+                $row->dns9, $row->dns10);
+            // The last match wins, as in findOrCreateDnsProfile()
+            if (LiveDns::sameServers($dns_servers, $servers)) $match = array('id' => (int) $row->id, 'name' => (string) $row->name);
+        }
+
+        return $match;
+    }
+
+    /*
      * The DNS profile for a list of DNS servers: array(id, created). An existing profile with the same servers (in any
      * order and case) is used, otherwise a new one is created with $name and $notes. Refreshing a domain passes $lock,
      * inside its transaction, so a matched profile is locked and checked again before it's used.

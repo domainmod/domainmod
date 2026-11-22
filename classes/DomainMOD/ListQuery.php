@@ -194,7 +194,7 @@ abstract class ListQuery
     protected function listIndexesExist()
     {
         $tables = array_values(array_unique(array_merge(array(static::FIELD_DATA_TABLE),
-            array_column(static::JOIN_ORDER, 0))));
+            array_column($this->joinOrder(), 0))));
         $names = array();
         foreach ($tables as $n => $table) {
             $names['table' . $n] = $table;
@@ -226,7 +226,7 @@ abstract class ListQuery
         }
         if (!$field_data_index) return false;
 
-        foreach (static::JOIN_ORDER as $table) {
+        foreach ($this->joinOrder() as $table) {
             if ($table[2] !== '' && !isset($indexes[strtolower($table[0] . '.' . $table[2])])) return false;
         }
 
@@ -243,7 +243,9 @@ abstract class ListQuery
 
     /*
      * The fixed join order the list's queries use: JOIN_ORDER as written. A list whose join conditions need a value
-     * from the instance (such as the signed-in user's id) returns its own copy with them filled in.
+     * from the instance (such as the signed-in user's id) returns its own copy with them filled in, and a list that adds
+     * a table only while the database has it returns its own copy with that table (as the Domains list adds Live DNS's
+     * and the hosting service's, see DomainList::joinOrder()).
      */
     protected function joinOrder()
     {

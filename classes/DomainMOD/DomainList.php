@@ -71,6 +71,9 @@ class DomainList extends ListQuery
     const EXPORT_ORDER_SQL = ' ORDER BY ' . self::EXPORT_ORDER[0] . ' ASC, ' . self::EXPORT_ORDER[1] . ' ASC, '
         . self::EXPORT_ORDER[2] . ' ASC';
 
+    // The Live DNS check's join condition: a row only counts for the name it checked
+    const LIVE_DNS_JOIN = 'ldc.domain_id = d.id AND ldc.domain = d.domain';
+
     // Every order ends with the domain and the id
     const TIE_BREAK = array('d.domain ASC', 'd.id ASC');
 
@@ -126,6 +129,7 @@ class DomainList extends ListQuery
         $state['is_active'] = in_array($is_active, self::VALID_IS_ACTIVE, true) ? $is_active : 'LIVE';
 
         $state['lock'] = self::normalizeLock($request['lock'] ?? '');
+        $state['livedns'] = self::normalizeLiveDns($request['livedns'] ?? '');
 
         return $state;
     }
@@ -152,6 +156,16 @@ class DomainList extends ListQuery
             return " AND (d.service_id = 0 OR NOT EXISTS (SELECT 1 FROM hosting_services AS nhs WHERE nhs.id = d.service_id)) ";
         }
         return " AND d.service_id = '" . $hsid . "' ";
+    }
+
+    /*
+     * The Live DNS filter's value (see LiveDns::FILTERS), or '' for none: anything else, or any value before the 4.27.0
+     * database update adds the table it filters on, is no filter
+     */
+    public static function normalizeLiveDns($value)
+    {
+        if (!is_string($value) || !array_key_exists($value, LiveDns::FILTERS)) return '';
+        return LiveDns::isAvailable() ? $value : '';
     }
 
     /*
@@ -211,6 +225,7 @@ class DomainList extends ListQuery
         $parts['search_string'] = $keyword != '' ? " AND " . self::keywordCondition($pdo, 'd.domain', $keyword) . " " : '';
 
         $parts['lock_string'] = DomainStatus::filterCondition($state['lock'] ?? '');
+        $parts['livedns_string'] = LiveDns::filterCondition($state['livedns'] ?? '');
 
         return $parts;
     }
@@ -440,8 +455,9 @@ class DomainList extends ListQuery
         return $parts['is_active_string'] . $parts['segid_string'] . $parts['pcid_string'] . $parts['oid_string']
             . $parts['dnsid_string'] . $parts['ipid_string'] . $parts['hsid_string'] . $parts['rid_string']
             . $parts['raid_string'] . $parts['range_string'] . $parts['tld_string'] . $parts['search_string']
-            . ($parts['lock_string'] ?? '');
+            . ($parts['lock_string'] ?? '') . ($parts['livedns_string'] ?? '');
     }
+
 
     // Whether the database has been updated to a version with hosting services (see Hosting::isAvailable()). Until it
     // has, nothing the list builds names the hosting service join or domains.service_id.
@@ -450,12 +466,16 @@ class DomainList extends ListQuery
         return Hosting::isAvailable($this->pdo);
     }
 
-    // The fixed join order (see ListQuery::joinOrder()): JOIN_ORDER, plus the hosting service's LEFT JOIN once hosting
-    // is available
+    /*
+     * The fixed join order (see ListQuery::joinOrder()): JOIN_ORDER, plus the hosting service's LEFT JOIN once hosting
+     * is available, then each domain's Live DNS check (for its current name), left joined through its primary key, only
+     * while the database has the table (see LiveDns::isAvailable())
+     */
     protected function joinOrder()
     {
         $order = static::JOIN_ORDER;
         if ($this->hostingAvailable()) $order[] = self::SERVICE_JOIN;
+        if ($this->hasLiveDns()) $order[] = array('domain_dns_check', 'ldc', 'PRIMARY', self::LIVE_DNS_JOIN);
         return $order;
     }
 
@@ -467,9 +487,13 @@ class DomainList extends ListQuery
         if ($this->fixedJoinOrder()) {
             $tables = $this->joinOrderTables();
         } else {
+            // A comma join binds more loosely than LEFT JOIN, so the hosting service and the Live DNS check are joined
+            // straight after domains, where d.id can be seen
             $service_join = $this->hostingAvailable() ? " LEFT JOIN " . self::SERVICE_JOIN[0] . " AS " . self::SERVICE_JOIN[1]
                 . " ON " . self::SERVICE_JOIN[3] : "";
-            $tables = "domains AS d" . $service_join . ", registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, domain_field_data AS dfd";
+            $tables = "domains AS d" . $service_join
+                . ($this->hasLiveDns() ? " LEFT JOIN domain_dns_check AS ldc ON " . self::LIVE_DNS_JOIN : "")
+                . ", registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, domain_field_data AS dfd";
         }
 
         return "
@@ -493,12 +517,22 @@ class DomainList extends ListQuery
         return DomainStatus::isAvailable($this->pdo);
     }
 
-    // The columns every row has, plus the hosting service's and the registry status columns (under their ds1_
-    // aliases), each once the 4.27.0 database update adds them, and the current custom fields
+    // Whether the database has Live DNS's table (see LiveDns::isAvailable())
+    public function hasLiveDns()
+    {
+        return LiveDns::isAvailable($this->pdo);
+    }
+
+    /*
+     * The columns every row has, plus the hosting service's columns, the registry status columns (under their ds1_
+     * aliases), and the Live DNS badge's columns (under ldc1_ aliases, since custom field names can only hold letters
+     * and underscores), each once the 4.27.0 database update adds them, and the current custom fields
+     */
     public function selectSql()
     {
         return "SELECT " . self::SELECT_COLUMNS . ($this->hostingAvailable() ? self::SERVICE_COLUMNS : '')
-            . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
+            . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '')
+            . ($this->hasLiveDns() ? LiveDns::LIST_SELECT : '') . $this->field_columns;
     }
 
     // The names of the list's own columns in its rows (see ListQuery::builtInColumnNames()), with the hosting service's,

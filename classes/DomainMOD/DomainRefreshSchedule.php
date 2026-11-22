@@ -100,6 +100,16 @@ class DomainRefreshSchedule
         return (int) min($started + self::SCHEDULE_DAYS * self::DAY, $window);
     }
 
+    /*
+     * A success's next check when its live DNS check needs another try (the DNS step had no time or couldn't save, or the
+     * stored check has sets to retry): the earlier of $next_due (what nextDueAfterSuccess() worked out, so a near-expiry
+     * check is never pushed later) and a day after the lookup started. It isn't a failure, so there's no back-off.
+     */
+    public static function withDnsRetry($next_due, $started)
+    {
+        return (int) min((int) $next_due, (int) $started + self::SCHEDULE_DAYS_NEAR_EXPIRY * self::DAY);
+    }
+
     // The wait after the $failures-th failure in a row (seconds): 1 day, doubling each time, up to BACKOFF_MAX_DAYS
     public static function backoff($failures)
     {

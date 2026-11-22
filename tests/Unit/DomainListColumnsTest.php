@@ -89,7 +89,7 @@ class DomainListColumnsTest extends TestCase
         $expected = array('s_display_domain_expiry_date', 's_display_domain_fee', 's_display_domain_tld',
             's_display_domain_registrar', 's_display_domain_account', 's_display_domain_dns', 's_display_domain_ip',
             's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_display_domain_lock',
-            's_cdf_data', 's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
+            's_display_domain_live_dns', 's_cdf_data', 's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
             's_default_currency_symbol_space', 's_read_only');
         sort($expected);
         $this->assertSame($expected, $keys);

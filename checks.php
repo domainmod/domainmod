@@ -199,6 +199,8 @@ $_SESSION['s_number_of_hosting_services'] = $result->number_of_hosting_services 
 $_SESSION['s_display_domain_owner'] = $result->display_domain_owner;
 // The Transfer Lock column (DomainMOD\DomainStatus) comes with the 4.27.0 database update, and is off until then
 $_SESSION['s_display_domain_lock'] = $result->display_domain_lock ?? '0';
+// The Live DNS column (DomainMOD\LiveDns) comes with the 4.27.0 database update too, and is off until then
+$_SESSION['s_display_domain_live_dns'] = $result->display_domain_live_dns ?? '0';
 $_SESSION['s_display_domain_registrar'] = $result->display_domain_registrar;
 $_SESSION['s_display_domain_account'] = $result->display_domain_account;
 $_SESSION['s_display_domain_expiry_date'] = $result->display_domain_expiry_date;

@@ -590,7 +590,8 @@ class ChangeHistoryListColumns extends ListColumns
             }, explode("\n", $this->valueText('watch', $field, $value, $display)))) . $shortened;
         }
 
-        if ($field === 'dns_servers' || $field === 'live_ns') {
+        // DNS servers, live name servers, and live addresses, one per line, each kept left to right
+        if ($field === 'dns_servers' || $field === 'live_ns' || $field === 'live_ips') {
             $servers = array_filter(explode("\n", $this->plain($value)), 'strlen');
             return implode('<br>', array_map(array($this->layout, 'ltr'), $servers)) . $shortened;
         }

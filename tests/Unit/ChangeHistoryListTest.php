@@ -181,6 +181,17 @@ class ChangeHistoryListTest extends TestCase
         $this->assertSame('&lt;b&gt;x&lt;/b&gt;', $cells[5]);
     }
 
+    // Live addresses show one per line, each kept left to right, as the live name servers do, and read as Refresh, DNS
+    public function testLiveAddressesShowOnePerLine()
+    {
+        $columns = new ChangeHistoryListColumns(array('s_default_timezone' => 'UTC'));
+        $cells = $columns->cells($this->row(array('field' => 'live_ips', 'old_value' => "198.51.100.4\n2001:db8::1",
+            'new_value' => 'www: 203.0.113.10', 'source' => 'refresh', 'op_action' => 'domain_refresh', 'via' => 'dns')), '');
+        $this->assertSame('<bdi dir="ltr">198.51.100.4</bdi><br><bdi dir="ltr">2001:db8::1</bdi>', $cells[4]);
+        $this->assertSame('<bdi dir="ltr">www: 203.0.113.10</bdi>', $cells[5]);
+        $this->assertSame('Scheduled Refresh, DNS', ChangeHistoryListColumns::sourceText('scheduled_refresh', 'domain_refresh', 'dns'));
+    }
+
     public function testADeletedItemIsNamedButNotLinked()
     {
         $columns = new ChangeHistoryListColumns(array('s_default_timezone' => 'UTC'));

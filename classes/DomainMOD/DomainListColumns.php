@@ -44,12 +44,14 @@ class DomainListColumns extends ListColumns
         'service' => array('s_display_domain_host', array('hs.name')),
         'category' => array('s_display_domain_category', array('cat.name')),
         'owner' => array('s_display_domain_owner', array('o.name')),
-        'lock' => array('s_display_domain_lock', array('d.transfer_lock', 'd.epp_status_time')));
+        'lock' => array('s_display_domain_lock', array('d.transfer_lock', 'd.epp_status_time')),
+        'live_dns' => array('s_display_domain_live_dns', array(LiveDns::LIST_SORT)));
 
     // The session values the columns and cells read, copied by sessionCopy()
     const SESSION_KEYS = array('s_display_domain_expiry_date', 's_display_domain_fee', 's_display_domain_tld',
         's_display_domain_registrar', 's_display_domain_account', 's_display_domain_dns', 's_display_domain_ip',
-        's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_display_domain_lock', 's_cdf_data',
+        's_display_domain_host', 's_display_domain_category', 's_display_domain_owner', 's_display_domain_lock',
+        's_display_domain_live_dns', 's_cdf_data',
         's_default_currency', 's_default_currency_symbol', 's_default_currency_symbol_order',
         's_default_currency_symbol_space', 's_read_only');
 
@@ -76,13 +78,15 @@ class DomainListColumns extends ListColumns
             'tld' => _('TLD'), 'registrar' => _('Registrar'), 'account' => _('Account'), 'dns' => _('DNS'),
             // TRANSLATORS: A Domains list column heading: the hosting service each domain uses
             'ip' => _('IP'), 'service' => _('Hosting Service'), 'category' => _('Category'), 'owner' => _('Owner'),
-            'lock' => _('Transfer Lock'));
+            'lock' => _('Transfer Lock'), 'live_dns' => _('Live DNS'));
         foreach (self::OPTIONAL as $key => $optional) {
             if (($settings[$optional[0]] ?? '') == '1') {
                 // The Transfer Lock column's columns come with the 4.27.0 database update, whatever the session says
                 if ($key === 'lock' && !DomainStatus::isAvailable()) continue;
                 // So does the Hosting Service column's
                 if ($key === 'service' && !($hosting_available ?? self::hostingAvailable())) continue;
+                // So does the Live DNS column's table
+                if ($key === 'live_dns' && !LiveDns::isAvailable()) continue;
                 $columns[] = array('key' => $key, 'title' => $titles[$key], 'sort' => $optional[1]);
             }
         }
@@ -214,6 +218,9 @@ class DomainListColumns extends ListColumns
 
             case 'lock':
                 return DomainStatus::listCell($row);
+
+            case 'live_dns':
+                return LiveDns::listCell($row);
 
             default:
                 return $this->customFieldCell($column['field'], $row);

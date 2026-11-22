@@ -62,7 +62,7 @@ if ($system->authCheckResult() !== 'valid') {
 
 // The request's shape: every value is a single value, and order is a short list of column and direction pairs
 $single_keys = array('draw', 'start', 'length', 'layout', 'pcid', 'oid', 'dnsid', 'ipid', 'hsid', 'rid', 'raid', 'tld',
-    'segid', 'is_active', 'search_for', 'daterange', 'lock');
+    'segid', 'is_active', 'search_for', 'daterange', 'lock', 'livedns');
 // Every custom field filter key (current field or not), cff, and cfk are single values too
 $single_keys = array_merge($single_keys, DomainMOD\CustomFieldFilter::incomingKeys($_GET));
 if (!DomainMOD\ListQuery::requestShapeOk($_GET, $single_keys)) $respond(400, array('error' => $generic_error));

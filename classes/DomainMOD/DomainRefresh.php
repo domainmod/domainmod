@@ -41,6 +41,7 @@ class DomainRefresh
     public $queue;
     public $status_available = false; // whether the lock status columns are there (DomainStatus::isAvailable())
     public $failed_started = '';      // when this refresh's lookup started, if its status codes couldn't be read
+    public $lookup_started_us = '0';  // when the last lookup started (see lookupStarted()), in microseconds (a string)
     public $time;
 
     const DEADLINE = 45;           // seconds for the whole lookup
@@ -79,6 +80,16 @@ class DomainRefresh
 
     // Whether a save in the task's run met another request's write (errors 1020 and 1213, see hadConflict())
     protected $had_conflict = false;
+
+    // The Live DNS step's states, in the outcome's dns part (see liveDns()): it ran and every set was complete (or a
+    // check that started later was already stored), it ran and some set wasn't, it had no time to start, its write
+    // failed, Live DNS isn't available (or the restore lock isn't held), or it doesn't run for this outcome
+    const DNS_COMPLETE = 'complete';
+    const DNS_INCOMPLETE = 'incomplete';
+    const DNS_NO_TIME = 'no_time';
+    const DNS_SAVE_FAILED = 'save_failed';
+    const DNS_UNAVAILABLE = 'unavailable';
+    const DNS_NOT_RUN = 'not_run';
 
     // Registrar APIs whose getFullInfo() only reads the Domain Queue's staging data, so there's no live call to make.
     public static $unsupported_apis = array('Above.com', 'DreamHost');
@@ -178,21 +189,26 @@ class DomainRefresh
         // Nothing a lookup remembers about one domain carries over to the next
         $this->status_available = DomainStatus::isAvailable($this->deeb->cnxx);
         $this->failed_started = '';
+        $this->lookup_started_us = '0';
+        $entry_us = LiveDns::nowUs();
         Rdap::newAttempt();
         if ($scheduled) $run->server = '';
 
         $source = '';
         $started = 0;
+        $started_us = '0';
         $fallback_lines = array();
         $details = null;
         $api_failed = false;
         $api_started = 0;
+        $api_started_us = '0';
         // The DNS profile's servers before the lookup, so apply() can tell when it's edited meanwhile
         $before_dns = $this->dnsServers((int) $row->dns_id);
         // looked_up says whether anything was asked of a registrar or registry (for the run's cap and count)
         $outcome = array('success' => false, 'kind' => DomainRefreshSchedule::FAILURE, 'result' => '', 'source' => '',
             'started' => 0, 'changed' => false, 'expiry_date' => (string) $row->expiry_date, 'looked_up' => false,
-            'public_done' => true, 'lines' => array(), 'parts' => array());
+            'public_done' => true, 'lines' => array(), 'parts' => array(),
+            'dns' => array('state' => self::DNS_NOT_RUN, 'lines' => array(), 'recorded' => false));
 
         // 1. The registrar's API (skipped by the task when an earlier slow attempt left no time for public data, or
         // when the account's API failed earlier in the run)
@@ -218,7 +234,8 @@ class DomainRefresh
                 if ($scheduled && $deadline - microtime(true) < self::MIN_LOOKUP_TIME) {
                     return array('kind' => DomainRefreshSchedule::DEFERRED, 'result' => DomainRefreshSchedule::DEFERRED) + $outcome;
                 }
-                $api_started = time();
+                $api_started = $this->lookupStarted();
+                $api_started_us = $this->lookup_started_us;
                 $details = $this->fetchFromRegistrar($row, $api_name, $deadline);
                 // A Dynadot call its shared details budget stopped before sending asked no one
                 if (!($api_name === 'Dynadot' && Dynadot::$last_call_skipped)) $outcome['looked_up'] = true;
@@ -231,6 +248,7 @@ class DomainRefresh
                 } else {
                     $source = 'registrar';
                     $started = $api_started;
+                    $started_us = $api_started_us;
                     // The API doesn't give the registry's status codes, so they come from one status-only RDAP lookup
                     if ($this->status_available) {
                         $details['status'] = $this->fetchStatusOnly($row, $deadline, $run);
@@ -277,17 +295,25 @@ class DomainRefresh
                 }
 
                 $failed = sprintf(_("Domain %s couldn't be refreshed."), $domain_html);
-                return array('kind' => $kind, 'result' => $kind === DomainRefreshSchedule::FAILURE
+                $api_time = empty($public['sent']) && $api_started > 0;
+                $failure_outcome = array('kind' => $kind, 'result' => $kind === DomainRefreshSchedule::FAILURE
                         || $kind === DomainRefreshSchedule::RATE_LIMITED ? $public['result'] : $kind,
                     // When nothing public was sent, the attempt's lookup time is the registrar call's
                     'source' => $public['source'], 'public_done' => $public['public_done'],
-                    'started' => empty($public['sent']) && $api_started > 0 ? $api_started : $public['started'],
+                    'started' => $api_time ? $api_started : $public['started'],
                     'lines' => array_merge(array($failed), $fallback_lines, array($error)),
                     'parts' => array('summary' => $failed, 'reasons' => array($error), 'changes' => array(), 'notes' => $fallback_lines)) + $outcome;
+
+                // Live DNS runs after a lookup that failed too (a domain can resolve while RDAP is busy), but not when
+                // nothing was looked up (a busy server or a lookup put off)
+                if ($kind !== DomainRefreshSchedule::FAILURE && $kind !== DomainRefreshSchedule::RATE_LIMITED) return $failure_outcome;
+                return $this->withLiveDns($failure_outcome, $row, $user_id, $deadline, $scheduled,
+                    $this->startedUs($failure_outcome['started'], $api_time ? $api_started_us : $this->lookup_started_us, $entry_us), true);
 
             }
 
             $started = $public['started'];
+            $started_us = $this->lookup_started_us;
 
         }
 
@@ -309,10 +335,16 @@ class DomainRefresh
             // Only a save that failed counts as a failure: a stale result, a deleted domain, or a write that met another
             // request's writes nothing, and the next run decides from the saved row
             if ($failure === 'conflict') $this->had_conflict = true;
-            return array('kind' => $failure === 'save_failed' ? DomainRefreshSchedule::FAILURE : DomainRefreshSchedule::NONE,
+            $failure_outcome = array('kind' => $failure === 'save_failed' ? DomainRefreshSchedule::FAILURE : DomainRefreshSchedule::NONE,
                 'result' => $failure === 'save_failed' ? 'save_failed' : $failure,
                 'lines' => array_merge(array($failed), $lines),
                 'parts' => array('summary' => $failed, 'reasons' => $parts['reasons'], 'changes' => array(), 'notes' => $fallback_lines)) + $outcome;
+
+            // Only a save that failed still checks live DNS: a stale result, a domain that's gone, or a write that met
+            // another request's writes nothing anywhere
+            if ($failure !== 'save_failed') return $failure_outcome;
+            return $this->withLiveDns($failure_outcome, $row, $user_id, $deadline, $scheduled,
+                $this->startedUs($started, $started_us, $entry_us), false);
 
         }
 
@@ -324,12 +356,261 @@ class DomainRefresh
             $first_line = sprintf(_('Domain %s refreshed using WHOIS.'), $domain_html);
         }
 
-        return array('success' => true, 'kind' => DomainRefreshSchedule::SUCCESS,
+        $success_outcome = array('success' => true, 'kind' => DomainRefreshSchedule::SUCCESS,
             'result' => !empty($parts['changed']) ? 'changed' : 'ok', 'changed' => !empty($parts['changed']),
             'expiry_date' => $details['expiry_date'] !== '' ? $details['expiry_date'] : (string) $row->expiry_date,
             'lines' => array_merge(array($first_line), $fallback_lines, $lines),
             'parts' => array('summary' => $first_line, 'reasons' => $parts['reasons'], 'changes' => $parts['changes'],
                 'notes' => array_merge($fallback_lines, $parts['notes']))) + $outcome;
+
+        $success_outcome = $this->withLiveDns($success_outcome, $row, $user_id, $deadline, $scheduled,
+            $this->startedUs($started, $started_us, $entry_us), false);
+
+        // A DNS profile apply() changed makes the stored live DNS states out of date. The DNS write works them out again
+        // when it stores (or drops) an observation, and otherwise they're worked out again here.
+        if (!empty($parts['dns_changed'])
+            && !in_array($success_outcome['dns']['state'], array(self::DNS_COMPLETE, self::DNS_INCOMPLETE), true)) {
+            LiveDns::recompare($this->deeb->cnxx, (int) $row->id);
+        }
+
+        return $success_outcome;
+    }
+
+    /*
+     * The time a lookup starts, as a timestamp, keeping the same moment in microseconds ($lookup_started_us, a decimal
+     * string, since it doesn't fit in an int on 32-bit PHP), so Live DNS orders its observations by the same start the
+     * status row orders successes by (to the second)
+     */
+    protected function lookupStarted()
+    {
+        $this->lookup_started_us = LiveDns::nowUs();
+        return LiveDns::usSeconds($this->lookup_started_us);
+    }
+
+    // The main lookup's start in microseconds (a decimal string): $candidate_us when it's the same second as $started (a
+    // timestamp), otherwise $started itself, or, with no start at all, when the refresh began ($entry_us)
+    protected function startedUs($started, $candidate_us, $entry_us)
+    {
+        $started = (int) $started;
+        if ($started <= 0) return LiveDns::usNormal($entry_us);
+        if (LiveDns::usNormal($candidate_us) !== '0' && LiveDns::usSeconds($candidate_us) === $started) return LiveDns::usNormal($candidate_us);
+        return LiveDns::usFrom($started);
+    }
+
+    /*
+     * Runs the Live DNS step for an outcome and adds its part: the outcome's dns part (state, lines, and whether it
+     * recorded history), its lines as the Live DNS note, and changed, which also counts a live_ns or live_ips row. The
+     * main step's success, kind, result, and lines are never changed.
+     */
+    protected function withLiveDns(array $outcome, $row, $user_id, $deadline, $scheduled, $started_us, $check_exists)
+    {
+        $dns = $this->liveDns($row, $user_id, $deadline, $scheduled, $started_us, $check_exists);
+        $outcome['dns'] = $dns;
+        if ($dns['recorded']) $outcome['changed'] = true;
+
+        if ($dns['lines']) {
+            // TRANSLATORS: %s is one or more sentences about the domain's live DNS records.
+            $note = sprintf(htmlspecialchars(_('Live DNS: %s'), ENT_QUOTES, 'UTF-8'), implode(' ', $dns['lines']));
+            $outcome['lines'][] = $note;
+            $outcome['parts']['notes'][] = $note;
+        }
+
+        return $outcome;
+    }
+
+    /*
+     * The Live DNS step at the end of refreshDomain(): with at least LiveDns::MIN_QUERY_TIME left before $deadline, the
+     * domain's live name servers, addresses, and mail servers are looked up through the server's resolver and stored
+     * (see saveLiveDns()). $check_exists makes it check first that the domain is still there (after a main lookup that
+     * failed before apply() looked). Everything it does is inside one try, so a database error, a lock wait, or a
+     * recorder exception is logged and gives save_failed, never changing the main step's result.
+     *
+     * Returns array('state' => a DNS_ state, 'lines' => sentences for the Refresh message, translated and escaped,
+     * 'recorded' => whether it recorded Change History rows).
+     */
+    protected function liveDns($row, $user_id, $deadline, $scheduled, $started_us, $check_exists)
+    {
+        $pdo = $this->deeb->cnxx;
+        $result = array('state' => self::DNS_UNAVAILABLE, 'lines' => array(), 'recorded' => false);
+        if (!LiveDns::isAvailable($pdo)) return $result;
+
+        // Without the shared restore lock (a lock file that can't be created), the recorder refuses the write anyway
+        $lock = RestoreLock::shared();
+        if (($lock['state'] ?? '') !== 'held' || !empty($lock['flag'])) return $result;
+
+        try {
+
+            if ($check_exists) {
+                $stmt = $pdo->prepare("
+                    SELECT COUNT(*)
+                    FROM domains
+                    WHERE id = :domain_id
+                      AND domain = :domain");
+                $stmt->bindValue('domain_id', (int) $row->id, \PDO::PARAM_INT);
+                $stmt->bindValue('domain', (string) $row->domain, \PDO::PARAM_STR);
+                $stmt->execute();
+                $exists = (int) $stmt->fetchColumn() > 0;
+                $stmt->closeCursor();
+                if (!$exists) return array('state' => self::DNS_NOT_RUN) + $result;
+            }
+
+            $observation = LiveDns::lookup((string) $row->domain, LiveDns::readRow($pdo, (int) $row->id), $deadline);
+
+            if ($observation === null) {
+                return array('state' => self::DNS_NO_TIME,
+                    'lines' => array($this->html(_('The lookup ran out of time before it could check live DNS.')))) + $result;
+            }
+
+            return $this->saveLiveDns($row, $user_id, $scheduled, $started_us, $observation);
+
+        } catch (\Throwable $e) {
+
+            try {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+            } catch (\Throwable $rollback_error) {
+            }
+            LiveDns::logFailure('Unable to save a domain\'s live DNS', (int) $row->id, $e);
+
+            return array('state' => self::DNS_SAVE_FAILED,
+                'lines' => array($this->html(_("The live DNS result couldn't be saved.")))) + $result;
+
+        }
+    }
+
+    /*
+     * Stores one Live DNS observation, in one short transaction: the Change History action starts first (before any row
+     * is locked, as apply() starts its action), then the domain, its IP Address asset, its DNS profile, and its check row
+     * are locked in that order (LiveDns::lockDomain()), the observation is merged into the stored row (LiveDns::merge()),
+     * the states are worked out, and any live_ns or live_ips change is recorded. It's dropped, with nothing written, when
+     * the domain was renamed or deleted during the lookup, or, for the task, marked Expired or Sold. When a check that
+     * started at the same time or later is already stored, only the states are worked out again (apply() may have
+     * changed the profile). A clicked Refresh that stores a check with sets to retry also pulls the domain's next
+     * scheduled check forward (see pullDnsRetry()).
+     */
+    protected function saveLiveDns($row, $user_id, $scheduled, $started_us, array $observation)
+    {
+        $pdo = $this->deeb->cnxx;
+        $result = array('state' => self::DNS_NOT_RUN, 'lines' => array(), 'recorded' => false);
+
+        $pdo->beginTransaction();
+        $history_op = (new ChangeHistory($pdo))->start($scheduled ? ChangeHistory::SOURCE_SCHEDULED_REFRESH
+            : ChangeHistory::SOURCE_REFRESH, $user_id, 'domain_refresh');
+
+        $locked = LiveDns::lockDomain($pdo, (int) $row->id);
+        if (!$locked || (string) $locked['domain']->domain !== (string) $row->domain
+            || ($scheduled && in_array((string) $locked['domain']->active, array('0', '10'), true))) {
+            $pdo->rollBack();
+            return $result;
+        }
+
+        $merged = LiveDns::merge($locked['check'], $observation, (string) $row->domain, $started_us,
+            gmdate('Y-m-d H:i:s', LiveDns::usSeconds($started_us)));
+
+        if ($merged === null) {
+            // A check that started at the same time or later is stored already, and decides the retry
+            $stored = $locked['check'];
+            $states = LiveDns::compareLocked($locked, $stored);
+            if ($states['ns_state'] !== (string) $stored['ns_state'] || $states['ip_state'] !== (string) $stored['ip_state']
+                || $states['list_state'] !== (string) $stored['list_state']) {
+                LiveDns::saveRow($pdo, (int) $row->id, $states + $stored);
+            }
+            $history_op->finish();
+            $pdo->commit();
+            return array('state' => self::DNS_COMPLETE) + $result;
+        }
+
+        $new_row = LiveDns::compareLocked($locked, $merged['row']) + $merged['row'];
+        LiveDns::saveRow($pdo, (int) $row->id, $new_row);
+
+        foreach ($merged['history'] as $change) {
+            $history_op->record('domain', (int) $row->id, $change[0], $change[1], $change[2], 'dns');
+        }
+
+        if (!$scheduled && $new_row['retry_sets'] !== '') $this->pullDnsRetry((int) $row->id, (string) $row->domain);
+
+        $history_op->finish();
+        $pdo->commit();
+
+        return array('state' => $new_row['stale_sets'] === '' ? self::DNS_COMPLETE : self::DNS_INCOMPLETE,
+            'lines' => $this->liveDnsLines($new_row, $observation['result'], $locked['asset_ip']),
+            'recorded' => (bool) $merged['history']);
+    }
+
+    /*
+     * Pulls a domain's next scheduled check forward to a day from now when the Live DNS observation stored for its
+     * current name has sets to retry: only an existing status row, never one backing off after failures, and never
+     * later than it was, without raising the revision (so a scheduled write that read the revision before it still goes
+     * ahead). A clicked Refresh does it in its DNS write's transaction, and the task when its own status write was
+     * refused (another refresh wrote first) after it stored an observation, then only while the domain is still live
+     * ($require_live, the task's rule). Nothing before the database update.
+     */
+    protected function pullDnsRetry($domain_id, $domain, $require_live = false)
+    {
+        $pdo = $this->deeb->cnxx;
+        if (!self::scheduleAvailable($pdo)) return;
+
+        $retry_due = DomainRefreshSchedule::stamp(time() + DomainRefreshSchedule::DAY);
+        $stmt = $pdo->prepare("
+            UPDATE domain_refresh_status
+            SET next_due = :retry_due
+            WHERE domain_id = :domain_id
+              AND failures = 0
+              AND next_due > :later_than
+              AND EXISTS (
+                SELECT 1
+                FROM domain_dns_check AS ldc
+                JOIN domains AS d ON d.id = ldc.domain_id AND d.domain = ldc.domain
+                WHERE ldc.domain_id = :ldc_id
+                  AND ldc.domain = :ldc_domain
+                  AND ldc.retry_sets <> ''" . ($require_live ? "
+                  AND d.active NOT IN ('0', '10')" : "") . ")");
+        $stmt->bindValue('retry_due', $retry_due, \PDO::PARAM_STR);
+        $stmt->bindValue('domain_id', (int) $domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('later_than', $retry_due, \PDO::PARAM_STR);
+        $stmt->bindValue('ldc_id', (int) $domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('ldc_domain', (string) $domain, \PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    /*
+     * The Live DNS sentences for the Refresh message, translated and escaped: how the check went (nothing when every
+     * set was complete), then whether the live name servers match the DNS profile and whether the domain's IP Address
+     * is among its live addresses, from the stored row's states. It never lists every record (the edit page does).
+     */
+    protected function liveDnsLines(array $row, $check_result, $asset_ip)
+    {
+        $layout = new Layout();
+        $lines = array();
+
+        $results = array('partial' => _("Some live DNS records couldn't be checked this time."),
+            'no_dns' => _('The domain has no live name servers or IP addresses.'), 'timeout' => _('The live DNS check ran out of time.'),
+            'failed' => _('The live DNS check failed.'), 'bad_name' => _("This domain name can't be looked up in DNS."));
+        // "No live name servers or IP addresses" only when the stored sets say so (the No DNS badge): a no_dns check
+        // whose www sets weren't answered reads as incomplete instead
+        if ($check_result === 'no_dns' && $row['list_state'] !== 'no_dns') $check_result = 'partial';
+        if (isset($results[$check_result])) $lines[] = $this->html($results[$check_result]);
+
+        $ns = array('match' => _('Live name servers match the DNS profile.'),
+            'differs' => _("Live name servers don't match the DNS profile."),
+            'not_set' => _("The domain has no DNS profile, so its live name servers weren't compared."));
+        if (isset($ns[$row['ns_state']])) $lines[] = $this->html($ns[$row['ns_state']]);
+
+        $asset = $layout->ltr(html_entity_decode((string) $asset_ip, ENT_QUOTES, 'UTF-8'));
+        if ($row['ip_state'] === 'match') {
+            $lines[] = sprintf($this->html(_("The domain's IP Address (%s) is among its live addresses.")), $asset);
+        } elseif ($row['ip_state'] === 'differs') {
+            $addresses = LiveDns::usedAddresses($row);
+            $shown = implode(', ', array_map(array($layout, 'ltr'), array_slice($addresses, 0, 3)));
+            if (count($addresses) > 3) $shown .= ', …';
+            // TRANSLATORS: %1$s is the IP Address set for the domain, and %2$s is a list of the addresses it answers with.
+            $lines[] = sprintf($this->html(_("The domain's IP Address (%1\$s) isn't among its live addresses (%2\$s).")), $asset, $shown);
+        } elseif ($row['ip_state'] === 'none' && $row['list_state'] !== 'no_dns') {
+            $lines[] = $this->html(_('The domain has no live addresses.'));
+        } elseif ($row['ip_state'] === 'not_set') {
+            $lines[] = $this->html(_("The domain has no valid IP Address set, so its live addresses weren't compared."));
+        }
+
+        return $lines;
     }
 
     // The name of the registrar API a refresh of this domain would try first, or '' when it would only use public
@@ -514,7 +795,7 @@ class DomainRefresh
         }
 
         $started = gmdate('Y-m-d H:i:s');
-        $result['started'] = time();
+        $result['started'] = $this->lookupStarted();
         $rdap = $this->rdap();
         $lookup = $rdap->lookup($row->domain, $deadline);
 
@@ -548,7 +829,7 @@ class DomainRefresh
         $whois_line = $this->tldMessage(_("RDAP isn't available for .%s domains, so WHOIS was used instead."), $row->tld);
         $whois = $this->whois();
         $started = gmdate('Y-m-d H:i:s');
-        $result['started'] = time();
+        $result['started'] = $this->lookupStarted();
         $result['source'] = 'whois';
         $failure = array('kind' => DomainRefreshSchedule::FAILURE) + $result;
         list($found, $server) = $whois->serverFor(Domain::forApi($row->domain), $deadline);
@@ -571,7 +852,7 @@ class DomainRefresh
         }
 
         $started = gmdate('Y-m-d H:i:s');
-        $result['started'] = time();
+        $result['started'] = $this->lookupStarted();
         $result['whois_server'] = $server;
         $failure = array('kind' => DomainRefreshSchedule::FAILURE) + $result;
         $lookup = $whois->lookup($row->domain, $deadline);
@@ -620,7 +901,7 @@ class DomainRefresh
             'source' => '', 'started' => 0, 'busy' => false, 'whois_server' => '', 'public_done' => false);
         if ($deadline - microtime(true) < self::MIN_LOOKUP_TIME) return $result;
 
-        $failure = array('kind' => DomainRefreshSchedule::FAILURE, 'started' => time()) + $result;
+        $failure = array('kind' => DomainRefreshSchedule::FAILURE, 'started' => $this->lookupStarted()) + $result;
         $ascii_domain = Domain::forApi($row->domain);
         if ($ascii_domain === '') return array('result' => 'invalid_name', 'public_done' => true) + $failure;
 
@@ -1077,7 +1358,7 @@ class DomainRefresh
 
             return array(true, array_merge($changes, $cost_lines, $notes_lines),
                 array('reasons' => array(), 'changes' => $changes, 'notes' => array_merge($notes_lines, $cost_lines),
-                    'changed' => true));
+                    'changed' => true, 'dns_changed' => $new['dns_id'] !== (int) $row->dns_id));
 
         } catch (\Throwable $e) {
 
@@ -1369,18 +1650,38 @@ class DomainRefresh
      * Saves the status row an outcome calls for (see DomainRefreshSchedule::row()), after the refresh and outside its
      * transaction. $status is the row read before the lookup (null when there was none, or when the caller doesn't
      * check it, as a clicked Refresh's success needn't). A failure to save it is logged and doesn't stop the run.
+     *
+     * After a success, with Live DNS available, the next check is due within a day (DomainRefreshSchedule::withDnsRetry())
+     * when the DNS step didn't start for lack of time or couldn't save, or when the observation stored for the domain
+     * at the moment of the write has sets to retry (read by the write itself, see writeStatus()).
      */
     protected function saveOutcome($row, array $outcome, $status, $require_live)
     {
         if (!self::scheduleAvailable($this->deeb->cnxx)) return;
 
-        $columns = DomainRefreshSchedule::row($outcome['kind'], $status, $outcome, $outcome['expiry_date'], time());
+        $now = time();
+        $columns = DomainRefreshSchedule::row($outcome['kind'], $status, $outcome, $outcome['expiry_date'], $now);
         if ($columns === null) return;
 
+        $dns_retry = null;
+        if ($outcome['kind'] === DomainRefreshSchedule::SUCCESS && LiveDns::isAvailable($this->deeb->cnxx)) {
+            $started = (int) $outcome['started'] > 0 ? (int) $outcome['started'] : $now;
+            $dns_retry = array('due' => DomainRefreshSchedule::stamp(DomainRefreshSchedule::withDnsRetry(
+                DomainRefreshSchedule::time($columns['next_due']), $started)),
+                'force' => in_array($outcome['dns']['state'] ?? '', array(self::DNS_NO_TIME, self::DNS_SAVE_FAILED), true));
+        }
+
         try {
-            $this->writeStatus((int) $row->id, (string) $row->domain, $columns, $outcome['kind'] === DomainRefreshSchedule::SUCCESS,
-                $status === null ? -1 : (int) $status['revision'], (int) $outcome['started'], $require_live);
+            $written = $this->writeStatus((int) $row->id, (string) $row->domain, $columns, $outcome['kind'] === DomainRefreshSchedule::SUCCESS,
+                $status === null ? -1 : (int) $status['revision'], (int) $outcome['started'], $require_live, $dns_retry);
+            // A scheduled write refused because another refresh wrote first, after this one stored a Live DNS
+            // observation: that observation's retry still applies
+            if (!$written && $outcome['kind'] !== DomainRefreshSchedule::SUCCESS
+                && in_array($outcome['dns']['state'] ?? '', array(self::DNS_COMPLETE, self::DNS_INCOMPLETE), true)) {
+                $this->pullDnsRetry((int) $row->id, (string) $row->domain, $require_live);
+            }
         } catch (\Throwable $e) {
+            if ($this->deeb->cnxx->inTransaction()) $this->deeb->cnxx->rollBack();
             if (function_exists('domainmod_restore_is_conflict') && domainmod_restore_is_conflict($e)) $this->had_conflict = true;
             try {
                 $this->log->warning('Unable to save a domain\'s refresh schedule', array('Domain' => $row->domain, 'Error' => get_class($e)));
@@ -1396,10 +1697,38 @@ class DomainRefresh
      * row holds a success whose lookup started later than this one ($started), since it's the newest proof the details
      * are current. Anything else writes only while the row still has the revision read before the lookup ($revision, -1
      * when there was no row), so a failure never replaces a newer success. Every write raises the revision by one.
+     *
+     * A success that ties with the stored one (the same second) keeps the earlier next_due, so a one-day retry another
+     * refresh wrote isn't pushed back. With $dns_retry (a success while Live DNS is available: 'due', the one-day retry's
+     * next_due, and 'force', whether it applies whatever is stored), next_due is that retry also when the domain's stored
+     * Live DNS observation has sets to retry. Then the write runs in a short transaction that locks the domain row first,
+     * the lock every Live DNS write takes first and holds until it commits, so the observation it reads is current.
      */
-    protected function writeStatus($domain_id, $domain, array $columns, $success, $revision, $started, $require_live)
+    protected function writeStatus($domain_id, $domain, array $columns, $success, $revision, $started, $require_live,
+                                   $dns_retry = null)
     {
+        // next_due goes first, since its tie rule reads last_success before this write changes it (MySQL and MariaDB
+        // apply the assignments in order, each seeing the ones before it)
+        if (isset($columns['next_due'])) $columns = array('next_due' => $columns['next_due']) + $columns;
         $insert = array_merge(DomainRefreshSchedule::COLUMNS, $columns);
+        $binds = array();
+
+        // next_due's value: the success's own, or, with $dns_retry, the retry when it applies (each use gets its own
+        // placeholders, since a placeholder can't be used twice)
+        $next_due = function ($tag) use ($columns, $dns_retry, $domain_id, $domain, &$binds) {
+            $binds[$tag . '_next_due'] = $columns['next_due'] ?? DomainRefreshSchedule::UNSET_TIME;
+            if ($dns_retry === null) return ':' . $tag . '_next_due';
+            $binds[$tag . '_retry_due'] = $dns_retry['due'];
+            $binds[$tag . '_force'] = $dns_retry['force'] ? 1 : 0;
+            $binds[$tag . '_ldc_id'] = (int) $domain_id;
+            $binds[$tag . '_ldc_domain'] = (string) $domain;
+            return "IF(:" . $tag . "_force = 1 OR EXISTS (
+                    SELECT 1
+                    FROM domain_dns_check AS ldc
+                    WHERE ldc.domain_id = :" . $tag . "_ldc_id
+                      AND ldc.domain = :" . $tag . "_ldc_domain
+                      AND ldc.retry_sets <> ''), :" . $tag . "_retry_due, :" . $tag . "_next_due)";
+        };
         /*
          * The same condition guards the update of an existing row, read from the row as it's locked, so a write that
          * waited for another refresh's never overwrites it (whatever the isolation level). Assignments run in order, and
@@ -1409,7 +1738,14 @@ class DomainRefresh
         $guard = $success ? "last_success <= :g_started" : "revision = :g_revision";
         $updates = array();
         foreach (array_keys($columns) as $column) {
-            $updates[] = $column . ' = IF(' . str_replace(':g_', ':g' . count($updates) . '_', $guard) . ', :u_' . $column . ', ' . $column . ')';
+            $value = ':u_' . $column;
+            if ($column === 'next_due' && $success) {
+                $binds['t_started'] = DomainRefreshSchedule::stamp($started > 0 ? $started : time());
+                $value = 'IF(last_success = :t_started, LEAST(next_due, ' . $next_due('n1') . '), ' . $next_due('n2') . ')';
+            } elseif ($column === 'next_due') {
+                $value = $next_due('n1');
+            }
+            $updates[] = $column . ' = IF(' . str_replace(':g_', ':g' . count($updates) . '_', $guard) . ', ' . $value . ', ' . $column . ')';
         }
         $updates[] = 'revision = IF(' . str_replace(':g_', ':g' . count($updates) . '_', $guard) . ', revision + 1, revision)';
         $guard_count = count($updates);
@@ -1417,7 +1753,9 @@ class DomainRefresh
         $stmt = $this->deeb->cnxx->prepare("
             INSERT INTO domain_refresh_status
             (domain_id, " . implode(', ', array_keys($insert)) . ", revision)
-            SELECT d.id, :i_" . implode(', :i_', array_keys($insert)) . ", 1
+            SELECT d.id, " . implode(', ', array_map(function ($column) use ($next_due) {
+                return $column === 'next_due' ? $next_due('i') : ':i_' . $column;
+            }, array_keys($insert))) . ", 1
             FROM domains AS d
             WHERE d.id = :domain_id
               AND d.domain = :domain" . ($require_live ? "
@@ -1428,8 +1766,13 @@ class DomainRefresh
                 WHERE s.domain_id = d.id
                   AND " . ($success ? "s.last_success > :started" : "s.revision <> :revision") . ")
             ON DUPLICATE KEY UPDATE " . implode(', ', $updates));
-        foreach ($insert as $column => $value) $stmt->bindValue('i_' . $column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
-        foreach ($columns as $column => $value) $stmt->bindValue('u_' . $column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        foreach ($insert as $column => $value) {
+            if ($column !== 'next_due') $stmt->bindValue('i_' . $column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        foreach ($columns as $column => $value) {
+            if ($column !== 'next_due') $stmt->bindValue('u_' . $column, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        foreach ($binds as $name => $value) $stmt->bindValue($name, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $stmt->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
         $stmt->bindValue('domain', $domain, \PDO::PARAM_STR);
         $started_stamp = DomainRefreshSchedule::stamp($started > 0 ? $started : time());
@@ -1445,9 +1788,27 @@ class DomainRefresh
                 $stmt->bindValue('g' . $i . '_revision', $revision, \PDO::PARAM_INT);
             }
         }
-        $stmt->execute();
 
-        return $stmt->rowCount() > 0;
+        if ($dns_retry === null) {
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+        }
+
+        $pdo = $this->deeb->cnxx;
+        $pdo->beginTransaction();
+        $lock = $pdo->prepare("
+            SELECT id
+            FROM domains
+            WHERE id = :domain_id
+            FOR UPDATE");
+        $lock->bindValue('domain_id', $domain_id, \PDO::PARAM_INT);
+        $lock->execute();
+        $lock->closeCursor();
+        $stmt->execute();
+        $written = $stmt->rowCount() > 0;
+        $pdo->commit();
+
+        return $written;
     }
 
     /*

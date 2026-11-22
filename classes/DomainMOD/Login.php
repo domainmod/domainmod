@@ -101,6 +101,7 @@ class Login
                 us.display_ssl_type, us.display_ssl_ip, us.display_ssl_category, us.display_ssl_expiry_date, us.display_ssl_fee,
                 us.display_inactive_assets, us.display_dw_intro_page, us.dark_mode, lang.name AS language_name" .
                 (DomainStatus::isAvailable($pdo) ? ", us.display_domain_lock" : "") .
+                (LiveDns::isAvailable($pdo) ? ", us.display_domain_live_dns" : "") .
                 (Hosting::isAvailable($pdo) ? ", us.default_category_hosting, us.default_ip_address_hosting,
                 us.default_owner_hosting, us.default_hosting_provider_account, us.default_hosting_type,
                 us.number_of_hosting_services, us.display_hosting_owner, us.display_hosting_provider,

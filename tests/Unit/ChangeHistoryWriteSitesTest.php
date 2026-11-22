@@ -33,8 +33,8 @@ class ChangeHistoryWriteSitesTest extends TestCase
 {
     // The files that record their changes in the Change History
     // Files whose actions finish on more than one path, by how many finish() calls each has (both Refreshes finish a
-    // quiet read early, as well as a full save)
-    const FINISHES = array('classes/DomainMOD/DomainRefresh.php' => 2, 'classes/DomainMOD/SslRefresh.php' => 2);
+    // quiet read early, as well as a full save, and a domain's Live DNS write finishes a stored check and a dropped one)
+    const FINISHES = array('classes/DomainMOD/DomainRefresh.php' => 4, 'classes/DomainMOD/SslRefresh.php' => 2);
 
     const CAPTURED = array(
         'classes/DomainMOD/Csv.php', 'admin/domain-fields/add.php', 'admin/domain-fields/edit.php', 'admin/ssl-fields/add.php', 'admin/ssl-fields/edit.php',

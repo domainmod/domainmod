@@ -820,6 +820,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
 
                             if ($pdo->InTransaction()) $pdo->commit();
 
+                            // The listed domains' live DNS states, worked out again one domain at a time
+                            DomainMOD\LiveDns::recompareMany($pdo, $bulk_known_ids ? array_merge(...array_values($bulk_known_ids)) : array());
+
                             $_SESSION['s_message_success'] .= _('DNS Profile Changed') . '<BR>';
 
                         } catch (Exception $e) {
@@ -899,6 +902,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $history_op->finish();
 
                             if ($pdo->InTransaction()) $pdo->commit();
+
+                            // The listed domains' live DNS states, worked out again one domain at a time
+                            DomainMOD\LiveDns::recompareMany($pdo, $bulk_known_ids ? array_merge(...array_values($bulk_known_ids)) : array());
 
                             $_SESSION['s_message_success'] .= _('IP Address Changed') . '<BR>';
 
@@ -1285,8 +1291,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_submitted === 1) {
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute($domain_id_list);
 
-                            // The Refresh Domains task's schedules for them (their history stays)
+                            // The Refresh Domains task's schedules for them, and their stored live DNS checks (their
+                            // history stays)
                             (new DomainMOD\DomainRefresh())->deleteStatus($domain_id_list);
+                            DomainMOD\LiveDns::deleteRows($pdo, $domain_id_list);
 
 
                         }

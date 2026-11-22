@@ -23,7 +23,9 @@
  * date, DNS profile, WHOIS privacy, auto renewal, and a note straight away. This script:
  * - asks first when the user has changed one of those fields and not saved, since the refresh replaces them,
  * - locks those fields, the date picker, and Save while the lookup runs (it can take up to 45 seconds),
- * - updates the fields to the saved values from the result, and highlights the ones that changed.
+ * - updates the fields to the saved values from the result, and highlights the ones that changed,
+ * - and handles the Live DNS section's "Use it" buttons, which pick a suggested DNS profile or IP Address in the form
+ *   (the user still saves it).
  * Loaded by domains/edit.php after the date picker's footer. Without JavaScript, Refresh is a normal post.
  */
 (function () {
@@ -241,8 +243,9 @@
         picker.setDate(value, false);
     };
 
-    var setDnsProfile = function (id, name) {
-        var select = fields.dns_id;
+    // Picks an option in one of the form's menus, adding it first when the menu doesn't have it (a profile or asset
+    // added after the page loaded)
+    var setMenuOption = function (select, id, name) {
         var value = String(id);
         var exists = Array.prototype.some.call(select.options, function (option) {
             return option.value === value;
@@ -250,6 +253,29 @@
         if (!exists) select.add(new Option(name, value));
         select.value = value;
     };
+
+    var setDnsProfile = function (id, name) {
+        setMenuOption(fields.dns_id, id, name);
+    };
+
+    // The Live DNS section's "Use it" buttons set the DNS Profile or IP Address menu and mark it as changed, so the
+    // user still clicks Save. One listener on the document, so buttons in a section a refresh replaced keep working.
+    // Nothing happens while a refresh is running and has the fields locked.
+    var use_menus = ['new_dns_id', 'new_ip_id'];
+    document.addEventListener('click', function (event) {
+        var button = event.target.closest ? event.target.closest('[data-domainmod-use-menu]') : null;
+        if (!button) return;
+        event.preventDefault();
+        if (locked) return;
+        var menu = button.getAttribute('data-domainmod-use-menu');
+        if (use_menus.indexOf(menu) === -1) return;
+        var select = edit_form.querySelector('select[name="' + menu + '"]');
+        if (!select) return;
+        setMenuOption(select, button.getAttribute('data-domainmod-use-id'), button.getAttribute('data-domainmod-use-name') || '');
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        highlight(select);
+        select.focus();
+    });
 
     result_area.addEventListener('htmx:afterSwap', function () {
         var data_element = document.getElementById('domainmod-refresh-data');

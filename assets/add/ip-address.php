@@ -44,6 +44,11 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? '');
 
 $new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
 $new_ip = isset($_POST['new_ip']) ? $sanitize->text($_POST['new_ip']) : '';
+// A first load can fill the address in from the link (the domain edit page's Live DNS section offers "Add this IP
+// Address" for a live address no asset has). Only a string is used, and a posted form keeps what was typed.
+if ($_SERVER['REQUEST_METHOD'] != 'POST' && isset($_GET['ip']) && is_string($_GET['ip'])) {
+    $new_ip = $sanitize->text($_GET['ip']);
+}
 $new_rdns = isset($_POST['new_rdns']) ? $sanitize->text($_POST['new_rdns']) : '';
 $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
 

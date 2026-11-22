@@ -685,8 +685,8 @@ class RestoreRecovery
     }
 
     /*
-     * The restore's cleanup: the Change History's check, the Watch List's, the Refresh Domains task's, then every user's
-     * new two-factor stamp (so sessions opened before the restore end), each safe to run twice
+     * The restore's cleanup: the Change History's check, the Watch List's, the Refresh Domains task's, Live DNS's, then
+     * every user's new two-factor stamp (so sessions opened before the restore end), each safe to run twice
      */
     public static function cleanup($restore_id)
     {
@@ -695,6 +695,7 @@ class RestoreRecovery
         ChangeHistory::forgetAvailability();
         self::watchCleanup($pdo, $restore_id);
         self::refreshCleanup($pdo, $restore_id);
+        self::liveDnsCleanup($pdo, $restore_id);
 
         /*
          * Every user gets a new two-factor stamp, so sessions opened before the restore end. Only a restored database that
@@ -827,6 +828,58 @@ class RestoreRecovery
         }
 
         DomainRefresh::resetScheduleAvailable();
+    }
+
+    /*
+     * Live DNS after a restore of a 4.27.0 or later database (an older one leaves domain_dns_check alone: the next Upgrade
+     * Database drops and creates it, and LiveDns::isAvailable() is false until then). A missing domain_dns_check, one
+     * without every column this version creates, or one with an extra column every insert here would fail on (no
+     * default, and not nullable: a newer release's) is created again empty. One that's there is emptied unless the
+     * Change History's check kept the restored history (see refreshCleanup()), since otherwise its rows may name other
+     * domains or compare against assets the restore rolled back (emptying only means every domain shows Not checked until
+     * its next Refresh). A user_settings without display_domain_live_dns gets it, since the database update that adds it
+     * only runs from 4.26.0. The decision is the one historyCleanup() saved, so a retry after a crash makes the same one.
+     */
+    public static function liveDnsCleanup(\PDO $pdo, $restore_id)
+    {
+        $version = self::restoredVersion($pdo);
+        if ($version === null || version_compare($version, LiveDns::AVAILABLE_FROM, '<')) return;
+
+        $kept = self::historyKept($pdo, $restore_id);
+
+        $stmt = $pdo->query("
+            SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, EXTRA
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME IN ('domain_dns_check', 'user_settings')");
+        $columns = array();
+        $unwritable = false;
+        foreach ($stmt->fetchAll(\PDO::FETCH_NUM) as $row) {
+            $column = strtolower($row[1]);
+            $columns[$row[0]][] = $column;
+            if ($row[0] === 'domain_dns_check' && !in_array($column, LiveDns::TABLE_COLUMNS, true) && $row[2] === 'NO'
+                && $row[3] === null && stripos((string) $row[4], 'auto_increment') === false) {
+                $unwritable = true;
+            }
+        }
+        $stmt->closeCursor();
+
+        if (!isset($columns['domain_dns_check']) || array_diff(LiveDns::TABLE_COLUMNS, $columns['domain_dns_check'])
+            || $unwritable) {
+            $pdo->exec("DROP TABLE IF EXISTS `domain_dns_check`");
+            $pdo->exec(LiveDns::tableSql());
+        } elseif (!$kept) {
+            $pdo->exec("TRUNCATE TABLE `domain_dns_check`");
+        }
+
+        if (isset($columns['user_settings']) && !in_array('display_domain_live_dns', $columns['user_settings'], true)) {
+            $pdo->exec("
+                ALTER TABLE `user_settings`
+                ADD `display_domain_live_dns` TINYINT(1) NOT NULL DEFAULT '0'"
+                . (in_array('display_domain_lock', $columns['user_settings'], true) ? " AFTER `display_domain_lock`" : ""));
+        }
+
+        LiveDns::resetAvailable();
     }
 
     /*

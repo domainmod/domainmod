@@ -51,7 +51,7 @@ class DomainListTest extends TestCase
             'tld' => 'XN--P1AI', 'is_active' => '10'));
 
         $this->assertSame(array('pcid' => 5, 'oid' => -2, 'dnsid' => 0, 'ipid' => 0, 'rid' => 0, 'raid' => 0,
-            'segid' => 7, 'hsid' => 0, 'tld' => 'рф', 'is_active' => '10', 'lock' => ''), $state);
+            'segid' => 7, 'hsid' => 0, 'tld' => 'рф', 'is_active' => '10', 'lock' => '', 'livedns' => ''), $state);
     }
 
     public static function serviceFilters()

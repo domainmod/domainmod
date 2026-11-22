@@ -167,6 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_POST['refresh_domain'] ?? '') ===
 
         // The Change History section, redrawn with the refresh's changes, replaces the page's (an out-of-band swap)
         echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, true, DomainMOD\DomainRefresh::statusLine($pdo, $did));
+        // and so does the Live DNS section, with whatever is stored now, whether or not the DNS step ran
+        echo DomainMOD\LiveDns::editCard($pdo, $did, true, true);
         exit;
 
     }
@@ -421,6 +423,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($pdo->InTransaction()) $pdo->commit();
 
+            // The domain's live DNS states, worked out again from its stored check for its DNS profile and IP Address
+            // as saved (in their own short transaction, and a failure never fails the save)
+            DomainMOD\LiveDns::recompare($pdo, $did);
+
             $_SESSION['s_message_success'] .= sprintf(_('Domain %s updated'), $new_domain) . '<BR>';
 
             // A domain saved without a fee is hidden from the list, so the save says so (DomainMOD\FeeStatus)
@@ -589,8 +595,9 @@ if ($del === 1) {
         $stmt->bindValue('did', $did, PDO::PARAM_INT);
         $stmt->execute();
 
-        // The Refresh Domains task's schedule for it (its history stays)
+        // The Refresh Domains task's schedule for it, and its stored live DNS check (its history stays)
         (new DomainMOD\DomainRefresh())->deleteStatus(array($did));
+        DomainMOD\LiveDns::deleteRows($pdo, array($did));
 
         $maint->updateSegments();
 
@@ -666,6 +673,11 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
     if ($refresh_checks_lock) {
         $refresh_source .= ' ' . _('Also checks the transfer lock status using RDAP.');
         $refresh_details .= ' ' . _("Refresh also checks the transfer lock status using RDAP, where it's available.");
+    }
+
+    // and looks up live DNS (DomainMOD\LiveDns), once the 4.27.0 database update is done
+    if (DomainMOD\LiveDns::isAvailable($pdo)) {
+        $refresh_details .= ' ' . _("Refresh also looks up the domain's live name servers, IP addresses, and mail servers through this server's DNS resolver, and only reports them.");
     } ?>
 
     <div class="domainmod-refresh-row d-flex flex-wrap align-items-center justify-content-end gap-2">
@@ -947,7 +959,10 @@ echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-// The domain's Change History, read-only and outside the form
+// The domain's live DNS, read-only and outside the form
+echo DomainMOD\LiveDns::editCard($pdo, $did, ($_SESSION['s_read_only'] ?? '') != '1');
+
+// Its Change History, read-only and outside the form, after the live DNS
 echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, false, DomainMOD\DomainRefresh::statusLine($pdo, $did));
 
 $dwaccounts = new DomainMOD\DwAccounts();

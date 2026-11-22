@@ -59,6 +59,10 @@ $new_display_getting_started = (int) ($_POST['new_display_getting_started'] ?? 0
 $domain_lock_available = DomainMOD\DomainStatus::isAvailable($pdo);
 $domain_lock_offered = $domain_lock_available && ($_POST['domain_lock_offered'] ?? '') === '1';
 $new_display_domain_lock = '0';
+// The Live DNS column (DomainMOD\LiveDns) the same way: offered and saved only once the 4.27.0 database update is done
+$domain_live_dns_available = DomainMOD\LiveDns::isAvailable($pdo);
+$domain_live_dns_offered = $domain_live_dns_available && ($_POST['domain_live_dns_offered'] ?? '') === '1';
+$new_display_domain_live_dns = '0';
 // The Hosting settings (DomainMOD\Hosting), saved only when the form offered them (from the 4.27.0 database update
 // on), so a form loaded before that update can't change them
 $hosting_available = DomainMOD\Hosting::isAvailable($pdo);
@@ -139,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (in_array("category", $domain_column_options)) { $new_display_domain_category = '1'; } else { $new_display_domain_category = '0'; }
     if (in_array("owner", $domain_column_options)) { $new_display_domain_owner = '1'; } else { $new_display_domain_owner = '0'; }
     if (in_array("lock", $domain_column_options)) { $new_display_domain_lock = '1'; } else { $new_display_domain_lock = '0'; }
+    if (in_array("live_dns", $domain_column_options)) { $new_display_domain_live_dns = '1'; } else { $new_display_domain_live_dns = '0'; }
 
     if (in_array("expiry", $ssl_column_options)) { $new_display_ssl_expiry_date = '1'; } else { $new_display_ssl_expiry_date = '0'; }
     if (in_array("fee", $ssl_column_options)) { $new_display_ssl_fee = '1'; } else { $new_display_ssl_fee = '0'; }
@@ -262,6 +267,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     }
 
+    if ($domain_live_dns_offered) {
+
+        $stmt = $pdo->prepare("
+            UPDATE user_settings
+            SET display_domain_live_dns = :new_display_domain_live_dns
+            WHERE user_id = :user_id");
+        $stmt->bindValue('new_display_domain_live_dns', $new_display_domain_live_dns, PDO::PARAM_INT);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_display_domain_live_dns'] = $new_display_domain_live_dns;
+
+    }
+
     if ($hosting_offered) {
 
         $sql_columns = '';
@@ -380,6 +399,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
         }
 
+        if ($domain_live_dns_available) {
+
+            $stmt = $pdo->prepare("
+                SELECT display_domain_live_dns
+                FROM user_settings
+                WHERE user_id = :user_id");
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $new_display_domain_live_dns = (string) $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+        }
+
         if ($hosting_available) {
 
             $stmt = $pdo->prepare("
@@ -439,8 +471,10 @@ echo $form->showMultipleSelectOption(_('Hosting Service'), 'host', $new_display_
 echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_domain_category);
 echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_domain_owner);
 if ($domain_lock_available) echo $form->showMultipleSelectOption(_('Transfer Lock'), 'lock', $new_display_domain_lock);
+if ($domain_live_dns_available) echo $form->showMultipleSelectOption(_('Live DNS'), 'live_dns', $new_display_domain_live_dns);
 echo $form->showMultipleSelectBottom('');
 if ($domain_lock_available) echo $form->showInputHidden('domain_lock_offered', '1');
+if ($domain_live_dns_available) echo $form->showInputHidden('domain_live_dns_offered', '1');
 
 echo $form->showMultipleSelectTop('custom_domain_fields', _('Custom Domain Fields to Display'), '');
 

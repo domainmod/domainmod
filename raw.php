@@ -142,6 +142,15 @@ if ($raw_list_status === 'mismatch') {
 
 }
 
+// A Domains list saved with Live DNS's table that's gone since (an older backup was restored, or a restore left it
+// missing) is a list that has changed, rather than a query that fails
+if ($raw_list_message === '' && $raw_list_type == 'domains' && is_string($raw_list_from_sql)
+    && strpos($raw_list_from_sql, 'JOIN domain_dns_check AS ldc') !== false && !DomainMOD\LiveDns::isAvailable($pdo)) {
+
+    $raw_list_message = $raw_list_mismatch;
+
+}
+
 if ($raw_list_type == 'hosting' && $list_class === null) {
 
     echo htmlspecialchars(DomainMOD\Hosting::unavailableMessage(), ENT_QUOTES, 'UTF-8') . "<BR>";

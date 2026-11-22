@@ -146,6 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dnsid = $new_dnsid;
 
+        // The live DNS states of the domains using this DNS profile, worked out again one domain at a time
+        DomainMOD\LiveDns::recompareMany($pdo, DomainMOD\LiveDns::domainsUsing($pdo, 'dns_id', $dnsid));
+
         $_SESSION['s_message_success'] .= sprintf(_('DNS Profile %s updated'), $new_name) . '<BR>';
 
         header("Location: ../dns.php");
