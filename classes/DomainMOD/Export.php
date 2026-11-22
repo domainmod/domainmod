@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class Export
 {
+    // A number, optionally followed by a currency symbol (see protectCell())
+    const NUMBER_CELL = '/^[+-]?(\d{1,3}(,\d{3})+|\d+)(\.\d+)?( ?[^\s\d=+\-@()\[\]{}|!"\'`;:,&*\\\\^<>%#~?]{1,10})?$/u';
+
     // A streamed export's phases (see begin()): nothing sent yet, the file started, and finished (or failed and dealt with)
     const PHASE_BEFORE_OUTPUT = 'before output';
     const PHASE_OUTPUT = 'output';
@@ -74,14 +77,14 @@ class Export
     /*
      * Writes standard CSV (RFC 4180): quotes are escaped by doubling them, with no backslash escape character. PHP's
      * default backslash escape writes a backslash before a quote as is, which can end a cell early, and PHP 8.4
-     * deprecates relying on it.
+     * deprecates relying on it. Every text cell is protected from running as a formula (see protectCell()).
      */
     public function writeRow($open_file, $row_contents)
     {
         // Without the left-to-right isolation marks Currency::format() adds to amounts in right-to-left languages, which
         // only matter on screen
         $row_contents = array_map(function ($value) {
-            return is_string($value) ? str_replace(array("\u{2066}", "\u{2069}"), '', $value) : $value;
+            return is_string($value) ? self::protectCell(str_replace(array("\u{2066}", "\u{2069}"), '', $value)) : $value;
         }, $row_contents);
         return $this->checkWritten(fputcsv($open_file, $row_contents, ',', '"', ''));
     }
@@ -108,12 +111,38 @@ class Export
     }
 
     /*
+     * The rule every export's cells follow (writeRow() applies it to each one), from OWASP's CSV injection guidance: text
+     * that starts with =, +, -, @, a tab, or a carriage return, or with their full-width forms (＝, ＋, －, and ＠, which
+     * some spreadsheets also read as a formula), gets an apostrophe in front, so opening the file in a spreadsheet shows
+     * it as text rather than running it as a formula. So does text whose first character after any spaces and line
+     * feeds is one of them, since a spreadsheet can trim those when it reads the file. Numbers and amounts are left as
+     * they are, so they stay numbers: a cell given as a number (an int or a float), and text that's only a number, such
+     * as -12.50 or -1,234.50 (an optional sign, digits with optional thousands commas, and optional decimals),
+     * optionally followed by a currency symbol as Currency::format() writes it, such as -12.50 USD, -12.50€, or
+     * -12.50 S/. The symbol can't hold a space, a digit, or any character a formula needs to call anything (such as
+     * brackets, quotes, or a pipe), so such a cell can't run anything. A lone dash, which some exports write for an
+     * empty value, is left as it is too. Cells are protected as a comma-separated file splits them: a spreadsheet that
+     * splits the file on semicolons instead can still start a cell after a semicolon inside one.
+     */
+    public static function protectCell($value)
+    {
+        if (!is_string($value) || $value === '-') return $value;
+        $start = ltrim($value, " \n");
+        if ($start === '' || (strpos("=+-@\t\r", $start[0]) === false && !preg_match('/^[＝＋－＠]/u', $start))) return $value;
+        if ($start === $value && preg_match(self::NUMBER_CELL, $value)) return $value;
+        return "'" . $value;
+    }
+
+    /*
      * For text that anyone could have supplied (such as the Debug Log's usernames and URLs): a value starting with a
-     * character a spreadsheet reads as a formula gets an apostrophe in front, so opening the file can't run it.
+     * character a spreadsheet reads as a formula gets an apostrophe in front, so opening the file can't run it. Unlike
+     * protectCell(), which writeRow() applies to every cell, it also marks text that's only a signed number. The
+     * direction marks writeRow() removes are removed here first, so a value that starts with one and then a sign is
+     * checked by its sign, whichever order a caller uses.
      */
     public function protectFormula($value)
     {
-        $value = (string) $value;
+        $value = str_replace(array("\u{2066}", "\u{2069}"), '', (string) $value);
         if ($value !== '' && strpos("=+-@\t\r", $value[0]) !== false) return "'" . $value;
         return $value;
     }

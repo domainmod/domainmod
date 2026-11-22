@@ -65,6 +65,20 @@ class ExportTest extends TestCase
         $this->assertSame("'-5", (new Export())->protectFormula(-5));
     }
 
+    // The direction marks writeRow() removes are removed before the check, so a mark in front of the sign doesn't hide
+    // it. The Debug Log's export protects its cells before writeRow() removes the marks, which left "-5" unprotected.
+    public function testProtectFormulaChecksTheSignBehindADirectionMark()
+    {
+        $export = new Export();
+        $this->assertSame("'=SUM(A1)", $export->protectFormula("\u{2066}=SUM(A1)\u{2069}"));
+        $this->assertSame("'-5", $export->protectFormula("\u{2066}-5\u{2069}"));
+        $this->assertSame('example.com', $export->protectFormula("\u{2066}example.com\u{2069}"));
+        $bytes = $this->written(function ($export, $file) {
+            $export->writeRow($file, array($export->protectFormula("\u{2066}-5\u{2069}")));
+        });
+        $this->assertSame("'-5\n", $bytes);
+    }
+
     private function written(callable $write)
     {
         $file = fopen('php://memory', 'w+');
