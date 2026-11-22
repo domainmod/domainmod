@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('SSL Fees');
-$breadcrumb = _('SSL Fees');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-ssl-fees";
 $report_section = 'ssl';

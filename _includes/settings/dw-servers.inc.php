@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Manage DW Servers');
-$breadcrumb = _('Servers');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-servers";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

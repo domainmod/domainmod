@@ -308,7 +308,7 @@ if ($new_expiration_emails !== 0) {
     $temp_expiration_emails = $_SESSION['s_expiration_emails'];
 }
 
-echo $form->showSwitch(_('Subscribe to expiration emails for domains, SSL certificates, and hosting services?'), '', 'new_expiration_emails', $temp_expiration_emails, '', '<BR><BR>');
+echo $form->showSwitch(_('Subscribe to expiration emails for domains, hosting services, and SSL certificates?'), '', 'new_expiration_emails', $temp_expiration_emails, '', '<BR><BR>');
 
 echo $form->showSubmitButton(_('Update Profile'), '', '');
 echo $form->showFormBottom('');

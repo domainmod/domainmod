@@ -489,42 +489,6 @@ foreach ($_SESSION['s_cdf_data'] as $field) {
 }
 
 echo $form->showMultipleSelectBottom('<BR>');
-?>
-
-<h2 class="h3"><?php echo _('Main SSL Certificate Page'); ?></h2><?php
-
-if ($new_number_of_ssl_certs !== 0) {
-    $temp_number_of_ssl_certs = $new_number_of_ssl_certs;
-} else {
-    $temp_number_of_ssl_certs = '';
-}
-echo $form->showInputText('new_number_of_ssl_certs', _('Number of SSL certificates per page'), '', $temp_number_of_ssl_certs, '5', '', '1', '', '');
-
-echo $form->showMultipleSelectTop('ssl_column_options', _('Columns to Display'), '');
-echo $form->showMultipleSelectOption(_('Expiry Date'), 'expiry', $new_display_ssl_expiry_date);
-echo $form->showMultipleSelectOption(_('Fee'), 'fee', $new_display_ssl_fee);
-echo $form->showMultipleSelectOption(_('Domain'), 'domain', $new_display_ssl_domain);
-echo $form->showMultipleSelectOption(_('SSL Provider'), 'provider', $new_display_ssl_provider);
-echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_ssl_account);
-echo $form->showMultipleSelectOption(_('SSL Type'), 'type', $new_display_ssl_type);
-echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_ssl_ip);
-echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_ssl_category);
-echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_ssl_owner);
-echo $form->showMultipleSelectBottom('');
-
-echo $form->showMultipleSelectTop('custom_ssl_fields', _('Custom SSL Fields to Display'), '');
-
-foreach ($_SESSION['s_csf_data'] as $field) {
-
-    if ($field['type_id'] != '3') { // Don't show Text Areas
-
-        echo $form->showMultipleSelectOption($field['name'], $field['display_field'], $field['value']);
-
-    }
-
-}
-
-echo $form->showMultipleSelectBottom('<BR>');
 
 if ($hosting_available) { ?>
 
@@ -567,7 +531,43 @@ if ($hosting_available) { ?>
 }
 ?>
 
-<h2 class="h3"><?php echo _('Asset Management Pages'); ?></h2>
+<h2 class="h3"><?php echo _('Main SSL Certificate Page'); ?></h2><?php
+
+if ($new_number_of_ssl_certs !== 0) {
+    $temp_number_of_ssl_certs = $new_number_of_ssl_certs;
+} else {
+    $temp_number_of_ssl_certs = '';
+}
+echo $form->showInputText('new_number_of_ssl_certs', _('Number of SSL certificates per page'), '', $temp_number_of_ssl_certs, '5', '', '1', '', '');
+
+echo $form->showMultipleSelectTop('ssl_column_options', _('Columns to Display'), '');
+echo $form->showMultipleSelectOption(_('Expiry Date'), 'expiry', $new_display_ssl_expiry_date);
+echo $form->showMultipleSelectOption(_('Fee'), 'fee', $new_display_ssl_fee);
+echo $form->showMultipleSelectOption(_('Domain'), 'domain', $new_display_ssl_domain);
+echo $form->showMultipleSelectOption(_('SSL Provider'), 'provider', $new_display_ssl_provider);
+echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_ssl_account);
+echo $form->showMultipleSelectOption(_('SSL Type'), 'type', $new_display_ssl_type);
+echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_ssl_ip);
+echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_ssl_category);
+echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_ssl_owner);
+echo $form->showMultipleSelectBottom('');
+
+echo $form->showMultipleSelectTop('custom_ssl_fields', _('Custom SSL Fields to Display'), '');
+
+foreach ($_SESSION['s_csf_data'] as $field) {
+
+    if ($field['type_id'] != '3') { // Don't show Text Areas
+
+        echo $form->showMultipleSelectOption($field['name'], $field['display_field'], $field['value']);
+
+    }
+
+}
+
+echo $form->showMultipleSelectBottom('<BR>');
+?>
+
+<h2 class="h3"><?php echo _('Asset Pages'); ?></h2>
 <?php echo $form->showCheckbox('new_display_inactive_assets', '1', _('Display inactive assets'), '', $new_display_inactive_assets, '', '<BR>'); ?>
 
 <h2 class="h3"><?php echo _('Data Warehouse'); ?></h2>

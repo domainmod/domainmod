@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('At-Risk Domains Report');
-$breadcrumb = _('At-Risk Domains');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-domain-at-risk";
 $report_section = 'domains';

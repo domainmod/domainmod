@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Domain Fees');
-$breadcrumb = _('Domain Fees');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-domain-fees";
 $report_section = 'domains';

@@ -34,7 +34,7 @@ if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
     $page_title = sprintf(_('Listing DNS Zones & Records on %s (%s)'), $_SESSION['s_dw_server_name'] ?? '', $_SESSION['s_dw_server_host'] ?? '');
 
 }
-$breadcrumb = _('Zones');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-list-zones";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

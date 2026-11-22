@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Watched Domain');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "watch";
 $slug = "watch-edit";

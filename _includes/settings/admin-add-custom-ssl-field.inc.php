@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Custom SSL Field');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-add-custom-ssl-field";

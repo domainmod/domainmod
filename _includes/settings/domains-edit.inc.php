@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Edit Domain');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "domains";
 $slug = "domains-edit";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

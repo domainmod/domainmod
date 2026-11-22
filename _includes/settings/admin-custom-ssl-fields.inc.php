@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Custom SSL Fields');
-$breadcrumb = _('Custom SSL Fields');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-custom-ssl-fields";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

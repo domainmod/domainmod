@@ -20,6 +20,6 @@
  */
 ?>
     <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/account-owners.php"><?php echo _('Owners'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/account-owners.php"><?php echo _('Account Owners'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

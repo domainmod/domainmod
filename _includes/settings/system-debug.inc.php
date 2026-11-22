@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Debugging');
-$breadcrumb = _('Debug');
+$breadcrumb = $page_title;
 $software_section = "system";
 $slug = "system-debug";

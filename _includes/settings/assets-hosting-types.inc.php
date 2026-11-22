@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Service Types');
-$breadcrumb = _('Types');
+$page_title = _('Hosting Service Types');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-hosting-types";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

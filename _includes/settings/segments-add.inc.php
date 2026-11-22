@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Segment');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "segments";
 $slug = "segments-add";

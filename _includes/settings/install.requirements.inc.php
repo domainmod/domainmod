@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Software Requirements');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.requirements";
 $install_step = 2;

@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Ready to Install');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.ready";
 $install_step = 7;

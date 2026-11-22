@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Feedback');
-$breadcrumb = _('Feedback');
+$breadcrumb = $page_title;
 $software_section = "feedback";
 $slug = "feedback-main";

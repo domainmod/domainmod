@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('SSL Pricing Report');
-$breadcrumb = _('SSL Pricing');
+$page_title = _('SSL Price Comparison Report');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-ssl-pricing";
 $report_section = 'ssl';
@@ -33,8 +33,8 @@ $page_length = (int) ($_SESSION['s_number_of_ssl_certs'] ?? 0);
 if ($page_length < 1) $page_length = 50;
 $length_menu = array_unique(array($page_length, 50, 75, 100));
 sort($length_menu);
-// The overview, paged and sortable like TLD Pricing's, opening with the most certificates first. The selected type's
-// providers are a short, plain table that the comparison swaps in place.
+// The overview, paged and sortable like TLD Price Comparison's, opening with the most certificates first. The selected
+// type's providers are a short, plain table that the comparison swaps in place.
 $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                           "paging": true,
                           "lengthChange": true,
@@ -59,7 +59,7 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-overview\', {
                           "bSortClasses": false,
                           "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
-                            // The paged table names its paging, as the TLD Pricing tables do
+                            // The paged table names its paging, as the TLD Price Comparison tables do
                             var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
                             if (paging) paging.setAttribute("aria-label", ' . json_encode(sprintf(_('Pages of %s'), _('Certificate Types')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');
                           }

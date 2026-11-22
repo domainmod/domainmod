@@ -288,7 +288,7 @@ echo $form->showFormBottom('');
 // Once the database has the hosting tables, hosting accounts and hosting services block the delete too
 $owner_name_html = '<strong>' . htmlentities(html_entity_decode($new_owner, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>';
 if (DomainMOD\Hosting::isAvailable($pdo)) {
-    $owner_delete_text = sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, hosting accounts, domains, SSL certificates, or hosting services. It can\'t be undone.'), $owner_name_html);
+    $owner_delete_text = sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, hosting accounts, SSL accounts, domains, hosting services, or SSL certificates. It can\'t be undone.'), $owner_name_html);
 } else {
     $owner_delete_text = sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, domains, or SSL certificates. It can\'t be undone.'), $owner_name_html);
 }

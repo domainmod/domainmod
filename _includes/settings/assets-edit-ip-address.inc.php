@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit IP Address');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-edit-ip-address";

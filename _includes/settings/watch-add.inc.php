@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Domains to the Watch List');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "watch";
 $slug = "watch-add";

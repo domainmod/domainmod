@@ -416,11 +416,11 @@ class Reporting
             <thead>
             <tr>
                 <th scope="col"><?php echo _('Month'); ?></th>
-                <th scope="col" class="text-end"><?php echo _('Domains'); ?></th>
-                <th scope="col" class="text-end"><?php echo _('SSL Certificates'); ?></th><?php
+                <th scope="col" class="text-end"><?php echo _('Domains'); ?></th><?php
                 if ($with_hosting) { ?>
                     <th scope="col" class="text-end"><?php echo _('Hosting'); ?></th><?php
                 } ?>
+                <th scope="col" class="text-end"><?php echo _('SSL Certificates'); ?></th>
                 <th scope="col" class="text-end"><?php echo _('Total Cost'); ?></th>
             </tr>
             </thead>
@@ -432,10 +432,6 @@ class Reporting
                     <td class="text-end"><?php echo $format($month['domains']['cost']); ?><?php
                     if ($month['domains']['missing'] > 0) { ?>
                         <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s domain has no fee or rate', '%s domains have no fee or rate', $month['domains']['missing']), number_format($month['domains']['missing'])); ?></span><?php
-                    } ?></td>
-                    <td class="text-end"><?php echo $format($month['certs']['cost']); ?><?php
-                    if ($month['certs']['missing'] > 0) { ?>
-                        <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s SSL certificate has no fee or rate', '%s SSL certificates have no fee or rate', $month['certs']['missing']), number_format($month['certs']['missing'])); ?></span><?php
                     } ?></td><?php
                     if ($with_hosting) { ?>
                         <td class="text-end"><?php echo $format($month['hosting']['cost']); ?><?php
@@ -443,6 +439,10 @@ class Reporting
                             <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s hosting service has no fee or rate', '%s hosting services have no fee or rate', $month['hosting']['missing']), number_format($month['hosting']['missing'])); ?></span><?php
                         } ?></td><?php
                     } ?>
+                    <td class="text-end"><?php echo $format($month['certs']['cost']); ?><?php
+                    if ($month['certs']['missing'] > 0) { ?>
+                        <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s SSL certificate has no fee or rate', '%s SSL certificates have no fee or rate', $month['certs']['missing']), number_format($month['certs']['missing'])); ?></span><?php
+                    } ?></td>
                     <td class="text-end"><?php echo $format($month['cost']); ?></td>
                 </tr><?php
 
@@ -455,11 +455,11 @@ class Reporting
     }
 
     /*
-     * Every registrar fee and every live domain, with their amounts converted to the user's currency, for TLD Pricing.
-     * A fee whose currency has no rate for the user is kept with has_rate 0, so the page can say how many were left
-     * out. Each fee row gains its yearly price for each price type (the fee plus the misc fee) and its privacy fee, and
-     * each domain its current yearly cost (its own fee's renewal and misc fees, plus privacy when privacy is on), as
-     * Maintenance's fee update works out total_cost.
+     * Every registrar fee and every live domain, with their amounts converted to the user's currency, for TLD Price
+     * Comparison. A fee whose currency has no rate for the user is kept with has_rate 0, so the page can say how many
+     * were left out. Each fee row gains its yearly price for each price type (the fee plus the misc fee) and its
+     * privacy fee, and each domain its current yearly cost (its own fee's renewal and misc fees, plus privacy when
+     * privacy is on), as Maintenance's fee update works out total_cost.
      */
     public function tldPrices()
     {
@@ -511,10 +511,10 @@ class Reporting
     }
 
     /*
-     * TLD Pricing's overview from tldPrices(): one row per TLD that has at least one fee with a rate, with its fees
-     * (cheapest first by renewal price), the cheapest and most expensive registrars (ties share), the spread, how many
-     * registrars have a fee for it, and how many of the user's live domains use it. Sorted by domains, most first, then
-     * by TLD. Also returns how many fees were left out for having no rate.
+     * TLD Price Comparison's overview from tldPrices(): one row per TLD that has at least one fee with a rate, with its
+     * fees (cheapest first by renewal price), the cheapest and most expensive registrars (ties share), the spread, how
+     * many registrars have a fee for it, and how many of the user's live domains use it. Sorted by domains, most first,
+     * then by TLD. Also returns how many fees were left out for having no rate.
      */
     public function tldOverview($prices)
     {
@@ -569,7 +569,8 @@ class Reporting
     /*
      * Fees ranked by a price type, cheapest first (ties by the seller's name, from $name_key): the cheapest and most
      * expensive fees by index (ties share, compared to the cent), the lowest and highest prices, the spread, and how
-     * many sellers (registrars or SSL providers, from $seller_key) have a fee, for TLD Pricing and SSL Pricing
+     * many sellers (registrars or SSL providers, from $seller_key) have a fee, for TLD Price Comparison and SSL Price
+     * Comparison
      */
     private function rankFees($fees, $price_type, $name_key, $seller_key)
     {
@@ -599,11 +600,11 @@ class Reporting
     }
 
     /*
-     * TLD Pricing's possible savings from tldPrices(): every live domain on a TLD with fees (with rates) at two or more
-     * registrars where another registrar's full yearly cost for that domain (renewal and misc, plus privacy when the
-     * domain has privacy on) is lower than its current cost. The destination is the registrar with the lowest full cost
-     * for that domain (ties: the first by name), worked out per domain. Sorted by saving, largest first. Also returns
-     * how many domains on those TLDs were left out because their own fee is missing or has no rate.
+     * TLD Price Comparison's possible savings from tldPrices(): every live domain on a TLD with fees (with rates) at
+     * two or more registrars where another registrar's full yearly cost for that domain (renewal and misc, plus privacy
+     * when the domain has privacy on) is lower than its current cost. The destination is the registrar with the lowest
+     * full cost for that domain (ties: the first by name), worked out per domain. Sorted by saving, largest first. Also
+     * returns how many domains on those TLDs were left out because their own fee is missing or has no rate.
      */
     public function tldSavings($prices)
     {
@@ -658,9 +659,9 @@ class Reporting
 
     /*
      * Every SSL provider fee, with its amounts converted to the user's currency, and the user's active SSL certificates
-     * counted by type and provider, for SSL Pricing. A fee whose currency has no rate for the user is kept with
-     * has_rate 0, so the page can say how many were left out. Each fee gains its yearly price for each price type (the
-     * fee plus the misc fee), as Maintenance's fee update works out total_cost.
+     * counted by type and provider, for SSL Price Comparison. A fee whose currency has no rate for the user is kept
+     * with has_rate 0, so the page can say how many were left out. Each fee gains its yearly price for each price type
+     * (the fee plus the misc fee), as Maintenance's fee update works out total_cost.
      */
     public function sslPrices()
     {
@@ -700,9 +701,9 @@ class Reporting
     }
 
     /*
-     * SSL Pricing's overview from sslPrices(): one row per certificate type that has at least one fee with a rate, as
-     * sslRow() ranks it by renewal price. Sorted by the user's active certificates of that type, most first, then by
-     * type. Also returns how many fees were left out for having no rate.
+     * SSL Price Comparison's overview from sslPrices(): one row per certificate type that has at least one fee with a
+     * rate, as sslRow() ranks it by renewal price. Sorted by the user's active certificates of that type, most first,
+     * then by type. Also returns how many fees were left out for having no rate.
      */
     public function sslOverview($prices)
     {

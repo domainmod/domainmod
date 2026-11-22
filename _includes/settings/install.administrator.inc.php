@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Administrator Account');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.administrator";
 $install_step = 5;

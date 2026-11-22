@@ -297,6 +297,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
+<?php
+// The SSL provider's name (stored HTML-escaped), for the breadcrumb and the summary below
+$ssl_provider_name = $assets->getSslProvider($sslpid);
+?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
@@ -308,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 echo $layout->factList(array(
-    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($assets->getSslProvider($sslpid)))));
+    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($ssl_provider_name))));
 
 echo $form->showDropdownTop('new_type_id', _('SSL Type'), '', '1', '');
 echo $form->showDropdownOption('', _('Choose an SSL Type'), '');

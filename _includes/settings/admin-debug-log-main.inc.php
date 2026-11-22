@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Debug Log');
-$breadcrumb = _('Debug');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-debug-log-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

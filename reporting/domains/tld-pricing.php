@@ -108,7 +108,7 @@ $query_string = function ($extra) use ($tld, $price_type) {
 if ($export_data === 1 && $overview['rows']) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile(_('tld_pricing_report'), strtotime($time->stamp()));
+    $export_file = $export->openFile(_('tld_price_comparison_report'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -250,8 +250,8 @@ if (!$overview['rows']) {
 } else { ?>
 
     <div class="row"><?php
-        echo $dashboard->displayPanel(_('Possible Yearly Savings'), count($savings['rows']), 'success', 'bi-piggy-bank', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#savings', _('TLD Pricing'), $money($total_saving));
-        echo $dashboard->displayPanel(_('TLDs Compared'), $savings['tlds_compared'], 'secondary', 'bi-tags', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#overview', _('TLD Pricing')); ?>
+        echo $dashboard->displayPanel(_('Possible Yearly Savings'), count($savings['rows']), 'success', 'bi-piggy-bank', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#savings', _('TLD Price Comparison'), $money($total_saving));
+        echo $dashboard->displayPanel(_('TLDs Compared'), $savings['tlds_compared'], 'secondary', 'bi-tags', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#overview', _('TLD Price Comparison')); ?>
     </div>
 
     <h2 class="h4 mt-4" id="overview"><?php echo _('TLDs'); ?></h2><?php
@@ -333,7 +333,7 @@ if (!$overview['rows']) {
 
         <p class="small text-body-secondary d-md-none mt-3 mb-1"><?php echo _('Scroll sideways to see every column.'); ?></p>
         <div class="table-responsive domainmod-scroll-table mt-1 mt-md-3" tabindex="0" role="region" aria-labelledby="tld-compare-caption"><table class="table table-sm table-striped mb-0">
-            <?php // TRANSLATORS: The hidden caption of TLD Pricing's comparison table. %s is a TLD without its leading dot, such as "com". ?>
+            <?php // TRANSLATORS: The hidden caption of TLD Price Comparison's comparison table. %s is a TLD without its leading dot, such as "com". ?>
             <caption id="tld-compare-caption" class="visually-hidden"><?php echo sprintf(_('Registrars for .%s'), $selected['tld']); ?></caption>
             <thead>
             <tr>

@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('At-Risk SSL Certificates Report');
-$breadcrumb = _('At-Risk SSL Certificates');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-ssl-at-risk";
 $report_section = 'ssl';

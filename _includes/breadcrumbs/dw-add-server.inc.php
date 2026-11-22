@@ -19,8 +19,8 @@
  *
  */
 ?>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Admin'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/dw/dw.php"><?php echo _('DW'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/dw/servers.php"><?php echo _('Servers'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/"><?php echo _('Administration'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/dw/dw.php"><?php echo _('Data Warehouse'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/admin/dw/servers.php"><?php echo _('Manage DW Servers'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

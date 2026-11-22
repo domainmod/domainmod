@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Owner');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-add-owner";

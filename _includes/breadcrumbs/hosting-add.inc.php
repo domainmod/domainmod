@@ -19,6 +19,6 @@
  *
  */
 ?>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/hosting/"><?php echo _('Hosting'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/hosting/"><?php echo _('Hosting Services'); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

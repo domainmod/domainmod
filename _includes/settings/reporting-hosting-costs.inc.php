@@ -22,7 +22,7 @@
 <?php
 // $cost_grouping is the report's grouping (DomainMOD\CostReport::grouping()), set by the page before this file
 $page_title = $cost_grouping['title'];
-$breadcrumb = _('Hosting Costs');
+$breadcrumb = $page_title;
 $report_name = $cost_grouping['name'];
 $software_section = "reporting";
 $slug = "reporting-hosting-costs";

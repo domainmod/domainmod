@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Dashboard');
-$breadcrumb = _('Dashboard');
+$breadcrumb = $page_title;
 $software_section = "dashboard";
 $slug = "dashboard-main";

@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = "";
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "login";
 $slug = "login";

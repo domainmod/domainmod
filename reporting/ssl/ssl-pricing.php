@@ -103,7 +103,7 @@ $query_string = function ($extra) use ($type_id, $price_type) {
 if ($export_data === 1 && $overview['rows']) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile(_('ssl_pricing_report'), strtotime($time->stamp()));
+    $export_file = $export->openFile(_('ssl_price_comparison_report'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
@@ -249,9 +249,9 @@ if (!$overview['rows']) {
 
     <h2 class="h4 mt-5" id="type-view"><?php echo _('Compare a Certificate Type'); ?></h2><?php
 
-    // The comparison updates in place with htmx, as TLD Pricing's does: the picker and the price links fetch this page
-    // and swap in just this section, keeping the scroll position, and the address bar follows. Without JavaScript they
-    // load the page as usual. The export button's link carries the type and price, so it's swapped too.
+    // The comparison updates in place with htmx, as TLD Price Comparison's does: the picker and the price links fetch
+    // this page and swap in just this section, keeping the scroll position, and the address bar follows. Without
+    // JavaScript they load the page as usual. The export button's link carries the type and price, so it's swapped too.
     $compare_htmx = 'hx-target="#ssl-compare" hx-select="#ssl-compare" hx-select-oob="#ssl-pricing-export" hx-swap="outerHTML" hx-sync="#ssl-compare:replace"'; ?>
 
     <div id="ssl-compare">
@@ -286,7 +286,7 @@ if (!$overview['rows']) {
 
         <p class="small text-body-secondary d-md-none mt-3 mb-1"><?php echo _('Scroll sideways to see every column.'); ?></p>
         <div class="table-responsive domainmod-scroll-table mt-1 mt-md-3" tabindex="0" role="region" aria-labelledby="ssl-compare-caption"><table class="table table-sm table-striped mb-0">
-            <?php // TRANSLATORS: The hidden caption of SSL Pricing's comparison table. %s is an SSL certificate type, such as "Wildcard". ?>
+            <?php // TRANSLATORS: The hidden caption of SSL Price Comparison's comparison table. %s is an SSL certificate type, such as "Wildcard". ?>
             <caption id="ssl-compare-caption" class="visually-hidden"><?php echo sprintf(_('Providers for %s'), $selected['type']); ?></caption>
             <thead>
             <tr>

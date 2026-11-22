@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Account Owners');
-$breadcrumb = _('Owners');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-owners";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

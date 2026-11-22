@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('IP Addresses');
-$breadcrumb = _('IPs');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-ip-addresses";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

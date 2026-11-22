@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('SSL Certificates');
-$breadcrumb = _('SSL Certificates');
+$breadcrumb = $page_title;
 $software_section = "ssl";
 $slug = "ssl-main";
 

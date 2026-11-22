@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Data Warehouse');
-$breadcrumb = _('DW');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('At-Risk Hosting Services Report');
-$breadcrumb = _('At-Risk Hosting Services');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-hosting-at-risk";
 $report_section = 'hosting';

@@ -32,10 +32,10 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $assets = new DomainMOD\Assets();
 $currency = new DomainMOD\Currency();
+$unsanitize = new DomainMOD\Unsanitize();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/assets-hosting-fees.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;
@@ -76,6 +76,9 @@ if (!$provider_found) {
 
 $provider_name = $assets->getHost($hosting_id);
 
+// The page's title names it, so its settings file comes now
+require_once DIR_INC . '/settings/assets-hosting-fees.inc.php';
+
 // The saved fees, one row per fee (each is one service type and billing term at this provider)
 $stmt = $pdo->prepare("
     SELECT f.id, f.billing_term, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, t.type, c.currency, c.symbol, c.symbol_order, c.symbol_space
@@ -106,7 +109,8 @@ if ($export_data === 1) {
     $export = new DomainMOD\Export();
     $export_file = $export->openFile(_('hosting_fee_list'), strtotime($time->stamp()));
 
-    $row_contents = array($page_title);
+    // The title without its markup, and the name unescaped
+    $row_contents = array(html_entity_decode(strip_tags($page_title), ENT_QUOTES, 'UTF-8'));
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
@@ -169,7 +173,7 @@ if ($export_data === 1) {
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
-    <title><?php echo $layout->pageTitle($page_title); ?></title>
+    <title><?php echo $layout->pageTitle(strip_tags($page_title)); ?></title>
     <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
 </head>
 <?php echo $layout->bodyTag(); ?>

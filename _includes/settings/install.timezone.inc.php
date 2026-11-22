@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Select Your Time Zone');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.timezone";
 $install_step = 4;

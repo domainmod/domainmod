@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add SSL Certificate');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "ssl";
 $slug = "ssl-add";

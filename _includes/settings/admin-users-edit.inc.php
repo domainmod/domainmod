@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit User');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-users-edit";

@@ -43,16 +43,22 @@ $system->authCheck();
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<?php echo $layout->contentBoxTop(_('Update Fees & Rates'), '3'); ?>
+<?php echo $layout->contentBoxTop(_('Maintenance Tasks'), '3'); ?>
+<?php
+// The tasks change data, so read-only users (who can't run them) get a note instead, as the menu leaves them out
+if (($_SESSION['s_read_only'] ?? '') == '1') { ?>
+<p class="mb-0 text-body-secondary"><?php echo _('Your account is read-only, so another user who can make changes needs to run these tasks.'); ?></p>
+<?php } else { ?>
 <div id="domainmod-maintenance-result" data-domainmod-focus></div>
-<?php echo $layout->htmxTaskLink('update-conversions.php?' . (new DomainMOD\Csrf())->query(), _('Update Conversion Rates'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-1') . $layout->htmxSpinner('domainmod-maintenance-working-1'); ?><BR><BR>
-<?php echo $layout->htmxTaskLink('update-domain-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Domain Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-2') . $layout->htmxSpinner('domainmod-maintenance-working-2'); ?><BR><BR>
-<?php echo $layout->htmxTaskLink('update-ssl-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update SSL Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?><BR><?php
+<?php echo $layout->htmxTaskLink('update-domain-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Domain Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-1') . $layout->htmxSpinner('domainmod-maintenance-working-1'); ?><BR><BR>
+<?php
 // Hosting's fees, once the database has the hosting tables
-if (DomainMOD\Hosting::isAvailable()) { ?>
-<BR>
-<?php echo $layout->htmxTaskLink('update-hosting-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Hosting Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-4') . $layout->htmxSpinner('domainmod-maintenance-working-4'); ?><BR><?php
+if (DomainMOD\Hosting::isAvailable()) {
+    echo $layout->htmxTaskLink('update-hosting-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Hosting Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-2') . $layout->htmxSpinner('domainmod-maintenance-working-2'); ?><BR><BR><?php
 } ?>
+<?php echo $layout->htmxTaskLink('update-ssl-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update SSL Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?><BR><BR>
+<?php echo $layout->htmxTaskLink('update-conversions.php?' . (new DomainMOD\Csrf())->query(), _('Update Conversion Rates'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-4') . $layout->htmxSpinner('domainmod-maintenance-working-4'); ?><BR>
+<?php } ?>
 <?php echo $layout->contentBoxBottom(); ?>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add SSL Provider Account');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-add-ssl-account";

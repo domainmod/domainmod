@@ -156,7 +156,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Service Types'), SOFTWARE_TITLE); ?>
+<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Hosting Service Types'), SOFTWARE_TITLE); ?>
     <?php echo _('Types are shared by every provider. A fee is set per provider, type, and billing term, so if one provider sells two shared plans at different prices, add a type for each (such as Shared Starter and Shared Pro).'); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())

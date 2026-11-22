@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Domains To Queue');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "queue";
 $slug = "queue-add";

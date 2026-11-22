@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Watch List');
-$breadcrumb = _('Watch List');
+$breadcrumb = $page_title;
 $software_section = "watch";
 $slug = "watch-main";
 

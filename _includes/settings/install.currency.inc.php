@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Select Your Currency');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.currency";
 $install_step = 3;

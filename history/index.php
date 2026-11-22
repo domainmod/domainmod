@@ -45,8 +45,9 @@ $pdo = $deeb->cnxx;
 // Each type's custom field table. Hosting Services are a type once the database update adds the hosting tables
 // (DomainMOD\Hosting).
 $hosting_available = DomainMOD\Hosting::isAvailable($pdo);
-$custom_field_tables = array('domain' => 'domain_fields', 'ssl' => 'ssl_cert_fields');
+$custom_field_tables = array('domain' => 'domain_fields');
 if ($hosting_available) $custom_field_tables['hosting'] = 'hosting_service_fields';
+$custom_field_tables['ssl'] = 'ssl_cert_fields';
 
 /*
  * The Change History (see DomainMOD\ChangeHistory): every change to a domain, SSL certificate, hosting service, or
@@ -229,7 +230,7 @@ if ($export_data === 1 && $history_available) {
 }
 
 // What Changed: the recorded fields of the chosen type, by their edit forms' labels. With every type, a field that
-// reads differently for each lists each label, and an SSL certificate's, hosting service's, or watched domain's own
+// reads differently for each lists each label, and a hosting service's, SSL certificate's, or watched domain's own
 // field is marked as one
 $field_types = $state['type'] !== '' ? array($state['type']) : array_merge(array_keys($custom_field_tables), array('watch'));
 $field_labels = array();
@@ -459,8 +460,8 @@ if (!$history_available) {
     echo $form->showDropdownTop('type', _('Type'), '', '', '');
     echo $form->showDropdownOption('', _('Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), $state['type']);
     echo $form->showDropdownOption('domain', _('Domain'), $state['type']);
-    echo $form->showDropdownOption('ssl', _('SSL Certificate'), $state['type']);
     if ($hosting_available) echo $form->showDropdownOption('hosting', _('Hosting Service'), $state['type']);
+    echo $form->showDropdownOption('ssl', _('SSL Certificate'), $state['type']);
     echo $form->showDropdownOption('watch', _('Watched Domain'), $state['type']);
     echo $form->showDropdownBottom('');
 

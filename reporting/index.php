@@ -57,33 +57,36 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
 <h2 class="h5 mb-3"><?php echo _('Renewals'); ?></h2>
 <div class="row g-3"><?php
     if ($hosting_available) {
-        echo $layout->landingTile('/reporting/renewal-calendar.php', _('Renewal Calendar'), _('What renews on each day: domains, SSL certificates, and hosting services'), 'bi-calendar3', 'info');
+        echo $layout->landingTile('/reporting/renewal-calendar.php', _('Renewal Calendar'), _('What renews on each day: domains, hosting services, and SSL certificates'), 'bi-calendar3', 'info');
     } else {
         echo $layout->landingTile('/reporting/renewal-calendar.php', _('Renewal Calendar'), _('What expires on each day, domains and SSL together'), 'bi-calendar3', 'info');
     }
     echo $layout->landingTile('/reporting/domains/upcoming-renewals.php', _('Domain Renewals'), _('What renewals will cost, month by month'), 'bi-calendar-event', 'danger');
-    echo $layout->landingTile('/reporting/ssl/upcoming-renewals.php', _('SSL Renewals'), _('What SSL renewals will cost, month by month'), 'bi-calendar-event', 'danger');
     if ($hosting_available) {
         echo $layout->landingTile('/reporting/hosting/upcoming-renewals.php', _('Hosting Renewals'), _('What hosting renewals will cost, month by month'), 'bi-calendar-event', 'danger');
-    } ?>
+    }
+    echo $layout->landingTile('/reporting/ssl/upcoming-renewals.php', _('SSL Renewals'), _('What SSL renewals will cost, month by month'), 'bi-calendar-event', 'danger'); ?>
 </div>
-<h2 class="h5 mt-4 mb-3"><?php echo _('Pricing'); ?></h2>
+<h2 class="h5 mt-4 mb-3"><?php echo _('Fees'); ?></h2>
 <div class="row g-3"><?php
-    echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Pricing'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success');
-    echo $layout->landingTile('/reporting/ssl/ssl-pricing.php', _('SSL Pricing'), _('The cheapest provider for each certificate type'), 'bi-shield-lock', 'success');
     echo $layout->landingTile('/reporting/domains/registrar-fees.php?all=0', _('Domain Fees'), _("Each registrar's fees for your TLDs, and any that are missing"), 'bi-cash-coin', 'success');
-    echo $layout->landingTile('/reporting/ssl/provider-fees.php?all=0', _('SSL Fees'), _("Each SSL provider's fees for your certificate types, and any that are missing"), 'bi-cash-coin', 'success');
     if ($hosting_available) {
         echo $layout->landingTile('/reporting/hosting/provider-fees.php?all=0', _('Hosting Fees'), _("Each hosting provider's fees for your service types and billing terms, and any that are missing"), 'bi-cash-coin', 'success');
-    } ?>
+    }
+    echo $layout->landingTile('/reporting/ssl/provider-fees.php?all=0', _('SSL Fees'), _("Each SSL provider's fees for your certificate types, and any that are missing"), 'bi-cash-coin', 'success'); ?>
+</div>
+<h2 class="h5 mt-4 mb-3"><?php echo _('Price Comparisons'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/reporting/domains/tld-pricing.php', _('TLD Price Comparison'), _('The cheapest registrar for each TLD, and possible savings'), 'bi-tags', 'success');
+    echo $layout->landingTile('/reporting/ssl/ssl-pricing.php', _('SSL Price Comparison'), _('The cheapest provider for each certificate type'), 'bi-shield-lock', 'success'); ?>
 </div>
 <h2 class="h5 mt-4 mb-3"><?php echo _('Needs Attention'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/reporting/domains/at-risk.php', _('At-Risk Domains'), sprintf(_('Expiring in the next %s days without auto-renewal or privacy'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-exclamation-triangle', 'warning');
-    echo $layout->landingTile('/reporting/ssl/at-risk.php', _('At-Risk SSL Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning');
     if ($hosting_available) {
         echo $layout->landingTile('/reporting/hosting/at-risk.php', _('At-Risk Hosting Services'), sprintf(_('Overdue, waiting to be confirmed, or renewing in the next %s days without auto-renew'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-hdd-stack', 'warning');
     }
+    echo $layout->landingTile('/reporting/ssl/at-risk.php', _('At-Risk SSL Certificates'), sprintf(_('Overdue, or expiring in the next %s days'), DomainMOD\Reporting::AT_RISK_DAYS), 'bi-shield-exclamation', 'warning');
     // To show this tile to admins only (as the sidebar's Data Warehouse section is), wrap it in
     // if (isset($_SESSION['s_is_admin']) && $_SESSION['s_is_admin'] === 1) { ... }
     echo $layout->landingTile('/reporting/dw/potential-problems.php', _('Potential Problems'), _('Data Warehouse accounts and zones that need a look'), 'bi-heart-pulse', 'info');
@@ -103,24 +106,24 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
     if ($hosting_available) {
         $domain_cost_links[] = array('/reporting/domains/costs.php?group=service', _('Hosting Service'), _('Domain Cost by Hosting Service'));
     }
-    echo $layout->landingLinks(_('Domain Costs'), $domain_cost_links);
-    echo $layout->landingLinks(_('SSL Costs'), array(
-        array('/reporting/ssl/costs.php?group=category', _('Category'), _('SSL Cost by Category')),
-        array('/reporting/ssl/costs.php?group=domain', _('Domain'), _('SSL Cost by Domain')),
-        array('/reporting/ssl/costs.php?group=ip-address', _('IP Address'), _('SSL Cost by IP Address')),
-        array('/reporting/ssl/costs.php?group=month', _('Month'), _('SSL Cost by Month')),
-        array('/reporting/ssl/costs.php?group=owner', _('Owner'), _('SSL Cost by Owner')),
-        array('/reporting/ssl/costs.php?group=provider', _('Provider'), _('SSL Cost by Provider')),
-        array('/reporting/ssl/costs.php?group=type', _('Type'), _('SSL Cost by Type'))));
+    echo $layout->landingLinks(_('Domain Costs by:'), $domain_cost_links);
     if ($hosting_available) {
-        echo $layout->landingLinks(_('Hosting Costs'), array(
+        echo $layout->landingLinks(_('Hosting Costs by:'), array(
             array('/reporting/hosting/costs.php?group=category', _('Category'), _('Hosting Cost by Category')),
             array('/reporting/hosting/costs.php?group=ip-address', _('IP Address'), _('Hosting Cost by IP Address')),
             array('/reporting/hosting/costs.php?group=month', _('Month'), _('Hosting Cost by Month')),
             array('/reporting/hosting/costs.php?group=owner', _('Owner'), _('Hosting Cost by Owner')),
             array('/reporting/hosting/costs.php?group=provider', _('Provider'), _('Hosting Cost by Provider')),
             array('/reporting/hosting/costs.php?group=type', _('Service Type'), _('Hosting Cost by Service Type'))));
-    } ?>
+    }
+    echo $layout->landingLinks(_('SSL Costs by:'), array(
+        array('/reporting/ssl/costs.php?group=category', _('Category'), _('SSL Cost by Category')),
+        array('/reporting/ssl/costs.php?group=domain', _('Domain'), _('SSL Cost by Domain')),
+        array('/reporting/ssl/costs.php?group=ip-address', _('IP Address'), _('SSL Cost by IP Address')),
+        array('/reporting/ssl/costs.php?group=month', _('Month'), _('SSL Cost by Month')),
+        array('/reporting/ssl/costs.php?group=owner', _('Owner'), _('SSL Cost by Owner')),
+        array('/reporting/ssl/costs.php?group=provider', _('Provider'), _('SSL Cost by Provider')),
+        array('/reporting/ssl/costs.php?group=type', _('Type'), _('SSL Cost by Type')))); ?>
 </div>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

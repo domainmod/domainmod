@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit SSL Provider Account');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-edit-ssl-account";

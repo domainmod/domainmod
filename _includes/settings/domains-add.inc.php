@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Domain');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "domains";
 $slug = "domains-add";

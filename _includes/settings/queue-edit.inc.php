@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Fix and Import Domain');
-$breadcrumb = _('Fix and Import');
+$breadcrumb = $page_title;
 $software_section = "queue";
 $slug = "queue-edit";

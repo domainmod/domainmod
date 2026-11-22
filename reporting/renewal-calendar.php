@@ -50,8 +50,8 @@ $today = $time->userToday();
 $hosting_available = DomainMOD\Hosting::isAvailable($deeb->cnxx);
 $hosting_today = $hosting_available ? DomainMOD\Hosting::hostingDate($deeb->cnxx) : $today;
 
-// What's shown: everything, or just domains, SSL certificates, or hosting services
-$show_choices = $hosting_available ? array('all', 'domains', 'ssl', 'hosting') : array('all', 'domains', 'ssl');
+// What's shown: everything, or just domains, hosting services, or SSL certificates
+$show_choices = $hosting_available ? array('all', 'domains', 'hosting', 'ssl') : array('all', 'domains', 'ssl');
 $show = $_GET['show'] ?? 'all';
 if (!is_string($show) || !in_array($show, $show_choices, true)) $show = 'all';
 
@@ -197,13 +197,14 @@ $day_label = function ($date) use ($reporting) {
 $day_summary = function ($day) {
     $parts = array();
     if ($day['domain'] > 0) $parts[] = sprintf(ngettext('%s domain', '%s domains', $day['domain']), number_format($day['domain']));
-    if ($day['ssl'] > 0) $parts[] = sprintf(ngettext('%s SSL certificate', '%s SSL certificates', $day['ssl']), number_format($day['ssl']));
     if ($day['hosting'] > 0) $parts[] = sprintf(ngettext('%s hosting service', '%s hosting services', $day['hosting']), number_format($day['hosting']));
+    if ($day['ssl'] > 0) $parts[] = sprintf(ngettext('%s SSL certificate', '%s SSL certificates', $day['ssl']), number_format($day['ssl']));
     return implode(', ', $parts);
 };
 
-$show_names = array('all' => _('All'), 'domains' => _('Domains'), 'ssl' => _('SSL Certificates'));
+$show_names = array('all' => _('All'), 'domains' => _('Domains'));
 if ($hosting_available) $show_names['hosting'] = _('Hosting Services');
+$show_names['ssl'] = _('SSL Certificates');
 
 // The list's columns, and each one's name as its cells' data-label, which phones show before each value (the Date
 // column's cells are row headers, which phones show as each row's heading instead)
@@ -218,7 +219,7 @@ $empty_texts = array(
     'domains' => _('No live domains expire in this month.'),
     'ssl' => _('No live SSL certificates expire in this month.'));
 if ($hosting_available) {
-    $empty_texts['all'] = _('No live domains or SSL certificates expire in this month, and no hosting services have a projected renewal in it.');
+    $empty_texts['all'] = _('No live domains expire in this month, no hosting services have a projected renewal in it, and no live SSL certificates expire in it.');
     $empty_texts['hosting'] = _('No hosting services have a projected renewal in this month.');
 }
 
@@ -310,7 +311,7 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
 <?php echo $layout->calloutTop(); ?>
 <?php
 if ($hosting_available) {
-    echo _('What renews on each day of the month, with each day\'s renewal cost in your currency. Only live domains, SSL certificates, and hosting services are shown. Expired and sold domains, expired SSL certificates, and cancelled hosting services are left out. Hosting services\' dates are projected renewals, so a monthly service appears on each day it renews.');
+    echo _('What renews on each day of the month, with each day\'s renewal cost in your currency. Only live domains, hosting services, and SSL certificates are shown. Expired and sold domains, cancelled hosting services, and expired SSL certificates are left out. Hosting services\' dates are projected renewals, so a monthly service appears on each day it renews.');
 } else {
     echo _('What expires on each day of the month, with each day\'s renewal cost in your currency. Only live domains and SSL certificates are shown. Expired and sold ones are left out.');
 } ?>
@@ -348,11 +349,11 @@ if ($hosting_available) {
         if ($show === 'all' || $show === 'domains') {
             echo $dashboard->displayPanel(_('Domains'), $totals['domain']['count'], 'danger', 'bi-calendar-event', $tile_url, _('Renewal Calendar'), $money($totals['domain']['cost']));
         }
-        if ($show === 'all' || $show === 'ssl') {
-            echo $dashboard->displayPanel(_('SSL Certificates'), $totals['ssl']['count'], 'danger', 'bi-shield-lock', $tile_url, _('Renewal Calendar'), $money($totals['ssl']['cost']));
-        }
         if ($hosting_available && ($show === 'all' || $show === 'hosting')) {
             echo $dashboard->displayPanel(_('Hosting Services'), $totals['hosting']['count'], 'danger', 'bi-hdd-stack', $tile_url, _('Renewal Calendar'), $money($totals['hosting']['cost']));
+        }
+        if ($show === 'all' || $show === 'ssl') {
+            echo $dashboard->displayPanel(_('SSL Certificates'), $totals['ssl']['count'], 'danger', 'bi-shield-lock', $tile_url, _('Renewal Calendar'), $money($totals['ssl']['cost']));
         }
         echo $dashboard->displayPanel(_('All Renewals'), $total_count, 'secondary', 'bi-calendar3', $tile_url, _('Renewal Calendar'), $money($total_cost)); ?>
     </div><?php

@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Backup & Restore');
-$breadcrumb = _('Backup');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-backup-main";

@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('DW Potential Problems Report');
-$breadcrumb = _('DW Potential Problems');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-dw-potential-problems";
 $report_section = 'dw';

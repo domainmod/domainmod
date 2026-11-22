@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Task Scheduler');
-$breadcrumb = _('Scheduler');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-scheduler-main";

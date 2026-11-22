@@ -20,7 +20,7 @@
  */
 ?>
     <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/registrars.php"><?php echo _('Registrars'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/registrar-fees.php?rid=<?php echo $rid; ?>"><?php echo _('Fees'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/registrars.php"><?php echo _('Domain Registrars'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/registrar-fees.php?rid=<?php echo (int) $rid; ?>"><?php echo sprintf(_('Fees for %s'), $layout->ltr($unsanitize->text($registrar_name))); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

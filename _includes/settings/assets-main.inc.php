@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Asset Management');
-$breadcrumb = _('Assets');
+$page_title = _('Assets');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-main";

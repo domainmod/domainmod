@@ -163,7 +163,7 @@ class EmailHostingSectionTest extends TestCase
     {
         if (!defined('SOFTWARE_TITLE')) define('SOFTWARE_TITLE', 'DomainMOD');
         $email = Instance::withoutConstructor(Email::class, array('number_of_days' => 30, 'hosting_available' => true));
-        $this->assertSame('Below is a list of all the domains, SSL certificates, and hosting services in DomainMOD that are expiring or renewing in the next 30 days.', $email->introLine());
+        $this->assertSame('Below is a list of all the domains, hosting services, and SSL certificates in DomainMOD that are expiring or renewing in the next 30 days.', $email->introLine());
 
         $email->hosting_available = false;
         $this->assertStringNotContainsString('hosting', $email->introLine());

@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Custom Hosting Field');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-add-custom-hosting-field";

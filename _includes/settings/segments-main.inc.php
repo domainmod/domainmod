@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Segment Filters');
-$breadcrumb = _('Segments');
+$page_title = _('Segments');
+$breadcrumb = $page_title;
 $software_section = "segments";
 $slug = "segments-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

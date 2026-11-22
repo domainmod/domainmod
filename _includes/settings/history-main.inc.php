@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Change History');
-$breadcrumb = _('Change History');
+$breadcrumb = $page_title;
 $software_section = "history";
 $slug = "history-main";
 

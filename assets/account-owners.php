@@ -77,13 +77,13 @@ if ($export_data === 1) {
         _('Owner'),
         _('Registrar Accounts'),
         _('Domains'),
-        _('SSL Provider Accounts'),
-        _('SSL Certs'),
         _('Hosting Accounts'),
         _('Hosting Services'),
+        _('SSL Provider Accounts'),
+        _('SSL Certs'),
         _('Default Domain Owner') . '?',
-        _('Default SSL Owner') . '?',
         _('Default Hosting Owner') . '?',
+        _('Default SSL Owner') . '?',
         _('Notes'),
         _('Creation Type'),
         _('Created By'),
@@ -166,13 +166,13 @@ if ($export_data === 1) {
                 $row->name,
                 $total_registrar_accounts,
                 $total_domains,
-                $total_ssl_provider_accounts,
-                $total_certs,
                 $total_hosting_provider_accounts,
                 $total_hosting_services,
+                $total_ssl_provider_accounts,
+                $total_certs,
                 $is_default_domains,
-                $is_default_ssl,
                 $is_default_hosting,
+                $is_default_ssl,
                 $row->notes,
                 $creation_type,
                 $created_by,
@@ -231,13 +231,13 @@ if ($result) {
             <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
             <th><?php echo _('Owners'); ?></th>
             <th><?php echo _('Registrar Accounts'); ?></th>
-            <th><?php echo _('Domains'); ?></th>
-            <th><?php echo _('SSL Accounts'); ?></th>
-            <th><?php echo _('SSL Certs'); ?></th><?php
+            <th><?php echo _('Domains'); ?></th><?php
             if ($hosting_available) { ?>
             <th><?php echo _('Hosting Accounts'); ?></th>
             <th><?php echo _('Hosting Services'); ?></th><?php
             } ?>
+            <th><?php echo _('SSL Accounts'); ?></th>
+            <th><?php echo _('SSL Certs'); ?></th>
         </tr>
         </thead>
 
@@ -276,7 +276,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/account-owner.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_owner_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_owner_ssl'] == $row->id) echo $default_ssl_marker; ?><?php if ($hosting_available && $default_owner_hosting === (int) $row->id) echo $default_hosting_marker; ?>
+                    <a href="edit/account-owner.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_owner_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($hosting_available && $default_owner_hosting === (int) $row->id) echo $default_hosting_marker; ?><?php if ($_SESSION['s_default_owner_ssl'] == $row->id) echo $default_ssl_marker; ?>
                 </td>
                 <td><?php
 
@@ -296,32 +296,6 @@ if ($result) {
                     if ($total_domains >= 1) { ?>
 
                         <a href="../domains/index.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
-
-                    } else {
-
-                        echo "-";
-
-                    } ?>
-
-                </td>
-                <td><?php
-
-                    if ($total_ssl_accounts >= 1) { ?>
-
-                        <a href="ssl-accounts.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_ssl_accounts); ?></a><?php
-
-                    } else {
-
-                        echo "-";
-
-                    } ?>
-
-                </td>
-                <td><?php
-
-                    if ($total_certs >= 1) { ?>
-
-                        <a href="../ssl/index.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
                     } else {
 
@@ -361,6 +335,32 @@ if ($result) {
                     </td><?php
 
                 } ?>
+                <td><?php
+
+                    if ($total_ssl_accounts >= 1) { ?>
+
+                        <a href="ssl-accounts.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_ssl_accounts); ?></a><?php
+
+                    } else {
+
+                        echo "-";
+
+                    } ?>
+
+                </td>
+                <td><?php
+
+                    if ($total_certs >= 1) { ?>
+
+                        <a href="../ssl/index.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+
+                    } else {
+
+                        echo "-";
+
+                    } ?>
+
+                </td>
                 </tr><?php
 
             }

@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Rebuild Data Warehouse');
-$breadcrumb = _('Rebuild');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-rebuild";

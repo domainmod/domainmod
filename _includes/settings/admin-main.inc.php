@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('System Administration');
-$breadcrumb = _('Administration');
+$page_title = _('Administration');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-main";

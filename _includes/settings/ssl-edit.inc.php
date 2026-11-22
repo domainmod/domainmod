@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit SSL Certificate');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "ssl";
 $slug = "ssl-edit";

@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Fees & Rates');
+$page_title = _('Maintenance');
 $breadcrumb = $page_title;
 $software_section = "maintenance";
 $slug = "maintenance-main";

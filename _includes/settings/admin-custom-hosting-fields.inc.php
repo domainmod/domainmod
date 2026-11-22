@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Custom Hosting Fields');
-$breadcrumb = _('Custom Hosting Fields');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-custom-hosting-fields";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

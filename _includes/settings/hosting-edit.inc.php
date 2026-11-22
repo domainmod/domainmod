@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit Hosting Service');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "hosting";
 $slug = "hosting-edit";

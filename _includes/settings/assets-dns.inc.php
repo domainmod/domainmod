@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('DNS Profiles');
-$breadcrumb = _('DNS');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-dns";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

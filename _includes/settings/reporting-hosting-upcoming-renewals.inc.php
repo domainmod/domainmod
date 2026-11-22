@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Hosting Renewals Report');
-$breadcrumb = _('Hosting Renewals');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-hosting-upcoming-renewals";
 $report_section = 'hosting';

@@ -180,15 +180,15 @@ class Email
         $message_html = '';
         $message_html .= $this->messageTopHtml($subject);
         $message_html .= $this->showDomainsHtml($result_domains, $timestamp_basic);
-        $message_html .= $this->showSslHtml($result_ssl, $timestamp_basic);
         $message_html .= $this->showHostingHtml($result_hosting);
+        $message_html .= $this->showSslHtml($result_ssl, $timestamp_basic);
         $message_html .= $this->messageBottomHtml();
 
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText();
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
-        $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
         $message_text .= $this->showHostingText($result_hosting);
+        $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
         $message_text .= $this->messageBottomText();
 
         foreach ($send_to as $row_recipients) {
@@ -429,7 +429,7 @@ class Email
     public function introLine()
     {
         if ($this->hosting_available) {
-            return sprintf(ngettext('Below is a list of all the domains, SSL certificates, and hosting services in %1$s that are expiring or renewing in the next %2$s day.', 'Below is a list of all the domains, SSL certificates, and hosting services in %1$s that are expiring or renewing in the next %2$s days.', (int) $this->number_of_days), SOFTWARE_TITLE, $this->number_of_days);
+            return sprintf(ngettext('Below is a list of all the domains, hosting services, and SSL certificates in %1$s that are expiring or renewing in the next %2$s day.', 'Below is a list of all the domains, hosting services, and SSL certificates in %1$s that are expiring or renewing in the next %2$s days.', (int) $this->number_of_days), SOFTWARE_TITLE, $this->number_of_days);
         }
         return sprintf(_('Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days.'), SOFTWARE_TITLE, $this->number_of_days);
     }

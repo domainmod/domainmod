@@ -35,11 +35,11 @@ class ReportPageLengthTest extends TestCase
         return array(
             'At-Risk Domains' => array('reporting-domain-at-risk', 's_number_of_domains', 1),
             'Domain Renewals' => array('reporting-domain-upcoming-renewals', 's_number_of_domains', 1),
-            'TLD Pricing' => array('reporting-domain-tld-pricing', 's_number_of_domains', 2),
+            'TLD Price Comparison' => array('reporting-domain-tld-pricing', 's_number_of_domains', 2),
             'DW Potential Problems' => array('reporting-dw-potential-problems', 's_number_of_domains', 3),
             'At-Risk SSL Certificates' => array('reporting-ssl-at-risk', 's_number_of_ssl_certs', 1),
             'SSL Renewals' => array('reporting-ssl-upcoming-renewals', 's_number_of_ssl_certs', 1),
-            'SSL Pricing' => array('reporting-ssl-pricing', 's_number_of_ssl_certs', 1),
+            'SSL Price Comparison' => array('reporting-ssl-pricing', 's_number_of_ssl_certs', 1),
             // SSL Costs grouped by Domain (see datatableOptions())
             'SSL Cost by Domain' => array('reporting-ssl-costs', 's_number_of_domains', 1),
         );

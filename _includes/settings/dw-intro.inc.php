@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Data Warehouse');
-$breadcrumb = _('Intro');
+$page_title = _('Data Warehouse Introduction');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-intro";

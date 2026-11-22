@@ -478,6 +478,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
 }
 ?>
+<?php
+// The hosting provider's name (stored HTML-escaped), for the breadcrumb and the summary below
+$provider_name = $assets->getHost($hosting_id);
+?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
@@ -489,7 +493,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 <?php
 echo $form->showFormTop('');
 echo $layout->factList(array(
-    array('label' => _('Hosting Provider'), 'value' => $unsanitize->text($assets->getHost($hosting_id))),
+    array('label' => _('Hosting Provider'), 'value' => $unsanitize->text($provider_name)),
     array('label' => _('Service Type'), 'value' => $unsanitize->text($assets->getHostingType($type_id))),
     array('label' => _('Billing Term'), 'value' => DomainMOD\Hosting::termLabel($billing_term))));
 

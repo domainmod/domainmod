@@ -245,8 +245,89 @@ foreach ($result as $row) {
     echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_system_default_owner_domains']);
 
 }
-echo $form->showDropdownBottom('<BR>'); ?>
+echo $form->showDropdownBottom('<BR>');
 
+if ($hosting_available) { ?>
+
+<h2 class="h3"><?php echo _('Hosting Defaults'); ?></h2><?php
+
+    echo $form->showInputHidden('hosting_offered', '1');
+
+    echo $form->showDropdownTop('new_default_hosting_provider_account', _('Default Hosting Account'),
+        _('The account new hosting services start with. Without one, they start with the first account at the default hosting provider.'), '', '');
+    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_hosting_provider_account'] ?? '');
+    $result = $pdo->query("
+        SELECT hpa.id, hpa.username, h.name AS h_name, o.name AS o_name
+        FROM hosting AS h, hosting_provider_accounts AS hpa, owners AS o
+        WHERE h.id = hpa.hosting_id
+          AND hpa.owner_id = o.id
+        ORDER BY h.name, o.name, hpa.username")->fetchAll();
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->h_name . ' :: ' . $row->o_name . ' :: ' . $row->username, $_SESSION['s_system_default_hosting_provider_account'] ?? '');
+
+    }
+    echo $form->showDropdownBottom('');
+
+    echo $form->showDropdownTop('new_default_hosting_type', _('Default Service Type'), '', '', '');
+    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_hosting_type'] ?? '');
+    $result = $pdo->query("
+        SELECT id, type
+        FROM hosting_types
+        ORDER BY type")->fetchAll();
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->type, $_SESSION['s_system_default_hosting_type'] ?? '');
+
+    }
+    echo $form->showDropdownBottom('');
+
+    echo $form->showDropdownTop('new_default_ip_address_hosting', _('Default IP Address'), '', '', '');
+    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_ip_address_hosting'] ?? '');
+    $result = $pdo->query("
+        SELECT id, ip, `name`
+        FROM ip_addresses
+        ORDER BY name")->fetchAll();
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $_SESSION['s_system_default_ip_address_hosting'] ?? '');
+
+    }
+    echo $form->showDropdownBottom('');
+
+    echo $form->showDropdownTop('new_default_category_hosting', _('Default Category'), '', '', '');
+    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_category_hosting'] ?? '');
+    $result = $pdo->query("
+        SELECT id, `name`
+        FROM categories
+        ORDER BY name")->fetchAll();
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_system_default_category_hosting'] ?? '');
+
+    }
+    echo $form->showDropdownBottom('');
+
+    echo $form->showDropdownTop('new_default_owner_hosting', _('Default Account Owner'), '', '', '');
+    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_owner_hosting'] ?? '');
+    $result = $pdo->query("
+        SELECT id, `name`
+        FROM owners
+        ORDER BY name")->fetchAll();
+
+    foreach ($result as $row) {
+
+        echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_system_default_owner_hosting'] ?? '');
+
+    }
+    echo $form->showDropdownBottom('<BR>');
+
+}
+?>
 
 <h2 class="h3"><?php echo _('SSL Defaults'); ?></h2><?php
 
@@ -330,86 +411,6 @@ foreach ($result as $row) {
 }
 echo $form->showDropdownBottom('');
 
-if ($hosting_available) { ?>
-
-<BR><h2 class="h3"><?php echo _('Hosting Defaults'); ?></h2><?php
-
-    echo $form->showInputHidden('hosting_offered', '1');
-
-    echo $form->showDropdownTop('new_default_hosting_provider_account', _('Default Hosting Account'),
-        _('The account new hosting services start with. Without one, they start with the first account at the default hosting provider.'), '', '');
-    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_hosting_provider_account'] ?? '');
-    $result = $pdo->query("
-        SELECT hpa.id, hpa.username, h.name AS h_name, o.name AS o_name
-        FROM hosting AS h, hosting_provider_accounts AS hpa, owners AS o
-        WHERE h.id = hpa.hosting_id
-          AND hpa.owner_id = o.id
-        ORDER BY h.name, o.name, hpa.username")->fetchAll();
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->h_name . ' :: ' . $row->o_name . ' :: ' . $row->username, $_SESSION['s_system_default_hosting_provider_account'] ?? '');
-
-    }
-    echo $form->showDropdownBottom('');
-
-    echo $form->showDropdownTop('new_default_hosting_type', _('Default Service Type'), '', '', '');
-    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_hosting_type'] ?? '');
-    $result = $pdo->query("
-        SELECT id, type
-        FROM hosting_types
-        ORDER BY type")->fetchAll();
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->type, $_SESSION['s_system_default_hosting_type'] ?? '');
-
-    }
-    echo $form->showDropdownBottom('');
-
-    echo $form->showDropdownTop('new_default_ip_address_hosting', _('Default IP Address'), '', '', '');
-    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_ip_address_hosting'] ?? '');
-    $result = $pdo->query("
-        SELECT id, ip, `name`
-        FROM ip_addresses
-        ORDER BY name")->fetchAll();
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $_SESSION['s_system_default_ip_address_hosting'] ?? '');
-
-    }
-    echo $form->showDropdownBottom('');
-
-    echo $form->showDropdownTop('new_default_category_hosting', _('Default Category'), '', '', '');
-    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_category_hosting'] ?? '');
-    $result = $pdo->query("
-        SELECT id, `name`
-        FROM categories
-        ORDER BY name")->fetchAll();
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_system_default_category_hosting'] ?? '');
-
-    }
-    echo $form->showDropdownBottom('');
-
-    echo $form->showDropdownTop('new_default_owner_hosting', _('Default Account Owner'), '', '', '');
-    echo $form->showDropdownOption('0', _('None'), $_SESSION['s_system_default_owner_hosting'] ?? '');
-    $result = $pdo->query("
-        SELECT id, `name`
-        FROM owners
-        ORDER BY name")->fetchAll();
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $_SESSION['s_system_default_owner_hosting'] ?? '');
-
-    }
-    echo $form->showDropdownBottom('');
-
-}
 
 echo $form->showSubmitButton(_('Update System Defaults'), '<BR>', '');
 

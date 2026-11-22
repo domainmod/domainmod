@@ -34,7 +34,7 @@ if (($_SESSION['s_dw_view_all'] ?? '') == "1") {
     $page_title = sprintf(_('Listing Server Accounts on %s (%s)'), $_SESSION['s_dw_server_name'] ?? '', $_SESSION['s_dw_server_host'] ?? '');
 
 }
-$breadcrumb = _('Accounts');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-list-accounts";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

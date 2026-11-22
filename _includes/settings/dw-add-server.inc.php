@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add DW Server');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-add-server";

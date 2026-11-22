@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Domains');
-$breadcrumb = _('Domains');
+$breadcrumb = $page_title;
 $software_section = "domains";
 $slug = "domains-main";
 

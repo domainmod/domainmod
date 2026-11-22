@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('SSL Certificate Types');
-$breadcrumb = _('SSL Types');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-ssl-types";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

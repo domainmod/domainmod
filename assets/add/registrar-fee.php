@@ -304,6 +304,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
+<?php
+// The registrar's name (stored HTML-escaped), for the breadcrumb and the summary below
+$registrar_name = $assets->getRegistrar($rid);
+?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
@@ -315,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 echo $layout->factList(array(
-    array('label' => _('Domain Registrar'), 'value' => $unsanitize->text($assets->getRegistrar($rid)))));
+    array('label' => _('Domain Registrar'), 'value' => $unsanitize->text($registrar_name))));
 
 echo $form->showInputText('new_tld', _('TLD'), '', $unsanitize->text($new_tld), '50', '', '1', '', '');
 // 11 characters fit the largest fee the fee columns hold (DECIMAL(10,2)), 99999999.99

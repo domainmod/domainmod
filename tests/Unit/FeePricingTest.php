@@ -25,8 +25,9 @@ use DomainMOD\Reporting;
 use PHPUnit\Framework\TestCase;
 
 /*
- * The fee comparisons behind TLD Pricing and SSL Pricing: Reporting::sslOverview() and sslRow() rank each certificate
- * type's providers, and tldRow() still ranks each TLD's registrars the same way now that both share rankFees().
+ * The fee comparisons behind TLD Price Comparison and SSL Price Comparison: Reporting::sslOverview() and sslRow() rank
+ * each certificate type's providers, and tldRow() still ranks each TLD's registrars the same way now that both share
+ * rankFees().
  */
 class FeePricingTest extends TestCase
 {

@@ -20,8 +20,11 @@
  */
 ?>
 <?php
-$page_title = _('SSL Fees');
-$breadcrumb = _('Fees');
+// The title names the SSL provider, so its page loads this file after fetching the name ($ssl_provider_name),
+// which is stored HTML-escaped.
+// TRANSLATORS: The heading of the page that lists one registrar's, SSL provider's, or hosting provider's fees. %s is its name.
+$page_title = sprintf(_('Fees for %s'), $layout->ltr($unsanitize->text($ssl_provider_name)));
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-ssl-provider-fees";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

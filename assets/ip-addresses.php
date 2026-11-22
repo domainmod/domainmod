@@ -79,11 +79,11 @@ if ($export_data === 1) {
         _('IP Address'),
         _('rDNS'),
         _('Domains'),
-        _('SSL Certs'),
         _('Hosting Services'),
+        _('SSL Certs'),
         _('Default Domain IP Address') . '?',
-        _('Default SSL IP Address') . '?',
         _('Default Hosting IP Address') . '?',
+        _('Default SSL IP Address') . '?',
         _('Notes'),
         _('Creation Type'),
         _('Created By'),
@@ -157,11 +157,11 @@ if ($export_data === 1) {
                 $row->ip,
                 $row->rdns,
                 $total_domains,
-                $total_certs,
                 $total_hosting_services,
+                $total_certs,
                 $is_default_domains,
-                $is_default_ssl,
                 $is_default_hosting,
+                $is_default_ssl,
                 $row->notes,
                 $creation_type,
                 $created_by,
@@ -219,11 +219,11 @@ if ($result) {
             <th><?php echo _('Name'); ?></th>
             <th><?php echo _('IP Address'); ?></th>
             <th><?php echo _('rDNS'); ?></th>
-            <th><?php echo _('Domains'); ?></th>
-            <th><?php echo _('SSL Certs'); ?></th><?php
+            <th><?php echo _('Domains'); ?></th><?php
             if ($hosting_available) { ?>
             <th><?php echo _('Hosting Services'); ?></th><?php
             } ?>
+            <th><?php echo _('SSL Certs'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -251,7 +251,7 @@ if ($result) {
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo $default_ssl_marker; ?><?php if ($hosting_available && $default_hosting === (int) $row->id) echo $default_hosting_marker; ?>
+                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($hosting_available && $default_hosting === (int) $row->id) echo $default_hosting_marker; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo $default_ssl_marker; ?>
                 </td>
                 <td>
                     <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
@@ -264,19 +264,6 @@ if ($result) {
                     if ($total_domains >= 1) { ?>
 
                         <a href="../domains/index.php?ipid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
-
-                    } else {
-
-                        echo "-";
-
-                    } ?>
-
-                </td>
-                <td><?php
-
-                    if ($total_certs >= 1) { ?>
-
-                        <a href="../ssl/index.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
                     } else {
 
@@ -303,6 +290,19 @@ if ($result) {
                     </td><?php
 
                 } ?>
+                <td><?php
+
+                    if ($total_certs >= 1) { ?>
+
+                        <a href="../ssl/index.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+
+                    } else {
+
+                        echo "-";
+
+                    } ?>
+
+                </td>
                 </tr><?php
 
             }

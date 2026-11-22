@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('TLD Pricing Report');
-$breadcrumb = _('TLD Pricing');
+$page_title = _('TLD Price Comparison Report');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-domain-tld-pricing";
 $report_section = 'domains';

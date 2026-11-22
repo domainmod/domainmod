@@ -280,6 +280,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 
 }
 ?>
+<?php
+// The SSL provider's name (stored HTML-escaped), for the breadcrumb and the summary below
+$ssl_provider_name = $assets->getSslProvider($sslpid);
+?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
 <head>
@@ -291,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$has_errors) {
 <?php
 echo $form->showFormTop('');
 echo $layout->factList(array(
-    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($assets->getSslProvider($sslpid))),
+    array('label' => _('SSL Provider'), 'value' => $unsanitize->text($ssl_provider_name)),
     array('label' => _('SSL Type'), 'value' => $unsanitize->text($assets->getSslType($new_type_id)))));
 
 // 11 characters fit the largest fee the fee columns hold (DECIMAL(10,2)), 99999999.99

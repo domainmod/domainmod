@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('System Email Address');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.email.system";
 $install_step = 6;

@@ -111,6 +111,10 @@ $counts = $pdo->query("
           AND sa.ssl_provider_id = sslp.id
         GROUP BY sa.username, o.name, sslp.name) AS a" . $cert_used('account_id', 'a.sslpaid') . "
     UNION ALL
+    SELECT 'fees', COUNT(*) FROM fees AS a
+    UNION ALL
+    SELECT 'ssl_fees', COUNT(*) FROM ssl_fees AS a
+    UNION ALL
     SELECT 'ssl_cert_types', COUNT(*) FROM ssl_cert_types AS a" . $cert_used('type_id', 'a.id') . "
     UNION ALL
     SELECT 'owners', COUNT(*) FROM owners AS a" . $either_used('owner_id', 'a.id') . "
@@ -143,14 +147,8 @@ $total = function ($asset) use ($counts) {
     echo $layout->landingTile('/assets/registrar-accounts.php', _('Domain Registrar Accounts'), _('Your accounts at each registrar'), 'bi-person-badge', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('registrar_accounts')), number_format($total('registrar_accounts'))));
     echo $layout->landingTile('/assets/dns.php', _('DNS Profiles'), _('The DNS servers your domains use'), 'bi-hdd-network', 'secondary', sprintf(ngettext('%s DNS profile', '%s DNS profiles', $total('dns')), number_format($total('dns'))));
     // Before the database update, Hosting Providers stays with the domain assets (domains still use it)
-    if (!$hosting_available) echo $layout->landingTile('/assets/hosting.php', _('Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s hosting provider', '%s hosting providers', $total('hosting')), number_format($total('hosting')))); ?>
-</div>
-
-<h2 class="h5 mt-4"><?php echo _('SSL Certificates'); ?></h2>
-<div class="row g-3"><?php
-    echo $layout->landingTile('/assets/ssl-providers.php', _('SSL Providers'), _('The providers your SSL certificates are from'), 'bi-shield-lock', 'secondary', sprintf(ngettext('%s SSL provider', '%s SSL providers', $total('ssl_providers')), number_format($total('ssl_providers'))));
-    echo $layout->landingTile('/assets/ssl-accounts.php', _('SSL Provider Accounts'), _('Your accounts at each SSL provider'), 'bi-person-lock', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('ssl_accounts')), number_format($total('ssl_accounts'))));
-    echo $layout->landingTile('/assets/ssl-types.php', _('SSL Certificate Types'), _('The kinds of SSL certificate you track'), 'bi-patch-check', 'secondary', sprintf(ngettext('%s type', '%s types', $total('ssl_cert_types')), number_format($total('ssl_cert_types')))); ?>
+    if (!$hosting_available) echo $layout->landingTile('/assets/hosting.php', _('Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s hosting provider', '%s hosting providers', $total('hosting')), number_format($total('hosting'))));
+    echo $layout->landingTile('/reporting/domains/registrar-fees.php', _('Domain Fees'), _('What each registrar charges for each TLD'), 'bi-cash-coin', 'secondary', sprintf(ngettext('%s fee', '%s fees', $total('fees')), number_format($total('fees')))); ?>
 </div>
 
 <?php
@@ -160,17 +158,25 @@ if ($hosting_available) { ?>
     <div class="row g-3"><?php
         echo $layout->landingTile('/assets/hosting.php', _('Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s hosting provider', '%s hosting providers', $total('hosting')), number_format($total('hosting'))));
         echo $layout->landingTile('/assets/hosting-accounts.php', _('Hosting Accounts'), _('Your accounts at each hosting provider'), 'bi-person-workspace', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('hosting_provider_accounts')), number_format($total('hosting_provider_accounts'))));
-        echo $layout->landingTile('/assets/hosting-types.php', _('Service Types'), _('The kinds of hosting service your providers sell'), 'bi-stack', 'secondary', sprintf(ngettext('%s type', '%s types', $total('hosting_types')), number_format($total('hosting_types'))));
+        echo $layout->landingTile('/assets/hosting-types.php', _('Hosting Service Types'), _('The kinds of hosting service your providers sell'), 'bi-stack', 'secondary', sprintf(ngettext('%s type', '%s types', $total('hosting_types')), number_format($total('hosting_types'))));
         echo $layout->landingTile('/reporting/hosting/provider-fees.php', _('Hosting Fees'), _('What each service type costs for each billing term'), 'bi-cash-coin', 'secondary', sprintf(ngettext('%s fee', '%s fees', $total('hosting_fees')), number_format($total('hosting_fees')))); ?>
     </div><?php
 
 } ?>
 
+<h2 class="h5 mt-4"><?php echo _('SSL Certificates'); ?></h2>
+<div class="row g-3"><?php
+    echo $layout->landingTile('/assets/ssl-providers.php', _('SSL Providers'), _('The providers your SSL certificates are from'), 'bi-shield-lock', 'secondary', sprintf(ngettext('%s SSL provider', '%s SSL providers', $total('ssl_providers')), number_format($total('ssl_providers'))));
+    echo $layout->landingTile('/assets/ssl-accounts.php', _('SSL Provider Accounts'), _('Your accounts at each SSL provider'), 'bi-person-lock', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('ssl_accounts')), number_format($total('ssl_accounts'))));
+    echo $layout->landingTile('/assets/ssl-types.php', _('SSL Certificate Types'), _('The kinds of SSL certificate you track'), 'bi-patch-check', 'secondary', sprintf(ngettext('%s type', '%s types', $total('ssl_cert_types')), number_format($total('ssl_cert_types'))));
+    echo $layout->landingTile('/reporting/ssl/provider-fees.php', _('SSL Fees'), _('What each SSL provider charges for each certificate type'), 'bi-cash-coin', 'secondary', sprintf(ngettext('%s fee', '%s fees', $total('ssl_fees')), number_format($total('ssl_fees')))); ?>
+</div>
+
 <h2 class="h5 mt-4"><?php echo _('Shared'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/assets/account-owners.php', _('Account Owners'), _('The people and companies that own your accounts'), 'bi-people', 'secondary', sprintf(ngettext('%s owner', '%s owners', $total('owners')), number_format($total('owners'))));
-    echo $layout->landingTile('/assets/categories.php', _('Categories'), ($hosting_available ? _('Groups for sorting your domains, SSL certificates, and hosting services') : _('Groups for sorting your domains and SSL certificates')), 'bi-folder', 'secondary', sprintf(ngettext('%s category', '%s categories', $total('categories')), number_format($total('categories'))));
-    echo $layout->landingTile('/assets/ip-addresses.php', _('IP Addresses'), ($hosting_available ? _('The IP addresses your domains, SSL certificates, and hosting services use') : _('The IP addresses your domains and SSL certificates point to')), 'bi-globe', 'secondary', sprintf(ngettext('%s IP address', '%s IP addresses', $total('ip_addresses')), number_format($total('ip_addresses')))); ?>
+    echo $layout->landingTile('/assets/categories.php', _('Categories'), ($hosting_available ? _('Groups for sorting your domains, hosting services, and SSL certificates') : _('Groups for sorting your domains and SSL certificates')), 'bi-folder', 'secondary', sprintf(ngettext('%s category', '%s categories', $total('categories')), number_format($total('categories'))));
+    echo $layout->landingTile('/assets/ip-addresses.php', _('IP Addresses'), ($hosting_available ? _('The IP addresses your domains, hosting services, and SSL certificates use') : _('The IP addresses your domains and SSL certificates point to')), 'bi-globe', 'secondary', sprintf(ngettext('%s IP address', '%s IP addresses', $total('ip_addresses')), number_format($total('ip_addresses')))); ?>
 </div>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

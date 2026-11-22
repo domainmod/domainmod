@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit DW Server');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "dw";
 $slug = "dw-edit-server";

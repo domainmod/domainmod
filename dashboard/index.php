@@ -108,13 +108,13 @@ echo $schedule->healthAlert('dashboard', $show_getting_started);
 
 $totals = array();
 $totals[] = array('/domains/index.php?is_active=LIVE', 'bi-globe2', number_format($total_live_domains), _('Domains'));
-$totals[] = array('/ssl/index.php?is_active=LIVE', 'bi-shield-lock', number_format($total_live_ssl), _('SSL Certificates'));
-if ($total_sold_domains) {
-    $totals[] = array('/domains/index.php?is_active=10', 'bi-cart', number_format($total_sold_domains), _('Sold Domains'));
-}
 // Shown once there are hosting services in any status, so an install that doesn't track hosting isn't shown a zero
 if ($total_hosting) {
     $totals[] = array('/hosting/index.php?is_active=1', 'bi-hdd-rack', number_format($total_active_hosting), _('Active Hosting Services'));
+}
+$totals[] = array('/ssl/index.php?is_active=LIVE', 'bi-shield-lock', number_format($total_live_ssl), _('SSL Certificates'));
+if ($total_sold_domains) {
+    $totals[] = array('/domains/index.php?is_active=10', 'bi-cart', number_format($total_sold_domains), _('Sold Domains'));
 }
 if (!$show_getting_started) { ?>
 <div class="card domainmod-dashboard-totals d-inline-block mw-100 mb-0">
@@ -218,6 +218,15 @@ if ($total_count_domains || $total_count_ssl || $total_count_hosting || $confirm
     }
 
     //////////////////////////////////////////////////
+    // Expiring Hosting Services
+    //////////////////////////////////////////////////
+    if ($total_count_hosting) {
+
+        echo $dashboard->displayExpPanel(_('Hosting Services'), $total_count_hosting, '/hosting/index.php?daterange=' . urlencode($hosting_daterange), $section);
+
+    }
+
+    //////////////////////////////////////////////////
     // Expiring SSL Certificates
     //////////////////////////////////////////////////
     $stmt = $pdo->prepare("
@@ -233,15 +242,6 @@ if ($total_count_domains || $total_count_ssl || $total_count_hosting || $confirm
     if ($total_count) {
 
         echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange), $section);
-
-    }
-
-    //////////////////////////////////////////////////
-    // Expiring Hosting Services
-    //////////////////////////////////////////////////
-    if ($total_count_hosting) {
-
-        echo $dashboard->displayExpPanel(_('Hosting Services'), $total_count_hosting, '/hosting/index.php?daterange=' . urlencode($hosting_daterange), $section);
 
     }
 
@@ -351,70 +351,6 @@ if ($total_count) { ?>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// SSL Certificate Panels
-////////////////////////////////////////////////////////////////////////////////////////////////////
-$total_count = $pdo->query("
-    SELECT count(*)
-    FROM ssl_certs
-    WHERE active IN ('3', '5', '4')")->fetchColumn();
-
-if ($total_count) { ?>
-
-    <?php $section = _('Pending SSL Certificates'); ?>
-    <div class="row">
-        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
-    </div>
-
-    <div class="row">
-
-        <?php
-        //////////////////////////////////////////////////
-        // Pending Renewals (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '3'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Renewals'), $total_count, 'warning', 'bi-arrow-repeat', '/ssl/index.php?is_active=3', $section);
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Registrations (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '5'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Registrations'), $total_count, 'warning', 'bi-plus-circle', '/ssl/index.php?is_active=5', $section);
-
-        }
-
-        //////////////////////////////////////////////////
-        // Pending Other (SSL Certificates)
-        //////////////////////////////////////////////////
-        $total_count = $pdo->query("
-            SELECT count(*)
-            FROM ssl_certs
-            WHERE active = '4'")->fetchColumn();
-
-        if ($total_count) {
-
-            echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/ssl/index.php?is_active=4', $section);
-
-        } ?>
-
-    </div><?php
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 // Hosting Service Panels (once the database update has added the hosting tables)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 $total_count = $hosting_available ? $pdo->query("
@@ -471,6 +407,70 @@ if ($total_count) { ?>
         if ($total_count) {
 
             echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/hosting/index.php?is_active=4', $section);
+
+        } ?>
+
+    </div><?php
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SSL Certificate Panels
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count = $pdo->query("
+    SELECT count(*)
+    FROM ssl_certs
+    WHERE active IN ('3', '5', '4')")->fetchColumn();
+
+if ($total_count) { ?>
+
+    <?php $section = _('Pending SSL Certificates'); ?>
+    <div class="row">
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
+    </div>
+
+    <div class="row">
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '3'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Renewals'), $total_count, 'warning', 'bi-arrow-repeat', '/ssl/index.php?is_active=3', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Registrations (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '5'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Registrations'), $total_count, 'warning', 'bi-plus-circle', '/ssl/index.php?is_active=5', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (SSL Certificates)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM ssl_certs
+            WHERE active = '4'")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/ssl/index.php?is_active=4', $section);
 
         } ?>
 
@@ -579,11 +579,11 @@ if ($renewal_rows || $renewal_cert_rows || $renewal_hosting_months) {
             </div>
         </details>
         <div class="ms-auto d-flex flex-wrap column-gap-3">
-            <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Domain Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a><?php
+            <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Domain Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a><?php
             if ($hosting_available) { ?>
                 <a href="<?php echo WEB_ROOT; ?>/reporting/hosting/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Hosting Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a><?php
             } ?>
+            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div><?php
 
@@ -594,11 +594,11 @@ if ($renewal_rows || $renewal_cert_rows || $renewal_hosting_months) {
     </div>
     <?php
     $renewal_series = array(
-        array('name' => _('Domains'), 'values' => array_column(array_column($renewal_months, 'domains'), 'cost'), 'colour' => '1'),
-        array('name' => _('SSL Certificates'), 'values' => array_column(array_column($renewal_months, 'certs'), 'cost'), 'colour' => '4'));
+        array('name' => _('Domains'), 'values' => array_column(array_column($renewal_months, 'domains'), 'cost'), 'colour' => '1'));
     if ($hosting_available) {
         $renewal_series[] = array('name' => _('Hosting'), 'values' => array_column(array_column($renewal_months, 'hosting'), 'cost'), 'colour' => '5');
     }
+    $renewal_series[] = array('name' => _('SSL Certificates'), 'values' => array_column(array_column($renewal_months, 'certs'), 'cost'), 'colour' => '4');
     echo $chart->stackedMonthBars('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'),
         $renewal_series, !empty($renewal_months[0]['overdue']), $after, false);
 

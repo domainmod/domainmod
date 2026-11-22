@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('SSL Provider Accounts');
-$breadcrumb = _('SSL Accounts');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-ssl-accounts";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

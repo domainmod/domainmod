@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Add Hosting Service');
-$breadcrumb = _('Add');
+$breadcrumb = $page_title;
 $software_section = "hosting";
 $slug = "hosting-add";

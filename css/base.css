@@ -215,6 +215,87 @@ a.btn:hover {
 .sidebar-mini.sidebar-collapse .app-sidebar:not(:hover) .sidebar-menu .nav-treeview {
     display: none !important;
 }
+/* Assets, Settings, Maintenance, and Administration (menu-main.inc.php): the name is a link to the landing page, and
+   the arrow is a separate button that opens and closes the submenu. The button sits over the end of the item's row, in
+   the same grid row as the link, so the row's highlight still runs under the arrow and the two stay the same height.
+   The link leaves room for it wherever the button shows, which isn't in the collapsed sidebar until it's hovered (see
+   below), where the room would make the link wider than the others. */
+.app-sidebar .sidebar-menu .domainmod-menu-parent {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+.app-sidebar .sidebar-menu .domainmod-menu-parent > .nav-link {
+    grid-row: 1;
+    grid-column: 1 / -1;
+}
+body:not(.sidebar-collapse) .app-sidebar .sidebar-menu .domainmod-menu-parent > .nav-link,
+.sidebar-collapse .app-sidebar:hover .sidebar-menu .domainmod-menu-parent > .nav-link {
+    padding-inline-end: 2.75rem;
+}
+/* A long name, such as in another language, wraps onto a second line rather than being cut off, as the submenu names
+   do. Not in the collapsed sidebar, where the hidden name would wrap in the narrow row and make it taller. */
+body:not(.sidebar-collapse) .app-sidebar .sidebar-menu .domainmod-menu-parent > .nav-link,
+body:not(.sidebar-collapse) .app-sidebar .sidebar-menu .domainmod-menu-parent > .nav-link > p {
+    white-space: normal;
+}
+.app-sidebar .sidebar-menu .domainmod-menu-parent > .nav-treeview {
+    grid-row: 2;
+    grid-column: 1 / -1;
+}
+.domainmod-menu-toggle {
+    grid-row: 1;
+    grid-column: 2;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    margin-bottom: .2rem;
+    padding: 0;
+    border: 0;
+    border-radius: .375rem;
+    background-color: transparent;
+    color: var(--lte-sidebar-color);
+}
+/* The arrow takes the colour of the row's name: AdminLTE's colours for an open item and for the open current section
+   (which it draws in grey, not red), and white on the red row of the current section while its submenu is closed */
+.menu-open > .domainmod-menu-toggle {
+    color: var(--lte-sidebar-hover-color);
+}
+.menu-open > .nav-link.active + .domainmod-menu-toggle {
+    color: var(--lte-sidebar-menu-active-color);
+}
+.domainmod-menu-parent:not(.menu-open) > .nav-link.active + .domainmod-menu-toggle {
+    color: #fff;
+}
+.domainmod-menu-toggle:hover {
+    background-color: var(--lte-sidebar-hover-bg);
+}
+/* The focus ring is in the arrow's own colour, so it shows on the current section's red row as well as on the
+   sidebar */
+.domainmod-menu-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+/* The arrow turns to point down while the submenu is open, as AdminLTE's arrows do. AdminLTE's right-to-left build
+   points a closed arrow the other way by turning it half round, so this does the same. */
+.domainmod-menu-toggle .nav-arrow {
+    transition: transform ease-in-out .3s;
+}
+.menu-open > .domainmod-menu-toggle .nav-arrow {
+    transform: rotate(90deg);
+}
+[dir="rtl"] .domainmod-menu-toggle .nav-arrow {
+    transform: rotate(180deg);
+}
+[dir="rtl"] .menu-open > .domainmod-menu-toggle .nav-arrow {
+    transform: rotate(90deg);
+}
+/* The collapsed, icon-only sidebar has no room for the arrow, so the button is hidden until the sidebar is hovered
+   (and widens), as AdminLTE hides its arrows */
+.sidebar-mini.sidebar-collapse .app-sidebar:not(:hover) .domainmod-menu-toggle {
+    display: none;
+}
 /* Links in the footer's sentence and in page introductions (callouts) are underlined, since their colour is too
    close to the text around them to tell them apart */
 .app-footer a,
@@ -1249,11 +1330,12 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
     outline-offset: 2px;
 }
 
-/* A real grid that's too wide for a phone (TLD Pricing's and SSL Provider Fees' comparisons): its box scrolls sideways
-   while the first column (the registrar or provider) stays in view, at the start in either direction. Bootstrap gives
-   table cells their own background, so the rows don't show through the column as they scroll under it. The box can
-   take keyboard focus (to scroll with the arrow keys), so it shows a focus ring. It never scrolls up and down, which
-   the table's hidden caption (Bootstrap keeps a caption 1px tall in the flow) would otherwise give it room to. */
+/* A real grid that's too wide for a phone (the TLD Price Comparison and SSL Price Comparison tables): its box scrolls
+   sideways while the first column (the registrar or provider) stays in view, at the start in either direction.
+   Bootstrap gives table cells their own background, so the rows don't show through the column as they scroll under it.
+   The box can take keyboard focus (to scroll with the arrow keys), so it shows a focus ring. It never scrolls up and
+   down, which the table's hidden caption (Bootstrap keeps a caption 1px tall in the flow) would otherwise give it room
+   to. */
 .domainmod-scroll-table {
     overflow-y: hidden;
 }

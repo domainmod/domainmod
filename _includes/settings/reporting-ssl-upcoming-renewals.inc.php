@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('SSL Renewals Report');
-$breadcrumb = _('SSL Renewals');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-ssl-upcoming-renewals";
 $report_section = 'ssl';

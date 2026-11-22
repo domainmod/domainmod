@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('MFA');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "login";
 $slug = "two-factor";

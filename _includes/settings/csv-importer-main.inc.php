@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('CSV Importer');
-$breadcrumb = _('CSV Importer');
+$breadcrumb = $page_title;
 $software_section = "domains";
 $slug = "csv-importer-main";

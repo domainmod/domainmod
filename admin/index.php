@@ -46,28 +46,29 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <h2 class="h5 mt-2"><?php echo _('System'); ?></h2>
 <div class="row g-3"><?php
+    echo $layout->landingTile('/admin/users/', _('Users'), _('Add, edit, and remove users'), 'bi-people', 'secondary');
     echo $layout->landingTile('/admin/settings/', _('System Settings'), _('The URL, email, expiry days, and system options'), 'bi-sliders', 'secondary');
     echo $layout->landingTile('/admin/defaults/', _('System Defaults'), (DomainMOD\Hosting::isAvailable() ? _('The default assets for new domains, hosting services, and SSL certificates') : _('The default assets for new domains and SSL certificates')), 'bi-ui-checks', 'secondary');
-    echo $layout->landingTile('/admin/users/', _('Users'), _('Add, edit, and remove users'), 'bi-people', 'secondary');
     echo $layout->landingTile('/admin/domain-fields/', _('Custom Domain Fields'), _('Your own fields on domains'), 'bi-input-cursor-text', 'secondary');
-    echo $layout->landingTile('/admin/ssl-fields/', _('Custom SSL Fields'), _('Your own fields on SSL certificates'), 'bi-input-cursor', 'secondary');
     // Once the database update adds the hosting tables (DomainMOD\Hosting)
     if (DomainMOD\Hosting::isAvailable()) {
         echo $layout->landingTile('/admin/hosting-fields/', _('Custom Hosting Fields'), _('Your own fields on hosting services'), 'bi-textarea-t', 'secondary');
-    } ?>
+    }
+    echo $layout->landingTile('/admin/ssl-fields/', _('Custom SSL Fields'), _('Your own fields on SSL certificates'), 'bi-input-cursor', 'secondary'); ?>
 </div>
 
 <h2 class="h5 mt-4"><?php echo _('Tasks'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/admin/scheduler/', _('Task Scheduler'), _('Scheduled tasks, when they run, and Run Now'), 'bi-clock-history', 'secondary');
-    echo $layout->landingTile('/admin/maintenance/', _('Maintenance'), _('Clear the queues and the debug log'), 'bi-tools', 'secondary');
     echo $layout->landingTile('/admin/backup/', _('Backup & Restore'), _('Back up the database, or restore a backup'), 'bi-archive', 'secondary');
-    echo $layout->landingTile('/admin/upgrade/', _('Upgrade'), _('Check for a new version, and see how to upgrade'), 'bi-arrow-up-circle', 'secondary'); ?>
+    echo $layout->landingTile('/admin/upgrade/', _('Upgrade'), _('Check for a new version, and see how to upgrade'), 'bi-arrow-up-circle', 'secondary');
+    echo $layout->landingTile('/admin/maintenance/', _('Cleanup'), _('Clear the queues and the debug log'), 'bi-eraser', 'secondary'); ?>
 </div>
 
 <h2 class="h5 mt-4"><?php echo _('Diagnostics'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/admin/tools/', _('Tools'), _('Send a test email to check that email works'), 'bi-wrench-adjustable', 'secondary');
+    echo $layout->landingTile('/admin/dw/', _('Data Warehouse'), _('Import and browse your WHM and cPanel servers\' accounts and DNS zones'), 'bi-database', 'secondary');
     echo $layout->landingTile('/admin/debug-log/', _('Debug Log'), _('What DomainMOD logged while debugging was on'), 'bi-journal-text', 'secondary');
     echo $layout->landingTile('/admin/info/', _('System Information'), _('PHP, MySQL, and server details for support'), 'bi-info-circle', 'secondary'); ?>
 </div>

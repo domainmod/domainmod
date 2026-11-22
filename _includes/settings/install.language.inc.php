@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Select Your Language');
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.language";
 $install_step = 1;

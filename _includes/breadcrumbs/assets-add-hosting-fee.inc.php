@@ -20,7 +20,7 @@
  */
 ?>
     <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/"><?php echo _('Assets'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/hosting.php"><?php echo _('Providers'); ?></a></li>
-    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/hosting-fees.php?hosting_id=<?php echo (int) $hosting_id; ?>"><?php echo _('Fees'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/hosting.php"><?php echo _('Hosting Providers'); ?></a></li>
+    <li class="breadcrumb-item"><a href="<?php echo $web_root; ?>/assets/hosting-fees.php?hosting_id=<?php echo (int) $hosting_id; ?>"><?php echo sprintf(_('Fees for %s'), $layout->ltr($unsanitize->text($provider_name))); ?></a></li>
     <li class="breadcrumb-item active"><?php echo $breadcrumb; ?></li>
 </ol>

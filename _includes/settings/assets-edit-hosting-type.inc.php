@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit Service Type');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-edit-hosting-type";

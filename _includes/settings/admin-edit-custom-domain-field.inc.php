@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit Custom Domain Field');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-edit-custom-domain-field";

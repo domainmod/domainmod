@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Edit SSL Provider Fee');
-$breadcrumb = _('Edit');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-edit-ssl-provider-fee";

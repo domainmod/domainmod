@@ -40,8 +40,8 @@ require_once DIR_INC . '/settings/reporting-ssl-fees.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
-// The provider comparison that was here is now SSL Pricing, so an old link to it (which carries the type) opens
-// SSL Pricing with that type
+// The provider comparison that was here is now SSL Price Comparison, so an old link to it (which carries the type)
+// opens SSL Price Comparison with that type
 if (isset($_GET['type'])) {
     $type = is_string($_GET['type']) && ctype_digit($_GET['type']) ? $_GET['type'] : '';
     header('Location: ssl-pricing.php' . ($type !== '' ? '?' . http_build_query(array('type' => $type)) : '') . '#type-view', true, 302);

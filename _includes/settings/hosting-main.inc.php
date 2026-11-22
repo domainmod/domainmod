@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Hosting Services');
-$breadcrumb = _('Hosting');
+$breadcrumb = $page_title;
 $software_section = "hosting";
 $slug = "hosting-main";
 

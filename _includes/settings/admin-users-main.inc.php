@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('User Administration');
-$breadcrumb = _('Users');
+$page_title = _('Users');
+$breadcrumb = $page_title;
 $software_section = "admin";
 $slug = "admin-users-main";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

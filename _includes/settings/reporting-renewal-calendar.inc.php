@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Renewal Calendar Report');
-$breadcrumb = _('Renewal Calendar');
+$breadcrumb = $page_title;
 $software_section = "reporting";
 $slug = "reporting-renewal-calendar";
 $report_filename = 'renewal-calendar.php';

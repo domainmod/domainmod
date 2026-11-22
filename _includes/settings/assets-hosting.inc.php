@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Hosting Providers');
-$breadcrumb = _('Providers');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-hosting";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

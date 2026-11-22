@@ -21,6 +21,6 @@
 ?>
 <?php
 $page_title = _('Welcome') . '!';
-$breadcrumb = "";
+$breadcrumb = $page_title;
 $software_section = "install";
 $slug = "install.main";

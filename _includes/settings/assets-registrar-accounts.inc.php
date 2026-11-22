@@ -21,7 +21,7 @@
 ?>
 <?php
 $page_title = _('Domain Registrar Accounts');
-$breadcrumb = _('Registrar Accounts');
+$breadcrumb = $page_title;
 $software_section = "assets";
 $slug = "assets-registrar-accounts";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';
