@@ -92,6 +92,15 @@ document.querySelectorAll('select.domainmod-search-select').forEach(function (se
     tom_select.hook('after', 'refreshOptions', function () {
         searchSelectHighlight(tom_select);
     });
+    // While something is typed, the chosen option is hidden under the search box, which lies over it (css/base.css), so
+    // the menu keeps one height when it gains or loses focus
+    var searchSelectTyping = function () {
+        tom_select.wrapper.classList.toggle('domainmod-search-typing', tom_select.inputValue() !== '');
+    };
+    tom_select.control_input.addEventListener('input', searchSelectTyping);
+    ['item_add', 'clear', 'blur', 'dropdown_close'].forEach(function (event) {
+        tom_select.on(event, searchSelectTyping);
+    });
     if (label) {
         if (!label.id) label.id = select.id + '-label';
         select.setAttribute('aria-labelledby', label.id);

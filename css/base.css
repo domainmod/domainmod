@@ -451,6 +451,21 @@ body:not(.sidebar-collapse) .app-sidebar .sidebar-menu .domainmod-menu-parent > 
     padding-left: max(var(--ts-pr-min), var(--ts-pr-clear-button) + var(--ts-pr-caret)) !important;
     padding-right: var(--ts-pr-min) !important;
 }
+/* A menu you can search (js/search-select.js) keeps one height whether or not it has focus. Tom Select puts its search
+   box after the chosen option while the menu has focus, and under a long option (such as a Hosting Service) the box
+   wrapped onto a line of its own, so the menu grew by a line, and shrank again as it lost focus. A click on the next
+   button then lost its first press, since the button moved between the press and the release. The search box now lies
+   over the chosen option instead, which keeps its space and is hidden only while something is typed. */
+.ts-wrapper.single.domainmod-search-select.has-items .ts-control > input {
+    position: absolute;
+    top: .375rem;
+    inset-inline-start: .75rem;
+    inset-inline-end: var(--ts-pr-caret, 2.25rem);
+    width: auto !important;
+}
+.ts-wrapper.single.domainmod-search-select.domainmod-search-typing .ts-control > .item {
+    visibility: hidden;
+}
 /* The focus ring in DomainMOD's main colour, like the other fields (the menu's border is on its wrapper) */
 .ts-wrapper.form-select.focus {
     border-color: var(--bs-primary);
