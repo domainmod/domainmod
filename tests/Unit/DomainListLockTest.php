@@ -124,7 +124,7 @@ class DomainListLockTest extends TestCase
         $sql = (new DomainList($pdo, 1, array(array('field_name' => 'transfer_lock'))))->selectSql();
 
         $this->assertStringContainsString('d.transfer_lock AS ds1_transfer_lock, d.epp_status AS ds1_epp_status, d.epp_status_time AS ds1_epp_status_time', $sql);
-        $this->assertStringEndsWith(', dfd.transfer_lock', $sql);
+        $this->assertStringEndsWith(', dfd.transfer_lock AS cf1_transfer_lock', $sql);
 
         $other = new QuotingPdo();
         $this->available(false, $other);

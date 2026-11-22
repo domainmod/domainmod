@@ -206,8 +206,8 @@ class SslListColumnsTest extends TestCase
             'domain_id' => 3, 'domain' => 'example.com', 'sslp_id' => 4, 'ssl_provider_name' => 'Prov', 'o_id' => 5,
             'owner_name' => 'Own', 'sslpa_id' => 6, 'username' => 'abcdefghijklmnopq', 'type_id' => 8, 'type' => 'Web',
             'ip_id' => 9, 'ip_name' => 'Main', 'ip' => '10.0.0.1', 'cat_id' => 10, 'cat_name' => 'Cat',
-            'purchaser_name' => '<script>', 'renewed' => '1', 'notes_area' => 'x', 'order_number' => '42',
-            'issued' => '1970-01-01', 'checked_at' => '2026-02-03 04:05:06', 'portal' => 'https://example.com/');
+            'cf1_purchaser_name' => '<script>', 'cf1_renewed' => '1', 'cf1_notes_area' => 'x', 'cf1_order_number' => '42',
+            'cf1_issued' => '1970-01-01', 'cf1_checked_at' => '2026-02-03 04:05:06', 'cf1_portal' => 'https://example.com/');
     }
 
     private function setDatabase($value)

@@ -23,6 +23,9 @@ namespace DomainMOD;
 
 class CustomField
 {
+    // The start of a custom field's alias in a list's rows (see listAlias())
+    const LIST_ALIAS_PREFIX = 'cf1_';
+
     public $deeb;
 
     public function __construct()
@@ -264,14 +267,38 @@ class CustomField
         return $fields;
     }
 
-    // The SELECT columns for a list's custom field rows (see getFilterFields()), as getCustomFieldsSql() writes them
+    /*
+     * The SELECT columns for a list's custom field rows (see getFilterFields()), each under its alias (listAlias()), so a
+     * custom field can never take the place of one of the list's own columns in a row
+     */
     public static function fieldsSql(array $fields, $column_prefix)
     {
         $columns = '';
         foreach ($fields as $field) {
-            $columns .= ", " . $column_prefix . "." . $field['field_name'];
+            $columns .= ", " . $column_prefix . "." . $field['field_name'] . " AS " . self::listAlias($field['field_name']);
         }
         return $columns;
+    }
+
+    /*
+     * A custom field's name in a list's rows. A Database Field Name holds only letters and underscores
+     * (checkFieldFormat()), so no field name and none of a list's own columns starts with this prefix.
+     */
+    public static function listAlias($field_name)
+    {
+        return self::LIST_ALIAS_PREFIX . $field_name;
+    }
+
+    /*
+     * Whether a new Database Field Name is taken by one of the list's own columns (such as notes or expiry_date), or by
+     * one of the custom field data table's own columns, ignoring case. $type is 'domain' or 'ssl'.
+     */
+    public static function reservedName($type, $field_name)
+    {
+        $list = $type === 'ssl' ? SslList::class : DomainList::class;
+        $info = ChangeHistory::ITEM_TYPES[$type];
+        $reserved = array_merge($list::builtInColumnNames(), array('id', $info['field_id'], 'insert_time', 'update_time'));
+        return in_array(strtolower((string) $field_name), $reserved, true);
     }
 
     public function getCDFData()

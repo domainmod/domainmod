@@ -78,7 +78,7 @@ class DomainListDateCellsTest extends TestCase
             array_column($columns->columns(), 'key'));
 
         $row = (object) array('id' => 3, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0',
-            'expiry_date' => '2027-01-01', 'renewed_on' => $date, 'checked_at' => $time_stamp);
+            'expiry_date' => '2027-01-01', 'cf1_renewed_on' => $date, 'cf1_checked_at' => $time_stamp);
         return $columns->cells($row, '2026-11-17');
     }
 

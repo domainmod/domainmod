@@ -32,6 +32,9 @@ namespace DomainMOD;
  */
 class SslList extends ListQuery
 {
+    // The columns every row has (see selectSql())
+    const SELECT_COLUMNS = "sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.creation_type_id, sslc.created_by, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.id AS f_id, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name";
+
     // The custom field data table and its certificate id column (see ListQuery::fixedJoinOrder())
     const FIELD_DATA_TABLE = 'ssl_cert_field_data';
     const FIELD_DATA_ID = 'ssl_id';
@@ -200,7 +203,7 @@ class SslList extends ListQuery
     // The columns every row has, plus the current custom fields
     public function selectSql()
     {
-        return "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.creation_type_id, sslc.created_by, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.id AS f_id, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name" . $this->field_columns;
+        return "SELECT " . self::SELECT_COLUMNS . $this->field_columns;
     }
 
     // The SSL Certificates list's columns, for ListQuery::tableSearchSql()

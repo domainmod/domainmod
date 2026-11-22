@@ -983,13 +983,13 @@ if ($export_data == 1) {
                     foreach ($dfd_columns_array as $column) {
 
                         // An empty Date or Time Stamp field is blank, as the list shows it
-                        if (in_array((string) ($dfd_types[$column] ?? ''), array('4', '5'), true) && DomainMOD\Time::isUnset($row->{$column})) {
+                        if (in_array((string) ($dfd_types[$column] ?? ''), array('4', '5'), true) && DomainMOD\Time::isUnset($row->{DomainMOD\CustomField::listAlias($column)})) {
 
                             $row_contents[$count++] = '';
 
                         } else {
 
-                            $row_contents[$count++] = $row->{$column};
+                            $row_contents[$count++] = $row->{DomainMOD\CustomField::listAlias($column)};
 
                         }
 

@@ -181,8 +181,11 @@ class DomainListColumnsTest extends TestCase
     private function customCells($row_values)
     {
         $columns = new DomainListColumns(self::settings(), FieldRows::of(self::FIELDS_SQL, self::settings()));
+        // the custom fields under their aliases, as the list's query names them
+        $aliased = array();
+        foreach ($row_values as $name => $value) $aliased[\DomainMOD\CustomField::listAlias($name)] = $value;
         $row = (object) array_merge(array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0'),
-            $row_values);
+            $aliased);
         // the domain cell comes first
         return array_slice($columns->cells($row, '2026-11-15'), 1);
     }

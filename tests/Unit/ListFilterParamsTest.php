@@ -131,7 +131,7 @@ class ListFilterParamsTest extends TestCase
     public function testTheSslListsColumnsComeFromItsFields()
     {
         $list = new SslList(new RecordingPdo(), 1, array(array('id' => 1, 'name' => 'Ref', 'field_name' => 'order_ref', 'type_id' => 2)));
-        $this->assertStringEndsWith(', sslfd.order_ref', $list->selectSql());
+        $this->assertStringEndsWith(', sslfd.order_ref AS cf1_order_ref', $list->selectSql());
         $this->assertSame(array(array('id' => 1, 'name' => 'Ref', 'field_name' => 'order_ref', 'type_id' => 2)), $list->fields());
     }
 

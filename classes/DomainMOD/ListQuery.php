@@ -44,6 +44,9 @@ abstract class ListQuery
     // The columns every order ends with, so pages stay stable when values tie (each list sets its own)
     const TIE_BREAK = array();
 
+    // The columns every row has, as a SELECT list (see builtInColumnNames()), which a list with custom fields sets
+    const SELECT_COLUMNS = '';
+
     /*
      * Export and the Raw List's order, each list's own: the expiry date, the name, and the id, all on the list's first
      * table and all sorted ascending. The list's EXPORT_ORDER_SQL and the keyset (see keysetSql()) are both built from
@@ -119,6 +122,17 @@ abstract class ListQuery
 
     // The columns every row has, plus the current custom fields
     abstract public function selectSql();
+
+    // The names of the list's own columns in its rows (SELECT_COLUMNS), in lower case, which a custom field can't take
+    public static function builtInColumnNames()
+    {
+        $names = array();
+        foreach (explode(',', static::SELECT_COLUMNS) as $column) {
+            $column = trim($column);
+            $names[] = strtolower(preg_match('/\sAS\s+(\w+)$/i', $column, $matches) ? $matches[1] : substr($column, strrpos($column, '.') + 1));
+        }
+        return $names;
+    }
 
     // The list's columns for a copy of the session's display settings (see ListColumns::sessionCopy())
     abstract protected function listColumns(array $settings);
@@ -412,8 +426,8 @@ abstract class ListQuery
     protected function rowBytesSql()
     {
         $columns = array(static::JOIN_ORDER[0][1] . '.notes');
-        foreach (explode(',', $this->field_columns) as $column) {
-            if (trim($column) !== '') $columns[] = trim($column);
+        foreach ($this->fields as $field) {
+            $columns[] = static::JOIN_ORDER[1][1] . '.' . $field['field_name'];
         }
 
         $sql = '';

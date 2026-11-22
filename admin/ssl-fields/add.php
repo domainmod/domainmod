@@ -54,7 +54,7 @@ $new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) :
 // the field types the ALTER TABLE below knows how to create
 $valid_field_type = in_array($new_field_type_id, array(1, 2, 3, 4, 5, 6), true);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name) && $valid_field_type) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name != '' && $custom_field->checkFieldFormat($new_field_name) && !DomainMOD\CustomField::reservedName('ssl', $new_field_name) && $valid_field_type) {
 
     $stmt = $pdo->prepare("
         SELECT field_name
@@ -113,6 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
         if ($new_name == '') $form->addFieldError('new_name', _('Enter the Display Name'));
         if (!$custom_field->checkFieldFormat($new_field_name)) $form->addFieldError('new_field_name', _('The Database Field Name format is incorrect'));
+        // A name the list's own columns or the custom field data table's own columns already have (see
+        // DomainMOD\CustomField::reservedName())
+        elseif (DomainMOD\CustomField::reservedName('ssl', $new_field_name)) $form->addFieldError('new_field_name', _('The Database Field Name you entered is reserved. Choose another name.'));
         if (!$valid_field_type) $form->addFieldError('new_field_type_id', _('Choose the Data Type'));
 
     }

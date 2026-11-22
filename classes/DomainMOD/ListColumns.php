@@ -219,7 +219,7 @@ abstract class ListColumns
     protected function customFieldCell(array $field, $row)
     {
         $layout = $this->layout;
-        $value = $row->{$field['field']} ?? '';
+        $value = $row->{CustomField::listAlias($field['field'])} ?? '';
         if ($field['type_id'] == '1') { // Check Box
             return $value == '1' ? 'Yes' : 'No';
         } elseif ($field['type_id'] == '2') { // Text

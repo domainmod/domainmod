@@ -359,7 +359,7 @@ class CustomFieldFilterTest extends TestCase
         $this->assertSame(array(array('id' => 2, 'name' => 'Note', 'field_name' => 'note', 'type_id' => 2)),
             CustomField::readFilterFields($pdo, 'domain_fields'));
         $this->assertStringContainsString('ORDER BY `name` ASC', $pdo->log[0]['sql']);
-        $this->assertSame(', dfd.note, dfd.renew', CustomField::fieldsSql(array(array('field_name' => 'note'),
+        $this->assertSame(', dfd.note AS cf1_note, dfd.renew AS cf1_renew', CustomField::fieldsSql(array(array('field_name' => 'note'),
             array('field_name' => 'renew')), 'dfd'));
 
         $this->expectException(\InvalidArgumentException::class);

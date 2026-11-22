@@ -32,6 +32,9 @@ namespace DomainMOD;
  */
 class DomainList extends ListQuery
 {
+    // The columns every row has (see selectSql())
+    const SELECT_COLUMNS = "d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name";
+
     // The custom field data table and its domain id column (see ListQuery::fixedJoinOrder())
     const FIELD_DATA_TABLE = 'domain_field_data';
     const FIELD_DATA_ID = 'domain_id';
@@ -435,7 +438,7 @@ class DomainList extends ListQuery
     // update adds them) and the current custom fields
     public function selectSql()
     {
-        return "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
+        return "SELECT " . self::SELECT_COLUMNS . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
     }
 
     // The search box's conditions (see ListQuery::searchSql()), where the domain always shows, so it always also matches
