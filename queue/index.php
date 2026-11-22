@@ -183,7 +183,7 @@ if ($export_data === 1) {
             _('Privacy'),
             _('Ready To Import'),
             _('Already in Domains'),
-            _('Already in Queue'),
+            _('Already in Domain Queue'),
             _('Invalid Domain'),
             _('Copied To History'),
             _('Added By'),
@@ -220,7 +220,7 @@ if ($export_data === 1) {
 
                     } else {
 
-                        $export_processing = _('Successfully Imported');
+                        $export_processing = _('Imported');
 
                     }
 
@@ -617,16 +617,16 @@ if ($queue_rdap_available) {
 if ($result_lists) { ?>
 
     <h3 class="h4"><?php echo _('Domain List Queue'); ?></h3>
+    <div class="domainmod-list-scroll" tabindex="0" role="region" aria-label="<?php echo htmlspecialchars(_('Domain List Queue'), ENT_QUOTES, 'UTF-8'); ?>">
     <table id="<?php echo $slug; ?>-lists" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-            <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Registrar Account'); ?></th>
+            <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Domain Count'); ?></th>
             <th><?php echo _('Added By'); ?></th>
-            <th><?php echo _('Added'); ?></th>
-            <th><?php echo _('Delete'); ?></th>
+            <th class="domainmod-col-date"><?php echo _('Added'); ?></th>
+            <th class="domainmod-col-delete"><?php echo _('Delete'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -634,7 +634,10 @@ if ($result_lists) { ?>
         foreach ($result_lists as $row_lists) { ?>
 
             <tr>
-            <td></td>
+            <td>
+                <?php echo $row_lists->registrar_name; ?>, <?php echo $row_lists->owner; ?>
+                (<?php echo $row_lists->username; ?>)
+            </td>
             <td>
                 <?php
                 if ($row_lists->finished == '1') {
@@ -654,10 +657,6 @@ if ($result_lists) { ?>
                     }
 
                 } ?>
-            </td>
-            <td>
-                <?php echo $row_lists->registrar_name; ?>, <?php echo $row_lists->owner; ?>
-                (<?php echo $row_lists->username; ?>)
             </td>
             <td>
                 <?php
@@ -697,7 +696,8 @@ if ($result_lists) { ?>
         } ?>
 
         </tbody>
-    </table><?php
+    </table>
+    </div><?php
 }
 
 if ($result_domains) {
@@ -709,19 +709,19 @@ if ($result_domains) {
 
     } ?>
 
+    <div class="domainmod-list-scroll" tabindex="0" role="region" aria-label="<?php echo htmlspecialchars(_('Domain Queue'), ENT_QUOTES, 'UTF-8'); ?>">
     <table id="<?php echo $slug; ?>-domains" class="<?php echo $datatable_class; ?>">
         <thead>
         <tr>
-            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-            <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Domain'); ?></th>
+            <th><?php echo _('Status'); ?></th>
             <th><?php echo _('Registrar Account'); ?></th>
-            <th><?php echo _('Expiry Date'); ?></th>
+            <th class="domainmod-col-date"><?php echo _('Expiry Date'); ?></th>
             <th><?php echo _('DNS'); ?></th>
             <th><?php echo _('IP'); ?></th>
             <th><?php echo _('Added By'); ?></th>
-            <th><?php echo _('Added'); ?></th>
-            <th><?php echo _('Delete'); ?></th>
+            <th class="domainmod-col-date"><?php echo _('Added'); ?></th>
+            <th class="domainmod-col-delete"><?php echo _('Delete'); ?></th>
         </tr>
         </thead>
         <tbody><?php
@@ -729,9 +729,10 @@ if ($result_domains) {
         foreach ($result_domains as $row_domains) { ?>
 
             <tr>
-            <td></td>
             <td>
-                <?php
+                <?php echo $row_domains->domain; ?>
+            </td>
+            <td><div class="domainmod-queue-status"><?php
                 $already_exists = '';
                 if ($row_domains->finished == '1' && $row_domains->processing != '1') {
 
@@ -756,7 +757,7 @@ if ($result_domains) {
 
                     } else {
 
-                        echo $layout->highlightText('green', _('Successfully Imported'));
+                        echo $layout->highlightText('green', _('Imported'));
 
                     }
 
@@ -774,10 +775,7 @@ if ($result_domains) {
                     }
 
                 }
-                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup'); ?>
-            </td>
-            <td>
-                <?php echo $row_domains->domain; ?>
+                $rdap_unresolved = ($row_domains->finished == '1') ? _('Not resolved') : _('To be found during lookup'); ?></div>
             </td>
             <td>
                 <?php echo $row_domains->registrar_name ?? $rdap_unresolved; ?>, <?php echo $row_domains->owner; ?>
@@ -880,7 +878,8 @@ if ($result_domains) {
         } ?>
 
         </tbody>
-    </table><?php
+    </table>
+    </div><?php
 }
 
 // With both lists empty, the Domain Queue says so. Its actions are already in its header, so it repeats none
@@ -956,19 +955,19 @@ if ($ssl_queue_available) {
             // TRANSLATORS: The SSL Queue's progress. %1$s and %2$s are numbers, such as "12 of 40 completed".
             echo sprintf(ngettext('%1$s of %2$s completed', '%1$s of %2$s completed', $total_count), number_format($completed_count), number_format($total_count)); ?></p>
 
+        <div class="domainmod-list-scroll" tabindex="0" role="region" aria-label="<?php echo htmlspecialchars(_('SSL Queue'), ENT_QUOTES, 'UTF-8'); ?>">
         <table id="<?php echo $slug; ?>-hosts" class="<?php echo $datatable_class; ?>">
             <thead>
             <tr>
-                <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-                <th><?php echo _('Status'); ?></th>
                 <th><?php echo _('Host'); ?></th>
+                <th><?php echo _('Status'); ?></th>
                 <th><?php echo _('Domain'); ?></th>
-                <th><?php echo _('Expiry Date'); ?></th>
+                <th class="domainmod-col-date"><?php echo _('Expiry Date'); ?></th>
                 <th><?php echo _('Issuer'); ?></th>
                 <th><?php echo _('Added By'); ?></th>
-                <th><?php echo _('Date Added'); ?></th><?php
+                <th class="domainmod-col-date"><?php echo _('Added'); ?></th><?php
                 if (!$read_only) { ?>
-                    <th><?php echo _('Delete'); ?></th><?php
+                    <th class="domainmod-col-delete"><?php echo _('Delete'); ?></th><?php
                 } ?>
             </tr>
             </thead>
@@ -982,7 +981,13 @@ if ($ssl_queue_available) {
                 $linked = ($state === 'imported' || $state === 'already_in_ssl') && $row->ssl_id !== null; ?>
 
                 <tr>
-                <td></td>
+                <td><?php
+                    if ($linked) {
+                        echo '<a href="' . htmlspecialchars($web_root . '/ssl/edit.php?sslcid=' . (int) $row->ssl_id, ENT_QUOTES, 'UTF-8') . '">' . $layout->ltr($row->host) . '</a>';
+                    } else {
+                        echo $layout->ltr($row->host);
+                    } ?>
+                </td>
                 <td><div class="domainmod-queue-status"><?php
                     if ($state === 'imported') {
                         echo $layout->highlightText('green', $label);
@@ -995,13 +1000,6 @@ if ($ssl_queue_available) {
                     if ($detail !== '') echo '<BR>' . htmlspecialchars($detail, ENT_QUOTES, 'UTF-8');
                     if ($state === 'imported' && $row->ssl_id !== null && !$fee_status->hasFee($row)) {
                         echo '<BR>' . $fee_status->sslWarning($row, !$read_only);
-                    } ?></div>
-                </td>
-                <td><div class="domainmod-queue-host"><?php
-                    if ($linked) {
-                        echo '<a href="' . htmlspecialchars($web_root . '/ssl/edit.php?sslcid=' . (int) $row->ssl_id, ENT_QUOTES, 'UTF-8') . '">' . $layout->ltr($row->host) . '</a>';
-                    } else {
-                        echo $layout->ltr($row->host);
                     } ?></div>
                 </td>
                 <td><?php echo ($domain_shown !== '') ? $layout->ltr($domain_shown) : '-'; ?></td>
@@ -1021,7 +1019,8 @@ if ($ssl_queue_available) {
             } ?>
 
             </tbody>
-        </table><?php
+        </table>
+        </div><?php
 
     } ?>
         </div>

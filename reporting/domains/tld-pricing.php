@@ -249,7 +249,7 @@ if (!$overview['rows']) {
 
 } else { ?>
 
-    <div class="row"><?php
+    <div class="row gy-4"><?php
         echo $dashboard->displayPanel(_('Possible Yearly Savings'), count($savings['rows']), 'success', 'bi-piggy-bank', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#savings', _('TLD Price Comparison'), $money($total_saving));
         echo $dashboard->displayPanel(_('TLDs Compared'), $savings['tlds_compared'], 'secondary', 'bi-tags', '/reporting/domains/tld-pricing.php?' . $query_string(array()) . '#overview', _('TLD Price Comparison')); ?>
     </div>

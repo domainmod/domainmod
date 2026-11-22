@@ -410,6 +410,24 @@ class ChangeHistoryListTest extends TestCase
         }
     }
 
+    /*
+     * On the domain and SSL edit pages, the cards after the form (a domain's Live DNS, then its Change History, and a
+     * certificate's Change History) sit in the same width wrapper as the cards above them, as on the hosting service and
+     * watched domain pages, so they're never wider than the form
+     */
+    public function testTheEditPagesHistoryCardsKeepTheFormsWidth()
+    {
+        $domain = file_get_contents(dirname(__DIR__, 2) . '/domains/edit.php');
+        $start = strpos($domain, "echo '<div class=\"domainmod-form\">';\necho DomainMOD\\LiveDns::editCard(\$pdo, \$did, ");
+        $this->assertNotFalse($start);
+        $history = strpos($domain, "echo DomainMOD\\ChangeHistoryListColumns::editSection(\$pdo, 'domain', \$did, false, ", $start);
+        $this->assertNotFalse($history);
+        $this->assertSame(strpos($domain, "\necho '</div>';\n", $history), strpos($domain, "\n", $history));
+
+        $ssl = file_get_contents(dirname(__DIR__, 2) . '/ssl/edit.php');
+        $this->assertStringContainsString("echo '<div class=\"domainmod-form\">' . DomainMOD\\ChangeHistoryListColumns::editSection(\$pdo, 'ssl', \$sslcid) . '</div>';", $ssl);
+    }
+
     // An in-memory SQLite connection for a test that runs real SQL, or null on a PHP without pdo_sqlite
     private function memoryDb()
     {

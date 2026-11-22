@@ -41,7 +41,9 @@ class Dashboard
      * section, so links with the same title (such as Renewals for domains and SSL certificates) differ. $colour is a
      * Bootstrap colour, used the same way across the dashboard (danger for urgent, warning for waiting, success for
      * done, and secondary for plain counts), and $icon is a Bootstrap Icons class. $detail is an optional short line
-     * under the title, such as a total cost (escaped here, so pass it as plain text).
+     * under the title, such as a total cost (escaped here, so pass it as plain text). Put the cards in a
+     * `<div class="row gy-4">`, so rows that wrap on smaller screens have the same gap between them as the default
+     * gap between cards side by side.
      */
     public function displayPanel($title, $count, $colour, $icon, $url, $section = '', $detail = '')
     {

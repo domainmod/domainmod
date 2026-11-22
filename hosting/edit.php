@@ -684,7 +684,7 @@ if (!$hosting_available) {
             if ($can_renew) $help[] = _("Once you've checked that it did, choose Mark Renewed.");
             $help[] = sprintf(_("If it's still unconfirmed on %s, it shows as overdue."),
                 $layout->ltr(DomainMOD\Hosting::addDays((string) $saved_record->expiry_date, DomainMOD\Hosting::CONFIRM_DAYS + 1)));
-            echo '<div class="domainmod-span-all callout callout-warning mb-0">' . implode(' ', $help) . '</div>';
+            echo '<div class="domainmod-span-all callout callout-warning mb-3">' . implode(' ', $help) . '</div>';
         }
         if (!$read_only) {
             if ($renew_preview !== '') {
@@ -692,7 +692,7 @@ if (!$hosting_available) {
                 echo '<p class="domainmod-span-all">' . sprintf(_('Move the renewal date forward one term (%1$s), from %2$s to %3$s.'),
                     htmlspecialchars(DomainMOD\Hosting::termLabel($saved_record->billing_term), ENT_QUOTES, 'UTF-8'),
                     $layout->ltr($saved_record->expiry_date), $layout->ltr($renew_preview)) . '</p>';
-                echo '<div class="domainmod-span-all">' . $form->showSubmitButton(_('Mark Renewed'), '', '') . '</div>';
+                echo '<div class="domainmod-span-all mb-3">' . $form->showSubmitButton(_('Mark Renewed'), '', '') . '</div>';
 
             } else {
 
@@ -957,7 +957,7 @@ if (!$hosting_available) {
     ob_start();
     if ($service_domain_count === 0) {
 
-        echo '<p class="domainmod-span-all mb-0">' . _("No domains use this service. Choose it on a domain's edit page, or use the Bulk Updater's Change Hosting Service.") . '</p>';
+        echo '<p class="domainmod-span-all mb-3">' . _("No domains use this service. Choose it on a domain's edit page, or use the Bulk Updater's Change Hosting Service.") . '</p>';
 
     } else {
 
@@ -976,7 +976,7 @@ if (!$hosting_available) {
         $domain_status_names = array('0' => _('Expired'), '1' => _('Active'), '2' => _('Pending (Transfer)'),
             '3' => _('Pending (Renewal)'), '4' => _('Pending (Other)'), '5' => _('Pending (Registration)'), '10' => _('Sold')); ?>
 
-        <div class="table-responsive domainmod-span-all"><table class="table table-sm table-striped mb-0">
+        <div class="table-responsive domainmod-span-all mb-3"><table class="table table-sm table-striped mb-0">
             <thead>
             <tr>
                 <th scope="col"><?php echo _('Domain'); ?></th>
@@ -996,7 +996,7 @@ if (!$hosting_available) {
         </table></div><?php
 
         if ($service_domain_count > $domains_card_limit) {
-            echo '<p class="domainmod-span-all mb-0"><a href="../domains/index.php?hsid=' . (int) $hsid . '&amp;is_active=ALL">'
+            echo '<p class="domainmod-span-all mb-3"><a href="../domains/index.php?hsid=' . (int) $hsid . '&amp;is_active=ALL">'
                 . _('Open these domains in the Domains list') . '</a></p>';
         }
 

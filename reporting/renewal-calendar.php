@@ -344,7 +344,7 @@ if ($hosting_available) {
         </div>
     </div>
 
-    <div class="row"><?php
+    <div class="row gy-4"><?php
         $tile_url = '/reporting/' . $page_url($month, $show) . '#renewal-list';
         if ($show === 'all' || $show === 'domains') {
             echo $dashboard->displayPanel(_('Domains'), $totals['domain']['count'], 'danger', 'bi-calendar-event', $tile_url, _('Renewal Calendar'), $money($totals['domain']['cost']));
@@ -359,7 +359,7 @@ if ($hosting_available) {
     </div><?php
 
     if ($missing > 0) { ?>
-        <p class="small text-body-secondary mt-2"><?php echo sprintf(ngettext('%s item has no fee or rate, so it\'s left out of the costs.', '%s items have no fee or rate, so they\'re left out of the costs.', $missing), number_format($missing)); ?></p><?php
+        <p class="small text-body-secondary mt-4"><?php echo sprintf(ngettext('%s item has no fee or rate, so it\'s left out of the costs.', '%s items have no fee or rate, so they\'re left out of the costs.', $missing), number_format($missing)); ?></p><?php
     } ?>
 
     <table class="table table-bordered domainmod-calendar d-none d-md-table mt-3">

@@ -738,6 +738,11 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
     font-size: 0.85em;
     margin-inline-start: 0.2rem;
 }
+/* A status icon before an item's name (on the Domains, SSL Certificates, and Hosting lists) leaves a little more room
+   before the name than the space alone */
+.domainmod-status-icon + a {
+    margin-inline-start: 0.25rem;
+}
 /* In light mode the grey privacy shield is lightened, so it stays quiet but keeps over 3:1 contrast on white, striped,
    and hovered rows */
 [data-bs-theme="light"] .domainmod-status-icon.text-body-secondary {
@@ -1111,6 +1116,10 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
 .sidebar-wrapper .sidebar-search {
     padding-top: 0;
 }
+/* A little space between the domain search and the menu filter below it */
+.sidebar-wrapper .sidebar-search + .sidebar-search {
+    padding-top: .5rem;
+}
 /* Form mistakes on a Tom Select menu (Form::addFieldError()): Tom Select hides the real menu and copies its classes to
    its own wrapper, so Bootstrap's red border for .is-invalid has to be given to Tom Select's control here. */
 .ts-wrapper.is-invalid .ts-control {
@@ -1471,11 +1480,11 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
 }
 
 /* The Domains and SSL Certificates lists' scroll box, from DataTables (or the page, when JavaScript is off, see
-   js/server-list.js). It has no width of its own but at least its container's, so the wide table never widens the
-   page around it, and it's positioned, so the cells' visually hidden text (absolutely positioned) is clipped by it
-   too. It can take keyboard focus, to scroll with the arrow keys. Its scroll padding at the start keeps a link tabbed
-   to out from under the pinned first column: the column's widest (see css/datatables/domains-main.css), which the
-   script narrows to the column's actual width. */
+   js/server-list.js), also used by the tables with the dense list style (below). It has no width of its own but at
+   least its container's, so the wide table never widens the page around it, and it's positioned, so the cells'
+   visually hidden text (absolutely positioned) is clipped by it too. It can take keyboard focus, to scroll with the
+   arrow keys. Its scroll padding at the start keeps a link tabbed to out from under the pinned first column: the
+   column's widest (see css/datatables/domains-main.css), which the script narrows to the column's actual width. */
 .domainmod-list-scroll {
     position: relative;
     inline-size: 0;
@@ -1487,6 +1496,100 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
 .domainmod-list-scroll:focus-visible {
     outline: 2px solid var(--bs-focus-ring-color, var(--bs-primary));
     outline-offset: 2px;
+}
+
+/*
+ * The dense list style, the Domains list's look (see css/datatables/domains-main.css) for any table that opts in: dense
+ * rows, small headings, a divider between columns, hairlines between the rows with a light stripe, a row that lights up
+ * under the pointer, and a box around it all that scrolls sideways, with the first column kept in view at the start and
+ * its values in bold. The colours come from the theme's variables, so they follow light and dark mode, and the sides
+ * are logical, so they mirror in right-to-left languages. By default, values stay on one line, apart from the first
+ * column's, which wrap to fit, and nothing is cut short, since these tables have no tooltip for a cut-short value. As
+ * in the Domains list, the first column is best kept for each row's name. A page's own stylesheet can let another long
+ * column wrap, as the Import Queue does for its statuses. The Import Queue's tables use it.
+ *
+ * To opt in, a table needs:
+ * - the class domainmod-dense-table, in place of Bootstrap's table-striped and DataTables' cell-border, compact, and
+ *   dt-responsive (the stripes, lines, and padding are all here),
+ * - to sit straight inside <div class="domainmod-list-scroll" tabindex="0" role="region" aria-label="...">, named
+ *   after the table, which boxes it in when JavaScript is off,
+ * - as a DataTable, to be started with domainmodTable(), with no Responsive and a dom option with the box around the
+ *   table alone, such as '<"top"lif>r<"domainmod-list-scroll"t><"bottom"ip><"clear">', so the search and paging
+ *   stay outside it. domainmodTable() (js/datatables.js) then takes the page's box off and gives its focus, role,
+ *   and name to the new one.
+ */
+.domainmod-dense-table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    margin: 0;
+    font-size: .8125rem;
+}
+/* The headings are 12px (.75rem), large enough that a browser's usual minimum font size doesn't enlarge them, and
+   stay on one line. */
+.domainmod-dense-table > thead > tr > th {
+    padding: .5rem;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color);
+    background: var(--bs-tertiary-bg);
+    box-shadow: none;
+    color: var(--bs-secondary-color);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+/* Bootstrap's stripe is drawn as a shadow inside each cell, so it's turned off, and each cell has its own background
+   instead, which the pinned first column needs, so the rows don't show through it as they scroll under it. */
+.domainmod-dense-table > tbody > tr > td {
+    padding: .3125rem .5rem;
+    border: 0;
+    border-block-end: 1px solid var(--bs-border-color-translucent);
+    background: var(--bs-body-bg);
+    box-shadow: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.domainmod-dense-table > tbody > tr:nth-of-type(even) > td {
+    background: color-mix(in srgb, var(--bs-tertiary-bg) 60%, var(--bs-body-bg));
+}
+.domainmod-dense-table > tbody > tr:hover > td {
+    background: var(--bs-secondary-bg);
+}
+/* The box has the same border all round as the dividers between columns, so the table is boxed in wherever it's
+   scrolled to, with any scrollbar inside the box. The last row's cells lose their bottom border, so the bottom isn't
+   drawn twice. Both rules find the box the same way, so a browser without :has() keeps the rows' own lines. */
+.domainmod-list-scroll:has(> .domainmod-dense-table) {
+    border: 1px solid var(--bs-border-color-translucent);
+}
+.domainmod-list-scroll:has(> .domainmod-dense-table) > .domainmod-dense-table > tbody > tr:last-child > td {
+    border-block-end: 0;
+}
+/* A divider between columns, none after the last */
+.domainmod-dense-table > :is(thead, tbody) > tr > :not(:last-child) {
+    border-inline-end: 1px solid var(--bs-border-color-translucent);
+}
+/* The first column stays in view at the start as the box scrolls. Like the Domains list's, it's at most 18rem wide,
+   and on a phone at most 45vw, so it never covers the columns scrolling under it. Its values wrap to fit, and like the
+   Domains list's domains, they're in bold (a link in the cell too), while its heading stays like the others. */
+.domainmod-dense-table > :is(thead, tbody) > tr > :first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    max-inline-size: min(18rem, 45vw);
+}
+.domainmod-dense-table > tbody > tr > td:first-child {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    font-weight: 600;
+}
+/* The message for a search with no matches spans the whole table, so it starts at the start edge, where the box
+   starts scrolled to, instead of being centred across columns that may be out of view. It isn't a name, so it isn't
+   in bold either. */
+.domainmod-dense-table > tbody > tr > td.dt-empty {
+    position: static;
+    text-align: start;
+    font-weight: inherit;
 }
 
 /* A real grid that's too wide for a phone (the TLD Price Comparison and SSL Price Comparison tables): its box scrolls

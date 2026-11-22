@@ -223,7 +223,7 @@ $expiring_at_risk = $total_at_risk - $counts['overdue'];
 echo '<p class="domainmod-intro">' . sprintf(ngettext('%1$s at-risk domain: %2$s overdue and %3$s expiring in the next %4$s days.', '%1$s at-risk domains: %2$s overdue and %3$s expiring in the next %4$s days.', $total_at_risk), number_format($total_at_risk), number_format($counts['overdue']), number_format($expiring_at_risk), number_format($risk_days));
 if (array_sum($counts) > $total_at_risk) echo ' ' . _('A domain can have more than one reason, so the tiles can add up to more.');
 echo '</p>'; ?>
-<div class="row"><?php
+<div class="row gy-4"><?php
     echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Auto-Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains'));
@@ -233,7 +233,7 @@ echo '</p>'; ?>
     } ?>
 </div><?php
 if ($unlocked_count > 0) {
-    echo '<p>' . htmlspecialchars(sprintf(ngettext('%s live domain has no transfer lock.', '%s live domains have no transfer lock.', $unlocked_count), number_format($unlocked_count)), ENT_QUOTES, 'UTF-8')
+    echo '<p class="mt-4">' . htmlspecialchars(sprintf(ngettext('%s live domain has no transfer lock.', '%s live domains have no transfer lock.', $unlocked_count), number_format($unlocked_count)), ENT_QUOTES, 'UTF-8')
         . ' <a href="' . WEB_ROOT . '/domains/?lock=unlocked">' . _('View on the Domains list') . '</a></p>';
 } ?>
 

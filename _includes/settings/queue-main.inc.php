@@ -24,7 +24,9 @@ $page_title = _('Import Queue');
 $breadcrumb = $page_title;
 $software_section = "queue";
 $slug = "queue-main";
-$datatable_class = 'table table-striped dt-responsive cell-border compact';
+// The three tables have the dense list style (see css/base.css): every column in a box that scrolls sideways, so
+// they don't use Responsive, and DataTables puts just the table in a box of its own (js/datatables.js)
+$datatable_class = 'table domainmod-dense-table';
 $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "paging": true,
                           "lengthChange": true,
@@ -33,20 +35,17 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "info": true,
                           "autoWidth": true,
                           "bAutoWidth": false,
-                          "responsive": {
-                               details: {
-                                         type: "column"
-                                        }
-                                        },
                           "columnDefs": [ {
-                                           className: "control",
-                                           orderable: false,
-                                           targets:   0
+                                           type: "string",
+                                           targets:   ".domainmod-col-date"
+                                           }, {
+                                           className: "dt-center",
+                                           targets:   ".domainmod-col-delete"
                                            } ],
                           "ordering": true,
-                          "order": [[ 5, "desc" ]],
+                          "order": [[ 4, "desc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "dom": \'<"top"lif>r<"domainmod-list-scroll"t><"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
                             var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
@@ -62,19 +61,19 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "info": true,
                           "autoWidth": true,
                           "bAutoWidth": false,
-                          "responsive": {
-                               details: {
-                                         type: "column"
-                                        }
-                                        },
                           "columnDefs": [ {
-                                           className: "control",
-                                           orderable: false,
-                                           targets:   0
+                                           type: "string",
+                                           targets:   ".domainmod-col-date"
+                                           }, {
+                                           className: "dt-center",
+                                           targets:   ".domainmod-col-delete"
                                            } ],
                           "ordering": true,
+                          // The rows start in the order the page lists them: domains already in DomainMOD or the
+                          // queue last, and newest first
+                          "order": [],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "dom": \'<"top"lif>r<"domainmod-list-scroll"t><"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
                             var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");
@@ -90,26 +89,17 @@ $datatable_options = 'domainmodTable(\'#' . $slug . '-lists\', {
                           "info": true,
                           "autoWidth": true,
                           "bAutoWidth": false,
-                          "responsive": {
-                               details: {
-                                         type: "column"
-                                        }
-                                        },
                           "columnDefs": [ {
-                                           className: "control",
-                                           orderable: false,
-                                           targets:   0
+                                           type: "string",
+                                           targets:   ".domainmod-col-date"
                                            }, {
-                                           responsivePriority: 1,
-                                           targets:   1
-                                           }, {
-                                           responsivePriority: 2,
-                                           targets:   2
+                                           className: "dt-center",
+                                           targets:   ".domainmod-col-delete"
                                            } ],
                           "ordering": true,
-                          "order": [[ 7, "desc" ]],
+                          "order": [[ 6, "desc" ]],
                           "bSortClasses": false,
-                          "dom": \'<"top"lif>rt<"bottom"ip><"clear">\',
+                          "dom": \'<"top"lif>r<"domainmod-list-scroll"t><"bottom"ip><"clear">\',
                           "drawCallback": function (settings) {
                             // Each paged table names its paging, so the navigation landmarks on the page can be told apart
                             var paging = new DataTable.Api(settings).table().container().querySelector(".dt-paging nav");

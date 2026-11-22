@@ -958,8 +958,8 @@ echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-// The certificate's Change History, read-only and outside the form
-echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'ssl', $sslcid);
+// The certificate's Change History, read-only and outside the form, at the same width as the cards above it
+echo '<div class="domainmod-form">' . DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'ssl', $sslcid) . '</div>';
 
 $layout->dangerZone(_('SSL Certificate'), $new_name, 'edit.php?sslcid=' . $sslcid . '&del=1', _('Delete this SSL certificate'), sprintf(_('This removes %s and its details from %s. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>', SOFTWARE_TITLE));
 ?>

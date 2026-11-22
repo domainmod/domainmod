@@ -200,7 +200,7 @@ if ($counts['overdue'] === 0) {
 }
 if (array_sum($counts) > $total_at_risk) echo ' ' . _('A service can have more than one reason, so the tiles can add up to more.');
 echo '</p>'; ?>
-<div class="row"><?php
+<div class="row gy-4"><?php
     echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/hosting/at-risk.php?show=overdue#hosting-list', _('At-Risk Hosting Services'));
     echo $dashboard->displayPanel(_('Confirm renewal'), $counts['confirm'], 'warning', 'bi-hourglass-split', '/reporting/hosting/at-risk.php?show=confirm#hosting-list', _('At-Risk Hosting Services'));
     echo $dashboard->displayPanel(sprintf(_('Renewing Soon (%s days)'), $risk_days), $counts['expiring'], 'warning', 'bi-calendar-event', '/reporting/hosting/at-risk.php?show=expiring#hosting-list', _('At-Risk Hosting Services'));

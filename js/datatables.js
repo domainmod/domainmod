@@ -25,6 +25,11 @@
 // - When a table changes page, the window jumps to the table's top, so the new rows start in view. The first draw
 //   doesn't move anything. Pass {scrollOnPage: false} as the third argument for a table that shouldn't jump.
 // - A drawCallback in the options still runs first, on every draw.
+// - A table with the dense list style (domainmod-dense-table, see css/base.css) that sits straight inside the page's
+//   scroll box (domainmod-list-scroll) gets a box of its own from DataTables, around just the table (its dom option
+//   names it), so the search and paging stay outside it. The page's box, there for when JavaScript is off, then comes
+//   off, and its keyboard focus, role, and name move to the new box. A draw with no matches scrolls the box back to the
+//   start, where the "no matches" message is.
 // It returns the table's DataTables API instance.
 // In right-to-left languages, Currency::format() isolates each amount as left-to-right text with U+2066 and U+2069
 // around it, so it keeps its order on screen. DataTables doesn't count the mark as part of a number, so on those pages an amount column
@@ -66,6 +71,8 @@ function domainmodTable(selector, options, settings) {
     if (!table) return null;
 
     options = options || {};
+    var page_box = table.classList.contains('domainmod-dense-table')
+        && table.parentNode.classList.contains('domainmod-list-scroll') ? table.parentNode : null;
     var scrollOnPage = !(settings && settings.scrollOnPage === false);
     var callerDraw = options.drawCallback;
     var lastStart = null;
@@ -80,5 +87,18 @@ function domainmodTable(selector, options, settings) {
         lastStart = start;
     };
 
-    return new DataTable(table, options);
+    var api = new DataTable(table, options);
+
+    var box = table.parentNode;
+    if (page_box && box !== page_box && box.classList.contains('domainmod-list-scroll')) {
+        ['tabindex', 'role', 'aria-label'].forEach(function (name) {
+            if (page_box.hasAttribute(name)) box.setAttribute(name, page_box.getAttribute(name));
+        });
+        page_box.replaceWith.apply(page_box, Array.prototype.slice.call(page_box.childNodes));
+        api.on('draw', function () {
+            if (api.page.info().recordsDisplay === 0) box.scrollLeft = 0;
+        });
+    }
+
+    return api;
 }

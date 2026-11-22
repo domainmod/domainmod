@@ -203,7 +203,7 @@ if ($export_data === 1 && $list) {
 $layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
 if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?export_data=1&days=' . $days, 'bi-download'); ?>
 
-<div class="row"><?php
+<div class="row gy-4"><?php
     foreach ($windows as $window_days => $window) {
         $detail = $money($window['cost']);
         if ($window['missing'] > 0) $detail .= ' ' . sprintf(_('(%s without a fee or rate)'), number_format($window['missing']));
@@ -211,7 +211,7 @@ if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?expor
     } ?>
 </div>
 <?php // The tiles leave out the renewals that have passed, which the list below them includes, so the two can differ ?>
-<p class="domainmod-intro"><?php echo _('The tiles count renewals from today on. The table also lists renewals that are overdue or waiting to be confirmed.'); ?></p>
+<p class="domainmod-intro mt-4"><?php echo _('The tiles count renewals from today on. The table also lists renewals that are overdue or waiting to be confirmed.'); ?></p>
 
 <?php
 if ($services) {

@@ -960,11 +960,11 @@ echo $form->showInputHidden('new_tld', $new_tld);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-// The domain's live DNS, read-only and outside the form
+// The domain's live DNS and then its Change History, read-only and outside the form, at the same width as the cards above them
+echo '<div class="domainmod-form">';
 echo DomainMOD\LiveDns::editCard($pdo, $did, ($_SESSION['s_read_only'] ?? '') != '1');
-
-// Its Change History, read-only and outside the form, after the live DNS
 echo DomainMOD\ChangeHistoryListColumns::editSection($pdo, 'domain', $did, false, DomainMOD\DomainRefresh::statusLine($pdo, $did));
+echo '</div>';
 
 $dwaccounts = new DomainMOD\DwAccounts();
 $dw_has_accounts = $dwaccounts->checkForAccounts($new_domain);

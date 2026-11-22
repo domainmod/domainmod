@@ -145,7 +145,7 @@ class ImportQueuePageTest extends TestCase
             $queue->statusParts($this->row(array('attempts' => 1, 'message' => 'timeout'))));
         $this->assertSame(array('imported', 'Imported', 'Not trusted', ''),
             $queue->statusParts($this->row(array('finished' => 1, 'message' => 'untrusted'))));
-        $this->assertSame(array('already_in_queue', 'Already in the Queue', '', ''),
+        $this->assertSame(array('already_in_queue', 'Already in SSL Queue', '', ''),
             $queue->statusParts($this->row(array('finished' => 1, 'already_in_queue' => 1))));
         $this->assertSame(array('failed', 'Failed', '', 'Nothing answered on port 443.'),
             $queue->statusParts($this->row(array('finished' => 1, 'failed' => 1, 'message' => 'no_connect'))));

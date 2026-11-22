@@ -172,7 +172,7 @@ if (!$dw_built) {
 
     } ?>
 
-    <div class="row"><?php
+    <div class="row gy-4"><?php
         echo $dashboard->displayPanel(_('Accounts without a DNS Zone'), $temp_accounts_without_a_dns_zone, 'warning', 'bi-diagram-2', '/reporting/dw/potential-problems.php?generate=1#no-zone', _('DW Potential Problems'));
         echo $dashboard->displayPanel(_('DNS Zones without an Account'), $temp_dns_zones_without_an_account, 'warning', 'bi-question-diamond', '/reporting/dw/potential-problems.php?generate=1#no-account', _('DW Potential Problems'));
         echo $dashboard->displayPanel(_('Suspended Accounts'), $temp_suspended_accounts, 'danger', 'bi-pause-circle', '/reporting/dw/potential-problems.php?generate=1#suspended', _('DW Potential Problems')); ?>

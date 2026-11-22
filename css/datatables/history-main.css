@@ -77,6 +77,15 @@
 #history-main > tbody > tr > td.domainmod-list-by {
     overflow-wrap: break-word;
 }
+/* The scroll box has the same border all round as the dividers between columns, so the table is boxed in wherever
+   it's scrolled to, with any scrollbar inside the box. The last row's cells lose their bottom border, so the bottom
+   isn't drawn twice. Both rules find the box the same way, so a browser without :has() keeps the rows' own lines. */
+.domainmod-list-scroll:has(> #history-main) {
+    border: 1px solid var(--bs-border-color-translucent);
+}
+.domainmod-list-scroll:has(> #history-main) > #history-main > tbody > tr:last-child > td {
+    border-block-end: 0;
+}
 /* A divider between columns, none after the last */
 #history-main > :is(thead, tbody) > tr > :not(:last-child) {
     border-inline-end: 1px solid var(--bs-border-color-translucent);

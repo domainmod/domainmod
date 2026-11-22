@@ -179,7 +179,7 @@ if ($ssl_queue_available && $export_data === 1) {
         _('Expiry Date'),
         _('Issuer'),
         _('Added By'),
-        _('Date Added')
+        _('Added')
     );
     $export->writeRow($export_file, $row_contents);
 

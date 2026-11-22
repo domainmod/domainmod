@@ -721,7 +721,7 @@ class SslQueue
 
         } elseif ($state === 'already_in_queue') {
 
-            $label = _('Already in the Queue');
+            $label = _('Already in SSL Queue');
 
         } elseif ($state === 'already_in_ssl') {
 

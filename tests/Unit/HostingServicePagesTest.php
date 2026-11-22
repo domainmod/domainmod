@@ -119,6 +119,22 @@ class HostingServicePagesTest extends TestCase
         $this->assertStringContainsString("_('If a shorter month moves the renewal date earlier, the next renewal goes back to the day chosen here.')", $this->source('hosting/add.php'));
     }
 
+    /*
+     * The cards after the main form end with the same space under their last line or button as the edit domain and SSL
+     * certificate pages' cards (a card's body has no bottom padding, so its last element's margin, mb-3, makes the space)
+     */
+    public function testTheLowerCardsEndWithTheFormsSpacing()
+    {
+        $source = $this->source('hosting/edit.php');
+        foreach (array("echo '<div class=\"domainmod-span-all mb-3\">' . \$form->showSubmitButton(_('Mark Renewed'), '', '') . '</div>';",
+            "echo '<p class=\"domainmod-span-all mb-3\">' . _(\"No domains use this service.",
+            '<div class="table-responsive domainmod-span-all mb-3"><table class="table table-sm table-striped mb-0">',
+            "echo '<p class=\"domainmod-span-all mb-3\"><a href=\"../domains/index.php?hsid='") as $text) {
+            $this->assertStringContainsString($text, $source);
+        }
+        $this->assertStringNotContainsString('<p class="domainmod-span-all mb-0">', $source);
+    }
+
     // The Change History card sits in the same width wrapper as the cards above it
     public function testTheEditPageHistoryCardKeepsTheFormsWidth()
     {
@@ -144,7 +160,7 @@ class HostingServicePagesTest extends TestCase
         $this->assertStringContainsString('<a href="../domains/edit.php?did=<?php echo (int) $service_domain->id; ?>">', $source);
         $this->assertStringContainsString('$layout->ltr($service_domain->expiry_date)', $source);
         $this->assertStringContainsString("if (\$service_domain_count > \$domains_card_limit) {", $source);
-        $this->assertStringContainsString("'<p class=\"domainmod-span-all mb-0\"><a href=\"../domains/index.php?hsid=' . (int) \$hsid . '&amp;is_active=ALL\">'", $source);
+        $this->assertStringContainsString("'<p class=\"domainmod-span-all mb-3\"><a href=\"../domains/index.php?hsid=' . (int) \$hsid . '&amp;is_active=ALL\">'", $source);
         $this->assertStringContainsString("_('Open these domains in the Domains list')", $source);
         $this->assertStringContainsString("_(\"No domains use this service. Choose it on a domain's edit page, or use the Bulk Updater's Change Hosting Service.\")", $source);
     }
@@ -244,7 +260,7 @@ class HostingServicePagesTest extends TestCase
         $this->assertStringContainsString('$can_renew = !$read_only && $renew_preview !== \'\';', $source);
         $this->assertStringContainsString("_(\"If it's still unconfirmed on %s, it shows as overdue.\")", $source);
         $this->assertStringContainsString('DomainMOD\\Hosting::CONFIRM_DAYS + 1', $source);
-        $this->assertStringContainsString('<div class="domainmod-span-all callout callout-warning mb-0">', $source);
+        $this->assertStringContainsString('<div class="domainmod-span-all callout callout-warning mb-3">', $source);
         // The card can't move a date past 9999-12-31, and says so instead of the sentence and the button
         $this->assertStringContainsString("_(\"The renewal date can't be moved forward one term until the hosting service has a valid billing term and renewal date.\")", $source);
 

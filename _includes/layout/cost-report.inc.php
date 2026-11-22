@@ -301,7 +301,7 @@ if ($submission_failed != 1) {
         $report_total = "\u{2066}" . $grand_total . ' ' . $_SESSION['s_default_currency'] . "\u{2069}";
         $report_card_url = $report_url . '?' . http_build_query(array('group' => $cost_key) + $report_range, '', '&amp;') . '#' . $slug;
 
-        echo '<div class="row mb-4">';
+        echo '<div class="row gy-4 mb-4">';
         if ($report_section == 'hosting') {
             // A yearly figure says so, while Month's total is the projected renewals in the range
             // TRANSLATORS: A Hosting Costs total. %s is an amount and its currency code, such as "$120.00 USD".
