@@ -45,7 +45,7 @@ $pdo = $deeb->cnxx;
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
 // Which certificates the list shows: all of them, or those a tile counts (anything else shows all)
-$show = (string) ($_GET['show'] ?? 'all');
+$show = is_string($_GET['show'] ?? null) ? $_GET['show'] : 'all';
 if (!in_array($show, array('all', 'expiring', 'domain', 'overdue', 'nofee'), true)) $show = 'all';
 
 $expiration_days = (int) $pdo->query("

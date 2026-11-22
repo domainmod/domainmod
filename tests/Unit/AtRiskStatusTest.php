@@ -27,8 +27,9 @@ use PHPUnit\Framework\TestCase;
 /*
  * Reporting::atRiskDomains() with the registry status columns from renewalDomainsWithStatus(): a domain in the next 30
  * days without a transfer lock, or that the registry has on hold or is deleting, is at risk, while one further out
- * isn't, and rows without the columns (before the database update) work as before. The Dashboard's At Risk tile counts
- * the same function over its wider rows, so these also keep the tile and the report in step.
+ * isn't, and rows without the columns (before the database update) work as before. Privacy off isn't a reason, since
+ * At Risk means might not renew (Greg's choice, 2026-11-21). The Dashboard's At Risk tile counts the same function
+ * over its wider rows, so these also keep the tile and the report in step.
  */
 class AtRiskStatusTest extends TestCase
 {
@@ -65,6 +66,17 @@ class AtRiskStatusTest extends TestCase
     {
         $this->assertSame(array('2026-11-01'), $this->listed(array($this->row('2026-11-01', array('transfer_lock' => 1,
             'registry_problem' => 1)))));
+    }
+
+    // Privacy off alone doesn't put a domain at risk, in the window or with rows from before the database update, while
+    // an overdue domain is listed whatever its privacy
+    public function testPrivacyOffIsntAReason()
+    {
+        $this->assertSame(array(), $this->listed(array($this->row('2026-12-01', array('privacy' => '0')))));
+        $this->assertSame(array('2026-12-02'), $this->listed(array($this->row('2026-12-02', array('privacy' => '0', 'autorenew' => '0')))));
+        $this->assertSame(array('2026-11-01'), $this->listed(array($this->row('2026-11-01', array('privacy' => '0')))));
+        $plain = (object) array('domain' => '2026-12-03', 'expiry_date' => '2026-12-03', 'autorenew' => '1', 'privacy' => '0');
+        $this->assertSame(array(), $this->listed(array($plain)));
     }
 
     public function testRowsWithoutTheColumnsWorkAsBefore()

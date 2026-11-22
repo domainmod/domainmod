@@ -153,16 +153,14 @@ if (DomainMOD\WatchList::isEnabled()) {
 }
 
 // Each item: its count, sentence, hint, colour (a Bootstrap colour, for the icon's tint), icon, and link. At Risk counts
-// only domains (Reporting::atRiskDomains(), as the At-Risk Domains report lists them), with its own fixed 30 days. The
-// hints don't show the count, so each picks between its two sentences itself (ngettext()'s plural forms follow a shown
-// number).
+// only domains that might not renew (Reporting::atRiskDomains(), as the At-Risk Domains report lists them), with its
+// own fixed 30 days, and its hint is short enough for a half-width column. The other hints don't show the count, so
+// each picks between its two sentences itself (ngettext()'s plural forms follow a shown number).
 $attention = array();
 if ($at_risk_count) {
     $attention[] = array($at_risk_count,
         sprintf(ngettext('%s domain is at risk', '%s domains are at risk', $at_risk_count), number_format($at_risk_count)),
-        sprintf($at_risk_count === 1
-            ? _("It's overdue, or it expires in the next %s days and has auto-renewal, privacy, or the transfer lock turned off, is on hold at the registry, or is being deleted or restored by the registry.")
-            : _("They're overdue, or they expire in the next %s days and have auto-renewal, privacy, or the transfer lock turned off, are on hold at the registry, or are being deleted or restored by the registry."),
+        sprintf(_('Overdue, or expiring in the next %s days with auto-renewal off, the transfer lock off, or a registry hold or deletion.'),
             DomainMOD\Reporting::AT_RISK_DAYS),
         'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php');
 }

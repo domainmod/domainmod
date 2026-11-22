@@ -47,8 +47,8 @@ $export_data = (int) ($_GET['export_data'] ?? 0);
 // The transfer lock and registry status reasons come with the 4.27.0 database update (DomainMOD\DomainStatus)
 $status_available = DomainMOD\DomainStatus::isAvailable($pdo);
 // Which domains the list shows: all of them, or those a tile counts (anything else shows all)
-$show = (string) ($_GET['show'] ?? 'all');
-$show_values = array('all', 'overdue', 'autorenew', 'privacy', 'nofee');
+$show = is_string($_GET['show'] ?? null) ? $_GET['show'] : 'all';
+$show_values = array('all', 'overdue', 'autorenew', 'nofee');
 if ($status_available) $show_values = array_merge($show_values, array('lock', 'registry'));
 if (!in_array($show, $show_values, true)) $show = 'all';
 
@@ -68,7 +68,6 @@ $is_overdue = function ($row) use ($today) {
 $conditions = array(
     'overdue' => $is_overdue,
     'autorenew' => function ($row) use ($is_overdue) { return !$is_overdue($row) && $row->autorenew != '1'; },
-    'privacy' => function ($row) use ($is_overdue) { return !$is_overdue($row) && $row->privacy != '1'; },
     'nofee' => function ($row) { return !$row->has_fee || !$row->has_rate; });
 if ($status_available) {
     // A transfer lock only matters for a domain still to renew, while the registry's hold or deletion matters for every one
@@ -116,7 +115,6 @@ $yes_no = function ($value) {
 $reasons = array(
     'overdue' => array(_('Overdue'), _('Past its expiry date'), 'danger'),
     'autorenew' => array(_('Auto-Renewal Off'), _('Auto-renewal is off'), 'warning'),
-    'privacy' => array(_('Privacy Off'), _('Privacy is off'), 'secondary'),
     'nofee' => array(_('No Fee or Rate'), _('No fee, or no conversion rate for its currency'), 'secondary'));
 if ($status_available) {
     $reasons['lock'] = array(_('Transfer Lock Off'), _('The transfer lock is off'), 'warning');
@@ -131,11 +129,14 @@ $row_reasons = function ($row) use ($conditions) {
     return $keys;
 };
 
+// The list's heading, also written to the export
+$list_heading = $show === 'all' ? _('All At-Risk Domains') : $reasons[$show][0];
+
 $expiration_days_text = sprintf(ngettext('%s day', '%s days', $expiration_days), $expiration_days);
 if ($status_available) {
-    $intro = sprintf(_('This report lists live domains expiring in the next %1$s days that have auto-renewal, privacy, or the transfer lock turned off, are on hold at the registry, or are being deleted or restored by the registry. The report also includes all live domains past their expiry date.'), $risk_days) . ' ' . sprintf(_('This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
+    $intro = sprintf(_('This report lists the live domains that might not renew: those expiring in the next %1$s days that have auto-renewal or the transfer lock turned off, are on hold at the registry, or are being deleted or restored by the registry, and all live domains past their expiry date.'), $risk_days) . ' ' . sprintf(_('This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
 } else {
-    $intro = sprintf(_('Domains expiring in the next %1$s days with auto-renewal or privacy off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
+    $intro = sprintf(_('Domains that might not renew: those expiring in the next %1$s days with auto-renewal off, plus any past their expiry date. This report always looks %1$s days ahead, separately from the Expiration Days setting (currently %2$s) that the Dashboard and the reminder emails use.'), $risk_days, $expiration_days_text);
 }
 
 // Domains without a transfer lock that expire later aren't listed here, so a line links to all of them on the Domains
@@ -160,6 +161,9 @@ if ($export_data === 1 && $list) {
     $row_contents = array($intro);
     $export->writeRow($export_file, $row_contents);
 
+    $row_contents = array($list_heading);
+    $export->writeRow($export_file, $row_contents);
+
     $row_contents = array(_('Number of Domains') . ':', number_format(count($list)));
     $export->writeRow($export_file, $row_contents);
 
@@ -172,7 +176,6 @@ if ($export_data === 1 && $list) {
         _('Registrar'),
         _('Account'),
         _('Auto-Renewal'),
-        _('Privacy'),
         _('Renewal Cost'),
         _('Reasons')
     );
@@ -186,7 +189,6 @@ if ($export_data === 1 && $list) {
             $row->registrar_name,
             $row->owner_name . ' (' . $row->username . ')',
             $yes_no($row->autorenew),
-            $yes_no($row->privacy),
             $cost_text($row),
             implode(', ', array_map(function ($key) use ($reasons) { return $reasons[$key][0]; }, $row_reasons($row)))
         );
@@ -206,8 +208,7 @@ if ($export_data === 1 && $list) {
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->calloutTop(); ?>
-<?php echo $intro; ?><BR><BR>
-<?php echo _('Privacy off is sometimes deliberate, since some TLDs don\'t offer it, so this is a list to check rather than a list of mistakes.'); ?>
+<?php echo $intro; ?>
 <?php echo $layout->calloutBottom(); ?>
 
 <?php
@@ -225,7 +226,6 @@ echo '</p>'; ?>
 <div class="row"><?php
     echo $dashboard->displayPanel(_('Overdue'), $counts['overdue'], 'danger', 'bi-exclamation-triangle', '/reporting/domains/at-risk.php?show=overdue#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(sprintf(_('Auto-Renewal Off (%s days)'), $risk_days), $counts['autorenew'], 'warning', 'bi-arrow-repeat', '/reporting/domains/at-risk.php?show=autorenew#domain-list', _('At-Risk Domains'));
-    echo $dashboard->displayPanel(sprintf(_('Privacy Off (%s days)'), $risk_days), $counts['privacy'], 'secondary', 'bi-incognito', '/reporting/domains/at-risk.php?show=privacy#domain-list', _('At-Risk Domains'));
     echo $dashboard->displayPanel(_('No Fee or Rate'), $counts['nofee'], 'secondary', 'bi-question-circle', '/reporting/domains/at-risk.php?show=nofee#domain-list', _('At-Risk Domains'));
     if ($status_available) {
         echo $dashboard->displayPanel(sprintf(_('Transfer Lock Off (%s days)'), $risk_days), $counts['lock'], 'warning', 'bi-unlock', '/reporting/domains/at-risk.php?show=lock#domain-list', _('At-Risk Domains'));
@@ -237,7 +237,7 @@ if ($unlocked_count > 0) {
         . ' <a href="' . WEB_ROOT . '/domains/?lock=unlocked">' . _('View on the Domains list') . '</a></p>';
 } ?>
 
-<h2 class="h4 mt-4" id="domain-list"><?php echo $show === 'all' ? _('All At-Risk Domains') : $reasons[$show][0]; ?></h2><?php
+<h2 class="h4 mt-4" id="domain-list"><?php echo $list_heading; ?></h2><?php
 
 if ($show !== 'all') { ?>
     <a href="<?php echo $report_filename; ?>#domain-list"><?php echo _('Show all at-risk domains'); ?></a><BR><BR><?php
@@ -258,7 +258,6 @@ if ($list) { ?>
             <th><?php echo _('Registrar'); ?></th>
             <th><?php echo _('Account'); ?></th>
             <th><?php echo _('Auto-Renewal'); ?></th>
-            <th><?php echo _('Privacy'); ?></th>
             <th><?php echo _('Renewal Cost'); ?></th>
         </tr>
         </thead>
@@ -278,7 +277,6 @@ if ($list) { ?>
                 <td><?php echo $row->registrar_name; ?></td>
                 <td><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</td>
                 <td><?php echo $yes_no($row->autorenew); ?></td>
-                <td><?php echo $yes_no($row->privacy); ?></td>
                 <td data-order="<?php echo $cost_order($row); ?>"><?php echo $cost_text($row); ?></td>
             </tr><?php
 

@@ -108,10 +108,13 @@ class DashboardLayoutTest extends TestCase
         $needs = substr($needs, 0, strpos($needs, '$expiration_days = (int) $pdo->query("'));
         preg_match_all("/ngettext\\('(%s [^']+)'/", $needs, $matches);
         $this->assertSame(array('%s domain is at risk', '%s hosting renewal to confirm', '%s watched domain is about to drop', '%s item'), $matches[1]);
-        // The hints don't show the count, so each picks its sentence by the count, not through ngettext()
-        foreach (array('$at_risk_count === 1', '$confirm_count_hosting === 1', '$watch_count_pending_delete === 1') as $pick) {
+        // The hints don't show the count, so each picks its sentence by the count, not through ngettext(), apart from At
+        // Risk's, one short phrase for a half-width column that doesn't call privacy a reason
+        foreach (array('$confirm_count_hosting === 1', '$watch_count_pending_delete === 1') as $pick) {
             $this->assertStringContainsString($pick, $needs, $pick);
         }
+        $this->assertStringContainsString("sprintf(_('Overdue, or expiring in the next %s days with auto-renewal off, the transfer lock off, or a registry hold or deletion.'),", $needs);
+        $this->assertStringNotContainsString('privacy', $needs);
         preg_match_all("#'bi-[a-z-]+', '(/[^']+)'\\);#", $needs, $links);
         $this->assertSame(array('/reporting/domains/at-risk.php', '/reporting/hosting/at-risk.php?show=confirm#hosting-list',
             '/watch/?stage=pending_delete'), $links[1]);

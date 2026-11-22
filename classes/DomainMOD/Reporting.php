@@ -302,17 +302,17 @@ class Reporting
     }
 
     /*
-     * The At-Risk Domains from renewalDomains() rows: every overdue domain, and every domain expiring from $today
-     * through $risk_end (the next 30 days) with auto-renewal or privacy off. With renewalDomainsWithStatus() rows, a
-     * domain in that window without a transfer lock, or that the registry has on hold or is deleting or restoring, is
-     * at risk too (an overdue one is listed anyway).
+     * The At-Risk Domains from renewalDomains() rows, the domains that might not renew: every overdue domain, and every
+     * domain expiring from $today through $risk_end (the next 30 days) with auto-renewal off. With
+     * renewalDomainsWithStatus() rows, a domain in that window without a transfer lock, or that the registry has on
+     * hold or is deleting or restoring, is at risk too (an overdue one is listed anyway).
      */
     public function atRiskDomains($rows, $today, $risk_end)
     {
         return array_values(array_filter($rows, function ($row) use ($today, $risk_end) {
             if ($row->expiry_date < $today) return true;
             if ($row->expiry_date > $risk_end) return false;
-            if ($row->autorenew != '1' || $row->privacy != '1') return true;
+            if ($row->autorenew != '1') return true;
             return isset($row->transfer_lock) && ((int) $row->transfer_lock === DomainStatus::LOCK_OFF
                 || (int) $row->registry_problem === 1);
         }));
