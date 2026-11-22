@@ -847,7 +847,7 @@ class Rdap
 
         foreach (explode('.', $name) as $label) {
 
-            if (!preg_match('/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i', $label)) return false;
+            if (!preg_match('/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\z/i', $label)) return false;
 
         }
 
