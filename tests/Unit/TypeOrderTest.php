@@ -47,12 +47,12 @@ class TypeOrderTest extends TestCase
             'sidebar custom fields' => array('_includes/layout/menu-main.inc.php', array(
                 '/admin/domain-fields/"', '/admin/hosting-fields/"', '/admin/ssl-fields/"')),
             'dashboard totals' => array('dashboard/index.php', array(
-                'number_format($total_live_domains)', 'number_format($total_active_hosting)', 'number_format($total_live_ssl)',
-                'number_format($total_sold_domains)')),
-            'dashboard expiring' => array('dashboard/index.php', array(
-                "displayExpPanel(_('Domains')", "displayExpPanel(_('Hosting Services')", "displayExpPanel(_('SSL Certificates')")),
+                "ngettext('%s Domain', '%s Domains', \$total_live_domains)", "ngettext('%s Hosting Service', '%s Hosting Services', \$total_live_hosting)",
+                "ngettext('%s SSL Certificate', '%s SSL Certificates', \$total_live_ssl)", "ngettext('%s Sold Domain', '%s Sold Domains', \$total_sold_domains)")),
+            'dashboard coming up' => array('dashboard/index.php', array(
+                "dueCounts(\$pdo, 'domains'", "dueCounts(\$pdo, 'hosting'", "dueCounts(\$pdo, 'ssl'")),
             'dashboard pending' => array('dashboard/index.php', array(
-                "_('Pending Domains')", "_('Pending Hosting Services')", "_('Pending SSL Certificates')")),
+                "_('Domain renewals')", "_('Hosting renewals')", "_('SSL renewals')")),
             'dashboard chart series' => array('dashboard/index.php', array(
                 "array_column(array_column(\$renewal_months, 'domains'), 'cost')",
                 "array_column(array_column(\$renewal_months, 'hosting'), 'cost')",

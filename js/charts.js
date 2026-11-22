@@ -56,15 +56,17 @@
     }
 
     // Each slice or bar's colour: a doughnut's slices in the palette's order (it has at most five), every bar in the
-    // first colour, a bar chart's last "Other" bar (the rest of the groups together) in grey, Domain Renewals'
-    // Overdue bar in red, and a price comparison's cheapest bars in green
+    // chart's own colour (data.colour, such as domains for the domain charts) or else the first colour, a bar chart's
+    // last "Other" bar (the rest of the groups together) in grey, an Overdue bar hatched in the bars' colour (red
+    // without one), and a price comparison's cheapest bars in green
     function sliceColours(data) {
         var colours = palette();
+        var base = data.colour && data.type !== 'doughnut' && data.type !== 'pricebar' ? colour(data.colour) : colours[0];
         var out = data.values.map(function (value, index) {
-            return data.type === 'doughnut' ? colours[index % colours.length] : colours[0];
+            return data.type === 'doughnut' ? colours[index % colours.length] : base;
         });
         if (data.hasOther) out[out.length - 1] = colour('other');
-        if (data.type === 'bar' && data.firstIsOverdue) out[0] = colour('2');
+        if (data.type === 'bar' && data.firstIsOverdue) out[0] = data.colour ? hatch(base) : colour('2');
         if (data.type === 'pricebar') {
             (data.highlight || []).forEach(function (index) {
                 if (index >= 0 && index < out.length) out[index] = colour('3');
@@ -73,23 +75,40 @@
         return out;
     }
 
-    // A colour made see-through, such as #dc2626 at .55, for a second shade of the same colour
-    function fade(hex, alpha) {
-        var match = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
-        if (!match) return hex;
-        return 'rgba(' + parseInt(match[1], 16) + ', ' + parseInt(match[2], 16) + ', ' + parseInt(match[3], 16) + ', ' + alpha + ')';
+    /*
+     * An Overdue bar's fill: diagonal stripes of a colour over a see-through fill of it, so it reads as the same costs,
+     * only late. Each colour's pattern is made once (a new colour mode brings new colours, and so new patterns).
+     */
+    var hatches = {};
+    function hatch(hex) {
+        if (hatches[hex]) return hatches[hex];
+        var tile = document.createElement('canvas');
+        tile.width = tile.height = 8;
+        var ctx = tile.getContext('2d');
+        ctx.fillStyle = hex;
+        ctx.globalAlpha = 0.35;
+        ctx.fillRect(0, 0, 8, 8);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = hex;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-2, 10);
+        ctx.lineTo(10, -2);
+        ctx.moveTo(-2, 2);
+        ctx.lineTo(2, -2);
+        ctx.moveTo(6, 10);
+        ctx.lineTo(10, 6);
+        ctx.stroke();
+        hatches[hex] = ctx.createPattern(tile, 'repeat');
+        return hatches[hex];
     }
-
-    // The Overdue bar's shades of the warning colour, one per stack by its position: the first in full, the second
-    // lighter, and the third (and any after it) lighter again
-    var OVERDUE_SHADES = [1, 0.55, 0.3];
 
     /*
      * The datasets to draw: one for most charts, and one per series (each in its own colour) for stacked counts and
-     * stacked monthly amounts. A stacked monthly chart's Overdue bar is drawn in the warning colour, each stack in its
-     * own shade (OVERDUE_SHADES), with a gap in the card's colour (white in light mode, as between a doughnut's slices)
-     * under every stack after the first, so overdue domains, SSL certificates, and hosting services never merge. The
-     * legend keeps each series' own colour.
+     * stacked monthly amounts. A stacked monthly chart's Overdue bar is drawn with each stack hatched in its series'
+     * colour (hatch()), with a gap in the card's colour (white in light mode, as between a doughnut's slices) under every
+     * stack after the first, so overdue domains, hosting services, and SSL certificates never merge. The legend keeps
+     * each series' own solid colour.
      */
     function datasets(data) {
         if (data.type === 'bar' && data.series) {
@@ -105,11 +124,7 @@
                     label: item.name,
                     data: item.values,
                     backgroundColor: function (context) {
-                        if (overdue(context)) {
-                            var shade = OVERDUE_SHADES[Math.min(series_index, OVERDUE_SHADES.length - 1)];
-                            return shade === 1 ? colour('2') : fade(colour('2'), shade);
-                        }
-                        return colour(item.colour);
+                        return overdue(context) ? hatch(colour(item.colour)) : colour(item.colour);
                     },
                     borderColor: function () {
                         return colour('border');
@@ -160,6 +175,22 @@
         var space = currency.space === '1' ? ' ' : '';
         return currency.order === '1' ? number + space + currency.symbol : currency.symbol + space + number;
     }
+
+    /*
+     * A top legend gets room below it, so the bar totals and the plot don't crowd the series names. Chart.js has no
+     * legend margin option, so the legend's height is grown once it's measured (the plugin runs after the legend's own).
+     */
+    var legendGap = {
+        id: 'domainmodLegendGap',
+        beforeInit: function (chart) {
+            if (!chart.legend) return;
+            var fit = chart.legend.fit;
+            chart.legend.fit = function () {
+                fit.call(this);
+                if (this.options.display !== false && this.options.position === 'top') this.height += 16;
+            };
+        }
+    };
 
     /*
      * Each month's total above its bar, on the monthly cost charts (Cost by Month, Domain Renewals, and the
@@ -295,14 +326,27 @@
                 }
             }
         };
-        // A stacked monthly chart's tooltip lists every series in the month, then their total
+        // A stacked monthly chart's tooltip lists every series in the month, then their total, each with its series'
+        // solid colour (an Overdue bar's stripes would make a hard-to-read swatch)
         if (data.type === 'bar' && data.series) {
             tooltip.mode = 'index';
+            tooltip.callbacks.labelColor = function (context) {
+                var series = data.series[context.datasetIndex];
+                var solid = series ? colour(series.colour) : colour('1');
+                return {borderColor: solid, backgroundColor: solid};
+            };
             tooltip.callbacks.footer = function (items) {
                 var total = items.reduce(function (sum, item) {
                     return sum + item.parsed.y;
                 }, 0);
                 return data.totalLabel + ': ' + isolate(money(total, data.currency));
+            };
+        }
+        // A one-colour bar chart's tooltip swatch is that solid colour, the Overdue bar's too
+        if (data.type === 'bar' && !data.series && data.colour) {
+            tooltip.callbacks.labelColor = function () {
+                var solid = colour(data.colour);
+                return {borderColor: solid, backgroundColor: solid};
             };
         }
         if (rtl) {
@@ -328,8 +372,8 @@
         common.plugins.legend = data.type === 'stacked' || data.series
             ? {position: 'top', rtl: rtl, textDirection: rtl ? 'rtl' : 'ltr', labels: {color: text}}
             : {display: false};
-        // A stacked monthly chart's legend keeps each series' own colour, which Chart.js would otherwise take from the
-        // first bar, the Overdue bar's warning colours when there is one, with no border
+        // A stacked monthly chart's legend keeps each series' own solid colour, which Chart.js would otherwise take from
+        // the first bar, the Overdue bar's stripes when there is one, with no border
         if (data.type === 'bar' && data.series) {
             common.plugins.legend.labels.generateLabels = function (chart) {
                 var items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
@@ -384,7 +428,17 @@
         common.scales = {
             // The months run right to left in right-to-left languages, so the earliest is on the right, and the
             // amounts axis moves to the right
-            x: {reverse: rtl, stacked: !!data.series, ticks: {color: text}, grid: {color: grid}},
+            // An Overdue bar's label is red, as the Overdue bar's stripes are in the bars' own colours
+            x: {
+                reverse: rtl,
+                stacked: !!data.series,
+                ticks: {
+                    color: function (context) {
+                        return data.firstIsOverdue && context.index === 0 ? colour('overdue-text') : text;
+                    }
+                },
+                grid: {color: grid}
+            },
             y: {
                 beginAtZero: true,
                 stacked: !!data.series,
@@ -422,7 +476,7 @@
                 datasets: datasets(data)
             },
             options: options(data),
-            plugins: data.type === 'bar' ? [barTotals] : []
+            plugins: data.type === 'doughnut' ? [] : (data.type === 'bar' ? [barTotals, legendGap] : [legendGap])
         });
         // Charts whose canvas an htmx swap took off the page are let go, so a recolour skips them
         charts = charts.filter(function (item) {

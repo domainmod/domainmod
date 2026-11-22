@@ -287,19 +287,19 @@ class RenewalChartHostingTest extends TestCase
 
 
     /*
-     * The Dashboard's Confirm renewal tile counts with HostingReport::confirmCount() over services() rows stored by the
-     * hosting date (the rows and rule At-Risk uses), whatever the Expiration Days setting, opens At-Risk's Confirm renewal
-     * list, draws the expirations row by itself, and says it's part of the Hosting Services tile only while Expiration
-     * Days isn't negative
+     * The Dashboard's count of hosting renewals to confirm comes from the same rows and rule as At-Risk Hosting Services
+     * (HostingReport::services() and confirmCount(), both given the hosting date), whatever the Expiration Days setting,
+     * and the Needs Attention item opens At-Risk's Confirm renewal list, saying it's about hosting renewals
      */
-    public function testTheDashboardsConfirmRenewalTile()
+    public function testTheDashboardsConfirmRenewalItem()
     {
         $dashboard = file_get_contents(dirname(__DIR__, 2) . '/dashboard/index.php');
         $this->assertStringContainsString("\$confirm_count_hosting = \$hosting_available ? DomainMOD\\HostingReport::confirmCount((new DomainMOD\\HostingReport(\$pdo,
     \$_SESSION['s_user_id'] ?? 0))->services(\$hosting_today), \$hosting_today) : 0;", $dashboard);
-        $this->assertStringContainsString('if ($total_count_domains || $total_count_ssl || $total_count_hosting || $confirm_count_hosting || $at_risk_count) {', $dashboard);
-        $this->assertStringContainsString("\$confirm_detail = (int) \$expiration_days >= 0 ? _('Also counted in Hosting Services') : _('Hosting Services');", $dashboard);
-        $this->assertStringContainsString("echo \$dashboard->displayPanel(_('Confirm renewal'), \$confirm_count_hosting, 'warning', 'bi-hourglass-split', '/reporting/hosting/at-risk.php?show=confirm#hosting-list', _('At-Risk Hosting Services'), \$confirm_detail);", $dashboard);
+        $this->assertStringContainsString("sprintf(ngettext('%s hosting renewal to confirm', '%s hosting renewals to confirm', \$confirm_count_hosting), number_format(\$confirm_count_hosting)),", $dashboard);
+        $this->assertStringContainsString("'warning', 'bi-hourglass-split', '/reporting/hosting/at-risk.php?show=confirm#hosting-list');", $dashboard);
+        $this->assertStringNotContainsString('Also counted in Hosting Services', $dashboard);
+        $this->assertStringNotContainsString("_('Confirm renewal')", $dashboard);
     }
 
     // The dashboard gives the chart the hosting date, which decides what's overdue, while the months follow the user's

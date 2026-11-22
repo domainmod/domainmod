@@ -204,7 +204,7 @@ if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?expor
 <?php
 if ($rows) {
 
-    echo $chart->bar('ssl-upcoming-renewals-chart', _('SSL Renewal Costs, Next 12 Months'), array_column($months, 'label'), array_column($months, 'cost'), !empty($months[0]['overdue']), '<div class="mt-3">' . $reporting->renewalMonthsTable($months, 'certs') . '</div>');
+    echo $chart->bar('ssl-upcoming-renewals-chart', _('SSL Renewal Costs, Next 12 Months'), array_column($months, 'label'), array_column($months, 'cost'), !empty($months[0]['overdue']), '<div class="mt-3">' . $reporting->renewalMonthsTable($months, 'certs') . '</div>', true, 'ssl');
 
 } ?>
 

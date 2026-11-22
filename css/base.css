@@ -514,7 +514,9 @@ a[aria-busy="true"] {
 /* The charts' colours (js/charts.js reads them, since Chart.js draws on a canvas and can't use CSS directly): a
    nine-colour palette (a doughnut's slices use the first five, since it has at most five groups, bars use the first,
    a price comparison's cheapest bars the green third, and the stacked counts the green, red, and amber), a grey for a
-   bar chart's "Other" bar, plus the text, grid, and slice border colours, for each colour mode */
+   bar chart's "Other" bar, plus the text, grid, and slice border colours, for each colour mode. Domains, Hosting, and
+   SSL Certificates each have their own colour wherever a chart shows their costs (the renewal and cost charts), and an
+   Overdue column's axis label is red. */
 :root,
 [data-bs-theme="light"] {
     --domainmod-chart-1: #2563eb;
@@ -530,6 +532,10 @@ a[aria-busy="true"] {
     --domainmod-chart-text: #495057;
     --domainmod-chart-grid: rgba(0, 0, 0, .1);
     --domainmod-chart-border: #ffffff;
+    --domainmod-chart-domains: #3e6fb0;
+    --domainmod-chart-hosting: #2f9e72;
+    --domainmod-chart-ssl: #d4602a;
+    --domainmod-chart-overdue-text: #b02a37;
 }
 /* Dark mode's chart colours come from the Nord palette (Frost and Aurora, a few lightened so every slice and bar has
    at least 3:1 contrast against the card) */
@@ -547,6 +553,10 @@ a[aria-busy="true"] {
     --domainmod-chart-text: #d8dee9;
     --domainmod-chart-grid: rgba(216, 222, 233, .12);
     --domainmod-chart-border: #3b4252;
+    --domainmod-chart-domains: #5b8fd6;
+    --domainmod-chart-hosting: #2aa57a;
+    --domainmod-chart-ssl: #e0703a;
+    --domainmod-chart-overdue-text: #f0a0a0;
 }
 /* A chart's drawing area. Chart.js sizes the canvas to fill it, so the height is set here (no inline styles under the
    CSP), smaller on narrow screens. */
@@ -927,6 +937,140 @@ table.dataTable > thead > tr > th.text-end div.dt-column-header {
 .domainmod-dashboard-total:focus-within {
     outline: 2px solid var(--bs-focus-ring-color, var(--bs-primary));
     outline-offset: -2px;
+}
+/* The rest of the Dashboard (layout F, Greg's choice, 2026-11-21): blocks with a heading and a note at the end side of
+   the header (Needs Attention's item count, Coming Up's "Renewals due"). Every colour is a theme variable, so light and
+   dark (Nord) modes follow, and logical properties mirror it in right-to-left languages. */
+.domainmod-dashboard-block-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 1rem;
+}
+.domainmod-dashboard-block-header::after {
+    display: none;
+}
+.domainmod-dashboard-block-header .card-title {
+    float: none;
+}
+.domainmod-dashboard-block-note {
+    margin-inline-start: auto;
+    font-size: .875rem;
+    color: var(--bs-secondary-color);
+}
+/* Needs Attention's items: a tinted icon, the sentence (the link, which covers the whole row) with its hint under it,
+   and a chevron. The hint is muted text, at least 4.5:1 in both colour modes. */
+.domainmod-attention-item {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.domainmod-attention-item:hover,
+.domainmod-attention-item:focus-within {
+    background-color: var(--bs-tertiary-bg);
+}
+.domainmod-attention-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: .5rem;
+}
+.domainmod-attention-text {
+    flex: 1;
+    min-width: 0;
+}
+.domainmod-attention-text a {
+    font-weight: 600;
+}
+.domainmod-attention-hint {
+    display: block;
+    font-size: .875rem;
+    color: var(--bs-secondary-color);
+}
+.domainmod-attention-none .bi {
+    margin-inline-end: .25rem;
+}
+/* Coming Up's table: the type in the first column with its chart colour as a dot, and the counts after it, lined up at
+   the end side in tabular figures. A zero is muted and isn't a link. */
+.domainmod-coming-up {
+    font-variant-numeric: tabular-nums;
+}
+.domainmod-coming-up > :not(caption) > * > * {
+    padding-inline: .75rem;
+    text-align: end;
+    background-color: transparent;
+}
+.domainmod-coming-up > :not(caption) > * > :first-child {
+    text-align: start;
+}
+.domainmod-coming-up > thead th {
+    white-space: nowrap;
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--bs-secondary-color);
+}
+.domainmod-coming-up > tbody th {
+    font-weight: 400;
+}
+.domainmod-coming-up > tbody td a {
+    font-weight: 600;
+}
+.domainmod-coming-up > tbody > tr:last-child > * {
+    border-bottom: 0;
+}
+/* Each row is tinted on hover, and while one of its counts has focus, with the same colour as Needs Attention's rows in
+   both colour modes. The counts keep their own focus rings, drawn over the tint. */
+.domainmod-coming-up > tbody > tr:hover > *,
+.domainmod-coming-up > tbody > tr:focus-within > * {
+    background-color: var(--bs-tertiary-bg);
+}
+.domainmod-coming-up-zero {
+    color: var(--bs-secondary-color);
+}
+.domainmod-type-dot {
+    display: inline-block;
+    width: .6rem;
+    height: .6rem;
+    margin-inline-end: .5rem;
+    border-radius: .2rem;
+    vertical-align: middle;
+}
+.domainmod-type-dot-domains {
+    background-color: var(--domainmod-chart-domains);
+}
+.domainmod-type-dot-hosting {
+    background-color: var(--domainmod-chart-hosting);
+}
+.domainmod-type-dot-ssl {
+    background-color: var(--domainmod-chart-ssl);
+}
+/* Pending's and Import Queue's pills: a rounded outline in the border colour, the label in the body colour, and the
+   count in bold */
+.domainmod-dashboard-pills {
+    gap: .5rem;
+}
+.domainmod-dashboard-pill {
+    display: inline-block;
+    padding: .25rem .75rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 50rem;
+    font-size: .875rem;
+    color: var(--bs-body-color);
+    text-decoration: none;
+}
+.domainmod-dashboard-pill:hover,
+.domainmod-dashboard-pill:focus-visible {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-emphasis-color);
+}
+.domainmod-dashboard-pill-count {
+    margin-inline-start: .25rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 /* Dark mode's logo (Greg's choice, 2026-11-14): the logo's lettering drawn in a soft off-white (#e0e0e0, close to
    Nord's Snow Storm) with a CSS filter, and

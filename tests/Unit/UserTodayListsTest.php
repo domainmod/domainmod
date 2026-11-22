@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  * The Domains and SSL Certificates lists marked expiry dates as past using today's date in UTC, and the CSV Importer
  * and the Bulk Updater started new dates from it, so west of UTC the evening was already tomorrow (and the Bulk
  * Updater's Change Expiry Date then converted that date again, which moved it back a day in the morning). They now use
- * Time::userToday(), the user's own date. The Dashboard's expiring panels also bind their end date as a parameter
+ * Time::userToday(), the user's own date. The Dashboard's Coming Up counts also bind their end date as a parameter
  * rather than pasting it into the SQL. These tests read the page source, since the pages aren't classes.
  */
 class UserTodayListsTest extends TestCase
@@ -72,14 +72,17 @@ class UserTodayListsTest extends TestCase
         $this->assertStringNotContainsString('toUserTimezone($timestamp_basic', $this->source('bulk/main/index.php'));
     }
 
+    // Coming Up's windows end at the user's date (or, for Hosting, the hosting date) plus each window's days, and
+    // Dashboard::dueCounts() binds the end date as a parameter (DashboardComingUpTest checks the statements)
     public function testTheDashboardBindsItsEndDate()
     {
         $source = $this->source('dashboard/index.php');
 
         $this->assertStringNotContainsString('$end_date . "', $source);
-        // Four for domains and SSL certificates, and a fifth for Hosting, which ends at the hosting date's window
-        $this->assertSame(5, substr_count($source, 'expiry_date <= :end_date'));
-        $this->assertSame(4, substr_count($source, "\$stmt->bindValue('end_date', \$end_date, PDO::PARAM_STR);"));
-        $this->assertSame(1, substr_count($source, "\$stmt->bindValue('end_date', \$hosting_end_date, PDO::PARAM_STR);"));
+        $this->assertStringContainsString('$coming_up_ends[$window] = $time->userTodayPlusDays($window, $today);', $source);
+        $this->assertStringContainsString('if ($hosting_available) $hosting_ends[$window] = DomainMOD\\Hosting::addDays($hosting_today, $window);', $source);
+        $class = $this->source('classes/DomainMOD/Dashboard.php');
+        $this->assertSame(3, substr_count($class, 'expiry_date <= :end_date'));
+        $this->assertSame(1, substr_count($class, "\$stmt->bindValue('end_date', max(\$end_dates), \\PDO::PARAM_STR);"));
     }
 }

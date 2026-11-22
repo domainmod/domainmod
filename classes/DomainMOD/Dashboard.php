@@ -23,6 +23,11 @@ namespace DomainMOD;
 
 class Dashboard
 {
+    // The first expiry date Coming Up counts and its links ask for, so each count is what its link lists
+    const DUE_FROM = '2000-01-01';
+    // The longest Coming Up window, in days
+    const MAX_WINDOW_DAYS = 36500;
+
     public $layout;
 
     public function __construct()
@@ -71,11 +76,115 @@ class Dashboard
     }
 
     /*
-     * The count of domains or SSL certificates expiring soon, in the same card as the other counts, marked urgent
+     * How many of a table's items are in each status (its active column), as status => count, for the Dashboard's
+     * totals and Pending block. $table is domains, ssl_certs, or hosting_services.
      */
-    public function displayExpPanel($title, $count, $url, $section = '')
+    public static function statusCounts(\PDO $pdo, $table)
     {
-        return $this->displayPanel($title, $count, 'danger', 'bi-calendar-event', $url, $section);
+        if (!in_array($table, array('domains', 'ssl_certs', 'hosting_services'), true)) {
+            throw new \InvalidArgumentException('Unknown table: ' . $table);
+        }
+
+        $counts = array();
+        foreach ($pdo->query("
+            SELECT active, count(*)
+            FROM " . $table . "
+            GROUP BY active")->fetchAll(\PDO::FETCH_KEY_PAIR) as $status => $count) {
+            $counts[(int) $status] = (int) $count;
+        }
+        return $counts;
+    }
+
+    /*
+     * The total of statusCounts()' counts for the statuses in $statuses, or with $exclude, for every other status
+     */
+    public static function countOf(array $counts, array $statuses, $exclude = false)
+    {
+        $total = 0;
+        foreach ($counts as $status => $count) {
+            if (in_array((int) $status, $statuses, true) !== (bool) $exclude) $total += $count;
+        }
+        return $total;
+    }
+
+    /*
+     * Coming Up's columns, in days: 7, 30, and the Expiration Days setting (the old "Expiring in the next N days"),
+     * smallest first and each once, so a setting of 7 or 30 doesn't repeat a column. The setting counts up to 100 years
+     * (MAX_WINDOW_DAYS), so a window's last day always has a four-digit year and compares correctly as a string.
+     */
+    public static function comingUpWindows($expiration_days)
+    {
+        $windows = array(7, 30);
+        if ((int) $expiration_days > 0) $windows[] = min((int) $expiration_days, self::MAX_WINDOW_DAYS);
+        $windows = array_values(array_unique($windows));
+        sort($windows);
+        return $windows;
+    }
+
+    /*
+     * How many of a type's items are due within each of Coming Up's windows, counted as the old expiring tiles counted
+     * them: domains that aren't Expired or Sold, hosting services that aren't Cancelled, and SSL certificates that
+     * aren't Expired (and have a type), whose expiry date is from DUE_FROM through the window's last day, overdue ones
+     * included. $type is domains, hosting, or ssl, and $end_dates maps each window to its last day (YYYY-MM-DD). One
+     * query fetches the count for each expiry date up to the latest last day, and countByWindow() adds them up.
+     */
+    public static function dueCounts(\PDO $pdo, $type, array $end_dates)
+    {
+        if (!$end_dates) return array();
+
+        if ($type === 'domains') {
+            $sql = "
+                SELECT expiry_date, count(*)
+                FROM domains
+                WHERE active NOT IN ('0', '10')
+                  AND expiry_date >= :start_date
+                  AND expiry_date <= :end_date
+                GROUP BY expiry_date";
+        } elseif ($type === 'hosting') {
+            $sql = "
+                SELECT expiry_date, count(*)
+                FROM hosting_services
+                WHERE active <> 0
+                  AND expiry_date >= :start_date
+                  AND expiry_date <= :end_date
+                GROUP BY expiry_date";
+        } elseif ($type === 'ssl') {
+            $sql = "
+                SELECT sslc.expiry_date, count(*)
+                FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                WHERE sslc.type_id = sslt.id
+                  AND sslc.active NOT IN ('0')
+                  AND sslc.expiry_date >= :start_date
+                  AND sslc.expiry_date <= :end_date
+                GROUP BY sslc.expiry_date";
+        } else {
+            throw new \InvalidArgumentException('Unknown type: ' . $type);
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue('start_date', self::DUE_FROM, \PDO::PARAM_STR);
+        $stmt->bindValue('end_date', max($end_dates), \PDO::PARAM_STR);
+        $stmt->execute();
+        $date_counts = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $stmt->closeCursor();
+
+        return self::countByWindow($date_counts, $end_dates);
+    }
+
+    /*
+     * dueCounts()' totals from the count for each expiry date (date => count): for each window, the items whose date is
+     * on or before its last day
+     */
+    public static function countByWindow(array $date_counts, array $end_dates)
+    {
+        $counts = array();
+        foreach ($end_dates as $window => $end_date) {
+            $counts[$window] = 0;
+            foreach ($date_counts as $date => $count) {
+                if ((string) $date <= $end_date) $counts[$window] += (int) $count;
+            }
+        }
+        return $counts;
     }
 
     /*

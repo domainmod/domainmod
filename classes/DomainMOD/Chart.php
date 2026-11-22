@@ -36,6 +36,9 @@ class Chart
     const MAX_SLICES = 5;  // a cost report with up to 5 groups draws a doughnut, and one with more a bar chart
     const MAX_BARS = 15;   // a cost report's bar chart shows the largest 15 groups, and the rest together as "Other"
     const MAX_HEIGHT_BARS = 30; // horizontal bar charts grow with their bars up to 30, and stay that tall above it
+    // The colours of the three types' costs, in their order, as css/base.css's --domainmod-chart-domains, -hosting, and
+    // -ssl define them for each colour mode
+    const SERIES_COLOURS = array('domains', 'hosting', 'ssl');
 
     public function __construct()
     {
@@ -48,9 +51,10 @@ class Chart
      * draw a doughnut. More draw a horizontal bar chart, largest first, with the largest 15 and the rest together as one
      * "Other" bar. A doughnut can't show a negative amount, so when any is negative, the bar chart is drawn instead.
      * Groups with no cost are left out first (the table still lists them, and a note under the chart says so), so
-     * they're not counted in the choice or in "Other", and when every group's cost is zero, no chart is drawn.
+     * they're not counted in the choice or in "Other", and when every group's cost is zero, no chart is drawn. $colour
+     * is the bar chart's colour name (see bar()), while a doughnut's slices keep the palette's colours.
      */
-    public function doughnut($id, $title, $labels, $values)
+    public function doughnut($id, $title, $labels, $values, $colour = '')
     {
         $labels = array_values($labels);
         $values = array_map('floatval', array_values($values));
@@ -89,30 +93,39 @@ class Chart
             $new_values[] = array_sum(array_slice($values, self::MAX_BARS, null, true));
         }
 
-        return $this->card($id, 'hbar', $title, $new_labels, $new_values, false, $has_other, $note);
+        return $this->card($id, 'hbar', $title, $new_labels, $new_values, false, $has_other, $note, $this->colourExtra($colour));
     }
 
     /*
-     * A bar chart, one bar per label, such as a month. With $first_is_overdue, the first bar is drawn in the warning
-     * colour, for Domain Renewals' Overdue bar. $after is HTML shown in the card under the chart, such as a link.
-     * Without $card_title, the card has no header, for a page that puts the title in a section heading above it (the
-     * title still names the chart for screen readers).
+     * A bar chart, one bar per label, such as a month. $colour names the bars' colour: one of SERIES_COLOURS (domains,
+     * hosting, or ssl) for a chart of that type's costs, or empty for the palette's first colour. With
+     * $first_is_overdue, the first bar is the Overdue bar, hatched in the bars' colour (red without one) with a red
+     * label. $after is HTML shown in the card under the chart, such as a link. Without $card_title, the card has no
+     * header, for a page that puts the title in a section heading above it (the title still names the chart for
+     * screen readers).
      */
-    public function bar($id, $title, $labels, $values, $first_is_overdue = false, $after = '', $card_title = true)
+    public function bar($id, $title, $labels, $values, $first_is_overdue = false, $after = '', $card_title = true, $colour = '')
     {
         $labels = array_values($labels);
         $values = array_map('floatval', array_values($values));
         if (!$values) return '';
 
-        return $this->card($id, 'bar', $title, $labels, $values, $first_is_overdue, false, $after, array('card_title' => $card_title));
+        return $this->card($id, 'bar', $title, $labels, $values, $first_is_overdue, false, $after,
+            array('card_title' => $card_title) + $this->colourExtra($colour));
+    }
+
+    // A chart's own colour for card()'s data, when it's one of SERIES_COLOURS
+    protected function colourExtra($colour)
+    {
+        return in_array($colour, self::SERIES_COLOURS, true) ? array('colour' => $colour) : array();
     }
 
     /*
      * A bar chart of amounts with each bar split into stacks, one bar per label (such as a month), so each bar is the
      * stacks' total, which is shown above it. $series is a list of the stacks, each array('name' => ...,
-     * 'values' => one amount per label, in the user's currency, 'colour' => a palette colour name, such as '1' or '4').
-     * The legend shows the series names. $first_is_overdue, $after, and $card_title work as in bar(), and the Overdue
-     * bar's stacks are drawn in shades of the warning colour.
+     * 'values' => one amount per label, in the user's currency, 'colour' => a colour name, such as 'domains' (see
+     * SERIES_COLOURS) or a palette number). The legend shows the series names in their solid colours. $first_is_overdue,
+     * $after, and $card_title work as in bar(), and each of the Overdue bar's stacks is hatched in its series' colour.
      */
     public function stackedMonthBars($id, $title, $labels, $series, $first_is_overdue = false, $after = '', $card_title = true)
     {

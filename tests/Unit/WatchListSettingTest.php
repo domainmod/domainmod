@@ -101,6 +101,7 @@ class WatchListSettingTest extends TestCase
     public function testTheEntryPointsCheckTheSetting()
     {
         $this->assertStringContainsString('if (DomainMOD\\WatchList::isEnabled()) { ?>', $this->source('_includes/layout/menu-main.inc.php'));
+        $this->assertStringContainsString('if (DomainMOD\\WatchList::isEnabled()) {', $this->source('dashboard/index.php'));
         $this->assertStringContainsString('if (!DomainMOD\\WatchList::isEnabled()) {', $this->source('watch/list-data.php'));
         foreach (array('watch/index.php', 'watch/add.php', 'watch/edit.php') as $page) {
             $source = $this->source($page);

@@ -348,10 +348,13 @@ if ($total_rows > 0) {
 
     // Each group's share of the total (Month: each month's cost)
     list($chart_labels, $chart_values) = $cost_report->chartData($cost_grouping, $cost_rows, $cost_chart_rows, $cost_subtotals);
+    // Bars use the colour of the report's section ($cost_section, see Chart::SERIES_COLOURS), and doughnut slices the
+    // palette's colours
+    $chart_colour = $cost_section;
     if ($cost_grouping['chart']['type'] === 'bar') {
-        echo $chart->bar($slug . '-chart', $report_name, $chart_labels, $chart_values);
+        echo $chart->bar($slug . '-chart', $report_name, $chart_labels, $chart_values, false, '', true, $chart_colour);
     } else {
-        echo $chart->doughnut($slug . '-chart', $report_name, $chart_labels, $chart_values);
+        echo $chart->doughnut($slug . '-chart', $report_name, $chart_labels, $chart_values, $chart_colour);
     }
 
     // Month's table has only four short columns, so it stops at half the page on wide screens
