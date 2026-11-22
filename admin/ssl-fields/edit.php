@@ -142,7 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         $log_extra = array('Error' => $e);
         $log->critical($log_message, $log_extra);
 
-        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+        // No message for a conflict, whose own page explains it (see domainmod_restore_is_conflict())
+        if (!domainmod_restore_is_conflict($e)) $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
         throw $e;
 
@@ -230,7 +231,8 @@ if ($del === 1) {
             $log_extra = array('Error' => $e);
             $log->critical($log_message, $log_extra);
 
-            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+            // No message for a conflict, whose own page explains it (see domainmod_restore_is_conflict())
+            if (!domainmod_restore_is_conflict($e)) $_SESSION['s_message_danger'] .= $log_message . '<BR>';
 
             throw $e;
 
