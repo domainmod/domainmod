@@ -47,7 +47,7 @@ class SslQueueTickBoxTest extends TestCase
     {
         $queue = Instance::withoutConstructor(SslQueue::class);
 
-        list($success, $warning) = $queue->queueDomainLookups($this->domains(SslQueue::MAX_HOSTS + 1), 1, 1);
+        list($success, $warning) = $queue->queueDomainLookups($this->domains(SslQueue::MAX_HOSTS + 1), 1);
 
         $this->assertStringContainsString('SSL certificate lookups are only added for lists of up to 1,000 domains.', $success);
         $this->assertSame('', $warning);
@@ -63,7 +63,7 @@ class SslQueueTickBoxTest extends TestCase
         $domains = $this->domains(SslQueue::MAX_HOSTS);
         $domains[] = 'DOMAIN1.EXAMPLE.';
 
-        list($success, $warning) = $queue->queueDomainLookups($domains, 1, 1);
+        list($success, $warning) = $queue->queueDomainLookups($domains, 1);
 
         $this->assertSame('', $success);
         $this->assertStringContainsString("The domains were added to the queue, but their SSL certificate lookups couldn't be.", $warning);
@@ -75,11 +75,12 @@ class SslQueueTickBoxTest extends TestCase
         $pdo = new FakeDatabase(array('FROM `categories`' => '3', 'FROM `ip_addresses`' => '1'));
         $queue = Instance::withoutConstructor(SslQueue::class, array('deeb' => Instance::withoutConstructor(Database::class, array('cnxx' => $pdo))));
 
-        list($success, $warning) = $queue->queueDomainLookups(array('example.com'), 1, 1);
+        list($success, $warning) = $queue->queueDomainLookups(array('example.com'), 1);
 
         $this->assertSame('', $success);
         $this->assertStringContainsString("their SSL certificate lookups couldn't be.", $warning);
-        $this->assertCount(3, $pdo->queriesWith('MIN(id)'));
+        // the type is read first, and with none the other tables aren't read
+        $this->assertCount(1, $pdo->queriesWith('MIN(id)'));
         $this->assertSame(array(), $pdo->queriesWith('ssl_queue'));
         $this->assertSame(array(), $pdo->queriesWith('GET_LOCK'));
     }

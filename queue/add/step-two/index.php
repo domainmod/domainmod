@@ -413,7 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         // throws)
                         if ($ssl_queue_available && $new_import_ssl === 1) {
 
-                            list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $temp_owner_id, $_SESSION['s_user_id']);
+                            list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $_SESSION['s_user_id']);
                             $_SESSION['s_message_success'] .= $ssl_success;
                             $_SESSION['s_message_warning'] .= $ssl_warning;
 
@@ -522,7 +522,7 @@ if ($new_raid !== 0) {
 
     // With an optional list, the help says the lookups are only for the domains pasted here
     // TRANSLATORS: %s is the app's name, DomainMOD.
-    $ssl_switch_help = sprintf(_("Each domain's site is checked once the domain has been imported, and a new certificate is linked to it when %s has just one record of that domain. If the domain isn't imported, the site is still checked, and a new certificate is added without a domain."), SOFTWARE_TITLE);
+    $ssl_switch_help = sprintf(_("Each domain's site is checked once the domain has been imported. When %s has just one record of that domain, a new certificate is linked to it and gets the domain's owner, category, and IP address. Otherwise, such as when the domain isn't imported, the site is still checked, and a new certificate is added without a domain, using your SSL defaults."), SOFTWARE_TITLE);
     if ($lists_domains == '1') $ssl_switch_help .= ' ' . _("Only the domains you paste are looked up, not the ones the registrar's API supplies.");
     if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), $ssl_switch_help, 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 

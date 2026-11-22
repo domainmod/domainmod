@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $rdap_api_registrar_id) {
             // The SSL certificate lookups, in their own transaction now the domains are committed (it never throws)
             if ($ssl_queue_available && $new_import_ssl === 1) {
 
-                list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $new_owner_id, $_SESSION['s_user_id']);
+                list($ssl_success, $ssl_warning) = $ssl_queue->queueDomainLookups($domain_array, $_SESSION['s_user_id']);
                 $_SESSION['s_message_success'] .= $ssl_success;
                 $_SESSION['s_message_warning'] .= $ssl_warning;
 
@@ -192,7 +192,7 @@ if (!$rdap_api_registrar_id) {
         . _("Some country-code registries (such as .de, .nl, and .au) don't publish expiry dates, so those domains can't be looked up this way. If they fail in the queue, you can finish them by hand with Fix and Import.");
     echo $form->showInputTextarea('raw_domain_list', sprintf(_('Domains to add (one per line, up to %s)'), number_format($max_domains)), $list_help, $unsanitize->text($raw_domain_list), '1', '', '');
     // TRANSLATORS: %s is the app's name, DomainMOD.
-    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), sprintf(_("Each domain's site is checked once the domain has been imported, and a new certificate is linked to it when %s has just one record of that domain. If the domain isn't imported, the site is still checked, and a new certificate is added without a domain."), SOFTWARE_TITLE), 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
+    if ($ssl_queue_available) echo $form->showSwitch(_("Also import each domain's SSL certificate"), sprintf(_("Each domain's site is checked once the domain has been imported. When %s has just one record of that domain, a new certificate is linked to it and gets the domain's owner, category, and IP address. Otherwise, such as when the domain isn't imported, the site is still checked, and a new certificate is added without a domain, using your SSL defaults."), SOFTWARE_TITLE), 'new_import_ssl', $new_import_ssl, '<div class="mb-3">', '</div>');
 
     // Go Back and the main button in one row, Back on the start side (css/base.css)
     echo '<div class="domainmod-back-next">' . $layout->linkButton('../', _('Go Back'), 'secondary', 'bi-arrow-left');

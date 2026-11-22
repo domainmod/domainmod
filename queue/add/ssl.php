@@ -53,9 +53,11 @@ $raw_host_list = htmlspecialchars($raw_host_text, ENT_QUOTES | ENT_SUBSTITUTE, '
 $new_account_id = (int) ($_POST['new_account_id'] ?? 0);
 
 /*
- * The menus' rows, and each one's default: the user's SSL default, then the system's, then the install's first row (the
+ * The menus' rows, and the type's default: the user's SSL default, then the system's, then the install's first row (the
  * lowest id, such as type 1, "Web Server SSL/TLS Certificate"), since the defaults can be 0 or point to a row that's
- * gone. A posted value is checked against the same rows.
+ * gone. The owner, category, and IP address start on "Same as the Domain" (SslQueue::SAME_AS_DOMAIN), so each
+ * certificate takes its domain's, or the SSL defaults when it has no domain (SslQueue::savedChoices()). A posted value
+ * is checked against the same rows.
  */
 $owners = $pdo->query("
     SELECT id, `name`
@@ -100,26 +102,46 @@ $row_exists = function ($rows, $id) {
     return false;
 };
 
+// A menu that offers "Same as the Domain" accepts it as well as its rows, but only while it has rows, since a certificate
+// with no domain takes one of them (as the tick box checks, see SslQueue::defaultChoices())
+$choice_exists = function ($rows, $id) use ($row_exists) {
+    return ((int) $id === DomainMOD\SslQueue::SAME_AS_DOMAIN && $rows) || $row_exists($rows, $id);
+};
+
 // A posted choice that no longer exists gets an empty option, selected, so the menu can't quietly fall back to its first
 // option when the form is shown again. Its value fails the same check, so a resubmission without a new choice is refused.
+// A menu with "Same as the Domain" (0) uses -1 for it, as the account menu does, and treats 0 as stale only while it has
+// no rows (see $choice_exists).
 $stale_option = function ($rows, $id, $empty_value) use ($form, $row_exists) {
-    if ($_SERVER['REQUEST_METHOD'] != 'POST' || $row_exists($rows, $id)) return '';
+    if ($_SERVER['REQUEST_METHOD'] != 'POST' || $row_exists($rows, $id) || ($empty_value === -1 && (int) $id === DomainMOD\SslQueue::SAME_AS_DOMAIN && $rows)) return '';
     return $form->showDropdownOption($empty_value, '', $empty_value);
+};
+
+// The value "Same as the Domain" is marked selected against: the menu's own, or -1 once that's stale, so only the empty
+// option is selected then
+$same_selected = function ($rows, $id) use ($choice_exists) {
+    return ($_SERVER['REQUEST_METHOD'] == 'POST' && !$choice_exists($rows, $id)) ? -1 : $id;
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $new_owner_id = (int) ($_POST['new_owner_id'] ?? 0);
+    // A menu with "Same as the Domain" (0) reads a missing or malformed value as -1, so it's refused rather than taken
+    // for that choice
+    $posted_choice = function ($name) {
+        $value = $_POST[$name] ?? null;
+        return (is_string($value) && ctype_digit($value)) ? (int) $value : -1;
+    };
+    $new_owner_id = $posted_choice('new_owner_id');
     $new_type_id = (int) ($_POST['new_type_id'] ?? 0);
-    $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
-    $new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
+    $new_cat_id = $posted_choice('new_cat_id');
+    $new_ip_id = $posted_choice('new_ip_id');
 
 } else {
 
-    $new_owner_id = $default_id($owners, array($_SESSION['s_default_owner_ssl'] ?? 0, $_SESSION['s_system_default_owner_ssl'] ?? 0));
+    $new_owner_id = DomainMOD\SslQueue::SAME_AS_DOMAIN;
     $new_type_id = $default_id($types, array($_SESSION['s_default_ssl_type'] ?? 0, $_SESSION['s_system_default_ssl_type'] ?? 0));
-    $new_cat_id = $default_id($categories, array($_SESSION['s_default_category_ssl'] ?? 0, $_SESSION['s_system_default_category_ssl'] ?? 0));
-    $new_ip_id = $default_id($ip_addresses, array($_SESSION['s_default_ip_address_ssl'] ?? 0, $_SESSION['s_system_default_ip_address_ssl'] ?? 0));
+    $new_cat_id = DomainMOD\SslQueue::SAME_AS_DOMAIN;
+    $new_ip_id = DomainMOD\SslQueue::SAME_AS_DOMAIN;
 
 }
 
@@ -171,10 +193,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $ssl_queue_available) {
     $menus_valid = true;
 
     foreach (array(array($new_account_id !== 0 && !$row_exists($accounts, $new_account_id), 'new_account_id', _('Choose the SSL Provider Account')),
-                 array($new_account_id === 0 && !$row_exists($owners, $new_owner_id), 'new_owner_id', _('Choose the owner')),
+                 array($new_account_id === 0 && !$choice_exists($owners, $new_owner_id), 'new_owner_id', _('Choose the owner')),
                  array(!$row_exists($types, $new_type_id), 'new_type_id', _('Choose the SSL Type')),
-                 array(!$row_exists($categories, $new_cat_id), 'new_cat_id', _('Choose the Category')),
-                 array(!$row_exists($ip_addresses, $new_ip_id), 'new_ip_id', _('Choose the IP Address'))) as $menu_check) {
+                 array(!$choice_exists($categories, $new_cat_id), 'new_cat_id', _('Choose the Category')),
+                 array(!$choice_exists($ip_addresses, $new_ip_id), 'new_ip_id', _('Choose the IP Address'))) as $menu_check) {
 
         if ($menu_check[0]) {
 
@@ -247,8 +269,9 @@ if (!$ssl_queue_available) {
     }
     echo $form->showDropdownBottom('', 'new_account_id');
 
-    echo $form->showDropdownTop('new_owner_id', _('Owner'), _("Used when each certificate's issuer is matched. A chosen account's own owner is used instead."), '1', '');
-    echo $stale_option($owners, $new_owner_id, 0);
+    echo $form->showDropdownTop('new_owner_id', _('Owner'), _("Used when each certificate's issuer is matched. A chosen account's own owner is used instead. Same as the Domain uses the owner of each new certificate's domain, or your SSL defaults for one without a domain."), '1', '');
+    echo $stale_option($owners, $new_owner_id, -1);
+    echo $form->showDropdownOption(DomainMOD\SslQueue::SAME_AS_DOMAIN, _('Same as the Domain'), $same_selected($owners, $new_owner_id));
     foreach ($owners as $row) {
         echo $form->showDropdownOption($row->id, $row->name, $new_owner_id);
     }
@@ -270,15 +293,17 @@ if (!$ssl_queue_available) {
         }
         echo $form->showDropdownBottom('', 'new_type_id');
 
-        echo $form->showDropdownTop('new_cat_id', _('Category'), '', '1', '');
-        echo $stale_option($categories, $new_cat_id, 0);
+        echo $form->showDropdownTop('new_cat_id', _('Category'), _("Same as the Domain uses the category of each new certificate's domain, or your SSL defaults for one without a domain."), '1', '');
+        echo $stale_option($categories, $new_cat_id, -1);
+        echo $form->showDropdownOption(DomainMOD\SslQueue::SAME_AS_DOMAIN, _('Same as the Domain'), $same_selected($categories, $new_cat_id));
         foreach ($categories as $row) {
             echo $form->showDropdownOption($row->id, $row->name, $new_cat_id);
         }
         echo $form->showDropdownBottom('', 'new_cat_id');
 
-        echo $form->showDropdownTop('new_ip_id', _('IP Address'), '', '1', '');
-        echo $stale_option($ip_addresses, $new_ip_id, 0);
+        echo $form->showDropdownTop('new_ip_id', _('IP Address'), _("Same as the Domain uses the IP address of each new certificate's domain, or your SSL defaults for one without a domain."), '1', '');
+        echo $stale_option($ip_addresses, $new_ip_id, -1);
+        echo $form->showDropdownOption(DomainMOD\SslQueue::SAME_AS_DOMAIN, _('Same as the Domain'), $same_selected($ip_addresses, $new_ip_id));
         foreach ($ip_addresses as $row) {
             echo $form->showDropdownOption($row->id, $row->name . ' (' . $row->ip . ')', $new_ip_id);
         }

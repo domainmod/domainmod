@@ -57,6 +57,12 @@ class SslQueue
     public static $failure_codes = array('no_dns', 'not_public', 'no_connect', 'no_tls', 'name_mismatch', 'not_yet_valid',
         'bad_certificate', 'stale_choice', 'name_too_long');
 
+    // A row's owner_id, cat_id, or ip_id that takes the domain's own when the certificate is saved (see savedChoices())
+    const SAME_AS_DOMAIN = 0;
+
+    // The ssl_certs.active values of a live certificate, as the SSL Certificates list's Live filter has them (see SslList)
+    const LIVE_STATUSES = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
     // Whether a save in this run met another request's write (errors 1020 and 1213, see hadConflict())
     protected $had_conflict = false;
 
@@ -344,8 +350,9 @@ class SslQueue
      * returns 'added', 'full' (the backlog cap stopped the new unfinished rows), or 'failed' (an error, logged, with
      * nothing changed). It never redirects or prints anything.
      *
-     * $choices holds owner_id, account_id (0 to match each certificate's issuer), type_id, cat_id, and ip_id. With a
-     * chosen account, the owner and provider are the account's. $exact is true for the domain paste pages' tick box:
+     * $choices holds owner_id, account_id (0 to match each certificate's issuer), type_id, cat_id, and ip_id. The owner,
+     * category, and IP address can be SAME_AS_DOMAIN (see savedChoices()). With a chosen account, the owner and provider
+     * are the account's. $exact is true for the domain paste pages' tick box:
      * each new row then waits for its own domain to be imported.
      */
     public function addHosts($hosts, $choices, $exact, $created_by)
@@ -402,7 +409,7 @@ class SslQueue
                 if ($kind === 'upgrade') {
 
                     // applied only when the row is still unclaimed and unfinished, otherwise a new exact-domain row
-                    if (!$this->upgradeRow($action[1], $host, $choices, $now)) {
+                    if (!$this->upgradeRow($action[1], $host, $choices, (int) $created_by, $now)) {
 
                         if ($full) continue;
                         $kind = 'new_exact';
@@ -506,13 +513,13 @@ class SslQueue
     /*
      * The domain paste pages' tick box: queues an SSL certificate lookup for each pasted domain, after the page's own
      * transaction has committed, so a problem here can never undo or block the domain import. Through addHosts()'s exact
-     * mode, each new row (or pasted row it upgrades) waits for its own domain to be imported, with the domain page's
-     * owner, issuer matching, and the user's SSL defaults, and a host that already has an unfinished exact-domain row
-     * gets a finished "Already in the queue" row instead. Returns
+     * mode, each new row (or pasted row it upgrades) waits for its own domain to be imported, with issuer matching, the
+     * user's default SSL type, and the domain's own owner, category, and IP address (see defaultChoices()), and a host
+     * that already has an unfinished exact-domain row gets a finished "Already in the queue" row instead. Returns
      * array(text to add to the success message, warning), each '' or translated HTML ending with <BR>. It never throws,
      * and a list of more than MAX_HOSTS distinct domains adds no rows.
      */
-    public function queueDomainLookups($domains, $owner_id, $created_by)
+    public function queueDomainLookups($domains, $created_by)
     {
         $hosts = array();
         foreach ($domains as $domain) {
@@ -531,8 +538,8 @@ class SslQueue
 
         try {
 
-            $choices = $this->defaultChoices($owner_id);
-            if ($choices === null) throw new \RuntimeException('There is no SSL certificate type, category, or IP address to use');
+            $choices = $this->defaultChoices();
+            if ($choices === null) throw new \RuntimeException('There is no SSL certificate type, owner, category, or IP address to use');
 
         } catch (\Throwable $e) {
 
@@ -573,19 +580,88 @@ class SslQueue
     }
 
     /*
-     * The tick box's choices: the domain page's owner, issuer matching (account 0), and for the type, category, and IP
-     * address, the user's SSL default, then the system's, then the install's first row (the lowest id), since the
-     * defaults can be 0 or point to a row that's gone. Null when one of those tables has no rows at all, since a row
-     * queued with none would only fail when it's saved.
+     * The tick box's choices: issuer matching (account 0), the user's SSL type default, then the system's, then the
+     * install's first row (the lowest id), since the defaults can be 0 or point to a row that's gone, and SAME_AS_DOMAIN
+     * for the owner, category, and IP address, so each certificate takes its domain's (see savedChoices()). Null when
+     * the types, categories, owners, or IP addresses have no rows at all, since a row queued with none would only fail
+     * when it's saved.
      */
-    protected function defaultChoices($owner_id)
+    protected function defaultChoices()
     {
-        $choices = array('owner_id' => (int) $owner_id, 'account_id' => 0,
-            'type_id' => $this->defaultId('ssl_cert_types', array($_SESSION['s_default_ssl_type'] ?? 0, $_SESSION['s_system_default_ssl_type'] ?? 0)),
-            'cat_id' => $this->defaultId('categories', array($_SESSION['s_default_category_ssl'] ?? 0, $_SESSION['s_system_default_category_ssl'] ?? 0)),
-            'ip_id' => $this->defaultId('ip_addresses', array($_SESSION['s_default_ip_address_ssl'] ?? 0, $_SESSION['s_system_default_ip_address_ssl'] ?? 0)));
+        $type_id = $this->defaultId('ssl_cert_types', array($_SESSION['s_default_ssl_type'] ?? 0, $_SESSION['s_system_default_ssl_type'] ?? 0));
 
-        return (min($choices['type_id'], $choices['cat_id'], $choices['ip_id']) === 0) ? null : $choices;
+        if ($type_id === 0) return null;
+
+        foreach (array('owners', 'categories', 'ip_addresses') as $table) {
+            if ($this->defaultId($table, array()) === 0) return null;
+        }
+
+        return array('owner_id' => self::SAME_AS_DOMAIN, 'account_id' => 0, 'type_id' => $type_id,
+            'cat_id' => self::SAME_AS_DOMAIN, 'ip_id' => self::SAME_AS_DOMAIN);
+    }
+
+    /*
+     * The SSL defaults a certificate takes for a SAME_AS_DOMAIN owner, category, or IP address when it has no domain, as
+     * array('owner_id', 'cat_id', 'ip_id'): the default of the user who queued it, then the system's, then the install's
+     * first row (the lowest id), the order the add form picks its type's default in. Read when the certificate is saved,
+     * since the row stores no defaults of its own, so a default changed while the row waits is the one used. A value is 0 only when its table has no rows.
+     */
+    protected function fallbackChoices($created_by)
+    {
+        $columns = 'default_owner_ssl, default_category_ssl, default_ip_address_ssl';
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT " . $columns . "
+            FROM user_settings
+            WHERE user_id = :user_id");
+        $stmt->bindValue('user_id', (int) $created_by, \PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch();
+        $stmt->closeCursor();
+
+        $system = $this->deeb->cnxx->query("
+            SELECT " . $columns . "
+            FROM settings
+            ORDER BY id
+            LIMIT 1")->fetch();
+
+        $fallback = array();
+
+        foreach (array('owner_id' => array('owners', 'default_owner_ssl'), 'cat_id' => array('categories', 'default_category_ssl'),
+                     'ip_id' => array('ip_addresses', 'default_ip_address_ssl')) as $choice => $source) {
+
+            list($table, $column) = $source;
+            $fallback[$choice] = $this->defaultId($table, array($user ? $user->$column : 0, $system ? $system->$column : 0));
+
+        }
+
+        return $fallback;
+    }
+
+    /*
+     * The owner, category, and IP address a saved certificate gets, as array('owner_id', 'cat_id', 'ip_id'): each one the
+     * row chose, or, for SAME_AS_DOMAIN, the domain's own ($domain, the locked domains row with owner_id, cat_id, and
+     * ip_id) when the certificate has a domain, and otherwise $fallback's (fallbackChoices()). The domain's values are
+     * read when the certificate is saved, so a row that waited for its domain, or was retried, gets the domain as it is
+     * then.
+     */
+    public static function savedChoices($row, $domain, $fallback)
+    {
+        $saved = array();
+
+        foreach (array('owner_id', 'cat_id', 'ip_id') as $column) {
+
+            if ((int) $row->$column !== self::SAME_AS_DOMAIN) {
+                $saved[$column] = (int) $row->$column;
+            } elseif ($domain && (int) $domain->$column > 0) {
+                $saved[$column] = (int) $domain->$column;
+            } else {
+                $saved[$column] = (int) ($fallback[$column] ?? 0);
+            }
+
+        }
+
+        return $saved;
     }
 
     // The first of $candidates that's a row of $table (a fixed name from this class), or the table's lowest id (0 when
@@ -942,7 +1018,7 @@ class SslQueue
                         'ip_id' => (int) $row->ip_id);
                     $wait_domain = ((string) $row->wait_domain !== '') ? (string) $row->wait_domain : (string) $row->host;
 
-                    $action = $this->upgradeRow($action[1], $wait_domain, $choices, $now) ? array('mark') : array('busy');
+                    $action = $this->upgradeRow($action[1], $wait_domain, $choices, (int) $row->created_by, $now) ? array('mark') : array('busy');
 
                 }
 
@@ -1146,10 +1222,11 @@ class SslQueue
     }
 
     /*
-     * Changes a pasted row to wait for the exact domain, with the tick box's choices, starting afresh. Applied only when
-     * the row is still unclaimed and unfinished, and returns whether it was.
+     * Changes a pasted row to wait for the exact domain, with the tick box's choices, starting afresh. The row becomes
+     * that of $created_by, the user whose choices it now has, so a SAME_AS_DOMAIN choice falls back to their SSL defaults
+     * (see fallbackChoices()). Applied only when the row is still unclaimed and unfinished, and returns whether it was.
      */
-    protected function upgradeRow($id, $host, $choices, $now)
+    protected function upgradeRow($id, $host, $choices, $created_by, $now)
     {
         $stmt = $this->deeb->cnxx->prepare("
             UPDATE ssl_queue
@@ -1165,6 +1242,7 @@ class SslQueue
                 type_id = :type_id,
                 cat_id = :cat_id,
                 ip_id = :ip_id,
+                created_by = :created_by,
                 attempts = '0',
                 message = ''
             WHERE id = :id
@@ -1175,6 +1253,7 @@ class SslQueue
         foreach (array('owner_id', 'account_id', 'provider_id', 'type_id', 'cat_id', 'ip_id') as $column) {
             $stmt->bindValue($column, $choices[$column], \PDO::PARAM_INT);
         }
+        $stmt->bindValue('created_by', (int) $created_by, \PDO::PARAM_INT);
         $stmt->bindValue('id', $id, \PDO::PARAM_INT);
         $stmt->execute();
 
@@ -1631,7 +1710,8 @@ class SslQueue
     /*
      * array(revision, name) of every certificate a name match could pick at save time, with the revision of its status
      * row (null for none): those named for the host (or, for a tick-box row, for its www. name too) on the row's domain,
-     * when it has one, and those with no domain. The name is kept as well, since a record with no status row can be
+     * when it has one, and those with no domain. Records of every status are noted, since one made live while the lookup
+     * runs can be matched by name at save time. The name is kept as well, since a record with no status row can be
      * renamed with no revision to show it.
      */
     protected function noteRevisions($row)
@@ -1640,14 +1720,14 @@ class SslQueue
         if ((int) $row->exact_domain === 1) $wanted[] = strtolower(Domain::forApi('www.' . $row->host));
 
         $noted = array();
-        $certificates = ((int) $row->domain_id > 0) ? $this->certificatesNamed((int) $row->domain_id, $wanted, false) : array();
+        $certificates = ((int) $row->domain_id > 0) ? $this->certificatesNamed((int) $row->domain_id, $wanted, false, true) : array();
 
         foreach ($certificates as $certificate) {
             $noted[(int) $certificate->id] = array(($certificate->revision === null) ? null : (int) $certificate->revision,
                 (string) $certificate->name);
         }
 
-        $candidates = $this->noDomainCandidates($wanted);
+        $candidates = $this->noDomainCandidates($wanted, true);
 
         if ($candidates) {
 
@@ -1668,17 +1748,18 @@ class SslQueue
     }
 
     /*
-     * The certificates with no domain whose name (normalised, and a valid hostname) is one of the ASCII names in
-     * $wanted, as array(id => stored name), lowest id first. It's an unlocked read on ssl_certs alone, so it locks
-     * nothing and sees every certificate with no domain committed by then. Each name's ASCII form is kept for the run, so a name is only
+     * The live certificates with no domain (see isLive()) whose name (normalised, and a valid hostname) is one of the
+     * ASCII names in $wanted, as array(id => stored name), lowest id first, or, with $any_status, those of any status
+     * (an expired one can still hold the very certificate, see existingMatch()). It's an unlocked read on ssl_certs
+     * alone, so it locks nothing and sees every certificate with no domain committed by then. Each name's ASCII form is kept for the run, so a name is only
      * converted once however many saves read it, and the rows are read one at a time rather than all at once, so a
      * large table doesn't need its every row in memory as objects. The SSL Queue only runs once the 4.27.0 update has
      * set every certificate whose domain was deleted to 0, so domain_id = 0 is exactly "no domain" wherever it runs.
      */
-    protected function noDomainCandidates($wanted)
+    protected function noDomainCandidates($wanted, $any_status = false)
     {
         $stmt = $this->deeb->cnxx->query("
-            SELECT id, `name`
+            SELECT id, `name`, active
             FROM ssl_certs
             WHERE domain_id = '0'
             ORDER BY id");
@@ -1687,6 +1768,7 @@ class SslQueue
 
         while (($certificate = $stmt->fetch(\PDO::FETCH_OBJ)) !== false) {
 
+            if (!$any_status && !self::isLive($certificate->active)) continue;
             $name = (string) $certificate->name;
             if (!isset($this->ascii_names[$name])) {
                 $this->ascii_names[$name] = $this->asciiHostname((new Unsanitize())->text($name));
@@ -1699,14 +1781,16 @@ class SslQueue
     }
 
     /*
-     * The domain's certificates whose name (normalised, and a valid hostname) is one of the ASCII names in $wanted,
-     * lowest id first, with their status row's revision (null for none). With $lock, the certificates and status rows
-     * stay locked until the transaction ends.
+     * The domain's live certificates (see isLive()) whose name (normalised, and a valid hostname) is one of the ASCII
+     * names in $wanted, lowest id first, with their status row's revision (null for none), or, with $any_status, those
+     * of any status. Without it, an expired record with the same name is left out (existingMatch() decides what happens
+     * next). With $lock, every certificate of the domain and its status row stay locked until the transaction ends, so a
+     * record's status can't change between this read and the save.
      */
-    protected function certificatesNamed($domain_id, $wanted, $lock)
+    protected function certificatesNamed($domain_id, $wanted, $lock, $any_status = false)
     {
         $stmt = $this->deeb->cnxx->prepare("
-            SELECT c.id, c.`name`, s.revision, s.fingerprint
+            SELECT c.id, c.`name`, c.active, s.revision, s.fingerprint
             FROM ssl_certs AS c
             LEFT JOIN ssl_cert_status AS s ON s.ssl_id = c.id
             WHERE c.domain_id = :domain_id
@@ -1719,6 +1803,7 @@ class SslQueue
 
         foreach ($stmt->fetchAll() as $certificate) {
 
+            if (!$any_status && !self::isLive($certificate->active)) continue;
             $ascii = $this->asciiHostname((new Unsanitize())->text($certificate->name));
             if ($ascii !== '' && in_array($ascii, $wanted, true)) $matches[] = $certificate;
 
@@ -1744,11 +1829,18 @@ class SslQueue
         return $ascii_domain !== '' && ($ascii_host === $ascii_domain || str_ends_with($ascii_host, '.' . $ascii_domain));
     }
 
+    // Whether a certificate's stored status (ssl_certs.active) is a live one, such as Active or Pending, not Expired
+    public static function isLive($active)
+    {
+        return in_array((int) $active, self::LIVE_STATUSES, true);
+    }
+
     /*
      * Saves a lookup that came with a certificate, in one transaction under the SSL Queue's named lock: the queue row and
      * every id the certificate uses are locked and rechecked, then the certificate is matched to an existing record
-     * (by name, then fingerprint, then a certificate with no domain named for the host) or inserted. The certificates
-     * with no domain are read after the lock and before the transaction, so the read sees everything committed by then.
+     * (see existingMatch()) or inserted. The certificates with no domain, and the SSL defaults a SAME_AS_DOMAIN choice
+     * falls back to (fallbackChoices()), are read after the lock and before the transaction, so the reads see everything
+     * committed by then.
      * Any error rolls back and counts as save_failed (tried again next run). A save that met another request's write is
      * also noted for hadConflict(), so Run Now can say so.
      */
@@ -1761,11 +1853,13 @@ class SslQueue
         try {
 
             $this->getQueueLock();
-            $candidates = $this->noDomainCandidates(array(strtolower(Domain::forApi($details['host']))));
+            $candidates = $this->noDomainCandidates(array(strtolower(Domain::forApi($details['host']))), true);
+            $fallback = in_array(self::SAME_AS_DOMAIN, array((int) $row->owner_id, (int) $row->cat_id, (int) $row->ip_id), true)
+                ? $this->fallbackChoices((int) $row->created_by) : array();
             if (self::$test_before_save) call_user_func(self::$test_before_save, 'read', $row);
             $pdo->beginTransaction();
 
-            $outcome = $this->importLocked($row, $code, $details, $noted, $ssl_assets, $candidates);
+            $outcome = $this->importLocked($row, $code, $details, $noted, $ssl_assets, $candidates, $fallback);
 
             if ($outcome === 'saved') {
                 $pdo->commit();
@@ -1809,9 +1903,11 @@ class SslQueue
     /*
      * The import's work inside its transaction. Returns 'saved', 'gone' (the row is no longer this run's claim, so
      * nothing is written), or a code to write to the row once the transaction is rolled back. $candidates are the
-     * certificates with no domain named for the host (noDomainCandidates()), read before the transaction.
+     * certificates with no domain named for the host, of any status (noDomainCandidates()), and $fallback the SSL
+     * defaults for a SAME_AS_DOMAIN choice (fallbackChoices(), or an empty array when the row has none), both read before
+     * the transaction.
      */
-    protected function importLocked($row, $code, $details, $noted, $ssl_assets, $candidates)
+    protected function importLocked($row, $code, $details, $noted, $ssl_assets, $candidates, $fallback)
     {
         $pdo = $this->deeb->cnxx;
 
@@ -1829,14 +1925,23 @@ class SslQueue
 
         if ((int) $row->domain_id > 0) {
 
-            $domain = $this->lockRow('domains', 'id', (int) $row->domain_id, 'domain');
+            $domain = $this->lockRow('domains', 'id', (int) $row->domain_id, 'domain, owner_id, cat_id, ip_id');
             if (!$domain || (string) $domain->domain !== (string) $row->domain_name) return 'domain_changed';
 
         }
 
-        foreach (array(array('owners', $row->owner_id), array('ssl_cert_types', $row->type_id),
-                     array('categories', $row->cat_id), array('ip_addresses', $row->ip_id)) as $check) {
-            if (!$this->lockRow($check[0], 'id', (int) $check[1], 'id')) return 'stale_choice';
+        /*
+         * The owner, category, and IP address the certificate gets, the domain's own or the SSL defaults for a
+         * SAME_AS_DOMAIN choice. One of those that's gone by now wasn't the user's choice, so the save is tried again
+         * (save_failed), and the next try reads them afresh, while a chosen one that's gone fails the row (stale_choice).
+         */
+        $saved = self::savedChoices($row, $domain, $fallback);
+
+        foreach (array(array('owners', $saved['owner_id'], $row->owner_id), array('ssl_cert_types', $row->type_id, $row->type_id),
+                     array('categories', $saved['cat_id'], $row->cat_id), array('ip_addresses', $saved['ip_id'], $row->ip_id)) as $check) {
+            if (!$this->lockRow($check[0], 'id', (int) $check[1], 'id')) {
+                return ((int) $check[2] === self::SAME_AS_DOMAIN) ? 'save_failed' : 'stale_choice';
+            }
         }
 
         $account = null;
@@ -1851,15 +1956,118 @@ class SslQueue
 
         }
 
-        $served_ascii = strtolower(Domain::forApi($details['host']));
         $now = $this->time->stamp();
+        list($match_id, $name_match, $finish_domain) = $this->existingMatch($row, $details, $domain, $candidates);
 
-        /*
-         * 1. An existing record: on the row's domain, the lowest id named for the host, then the lowest id holding the
-         * fingerprint, and then (with or without a domain) the lowest id with no domain named for the host. A record
-         * matched by name has its status row updated (below), and its name and revision as they are now are kept in
-         * $name_match for that.
-         */
+        if (self::$test_before_save) call_user_func(self::$test_before_save, 'locked', $row);
+
+        if ($match_id > 0) {
+
+            if ($name_match !== null) {
+
+                // the status row describes the latest lookup, unless the record or its status row changed while this lookup
+                // ran (then the newer result is kept, and only the link is made)
+                if (isset($noted[$match_id]) && $noted[$match_id] === $name_match) {
+                    $this->writeStatus($match_id, $details, $code, false);
+                }
+
+            }
+
+            $this->finishRow((int) $row->id, $code, $details, $match_id, true, $finish_domain);
+            return 'saved';
+
+        }
+
+        // 2. A new record's name must fit, never cut short
+        if (mb_strlen($details['host']) > self::MAX_NAME_LENGTH) return 'name_too_long';
+
+        // 3. The provider and account, then the certificate
+        if ($account) {
+
+            $provider_id = (int) $account->ssl_provider_id;
+            $account_id = (int) $row->account_id;
+            $owner_id = (int) $account->owner_id;
+
+        } else {
+
+            list($provider_id, $account_id, $owner_id) = $ssl_assets->resolve($details['issuer'], $saved['owner_id'], (int) $row->created_by);
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT id, (renewal_fee + misc_fee) AS total_cost
+            FROM ssl_fees
+            WHERE ssl_provider_id = :provider_id
+              AND type_id = :type_id");
+        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
+        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $fee = $stmt->fetch();
+        $stmt->closeCursor();
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_certs
+            (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date, fee_id,
+             total_cost, notes, active, fee_fixed, creation_type_id, created_by, insert_time)
+            VALUES
+            (:owner_id, :provider_id, :account_id, :domain_id, :name, :type_id, :ip_id, :cat_id, :expiry_date, :fee_id,
+             :total_cost, :notes, :active, :fee_fixed, :creation_type_id, :created_by, :insert_time)");
+        $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
+        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->bindValue('domain_id', (int) $row->domain_id, \PDO::PARAM_INT);
+        $stmt->bindValue('name', $details['host'], \PDO::PARAM_STR);
+        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
+        $stmt->bindValue('ip_id', $saved['ip_id'], \PDO::PARAM_INT);
+        $stmt->bindValue('cat_id', $saved['cat_id'], \PDO::PARAM_INT);
+        $stmt->bindValue('expiry_date', $details['expiry_date'], \PDO::PARAM_STR);
+        $stmt->bindValue('fee_id', $fee ? (int) $fee->id : 0, \PDO::PARAM_INT);
+        $stmt->bindValue('total_cost', strval($fee ? $fee->total_cost : 0), \PDO::PARAM_STR);
+        $stmt->bindValue('notes', $this->importNote($details, $code), \PDO::PARAM_LOB);
+        $stmt->bindValue('active', $code === 'expired' ? 0 : 1, \PDO::PARAM_INT);
+        $stmt->bindValue('fee_fixed', $fee ? 1 : 0, \PDO::PARAM_INT);
+        $stmt->bindValue('creation_type_id', $this->system->getCreationTypeId('Queue'), \PDO::PARAM_INT);
+        $stmt->bindValue('created_by', (int) $row->created_by, \PDO::PARAM_INT);
+        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
+        $stmt->execute();
+        $ssl_id = (int) $pdo->lastInsertId('id');
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ssl_cert_field_data
+            (ssl_id, insert_time)
+            VALUES
+            (:ssl_id, :insert_time)");
+        $stmt->bindValue('ssl_id', $ssl_id, \PDO::PARAM_INT);
+        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $this->writeStatus($ssl_id, $details, $code, true);
+        $this->finishRow((int) $row->id, $code, $details, $ssl_id, false);
+
+        // The import's create row, with a snapshot that includes the issuer the status row now holds
+        $history_op->created('ssl', $ssl_id);
+        $history_op->finish();
+
+        return 'saved';
+    }
+
+    /*
+     * The existing record a saved lookup belongs to, inside importLocked()'s transaction, as array(id, name match,
+     * domain), with 0 for none. On the row's domain ($domain, locked, or null for none): the lowest id of a live record
+     * named for the host, then the lowest id holding the certificate's fingerprint, whatever its status. Then, with or
+     * without a domain, a certificate with no domain named for the host: the lowest id of a live one, or else the lowest
+     * id of one of any status holding the fingerprint. So an expired record with the same name never takes a new
+     * certificate (it's added as a new record), while the very certificate already recorded, even on a record marked
+     * expired (the SSL Queue imports an expired certificate as Expired), is never added twice, and its record is left as
+     * it is. The name match, array(revision, name) as they are now, is set only for a live record matched by name,
+     * whose status row importLocked() then updates. The domain, array(0, ''), is set when a row with a domain ends with
+     * a certificate with no domain, which it leaves as it is. $candidates are noDomainCandidates() of any status.
+     */
+    protected function existingMatch($row, $details, $domain, $candidates)
+    {
+        $pdo = $this->deeb->cnxx;
+        $served_ascii = strtolower(Domain::forApi($details['host']));
+
         $by_name = $domain ? $this->certificatesNamed((int) $row->domain_id, array($served_ascii), true) : array();
         $match_id = $by_name ? (int) $by_name[0]->id : 0;
         $name_match = $by_name ? array(($by_name[0]->revision === null) ? null : (int) $by_name[0]->revision,
@@ -1901,116 +2109,43 @@ class SslQueue
             /*
              * Each candidate is locked by its id on ssl_certs alone, then its status row, and rechecked: still named for
              * the host, and still with no domain (0 is never a domain, so no domains row is read under these locks). One
-             * renamed or linked since the read only moves the match to the next candidate.
+             * renamed, linked, or no longer live since the read only moves the match to the next candidate. The first
+             * live one is taken, and one that isn't live is kept only when it holds the fingerprint, in case no live one
+             * follows.
              */
+            $same_certificate = 0;
+
             foreach ($candidates as $candidate_id => $candidate_name) {
 
-                $certificate = $this->lockRow('ssl_certs', 'id', $candidate_id, 'id, `name`, domain_id');
-                $status = $this->lockRow('ssl_cert_status', 'ssl_id', $candidate_id, 'revision');
+                $certificate = $this->lockRow('ssl_certs', 'id', $candidate_id, 'id, `name`, domain_id, active');
+                $status = $this->lockRow('ssl_cert_status', 'ssl_id', $candidate_id, 'revision, fingerprint');
                 if (!$certificate || (int) $certificate->domain_id !== 0) continue;
                 if ($this->asciiHostname((new Unsanitize())->text($certificate->name)) !== $served_ascii) continue;
 
+                if (!self::isLive($certificate->active)) {
+
+                    if ($same_certificate === 0 && $status && $details['fingerprint'] !== ''
+                        && (string) $status->fingerprint === (string) $details['fingerprint']) {
+                        $same_certificate = (int) $candidate_id;
+                    }
+                    continue;
+
+                }
+
                 $match_id = (int) $candidate_id;
                 $name_match = array($status ? (int) $status->revision : null, (string) $certificate->name);
-
-                // the finished row shows the matched record's domain, which it leaves as it is
-                if ($domain) $finish_domain = array(0, '');
                 break;
 
             }
 
-        }
+            if ($match_id === 0) $match_id = $same_certificate;
 
-        if (self::$test_before_save) call_user_func(self::$test_before_save, 'locked', $row);
-
-        if ($match_id > 0) {
-
-            if ($name_match !== null) {
-
-                // the status row describes the latest lookup, unless the record or its status row changed while this lookup
-                // ran (then the newer result is kept, and only the link is made)
-                if (isset($noted[$match_id]) && $noted[$match_id] === $name_match) {
-                    $this->writeStatus($match_id, $details, $code, false);
-                }
-
-            }
-
-            $this->finishRow((int) $row->id, $code, $details, $match_id, true, $finish_domain);
-            return 'saved';
+            // the finished row shows the matched record's domain, which it leaves as it is
+            if ($match_id > 0 && $domain) $finish_domain = array(0, '');
 
         }
 
-        // 2. A new record's name must fit, never cut short
-        if (mb_strlen($details['host']) > self::MAX_NAME_LENGTH) return 'name_too_long';
-
-        // 3. The provider and account, then the certificate
-        if ($account) {
-
-            $provider_id = (int) $account->ssl_provider_id;
-            $account_id = (int) $row->account_id;
-            $owner_id = (int) $account->owner_id;
-
-        } else {
-
-            list($provider_id, $account_id, $owner_id) = $ssl_assets->resolve($details['issuer'], (int) $row->owner_id, (int) $row->created_by);
-
-        }
-
-        $stmt = $pdo->prepare("
-            SELECT id, (renewal_fee + misc_fee) AS total_cost
-            FROM ssl_fees
-            WHERE ssl_provider_id = :provider_id
-              AND type_id = :type_id");
-        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
-        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        $fee = $stmt->fetch();
-        $stmt->closeCursor();
-
-        $stmt = $pdo->prepare("
-            INSERT INTO ssl_certs
-            (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date, fee_id,
-             total_cost, notes, active, fee_fixed, creation_type_id, created_by, insert_time)
-            VALUES
-            (:owner_id, :provider_id, :account_id, :domain_id, :name, :type_id, :ip_id, :cat_id, :expiry_date, :fee_id,
-             :total_cost, :notes, :active, :fee_fixed, :creation_type_id, :created_by, :insert_time)");
-        $stmt->bindValue('owner_id', $owner_id, \PDO::PARAM_INT);
-        $stmt->bindValue('provider_id', $provider_id, \PDO::PARAM_INT);
-        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
-        $stmt->bindValue('domain_id', (int) $row->domain_id, \PDO::PARAM_INT);
-        $stmt->bindValue('name', $details['host'], \PDO::PARAM_STR);
-        $stmt->bindValue('type_id', (int) $row->type_id, \PDO::PARAM_INT);
-        $stmt->bindValue('ip_id', (int) $row->ip_id, \PDO::PARAM_INT);
-        $stmt->bindValue('cat_id', (int) $row->cat_id, \PDO::PARAM_INT);
-        $stmt->bindValue('expiry_date', $details['expiry_date'], \PDO::PARAM_STR);
-        $stmt->bindValue('fee_id', $fee ? (int) $fee->id : 0, \PDO::PARAM_INT);
-        $stmt->bindValue('total_cost', strval($fee ? $fee->total_cost : 0), \PDO::PARAM_STR);
-        $stmt->bindValue('notes', $this->importNote($details, $code), \PDO::PARAM_LOB);
-        $stmt->bindValue('active', $code === 'expired' ? 0 : 1, \PDO::PARAM_INT);
-        $stmt->bindValue('fee_fixed', $fee ? 1 : 0, \PDO::PARAM_INT);
-        $stmt->bindValue('creation_type_id', $this->system->getCreationTypeId('Queue'), \PDO::PARAM_INT);
-        $stmt->bindValue('created_by', (int) $row->created_by, \PDO::PARAM_INT);
-        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
-        $stmt->execute();
-        $ssl_id = (int) $pdo->lastInsertId('id');
-
-        $stmt = $pdo->prepare("
-            INSERT INTO ssl_cert_field_data
-            (ssl_id, insert_time)
-            VALUES
-            (:ssl_id, :insert_time)");
-        $stmt->bindValue('ssl_id', $ssl_id, \PDO::PARAM_INT);
-        $stmt->bindValue('insert_time', $now, \PDO::PARAM_STR);
-        $stmt->execute();
-
-        $this->writeStatus($ssl_id, $details, $code, true);
-        $this->finishRow((int) $row->id, $code, $details, $ssl_id, false);
-
-        // The import's create row, with a snapshot that includes the issuer the status row now holds
-        $history_op->created('ssl', $ssl_id);
-        $history_op->finish();
-
-        return 'saved';
+        return array($match_id, $name_match, $finish_domain);
     }
 
     /*

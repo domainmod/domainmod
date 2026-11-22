@@ -40,11 +40,11 @@ class SslQueueNoDomainTest extends TestCase
     private function certificates()
     {
         return array(
-            (object) array('id' => 3, 'name' => 'shop。münchen.de'),
-            (object) array('id' => 5, 'name' => 'status.example.org'),
-            (object) array('id' => 8, 'name' => 'Shop.Example.net'),
-            (object) array('id' => 9, 'name' => 'not a hostname'),
-            (object) array('id' => 12, 'name' => 'shop.example.net'));
+            (object) array('id' => 3, 'name' => 'shop。münchen.de', 'active' => '1'),
+            (object) array('id' => 5, 'name' => 'status.example.org', 'active' => '1'),
+            (object) array('id' => 8, 'name' => 'Shop.Example.net', 'active' => '1'),
+            (object) array('id' => 9, 'name' => 'not a hostname', 'active' => '1'),
+            (object) array('id' => 12, 'name' => 'shop.example.net', 'active' => '1'));
     }
 
     // The certificates' query is answered row by row only, so reading all its rows at once finds nothing
@@ -104,8 +104,8 @@ class SslQueueNoDomainTest extends TestCase
 
     public function testATickBoxRowNotesItsWwwNameToo()
     {
-        $pdo = $this->database(array('FROM ssl_certs' => array((object) array('id' => 2, 'name' => 'www.example.net'),
-            (object) array('id' => 6, 'name' => 'example.net'))));
+        $pdo = $this->database(array('FROM ssl_certs' => array((object) array('id' => 2, 'name' => 'www.example.net', 'active' => '1'),
+            (object) array('id' => 6, 'name' => 'example.net', 'active' => '1'))));
         $row = (object) array('host' => 'example.net', 'exact_domain' => 1, 'domain_id' => 0);
 
         $this->assertSame(array(2 => array(null, 'www.example.net'), 6 => array(null, 'example.net')),
