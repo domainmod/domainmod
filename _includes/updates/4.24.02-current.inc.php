@@ -1449,7 +1449,7 @@ if ($current_db_version === '4.26.0') {
             array('user_settings', 'display_hosting_expiry_date', "ADD `display_hosting_expiry_date` TINYINT(1) NOT NULL DEFAULT '1' AFTER `display_hosting_type`"),
             array('user_settings', 'display_hosting_ip', "ADD `display_hosting_ip` TINYINT(1) NOT NULL DEFAULT '0' AFTER `display_hosting_expiry_date`"),
             array('user_settings', 'display_hosting_category', "ADD `display_hosting_category` TINYINT(1) NOT NULL DEFAULT '0' AFTER `display_hosting_ip`"),
-            array('user_settings', 'display_hosting_fee', "ADD `display_hosting_fee` TINYINT(1) NOT NULL DEFAULT '0' AFTER `display_hosting_category`"),
+            array('user_settings', 'display_hosting_fee', "ADD `display_hosting_fee` TINYINT(1) NOT NULL DEFAULT '1' AFTER `display_hosting_category`"),
             array('settings', 'default_category_hosting', "ADD `default_category_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `default_ssl_provider`"),
             array('settings', 'default_ip_address_hosting', "ADD `default_ip_address_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `default_category_hosting`"),
             array('settings', 'default_owner_hosting', "ADD `default_owner_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `default_ip_address_hosting`"),
@@ -1496,12 +1496,16 @@ if ($current_db_version === '4.26.0') {
         // ===== BEGIN: Hosting, domains, schema (HOSTING-RESTRUCTURE-PLAN.local.md, hosting-domains build) =====
         /*
          * Each domain can now use one hosting service (domains.service_id, 0 for none), which replaces the domain's old
-         * hosting provider (domains.hosting_id, dropped with its links, as the release notes and the upgrade notice say).
-         * Each step is checked in INFORMATION_SCHEMA first, so a stopped upgrade carries on, and the parts still needed
-         * go into one ALTER TABLE, so a large table is rebuilt once. The index on service_id is added unless a usable
-         * index (one that isn't ignored on MariaDB or invisible on MySQL) has service_id as its only column, since a
-         * service delete's keyset pages need a service's domains in id order (one with more columns, such as
-         * (service_id, expiry_date), doesn't give that). It's named service_id, or service_id_hosting (then
+         * hosting provider (domains.hosting_id). The old column stays until the transaction below has turned its links
+         * into hosting services (DomainMOD\HostingLinkImport) and committed, and is dropped after that, so a stopped
+         * upgrade still has the links to import on its next run. Until then its default becomes 0, so a domain added
+         * while a leftover column is still there never gets the old default of 1 (provider 1), which a later run could
+         * import. Each step is checked in INFORMATION_SCHEMA first, so a stopped upgrade carries on, and the parts
+         * still needed go into one ALTER TABLE, so a large table is rebuilt once here (dropping the old column after the
+         * commit can rebuild it again). The index on service_id is added
+         * unless a usable index (one that isn't ignored on MariaDB or invisible on MySQL) has service_id as its only
+         * column, since a service delete's keyset pages need a service's domains in id order (one with more columns,
+         * such as (service_id, expiry_date), doesn't give that). It's named service_id, or service_id_hosting (then
          * service_id_hosting_2, and so on) when an index on other columns already has that name.
          */
         $stmt = $pdo->prepare("
@@ -1557,7 +1561,7 @@ if ($current_db_version === '4.26.0') {
             $domain_changes[] = "ADD INDEX `" . $index_name . "` (`service_id`)";
         }
 
-        if ($domain_column_exists('domains', 'hosting_id')) $domain_changes[] = "DROP `hosting_id`";
+        if ($domain_column_exists('domains', 'hosting_id')) $domain_changes[] = "ALTER `hosting_id` SET DEFAULT '0'";
 
         if ($domain_changes) $pdo->query("ALTER TABLE `domains` " . implode(", ", $domain_changes));
 
@@ -1870,36 +1874,31 @@ if ($current_db_version === '4.26.0') {
         }
 
         /*
-         * The placeholder providers DomainMOD made itself (DomainMOD\Notice::PLACEHOLDER_PROVIDERS, the same list the
-         * upgrade notice's count uses): [no hosting], which the installer added in its language (so every translation
-         * DomainMOD ships is listed), and [created by queue], which the Domain Queue always added in English. A row matches only with both its exact name (compared byte for byte, so a provider renamed to
-         * [No Hosting] is kept) and DomainMOD's own creation type, so a provider someone added or renamed by hand is
-         * never touched. A matching row is kept while any hosting account or service uses it, so nothing is orphaned.
-         * Then any default hosting provider that pointed at a deleted row is set to 0. Running this again finds nothing.
+         * The placeholder providers DomainMOD made itself (DomainMOD\Notice::PLACEHOLDER_PROVIDERS, matched by
+         * DomainMOD\HostingLinkImport::placeholderMatch(), as the upgrade notice's count and the link import below
+         * match them): [no hosting], which the installer added in its language (so every translation DomainMOD ships is
+         * listed), and [created by queue], which the Domain Queue always added in English. A row matches only with both
+         * its exact name (compared byte for byte, so a provider renamed to [No Hosting] is kept) and DomainMOD's own
+         * creation type (any creation type row with that name), so a provider someone added or renamed by hand is never
+         * touched. A matching row is kept while any hosting account or service uses it, so nothing is orphaned. Then
+         * any default hosting provider that pointed at a deleted row is set to 0. Running this again finds nothing.
          */
-        $placeholder_names = array();
-        foreach (DomainMOD\Notice::PLACEHOLDER_PROVIDERS as $placeholder_type_name => $names) {
-            $placeholder_names[$system->getCreationTypeId($placeholder_type_name)] = $names;
-        }
-
+        $placeholder_match = DomainMOD\HostingLinkImport::placeholderMatch('h');
         $stmt_find = $pdo->prepare("
             SELECT h.id
             FROM hosting AS h
-            WHERE BINARY h.name = :name
-              AND h.creation_type_id = :creation_type_id
+            WHERE " . $placeholder_match['sql'] . "
               AND NOT EXISTS (SELECT 1 FROM hosting_provider_accounts AS hpa WHERE hpa.hosting_id = h.id)
               AND NOT EXISTS (SELECT 1 FROM hosting_services AS hs WHERE hs.hosting_id = h.id)");
-        $placeholder_ids = array();
-        foreach ($placeholder_names as $placeholder_type => $names) {
-            foreach ($names as $placeholder_name) {
-                $stmt_find->bindValue('name', $placeholder_name, PDO::PARAM_STR);
-                $stmt_find->bindValue('creation_type_id', (int) $placeholder_type, PDO::PARAM_INT);
-                $stmt_find->execute();
-                foreach ($stmt_find->fetchAll(PDO::FETCH_COLUMN) as $placeholder_id) {
-                    $placeholder_ids[(int) $placeholder_id] = (int) $placeholder_id;
-                }
-            }
+        foreach ($placeholder_match['params'] as $placeholder_key => $placeholder_value) {
+            $stmt_find->bindValue($placeholder_key, $placeholder_value, PDO::PARAM_STR);
         }
+        $stmt_find->execute();
+        $placeholder_ids = array();
+        foreach ($stmt_find->fetchAll(PDO::FETCH_COLUMN) as $placeholder_id) {
+            $placeholder_ids[(int) $placeholder_id] = (int) $placeholder_id;
+        }
+        $stmt_find->closeCursor();
 
         if ($placeholder_ids) {
             $placeholder_list = implode(', ', $placeholder_ids);
@@ -1913,6 +1912,17 @@ if ($current_db_version === '4.26.0') {
             $pdo->query("UPDATE settings SET default_host = 0 WHERE default_host IN (" . $placeholder_list . ")
                            AND default_host NOT IN (SELECT id FROM hosting)");
         }
+
+        /*
+         * Each domain's old Web Hosting Provider becomes a hosting service (DomainMOD\HostingLinkImport): one hosting
+         * account (username Imported) for each provider and owner pair the domains use, with one service named after
+         * the provider, and each domain linked to the service for its provider and owner. It runs after the service_id
+         * reset above, which would otherwise clear the links, and only while domains still has the old column. It ends
+         * by setting every old link to 0, and the column is dropped after the commit. Like the repairs above, it isn't
+         * recorded in the Change History, which starts below.
+         */
+        DomainMOD\HostingLinkImport::import($pdo, $creation_type_id_installation, $time->stamp(),
+            DomainMOD\Hosting::hostingDate($pdo));
         // ===== END: Hosting, domains, data =====
 
         // ===== BEGIN: Change History, start marker (CHANGE-HISTORY-PLAN.local.md, change-history build) =====
@@ -1930,6 +1940,10 @@ if ($current_db_version === '4.26.0') {
 
         if ($pdo->InTransaction()) $pdo->commit();
         $current_db_version = $new_version;
+
+        // The domains' old hosting provider column, now that its links are hosting services. A failure here is ignored,
+        // since the upgrade has finished, and the column left behind holds only zeros.
+        DomainMOD\HostingLinkImport::dropLegacyColumn($pdo);
 
         if (isset($upgrading_user_stamp)) {
 

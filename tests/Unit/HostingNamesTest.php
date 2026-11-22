@@ -60,11 +60,12 @@ class HostingNamesTest extends TestCase
 
     const LEGACY_MARKER = '// Legacy: domains.hosting_id before 4.27.0';
 
-    // The only files whose statements may carry the legacy marker: the upgrade notice's count, the provider list's domain
-    // count and export, the Assets page's Providers tile, the provider delete's domain check, and the five domain inserts
+    // The only files whose statements may carry the legacy marker: the upgrade notice's count, the upgrade's import of
+    // the links into hosting services, the provider list's domain count and export, the Assets page's Providers tile,
+    // the provider delete's domain check, and the five domain inserts
     const LEGACY_FILES = array('assets/edit/host.php', 'assets/hosting.php', 'assets/index.php', 'bulk/main/index.php',
-        'classes/DomainMOD/Domain.php', 'classes/DomainMOD/DomainQueue.php', 'classes/DomainMOD/Notice.php',
-        'domains/add.php', 'queue/edit/index.php');
+        'classes/DomainMOD/Domain.php', 'classes/DomainMOD/DomainQueue.php', 'classes/DomainMOD/HostingLinkImport.php',
+        'classes/DomainMOD/Notice.php', 'domains/add.php', 'queue/edit/index.php');
 
     const DOMAIN_TABLES = 'domains|domain_queue|domain_queue_history';
 

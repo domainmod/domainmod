@@ -27,16 +27,19 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 
 /*
- * The upgrade notice's warning that the 4.27.0 upgrade drops each domain's Web Hosting Provider link (Notice): how many
- * domains name a real provider, read only while the column exists and the placeholder match can run, and the warning
- * without a number when the count can't be worked out, so the Upgrade Database button always renders. The database is
- * a FakeDatabase, which answers the column check and the count.
+ * The upgrade notice's message that the 4.27.0 upgrade turns each domain's Web Hosting Provider link into a hosting
+ * service (Notice): how many domains HostingLinkImport links (a real provider, and a registrar account and owner that
+ * exist), read only while the column exists and the count can run, and the message without a number when the count
+ * can't be worked out, so the Upgrade Database button always renders. The database is a FakeDatabase, which answers
+ * the column check and the count.
  */
 class NoticeHostingLinksTest extends TestCase
 {
     // The column check's rows for a 4.26.0 database: everything the count needs
-    const ALL_COLUMNS = array(array('domains', 'hosting_id'), array('hosting', 'id'), array('hosting', 'name'),
-        array('hosting', 'creation_type_id'), array('creation_types', 'id'), array('creation_types', 'name'));
+    const ALL_COLUMNS = array(array('domains', 'hosting_id'), array('domains', 'account_id'), array('hosting', 'id'),
+        array('hosting', 'name'), array('hosting', 'creation_type_id'), array('registrar_accounts', 'id'),
+        array('registrar_accounts', 'owner_id'), array('owners', 'id'), array('creation_types', 'id'),
+        array('creation_types', 'name'));
 
     private static function database(array $columns, $count = '0')
     {
@@ -52,7 +55,10 @@ class NoticeHostingLinksTest extends TestCase
         $count = $pdo->queriesWith('SELECT COUNT(*)');
         $this->assertCount(1, $count);
         $sql = preg_replace('/\s+/', ' ', $count[0]);
-        $this->assertStringContainsString('FROM domains AS d INNER JOIN hosting AS h ON h.id = d.hosting_id WHERE NOT (', $sql);
+        // The same domains the import links: the provider, the registrar account, and its owner all exist
+        $this->assertStringContainsString('FROM domains AS d INNER JOIN hosting AS h ON h.id = d.hosting_id INNER JOIN '
+            . 'registrar_accounts AS ra ON ra.id = d.account_id INNER JOIN owners AS o ON o.id = ra.owner_id WHERE '
+            . 'd.hosting_id <> 0 AND NOT ((', $sql);
         // Each placeholder list is matched by its creation type and the exact, byte for byte, name
         $this->assertSame(2, substr_count($sql, 'h.creation_type_id IN (SELECT ct.id FROM creation_types AS ct WHERE ct.name = :type'));
         $this->assertSame(2, substr_count($sql, 'BINARY h.name IN ('));
@@ -75,8 +81,9 @@ class NoticeHostingLinksTest extends TestCase
         $this->assertSame(array('[created by queue]'), Notice::PLACEHOLDER_PROVIDERS['Queue']);
     }
 
-    // Nothing to warn about: a database at 4.27.0 or later (nothing is read), or one without the old column
-    public function testNoWarningWithoutTheOldColumn()
+    // Nothing to say: a database at 4.27.0 or later (nothing is read), or one without the old column (the other domains
+    // column the count reads is still there, so it's the old column that decides)
+    public function testNoMessageWithoutTheOldColumn()
     {
         foreach (array('4.27.0', '4.27.01', '5.0.0') as $version) {
             $pdo = self::database(self::ALL_COLUMNS, '5');
@@ -95,7 +102,8 @@ class NoticeHostingLinksTest extends TestCase
      */
     public function testACountThatCantBeWorkedOutIsNull()
     {
-        foreach (array(array('hosting', 'creation_type_id'), array('creation_types', 'id'), array('creation_types', 'name')) as $missing) {
+        foreach (array(array('hosting', 'creation_type_id'), array('creation_types', 'id'), array('creation_types', 'name'),
+                     array('domains', 'account_id'), array('registrar_accounts', 'owner_id'), array('owners', 'id')) as $missing) {
             $pdo = self::database(array_values(array_filter(self::ALL_COLUMNS, function ($row) use ($missing) {
                 return $row !== $missing;
             })), '5');
@@ -110,35 +118,39 @@ class NoticeHostingLinksTest extends TestCase
     }
 
     #[RunInSeparateProcess]
-    public function testTheWarningsWords()
+    public function testTheMessagesWords()
     {
-        $this->assertSame('', Notice::hostingLinkWarning(0));
-        $backup = " If you need them, back up your database with your usual tools before you continue. That's the only complete copy, since the Domains export leaves out domains with no fee.";
-        $this->assertSame("This upgrade removes each domain's Web Hosting Provider field. 1 domain has one set, and that link won't be kept." . $backup,
-            Notice::hostingLinkWarning(1));
-        $this->assertSame("This upgrade removes each domain's Web Hosting Provider field. 1,234 domains have one set, and those links won't be kept." . $backup,
-            Notice::hostingLinkWarning(1234));
-        $this->assertSame("This upgrade removes each domain's Web Hosting Provider field, and those links won't be kept." . $backup,
-            Notice::hostingLinkWarning(null));
+        $this->assertSame('', Notice::hostingLinkMessage(0));
+        $start = "This upgrade replaces each domain's Web Hosting Provider field with a Hosting Service. ";
+        $end = ' Domains with the same provider and owner share one service. These services have no fees, and their renewal dates are placeholders, so check them under Hosting after the upgrade.';
+        $this->assertSame($start . '1 domain will be linked to a new service named after its provider, in a new hosting account with the username "Imported".' . $end,
+            Notice::hostingLinkMessage(1));
+        $this->assertSame($start . '1,234 domains will each be linked to a new service named after its provider, in a new hosting account with the username "Imported".' . $end,
+            Notice::hostingLinkMessage(1234));
+        $this->assertSame($start . "Each domain will be linked to a new service named after its provider, in a new hosting account with the username \"Imported\", if that provider still exists and isn't one of DomainMOD's placeholders, such as [no hosting]." . $end,
+            Notice::hostingLinkMessage(null));
+        // Nothing is dropped any more, so there's no advice to back up the links
+        $this->assertStringNotContainsString('back up', Notice::hostingLinkMessage(5));
     }
 
-    // The warning sits in the notice's one Critical Warning, above the back-up line, and the button is always there
+    // The message is a plain paragraph above the notice's one Critical Warning (it isn't a warning about lost data), and
+    // the button is always there
     #[RunInSeparateProcess]
-    public function testTheNoticeShowsTheWarningAboveTheBackUpLine()
+    public function testTheNoticeShowsTheMessageAboveTheWarning()
     {
         define('SOFTWARE_VERSION', '4.27.0');
         define('SOFTWARE_TITLE', 'DomainMOD');
 
         $body = (new Notice())->upgradeBody('4.26.0', '', 'csrf_token=abc', self::database(self::ALL_COLUMNS, '3'));
         $this->assertSame(1, substr_count($body, 'alert alert-danger'));
-        $warning = strpos($body, '3 domains have one set, and those links won&#039;t be kept.');
-        $this->assertNotFalse($warning);
-        $this->assertGreaterThan(strpos($body, '>Critical Warning</h3>'), $warning);
-        $this->assertLessThan(strpos($body, 'We strongly recommend that you back up'), $warning);
+        $message = strpos($body, '<p class="mt-4">This upgrade replaces each domain&#039;s Web Hosting Provider field with a Hosting Service. 3 domains will each be linked');
+        $this->assertNotFalse($message);
+        $this->assertLessThan(strpos($body, 'alert alert-danger'), $message);
+        $this->assertStringContainsString('We strongly recommend that you back up', $body);
         $this->assertStringContainsString('Upgrade Database', $body);
 
         $fallback = (new Notice())->upgradeBody('4.26.0', '', 'csrf_token=abc', new FakeDatabase(array('INFORMATION_SCHEMA' => new \PDOException('no access'))));
-        $this->assertStringContainsString('Web Hosting Provider field, and those links won&#039;t be kept.', $fallback);
+        $this->assertStringContainsString('if that provider still exists and isn&#039;t one of DomainMOD&#039;s placeholders', $fallback);
         $this->assertStringContainsString('Upgrade Database', $fallback);
 
         $none = (new Notice())->upgradeBody('4.26.0', '', 'csrf_token=abc', self::database(self::ALL_COLUMNS, '0'));

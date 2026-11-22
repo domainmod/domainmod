@@ -29,9 +29,9 @@ class Notice
     /*
      * The placeholder hosting providers DomainMOD made itself, by the creation type it gave them: [no hosting], which the
      * installer added in its language (so every translation DomainMOD ships is listed), and [created by queue], which the
-     * Domain Queue always added in English. The 4.27.0 update block's "Hosting, domains, data" section deletes the same
-     * rows, matched the same way (exact name and creation type), so the upgrade notice's count of domain links leaves
-     * them out. Keep the two lists the same.
+     * Domain Queue always added in English. HostingLinkImport::placeholderMatch() matches them (exact name and creation
+     * type) for the upgrade notice's count, the 4.27.0 update block's placeholder delete, and the import of the domains'
+     * links, so all three leave out the same rows.
      */
     const PLACEHOLDER_PROVIDERS = array(
         'Installation' => array('[no hosting]', '[لا استضافة]', '[কোন হোস্টিং নেই]',
@@ -97,12 +97,12 @@ class Notice
     }
 
     /*
-     * How many domains have a Web Hosting Provider (domains.hosting_id) that the 4.27.0 upgrade drops, counting only the
-     * ones that name a real provider: a provider that exists and isn't one of DomainMOD's own placeholders
-     * (PLACEHOLDER_PROVIDERS, matched by exact name and creation type). It's 0 when there's nothing to warn about (a
-     * database at 4.27.0 or later, or one without the column), and null when it can't be worked out: something the
-     * placeholder match needs is missing (hosting.creation_type_id or the creation_types table, which a database older
-     * than 4.02 doesn't have yet), or a query fails. $pdo defaults to the shared connection.
+     * How many domains have a Web Hosting Provider (domains.hosting_id) that the 4.27.0 upgrade turns into a hosting
+     * service: the domains HostingLinkImport links, with a provider that exists and isn't one of DomainMOD's own
+     * placeholders (PLACEHOLDER_PROVIDERS), and a registrar account and owner that exist. It's 0 when there's nothing to
+     * say (a database at 4.27.0 or later, or one without the column), and null when it can't be worked out: something
+     * the count needs is missing (hosting.creation_type_id or the creation_types table, which a database older than
+     * 4.02 doesn't have yet), or a query fails. $pdo defaults to the shared connection.
      */
     public static function hostingLinkCount($db_version, $pdo = null)
     {
@@ -119,43 +119,32 @@ class Notice
                 SELECT `TABLE_NAME`, `COLUMN_NAME`
                 FROM `INFORMATION_SCHEMA`.`COLUMNS`
                 WHERE `TABLE_SCHEMA` = DATABASE()
-                  AND ((`TABLE_NAME` = 'domains' AND `COLUMN_NAME` = 'hosting_id')
+                  AND ((`TABLE_NAME` = 'domains' AND `COLUMN_NAME` IN ('hosting_id', 'account_id'))
                     OR (`TABLE_NAME` = 'hosting' AND `COLUMN_NAME` IN ('id', 'name', 'creation_type_id'))
+                    OR (`TABLE_NAME` = 'registrar_accounts' AND `COLUMN_NAME` IN ('id', 'owner_id'))
+                    OR (`TABLE_NAME` = 'owners' AND `COLUMN_NAME` = 'id')
                     OR (`TABLE_NAME` = 'creation_types' AND `COLUMN_NAME` IN ('id', 'name')))")->fetchAll(\PDO::FETCH_NUM);
             $columns = array();
             foreach ($rows as $row) {
                 $columns[strtolower($row[0])][strtolower($row[1])] = true;
             }
-            // The only domains column the check asks about is hosting_id
-            if (!isset($columns['domains'])) return 0;
-            foreach (array('hosting' => array('id', 'name', 'creation_type_id'), 'creation_types' => array('id', 'name')) as $table => $needed) {
+            if (!isset($columns['domains']['hosting_id'])) return 0;
+            foreach (array('domains' => array('account_id'), 'hosting' => array('id', 'name', 'creation_type_id'),
+                         'registrar_accounts' => array('id', 'owner_id'), 'owners' => array('id'),
+                         'creation_types' => array('id', 'name')) as $table => $needed) {
                 foreach ($needed as $column) {
                     if (!isset($columns[$table][$column])) return null;
                 }
             }
 
-            // The placeholder match, with every name compared byte for byte (the column's collation would treat
-            // [No Hosting] as [no hosting]) and bound
-            $params = array();
-            $matches = array();
-            foreach (self::PLACEHOLDER_PROVIDERS as $type => $names) {
-                $params['type' . count($matches)] = $type;
-                $name_keys = array();
-                foreach ($names as $name) {
-                    $key = 'name' . count($params);
-                    $params[$key] = $name;
-                    $name_keys[] = ':' . $key;
-                }
-                $matches[] = "(h.creation_type_id IN (SELECT ct.id FROM creation_types AS ct WHERE ct.name = :type"
-                    . count($matches) . ") AND BINARY h.name IN (" . implode(', ', $name_keys) . "))";
-            }
-
+            $placeholder = HostingLinkImport::placeholderMatch('h');
             $stmt = $pdo->prepare( // Legacy: domains.hosting_id before 4.27.0
                 "SELECT COUNT(*)
                 FROM domains AS d
-                INNER JOIN hosting AS h ON h.id = d.hosting_id
-                WHERE NOT (" . implode(' OR ', $matches) . ")");
-            foreach ($params as $key => $value) {
+                " . HostingLinkImport::ELIGIBLE_JOINS . "
+                WHERE d.hosting_id <> 0
+                  AND NOT " . $placeholder['sql']);
+            foreach ($placeholder['params'] as $key => $value) {
                 $stmt->bindValue($key, $value, \PDO::PARAM_STR);
             }
             $stmt->execute();
@@ -171,36 +160,36 @@ class Notice
     }
 
     /*
-     * The upgrade warning's text about the domains' Web Hosting Provider links the 4.27.0 upgrade drops, for a count from
-     * hostingLinkCount(): '' for 0, and without a number when the count is null
+     * The upgrade notice's text about the domains' Web Hosting Provider links the 4.27.0 upgrade turns into hosting
+     * services, for a count from hostingLinkCount(): '' for 0, and without a number when the count is null
      */
-    public static function hostingLinkWarning($count)
+    public static function hostingLinkMessage($count)
     {
         if ($count === 0) return '';
         if ($count === null) {
-            // TRANSLATORS: In the database upgrade notice, when the number of domains affected can't be worked out
-            $first = _("This upgrade removes each domain's Web Hosting Provider field, and those links won't be kept.");
+            // TRANSLATORS: In the database upgrade notice, when the number of domains affected can't be worked out. "Imported" is the username the upgrade gives the new hosting accounts. Keep the username "Imported" unchanged.
+            $first = _("This upgrade replaces each domain's Web Hosting Provider field with a Hosting Service. Each domain will be linked to a new service named after its provider, in a new hosting account with the username \"Imported\", if that provider still exists and isn't one of DomainMOD's placeholders, such as [no hosting].");
         } else {
-            // TRANSLATORS: In the database upgrade notice. %s is the number of domains with a Web Hosting Provider set.
-            $first = sprintf(ngettext("This upgrade removes each domain's Web Hosting Provider field. %s domain has one set, and that link won't be kept.",
-                "This upgrade removes each domain's Web Hosting Provider field. %s domains have one set, and those links won't be kept.",
+            // TRANSLATORS: In the database upgrade notice. %s is the number of domains the upgrade will link to a hosting service (those whose provider still exists and isn't one of DomainMOD's placeholders). "Imported" is the username the upgrade gives the new hosting accounts. Keep the username "Imported" unchanged.
+            $first = sprintf(ngettext("This upgrade replaces each domain's Web Hosting Provider field with a Hosting Service. %s domain will be linked to a new service named after its provider, in a new hosting account with the username \"Imported\".",
+                "This upgrade replaces each domain's Web Hosting Provider field with a Hosting Service. %s domains will each be linked to a new service named after its provider, in a new hosting account with the username \"Imported\".",
                 $count), number_format($count));
         }
-        return $first . ' ' . _("If you need them, back up your database with your usual tools before you continue. That's the only complete copy, since the Domains export leaves out domains with no fee.");
+        return $first . ' ' . _('Domains with the same provider and owner share one service. These services have no fees, and their renewal dates are placeholders, so check them under Hosting after the upgrade.');
     }
 
     /*
      * The notice itself: why the upgrade is needed, the new version's requirements as the installer's checklist
      * ($requirements, from System::requirementsChecklist()), one warning to back up first, and the button that starts
-     * the upgrade, whose link carries the security token ($csrf_query, from Csrf::query()). Above the back-up line, the
-     * warning names the domains' Web Hosting Provider links the 4.27.0 upgrade drops, when there are any (see
-     * hostingLinkCount(), which reads $pdo, the shared connection by default).
+     * the upgrade, whose link carries the security token ($csrf_query, from Csrf::query()). Above the warning, a
+     * paragraph says how the 4.27.0 upgrade turns the domains' Web Hosting Provider links into hosting services, when
+     * there are any (see hostingLinkCount(), which reads $pdo, the shared connection by default).
      */
     public function upgradeBody($db_version, $requirements, $csrf_query, $pdo = null)
     {
         $layout = new Layout();
         $esc = function ($text) { return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8'); };
-        $hosting_warning = self::hostingLinkWarning(self::hostingLinkCount($db_version, $pdo));
+        $hosting_message = self::hostingLinkMessage(self::hostingLinkCount($db_version, $pdo));
 
         ob_start(); ?>
         <p><?php echo sprintf(_('Your %s software was recently updated, so we now need to upgrade your database.'), SOFTWARE_TITLE); ?></p>
@@ -208,11 +197,11 @@ class Notice
         <?php // The msgid starts with a space, which some translations leave out, so the space is added here instead ?>
         <h3 class="h5 mt-4 mb-3">v<?php echo SOFTWARE_VERSION . ' ' . trim(_(' Software Requirements')); ?></h3>
         <?php echo $requirements; ?>
+        <?php if ($hosting_message !== '') echo '<p class="mt-4">' . $esc($hosting_message) . '</p>'; ?>
         <div class="alert alert-danger d-flex align-items-start gap-2 py-2 my-4 domainmod-message">
             <i class="bi bi-exclamation-triangle-fill domainmod-message-icon" aria-hidden="true"></i>
             <div class="domainmod-message-text">
                 <h3 class="h6 alert-heading"><?php echo _('Critical Warning'); ?></h3>
-                <?php if ($hosting_warning !== '') echo '<p>' . $esc($hosting_warning) . '</p>'; ?>
                 <p class="mb-0"><?php
                     echo sprintf(_('We strongly recommend that you back up your %s installation directory and database before proceeding with the upgrade'), SOFTWARE_TITLE) . '. ' .
                         _("If something goes wrong during the upgrade and you haven't created a backup, there may be no way to recover your data") . '. ' .

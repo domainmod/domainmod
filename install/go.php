@@ -279,7 +279,7 @@ try {
             `display_hosting_expiry_date` TINYINT(1) NOT NULL DEFAULT '1',
             `display_hosting_ip` TINYINT(1) NOT NULL DEFAULT '0',
             `display_hosting_category` TINYINT(1) NOT NULL DEFAULT '0',
-            `display_hosting_fee` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_hosting_fee` TINYINT(1) NOT NULL DEFAULT '1',
             `display_inactive_assets` TINYINT(1) NOT NULL DEFAULT '1',
             `display_dw_intro_page` TINYINT(1) NOT NULL DEFAULT '1',
             `display_getting_started` TINYINT(1) NOT NULL DEFAULT '1',

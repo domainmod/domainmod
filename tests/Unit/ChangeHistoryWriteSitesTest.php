@@ -65,6 +65,7 @@ class ChangeHistoryWriteSitesTest extends TestCase
         'classes/DomainMOD/RestoreImport.php' => 'the restore, which replaces every table',
         'classes/DomainMOD/DwBuild.php' => 'the Data Warehouse tables',
         'classes/DomainMOD/DwClean.php' => 'the Data Warehouse tables',
+        'classes/DomainMOD/HostingLinkImport.php' => "the 4.27.0 database update's import of the old hosting links, before the history starts",
         'classes/DomainMOD/Segment.php' => 'the segment tables');
 
     // Any file under these folders is exempt: the database updates run before the history exists, or build it

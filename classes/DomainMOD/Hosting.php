@@ -98,10 +98,11 @@ class Hosting
 
     /*
      * Whether domains still has the hosting provider column it had before 4.27.0 (domains.hosting_id), which the
-     * statements marked as legacy write or read: before the update, but not once a stopped upgrade has dropped the
-     * column without moving the version yet. Then those statements are left out, and a domain is written as it is after
-     * the update, with no hosting service (the service menus aren't offered until hosting is available). A database
-     * that can't be asked counts as not having it.
+     * statements marked as legacy write or read: only before the update, since the update drops the column after its
+     * version has moved (HostingLinkImport::dropLegacyColumn()). A database without the column (such as a pre-release
+     * test database) has those statements left out, and a domain is written as it is after the update, with no hosting
+     * service (the service menus aren't offered until hosting is available). A database that can't be asked counts as
+     * not having it.
      */
     public static function legacyDomainColumn($pdo = null)
     {
