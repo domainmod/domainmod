@@ -949,6 +949,149 @@ class Scheduler
     }
 
     /*
+     * Disables every active task, for Disable All on the Task Scheduler page, or enables every inactive one, for Enable
+     * All, which includes the tasks that are off on a new install. Each task is changed as Disable or Enable changes it
+     * (update.php), once its lock is taken without waiting, so a running task is left as it is, and it can't overwrite
+     * the change when it finishes (see finishTask()). Returns how many tasks were changed and how many were running.
+     */
+    public function disableAll()
+    {
+        return $this->changeAll(false);
+    }
+
+    public function enableAll()
+    {
+        return $this->changeAll(true);
+    }
+
+    protected function changeAll($enable)
+    {
+        $pdo = $this->deeb->cnxx;
+        $ids = $pdo->query("
+            SELECT id
+            FROM scheduler
+            WHERE active = '" . ($enable ? '0' : '1') . "'
+            ORDER BY sort_order ASC")->fetchAll(\PDO::FETCH_COLUMN);
+
+        $changed = 0;
+        $running = 0;
+
+        foreach ($ids as $task_id) {
+
+            $task_id = (int) $task_id;
+
+            if (!$this->getTaskLock($task_id)) {
+                $running++;
+                continue;
+            }
+
+            try {
+
+                if ($enable) {
+
+                    $task = $this->getTask($task_id);
+                    if (!$task) continue;
+
+                    $stmt = $pdo->prepare("
+                        UPDATE scheduler
+                        SET active = '1',
+                            next_run = :next_run
+                        WHERE id = :id
+                          AND active = '0'");
+                    $stmt->bindValue('next_run', $this->getNextRun($task->expression, $task->timezone), \PDO::PARAM_STR);
+
+                } else {
+
+                    $stmt = $pdo->prepare("
+                        UPDATE scheduler
+                        SET active = '0',
+                            next_run = '1970-01-01 00:00:00'
+                        WHERE id = :id
+                          AND active = '1'");
+
+                }
+
+                // A task another admin turned on or off since it was read is left as it is, and out of the count
+                $stmt->bindValue('id', $task_id, \PDO::PARAM_INT);
+                $stmt->execute();
+                if ($stmt->rowCount() > 0) $changed++;
+
+            } finally {
+
+                $this->releaseTaskLock($task_id);
+
+            }
+
+        }
+
+        return array('changed' => $changed, 'running' => $running);
+    }
+
+    /*
+     * Disable All's or Enable All's result as one message: its type ('success', or 'warning' when a running task was
+     * left as it was) and its text, from the counts disableAll() or enableAll() returns.
+     */
+    public static function changeAllMessage($enable, $changed, $running)
+    {
+        if ($running === 0) {
+            if ($enable) {
+                return array('success', $changed > 0 ? _('All tasks are now enabled.') : _('All tasks were already enabled.'));
+            }
+            return array('success', $changed > 0 ? _('All tasks are now disabled.') : _('All tasks were already disabled.'));
+        }
+
+        if ($enable) {
+            // Enable All gives way to Disable All once a task is on, so a task left off is enabled from its own card
+            $running_text = sprintf(ngettext('%s task is running and was left disabled, so enable it once it finishes.',
+                '%s tasks are running and were left disabled, so enable them once they finish.', $running), number_format($running));
+            $changed_text = sprintf(ngettext('%s task was enabled.', '%s tasks were enabled.', $changed), number_format($changed));
+        } else {
+            $running_text = sprintf(ngettext('%s task is running and was left enabled, so try again once it finishes.',
+                '%s tasks are running and were left enabled, so try again once they finish.', $running), number_format($running));
+            $changed_text = sprintf(ngettext('%s task was disabled.', '%s tasks were disabled.', $changed), number_format($changed));
+        }
+
+        return array('warning', $changed === 0 ? $running_text : $changed_text . ' ' . $running_text);
+    }
+
+    /*
+     * Disable All or Enable All, as a page action that asks first, in the same spot: Disable All while any task is
+     * active, for anyone who doesn't use the Task Scheduler, and Enable All once every task is off. Neither is shown on
+     * the public demo, where one click would change every task for every visitor. Layout leaves them out for read-only
+     * users, and update.php turns them away too. $tasks are the page's task rows.
+     */
+    public function addChangeAllAction(Layout $layout, array $tasks)
+    {
+        if (defined('DEMO_INSTALLATION') && DEMO_INSTALLATION == true) return;
+        if (!$tasks) return;
+
+        $any_active = false;
+        $refresh_off = false;
+        foreach ($tasks as $task) {
+            if ($task->active == '1') $any_active = true;
+            if (($task->slug ?? '') === 'domain-refresh' && $task->active != '1') $refresh_off = true;
+        }
+        $token = (new Csrf())->query();
+
+        if ($any_active) {
+
+            $layout->addPageAction(_('Disable All'), 'update.php?a=da&' . $token, 'bi-toggle-on',
+                array('confirm' => array('message' => _("Disable every task? They won't run on their schedule until you enable them again, but Run Now still runs them."))));
+
+        } else {
+
+            // Refresh Domains is the one task that's off on a new install, and once it's on it looks domains up with
+            // outside services, so the question names it while it's off
+            $message = $refresh_off
+                ? _('Enable every task? This includes Refresh Domains, which looks up your domains with registrar APIs, RDAP and WHOIS servers, and DNS resolvers.')
+                : _('Enable every task? Each one will run on its schedule again.');
+            $layout->addPageAction(_('Enable All'), 'update.php?a=ea&' . $token, 'bi-toggle-off',
+                array('confirm' => array('message' => $message)));
+
+        }
+    }
+
+    /*
      * A task's name or description ($field is 'name' or 'description') in the viewer's language, found by its slug. The
      * stored name and description are in English (or the installer's language), so they're only shown for a task this
      * list doesn't know, as plain text. They stay in the database as they are.

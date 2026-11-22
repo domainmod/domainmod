@@ -74,7 +74,8 @@ echo $layout->factList($facts);
 $result = $pdo->query("
         SELECT id, `name`, description, `interval`, expression, `timezone`, last_run, last_duration, next_run, active, slug
         FROM scheduler
-        ORDER BY sort_order ASC")->fetchAll(); ?>
+        ORDER BY sort_order ASC")->fetchAll();
+$schedule->addChangeAllAction($layout, $result); ?>
 <div class="row g-3"><?php
     foreach ($result as $task) {
         echo $schedule->taskCard($task);

@@ -45,6 +45,28 @@ $a = $_REQUEST['a'] ?? '';
 $id = (int) ($_REQUEST['id'] ?? 0);
 $new_hour = $_REQUEST['new_hour'] ?? 0;
 
+// Disable All and Enable All take each task's lock themselves, and leave a running task as it is (see
+// Scheduler::disableAll()). The public demo doesn't offer them, since one click would change every task for every
+// visitor.
+if ($a == 'da' || $a == 'ea') {
+
+    if (DEMO_INSTALLATION == true) {
+
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('You are not authorized to perform that action.') . '<BR>';
+        header("Location: index.php");
+        exit;
+
+    }
+
+    $enable = $a == 'ea';
+    $counts = $enable ? $schedule->enableAll() : $schedule->disableAll();
+    list($type, $text) = DomainMOD\Scheduler::changeAllMessage($enable, $counts['changed'], $counts['running']);
+    $_SESSION['s_message_' . $type] = ($_SESSION['s_message_' . $type] ?? '') . $text . '<BR>';
+    header("Location: index.php");
+    exit;
+
+}
+
 // A change waits for a running task, so the task can't overwrite it when it finishes (see Scheduler::finishTask()).
 if (in_array($a, array('u', 'e', 'd'), true) && !$schedule->getTaskLock($id)) {
 
