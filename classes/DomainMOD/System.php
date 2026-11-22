@@ -620,6 +620,17 @@ class System
         $_SESSION['s_has_ssl_account'] = $this->checkForRows($sql);
         $sql = $queryB->singleAsset('ssl_certs');
         $_SESSION['s_has_ssl_cert'] = $this->checkForRows($sql);
+
+        // The hosting tables exist only once the database has been updated (DomainMOD\Hosting)
+        if (Hosting::isAvailable($this->deeb->cnxx)) {
+            $sql = $queryB->singleAsset('hosting_provider_accounts');
+            $_SESSION['s_has_hosting_provider_account'] = $this->checkForRows($sql);
+            $sql = $queryB->singleAsset('hosting_services');
+            $_SESSION['s_has_hosting_service'] = $this->checkForRows($sql);
+        } else {
+            $_SESSION['s_has_hosting_provider_account'] = '0';
+            $_SESSION['s_has_hosting_service'] = '0';
+        }
     }
 
     public function checkForRows($sql)
@@ -848,8 +859,10 @@ class System
         header('X-DomainMOD-Result: 1');
         $result = '';
         if (($_SESSION['s_message_danger'] ?? '') != '') $result .= $this->showMessageDanger($_SESSION['s_message_danger']);
+        if (($_SESSION['s_message_warning'] ?? '') != '') $result .= $this->showMessageWarning($_SESSION['s_message_warning']);
         if (($_SESSION['s_message_success'] ?? '') != '') $result .= $this->showMessageSuccess($_SESSION['s_message_success']);
         $_SESSION['s_message_danger'] = '';
+        $_SESSION['s_message_warning'] = '';
         $_SESSION['s_message_success'] = '';
         return $result;
     }

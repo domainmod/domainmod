@@ -1,0 +1,295 @@
+<?php
+/**
+ * /reporting/hosting/upcoming-renewals.php
+ *
+ * This file is part of DomainMOD, an open source domain and internet asset manager.
+ * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
+ *
+ * Project: http://domainmod.org   Author: https://greg.ca
+ *
+ * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * DomainMOD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with DomainMOD. If not, see
+ * http://www.gnu.org/licenses/.
+ *
+ */
+?>
+<?php //@formatter:off
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$system = new DomainMOD\System();
+$layout = new DomainMOD\Layout;
+$time = new DomainMOD\Time();
+$reporting = new DomainMOD\Reporting();
+$currency = new DomainMOD\Currency();
+$dashboard = new DomainMOD\Dashboard();
+$chart = new DomainMOD\Chart();
+
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/reporting-hosting-upcoming-renewals.inc.php';
+
+$system->authCheck();
+$pdo = $deeb->cnxx;
+
+// Nothing to report before the database update adds the hosting tables
+if (!DomainMOD\Hosting::isAvailable($pdo)) {
+    require_once DIR_INC . '/layout/hosting-report-unavailable.inc.php';
+    exit;
+}
+
+// Rates for every currency in use, or the lists and reports below would leave out what uses a missing one
+(new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
+
+$export_data = (int) ($_GET['export_data'] ?? 0);
+// The window the list covers: 30, 60, or 90 days (anything else shows 90)
+$days = (int) ($_GET['days'] ?? 90);
+if (!in_array($days, array(30, 60, 90), true)) $days = 90;
+
+/*
+ * Every part of the report uses the same projected renewals (see DomainMOD\HostingReport): each service's stored date,
+ * then that date plus each whole number of terms. Today is the hosting date, as the email and the other hosting views use.
+ */
+$today = DomainMOD\Hosting::hostingDate($pdo);
+$hosting_report = new DomainMOD\HostingReport($pdo, $_SESSION['s_user_id'] ?? 0);
+$chart_end = $reporting->renewalChartEnd($today);
+$services = $hosting_report->services(DomainMOD\Hosting::addDays($chart_end, -1));
+$months = DomainMOD\HostingReport::renewalMonths($services, $today);
+
+// An amount in the user's currency, as the other reports show it
+$money = function ($amount) use ($currency) {
+    return $currency->format($amount, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+};
+
+// The 90 days' renewals: the stored dates that have passed (overdue, or waiting for the renewal to be confirmed), then
+// each projected renewal from today on
+$rows = DomainMOD\HostingReport::renewalList($services, $today, DomainMOD\Hosting::addDays($today, 90));
+
+// The 30, 60, and 90 day windows' tiles count the renewals from today through that many days ahead (a passed date isn't
+// in them), and the chosen window's list has the passed dates, then the renewals by the window's end
+$windows = DomainMOD\HostingReport::windowTotals($rows, $today, array(30, 60, 90));
+
+$window_end = DomainMOD\Hosting::addDays($today, $days);
+$list = array_values(array_filter($rows, function ($row) use ($window_end) {
+    return $row->renewal_date <= $window_end;
+}));
+
+$list_cost = 0.0;
+$list_missing = 0;
+foreach ($list as $row) {
+    if ($row->has_fee && $row->has_rate) {
+        $list_cost += (float) $row->converted_cost;
+    } else {
+        $list_missing++;
+    }
+}
+
+// What a renewal's cost cell shows: one term's cost, or why it has none
+$cost_text = function ($row) use ($money) {
+    if (!$row->has_fee) return _('No fee');
+    if (!$row->has_rate) return _('No rate');
+    return $money($row->converted_cost);
+};
+
+// The days left as a number (negative once overdue), and a cost as a number (no fee or no rate sort first), so the
+// list's columns sort by value
+$days_left = function ($row) use ($today) {
+    return (int) round((strtotime($row->renewal_date) - strtotime($today)) / 86400);
+};
+$cost_order = function ($row) {
+    return !$row->has_fee || !$row->has_rate ? -1 : round((float) $row->converted_cost, 2);
+};
+
+// Days from today to the renewal date, or for a stored date that has passed, its renewal state ("Overdue" or "Confirm
+// renewal", see DomainMOD\Hosting::renewalState())
+$days_left_text = function ($row) use ($days_left) {
+    return $row->state !== '' ? DomainMOD\Hosting::stateLabel($row->state) : number_format($days_left($row));
+};
+
+// A renewal's billing term (a service whose term isn't an allowed one has no renewals here)
+$term_text = function ($row) {
+    return DomainMOD\Hosting::termLabel($row->billing_term);
+};
+
+$window_title = sprintf(_('Hosting service renewals that have passed or are due in the next %s days'), $days);
+
+if ($export_data === 1 && $list) {
+
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile(_('hosting_upcoming_renewals_report'), $days . '_' . _('days') . '_' . $today);
+
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
+
+    $export->writeBlankRow($export_file);
+
+    $row_contents = array($window_title . ':', number_format(count($list)));
+    $export->writeRow($export_file, $row_contents);
+
+    $row_contents = array(_('Renewal Cost') . ':', $money($list_cost), $_SESSION['s_default_currency']);
+    $export->writeRow($export_file, $row_contents);
+
+    if ($list_missing > 0) {
+        $row_contents = array(sprintf(ngettext('%s renewal has no fee or rate and is left out of the cost.', '%s renewals have no fee or rate and are left out of the cost.', $list_missing), number_format($list_missing)));
+        $export->writeRow($export_file, $row_contents);
+    }
+
+    $export->writeBlankRow($export_file);
+
+    $row_contents = array(
+        _('Hosting Service'),
+        _('Renewal Date'),
+        _('Days Left'),
+        _('Provider'),
+        _('Account'),
+        _('Service Type'),
+        _('Billing Term'),
+        _('Renewal Cost')
+    );
+    $export->writeRow($export_file, $row_contents);
+
+    foreach ($list as $row) {
+        $row_contents = array(
+            $row->name,
+            $row->renewal_date,
+            $days_left_text($row),
+            $row->provider_name,
+            $row->owner_name . ' (' . $row->username . ')',
+            $row->type,
+            $term_text($row),
+            $cost_text($row)
+        );
+        $export->writeRow($export_file, $row_contents);
+    }
+
+    $export->writeBlankRow($export_file);
+
+    $row_contents = array(_('Month'), _('Renewals'), _('Renewal Cost'), _('No Fee or Rate'));
+    $export->writeRow($export_file, $row_contents);
+
+    foreach ($months as $month) {
+        $row_contents = array($month['label'], $month['count'], $money($month['cost']), $month['missing']);
+        $export->writeRow($export_file, $row_contents);
+    }
+
+    $export->closeFile($export_file);
+
+}
+?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
+<?php echo $layout->htmlTag(); ?>
+<head>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+</head>
+<?php echo $layout->bodyTag(); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php echo $layout->calloutTop(); ?>
+<?php echo _('What your hosting services will cost to renew over the next year, month by month, and which ones renew soon. These are projected renewals, so a monthly service appears once for each month it renews in. Each renewal is counted at one billing term\'s renewal fee plus any other fees, in your currency. Cancelled hosting services are left out.'); ?>
+<?php echo $layout->calloutBottom(); ?>
+
+<?php
+// The page's actions, drawn in the page header (see Layout::renderPageActions())
+$layout->addPageAction(_('View Full Report'), $report_filename, 'bi-arrow-counterclockwise');
+if ($list) $layout->addPageAction(_('Export Report'), $report_filename . '?export_data=1&days=' . $days, 'bi-download'); ?>
+
+<div class="row"><?php
+    foreach ($windows as $window_days => $window) {
+        $detail = $money($window['cost']);
+        if ($window['missing'] > 0) $detail .= ' ' . sprintf(_('(%s without a fee or rate)'), number_format($window['missing']));
+        echo $dashboard->displayPanel(sprintf(_('Next %s Days'), $window_days), $window['count'], 'danger', 'bi-calendar-event', '/reporting/hosting/upcoming-renewals.php?days=' . $window_days . '#hosting-list', _('Hosting Renewals'), $detail);
+    } ?>
+</div>
+<?php // The tiles leave out the renewals that have passed, which the list below them includes, so the two can differ ?>
+<p class="domainmod-intro"><?php echo _('The tiles count renewals from today on. The table also lists renewals that are overdue or waiting to be confirmed.'); ?></p>
+
+<?php
+if ($services) {
+
+    echo $chart->bar('hosting-upcoming-renewals-chart', _('Hosting Renewal Costs, Next 12 Months'), array_column($months, 'label'), array_column($months, 'cost'), !empty($months[0]['overdue']), '<div class="mt-3">' . DomainMOD\HostingReport::renewalMonthsTable($months) . '</div>');
+
+} ?>
+
+<h2 class="h4 mt-5" id="hosting-list"><?php echo $window_title; ?></h2>
+
+<div class="mb-3">
+<div class="btn-group" role="group" aria-label="<?php echo htmlspecialchars(_('Window'), ENT_QUOTES, 'UTF-8'); ?>"><?php
+    foreach (array(30, 60, 90) as $window_days) { ?>
+        <a href="<?php echo $report_filename; ?>?days=<?php echo $window_days; ?>#hosting-list" class="btn btn-sm <?php echo $window_days === $days ? 'btn-danger' : 'btn-outline-secondary'; ?>"<?php echo $window_days === $days ? ' aria-current="true"' : ''; ?>><?php echo sprintf(_('%s Days'), $window_days); ?></a><?php
+    } ?>
+</div>
+<a href="<?php echo WEB_ROOT; ?>/reporting/renewal-calendar.php?show=hosting" class="ms-2 small"><i class="bi bi-calendar3" aria-hidden="true"></i> <?php echo _('See them on a calendar'); ?></a>
+</div>
+
+<?php
+if ($list) { ?>
+
+    <strong><?php echo _('Renewal Cost'); ?>:</strong> <?php echo $money($list_cost); ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
+    <strong><?php echo _('Number of Renewals'); ?>:</strong> <?php echo number_format(count($list)); ?><BR><?php
+
+    if ($list_missing > 0) { ?>
+        <em><?php echo sprintf(ngettext('%s renewal has no fee or rate and is left out of the cost.', '%s renewals have no fee or rate and are left out of the cost.', $list_missing), number_format($list_missing)); ?></em><BR><?php
+    } ?>
+    <BR>
+
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+            <th><?php echo _('Hosting Service'); ?></th>
+            <th><?php echo _('Renewal Date'); ?></th>
+            <th><?php echo _('Days Left'); ?></th>
+            <th><?php echo _('Provider'); ?></th>
+            <th><?php echo _('Account'); ?></th>
+            <th><?php echo _('Service Type'); ?></th>
+            <th><?php echo _('Billing Term'); ?></th>
+            <th><?php echo _('Renewal Cost'); ?></th>
+        </tr>
+        </thead>
+        <tbody><?php
+
+        foreach ($list as $row) { ?>
+
+            <tr>
+                <td></td>
+                <td><a href="<?php echo WEB_ROOT; ?>/hosting/edit.php?hsid=<?php echo (int) $row->id; ?>"><?php echo $row->name; ?></a></td>
+                <td data-order="<?php echo $row->renewal_date; ?>"><?php echo $row->renewal_date; ?></td>
+                <td data-order="<?php echo $days_left($row); ?>"><?php echo $days_left_text($row); ?></td>
+                <td><?php echo $row->provider_name; ?></td>
+                <td><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</td>
+                <td><?php echo $row->type; ?></td>
+                <td data-order="<?php echo (int) $row->billing_term; ?>"><?php echo htmlspecialchars($term_text($row), ENT_QUOTES, 'UTF-8'); ?></td>
+                <td data-order="<?php echo $cost_order($row); ?>"><?php echo $cost_text($row); ?></td>
+            </tr><?php
+
+        } ?>
+
+        </tbody>
+    </table><?php
+
+} else {
+
+    // Nothing in the chosen window, with a link to the 90-day window when it has renewals
+    $longer_url = $days < 90 && $windows[90]['count'] > 0 ? '/reporting/hosting/' . $report_filename . '?days=90#hosting-list' : '';
+    // TRANSLATORS: Shown under the Hosting Renewals report's list when it's empty. %s is the number of days (30, 60, or 90).
+    $empty_text = sprintf(_('No hosting services are overdue or have a projected renewal in the next %s days.'), $days);
+    // TRANSLATORS: A link under an empty Hosting Renewals list. %s is 90, the longest window.
+    $longer_label = sprintf(_('Show the next %s days'), 90);
+    echo $layout->emptyState('bi-calendar-check', _('No hosting services to renew'), $empty_text, '', '', $longer_url, $longer_label, 3);
+
+}
+?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
+<?php require_once DIR_INC . '/layout/chart-footer.inc.php'; ?>
+</body>
+</html>

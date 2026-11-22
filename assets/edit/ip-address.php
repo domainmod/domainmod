@@ -116,26 +116,73 @@ if ($del === 1) {
     $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-    $stmt = $pdo->prepare("
-        SELECT ip_id
-        FROM domains
-        WHERE ip_id = :ipid
-        LIMIT 1");
-    $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetchColumn();
+    /*
+     * Once the database has the hosting tables, the checks and the delete hold the hosting lock, so a hosting service
+     * can't be given this IP address between the two
+     */
+    $hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+    if ($hosting_available && !DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {
 
-    if ($result) {
+        $_SESSION['s_message_danger'] .= DomainMOD\Hosting::busyMessage() . '<BR>';
+        header("Location: ip-address.php?ipid=" . $ipid);
+        exit;
 
-        $_SESSION['s_message_danger'] .= _('This IP Address has domains associated with it and cannot be deleted.') . '<BR>';
+    }
 
-    } else {
+    $deleted = false;
+
+    try {
 
         $stmt = $pdo->prepare("
-            DELETE FROM ip_addresses
-            WHERE id = :ipid");
+            SELECT ip_id
+            FROM domains
+            WHERE ip_id = :ipid
+            LIMIT 1");
         $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
         $stmt->execute();
+        $existing_domains = $stmt->fetchColumn() !== false;
+        $stmt->closeCursor();
+
+        $existing_hosting_services = false;
+
+        if ($hosting_available) {
+
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM hosting_services
+                WHERE ip_id = :ipid
+                LIMIT 1");
+            $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+            $stmt->execute();
+            $existing_hosting_services = $stmt->fetchColumn() !== false;
+            $stmt->closeCursor();
+
+        }
+
+        if ($existing_domains || $existing_hosting_services) {
+
+            if ($existing_domains) $_SESSION['s_message_danger'] .= _('This IP Address has domains associated with it and cannot be deleted.') . '<BR>';
+            if ($existing_hosting_services) $_SESSION['s_message_danger'] .= _('This IP Address has hosting services associated with it and cannot be deleted.') . '<BR>';
+
+        } else {
+
+            $stmt = $pdo->prepare("
+                DELETE FROM ip_addresses
+                WHERE id = :ipid");
+            $stmt->bindValue('ipid', $ipid, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $deleted = true;
+
+        }
+
+    } finally {
+
+        if ($hosting_available) DomainMOD\Hosting::unlock($pdo);
+
+    }
+
+    if ($deleted) {
 
         $_SESSION['s_message_success'] .= sprintf(_('IP Address %s (%s) deleted'), $new_name, $new_ip) . '<BR>';
 
@@ -164,7 +211,7 @@ echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->dangerZone(_('IP Address'), $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1', _('Delete this IP address'), sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
+$layout->dangerZone(_('IP Address'), $new_name, 'ip-address.php?ipid=' . $ipid . '&del=1', _('Delete this IP address'), (DomainMOD\Hosting::isAvailable($pdo) ? sprintf(_('This removes %s. It can only be deleted when no domains or hosting services use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>') : sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>')), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

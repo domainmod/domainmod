@@ -63,8 +63,9 @@ if (file_exists($full_filename)) {
 ?>
 <!-- Bootstrap 5 (with Popper) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
-<!-- Tom Select (the multiple choice menus) -->
+<!-- Tom Select (the multiple choice menus, and the menus you can search, such as a domain's Hosting Service) -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/tom-select/js/tom-select.complete.min.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl('js/search-select.js'); ?>"></script>
 <!-- DataTables, with Bootstrap 5 styling and Responsive -->
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.min.js'); ?>"></script>
 <script src="<?php echo $layout->assetUrl(WEBROOT_THEME . '/plugins/datatables/js/dataTables.bootstrap5.min.js'); ?>"></script>

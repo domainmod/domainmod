@@ -42,11 +42,17 @@ require_once DIR_INC . '/settings/history-main.inc.php';
 $system->authCheck();
 $pdo = $deeb->cnxx;
 
+// Each type's custom field table. Hosting Services are a type once the database update adds the hosting tables
+// (DomainMOD\Hosting).
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$custom_field_tables = array('domain' => 'domain_fields', 'ssl' => 'ssl_cert_fields');
+if ($hosting_available) $custom_field_tables['hosting'] = 'hosting_service_fields';
+
 /*
- * The Change History (see DomainMOD\ChangeHistory): every change to a domain or SSL certificate, whoever or whatever
- * made it, newest first. Every signed-in user sees it, read-only users included, as they see every item. The bootstrap's
- * restore gate holds the shared restore lock until the request ends, so the page and its export never read history
- * part-way into a restore.
+ * The Change History (see DomainMOD\ChangeHistory): every change to a domain, SSL certificate, hosting service, or
+ * watched domain, whoever or whatever made it, newest first. Every signed-in user sees it, read-only users included, as
+ * they see every item. The bootstrap's restore gate holds the shared restore lock until the request ends, so the page
+ * and its export never read history part-way into a restore.
  */
 
 // The filter panel posts its form here, and the page moves to the address of the filters it chose, so the filters
@@ -74,8 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // When the type changes, a What Changed choice the new type doesn't have is dropped, so it can't hide every row while
     // the menu shows All (with the type unchanged, a deleted custom field's choice stays, as keepOption() keeps it)
     if ($posted['type'] !== '' && $posted['field'] !== '' && $posted['type'] !== ($post['type_was'] ?? '')) {
-        if (strpos($posted['field'], 'cf:') === 0 && $posted['type'] !== 'watch') {
-            $posted_fields = DomainMOD\CustomField::readFilterFields($pdo, $posted['type'] === 'ssl' ? 'ssl_cert_fields' : 'domain_fields');
+        if (strpos($posted['field'], 'cf:') === 0) {
+            $posted_fields = isset($custom_field_tables[$posted['type']])
+                ? DomainMOD\CustomField::readFilterFields($pdo, $custom_field_tables[$posted['type']]) : array();
             $posted_names = array_map('strtolower', array_column($posted_fields, 'field_name'));
             if (!in_array(strtolower(substr($posted['field'], 3)), $posted_names, true)) $posted['field'] = '';
         } elseif (!isset(DomainMOD\ChangeHistoryListColumns::fieldNames($posted['type'])[$posted['field']])) {
@@ -222,8 +229,9 @@ if ($export_data === 1 && $history_available) {
 }
 
 // What Changed: the recorded fields of the chosen type, by their edit forms' labels. With every type, a field that
-// reads differently for each lists each label, and an SSL certificate's or a watched domain's own field is marked as one
-$field_types = $state['type'] !== '' ? array($state['type']) : array('domain', 'ssl', 'watch');
+// reads differently for each lists each label, and an SSL certificate's, hosting service's, or watched domain's own
+// field is marked as one
+$field_types = $state['type'] !== '' ? array($state['type']) : array_merge(array_keys($custom_field_tables), array('watch'));
 $field_labels = array();
 foreach ($field_types as $field_type) {
     foreach (DomainMOD\ChangeHistoryListColumns::fieldNames($field_type) as $field_code => $field_label) {
@@ -250,9 +258,8 @@ asort($field_choices);
 // Watched domains have no custom fields.
 $custom_field_choices = array();
 foreach ($field_types as $field_type) {
-    if ($field_type === 'watch') continue;
-    $custom_table = $field_type === 'ssl' ? 'ssl_cert_fields' : 'domain_fields';
-    foreach (DomainMOD\CustomField::readFilterFields($pdo, $custom_table) as $custom_field_row) {
+    if (!isset($custom_field_tables[$field_type])) continue;
+    foreach (DomainMOD\CustomField::readFilterFields($pdo, $custom_field_tables[$field_type]) as $custom_field_row) {
         $custom_label = DomainMOD\FilterToolbar::decode($custom_field_row['name']);
         if (count($field_types) > 1) {
             $custom_label = sprintf('%1$s (%2$s)', $custom_label, DomainMOD\ChangeHistoryListColumns::typeName($field_type));
@@ -453,6 +460,7 @@ if (!$history_available) {
     echo $form->showDropdownOption('', _('Type') . ' - ' . DomainMOD\Format::toUpper(_('All')), $state['type']);
     echo $form->showDropdownOption('domain', _('Domain'), $state['type']);
     echo $form->showDropdownOption('ssl', _('SSL Certificate'), $state['type']);
+    if ($hosting_available) echo $form->showDropdownOption('hosting', _('Hosting Service'), $state['type']);
     echo $form->showDropdownOption('watch', _('Watched Domain'), $state['type']);
     echo $form->showDropdownBottom('');
 
@@ -579,7 +587,7 @@ if (!$history_available) {
     } elseif ($filter['life_ok']) {
 
         if (!$has_any_changes) {
-            echo $layout->emptyState('bi-clock-history', _('No changes recorded yet.'), _('Changes to your domains and SSL certificates will be listed here.'));
+            echo $layout->emptyState('bi-clock-history', _('No changes recorded yet.'), ($hosting_available ? _('Changes to your domains, hosting services, and SSL certificates will be listed here.') : _('Changes to your domains and SSL certificates will be listed here.')));
         } else {
             echo $layout->emptyState('bi-search', _('No changes match these filters.'), _('Try changing or clearing the filters.'), '', '', '/history/', _('Clear filters'));
         }

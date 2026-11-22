@@ -47,10 +47,14 @@ $system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
 <h2 class="h5 mt-2"><?php echo _('System'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/admin/settings/', _('System Settings'), _('The URL, email, expiry days, and system options'), 'bi-sliders', 'secondary');
-    echo $layout->landingTile('/admin/defaults/', _('System Defaults'), _('The default assets for new domains and SSL certificates'), 'bi-ui-checks', 'secondary');
+    echo $layout->landingTile('/admin/defaults/', _('System Defaults'), (DomainMOD\Hosting::isAvailable() ? _('The default assets for new domains, hosting services, and SSL certificates') : _('The default assets for new domains and SSL certificates')), 'bi-ui-checks', 'secondary');
     echo $layout->landingTile('/admin/users/', _('Users'), _('Add, edit, and remove users'), 'bi-people', 'secondary');
     echo $layout->landingTile('/admin/domain-fields/', _('Custom Domain Fields'), _('Your own fields on domains'), 'bi-input-cursor-text', 'secondary');
-    echo $layout->landingTile('/admin/ssl-fields/', _('Custom SSL Fields'), _('Your own fields on SSL certificates'), 'bi-input-cursor', 'secondary'); ?>
+    echo $layout->landingTile('/admin/ssl-fields/', _('Custom SSL Fields'), _('Your own fields on SSL certificates'), 'bi-input-cursor', 'secondary');
+    // Once the database update adds the hosting tables (DomainMOD\Hosting)
+    if (DomainMOD\Hosting::isAvailable()) {
+        echo $layout->landingTile('/admin/hosting-fields/', _('Custom Hosting Fields'), _('Your own fields on hosting services'), 'bi-textarea-t', 'secondary');
+    } ?>
 </div>
 
 <h2 class="h5 mt-4"><?php echo _('Tasks'); ?></h2>

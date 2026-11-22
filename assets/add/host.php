@@ -65,14 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
         $stmt->execute();
 
-        $_SESSION['s_message_success'] .= sprintf(_('Web Host %s added'), $new_host) . '<BR>';
+        $_SESSION['s_message_success'] .= sprintf(_('Hosting Provider %s added'), $new_host) . '<BR>';
 
         header("Location: ../hosting.php");
         exit;
 
     } else {
 
-        if (!$validate->text($new_host)) $form->addFieldError('new_host', _("Enter the Web Host's name"));
+        if (!$validate->text($new_host)) $form->addFieldError('new_host', _("Enter the hosting provider's name"));
 
     }
 
@@ -88,10 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_host', _('Web Host Name') . ' (100)', '', $unsanitize->text($new_host), '100', '', '1', '', '', '1');
-echo $form->showInputText('new_url', _("Web Host's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
+echo $form->showInputText('new_host', _('Hosting Provider Name') . ' (100)', '', $unsanitize->text($new_host), '100', '', '1', '', '', '1');
+echo $form->showInputText('new_url', _("Hosting Provider's URL") . ' (100)', '', $unsanitize->text($new_url), '100', '', '', '', '');
 echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
-echo $form->showSubmitButton(_('Add Web Host'), '', '');
+echo $form->showSubmitButton(_('Add Hosting Provider'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

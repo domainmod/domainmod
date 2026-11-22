@@ -119,6 +119,58 @@ class Assets
         }
     }
 
+    public function getHostingType($type_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT type
+            FROM hosting_types
+            WHERE id = :type_id");
+        $stmt->bindValue('type_id', $type_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if (!$result) {
+
+            $log_message = 'Unable to retrieve Hosting Service Type';
+            $log_extra = array('Hosting Service Type ID' => $type_id);
+            $this->log->critical($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
+    public function getHostingProviderAccount($account_id)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        $stmt = $pdo->prepare("
+            SELECT username
+            FROM hosting_provider_accounts
+            WHERE id = :account_id");
+        $stmt->bindValue('account_id', $account_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if ($result === false) {
+
+            $log_message = 'Unable to retrieve Hosting Account';
+            $log_extra = array('Hosting Account ID' => $account_id);
+            $this->log->critical($log_message, $log_extra);
+            return $log_message;
+
+        } else {
+
+            return $result;
+
+        }
+    }
+
     public function getDnsName($dns_id)
     {
         $pdo = $this->deeb->cnxx;
@@ -264,8 +316,8 @@ class Assets
 
         if (!$result) {
 
-            $log_message = 'Unable to retrieve Web Host';
-            $log_extra = array('Web Host ID' => $host_id);
+            $log_message = 'Unable to retrieve Hosting Provider';
+            $log_extra = array('Hosting Provider ID' => $host_id);
             $this->log->critical($log_message, $log_extra);
             return $log_message;
 
@@ -346,32 +398,6 @@ class Assets
 
             $log_message = 'Unable to retrieve Fee ID';
             $log_extra = array('Registrar ID' => $registrar_id, 'TLD' => $tld, 'Fee ID' => $result);
-            $this->log->critical($log_message, $log_extra);
-            return $log_message;
-
-        } else {
-
-            return $result;
-
-        }
-    }
-
-    public function getHostId($host_name)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT id
-            FROM hosting
-            WHERE name = :host_name");
-        $stmt->bindValue('host_name', $host_name, \PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
-
-        if (!$result) {
-
-            $log_message = 'Unable to retrieve Hosting ID';
-            $log_extra = array('Host Name' => $host_name, 'Host ID' => $result);
             $this->log->critical($log_message, $log_extra);
             return $log_message;
 
@@ -523,28 +549,6 @@ class Assets
               AND tld = :tld");
         $stmt->bindValue('registrar_id', $registrar_id, \PDO::PARAM_INT);
         $stmt->bindValue('tld', $tld, \PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchColumn();
-
-        if (!$result) {
-
-            return false;
-
-        }
-
-        return true;
-
-    }
-
-    public function checkForHostByName($host_name)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-            SELECT `id`
-            FROM hosting
-            WHERE name = :host_name");
-        $stmt->bindValue('host_name', $host_name, \PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetchColumn();
 
@@ -854,29 +858,6 @@ class Assets
         $stmt->bindValue('new_ip10', $dns_ip_10, \PDO::PARAM_STR);
         $stmt->bindValue('notes', $notes, \PDO::PARAM_LOB);
         $stmt->bindValue('number_of_servers', $number_of_servers, \PDO::PARAM_INT);
-        $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
-        $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
-        $bind_timestamp = $this->time->stamp();
-        $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
-        $stmt->bindValue('update_time', $bind_timestamp, \PDO::PARAM_STR);
-        $stmt->execute();
-
-        return $pdo->lastInsertId('id');
-
-    }
-
-    public function createHost($name, $url, $notes, $creation_type_id, $created_by)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        $stmt = $pdo->prepare("
-                INSERT INTO hosting
-                (`name`, url, notes, creation_type_id, created_by, insert_time, update_time)
-                VALUES
-                (:name, :url, :notes, :creation_type_id, :created_by, :insert_time, :update_time)");
-        $stmt->bindValue('name', $name, \PDO::PARAM_STR);
-        $stmt->bindValue('url', $url, \PDO::PARAM_STR);
-        $stmt->bindValue('notes', $notes, \PDO::PARAM_LOB);
         $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
         $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
         $bind_timestamp = $this->time->stamp();

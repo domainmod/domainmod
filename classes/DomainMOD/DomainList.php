@@ -32,8 +32,8 @@ namespace DomainMOD;
  */
 class DomainList extends ListQuery
 {
-    // The columns every row has (see selectSql())
-    const SELECT_COLUMNS = "d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name";
+    // The columns every row has (see selectSql(), which adds the hosting service's once hosting is available)
+    const SELECT_COLUMNS = "d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns";
 
     // The custom field data table and its domain id column (see ListQuery::fixedJoinOrder())
     const FIELD_DATA_TABLE = 'domain_field_data';
@@ -51,8 +51,19 @@ class DomainList extends ListQuery
         array('currencies', 'c', 'PRIMARY'),
         array('currency_conversions', 'cc', 'user_currency'),
         array('dns', 'dns', 'PRIMARY'),
-        array('ip_addresses', 'ip', 'PRIMARY'),
-        array('hosting', 'h', 'PRIMARY'));
+        array('ip_addresses', 'ip', 'PRIMARY'));
+
+    // The hosting service's join, added to the join order (see joinOrder()) only once hosting is available. It's a LEFT
+    // JOIN, since a domain doesn't need a service: one with none (service_id 0, or a service that no longer exists)
+    // stays in the list with NULL service columns.
+    const SERVICE_JOIN = array('hosting_services', 'hs', 'PRIMARY', 'hs.id = d.service_id');
+
+    // The hosting service columns selectSql() adds once hosting is available. builtInColumnNames() lists them either
+    // way, so a custom field can't take either name before the update and then clash with them after it.
+    const SERVICE_COLUMNS = ", hs.id AS service_id, hs.name AS service_name";
+
+    // The Hosting Service filter's value for domains with no hosting service (0 already means no filter)
+    const NO_SERVICE = -1;
 
     // Export and the Raw List's order: the expiry date, then the domain (the id keeps domains that tie on both in the
     // same order each time). EXPORT_ORDER_SQL and the keyset (see ListQuery::keysetSql()) are both built from it.
@@ -93,9 +104,12 @@ class DomainList extends ListQuery
         };
 
         $state = array();
-        foreach (array('pcid', 'oid', 'dnsid', 'ipid', 'whid', 'rid', 'raid', 'segid') as $key) {
+        foreach (array('pcid', 'oid', 'dnsid', 'ipid', 'rid', 'raid', 'segid') as $key) {
             $state[$key] = (int) $single($key);
         }
+        // The Hosting Service filter. The Hosting Provider filter it replaced (whid) is no longer read, since a saved
+        // provider id isn't a service id.
+        $state['hsid'] = self::checkedServiceId($single('hsid'));
 
         $tld = (new Sanitize())->text($single('tld'));
         // As on the page, a TLD of "0" skips the check and stays as it is
@@ -114,6 +128,30 @@ class DomainList extends ListQuery
         $state['lock'] = self::normalizeLock($request['lock'] ?? '');
 
         return $state;
+    }
+
+    // A Hosting Service filter value as the list uses it: a service's id, NO_SERVICE, or 0 (no filter) for any other
+    // number
+    public static function checkedServiceId($hsid)
+    {
+        $hsid = (int) $hsid;
+        return $hsid < 0 && $hsid !== self::NO_SERVICE ? 0 : $hsid;
+    }
+
+    /*
+     * The Hosting Service filter's condition for a value (checked with checkedServiceId()), written on the domains table
+     * alone (as d), so the filter menus that query domains without the list's joins can use it too: '' for 0 (no
+     * filter), the domains on a service for its id, and for NO_SERVICE the domains with no service, the ones whose
+     * service_id matches no service (0, or a service that no longer exists), as their Hosting Service cell is blank.
+     */
+    public static function serviceCondition($hsid)
+    {
+        $hsid = self::checkedServiceId($hsid);
+        if ($hsid === 0) return '';
+        if ($hsid === self::NO_SERVICE) {
+            return " AND (d.service_id = 0 OR NOT EXISTS (SELECT 1 FROM hosting_services AS nhs WHERE nhs.id = d.service_id)) ";
+        }
+        return " AND d.service_id = '" . $hsid . "' ";
     }
 
     /*
@@ -154,10 +192,13 @@ class DomainList extends ListQuery
         }
 
         $id_columns = array('pcid' => 'd.cat_id', 'oid' => 'o.id', 'dnsid' => 'dns.id', 'ipid' => 'ip.id',
-            'whid' => 'h.id', 'rid' => 'r.id', 'raid' => 'd.account_id');
+            'rid' => 'r.id', 'raid' => 'd.account_id');
         foreach ($id_columns as $key => $column) {
             $parts[$key . '_string'] = $state[$key] !== 0 ? " AND " . $column . " = '" . (int) $state[$key] . "' " : '';
         }
+
+        // Before the update there are no hosting services, so the filter is no filter
+        $parts['hsid_string'] = $this->hostingAvailable() ? self::serviceCondition($state['hsid'] ?? 0) : '';
 
         $parts['range_string'] = '';
         if ($start_date != '' && $start_date != 'YYYY-MM-DD') {
@@ -397,19 +438,38 @@ class DomainList extends ListQuery
     public static function filterSql(array $parts)
     {
         return $parts['is_active_string'] . $parts['segid_string'] . $parts['pcid_string'] . $parts['oid_string']
-            . $parts['dnsid_string'] . $parts['ipid_string'] . $parts['whid_string'] . $parts['rid_string']
+            . $parts['dnsid_string'] . $parts['ipid_string'] . $parts['hsid_string'] . $parts['rid_string']
             . $parts['raid_string'] . $parts['range_string'] . $parts['tld_string'] . $parts['search_string']
             . ($parts['lock_string'] ?? '');
     }
 
+    // Whether the database has been updated to a version with hosting services (see Hosting::isAvailable()). Until it
+    // has, nothing the list builds names the hosting service join or domains.service_id.
+    public function hostingAvailable()
+    {
+        return Hosting::isAvailable($this->pdo);
+    }
+
+    // The fixed join order (see ListQuery::joinOrder()): JOIN_ORDER, plus the hosting service's LEFT JOIN once hosting
+    // is available
+    protected function joinOrder()
+    {
+        $order = static::JOIN_ORDER;
+        if ($this->hostingAvailable()) $order[] = self::SERVICE_JOIN;
+        return $order;
+    }
+
     // The tables the list joins, and the conditions that join them, for the signed-in user's currency conversions (see
-    // ListQuery::fromSql())
+    // ListQuery::fromSql()). Without the fixed join order, the hosting service's LEFT JOIN is attached to domains in the
+    // comma list, since a LEFT JOIN's ON can only name the tables in its own operand.
     public function fromSql()
     {
         if ($this->fixedJoinOrder()) {
             $tables = $this->joinOrderTables();
         } else {
-            $tables = "domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd";
+            $service_join = $this->hostingAvailable() ? " LEFT JOIN " . self::SERVICE_JOIN[0] . " AS " . self::SERVICE_JOIN[1]
+                . " ON " . self::SERVICE_JOIN[3] : "";
+            $tables = "domains AS d" . $service_join . ", registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, domain_field_data AS dfd";
         }
 
         return "
@@ -421,7 +481,6 @@ class DomainList extends ListQuery
               AND d.fee_id = f.id
               AND d.dns_id = dns.id
               AND d.ip_id = ip.id
-              AND d.hosting_id = h.id
               AND f.currency_id = c.id
               AND c.id = cc.currency_id
               AND d.id = dfd.domain_id
@@ -434,11 +493,19 @@ class DomainList extends ListQuery
         return DomainStatus::isAvailable($this->pdo);
     }
 
-    // The columns every row has, plus the registry status columns (under their ds1_ aliases, once the 4.27.0 database
-    // update adds them) and the current custom fields
+    // The columns every row has, plus the hosting service's and the registry status columns (under their ds1_
+    // aliases), each once the 4.27.0 database update adds them, and the current custom fields
     public function selectSql()
     {
-        return "SELECT " . self::SELECT_COLUMNS . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
+        return "SELECT " . self::SELECT_COLUMNS . ($this->hostingAvailable() ? self::SERVICE_COLUMNS : '')
+            . ($this->hasStatusColumns() ? DomainStatus::selectSql('d') : '') . $this->field_columns;
+    }
+
+    // The names of the list's own columns in its rows (see ListQuery::builtInColumnNames()), with the hosting service's,
+    // whether or not hosting is available yet
+    public static function builtInColumnNames()
+    {
+        return array_merge(parent::builtInColumnNames(), array('service_id', 'service_name'));
     }
 
     // The search box's conditions (see ListQuery::searchSql()), where the domain always shows, so it always also matches
@@ -451,7 +518,7 @@ class DomainList extends ListQuery
     // The Domains list's columns, for ListQuery::tableSearchSql()
     protected function listColumns(array $settings)
     {
-        return new DomainListColumns($settings, $this->fields);
+        return new DomainListColumns($settings, $this->fields, $this->hostingAvailable());
     }
 
 } //@formatter:on

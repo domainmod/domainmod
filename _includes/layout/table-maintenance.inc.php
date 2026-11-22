@@ -57,6 +57,25 @@ if ($missing_ssl_fees == 1 && $fees_read_only) {
 
 }
 
+// Set only once the database update has added the hosting tables (checks.php). Unlike domains and SSL certificates,
+// hosting services without a fee are still listed (with "No fee"), so the message says they're left out of costs.
+$missing_hosting_fees = $_SESSION['s_missing_hosting_fees'] ?? '';
+if ($missing_hosting_fees == 1 && $fees_read_only) {
+
+    $message = _('Some of your Hosting Services are missing fees. Until you enter the fees, they show "No fee" and aren\'t counted in costs.') . " <a href=\"" . $web_root . "/reporting/hosting/provider-fees.php?all=0#missing\">" . _('View the missing fees') . "</a>.";
+
+    echo $system->showMaintenanceTable($message);
+
+} elseif ($missing_hosting_fees == 1) {
+
+    $message = _('Some of your Hosting Services are missing fees. Until you enter the fees, they show "No fee" and aren\'t counted in costs.') . " <a href=\"" . $web_root . "/reporting/hosting/provider-fees.php?all=0#missing\">" . _('Click here to fix this') . "</a>.<BR>";
+    $message .= sprintf(_("If you don't care about tracking Hosting Service fees, %sclick here to set all missing fees to 0%s."), "<a href=\"" . $web_root . "/assets/zero-out-hosting-fees.php?" . (new DomainMOD\Csrf())->query() . "\">", '</a>') . "<BR>";
+    $message .= sprintf(_("If you've already updated all new fees, you should %supdate the Hosting Service fees system-wide%s. This may take some time."), "<a href='" . $web_root . "/maintenance/update-hosting-fees.php?" . (new DomainMOD\Csrf())->query() . "'>", '</a>');
+
+    echo $system->showMaintenanceTable($message);
+
+}
+
 if (DEBUG_MODE == 1) {
 
     $message = _('Debugging mode is currently enabled.') . " <a href=\"" . $web_root . "/admin/debug-log/\">" . _('View Debug Log') . "</a><BR><BR>";

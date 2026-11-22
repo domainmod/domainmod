@@ -328,16 +328,16 @@ class Form
      * when showDropdownBottom() is given the same name. $searchable lets people type to narrow a long menu
      * (js/search-select.js, with Tom Select), and carries the translated message for a search that finds nothing.
      * $hide_label keeps the label for screen readers only, for a menu whose page heading already names it, and adds
-     * a little room above the menu in its place.
+     * a little room above the menu in its place. $data adds data-* attributes to the menu (name => value).
      */
-    public function showDropdownTop($name, $text_to_display, $subtext, $required, $before, $searchable = false, $hide_label = false)
+    public function showDropdownTop($name, $text_to_display, $subtext, $required, $before, $searchable = false, $hide_label = false, array $data = array())
     {
         ob_start();
             echo $before; ?>
             <div class="mb-3<?php echo $hide_label ? ' mt-3' : ''; ?>"><?php // Room under the heading that names the menu, in place of the label ?>
                 <label class="form-label<?php echo $hide_label ? ' visually-hidden' : ''; ?>" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
-                <select class="form-select<?php echo $searchable ? ' domainmod-search-select' : ''; ?><?php echo $this->errorClass($name); ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?><?php if ($searchable) echo ' data-no-results="' . htmlspecialchars(_('No results.'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php
+                <select class="form-select<?php echo $searchable ? ' domainmod-search-select' : ''; ?><?php echo $this->errorClass($name); ?>" name="<?php echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->errorAttributes($name); ?><?php echo $this->dataAttributes($data); ?><?php if ($searchable) echo ' data-no-results="' . htmlspecialchars(_('No results.'), ENT_QUOTES, 'UTF-8') . '"'; ?>><?php
         return ob_get_clean();
     }
 
@@ -354,11 +354,45 @@ class Form
 
     // Each option takes its direction from its own text (dir="auto"), so in a right-to-left language a long
     // left-to-right name, such as a registrar account, is cut at its end in the closed menu rather than its start.
-    public function showDropdownOption($value, $text_to_display, $to_compare)
+    // $data adds data-* attributes to the option (name => value).
+    public function showDropdownOption($value, $text_to_display, $to_compare, array $data = array())
     {
         ob_start(); ?>
-            <option value="<?php echo $value ?>" dir="auto"<?php if ($value == $to_compare) echo " selected" ?>><?php echo $text_to_display; ?></option><?php
+            <option value="<?php echo $value ?>" dir="auto"<?php echo $this->dataAttributes($data); ?><?php if ($value == $to_compare) echo " selected" ?>><?php echo $text_to_display; ?></option><?php
         return ob_get_clean();
+    }
+
+    // data-* attributes from a name => value list, each value escaped. A name that isn't lowercase letters, digits, and
+    // hyphens is left out, so it can't add another attribute.
+    protected function dataAttributes(array $data)
+    {
+        $attributes = '';
+        foreach ($data as $key => $value) {
+            if (!preg_match('/^[a-z0-9-]+$/D', (string) $key)) continue;
+            $attributes .= ' data-' . $key . '="' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '"';
+        }
+        return $attributes;
+    }
+
+    /*
+     * The domain pages' optional, searchable Hosting Service menu: "None" (0) first, then $services (id => label, from
+     * Hosting::serviceMenu()), with $selected chosen. $ip_menu names the domain's IP Address menu on the same form, and
+     * $service_ips gives each service's IP address (service id => IP address id, from Hosting::serviceIps()), so
+     * js/hosting-service-ip.js can fill in the domain's IP Address from the service chosen. $keep_saved_ip is for a
+     * domain that's already saved (Edit Domain): the IP address it was saved with is never replaced, only the placeholder
+     * or one the script filled in. A form shown again after a failed save passes no $ip_menu, so nothing is filled in.
+     */
+    public function showHostingServiceMenu($name, $selected, array $services, $before = '', $after = '', $ip_menu = '', array $service_ips = array(), $keep_saved_ip = false)
+    {
+        $data = $ip_menu !== '' ? array('ip-menu' => $ip_menu) : array();
+        if ($ip_menu !== '' && $keep_saved_ip) $data['ip-keep-saved'] = '1';
+        $html = $this->showDropdownTop($name, _('Hosting Service'), '', '', $before, true, false, $data);
+        $html .= $this->showDropdownOption(0, _('None'), (int) $selected);
+        foreach ($services as $service_id => $label) {
+            $html .= $this->showDropdownOption((int) $service_id, $label, (int) $selected,
+                isset($service_ips[$service_id]) ? array('ip-id' => (int) $service_ips[$service_id]) : array());
+        }
+        return $html . $this->showDropdownBottom($after, $name);
     }
 
     public function showMultipleSelectTop($name, $text_to_display, $before)

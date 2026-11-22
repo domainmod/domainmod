@@ -85,6 +85,30 @@ class ChangeHistoryCompareTest extends TestCase
         $this->assertSame('stamp', ChangeHistory::CUSTOM_FIELD_KINDS[5]);
     }
 
+    // A captured custom Date or Time Stamp field left blank is recorded as blank (the value a change row or a snapshot
+    // keeps), and a set one as it's stored. The fields are read as an action reads them, by their custom field types.
+    public function testABlankCustomDateIsCapturedAsBlank()
+    {
+        $pdo = new RecordingPdo(array(
+            'FROM hosting_service_fields' => array(array(
+                array('id' => 1, 'name' => 'Blank Date', 'field_name' => 'blank_date', 'type_id' => 4),
+                array('id' => 2, 'name' => 'Blank Stamp', 'field_name' => 'blank_stamp', 'type_id' => 5),
+                array('id' => 3, 'name' => 'Set Date', 'field_name' => 'set_date', 'type_id' => 4),
+                array('id' => 4, 'name' => 'Set Stamp', 'field_name' => 'set_stamp', 'type_id' => 5))),
+            'FROM hosting_services AS i' => array(array(
+                array('item_id' => 5, 'item_name' => 'Plan', 'item_fee_id' => 0, 'v0' => '0000-00-00', 'v1' => '0000-00-00 00:00:00',
+                    'v2' => '2026-03-04', 'v3' => '2026-03-04 05:06:07')))));
+        $op = new ChangeHistoryOperation($pdo, false, ChangeHistory::SOURCE_USER, 1);
+        $fields = (new \ReflectionMethod($op, 'customFields'))->invoke($op, 'hosting');
+        $this->assertSame(array('date', 'stamp', 'date', 'stamp'), array_column($fields, 'kind'));
+        $images = (new \ReflectionMethod($op, 'readImages'))->invoke($op, 'hosting', array(5), array(), $fields, false);
+        $values = array_map(function ($value) {
+            return $value['v'];
+        }, $images[5]['values']);
+        $this->assertSame(array('cf:blank_date' => '', 'cf:blank_stamp' => '', 'cf:set_date' => '2026-03-04',
+            'cf:set_stamp' => '2026-03-04 05:06:07'), $values);
+    }
+
     public function testLongTextIsComparedByItsHashAndLength()
     {
         $old = array('v' => 'same start', 'h' => hash('sha256', 'one'), 'l' => 3);

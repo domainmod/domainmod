@@ -19,8 +19,8 @@
  */
 
 // The menus you can search (Form::showDropdownTop() with $searchable): typing narrows a long list, such as the
-// installer's currencies and time zones. Every option stays available (Tom Select shows only 50 by default). Without
-// JavaScript the plain menu works as before.
+// installer's currencies and time zones, or a domain's Hosting Service. Every option stays available (Tom Select shows
+// only 50 by default). Without JavaScript the plain menu works as before.
 //
 // Matching is plain and predictable: an option matches when its name contains what was typed, ignoring case and
 // treating underscores as spaces (so "los angeles" finds America/Los_Angeles). Matches at the start of a word come
@@ -97,4 +97,9 @@ document.querySelectorAll('select.domainmod-search-select').forEach(function (se
         select.setAttribute('aria-labelledby', label.id);
         tom_select.control_input.setAttribute('aria-labelledby', label.id);
     }
+    // A mistake marked on the real menu (Form::errorAttributes()) is marked on Tom Select's box too, so a screen reader
+    // still reads it as invalid, with its message
+    ['aria-invalid', 'aria-describedby'].forEach(function (attribute) {
+        if (select.hasAttribute(attribute)) tom_select.control_input.setAttribute(attribute, select.getAttribute(attribute));
+    });
 });

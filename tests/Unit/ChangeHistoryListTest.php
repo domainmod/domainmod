@@ -293,7 +293,7 @@ class ChangeHistoryListTest extends TestCase
         $this->assertSame(array('ch.item_name'), $map[$item]);
         // A type and a source by their names, in the viewer's language, and an unknown code as itself
         $this->assertSame(array("CASE ch.item_type WHEN 'domain' THEN 'Domain' WHEN 'ssl' THEN 'SSL Certificate'"
-            . " WHEN 'watch' THEN 'Watched Domain' ELSE ch.item_type END"), $map[$type]);
+            . " WHEN 'hosting' THEN 'Hosting Service' WHEN 'watch' THEN 'Watched Domain' ELSE ch.item_type END"), $map[$type]);
         // A source by its name, the first part of its cell
         $this->assertCount(1, $map[$source]);
         $this->assertStringStartsWith("CASE ch.source WHEN 'user' THEN 'Add or Edit Page' WHEN 'bulk' THEN 'Bulk Updater'", $map[$source][0]);

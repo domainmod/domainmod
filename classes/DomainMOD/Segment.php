@@ -66,26 +66,41 @@ class Segment
 
     // The query behind the segment's Matching But Inactive (inactive) or Matching But Filtered (filtered) list, for the
     // signed-in user's currency conversions (bind user_id and segid). The summary counts every domain with the flag, so
-    // the list joins everything else with left joins: a domain without a fee, category, DNS profile, IP address, host,
-    // or account is still listed.
-    public static function resultsSql($flag)
+    // the list joins everything else with left joins: a domain without a fee, category, DNS profile, IP address, hosting
+    // service, or account is still listed. $pdo is the connection asked whether hosting is available (see
+    // hostingAvailable()).
+    public static function resultsSql($flag, $pdo = null)
     {
-        return self::resultsSelectSql() . self::resultsFromSql($flag) . "
+        $hosting = self::hostingAvailable($pdo);
+        return self::resultsSelectSql($hosting) . self::resultsFromSql($flag, $hosting) . "
             ORDER BY d.domain ASC";
     }
 
-    // The columns resultsSql() reads
-    protected static function resultsSelectSql()
+    // Whether the database has hosting services (see Hosting::isAvailable()). Until it has, the results neither join
+    // hosting_services nor read domains.service_id, and their Hosting Service column is empty. A database that can't be
+    // asked counts as no.
+    protected static function hostingAvailable($pdo = null)
+    {
+        try {
+            return Hosting::isAvailable($pdo);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    // The columns resultsSql() reads, with the hosting service's name once hosting is available ($hosting)
+    protected static function resultsSelectSql($hosting = false)
     {
         return "
-            SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name"
+            SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns"
+            . ($hosting ? ", hs.name AS service_name" : '')
             . (DomainStatus::isAvailable() ? DomainStatus::selectSql('d') : '');
     }
 
     // The tables and conditions resultsSql() reads from (bind user_id and segid)
-    protected static function resultsFromSql($flag)
+    protected static function resultsFromSql($flag, $hosting = false)
     {
-        return self::resultsJoinSql() . self::resultsWhereSql($flag);
+        return self::resultsJoinSql($hosting) . self::resultsWhereSql($flag);
     }
 
     // The condition that picks the segment's inactive or filtered domains (bind segid)
@@ -97,8 +112,8 @@ class Segment
             WHERE d.domain IN (SELECT domain FROM segment_data WHERE segment_id = :segid AND " . $flag . " = '1')";
     }
 
-    // The tables resultsSql() reads from (bind user_id)
-    protected static function resultsJoinSql()
+    // The tables resultsSql() reads from (bind user_id), with the hosting service once hosting is available ($hosting)
+    protected static function resultsJoinSql($hosting = false)
     {
         return "
             FROM domains AS d
@@ -109,8 +124,9 @@ class Segment
             LEFT JOIN currency_conversions AS cc ON f.currency_id = cc.currency_id AND cc.user_id = :user_id
             LEFT JOIN categories AS cat ON d.cat_id = cat.id
             LEFT JOIN dns ON d.dns_id = dns.id
-            LEFT JOIN ip_addresses AS ip ON d.ip_id = ip.id
-            LEFT JOIN hosting AS h ON d.hosting_id = h.id";
+            LEFT JOIN ip_addresses AS ip ON d.ip_id = ip.id"
+            . ($hosting ? "
+            LEFT JOIN hosting_services AS hs ON d.service_id = hs.id" : "");
     }
 
     /*
@@ -130,7 +146,7 @@ class Segment
 
         } else {
 
-            $stmt = $pdo->prepare("SELECT COUNT(*)" . self::resultsFromSql($type));
+            $stmt = $pdo->prepare("SELECT COUNT(*)" . self::resultsFromSql($type, self::hostingAvailable($pdo)));
             $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);
 
         }
@@ -224,7 +240,8 @@ class Segment
             $params['ks_id' . $n] = (int) $id;
         }
 
-        $stmt = $pdo->prepare(self::resultsSelectSql() . self::resultsJoinSql() . "
+        $hosting = self::hostingAvailable($pdo);
+        $stmt = $pdo->prepare(self::resultsSelectSql($hosting) . self::resultsJoinSql($hosting) . "
             WHERE d.id IN (:" . implode(', :', array_keys($params)) . ")
             ORDER BY d.domain ASC, d.id ASC");
         $stmt->bindValue('user_id', $user_id, \PDO::PARAM_INT);

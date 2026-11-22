@@ -62,6 +62,11 @@ class Csv
     {
         if (!$this->checkColumns($filename)) return false;
 
+        // Whether the hosting tables are there, and whether domains still has its old hosting_id column, asked before the
+        // transaction (Domain::addDomain() reads the cached answers), so their plain reads never open the transaction's
+        // snapshot before the import's locking reads
+        Hosting::legacyDomainColumn($this->deeb->cnxx);
+
         // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
         $this->deeb->cnxx->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         $this->deeb->cnxx->beginTransaction();
@@ -107,9 +112,9 @@ class Csv
                 $category = $row[13];
                 $stakeholder = $row[14];
                 $category_notes = $row[15];
-                $hosting_provider = $row[16];
-                $hosting_provider_url = $row[17];
-                $hosting_provider_notes = $row[18];
+                // Columns 16 to 18 (the hosting provider, its URL, and its notes) are still accepted, so older files
+                // import, but they're ignored: domains no longer name a hosting provider (they can be given a hosting
+                // service afterwards), so no provider is created
                 $registrar = $row[19];
                 $registrar_url = $row[20];
                 $registrar_notes = $row[21];
@@ -166,9 +171,8 @@ class Csv
 
                 $this->domainadd->addDomainFull($user_id, $creation_type, $domain, $expiry, $function,
                     $auto_renewal, $privacy, $status, $registration_fee, $renewal_fee, $transfer_fee, $privacy_fee,
-                    $misc_fee, $fee_currency, $domain_notes, $category, $stakeholder, $category_notes,
-                    $hosting_provider, $hosting_provider_url, $hosting_provider_notes, $registrar, $registrar_url,
-                    $registrar_notes, $registrar_account_owner, $registrar_account_owner_notes,
+                    $misc_fee, $fee_currency, $domain_notes, $category, $stakeholder, $category_notes, $registrar,
+                    $registrar_url, $registrar_notes, $registrar_account_owner, $registrar_account_owner_notes,
                     $registrar_account_email_address, $registrar_username, $registrar_password, $registrar_account_id,
                     $registrar_reseller, $registrar_reseller_id, $registrar_account_notes, $api_app_name, $api_key,
                     $api_secret, $api_ip_address_name, $api_ip_address, $api_ip_address_rdns, $api_ip_address_notes,

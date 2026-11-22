@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Add Web Host');
+$page_title = _('Add Hosting Provider');
 $breadcrumb = _('Add');
 $software_section = "assets";
 $slug = "assets-add-host";

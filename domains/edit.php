@@ -78,7 +78,9 @@ $new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_func
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
 $new_dns_id = (int) ($_POST['new_dns_id'] ?? 0);
 $new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
-$new_hosting_id = (int) ($_POST['new_hosting_id'] ?? 0);
+// The domain's optional hosting service (0 is None), once hosting is available. A malformed value is -1, refused below.
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$new_service_id = $hosting_available ? DomainMOD\Hosting::postedInt($_POST['new_service_id'] ?? '0', -1) : 0;
 $new_account_id = (int) ($_POST['new_account_id'] ?? 0);
 $new_autorenew = (int) ($_POST['new_autorenew'] ?? 0);
 $new_privacy = (int) ($_POST['new_privacy'] ?? 0);
@@ -189,10 +191,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
 
     if ($date->checkDateFormat($new_expiry_date) && $new_cat_id !== 0 && $new_dns_id !== 0 && $new_ip_id !== 0 &&
-        $new_hosting_id !== 0 && $new_account_id !== 0 && $custom_fields_valid
+        $new_service_id >= 0 && $new_account_id !== 0 && $custom_fields_valid
     ) {
 
+        /*
+         * A Save that involves a hosting service holds the hosting lock, taken before the transaction: one whose posted
+         * service isn't None, or whose stored service (read here) isn't None, even for a Save to None, so a Save and a
+         * service delete never meet on the same domain from opposite ends. A domain with no service, saved with None,
+         * takes no lock, so ordinary edits never wait on hosting maintenance (see DomainMOD\Hosting).
+         */
+        $stored_service_id = 0;
+        if ($hosting_available) {
+            $stmt = $pdo->prepare("
+                SELECT service_id
+                FROM domains
+                WHERE id = :did");
+            $stmt->bindValue('did', $did, PDO::PARAM_INT);
+            $stmt->execute();
+            $stored_service_id = (int) $stmt->fetchColumn();
+            $stmt->closeCursor();
+        }
+        $hosting_locked = false;
+
         try {
+
+            if ($new_service_id !== 0 || $stored_service_id !== 0) {
+                if (!DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {
+                    throw new DomainMOD\HostingServiceRefused(DomainMOD\Hosting::busyMessage(), DomainMOD\HostingServiceRefused::BUSY);
+                }
+                $hosting_locked = true;
+            }
 
             $pdo->beginTransaction();
 
@@ -222,6 +250,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // The domain as it was, locked, so only what this Save really changes is recorded
             $history_before = $history_op->capture('domain', array($did));
+
+            // The hosting service must still exist, and can't be a cancelled one unless the domain is already on it (its
+            // stored service, read now under the domain's lock). Nothing is saved, and the form shows again with the
+            // service marked, when it can't be used.
+            if ($hosting_available && $new_service_id !== 0) {
+                $stmt = $pdo->prepare("
+                    SELECT service_id
+                    FROM domains
+                    WHERE id = :did");
+                $stmt->bindValue('did', $did, PDO::PARAM_INT);
+                $stmt->execute();
+                $locked_service_id = (int) $stmt->fetchColumn();
+                $stmt->closeCursor();
+                $service_error = DomainMOD\Hosting::serviceError($pdo, $new_service_id, $locked_service_id);
+                if ($service_error !== '') {
+                    $pdo->rollback();
+                    throw new DomainMOD\HostingServiceRefused($service_error);
+                }
+            }
 
             $stmt = $pdo->prepare("
                 SELECT registrar_id, owner_id
@@ -297,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     cat_id = :new_cat_id,
                     dns_id = :new_dns_id,
                     ip_id = :new_ip_id,
-                    hosting_id = :new_hosting_id,
+                    " . ($hosting_available ? "service_id = :new_service_id," : "") . "
                     fee_id = :temp_fee_id,
                     total_cost = :new_total_cost,
                     `function` = :new_function,
@@ -316,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
             $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
             $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
+            if ($hosting_available) $stmt->bindValue('new_service_id', $new_service_id, PDO::PARAM_INT);
             $stmt->bindValue('temp_fee_id', $temp_fee_id, PDO::PARAM_INT);
             $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
             $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
@@ -384,6 +431,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: edit.php?did=' . $did);
             exit;
 
+        } catch (DomainMOD\HostingServiceRefused $e) {
+
+            // The hosting lock was busy (nothing was written), or the service can't be used (marked on its menu)
+            if ($e->getCode() === DomainMOD\HostingServiceRefused::BUSY) {
+                $_SESSION['s_message_danger'] .= $e->getMessage() . '<BR>';
+            } else {
+                $form->addFieldError('new_service_id', $e->getMessage());
+            }
+
         } catch (Exception $e) {
 
             if ($pdo->InTransaction()) $pdo->rollback();
@@ -403,6 +459,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 throw $e;
 
             }
+
+        } finally {
+
+            if ($hosting_locked) DomainMOD\Hosting::unlock($pdo);
 
         }
 
@@ -430,9 +490,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_hosting_id === 0) {
+        if ($new_service_id < 0) {
 
-            $form->addFieldError('new_hosting_id', _('Choose the Web Host'));
+            $form->addFieldError('new_service_id', DomainMOD\Hosting::serviceGoneMessage());
 
         }
 
@@ -447,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 
     $stmt = $pdo->prepare("
-        SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.autorenew, d.privacy, d.active, ra.id AS account_id
+        SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id" . ($hosting_available ? ", d.service_id" : "") . ", d.function, d.notes, d.autorenew, d.privacy, d.active, ra.id AS account_id
         FROM domains AS d, registrar_accounts AS ra
         WHERE d.account_id = ra.id
           AND d.id = :did");
@@ -464,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_cat_id = $result->cat_id;
         $new_dns_id = $result->dns_id;
         $new_ip_id = $result->ip_id;
-        $new_hosting_id = $result->hosting_id;
+        $new_service_id = $hosting_available ? (int) $result->service_id : 0;
         $new_function = $result->function;
         $new_notes = $result->notes;
         $new_autorenew = $result->autorenew;
@@ -765,22 +825,15 @@ if ($result) {
     echo $form->showDropdownBottom('', 'new_ip_id');
 }
 
-$result = $pdo->query("
-    SELECT id, `name`
-    FROM hosting
-    ORDER BY name ASC")->fetchAll();
+// The optional hosting service, once hosting is available. The domain's current service is listed even when it's
+// cancelled, so a Save that keeps it still works.
+if ($hosting_available) {
 
-if ($result) {
-
-    echo $form->showDropdownTop('new_hosting_id', _('Web Hosting Provider'), '', '1', '');
-
-    foreach ($result as $row) {
-
-        echo $form->showDropdownOption($row->id, $row->name, $new_hosting_id);
-
-    }
-
-    echo $form->showDropdownBottom('', 'new_hosting_id');
+    $new_service_id = max((int) $new_service_id, 0);
+    $services = DomainMOD\Hosting::serviceMenu($pdo, $new_service_id);
+    // Shown again after a failed save, the IP Address shown was already chosen, so the service no longer fills it in
+    echo $form->showHostingServiceMenu('new_service_id', $new_service_id, $services, '', '',
+        $_SERVER['REQUEST_METHOD'] == 'POST' ? '' : 'new_ip_id', DomainMOD\Hosting::serviceIps($pdo, array_keys($services)), true);
 
 }
 
@@ -1000,5 +1053,6 @@ $layout->dangerZone(_('Domain'), $new_domain, 'edit.php?did=' . $did . '&del=1',
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
 <script src="<?php echo $layout->assetUrl('js/domain-refresh.js'); ?>"></script>
+<script src="<?php echo $layout->assetUrl('js/hosting-service-ip.js'); ?>"></script>
 </body>
 </html>

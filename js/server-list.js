@@ -19,11 +19,13 @@
  */
 
 /*
- * A list's table in DataTables' server-side mode: the Domains list (see domains/index.php and domains/list-data.php)
- * and the SSL Certificates list (ssl/index.php and ssl/list-data.php). The page prints the first page itself, so the
- * table starts with deferLoading and makes no request until the user sorts, searches, or changes page. The table's
- * data-domainmod-list attribute carries the endpoint's address (with the list's whole state), the columns, the
- * counts, the page, its size, the messages, and the links that follow the search box.
+ * A list's table in DataTables' server-side mode: the Domains list (see domains/index.php and domains/list-data.php),
+ * the SSL Certificates list (ssl/index.php and ssl/list-data.php), and the Hosting Services list (hosting/index.php and
+ * hosting/list-data.php). The page prints the first page itself, so the table starts with deferLoading and makes no
+ * request until the user sorts, searches, or changes page. The table's data-domainmod-list attribute carries the
+ * endpoint's address (with the list's whole state), the columns, the counts, the page, its size, the messages, and the
+ * links that follow the search box. A list can also give the search its first page was printed with (search) and the
+ * count it left (filtered), so the search box, the pager, and the "filtered from" text start the way the page drew them.
  * This script:
  * - removes the no-JavaScript pager once DataTables has started, since it pages the table from there on, starting
  *   on the same page,
@@ -119,10 +121,16 @@ function domainmodServerList(selector) {
         return options;
     });
 
+    // DataTables wants the count the search leaves first, then the total. A list that gives only the total (the Domains
+    // and SSL Certificates lists) starts with no search, where the two are the same.
+    var filtered = typeof config.filtered === 'number' ? config.filtered : config.total;
+    var first_search = typeof config.search === 'string' ? config.search : '';
+
     var api = domainmodTable(selector, {
         "serverSide": true,
         "processing": true,
-        "deferLoading": [config.total, config.total],
+        "deferLoading": [filtered, config.total],
+        "search": {"search": first_search},
         "displayStart": config.start,
         "pageLength": config.length,
         // DataTables sends six columns[n][...] keys for each column, which the endpoints never read and which make a wide
@@ -304,8 +312,9 @@ function domainmodServerList(selector) {
         return item.link !== null;
     });
     var followSearch = function () {
+        // Before the first request, the rows on screen came from the search the page was printed with
         var params = api.ajax.params();
-        var value = params && params.search && typeof params.search.value === 'string' ? params.search.value : '';
+        var value = params && params.search && typeof params.search.value === 'string' ? params.search.value : first_search;
         search_links.forEach(function (item) {
             var url = new URL(item.link.href, window.location.href);
             if ((url.searchParams.get('dt_search') || '') === value) return;

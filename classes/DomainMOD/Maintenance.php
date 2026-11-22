@@ -26,6 +26,7 @@ class Maintenance
     public $deeb;
     public $log;
     public $time;
+    protected $hosting_fee_warning = '';
 
     public function __construct()
     {
@@ -89,15 +90,52 @@ class Maintenance
         $this->deleteUnusedFees('ssl_fees', 'ssl_certs');
         // The fee work is done, so the action (and its fee-change lock) goes before the steps that don't touch fees
         $history_op = null;
+
+        /*
+         * The hosting fees, as their own step once the domain and SSL fee steps have committed (it holds the hosting lock
+         * and owns its transaction, so it never runs inside another one, and it starts after the fee-change lock has gone,
+         * so the two locks are never held together). If the hosting data stays busy, or the step fails, only it is
+         * skipped: the rest of the clean-up still runs, and the result says so (see hostingFeeWarning()). Unused hosting
+         * fees are never deleted, since a fee is often added before its first service.
+         */
+        $this->hosting_fee_warning = '';
+        if (Hosting::isAvailable($pdo)) {
+
+            try {
+                $hosting_ran = $this->updateHostingFees(Hosting::TASK_WAIT, (int) $user_id);
+            } catch (\Throwable $e) {
+                $this->log->error('Unable to update the hosting fees', array('Error' => $e->getMessage()));
+                $hosting_ran = false;
+            }
+
+            if (!$hosting_ran) $this->hosting_fee_warning = self::hostingSkippedMessage();
+
+        }
         $this->zeroInvalidIpIds();
 
         // The Change History's pruning, and any custom field columns a delete or add left part-way
         (new ChangeHistory($pdo))->prune();
         $this->dropOrphanCustomFieldColumns();
 
-        $result_message = _('Maintenance Completed') . '<BR>';
+        // The result: the completed message, and the hosting fee step's skipped line ('' when it ran, or when the
+        // database doesn't have the hosting tables yet), which cron.php logs and Run Now shows as a warning
+        return array('message' => _('Maintenance Completed') . '<BR>', 'hosting_warning' => $this->hosting_fee_warning);
+    }
 
-        return $result_message;
+    // The line performCleanup() reports when it had to skip the hosting fee step
+    public static function hostingSkippedMessage()
+    {
+        return _('Hosting fee updates were skipped. The task will try again on its next run.');
+    }
+
+    /*
+     * The warning from the last performCleanup() on this object (also in its result's 'hosting_warning'):
+     * hostingSkippedMessage() when its hosting fee step was skipped (the hosting data stayed busy, or the step failed),
+     * otherwise ''. Plain text.
+     */
+    public function hostingFeeWarning()
+    {
+        return $this->hosting_fee_warning;
     }
 
     // Custom field columns with no definition row, left by a delete or add that stopped part-way (see CustomFieldSchema)
@@ -106,6 +144,7 @@ class Maintenance
         $pdo = $this->deeb->cnxx;
         CustomFieldSchema::dropOrphans($pdo, 'domain');
         CustomFieldSchema::dropOrphans($pdo, 'ssl');
+        CustomFieldSchema::dropOrphans($pdo, 'hosting');
     }
 
     public function lowercaseDomains()
@@ -474,6 +513,150 @@ class Maintenance
             }
 
         }
+    }
+
+    /*
+     * Recalculates every hosting service's fee and cost from the hosting fees, matching each service's provider, service
+     * type, and billing term (as updateSslFees() does by provider and type), and records each cost it really changes in
+     * the Change History as one maintenance action. Unlike the domain and SSL steps, it owns its whole step: it takes the
+     * hosting lock (waiting up to $wait_seconds), runs in its own REPEATABLE READ transaction, commits, and lets go of the
+     * lock, so it must never be called inside another transaction. Returns whether it ran: false when the hosting lock
+     * couldn't be had in time (nothing changed), and true when there's nothing to do because the database doesn't have
+     * the hosting tables yet. A failure rolls back and is thrown.
+     */
+    public function updateHostingFees($wait_seconds, $user_id = 0)
+    {
+        $pdo = $this->deeb->cnxx;
+
+        if (!Hosting::isAvailable($pdo)) return true;
+        if (!Hosting::lock($pdo, $wait_seconds)) return false;
+
+        try {
+
+            // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
+            $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+            $pdo->beginTransaction();
+
+            try {
+
+                $history_op = (new ChangeHistory($pdo))->start(ChangeHistory::SOURCE_MAINTENANCE, (int) $user_id, 'update_hosting_fees');
+                $history_costs = $history_op->captureCosts('hosting');
+
+                $pdo->query("UPDATE hosting_services SET fee_fixed = '0'");
+
+                $stmt = $pdo->prepare("
+                    UPDATE hosting_fees
+                    SET fee_fixed = '0',
+                        update_time = :update_time");
+                $timestamp = $this->time->stamp();
+                $stmt->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+                $stmt->execute();
+
+                // In id order, so if a provider, service type, and billing term ever had more than one fee, the lowest id wins
+                $result = $pdo->query("
+                    SELECT id, hosting_id, type_id, billing_term
+                    FROM hosting_fees
+                    WHERE fee_fixed = '0'
+                    ORDER BY id")->fetchAll();
+
+                if ($result) {
+
+                    $stmt = $pdo->prepare("
+                        UPDATE hosting_services
+                        SET revision = revision + (fee_id <> :fee_id_check),
+                            fee_id = :fee_id
+                        WHERE hosting_id = :hosting_id
+                          AND type_id = :type_id
+                          AND billing_term = :billing_term
+                          AND fee_fixed = '0'");
+                    $stmt->bindParam('fee_id_check', $bind_fee_id, \PDO::PARAM_INT);
+                    $stmt->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+                    $stmt->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
+                    $stmt->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
+                    $stmt->bindParam('billing_term', $bind_billing_term, \PDO::PARAM_INT);
+
+                    // A repriced service's revision goes up first, in its own statement, since a joined UPDATE doesn't
+                    // promise the order of its assignments (so a form opened before the new cost is refused)
+                    $stmt_revision = $pdo->prepare("
+                        UPDATE hosting_services hs
+                        JOIN hosting_fees hf ON hs.fee_id = hf.id
+                        SET hs.revision = hs.revision + 1
+                        WHERE hs.hosting_id = :hosting_id
+                          AND hs.type_id = :type_id
+                          AND hs.billing_term = :billing_term
+                          AND hs.fee_id = :fee_id
+                          AND hs.total_cost <> hf.renewal_fee + hf.misc_fee");
+                    $stmt_revision->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+                    $stmt_revision->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
+                    $stmt_revision->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
+                    $stmt_revision->bindParam('billing_term', $bind_billing_term, \PDO::PARAM_INT);
+
+                    $stmt2 = $pdo->prepare("
+                        UPDATE hosting_services hs
+                        JOIN hosting_fees hf ON hs.fee_id = hf.id
+                        SET hs.fee_fixed = '1',
+                            hs.total_cost = hf.renewal_fee + hf.misc_fee
+                        WHERE hs.hosting_id = :hosting_id
+                          AND hs.type_id = :type_id
+                          AND hs.billing_term = :billing_term
+                          AND hs.fee_id = :fee_id");
+                    $stmt2->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+                    $stmt2->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
+                    $stmt2->bindParam('type_id', $bind_type_id, \PDO::PARAM_INT);
+                    $stmt2->bindParam('billing_term', $bind_billing_term, \PDO::PARAM_INT);
+
+                    $stmt3 = $pdo->prepare("
+                        UPDATE hosting_fees
+                        SET fee_fixed = '1',
+                            update_time = :update_time
+                        WHERE id = :fee_id");
+                    $timestamp = $this->time->stamp();
+                    $stmt3->bindValue('update_time', $timestamp, \PDO::PARAM_STR);
+                    $stmt3->bindParam('fee_id', $bind_fee_id, \PDO::PARAM_INT);
+
+                    foreach ($result as $row) {
+
+                        $bind_fee_id = $row->id;
+                        $bind_hosting_id = $row->hosting_id;
+                        $bind_type_id = $row->type_id;
+                        $bind_billing_term = $row->billing_term;
+
+                        $stmt->execute();
+
+                        $stmt_revision->execute();
+
+                        $stmt2->execute();
+
+                        $stmt3->execute();
+
+                    }
+
+                }
+
+                $history_op->compareCosts($history_costs);
+                $history_op->finish();
+
+                $pdo->commit();
+
+            } catch (\Throwable $e) {
+
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+
+            } finally {
+
+                // The action goes (dropping anything it left) before the lock is let go of
+                $history_op = null;
+
+            }
+
+        } finally {
+
+            Hosting::unlock($pdo);
+
+        }
+
+        return true;
     }
 
     public function deleteUnusedFees($fee_table, $compare_table)

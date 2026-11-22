@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = _('Web Hosting Providers');
-$breadcrumb = _('Hosting');
+$page_title = _('Hosting Providers');
+$breadcrumb = _('Providers');
 $software_section = "assets";
 $slug = "assets-hosting";
 $datatable_class = 'table table-striped dt-responsive cell-border compact';

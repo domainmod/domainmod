@@ -47,7 +47,12 @@ $system->authCheck();
 <div id="domainmod-maintenance-result" data-domainmod-focus></div>
 <?php echo $layout->htmxTaskLink('update-conversions.php?' . (new DomainMOD\Csrf())->query(), _('Update Conversion Rates'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-1') . $layout->htmxSpinner('domainmod-maintenance-working-1'); ?><BR><BR>
 <?php echo $layout->htmxTaskLink('update-domain-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Domain Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-2') . $layout->htmxSpinner('domainmod-maintenance-working-2'); ?><BR><BR>
-<?php echo $layout->htmxTaskLink('update-ssl-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update SSL Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?><BR>
+<?php echo $layout->htmxTaskLink('update-ssl-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update SSL Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-3') . $layout->htmxSpinner('domainmod-maintenance-working-3'); ?><BR><?php
+// Hosting's fees, once the database has the hosting tables
+if (DomainMOD\Hosting::isAvailable()) { ?>
+<BR>
+<?php echo $layout->htmxTaskLink('update-hosting-fees.php?' . (new DomainMOD\Csrf())->query(), _('Update Hosting Fees'), '#domainmod-maintenance-result', 'innerHTML', 'domainmod-maintenance-working-4') . $layout->htmxSpinner('domainmod-maintenance-working-4'); ?><BR><?php
+} ?>
 <?php echo $layout->contentBoxBottom(); ?>
 <?php //@formatter:on ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

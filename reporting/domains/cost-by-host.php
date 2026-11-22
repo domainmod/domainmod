@@ -20,9 +20,10 @@
  */
 ?>
 <?php //@formatter:off
-// This report is now Domain Costs grouped by Web Host (costs.php). Old links, bookmarks, and exports lead
-// there with their date range, and costs.php checks the sign-in.
+// This report was Domain Costs grouped by Hosting Provider, which 4.27.0 replaced with Hosting Service. A provider's id
+// isn't a service's, so old links, bookmarks, and exports lead to Domain Costs' default grouping (costs.php), with their
+// date range, and costs.php checks the sign-in.
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-header('Location: ' . DomainMOD\CostReport::redirectUrl('domains', 'host'), true, 302);
+header('Location: ' . DomainMOD\CostReport::redirectUrl('domains', DomainMOD\CostReport::SECTIONS['domains']['default']), true, 302);
 exit; //@formatter:on

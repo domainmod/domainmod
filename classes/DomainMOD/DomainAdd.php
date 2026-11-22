@@ -46,8 +46,7 @@ class DomainAdd
 
     public function addDomainFull($user_id, $creation_type, $domain, $expiry, $function, $auto_renewal, $privacy,
                                   $status, $registration_fee, $renewal_fee, $transfer_fee, $privacy_fee, $misc_fee,
-                                  $fee_currency, $domain_notes, $category, $stakeholder, $category_notes,
-                                  $hosting_provider, $hosting_provider_url, $hosting_provider_notes, $registrar,
+                                  $fee_currency, $domain_notes, $category, $stakeholder, $category_notes, $registrar,
                                   $registrar_url, $registrar_notes, $registrar_account_owner,
                                   $registrar_account_owner_notes, $registrar_account_email_address,
                                   $registrar_account_username, $registrar_account_password, $registrar_account_id,
@@ -111,8 +110,6 @@ class DomainAdd
         if ($category == '') $category = $default_text;
         if ($category_notes == '') $category_notes = $todays_date . ' - ' . $default_text;
         if ($stakeholder == '')  $stakeholder = $default_name;
-        if ($hosting_provider == '')  $hosting_provider = $default_text;
-        if ($hosting_provider_notes == '') $hosting_provider_notes = $todays_date . ' - ' . $default_text;
         if ($domain_ip_address_name == '') $domain_ip_address_name = $default_text;
         if ($domain_ip_address == '') $domain_ip_address = $default_ip_address;
         if ($domain_ip_address_rdns == '') $domain_ip_address_rdns = $default_rdns;
@@ -189,22 +186,6 @@ class DomainAdd
             // If the category doesn't exist, create it and get the category ID
             $cat_id = $this->assets->createCategory($category, $stakeholder, $category_notes, $creation_type_id,
                 $user_id);
-
-        }
-
-        // Check to see if the hosting provider already exists
-        $result = $this->assets->checkForHostByName($hosting_provider);
-
-        if ($result == true) {
-
-            // If the hosting provider exists, get the hosting provider ID
-            $host_id = $this->assets->getHostId($hosting_provider);
-
-        } else {
-
-            // If the hosting provider doesn't exist, create it and get the hosting provider ID
-            $host_id = $this->assets->createHost($hosting_provider, $hosting_provider_url, $hosting_provider_notes,
-                $creation_type_id, $user_id);
 
         }
 
@@ -337,7 +318,7 @@ class DomainAdd
         }
 
         $void = $this->domain->addDomain($registrar_account_owner_id, $registrar_id, $account_id, $domain, $tld,
-            $expiry, $cat_id, $dns_id, $domain_ip_id, $host_id, $fee_id, $total_cost, $function, $domain_notes,
+            $expiry, $cat_id, $dns_id, $domain_ip_id, $fee_id, $total_cost, $function, $domain_notes,
             $auto_renewal, $privacy, $creation_type_id, $user_id, $status);
 
         return true;

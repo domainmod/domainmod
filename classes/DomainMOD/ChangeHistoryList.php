@@ -114,9 +114,9 @@ class ChangeHistoryList extends ListQuery
 
     /*
      * The filters from a request, checked: each is its default when it's missing or not one of its allowed values.
-     * type (domain, ssl, or watch), id (an item's id, only with type), life (a delete row's id, only with type and id),
-     * name (an item name search), source, user, field (a custom field only for a type that has them), op (one action),
-     * range (a preset, or custom with daterange's two dates).
+     * type (domain, ssl, hosting, or watch), id (an item's id, only with type), life (a delete row's id, only with type
+     * and id), name (an item name search), source, user, field (a custom field only for a type that has them), op (one
+     * action), range (a preset, or custom with daterange's two dates).
      */
     public static function normalizeState(array $get)
     {
@@ -128,7 +128,7 @@ class ChangeHistoryList extends ListQuery
             return $value === false ? 0 : (int) $value;
         };
 
-        $type = in_array($text('type'), array('domain', 'ssl', 'watch'), true) ? $text('type') : '';
+        $type = in_array($text('type'), array('domain', 'ssl', 'hosting', 'watch'), true) ? $text('type') : '';
         $id = $type !== '' ? $int('id') : 0;
         $life = $id !== 0 ? $int('life') : 0;
         // A life that's given but isn't a whole number names no kept delete row, so it shows nothing (-1), never the

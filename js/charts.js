@@ -80,22 +80,46 @@
         return 'rgba(' + parseInt(match[1], 16) + ', ' + parseInt(match[2], 16) + ', ' + parseInt(match[3], 16) + ', ' + alpha + ')';
     }
 
-    // The datasets to draw: one for most charts, and one per series (each in its own colour) for stacked counts and
-    // stacked monthly amounts. A stacked monthly chart's Overdue bar is drawn in the warning colour, its first stack in
-    // full and the others lighter, while the legend keeps each series' own colour.
+    // The Overdue bar's shades of the warning colour, one per stack by its position: the first in full, the second
+    // lighter, and the third (and any after it) lighter again
+    var OVERDUE_SHADES = [1, 0.55, 0.3];
+
+    /*
+     * The datasets to draw: one for most charts, and one per series (each in its own colour) for stacked counts and
+     * stacked monthly amounts. A stacked monthly chart's Overdue bar is drawn in the warning colour, each stack in its
+     * own shade (OVERDUE_SHADES), with a gap in the card's colour (white in light mode, as between a doughnut's slices)
+     * under every stack after the first, so overdue domains, SSL certificates, and hosting services never merge. The
+     * legend keeps each series' own colour.
+     */
     function datasets(data) {
         if (data.type === 'bar' && data.series) {
             return data.series.map(function (item, series_index) {
+                var overdue = function (context) {
+                    return data.firstIsOverdue && context.type === 'data' && context.dataIndex === 0;
+                };
+                // The gap is the stack's bottom border, drawn inside the bar, so the stacks keep their heights
+                var gap = function (context) {
+                    return overdue(context) && series_index > 0;
+                };
                 return {
                     label: item.name,
                     data: item.values,
                     backgroundColor: function (context) {
-                        if (data.firstIsOverdue && context.type === 'data' && context.dataIndex === 0) {
-                            return series_index === 0 ? colour('2') : fade(colour('2'), 0.55);
+                        if (overdue(context)) {
+                            var shade = OVERDUE_SHADES[Math.min(series_index, OVERDUE_SHADES.length - 1)];
+                            return shade === 1 ? colour('2') : fade(colour('2'), shade);
                         }
                         return colour(item.colour);
                     },
-                    borderWidth: 0
+                    borderColor: function () {
+                        return colour('border');
+                    },
+                    borderWidth: function (context) {
+                        return gap(context) ? {top: 0, right: 0, bottom: 2, left: 0} : 0;
+                    },
+                    borderSkipped: function (context) {
+                        return gap(context) ? false : 'start';
+                    }
                 };
             });
         }
@@ -305,13 +329,15 @@
             ? {position: 'top', rtl: rtl, textDirection: rtl ? 'rtl' : 'ltr', labels: {color: text}}
             : {display: false};
         // A stacked monthly chart's legend keeps each series' own colour, which Chart.js would otherwise take from the
-        // first bar, the Overdue bar's warning colours when there is one
+        // first bar, the Overdue bar's warning colours when there is one, with no border
         if (data.type === 'bar' && data.series) {
             common.plugins.legend.labels.generateLabels = function (chart) {
                 var items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                 items.forEach(function (legend_item) {
                     var series = data.series[legend_item.datasetIndex];
                     if (series) legend_item.fillStyle = legend_item.strokeStyle = colour(series.colour);
+                    // The Overdue bar's gap is a border, which the legend's boxes don't show
+                    legend_item.lineWidth = 0;
                 });
                 return items;
             };

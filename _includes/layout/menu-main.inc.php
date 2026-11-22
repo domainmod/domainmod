@@ -46,6 +46,16 @@
                 </p>
             </a>
         </li>
+        <?php if (DomainMOD\Hosting::isAvailable()) { ?>
+        <li class="nav-item">
+            <a href="<?php echo $web_root; ?>/hosting/" class="nav-link<?php if ($software_section == "hosting") echo " active"; ?>" aria-label="<?php echo _('Hosting'); ?>">
+                <i class="nav-icon bi bi-hdd-rack-fill"></i>
+                <p>
+                    <?php echo _('Hosting'); ?>
+                </p>
+            </a>
+        </li>
+        <?php } ?>
         <?php
 	    // The Import Queue only shows while any of its queues has rows (see SslQueue::inMenu()). Users reach the add pages
 	    // from the Domains and SSL Certificates lists and the Dashboard.
@@ -89,7 +99,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting" && $slug != "reporting-domain-fees" && $slug != "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
+            <a href="<?php echo $web_root; ?>/reporting/" class="nav-link<?php if ($software_section == "reporting" && $slug != "reporting-domain-fees" && $slug != "reporting-ssl-fees" && $slug != "reporting-hosting-fees") echo " active"; ?>" aria-label="<?php echo _('Reporting'); ?>">
                 <i class="nav-icon bi bi-bar-chart-fill"></i>
                 <p>
                     <?php echo _('Reporting'); ?>
@@ -107,8 +117,8 @@
         <?php // The fee reports live in Reporting and the fee and rate updates in Maintenance, but they're listed under
         // Assets, so Assets is open and highlighted on those pages. Read-only users can't update fees or rates, so
         // those items are left out for them. ?>
-        <li class="nav-item<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " menu-open"; ?>">
-            <a href="#" class="nav-link<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
+        <li class="nav-item<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees" || $slug == "reporting-hosting-fees") echo " menu-open"; ?>">
+            <a href="#" class="nav-link<?php if ($software_section == "assets" || $software_section == "maintenance" || $slug == "reporting-domain-fees" || $slug == "reporting-ssl-fees" || $slug == "reporting-hosting-fees") echo " active"; ?>" aria-label="<?php echo _('Assets'); ?>">
                 <i class="nav-icon bi bi-boxes"></i>
                 <p>
                     <?php echo _('Assets') ?>
@@ -141,16 +151,17 @@
                         <p><?php echo _('DNS Profiles') ?></p>
                     </a>
                 </li>
+                <?php
+                // Hosting Providers move to their own Hosting group once the hosting section is available
+                if (!DomainMOD\Hosting::isAvailable()) { ?>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/assets/hosting.php" class="nav-link<?php if ($slug == "assets-hosting" || $slug == "assets-add-host" || $slug == "assets-edit-host") echo " active"; ?>">
                         <i class="nav-icon bi"></i>
-                        <p>
-                            <?php // TRANSLATORS: Sidebar item under the Domains heading, short for Web Hosting Providers ?>
-                            <span aria-hidden="true"><?php echo _('Hosting Providers') ?></span>
-                            <span class="visually-hidden"><?php echo _('Web Hosting Providers') ?></span>
-                        </p>
+                        <?php // TRANSLATORS: Sidebar item under the Domains heading ?>
+                        <p><?php echo _('Hosting Providers') ?></p>
                     </a>
                 </li>
+                <?php } ?>
                 <li class="nav-item">
                     <a href="<?php echo $web_root; ?>/reporting/domains/registrar-fees.php?all=0" class="nav-link<?php if ($slug == "reporting-domain-fees") echo " active"; ?>" aria-label="<?php echo _('Domain Fees'); ?>">
                         <i class="nav-icon bi"></i>
@@ -209,6 +220,57 @@
                             <p><?php echo _('Update SSL Fees') ?></p>
                         </a>
                     </li>
+                <?php } ?>
+                <?php if (DomainMOD\Hosting::isAvailable()) { ?>
+                <li class="nav-header"><?php echo _('Hosting') ?></li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/hosting.php" class="nav-link<?php if ($slug == "assets-hosting" || $slug == "assets-add-host" || $slug == "assets-edit-host" || $slug == "assets-hosting-fees" || $slug == "assets-add-hosting-fee" || $slug == "assets-edit-hosting-fee") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the Hosting heading, short for Hosting Providers ?>
+                            <span aria-hidden="true"><?php echo _('Providers') ?></span>
+                            <span class="visually-hidden"><?php echo _('Hosting Providers') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/hosting-accounts.php" class="nav-link<?php if ($slug == "assets-hosting-accounts" || $slug == "assets-add-hosting-account" || $slug == "assets-edit-hosting-account") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the Hosting heading, short for Hosting Accounts ?>
+                            <span aria-hidden="true"><?php echo _('Accounts') ?></span>
+                            <span class="visually-hidden"><?php echo _('Hosting Accounts') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/assets/hosting-types.php" class="nav-link<?php if ($slug == "assets-hosting-types" || $slug == "assets-add-hosting-type" || $slug == "assets-edit-hosting-type") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the Hosting heading, short for Hosting Service Types ?>
+                            <span aria-hidden="true"><?php echo _('Types') ?></span>
+                            <span class="visually-hidden"><?php echo _('Hosting Service Types') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo $web_root; ?>/reporting/hosting/provider-fees.php?all=0" class="nav-link<?php if ($slug == "reporting-hosting-fees") echo " active"; ?>">
+                        <i class="nav-icon bi"></i>
+                        <p>
+                            <?php // TRANSLATORS: Sidebar item under the Hosting heading, short for Hosting Fees ?>
+                            <span aria-hidden="true"><?php echo _('Fees') ?></span>
+                            <span class="visually-hidden"><?php echo _('Hosting Fees') ?></span>
+                        </p>
+                    </a>
+                </li>
+                <?php if (($_SESSION['s_read_only'] ?? '') != '1') { ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/maintenance/update-hosting-fees.php?<?php echo (new DomainMOD\Csrf())->query(); ?>" class="nav-link" aria-label="<?php echo _('Update Hosting Fees'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Update Hosting Fees') ?></p>
+                        </a>
+                    </li>
+                <?php } ?>
                 <?php } ?>
                 <li class="nav-header"><?php echo _('Shared') ?></li>
                 <li class="nav-item">
@@ -315,6 +377,14 @@
                             <p><?php echo _('Custom SSL Fields') ?></p>
                         </a>
                     </li>
+                    <?php if (DomainMOD\Hosting::isAvailable()) { ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $web_root; ?>/admin/hosting-fields/" class="nav-link<?php if ($slug == "admin-custom-hosting-fields" || $slug == "admin-add-custom-hosting-field" || $slug == "admin-edit-custom-hosting-field") echo " active"; ?>" aria-label="<?php echo _('Custom Hosting Fields'); ?>">
+                            <i class="nav-icon bi"></i>
+                            <p><?php echo _('Custom Hosting Fields') ?></p>
+                        </a>
+                    </li>
+                    <?php } ?>
                     <li class="nav-item">
                         <a href="<?php echo $web_root; ?>/admin/scheduler/" class="nav-link<?php if ($slug == "admin-scheduler-main") echo " active"; ?>" aria-label="<?php echo _('Task Scheduler'); ?>">
                             <i class="nav-icon bi"></i>

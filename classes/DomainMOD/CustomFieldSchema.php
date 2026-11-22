@@ -22,8 +22,8 @@
 namespace DomainMOD;
 
 /*
- * Adding and deleting a custom field's columns (the value column in domain_field_data or ssl_cert_field_data, and its
- * display column in user_settings), and the daily clean-up of columns a part-way add or delete left behind. ALTER TABLE
+ * Adding and deleting a custom field's columns (the value column in domain_field_data, ssl_cert_field_data, or
+ * hosting_service_field_data, and its display column in user_settings), and the daily clean-up of columns a part-way add or delete left behind. ALTER TABLE
  * commits straight away, so each of these holds the item type's custom field named lock (ChangeHistory::lockCustomFields())
  * from before its first write until after its last ALTER TABLE, and the request's shared restore lock, so a restore can't
  * replace the field data tables in the middle of one.
@@ -47,10 +47,15 @@ class CustomFieldSchema
     const EMPTY_VALUES = array(1 => array('', '0'), 4 => array('', '1970-01-01', '0000-00-00'),
         5 => array('', '1970-01-01 00:00:00', '0000-00-00 00:00:00'));
 
-    // The prefix of each item type's display columns in user_settings
+    // The prefix of each item type's display columns in user_settings (no prefix starts with another, so each type's
+    // clean-up only ever matches its own columns)
+    const DISPLAY_PREFIXES = array('domain' => 'dispcdf_', 'ssl' => 'dispcsf_', 'hosting' => 'dispchf_');
+
+    // The prefix of an item type's display columns in user_settings
     public static function displayPrefix($type)
     {
-        return $type === 'ssl' ? 'dispcsf_' : 'dispcdf_';
+        if (!isset(self::DISPLAY_PREFIXES[$type])) throw new \InvalidArgumentException('Unknown custom field type');
+        return self::DISPLAY_PREFIXES[$type];
     }
 
     // Takes the restore check and the custom field lock, or throws with the restore or busy message
@@ -243,6 +248,9 @@ class CustomFieldSchema
     {
         $info = ChangeHistory::ITEM_TYPES[$type];
         $own_lock = $only_name === null;
+
+        // The hosting tables exist only once the database has been updated (DomainMOD\Hosting)
+        if ($type === 'hosting' && !Hosting::isAvailable($pdo)) return 0;
 
         if ($own_lock) {
             $lock = RestoreLock::shared();

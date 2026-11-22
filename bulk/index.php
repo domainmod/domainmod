@@ -106,7 +106,8 @@ if ($action == '') {
     echo $form->showDropdownOption('CED', _('Change Expiry Date'), $action);
     echo $form->showDropdownOption('CIP', _('Change IP Address'), $action);
     echo $form->showDropdownOption('CRA', _('Change Registrar Account'), $action);
-    echo $form->showDropdownOption('CWH', _('Change Web Hosting Provider'), $action);
+    // Change Hosting Service needs the hosting tables, so it's offered only after the database update
+    if (DomainMOD\Hosting::isAvailable()) echo $form->showDropdownOption('CWH', _('Change Hosting Service'), $action);
     echo $form->showDropdownOption('UCF', _('Update Custom Domain Field'), $action);
     echo $form->showDropdownOption('DD', _('Delete Domains'), $action);
     echo $form->showDropdownBottom('', 'action');

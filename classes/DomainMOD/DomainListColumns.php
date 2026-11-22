@@ -41,7 +41,7 @@ class DomainListColumns extends ListColumns
         'account' => array('s_display_domain_account', array('r.name', 'o.name', 'ra.username')),
         'dns' => array('s_display_domain_dns', array('dns.name')),
         'ip' => array('s_display_domain_ip', array('ip.name', 'ip.ip')),
-        'host' => array('s_display_domain_host', array('h.name')),
+        'service' => array('s_display_domain_host', array('hs.name')),
         'category' => array('s_display_domain_category', array('cat.name')),
         'owner' => array('s_display_domain_owner', array('o.name')),
         'lock' => array('s_display_domain_lock', array('d.transfer_lock', 'd.epp_status_time')));
@@ -60,9 +60,11 @@ class DomainListColumns extends ListColumns
      * $settings is sessionCopy()'s array. $fields is the list's custom fields as they exist now
      * (CustomField::getFilterFields('domain_fields')), which give each custom field column its title and type: the
      * session's list (s_cdf_data) only says which ones are shown, and can still list a field that's since been deleted
-     * or replaced.
+     * or replaced. $hosting_available says whether the database has hosting services (see Hosting::isAvailable()), or
+     * is null to ask, which happens only when the Hosting Service column is switched on: before the update the column
+     * isn't offered, whatever the session says, since its values come from a join the list doesn't have yet.
      */
-    public function __construct(array $settings, array $fields)
+    public function __construct(array $settings, array $fields, $hosting_available = null)
     {
         $this->settings = $settings;
         $this->layout = new Layout();
@@ -72,17 +74,30 @@ class DomainListColumns extends ListColumns
         $titles = array('expiry' => _('Expiry'),
             'fee' => _('Fee') . ' (' . ($settings['s_default_currency'] ?? '') . ')',
             'tld' => _('TLD'), 'registrar' => _('Registrar'), 'account' => _('Account'), 'dns' => _('DNS'),
-            'ip' => _('IP'), 'host' => _('Host'), 'category' => _('Category'), 'owner' => _('Owner'),
+            // TRANSLATORS: A Domains list column heading: the hosting service each domain uses
+            'ip' => _('IP'), 'service' => _('Hosting Service'), 'category' => _('Category'), 'owner' => _('Owner'),
             'lock' => _('Transfer Lock'));
         foreach (self::OPTIONAL as $key => $optional) {
             if (($settings[$optional[0]] ?? '') == '1') {
                 // The Transfer Lock column's columns come with the 4.27.0 database update, whatever the session says
                 if ($key === 'lock' && !DomainStatus::isAvailable()) continue;
+                // So does the Hosting Service column's
+                if ($key === 'service' && !($hosting_available ?? self::hostingAvailable())) continue;
                 $columns[] = array('key' => $key, 'title' => $titles[$key], 'sort' => $optional[1]);
             }
         }
 
         $this->columns = $this->withCustomFields($columns, $settings['s_cdf_data'] ?? array(), $fields);
+    }
+
+    // Whether the shared database has hosting services (a database that can't be asked counts as no)
+    protected static function hostingAvailable()
+    {
+        try {
+            return Hosting::isAvailable();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     /*
@@ -106,7 +121,9 @@ class DomainListColumns extends ListColumns
                 case 'account': $encoded[] = "CONCAT(r.name, ', ', o.name, ' (', ra.username, ')')"; break;
                 case 'dns': $encoded[] = 'dns.name'; break;
                 case 'ip': $encoded[] = "CONCAT(ip.name, ' (', ip.ip, ')')"; break;
-                case 'host': $encoded[] = 'h.name'; break;
+                // A domain with no service shows a blank cell, so an excluded word (NOT LIKE) mustn't hide it by
+                // turning the condition NULL
+                case 'service': $encoded[] = "COALESCE(hs.name, '')"; break;
                 case 'category': $encoded[] = 'cat.name'; break;
                 case 'owner': $encoded[] = 'o.name'; break;
                 default:
@@ -184,8 +201,10 @@ class DomainListColumns extends ListColumns
             case 'ip':
                 return '<a href="../assets/edit/ip-address.php?ipid=' . $row->ipid . '">' . $row->ip_name . ' (' . $row->ip . ')</a>';
 
-            case 'host':
-                return '<a href="../assets/edit/host.php?whid=' . $row->whid . '">' . $row->wh_name . '</a>';
+            // Blank for a domain with no service (service_id 0, or a service that no longer exists)
+            case 'service':
+                if (($row->service_id ?? null) === null) return '';
+                return '<a href="../hosting/edit.php?hsid=' . (int) $row->service_id . '">' . $row->service_name . '</a>';
 
             case 'category':
                 return '<a href="../assets/edit/category.php?pcid=' . $row->pcid . '">' . $row->category_name . '</a>';

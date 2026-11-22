@@ -156,6 +156,12 @@ $_SESSION['s_system_default_registrar_account'] = $result->default_registrar_acc
 $_SESSION['s_system_default_ssl_provider_account'] = $result->default_ssl_provider_account;
 $_SESSION['s_system_default_ssl_type'] = $result->default_ssl_type;
 $_SESSION['s_system_default_ssl_provider'] = $result->default_ssl_provider;
+// The hosting defaults come with the 4.27.0 database update (DomainMOD\Hosting), and are 0 (none) until then
+$_SESSION['s_system_default_category_hosting'] = $result->default_category_hosting ?? '0';
+$_SESSION['s_system_default_ip_address_hosting'] = $result->default_ip_address_hosting ?? '0';
+$_SESSION['s_system_default_owner_hosting'] = $result->default_owner_hosting ?? '0';
+$_SESSION['s_system_default_hosting_provider_account'] = $result->default_hosting_provider_account ?? '0';
+$_SESSION['s_system_default_hosting_type'] = $result->default_hosting_type ?? '0';
 $_SESSION['s_system_expiration_days'] = $result->expiration_days;
 $_SESSION['s_system_email_signature'] = $result->email_signature;
 $_SESSION['s_system_currency_converter'] = $result->currency_converter;
@@ -181,8 +187,15 @@ $_SESSION['s_default_registrar_account'] = $result->default_registrar_account;
 $_SESSION['s_default_ssl_provider_account'] = $result->default_ssl_provider_account;
 $_SESSION['s_default_ssl_type'] = $result->default_ssl_type;
 $_SESSION['s_default_ssl_provider'] = $result->default_ssl_provider;
+// The hosting settings come with the 4.27.0 database update (DomainMOD\Hosting), and are their defaults until then
+$_SESSION['s_default_category_hosting'] = $result->default_category_hosting ?? '0';
+$_SESSION['s_default_ip_address_hosting'] = $result->default_ip_address_hosting ?? '0';
+$_SESSION['s_default_owner_hosting'] = $result->default_owner_hosting ?? '0';
+$_SESSION['s_default_hosting_provider_account'] = $result->default_hosting_provider_account ?? '0';
+$_SESSION['s_default_hosting_type'] = $result->default_hosting_type ?? '0';
 $_SESSION['s_number_of_domains'] = $result->number_of_domains;
 $_SESSION['s_number_of_ssl_certs'] = $result->number_of_ssl_certs;
+$_SESSION['s_number_of_hosting_services'] = $result->number_of_hosting_services ?? '50';
 $_SESSION['s_display_domain_owner'] = $result->display_domain_owner;
 // The Transfer Lock column (DomainMOD\DomainStatus) comes with the 4.27.0 database update, and is off until then
 $_SESSION['s_display_domain_lock'] = $result->display_domain_lock ?? '0';
@@ -204,6 +217,14 @@ $_SESSION['s_display_ssl_ip'] = $result->display_ssl_ip;
 $_SESSION['s_display_ssl_category'] = $result->display_ssl_category;
 $_SESSION['s_display_ssl_expiry_date'] = $result->display_ssl_expiry_date;
 $_SESSION['s_display_ssl_fee'] = $result->display_ssl_fee;
+$_SESSION['s_display_hosting_owner'] = $result->display_hosting_owner ?? '1';
+$_SESSION['s_display_hosting_provider'] = $result->display_hosting_provider ?? '0';
+$_SESSION['s_display_hosting_account'] = $result->display_hosting_account ?? '1';
+$_SESSION['s_display_hosting_type'] = $result->display_hosting_type ?? '1';
+$_SESSION['s_display_hosting_expiry_date'] = $result->display_hosting_expiry_date ?? '1';
+$_SESSION['s_display_hosting_ip'] = $result->display_hosting_ip ?? '0';
+$_SESSION['s_display_hosting_category'] = $result->display_hosting_category ?? '0';
+$_SESSION['s_display_hosting_fee'] = $result->display_hosting_fee ?? '0';
 $_SESSION['s_display_inactive_assets'] = $result->display_inactive_assets;
 $_SESSION['s_display_dw_intro_page'] = $result->display_dw_intro_page;
 $_SESSION['s_dark_mode'] = (int) $result->dark_mode;
@@ -215,6 +236,9 @@ $_SESSION['s_cdf_data'] = $custom_field->getCDFData();
 
 // Load Custom SSL Field Data
 $_SESSION['s_csf_data'] = $custom_field->getCSFData();
+
+// Load Custom Hosting Field Data (none before the database update adds the hosting tables)
+$_SESSION['s_chf_data'] = $custom_field->getCHFData();
 
 // Load Currency Info
 list($_SESSION['s_default_currency_name'], $_SESSION['s_default_currency_symbol'],
@@ -230,7 +254,7 @@ $queue->checkDomainQueue();
 $ssl_queue = new DomainMOD\SslQueue();
 $ssl_queue->checkSslQueue();
 
-// Check for existing Domain and SSL assets
+// Check for existing Domain, SSL, and hosting assets
 $system->checkExistingAssets();
 
 unset($_SESSION['s_installation_mode']);
@@ -270,6 +294,13 @@ if ($_SESSION['s_version_error'] != '1') {
     // Check for missing ssl fees
     $sql = $queryB->missingFees('ssl_certs');
     $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($sql);
+
+    // Check for missing hosting fees (only once the database update has added the hosting tables)
+    $_SESSION['s_missing_hosting_fees'] = '0';
+    if (DomainMOD\Hosting::isAvailable()) {
+        $sql = (new DomainMOD\QueryBuild())->missingFees('hosting_services');
+        $_SESSION['s_missing_hosting_fees'] = $system->checkForRows($sql);
+    }
 
     // If it's a new password ask the user to change it
     if ($_SESSION['s_is_new_password'] == 1) {

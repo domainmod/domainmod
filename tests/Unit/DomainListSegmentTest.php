@@ -73,14 +73,14 @@ class DomainListSegmentTest extends TestCase
             . preg_replace('/\s+/', ' ', trim($list->fromSql())) . preg_replace('/\s+/', ' ', $filter_sql)
             . " AND d.domain = sd.domain)", $sql);
         $this->assertSame(array('sf_segid' => 7, 'sw0' => '%a%'), $query['params']);
-        // One plain read, and no other statement apart from the join order's version check, with no locking clause or
-        // write in any of them
+        // One plain read, and no other statement apart from the version checks (the join order's, and whether hosting is
+        // available, see DomainList::hostingAvailable()), with no locking clause or write in any of them
         foreach ($pdo->log as $entry) {
             $this->assertDoesNotMatchRegularExpression('/FOR UPDATE|LOCK IN SHARE MODE|UPDATE |INSERT |DELETE /',
                 $entry['sql']);
         }
         $this->assertCount(1, $pdo->statementsWith('FROM segment_data AS sd'));
-        $this->assertLessThanOrEqual(1, count($pdo->statementsWith('FROM settings')));
+        $this->assertLessThanOrEqual(2, count($pdo->statementsWith('FROM settings')));
         $this->assertCount(count($pdo->statementsWith('FROM settings')) + 1, $pdo->log);
     }
 

@@ -54,6 +54,14 @@ $today = $time->userToday();
 $renewal_rows = $reporting->renewalDomainsWithStatus($reporting->renewalChartEnd($today));
 $renewal_cert_rows = $reporting->renewalCerts($reporting->renewalChartEnd($today));
 $at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->userTodayPlusDays(DomainMOD\Reporting::AT_RISK_DAYS, $today)));
+// Hosting's panels and chart series, once the database update has added its tables. Hosting compares with the
+// hosting date (today in the hosting time zone, see Hosting::hostingDate()), not the user's date domains and SSL use.
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$hosting_today = $hosting_available ? DomainMOD\Hosting::hostingDate($pdo) : '';
+// The hosting services' payments in the chart's months, matched to them by year and month. The months follow the
+// user's date, as the domains' and certificates' do, while the hosting date decides which services are overdue.
+$renewal_hosting_months = $hosting_available ? $reporting->renewalHostingMonths(substr($today, 0, 7) . '-01',
+    DomainMOD\Hosting::addDays($reporting->renewalChartEnd($today), -1), $hosting_today) : array();
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -82,6 +90,15 @@ $total_sold_domains = (int) $pdo->query("
     FROM domains
     WHERE active = '10'")->fetchColumn();
 
+$total_active_hosting = $hosting_available ? (int) $pdo->query("
+    SELECT count(*)
+    FROM hosting_services
+    WHERE active = 1")->fetchColumn() : 0;
+
+$total_hosting = $hosting_available ? (int) $pdo->query("
+    SELECT count(*)
+    FROM hosting_services")->fetchColumn() : 0;
+
 // On an install with no domains yet, the Getting Started checklist takes the totals' place, since they'd only be zeros
 // (Greg's choice, 2026-11-15)
 $show_getting_started = $dashboard->showGettingStarted();
@@ -94,6 +111,10 @@ $totals[] = array('/domains/index.php?is_active=LIVE', 'bi-globe2', number_forma
 $totals[] = array('/ssl/index.php?is_active=LIVE', 'bi-shield-lock', number_format($total_live_ssl), _('SSL Certificates'));
 if ($total_sold_domains) {
     $totals[] = array('/domains/index.php?is_active=10', 'bi-cart', number_format($total_sold_domains), _('Sold Domains'));
+}
+// Shown once there are hosting services in any status, so an install that doesn't track hosting isn't shown a zero
+if ($total_hosting) {
+    $totals[] = array('/hosting/index.php?is_active=1', 'bi-hdd-rack', number_format($total_active_hosting), _('Active Hosting Services'));
 }
 if (!$show_getting_started) { ?>
 <div class="card domainmod-dashboard-totals d-inline-block mw-100 mb-0">
@@ -143,7 +164,32 @@ $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
 $stmt->execute();
 $total_count_ssl = $stmt->fetchColumn();
 
-if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
+// Hosting services renewing by the hosting date plus the same number of days
+$hosting_start_date = '2000-01-01';
+$hosting_end_date = $hosting_available ? DomainMOD\Hosting::addDays($hosting_today, (int) $expiration_days) : '';
+$hosting_daterange = $hosting_start_date . ' - ' . $hosting_end_date;
+$total_count_hosting = 0;
+
+if ($hosting_available) {
+
+    $stmt = $pdo->prepare("
+        SELECT count(*)
+        FROM hosting_services
+        WHERE active <> 0
+          AND expiry_date <= :end_date");
+    $stmt->bindValue('end_date', $hosting_end_date, PDO::PARAM_STR);
+    $stmt->execute();
+    $total_count_hosting = (int) $stmt->fetchColumn();
+    $stmt->closeCursor();
+
+}
+
+// Hosting services waiting for their renewal to be confirmed (see Hosting::renewalState()), counted from the same rows
+// and rule as At-Risk Hosting Services, which the tile opens, whatever the Expiration Days setting
+$confirm_count_hosting = $hosting_available ? DomainMOD\HostingReport::confirmCount((new DomainMOD\HostingReport($pdo,
+    $_SESSION['s_user_id'] ?? 0))->services($hosting_today), $hosting_today) : 0;
+
+if ($total_count_domains || $total_count_ssl || $total_count_hosting || $confirm_count_hosting || $at_risk_count) { ?>
 
     <?php $section = sprintf(ngettext('Expiring in the next day', 'Expiring in the next %s days', $expiration_days), $expiration_days); ?>
     <div class="row">
@@ -187,6 +233,28 @@ if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
     if ($total_count) {
 
         echo $dashboard->displayExpPanel(_('SSL Certificates'), $total_count, '/ssl/index.php?daterange=' . urlencode($daterange), $section);
+
+    }
+
+    //////////////////////////////////////////////////
+    // Expiring Hosting Services
+    //////////////////////////////////////////////////
+    if ($total_count_hosting) {
+
+        echo $dashboard->displayExpPanel(_('Hosting Services'), $total_count_hosting, '/hosting/index.php?daterange=' . urlencode($hosting_daterange), $section);
+
+    }
+
+    //////////////////////////////////////////////////
+    // Hosting Services Waiting for Their Renewal to Be Confirmed
+    //////////////////////////////////////////////////
+    if ($confirm_count_hosting) {
+
+        // With an Expiration Days of 0 or more, they're all in the Expiring Hosting Services count too. A negative one
+        // moves that count's cut-off before the hosting date, so only the ones past it are in both, and the line doesn't
+        // say they're also counted.
+        $confirm_detail = (int) $expiration_days >= 0 ? _('Also counted in Hosting Services') : _('Hosting Services');
+        echo $dashboard->displayPanel(_('Confirm renewal'), $confirm_count_hosting, 'warning', 'bi-hourglass-split', '/reporting/hosting/at-risk.php?show=confirm#hosting-list', _('At-Risk Hosting Services'), $confirm_detail);
 
     }
 
@@ -347,6 +415,70 @@ if ($total_count) { ?>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// Hosting Service Panels (once the database update has added the hosting tables)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$total_count = $hosting_available ? $pdo->query("
+    SELECT count(*)
+    FROM hosting_services
+    WHERE active IN (3, 5, 4)")->fetchColumn() : 0;
+
+if ($total_count) { ?>
+
+    <?php $section = _('Pending Hosting Services'); ?>
+    <div class="row">
+        <h2 class="h4 mt-4 pt-2"><?php echo $section; ?></h2>
+    </div>
+
+    <div class="row">
+
+        <?php
+        //////////////////////////////////////////////////
+        // Pending Renewals (Hosting Services)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM hosting_services
+            WHERE active = 3")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Renewals'), $total_count, 'warning', 'bi-arrow-repeat', '/hosting/index.php?is_active=3', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Setup (Hosting Services)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM hosting_services
+            WHERE active = 5")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Setup'), $total_count, 'warning', 'bi-plus-circle', '/hosting/index.php?is_active=5', $section);
+
+        }
+
+        //////////////////////////////////////////////////
+        // Pending Other (Hosting Services)
+        //////////////////////////////////////////////////
+        $total_count = $pdo->query("
+            SELECT count(*)
+            FROM hosting_services
+            WHERE active = 4")->fetchColumn();
+
+        if ($total_count) {
+
+            echo $dashboard->displayPanel(_('Other'), $total_count, 'warning', 'bi-three-dots', '/hosting/index.php?is_active=4', $section);
+
+        } ?>
+
+    </div><?php
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Domain Queue
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 $total_count_processing = $pdo->query("
@@ -428,12 +560,14 @@ if ($total_count_ssl_queue > 0) { ?>
 ?>
 <?php
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Renewal Costs, Next 12 Months (Domain Renewals' and SSL Renewals' bars stacked, so each month's bar is the
-// total, with the figures as a table under the chart)
+// Renewal Costs, Next 12 Months (Domain Renewals' and SSL Renewals' bars stacked, with Hosting's payments once the
+// hosting tables exist, so each month's bar is the total, with the figures as a table under the chart). Hosting's series
+// uses the palette's fifth colour, since js/charts.js draws the Overdue bar in the second (the warning colour).
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-if ($renewal_rows || $renewal_cert_rows) {
+if ($renewal_rows || $renewal_cert_rows || $renewal_hosting_months) {
 
-    $renewal_months = $reporting->renewalMonthsBoth($renewal_rows, $renewal_cert_rows, $today);
+    $renewal_months = $reporting->renewalMonthsBoth($renewal_rows, $renewal_cert_rows, $today,
+        $hosting_available ? $renewal_hosting_months : null);
     ob_start(); ?>
 
     <?php // The figures toggle and the report links share one row, so the card doesn't end with a gap under the toggle (on a phone, open figures can push the links below them, at the end side) ?>
@@ -446,7 +580,10 @@ if ($renewal_rows || $renewal_cert_rows) {
         </details>
         <div class="ms-auto d-flex flex-wrap column-gap-3">
             <a href="<?php echo WEB_ROOT; ?>/reporting/domains/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Domain Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            <a href="<?php echo WEB_ROOT; ?>/reporting/ssl/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('SSL Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a><?php
+            if ($hosting_available) { ?>
+                <a href="<?php echo WEB_ROOT; ?>/reporting/hosting/upcoming-renewals.php" class="link-underline-opacity-0 link-underline-opacity-75-hover"><?php echo _('Hosting Renewals'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a><?php
+            } ?>
         </div>
     </div><?php
 
@@ -455,11 +592,15 @@ if ($renewal_rows || $renewal_cert_rows) {
     <div class="row">
         <h2 class="h4 mt-4 pt-2"><?php echo _('Renewal Costs, Next 12 Months'); ?></h2>
     </div>
-    <?php echo $chart->stackedMonthBars('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'),
-        array(
-            array('name' => _('Domains'), 'values' => array_column(array_column($renewal_months, 'domains'), 'cost'), 'colour' => '1'),
-            array('name' => _('SSL Certificates'), 'values' => array_column(array_column($renewal_months, 'certs'), 'cost'), 'colour' => '4')),
-        !empty($renewal_months[0]['overdue']), $after, false);
+    <?php
+    $renewal_series = array(
+        array('name' => _('Domains'), 'values' => array_column(array_column($renewal_months, 'domains'), 'cost'), 'colour' => '1'),
+        array('name' => _('SSL Certificates'), 'values' => array_column(array_column($renewal_months, 'certs'), 'cost'), 'colour' => '4'));
+    if ($hosting_available) {
+        $renewal_series[] = array('name' => _('Hosting'), 'values' => array_column(array_column($renewal_months, 'hosting'), 'cost'), 'colour' => '5');
+    }
+    echo $chart->stackedMonthBars('dashboard-renewal-costs', _('Renewal Costs, Next 12 Months'), array_column($renewal_months, 'label'),
+        $renewal_series, !empty($renewal_months[0]['overdue']), $after, false);
 
     // The chart's card ends the page, so the footer skips its usual gap above it
     $footer_no_gap = true;

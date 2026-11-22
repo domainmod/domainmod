@@ -79,10 +79,11 @@ class Dashboard
     }
 
     /*
-     * Whether to show the Getting Started checklist: only on an install with no domains and no SSL certificates in any
-     * status, since sold and inactive domains, and certificates tracked without a domain, show a user has clearly got
-     * started, and only while the signed-in user hasn't hidden it (from the 4.26.0 database update on, loaded at
-     * sign-in). Once a domain or a certificate exists the checklist is gone for everyone.
+     * Whether to show the Getting Started checklist: only on an install with no domains, SSL certificates, or hosting
+     * services in any status, since sold and inactive domains, certificates tracked without a domain, and hosting
+     * services show a user has clearly got started, and only while the signed-in user hasn't hidden it (from the 4.26.0
+     * database update on, loaded at sign-in). Once a domain, a certificate, or a hosting service exists, the checklist
+     * is gone for everyone.
      */
     public function showGettingStarted()
     {
@@ -90,7 +91,10 @@ class Dashboard
 
         $pdo = Database::getInstance()->cnxx;
         if ((int) $pdo->query("SELECT COUNT(*) FROM domains")->fetchColumn() !== 0) return false;
-        return (int) $pdo->query("SELECT COUNT(*) FROM ssl_certs")->fetchColumn() === 0;
+        if ((int) $pdo->query("SELECT COUNT(*) FROM ssl_certs")->fetchColumn() !== 0) return false;
+        // Hosting services count too, once the database update has added their table
+        if (Hosting::isAvailable($pdo) && (int) $pdo->query("SELECT COUNT(*) FROM hosting_services")->fetchColumn() !== 0) return false;
+        return true;
     }
 
     /*

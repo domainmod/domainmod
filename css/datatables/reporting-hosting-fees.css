@@ -1,0 +1,4 @@
+#reporting-hosting-fees thead th { padding: 4px 6px; border: 0; white-space: nowrap; }
+#reporting-hosting-fees tbody tr:hover { background-color: #cccccc; }
+#reporting-hosting-fees tbody td { padding: 4px 6px; border: 0; white-space: nowrap; }
+[data-bs-theme="dark"] #reporting-hosting-fees tbody tr:hover { background-color: #343a40; }

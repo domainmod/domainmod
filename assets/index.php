@@ -49,10 +49,44 @@ $domain_used = function ($column, $id) use ($show_all) {
 $cert_used = function ($column, $id) use ($show_all) {
     return $show_all ? '' : " WHERE EXISTS (SELECT 1 FROM ssl_certs AS sc WHERE sc.$column = $id AND sc.active NOT IN ('0'))";
 };
-$either_used = function ($column, $id) use ($show_all) {
-    return $show_all ? '' : " WHERE EXISTS (SELECT 1 FROM domains AS d WHERE d.$column = $id AND d.active NOT IN ('0', '10'))
-                                OR EXISTS (SELECT 1 FROM ssl_certs AS sc WHERE sc.$column = $id AND sc.active NOT IN ('0'))";
+// Once the database has the hosting tables, hosting services that aren't Cancelled count too, as their lists count them
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$hosting_exists = function ($column, $id) use ($hosting_available) {
+    return $hosting_available ? " OR EXISTS (SELECT 1 FROM hosting_services AS hs WHERE hs.$column = $id AND hs.active NOT IN ('0'))" : '';
 };
+$either_used = function ($column, $id) use ($show_all, $hosting_exists) {
+    return $show_all ? '' : " WHERE EXISTS (SELECT 1 FROM domains AS d WHERE d.$column = $id AND d.active NOT IN ('0', '10'))
+                                OR EXISTS (SELECT 1 FROM ssl_certs AS sc WHERE sc.$column = $id AND sc.active NOT IN ('0'))"
+                              . $hosting_exists($column, $id);
+};
+// A hosting provider is in use when a hosting account or hosting services that aren't Cancelled use it. Before the
+// database update, while domains still name a provider, it's in use when active domains use it instead (see
+// assets/hosting.php).
+$legacy_domain_column = DomainMOD\Hosting::legacyDomainColumn($pdo);
+$host_used = function ($id) use ($show_all, $legacy_domain_column) {
+    if ($show_all) return '';
+    if ($legacy_domain_column) {
+        return " WHERE EXISTS (SELECT 1 FROM domains AS d" // Legacy: domains.hosting_id before 4.27.0
+            . " WHERE d.hosting_id = $id AND d.active NOT IN ('0', '10'))";
+    }
+    return " WHERE EXISTS (SELECT 1 FROM hosting_provider_accounts AS hpa WHERE hpa.hosting_id = $id)
+             OR EXISTS (SELECT 1 FROM hosting_services AS hs WHERE hs.hosting_id = $id AND hs.active NOT IN ('0'))";
+};
+$hosting_used = function ($column, $id) use ($show_all) {
+    return $show_all ? '' : " WHERE EXISTS (SELECT 1 FROM hosting_services AS hs WHERE hs.$column = $id AND hs.active NOT IN ('0'))";
+};
+$hosting_counts = $hosting_available ? "
+    UNION ALL
+    SELECT 'hosting_provider_accounts', COUNT(*) FROM (
+        SELECT hpa.id AS hpaid
+        FROM hosting_provider_accounts AS hpa, owners AS o, hosting AS h
+        WHERE hpa.owner_id = o.id
+          AND hpa.hosting_id = h.id
+        GROUP BY hpa.username, o.name, h.name) AS a" . $hosting_used('account_id', 'a.hpaid') . "
+    UNION ALL
+    SELECT 'hosting_types', COUNT(*) FROM hosting_types AS a" . $hosting_used('type_id', 'a.id') . "
+    UNION ALL
+    SELECT 'hosting_fees', COUNT(*) FROM hosting_fees AS a" : '';
 
 $counts = $pdo->query("
     SELECT 'registrars' AS asset, COUNT(*) AS total FROM registrars AS a" . $domain_used('registrar_id', 'a.id') . "
@@ -66,7 +100,7 @@ $counts = $pdo->query("
     UNION ALL
     SELECT 'dns', COUNT(*) FROM dns AS a" . $domain_used('dns_id', 'a.id') . "
     UNION ALL
-    SELECT 'hosting', COUNT(*) FROM hosting AS a" . $domain_used('hosting_id', 'a.id') . "
+    SELECT 'hosting', COUNT(*) FROM hosting AS a" . $host_used('a.id') . "
     UNION ALL
     SELECT 'ssl_providers', COUNT(*) FROM ssl_providers AS a" . $cert_used('ssl_provider_id', 'a.id') . "
     UNION ALL
@@ -83,7 +117,7 @@ $counts = $pdo->query("
     UNION ALL
     SELECT 'categories', COUNT(*) FROM categories AS a" . $either_used('cat_id', 'a.id') . "
     UNION ALL
-    SELECT 'ip_addresses', COUNT(*) FROM ip_addresses AS a" . $either_used('ip_id', 'a.id'))->fetchAll(PDO::FETCH_KEY_PAIR);
+    SELECT 'ip_addresses', COUNT(*) FROM ip_addresses AS a" . $either_used('ip_id', 'a.id') . $hosting_counts)->fetchAll(PDO::FETCH_KEY_PAIR);
 
 // Each tile's count line is its own ngettext() call with literal strings, so gettext finds both forms
 $total = function ($asset) use ($counts) {
@@ -108,7 +142,8 @@ $total = function ($asset) use ($counts) {
     echo $layout->landingTile('/assets/registrars.php', _('Domain Registrars'), _('The registrars your domains are with'), 'bi-building', 'secondary', sprintf(ngettext('%s registrar', '%s registrars', $total('registrars')), number_format($total('registrars'))));
     echo $layout->landingTile('/assets/registrar-accounts.php', _('Domain Registrar Accounts'), _('Your accounts at each registrar'), 'bi-person-badge', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('registrar_accounts')), number_format($total('registrar_accounts'))));
     echo $layout->landingTile('/assets/dns.php', _('DNS Profiles'), _('The DNS servers your domains use'), 'bi-hdd-network', 'secondary', sprintf(ngettext('%s DNS profile', '%s DNS profiles', $total('dns')), number_format($total('dns'))));
-    echo $layout->landingTile('/assets/hosting.php', _('Web Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s web host', '%s web hosts', $total('hosting')), number_format($total('hosting')))); ?>
+    // Before the database update, Hosting Providers stays with the domain assets (domains still use it)
+    if (!$hosting_available) echo $layout->landingTile('/assets/hosting.php', _('Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s hosting provider', '%s hosting providers', $total('hosting')), number_format($total('hosting')))); ?>
 </div>
 
 <h2 class="h5 mt-4"><?php echo _('SSL Certificates'); ?></h2>
@@ -118,11 +153,24 @@ $total = function ($asset) use ($counts) {
     echo $layout->landingTile('/assets/ssl-types.php', _('SSL Certificate Types'), _('The kinds of SSL certificate you track'), 'bi-patch-check', 'secondary', sprintf(ngettext('%s type', '%s types', $total('ssl_cert_types')), number_format($total('ssl_cert_types')))); ?>
 </div>
 
+<?php
+if ($hosting_available) { ?>
+
+    <h2 class="h5 mt-4"><?php echo _('Hosting'); ?></h2>
+    <div class="row g-3"><?php
+        echo $layout->landingTile('/assets/hosting.php', _('Hosting Providers'), _('Where your websites are hosted'), 'bi-server', 'secondary', sprintf(ngettext('%s hosting provider', '%s hosting providers', $total('hosting')), number_format($total('hosting'))));
+        echo $layout->landingTile('/assets/hosting-accounts.php', _('Hosting Accounts'), _('Your accounts at each hosting provider'), 'bi-person-workspace', 'secondary', sprintf(ngettext('%s account', '%s accounts', $total('hosting_provider_accounts')), number_format($total('hosting_provider_accounts'))));
+        echo $layout->landingTile('/assets/hosting-types.php', _('Service Types'), _('The kinds of hosting service your providers sell'), 'bi-stack', 'secondary', sprintf(ngettext('%s type', '%s types', $total('hosting_types')), number_format($total('hosting_types'))));
+        echo $layout->landingTile('/reporting/hosting/provider-fees.php', _('Hosting Fees'), _('What each service type costs for each billing term'), 'bi-cash-coin', 'secondary', sprintf(ngettext('%s fee', '%s fees', $total('hosting_fees')), number_format($total('hosting_fees')))); ?>
+    </div><?php
+
+} ?>
+
 <h2 class="h5 mt-4"><?php echo _('Shared'); ?></h2>
 <div class="row g-3"><?php
     echo $layout->landingTile('/assets/account-owners.php', _('Account Owners'), _('The people and companies that own your accounts'), 'bi-people', 'secondary', sprintf(ngettext('%s owner', '%s owners', $total('owners')), number_format($total('owners'))));
-    echo $layout->landingTile('/assets/categories.php', _('Categories'), _('Groups for sorting your domains and SSL certificates'), 'bi-folder', 'secondary', sprintf(ngettext('%s category', '%s categories', $total('categories')), number_format($total('categories'))));
-    echo $layout->landingTile('/assets/ip-addresses.php', _('IP Addresses'), _('The IP addresses your domains and SSL certificates point to'), 'bi-globe', 'secondary', sprintf(ngettext('%s IP address', '%s IP addresses', $total('ip_addresses')), number_format($total('ip_addresses')))); ?>
+    echo $layout->landingTile('/assets/categories.php', _('Categories'), ($hosting_available ? _('Groups for sorting your domains, SSL certificates, and hosting services') : _('Groups for sorting your domains and SSL certificates')), 'bi-folder', 'secondary', sprintf(ngettext('%s category', '%s categories', $total('categories')), number_format($total('categories'))));
+    echo $layout->landingTile('/assets/ip-addresses.php', _('IP Addresses'), ($hosting_available ? _('The IP addresses your domains, SSL certificates, and hosting services use') : _('The IP addresses your domains and SSL certificates point to')), 'bi-globe', 'secondary', sprintf(ngettext('%s IP address', '%s IP addresses', $total('ip_addresses')), number_format($total('ip_addresses')))); ?>
 </div>
 
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>

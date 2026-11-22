@@ -22,6 +22,7 @@
 namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\DomainList;
+use DomainMOD\Hosting;
 use DomainMOD\ListQuery;
 use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FakeDatabase;
@@ -36,9 +37,10 @@ use PHPUnit\Framework\TestCase;
 class ListJoinOrderTest extends TestCase
 {
     // The lists' FROM and WHERE before the fixed join order, which they must still give when the check doesn't pass. The
-    // SSL list's domain is a LEFT JOIN, since a certificate doesn't need a domain.
+    // SSL list's domain is a LEFT JOIN, since a certificate doesn't need a domain. The Domains list joins no hosting
+    // table until the 4.27.0 update adds hosting services (see testTheHostingServiceJoinComesWithTheUpdate()).
     const DOMAINS_FROM = "
-            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, domain_field_data AS dfd
             WHERE d.account_id = ra.id
               AND ra.registrar_id = r.id
               AND ra.owner_id = o.id
@@ -46,7 +48,6 @@ class ListJoinOrderTest extends TestCase
               AND d.fee_id = f.id
               AND d.dns_id = dns.id
               AND d.ip_id = ip.id
-              AND d.hosting_id = h.id
               AND f.currency_id = c.id
               AND c.id = cc.currency_id
               AND d.id = dfd.domain_id
@@ -72,11 +73,21 @@ class ListJoinOrderTest extends TestCase
     protected function setUp(): void
     {
         (new \ReflectionProperty(ListQuery::class, 'fixed_join_order'))->setValue(null, array());
+        Hosting::forgetAvailability();
     }
 
     protected function tearDown(): void
     {
         (new \ReflectionProperty(ListQuery::class, 'fixed_join_order'))->setValue(null, array());
+        Hosting::forgetAvailability();
+    }
+
+    // The list's own version checks (ListQuery::dbVersion()), apart from Hosting::isAvailable()'s
+    protected static function listVersionChecks(FakeDatabase $database)
+    {
+        return array_values(array_filter($database->queriesWith('SELECT db_version'), function ($sql) {
+            return strpos($sql, 'LIMIT 1') === false;
+        }));
     }
 
     /*
@@ -147,7 +158,7 @@ class ListJoinOrderTest extends TestCase
     // The fixed order names each lookup's key, so a missing one would stop every list query
     public function testWithoutALookupKeyTheListsStayAsTheyWere()
     {
-        foreach (array('currency_conversions.user_currency', 'hosting.PRIMARY', 'registrar_accounts.PRIMARY') as $missing) {
+        foreach (array('currency_conversions.user_currency', 'ip_addresses.PRIMARY', 'registrar_accounts.PRIMARY') as $missing) {
             $this->setUp();
             list($domains) = $this->onDatabase(DomainList::class, '4.26.0', array($missing));
             $this->assertFalse($domains->fixedJoinOrder(), $missing);
@@ -199,8 +210,8 @@ class ListJoinOrderTest extends TestCase
         $sql = $database->queriesWith('STATISTICS')[0];
         $this->assertStringContainsString('`TABLE_SCHEMA` = DATABASE()', $sql);
         $this->assertStringContainsString('`SEQ_IN_INDEX` = 1', $sql);
-        // Twelve tables (the field data table is one of them), each a bound parameter
-        $this->assertSame(12, substr_count($sql, ':table'));
+        // Eleven tables (the field data table is one of them), each a bound parameter
+        $this->assertSame(11, substr_count($sql, ':table'));
     }
 
     public function testAFailedCheckCountsAsNo()
@@ -229,9 +240,40 @@ class ListJoinOrderTest extends TestCase
         $this->assertTrue($domains->fixedJoinOrder());
         $from = $domains->fromSql();
         $this->assertStringStartsWith("
-            FROM domains AS d STRAIGHT_JOIN domain_field_data AS dfd STRAIGHT_JOIN registrar_accounts AS ra FORCE INDEX (PRIMARY) STRAIGHT_JOIN registrars AS r FORCE INDEX (PRIMARY) STRAIGHT_JOIN owners AS o FORCE INDEX (PRIMARY) STRAIGHT_JOIN categories AS cat FORCE INDEX (PRIMARY) STRAIGHT_JOIN fees AS f FORCE INDEX (PRIMARY) STRAIGHT_JOIN currencies AS c FORCE INDEX (PRIMARY) STRAIGHT_JOIN currency_conversions AS cc FORCE INDEX (user_currency) STRAIGHT_JOIN dns AS dns FORCE INDEX (PRIMARY) STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY) STRAIGHT_JOIN hosting AS h FORCE INDEX (PRIMARY)
+            FROM domains AS d STRAIGHT_JOIN domain_field_data AS dfd STRAIGHT_JOIN registrar_accounts AS ra FORCE INDEX (PRIMARY) STRAIGHT_JOIN registrars AS r FORCE INDEX (PRIMARY) STRAIGHT_JOIN owners AS o FORCE INDEX (PRIMARY) STRAIGHT_JOIN categories AS cat FORCE INDEX (PRIMARY) STRAIGHT_JOIN fees AS f FORCE INDEX (PRIMARY) STRAIGHT_JOIN currencies AS c FORCE INDEX (PRIMARY) STRAIGHT_JOIN currency_conversions AS cc FORCE INDEX (user_currency) STRAIGHT_JOIN dns AS dns FORCE INDEX (PRIMARY) STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY)
             WHERE ", $from);
-        $this->assertSameJoin(self::DOMAINS_FROM, $from, 11, 0);
+        $this->assertSameJoin(self::DOMAINS_FROM, $from, 10, 0);
+    }
+
+    /*
+     * Once the 4.27.0 update adds hosting services, the Domains list LEFT JOINs each domain's service (a domain doesn't
+     * need one), in both forms: last in the fixed order, and attached to domains in the comma list, whose LEFT JOIN's ON
+     * can only name domains. Nothing names the old domains.hosting_id or the hosting providers in either.
+     */
+    public function testTheHostingServiceJoinComesWithTheUpdate()
+    {
+        list($fixed) = $this->onDatabase(DomainList::class, '4.27.0', 1);
+        $this->assertTrue($fixed->fixedJoinOrder());
+        $from = $fixed->fromSql();
+        $this->assertStringContainsString(" STRAIGHT_JOIN ip_addresses AS ip FORCE INDEX (PRIMARY) LEFT JOIN hosting_services AS hs FORCE INDEX (PRIMARY) ON hs.id = d.service_id
+            WHERE ", $from);
+        $this->assertSameJoin(str_replace('FROM domains AS d,', 'FROM domains AS d LEFT JOIN hosting_services AS hs ON hs.id = d.service_id,', self::DOMAINS_FROM), $from, 10, 1);
+
+        $this->setUp();
+        list($comma) = $this->onDatabase(DomainList::class, '4.27.0', array('field_data.asset_id'));
+        $this->assertFalse($comma->fixedJoinOrder());
+        $this->assertSame(str_replace('FROM domains AS d,', 'FROM domains AS d LEFT JOIN hosting_services AS hs ON hs.id = d.service_id,',
+            self::DOMAINS_FROM), $comma->fromSql());
+
+        foreach (array($from, $comma->fromSql()) as $sql) {
+            $this->assertStringNotContainsString('hosting_id', $sql);
+            $this->assertStringNotContainsString('hosting AS h', $sql);
+        }
+
+        // Before the update, neither form names the services
+        $this->setUp();
+        list($before) = $this->onDatabase(DomainList::class, '4.26.0', 1);
+        $this->assertStringNotContainsString('hosting_services', $before->fromSql());
     }
 
     public function testWithTheIndexTheSslListJoinsInTheWrittenOrder()
@@ -268,9 +310,9 @@ class ListJoinOrderTest extends TestCase
         $this->assertSame($split($before_tables, ','), $split($after_tables, 'STRAIGHT_JOIN'));
         $this->assertSame($straight, substr_count($after_tables, 'STRAIGHT_JOIN'));
         $this->assertSame($left, substr_count($after_tables, 'LEFT JOIN'));
-        $this->assertSame(11, $straight + $left, 'twelve tables, eleven joins');
+        $this->assertSame(count($split($before_tables, ',')) - 1, $straight + $left, 'one join fewer than the tables');
         $this->assertStringNotContainsString(',', $after_tables);
-        $this->assertSame(10, substr_count($after_tables, 'FORCE INDEX ('), 'every lookup through its key');
+        $this->assertSame($straight + $left - 1, substr_count($after_tables, 'FORCE INDEX ('), 'every lookup through its key');
     }
 
     public function testTheCheckRunsOncePerRequestForEachConnection()
@@ -283,14 +325,14 @@ class ListJoinOrderTest extends TestCase
         // Another Domains list on the same connection uses the answer already found
         $same = Instance::withoutConstructor(DomainList::class, array('pdo' => $database, 'user_id' => 7, 'field_columns' => ''));
         $this->assertTrue($same->fixedJoinOrder());
-        $this->assertCount(1, $database->queriesWith('SELECT db_version'));
+        $this->assertCount(1, self::listVersionChecks($database));
         $this->assertCount(1, $database->queriesWith('STATISTICS'));
 
         // A list on another connection checks that one's database
         list($another, $another_database) = $this->onDatabase(DomainList::class, '4.25.0', 1);
         $this->assertFalse($another->fixedJoinOrder());
         $this->assertSame(self::DOMAINS_FROM, $another->fromSql());
-        $this->assertCount(1, $another_database->queriesWith('SELECT db_version'));
+        $this->assertCount(1, self::listVersionChecks($another_database));
 
         // The SSL list checks its own tables, even on a connection the Domains list has checked
         $ssl = Instance::withoutConstructor(SslList::class, array('pdo' => $database, 'user_id' => 7, 'field_columns' => ''));

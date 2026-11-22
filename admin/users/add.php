@@ -158,6 +158,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $stmt->bindValue('insert_time', $bind_timestamp, PDO::PARAM_STR);
             $stmt->execute();
 
+            // The Hosting defaults (DomainMOD\Hosting) come with the 4.27.0 database update, read from the system
+            // settings themselves, since a session that began before the update doesn't have them
+            if (DomainMOD\Hosting::isAvailable($pdo)) {
+
+                $stmt = $pdo->prepare("
+                    UPDATE user_settings AS us, settings AS s
+                    SET us.default_category_hosting = s.default_category_hosting,
+                        us.default_ip_address_hosting = s.default_ip_address_hosting,
+                        us.default_owner_hosting = s.default_owner_hosting,
+                        us.default_hosting_provider_account = s.default_hosting_provider_account,
+                        us.default_hosting_type = s.default_hosting_type
+                    WHERE us.user_id = :user_id");
+                $stmt->bindValue('user_id', $temp_user_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+            }
+
             //@formatter:on
 
             $conversion->updateRates('USD', $temp_user_id);

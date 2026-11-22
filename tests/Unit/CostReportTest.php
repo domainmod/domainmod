@@ -22,17 +22,97 @@
 namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\CostReport;
+use DomainMOD\Database;
+use DomainMOD\DomainList;
+use DomainMOD\Hosting;
 use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FakeDatabase;
+use DomainMOD\Tests\Support\Instance;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 // The Domain Costs and SSL Costs reports' groupings, queries, and the old reports' redirects (DomainMOD\CostReport)
 class CostReportTest extends TestCase
 {
-    // The old reports' file names (reporting/<section>/cost-by-<key>.php), which are the groupings' keys
+    // Whether hosting is available is kept per connection for the request, and some tests give the shared database
+    // object a stand-in, so each test starts without either
+    protected function setUp(): void
+    {
+        Hosting::forgetAvailability();
+    }
+
+    protected function tearDown(): void
+    {
+        (new \ReflectionProperty(Database::class, 'instance'))->setValue(null, null);
+        Hosting::forgetAvailability();
+    }
+
+    // Makes the shared database one at version $version, which Hosting::isAvailable() asks
+    private static function sharedDatabaseAt($version)
+    {
+        Hosting::forgetAvailability();
+        (new \ReflectionProperty(Database::class, 'instance'))->setValue(null, Instance::withoutConstructor(Database::class,
+            array('cnxx' => new FakeDatabase(array('SELECT db_version' => $version)))));
+    }
+
+    /*
+     * Domain Costs' Hosting Service grouping comes with the 4.27.0 update: each domain's service as a LEFT JOIN (a
+     * domain doesn't need one), with the domains with none as one NULL row, None, linked to the Domains list's None
+     * filter. The Hosting Provider grouping it replaced (host) is gone, so an old link opens the default grouping, since
+     * a provider's id isn't a service's.
+     */
+    public function testTheHostingServiceGrouping()
+    {
+        $this->assertArrayNotHasKey('service', CostReport::groupings('domains'));
+        $this->assertSame('registrar', CostReport::grouping('domains', 'host')['key']);
+        $this->assertSame('costs.php?group=registrar', CostReport::redirectUrl('domains', 'host', array(), array()));
+
+        self::sharedDatabaseAt('4.27.0');
+        $this->assertSame(array('category', 'dns', 'ip-address', 'month', 'owner', 'registrar', 'tld', 'service'),
+            array_keys(CostReport::groupings('domains')));
+        $this->assertSame('registrar', CostReport::grouping('domains', 'host')['key']);
+        $grouping = CostReport::grouping('domains', 'service');
+        $this->assertSame('Hosting Service', $grouping['label']);
+        $this->assertSame(array('table' => 'hosting_services', 'alias' => 'hs', 'on' => 'hs.id = d.service_id'), $grouping['left_join']);
+
+        $report = new CostReport(new FakeDatabase(), 1);
+        list($sql) = $report->sql('domains', $grouping, $grouping['select'], $grouping['group_by'], $grouping['order_by'], '', '');
+        $this->assertStringContainsString('FROM domains AS d LEFT JOIN hosting_services AS hs ON hs.id = d.service_id, fees AS f', $sql);
+        $this->assertStringNotContainsString('hosting_id', $sql);
+        $this->assertStringContainsString('GROUP BY hs.id, hs.name', $sql);
+
+        $none = (object) array('id' => null, 'name' => null, 'total_cost' => '4.00', 'number_of_assets' => 2);
+        $linked = (object) array('id' => 3, 'name' => 'Shared', 'total_cost' => '6.00', 'number_of_assets' => 1);
+        // The number of domains comes before the cost
+        $this->assertSame(array('field', 'count', 'cost', 'per'), array_column($grouping['columns'], 'value'));
+        $field = $grouping['columns'][0];
+        $count = $grouping['columns'][1];
+        $this->assertSame('None', CostReport::fieldText($field, $none));
+        $this->assertSame('Shared', CostReport::fieldText($field, $linked));
+        $this->assertSame(array('hsid', 'id'), $count['link']);
+        $this->assertSame(DomainList::NO_SERVICE, CostReport::linkValue($count, $none));
+        $this->assertSame(3, CostReport::linkValue($count, $linked));
+        $this->assertSame(array(array('None', 'Shared'), array('4.00', '6.00')),
+            $report->chartData($grouping, array($none, $linked), array(), array()));
+
+        // Before the update the grouping isn't there, so its link opens the default
+        self::sharedDatabaseAt('4.26.0');
+        $this->assertSame('registrar', CostReport::grouping('domains', 'service')['key']);
+    }
+
+    // The old Hosting Provider report's address opens the default grouping, with its range and export
+    public function testTheOldHostingProviderReportOpensTheDefaultGrouping()
+    {
+        $source = file_get_contents(dirname(__DIR__, 2) . '/reporting/domains/cost-by-host.php');
+        $this->assertStringContainsString("CostReport::redirectUrl('domains', DomainMOD\\CostReport::SECTIONS['domains']['default'])", $source);
+        $this->assertSame('costs.php?group=registrar&daterange=2026-01-01+-+2026-12-31&export_data=1',
+            CostReport::redirectUrl('domains', CostReport::SECTIONS['domains']['default'], array(),
+                array('daterange' => '2026-01-01 - 2026-12-31', 'export_data' => '1')));
+    }
+    // The old reports' file names (reporting/<section>/cost-by-<key>.php), which are the groupings' keys, apart from
+    // Hosting Provider (host), which 4.27.0 replaced with Hosting Service (see testTheHostingServiceGrouping())
     const OLD_KEYS = array(
-        'domains' => array('category', 'dns', 'host', 'ip-address', 'month', 'owner', 'registrar', 'tld'),
+        'domains' => array('category', 'dns', 'ip-address', 'month', 'owner', 'registrar', 'tld'),
         'ssl' => array('category', 'domain', 'ip-address', 'month', 'owner', 'provider', 'type'),
     );
 
@@ -66,10 +146,11 @@ class CostReportTest extends TestCase
         }
     }
 
-    // The Group By menu lists them in the Reporting page's order (by label, Web Host last)
+    // The Group By menu lists them in the Reporting page's order (by label, and once hosting is available, Hosting
+    // Service last, see testTheHostingServiceGrouping())
     public function testTheMenuOrderIsTheReportingPagesOrder()
     {
-        $this->assertSame(array('category', 'dns', 'ip-address', 'month', 'owner', 'registrar', 'tld', 'host'),
+        $this->assertSame(array('category', 'dns', 'ip-address', 'month', 'owner', 'registrar', 'tld'),
             array_keys(CostReport::groupings('domains')));
         $this->assertSame(array('category', 'domain', 'ip-address', 'month', 'owner', 'provider', 'type'),
             array_keys(CostReport::groupings('ssl')));

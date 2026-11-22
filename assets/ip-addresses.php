@@ -45,6 +45,24 @@ $result = $pdo->query("
     FROM ip_addresses
     ORDER BY `name`")->fetchAll();
 
+// Once the database has the hosting tables, each IP address also shows how many hosting services that aren't Cancelled use it,
+// which count as use as its domains and SSL certificates do
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$stmt_hosting_count = $hosting_available ? $pdo->prepare("
+    SELECT count(*)
+    FROM hosting_services
+    WHERE ip_id = :asset_id
+      AND active NOT IN ('0')") : null;
+$count_hosting_services = function ($asset_id) use ($stmt_hosting_count) {
+    if ($stmt_hosting_count === null) return 0;
+    $stmt_hosting_count->bindValue('asset_id', (int) $asset_id, PDO::PARAM_INT);
+    $stmt_hosting_count->execute();
+    $total = (int) $stmt_hosting_count->fetchColumn();
+    $stmt_hosting_count->closeCursor();
+    return $total;
+};
+$default_hosting = (int) ($_SESSION['s_default_ip_address_hosting'] ?? 0);
+
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
@@ -62,8 +80,10 @@ if ($export_data === 1) {
         _('rDNS'),
         _('Domains'),
         _('SSL Certs'),
+        _('Hosting Services'),
         _('Default Domain IP Address') . '?',
         _('Default SSL IP Address') . '?',
+        _('Default Hosting IP Address') . '?',
         _('Notes'),
         _('Creation Type'),
         _('Created By'),
@@ -88,6 +108,8 @@ if ($export_data === 1) {
                 WHERE active NOT IN ('0')
                   AND ip_id = '" . $row->id . "'")->fetchColumn();
 
+            $total_hosting_services = $count_hosting_services($row->id);
+
             if ($row->id == $_SESSION['s_default_ip_address_domains']) {
 
                 $is_default_domains = '1';
@@ -108,7 +130,9 @@ if ($export_data === 1) {
 
             }
 
-            if ($total_domains >= 1 || $total_certs >= 1) {
+            $is_default_hosting = (int) $row->id === $default_hosting ? '1' : '0';
+
+            if ($total_domains >= 1 || $total_certs >= 1 || $total_hosting_services >= 1) {
 
                 $status = _('Active');
 
@@ -134,8 +158,10 @@ if ($export_data === 1) {
                 $row->rdns,
                 $total_domains,
                 $total_certs,
+                $total_hosting_services,
                 $is_default_domains,
                 $is_default_ssl,
+                $is_default_hosting,
                 $row->notes,
                 $creation_type,
                 $created_by,
@@ -181,6 +207,7 @@ if ($result) {
     // searched or sorted. As an inline block, the wrapper doesn't show that space.
     $default_domains_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for domains'), ENT_QUOTES, 'UTF-8'), _('Default for domains'), 'warning', 'bi-globe2') . '</span>';
     $default_ssl_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for SSL certificates'), ENT_QUOTES, 'UTF-8'), _('Default for SSL certificates'), 'warning', 'bi-shield-lock') . '</span>';
+    $default_hosting_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for hosting services'), ENT_QUOTES, 'UTF-8'), _('Default for hosting services'), 'warning', 'bi-server') . '</span>';
 
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
@@ -193,7 +220,10 @@ if ($result) {
             <th><?php echo _('IP Address'); ?></th>
             <th><?php echo _('rDNS'); ?></th>
             <th><?php echo _('Domains'); ?></th>
-            <th><?php echo _('SSL Certs'); ?></th>
+            <th><?php echo _('SSL Certs'); ?></th><?php
+            if ($hosting_available) { ?>
+            <th><?php echo _('Hosting Services'); ?></th><?php
+            } ?>
         </tr>
         </thead>
         <tbody><?php
@@ -212,14 +242,16 @@ if ($result) {
                 WHERE active NOT IN ('0')
                   AND ip_id = '" . $row->id . "'")->fetchColumn();
 
-            if (($total_domains >= 1 || $total_certs >= 1) || $_SESSION['s_display_inactive_assets'] == '1') {
+            $total_hosting_services = $count_hosting_services($row->id);
+
+            if (($total_domains >= 1 || $total_certs >= 1 || $total_hosting_services >= 1) || $_SESSION['s_display_inactive_assets'] == '1') {
 
                 $shown++; ?>
 
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo $default_ssl_marker; ?>
+                    <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo $default_ssl_marker; ?><?php if ($hosting_available && $default_hosting === (int) $row->id) echo $default_hosting_marker; ?>
                 </td>
                 <td>
                     <a href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
@@ -252,7 +284,25 @@ if ($result) {
 
                     } ?>
 
-                </td>
+                </td><?php
+
+                if ($hosting_available) { ?>
+
+                    <td><?php
+
+                        if ($total_hosting_services >= 1) { ?>
+
+                            <a href="../hosting/index.php?hipid=<?php echo $row->id; ?>"><?php echo number_format($total_hosting_services); ?></a><?php
+
+                        } else {
+
+                            echo "-";
+
+                        } ?>
+
+                    </td><?php
+
+                } ?>
                 </tr><?php
 
             }

@@ -4,12 +4,16 @@ $include_datatable_css = 0;
 switch ($slug ?? '') {
     case 'admin-custom-ssl-fields':
     case 'admin-custom-domain-fields':
+    case 'admin-custom-hosting-fields':
     case 'admin-scheduler-main':
     case 'admin-users-main':
     case 'admin-debug-log-main':
     case 'assets-categories':
     case 'assets-dns':
     case 'assets-hosting':
+    case 'assets-hosting-accounts':
+    case 'assets-hosting-fees':
+    case 'assets-hosting-types':
     case 'assets-ip-addresses':
     case 'assets-owners':
     case 'assets-registrar-accounts':
@@ -26,8 +30,11 @@ switch ($slug ?? '') {
     case 'dw-main':
     case 'dw-servers':
     case 'history-main':
+    case 'hosting-main':
     case 'reporting-domain-costs':
     case 'reporting-domain-fees':
+    case 'reporting-hosting-costs':
+    case 'reporting-hosting-fees':
     case 'reporting-main':
     case 'reporting-ssl-costs':
     case 'reporting-ssl-fees':

@@ -123,8 +123,11 @@ if (DEMO_INSTALLATION == false && $system->getDbVersion() !== SOFTWARE_VERSION) 
 
                     $schedule->isRunning($row->id);
                     try {
-                        $maint->performCleanup();
+                        $cleanup_result = $maint->performCleanup();
                         $schedule->finishTask($row->id, $started);
+                        // A skipped hosting fee step (the hosting lock stayed busy) is logged, and the next run catches up
+                        $cleanup_hosting_warning = is_array($cleanup_result) ? (string) ($cleanup_result['hosting_warning'] ?? '') : '';
+                        if ($cleanup_hosting_warning !== '') $log->warning($cleanup_hosting_warning);
                         $log_message = sprintf('[%s]' . _('Cleanup Tasks'), DomainMOD\Format::toUpper(_('End')));
                         $log->notice($log_message);
                     } catch (DomainMOD\RestoreLockException $e) {

@@ -411,21 +411,41 @@ class Domain
         return array($fee_id, $total_cost);
     }
 
-    public function addDomain($oid, $rid, $raid, $domain, $tld, $expiry_date, $cat_id, $dns_id, $ip_id, $hosting_id,
-                              $fee_id, $total_cost, $function, $notes, $autorenew, $privacy, $creation_type_id,
-                              $created_by, $status)
+    /*
+     * Adds a domain (the CSV importer, through DomainAdd), with no hosting service: service_id keeps its default of 0.
+     * Before the update, the old hosting_id column is still there, and is written as 0 so it doesn't take its old
+     * default of 1 (a real provider on some installs).
+     */
+    public function addDomain($oid, $rid, $raid, $domain, $tld, $expiry_date, $cat_id, $dns_id, $ip_id, $fee_id,
+                              $total_cost, $function, $notes, $autorenew, $privacy, $creation_type_id, $created_by,
+                              $status)
     {
         $pdo = $this->deeb->cnxx;
 
-        $stmt = $pdo->prepare("
+        // Before the update, the old hosting_id column is written as 0 so it doesn't take its old default of 1 (a real
+        // provider on some installs). A stopped upgrade that has dropped it writes the domain as the update does.
+        if (!Hosting::legacyDomainColumn($pdo)) {
+            $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                     fee_id, total_cost, `function`, notes, autorenew, privacy, creation_type_id,
+                     created_by, `active`, insert_time, update_time)
+                    VALUES
+                    (:oid, :rid, :raid, :domain, :tld, :expiry_date, :cat_id,
+                     :dns_id, :ip_id, :fee_id, :total_cost, :function, :notes,
+                     :autorenew, :privacy, :creation_type_id, :user_id, :status, :insert_time, :update_time)");
+        } else {
+            // Legacy: domains.hosting_id before 4.27.0
+            $stmt = $pdo->prepare("
                     INSERT INTO domains
                     (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
                      hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, creation_type_id,
                      created_by, `active`, insert_time, update_time)
                     VALUES
                     (:oid, :rid, :raid, :domain, :tld, :expiry_date, :cat_id,
-                     :dns_id, :ip_id, :hosting_id, :fee_id, :total_cost, :function, :notes,
+                     :dns_id, :ip_id, 0, :fee_id, :total_cost, :function, :notes,
                      :autorenew, :privacy, :creation_type_id, :user_id, :status, :insert_time, :update_time)");
+        }
         $stmt->bindValue('oid', $oid, \PDO::PARAM_INT);
         $stmt->bindValue('rid', $rid, \PDO::PARAM_INT);
         $stmt->bindValue('raid', $raid, \PDO::PARAM_INT);
@@ -435,7 +455,6 @@ class Domain
         $stmt->bindValue('cat_id', $cat_id, \PDO::PARAM_INT);
         $stmt->bindValue('dns_id', $dns_id, \PDO::PARAM_INT);
         $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
-        $stmt->bindValue('hosting_id', $hosting_id, \PDO::PARAM_INT);
         $stmt->bindValue('fee_id', $fee_id, \PDO::PARAM_INT);
         $stmt->bindValue('total_cost', strval($total_cost), \PDO::PARAM_STR);
         $stmt->bindValue('function', $function, \PDO::PARAM_STR);
@@ -539,6 +558,29 @@ class Domain
         foreach ($domain_ids as $index => $domain_id) {
             $stmt->bindValue('domain_id' . $index, $domain_id, \PDO::PARAM_INT);
         }
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
+    /*
+     * The service delete's unlink: sets service_id to 0 for the given domains that still have $service_id, and returns
+     * how many were changed. It starts no transaction and locks nothing itself: hosting/edit.php calls it under the
+     * hosting lock, inside its transaction, with a page of domains it has already locked and captured.
+     */
+    public function clearHostingService(array $domain_ids, $service_id)
+    {
+        $domain_ids = array_values(array_unique(array_map('intval', $domain_ids)));
+        if (!$domain_ids || (int) $service_id <= 0) return 0;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            UPDATE domains
+            SET service_id = 0,
+                update_time = :update_time
+            WHERE id IN (" . implode(',', $domain_ids) . ")
+              AND service_id = :service_id");
+        $stmt->bindValue('update_time', $this->time->stamp(), \PDO::PARAM_STR);
+        $stmt->bindValue('service_id', (int) $service_id, \PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->rowCount();

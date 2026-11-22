@@ -45,6 +45,23 @@ $result = $pdo->query("
     FROM owners
     ORDER BY `name` ASC")->fetchAll();
 
+// Once the database has the hosting tables, each owner also shows its hosting accounts and the hosting services
+// that aren't Cancelled, which count as use as its domains and SSL certificates do
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$stmt_hosting_counts = $hosting_available ? $pdo->prepare("
+    SELECT (SELECT count(*) FROM hosting_provider_accounts WHERE owner_id = :owner_id_a) AS provider_accounts,
+           (SELECT count(*) FROM hosting_services WHERE owner_id = :owner_id_b AND active NOT IN ('0')) AS hosting_services") : null;
+$hosting_counts = function ($owner_id) use ($stmt_hosting_counts) {
+    if ($stmt_hosting_counts === null) return array(0, 0);
+    $stmt_hosting_counts->bindValue('owner_id_a', (int) $owner_id, PDO::PARAM_INT);
+    $stmt_hosting_counts->bindValue('owner_id_b', (int) $owner_id, PDO::PARAM_INT);
+    $stmt_hosting_counts->execute();
+    $row = $stmt_hosting_counts->fetch();
+    $stmt_hosting_counts->closeCursor();
+    return array((int) $row->provider_accounts, (int) $row->hosting_services);
+};
+$default_owner_hosting = (int) ($_SESSION['s_default_owner_hosting'] ?? 0);
+
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
@@ -62,8 +79,11 @@ if ($export_data === 1) {
         _('Domains'),
         _('SSL Provider Accounts'),
         _('SSL Certs'),
+        _('Hosting Accounts'),
+        _('Hosting Services'),
         _('Default Domain Owner') . '?',
         _('Default SSL Owner') . '?',
+        _('Default Hosting Owner') . '?',
         _('Notes'),
         _('Creation Type'),
         _('Created By'),
@@ -98,6 +118,8 @@ if ($export_data === 1) {
                 WHERE active NOT IN ('0')
                   AND owner_id = '" . $row->id . "'")->fetchColumn();
 
+            list($total_hosting_provider_accounts, $total_hosting_services) = $hosting_counts($row->id);
+
             if ($row->id == $_SESSION['s_default_owner_domains']) {
 
                 $is_default_domains = '1';
@@ -118,7 +140,9 @@ if ($export_data === 1) {
 
             }
 
-            if ($total_domains >= 1 || $total_certs >= 1) {
+            $is_default_hosting = (int) $row->id === $default_owner_hosting ? '1' : '0';
+
+            if ($total_domains >= 1 || $total_certs >= 1 || $total_hosting_services >= 1) {
 
                 $status = _('Active');
 
@@ -144,8 +168,11 @@ if ($export_data === 1) {
                 $total_domains,
                 $total_ssl_provider_accounts,
                 $total_certs,
+                $total_hosting_provider_accounts,
+                $total_hosting_services,
                 $is_default_domains,
                 $is_default_ssl,
+                $is_default_hosting,
                 $row->notes,
                 $creation_type,
                 $created_by,
@@ -193,6 +220,7 @@ if ($result) {
     // searched or sorted. As an inline block, the wrapper doesn't show that space.
     $default_domains_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for domains'), ENT_QUOTES, 'UTF-8'), _('Default for domains'), 'warning', 'bi-globe2') . '</span>';
     $default_ssl_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for SSL certificates'), ENT_QUOTES, 'UTF-8'), _('Default for SSL certificates'), 'warning', 'bi-shield-lock') . '</span>';
+    $default_hosting_marker = '<span class="d-inline-block ms-2"> ' . $layout->statusBadge(htmlspecialchars(_('Default for hosting accounts'), ENT_QUOTES, 'UTF-8'), _('Default for hosting accounts'), 'warning', 'bi-server') . '</span>';
 
     // The rows are buffered, so if every one is hidden as unused, the empty table gives way to an empty state
     $shown = 0;
@@ -205,7 +233,11 @@ if ($result) {
             <th><?php echo _('Registrar Accounts'); ?></th>
             <th><?php echo _('Domains'); ?></th>
             <th><?php echo _('SSL Accounts'); ?></th>
-            <th><?php echo _('SSL Certs'); ?></th>
+            <th><?php echo _('SSL Certs'); ?></th><?php
+            if ($hosting_available) { ?>
+            <th><?php echo _('Hosting Accounts'); ?></th>
+            <th><?php echo _('Hosting Services'); ?></th><?php
+            } ?>
         </tr>
         </thead>
 
@@ -235,14 +267,16 @@ if ($result) {
                 WHERE active NOT IN ('0')
                   AND owner_id = '" . $row->id . "'")->fetchColumn();
 
-            if (($total_domains >= 1 || $total_certs >= 1) || $_SESSION['s_display_inactive_assets'] == '1') {
+            list($total_hosting_provider_accounts, $total_hosting_services) = $hosting_counts($row->id);
+
+            if (($total_domains >= 1 || $total_certs >= 1 || $total_hosting_services >= 1) || $_SESSION['s_display_inactive_assets'] == '1') {
 
                 $shown++; ?>
 
                 <tr>
                 <td></td>
                 <td>
-                    <a href="edit/account-owner.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_owner_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_owner_ssl'] == $row->id) echo $default_ssl_marker; ?>
+                    <a href="edit/account-owner.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_owner_domains'] == $row->id) echo $default_domains_marker; ?><?php if ($_SESSION['s_default_owner_ssl'] == $row->id) echo $default_ssl_marker; ?><?php if ($hosting_available && $default_owner_hosting === (int) $row->id) echo $default_hosting_marker; ?>
                 </td>
                 <td><?php
 
@@ -295,7 +329,38 @@ if ($result) {
 
                     } ?>
 
-                </td>
+                </td><?php
+
+                if ($hosting_available) { ?>
+
+                    <td><?php
+
+                        if ($total_hosting_provider_accounts >= 1) { ?>
+
+                            <a href="hosting-accounts.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_hosting_provider_accounts); ?></a><?php
+
+                        } else {
+
+                            echo "-";
+
+                        } ?>
+
+                    </td>
+                    <td><?php
+
+                        if ($total_hosting_services >= 1) { ?>
+
+                            <a href="../hosting/index.php?oid=<?php echo $row->id; ?>"><?php echo number_format($total_hosting_services); ?></a><?php
+
+                        } else {
+
+                            echo "-";
+
+                        } ?>
+
+                    </td><?php
+
+                } ?>
                 </tr><?php
 
             }

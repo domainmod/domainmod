@@ -87,7 +87,7 @@ if (DEMO_INSTALLATION == false) {
                 $cleanup_busy = false;
                 try {
                     // Recorded in the Change History as this administrator's
-                    $maint->performCleanup((int) ($_SESSION['s_user_id'] ?? 0));
+                    $cleanup_result = $maint->performCleanup((int) ($_SESSION['s_user_id'] ?? 0));
                 } catch (DomainMOD\RestoreLockException $e) {
                     // The fee-change lock stayed busy (such as during a long CSV import): the task isn't left marked as
                     // running, it stays due (as cron.php leaves it), and the busy message is shown with the result
@@ -104,6 +104,10 @@ if (DEMO_INSTALLATION == false) {
                     $log->notice($log_message);
 
                     $_SESSION['s_message_success'] .= _('System Cleanup Performed') . '<BR>';
+
+                    // A skipped hosting fee step (the hosting lock stayed busy) is shown beside it, and the next run catches up
+                    $cleanup_hosting_warning = is_array($cleanup_result) ? (string) ($cleanup_result['hosting_warning'] ?? '') : '';
+                    if ($cleanup_hosting_warning !== '') $_SESSION['s_message_warning'] .= htmlspecialchars($cleanup_hosting_warning, ENT_QUOTES, 'UTF-8') . '<BR>';
 
                 }
 

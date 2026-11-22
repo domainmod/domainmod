@@ -75,7 +75,7 @@ $result_lists = $pdo->query("
 
 $result_domains = $pdo->query("
     SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
-        dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
+        dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.autorenew, dq.privacy,
         dq.processing, dq.ready_to_import, dq.finished, dq.already_in_domains, dq.already_in_queue, dq.invalid_domain,
         dq.copied_to_history, dq.message, dq.created_by, dq.insert_time, r.name AS registrar_name,
         ra.username AS username, o.name AS owner, ar.name AS api_registrar_name
@@ -178,7 +178,6 @@ if ($export_data === 1) {
             _('DNS Profile'),
             _('IP Address (Name)'),
             _('IP Address (IP)'),
-            _('Web Host'),
             _('Category'),
             _('Auto-Renew'),
             _('Privacy'),
@@ -308,24 +307,6 @@ if ($export_data === 1) {
 
                 }
 
-                if ($row_domains->hosting_id == '0') {
-
-                    if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
-
-                        $export_host = '-';
-
-                    } else {
-
-                        $export_host = _('Pending');
-
-                    }
-
-                } else {
-
-                    $export_host = $assets->getHost($row_domains->hosting_id);
-
-                }
-
                 if ($row_domains->cat_id == '0') {
 
                     if ($already_exists == '1' || $row_domains->invalid_domain === 1) {
@@ -420,7 +401,6 @@ if ($export_data === 1) {
                     $export_dns,
                     $export_ip_name,
                     $export_ip_address,
-                    $export_host,
                     $export_category,
                     $export_autorenew,
                     $export_privacy,

@@ -178,28 +178,125 @@ class Reporting
     }
 
     /*
+     * The hosting services' payments in the renewal chart's months, as month totals: for every service in any status
+     * except Cancelled, each renewal date from $start through $end (YYYY-MM-DD, both included) that
+     * Hosting::renewalsInRange() gives adds one term's cost to its month. A service whose stored date is before
+     * $overdue_before (the hosting date, see Hosting::hostingDate()) has a renewal state (Hosting::renewalState()): an
+     * overdue one's stored date goes in 'overdue' instead of its month, a stored date waiting for its renewal to be
+     * confirmed goes in no bucket (it may already be paid, and it isn't overdue), and either way its later renewals are
+     * projected into their months as usual. Returns 'YYYY-MM' (and
+     * 'overdue', when any service is) => array('count' => the payments, 'cost' => the cost of those with a fee and a
+     * rate, 'missing' => the payments left out of the cost for having neither), or an empty list before the database
+     * update that adds the hosting tables.
+     */
+    public function renewalHostingMonths($start, $end, $overdue_before = '')
+    {
+        $pdo = Database::getInstance()->cnxx;
+        if (!Hosting::isAvailable($pdo)) return array();
+
+        $stmt = $pdo->prepare("
+            SELECT hs.expiry_date, hs.billing_term, hs.renewal_day, hs.active, hs.autorenew, (f.id IS NOT NULL) AS has_fee,
+                (cc.id IS NOT NULL) AS has_rate, hs.total_cost * cc.conversion AS converted_cost
+            FROM hosting_services AS hs
+            LEFT JOIN hosting_fees AS f ON hs.fee_id = f.id
+            LEFT JOIN currency_conversions AS cc ON cc.currency_id = f.currency_id AND cc.user_id = :user_id
+            WHERE hs.active <> 0
+              AND hs.expiry_date <= :end_date
+            ORDER BY hs.id");
+        $stmt->bindValue('user_id', (int) ($_SESSION['s_user_id'] ?? 0), \PDO::PARAM_INT);
+        $stmt->bindValue('end_date', $end, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $this->hostingMonths($stmt->fetchAll(), $start, $end, $overdue_before);
+    }
+
+    /*
+     * Month totals of the payments of hosting service rows (expiry_date, billing_term, renewal_day, active, autorenew,
+     * has_fee, has_rate, and converted_cost) from $start through $end, with the overdue stored dates before
+     * $overdue_before (YYYY-MM-DD, or '' for none) in 'overdue' rather than their months, and those waiting for their
+     * renewal to be confirmed in neither, as renewalHostingMonths() returns them. A row without active or autorenew
+     * counts as Active without auto-renew. A service with a billing term outside the allowed list has no projected
+     * payments, but an overdue stored date is still in 'overdue', as on Hosting Renewals.
+     */
+    public function hostingMonths($rows, $start, $end, $overdue_before = '')
+    {
+        $months = array();
+        $add = function ($key, $has_cost, $cost) use (&$months) {
+            if (!isset($months[$key])) $months[$key] = array('count' => 0, 'cost' => 0.0, 'missing' => 0);
+            $months[$key]['count']++;
+            if ($has_cost) {
+                $months[$key]['cost'] += (float) $cost;
+            } else {
+                $months[$key]['missing']++;
+            }
+        };
+        foreach ($rows as $row) {
+            $has_cost = $row->has_fee && $row->has_rate;
+            $stored = (string) $row->expiry_date;
+            $state = $overdue_before !== '' ? Hosting::renewalState($row->active ?? Hosting::ACTIVE, $row->autorenew ?? 0,
+                $stored, $row->billing_term, $overdue_before) : '';
+            if ($state === Hosting::STATE_OVERDUE) $add('overdue', $has_cost, $row->converted_cost);
+            // A billing term DomainMOD doesn't know gives no projected renewals (an overdue stored date is counted above)
+            if (!Hosting::validTerm($row->billing_term)) continue;
+            foreach (Hosting::renewalsInRange($stored, $row->billing_term, $row->renewal_day, $start, $end) as $date) {
+                // A passed stored date leaves its own month: an overdue one is in the Overdue bar, and one waiting for
+                // its renewal to be confirmed is in no bar
+                if ($state !== '' && $date === $stored) continue;
+                $add(substr($date, 0, 7), $has_cost, $row->converted_cost);
+            }
+        }
+        return $months;
+    }
+
+    /*
      * The Dashboard's renewal chart's bars from renewalDomains() and renewalCerts() rows: renewalMonths() for each, lined
      * up bar by bar. The Overdue bar is shown when either has overdue items, and the other gets an empty one. Each bar
      * has its label, whether it's the Overdue bar, its domains' and SSL certificates' renewalMonths() buckets, and the
-     * two costs together.
+     * costs together. With $hosting_months (renewalHostingMonths()'s month totals), each bar also has its hosting bucket,
+     * matched to the month by its year and month (never by position), so a payment before the first month isn't shown,
+     * and the Overdue bar's hosting bucket holds the overdue services' stored dates. An overdue service shows the
+     * Overdue bar by itself, with empty domain and SSL certificate buckets. The months stay anchored to $today (the
+     * user's date), while the hosting date has already decided which services are overdue.
      */
-    public function renewalMonthsBoth($domain_rows, $cert_rows, $today)
+    public function renewalMonthsBoth($domain_rows, $cert_rows, $today, $hosting_months = null)
     {
         $domains = $this->renewalMonths($domain_rows, $today);
         $certs = $this->renewalMonths($cert_rows, $today);
 
         $empty = array('label' => _('Overdue'), 'count' => 0, 'cost' => 0.0, 'missing' => 0, 'overdue' => true);
+        $hosting_overdue = !empty($hosting_months['overdue']['count']);
+        if ($hosting_overdue && empty($domains[0]['overdue']) && empty($certs[0]['overdue'])) {
+            array_unshift($domains, $empty);
+            array_unshift($certs, $empty);
+        }
         if (!empty($domains[0]['overdue']) && empty($certs[0]['overdue'])) array_unshift($certs, $empty);
         if (!empty($certs[0]['overdue']) && empty($domains[0]['overdue'])) array_unshift($domains, $empty);
 
+        $this_month = (int) substr($today, 0, 4) * 12 + (int) substr($today, 5, 2) - 1;
+        $month_offset = 0;
+
         $months = array();
         foreach ($domains as $index => $domain_month) {
-            $months[] = array(
+            $month = array(
                 'label' => $domain_month['label'],
                 'overdue' => $domain_month['overdue'],
                 'domains' => $domain_month,
                 'certs' => $certs[$index],
                 'cost' => $domain_month['cost'] + $certs[$index]['cost']);
+            if ($hosting_months !== null) {
+                $hosting = array('label' => $domain_month['label'], 'count' => 0, 'cost' => 0.0, 'missing' => 0,
+                    'overdue' => $domain_month['overdue']);
+                if ($domain_month['overdue']) {
+                    if ($hosting_overdue) $hosting = array_merge($hosting, $hosting_months['overdue']);
+                } else {
+                    $key = sprintf('%04d-%02d', intdiv($this_month + $month_offset, 12), ($this_month + $month_offset) % 12 + 1);
+                    $month_offset++;
+                    if (isset($hosting_months[$key])) $hosting = array_merge($hosting, $hosting_months[$key]);
+                }
+                $month['hosting'] = $hosting;
+                $month['cost'] += $hosting['cost'];
+            }
+            $months[] = $month;
         }
         return $months;
     }
@@ -303,8 +400,8 @@ class Reporting
 
     /*
      * The Dashboard's renewal chart's figures as a table (from renewalMonthsBoth()), for screen readers and people
-     * without JavaScript: each bar's label, its domains' and SSL certificates' renewal costs, noting any left out of a
-     * cost, and the two together
+     * without JavaScript: each bar's label, its domains' and SSL certificates' renewal costs (and its hosting services'
+     * payments, when the bars have them), noting any left out of a cost, and the costs together
      */
     public function renewalMonthsBothTable($months)
     {
@@ -312,6 +409,7 @@ class Reporting
         $format = function ($amount) use ($currency) {
             return $currency->format($amount, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
         };
+        $with_hosting = isset($months[0]['hosting']);
         ob_start(); ?>
 
         <table class="table table-sm table-striped mb-0">
@@ -319,7 +417,10 @@ class Reporting
             <tr>
                 <th scope="col"><?php echo _('Month'); ?></th>
                 <th scope="col" class="text-end"><?php echo _('Domains'); ?></th>
-                <th scope="col" class="text-end"><?php echo _('SSL Certificates'); ?></th>
+                <th scope="col" class="text-end"><?php echo _('SSL Certificates'); ?></th><?php
+                if ($with_hosting) { ?>
+                    <th scope="col" class="text-end"><?php echo _('Hosting'); ?></th><?php
+                } ?>
                 <th scope="col" class="text-end"><?php echo _('Total Cost'); ?></th>
             </tr>
             </thead>
@@ -335,7 +436,13 @@ class Reporting
                     <td class="text-end"><?php echo $format($month['certs']['cost']); ?><?php
                     if ($month['certs']['missing'] > 0) { ?>
                         <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s SSL certificate has no fee or rate', '%s SSL certificates have no fee or rate', $month['certs']['missing']), number_format($month['certs']['missing'])); ?></span><?php
-                    } ?></td>
+                    } ?></td><?php
+                    if ($with_hosting) { ?>
+                        <td class="text-end"><?php echo $format($month['hosting']['cost']); ?><?php
+                        if ($month['hosting']['missing'] > 0) { ?>
+                            <br><span class="small text-body-secondary"><?php echo sprintf(ngettext('%s hosting service has no fee or rate', '%s hosting services have no fee or rate', $month['hosting']['missing']), number_format($month['hosting']['missing'])); ?></span><?php
+                        } ?></td><?php
+                    } ?>
                     <td class="text-end"><?php echo $format($month['cost']); ?></td>
                 </tr><?php
 

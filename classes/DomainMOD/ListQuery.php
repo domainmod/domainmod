@@ -55,7 +55,8 @@ abstract class ListQuery
     const EXPORT_ORDER = array();
     const EXPORT_ORDER_SQL = '';
 
-    // The database version whose update adds the index on each list's custom field data (see fixedJoinOrder())
+    // The database version whose update adds the index on each list's custom field data (see fixedJoinOrder()). A list
+    // whose tables arrived in a later update sets its own.
     const JOIN_ORDER_DB_VERSION = '4.26.0';
 
     // The list's custom field data table, and its column with the asset's id, which needs an index (each list sets
@@ -138,14 +139,14 @@ abstract class ListQuery
     abstract protected function listColumns(array $settings);
 
     /*
-     * Whether a database at this version has the index on each list's custom field data (the asset's id). New code can
+     * Whether a database at this version has the index on the list's custom field data (the asset's id). New code can
      * arrive before the database update that adds it, so it's used only once the database itself is at that version or
-     * later.
+     * later. Each list's own version is read through static::, so a list can set a later one.
      */
     public static function hasListIndexes($db_version)
     {
         return is_string($db_version) && $db_version !== ''
-            && version_compare($db_version, self::JOIN_ORDER_DB_VERSION, '>=');
+            && version_compare($db_version, static::JOIN_ORDER_DB_VERSION, '>=');
     }
 
     /*
@@ -163,7 +164,7 @@ abstract class ListQuery
 
             try {
 
-                self::$fixed_join_order[$key] = self::hasListIndexes($this->dbVersion()) && $this->listIndexesExist();
+                self::$fixed_join_order[$key] = static::hasListIndexes($this->dbVersion()) && $this->listIndexesExist();
 
             } catch (\Throwable $e) {
 
@@ -241,14 +242,23 @@ abstract class ListQuery
     }
 
     /*
-     * The tables in the fixed join order (JOIN_ORDER), joined with STRAIGHT_JOIN, for the list's fromSql(). An entry
+     * The fixed join order the list's queries use: JOIN_ORDER as written. A list whose join conditions need a value
+     * from the instance (such as the signed-in user's id) returns its own copy with them filled in.
+     */
+    protected function joinOrder()
+    {
+        return static::JOIN_ORDER;
+    }
+
+    /*
+     * The tables in the fixed join order (joinOrder()), joined with STRAIGHT_JOIN, for the list's fromSql(). An entry
      * with a fourth element, its join condition, is joined with LEFT JOIN ... ON that condition instead, so a row
      * without a match in that table is kept. A LEFT JOIN still reads the tables before it first, so the order holds.
      */
     protected function joinOrderTables()
     {
         $sql = '';
-        foreach (static::JOIN_ORDER as $n => $table) {
+        foreach ($this->joinOrder() as $n => $table) {
             $entry = $table[0] . ' AS ' . $table[1] . ($table[2] !== '' ? ' FORCE INDEX (' . $table[2] . ')' : '');
             if ($n === 0) {
                 $sql = $entry;

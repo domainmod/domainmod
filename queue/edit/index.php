@@ -56,7 +56,10 @@ $new_function = isset($_POST['new_function']) ? $sanitize->text($_POST['new_func
 $new_cat_id = (int) ($_POST['new_cat_id'] ?? 0);
 $new_dns_id = (int) ($_POST['new_dns_id'] ?? 0);
 $new_ip_id = (int) ($_POST['new_ip_id'] ?? 0);
-$new_hosting_id = (int) ($_POST['new_hosting_id'] ?? 0);
+// The imported domain's optional hosting service (0 is None), once hosting is available. A malformed value is -1,
+// refused below.
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$new_service_id = $hosting_available ? DomainMOD\Hosting::postedInt($_POST['new_service_id'] ?? '0', -1) : 0;
 $new_account_id = (int) ($_POST['new_account_id'] ?? 0);
 $new_autorenew = (int) ($_POST['new_autorenew'] ?? 0);
 $new_privacy = (int) ($_POST['new_privacy'] ?? 0);
@@ -82,9 +85,20 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
     $custom_fields_valid = DomainMOD\CustomField::markInvalidValues($form, $custom_field_types, $new_custom_fields);
 
     if ($date->checkDateFormat($new_expiry_date) && $new_cat_id !== 0 && $new_dns_id !== 0 && $new_ip_id !== 0 &&
-        $new_hosting_id !== 0 && $new_account_id !== 0 && $custom_fields_valid) {
+        $new_service_id >= 0 && $new_account_id !== 0 && $custom_fields_valid) {
+
+        // An import with a hosting service holds the hosting lock, taken before the transaction, so the service can't be
+        // deleted or cancelled between its check and the insert (see DomainMOD\Hosting)
+        $hosting_locked = false;
 
         try {
+
+            if ($new_service_id !== 0) {
+                if (!DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {
+                    throw new DomainMOD\HostingServiceRefused(DomainMOD\Hosting::busyMessage(), DomainMOD\HostingServiceRefused::BUSY);
+                }
+                $hosting_locked = true;
+            }
 
             // REPEATABLE READ, so the locking reads' next-key locks hold even on a server whose default is READ COMMITTED
             $pdo->exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
@@ -170,12 +184,11 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $new_registrar_id = $result->registrar_id;
             $new_owner_id = $result->owner_id;
 
-            // the category, DNS profile, IP address, and web host may also have been deleted while the form was open
+            // the category, DNS profile, and IP address may also have been deleted while the form was open
             $chosen_assets = array(
                 array('categories', $new_cat_id, _('The category you chose no longer exists. Please choose another one.')),
                 array('dns', $new_dns_id, _('The DNS profile you chose no longer exists. Please choose another one.')),
-                array('ip_addresses', $new_ip_id, _('The IP address you chose no longer exists. Please choose another one.')),
-                array('hosting', $new_hosting_id, _('The web host you chose no longer exists. Please choose another one.')));
+                array('ip_addresses', $new_ip_id, _('The IP address you chose no longer exists. Please choose another one.')));
 
             foreach ($chosen_assets as $chosen_asset) {
 
@@ -197,6 +210,14 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 
                 }
 
+            }
+
+            // The hosting service must still exist and not be cancelled. Nothing is saved, and the form shows again with
+            // the service marked, when it isn't.
+            $service_error = DomainMOD\Hosting::serviceError($pdo, $new_service_id);
+            if ($service_error !== '') {
+                $pdo->rollback();
+                throw new DomainMOD\HostingServiceRefused($service_error);
             }
 
             $tld = $domain->getTld($new_domain);
@@ -241,15 +262,32 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $temp_notes = $time->timeBasic() . ' - Inserted by Queue (edited manually).';
             if ($new_notes != '') $temp_notes .= "\r\n" . $new_notes;
 
-            $stmt = $pdo->prepare("
-                INSERT INTO domains
-                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
-                 hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, creation_type_id, created_by,
-                 active, insert_time)
-                VALUES
-                (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
-                 :new_dns_id, :new_ip_id, :new_hosting_id, :new_fee_id, :new_total_cost, :new_function, :new_notes,
-                 :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active, :timestamp)");
+            // Before the update, the old hosting_id column is still there, and is written as 0 so it doesn't take its old
+            // default of 1 (a real provider on some installs). A stopped upgrade that has dropped it writes the domain as
+            // the update does (see Hosting::legacyDomainColumn()).
+            if (!DomainMOD\Hosting::legacyDomainColumn($pdo)) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                     service_id, fee_id, total_cost, `function`, notes, autorenew, privacy, creation_type_id, created_by,
+                     active, insert_time)
+                    VALUES
+                    (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
+                     :new_dns_id, :new_ip_id, :new_service_id, :new_fee_id, :new_total_cost, :new_function, :new_notes,
+                     :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active, :timestamp)");
+                $stmt->bindValue('new_service_id', $new_service_id, PDO::PARAM_INT);
+            } else {
+                // Legacy: domains.hosting_id before 4.27.0
+                $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                     hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, creation_type_id, created_by,
+                     active, insert_time)
+                    VALUES
+                    (:new_owner_id, :new_registrar_id, :new_account_id, :new_domain, :tld, :new_expiry_date, :new_cat_id,
+                     :new_dns_id, :new_ip_id, 0, :new_fee_id, :new_total_cost, :new_function, :new_notes,
+                     :new_autorenew, :new_privacy, :creation_type_id, :user_id, :new_active, :timestamp)");
+            }
             $stmt->bindValue('new_owner_id', $new_owner_id, PDO::PARAM_INT);
             $stmt->bindValue('new_registrar_id', $new_registrar_id, PDO::PARAM_INT);
             $stmt->bindValue('new_account_id', $new_account_id, PDO::PARAM_INT);
@@ -259,7 +297,6 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $stmt->bindValue('new_cat_id', $new_cat_id, PDO::PARAM_INT);
             $stmt->bindValue('new_dns_id', $new_dns_id, PDO::PARAM_INT);
             $stmt->bindValue('new_ip_id', $new_ip_id, PDO::PARAM_INT);
-            $stmt->bindValue('new_hosting_id', $new_hosting_id, PDO::PARAM_INT);
             $stmt->bindValue('new_fee_id', $new_fee_id, PDO::PARAM_INT);
             $stmt->bindValue('new_total_cost', strval($new_total_cost), PDO::PARAM_STR);
             $stmt->bindValue('new_function', $new_function, PDO::PARAM_STR);
@@ -326,7 +363,6 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
                     cat_id = :cat_id,
                     dns_id = :dns_id,
                     ip_id = :ip_id,
-                    hosting_id = :hosting_id,
                     privacy = :privacy,
                     autorenew = :autorenew,
                     processing = '0',
@@ -345,7 +381,6 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $stmt->bindValue('cat_id', $new_cat_id, PDO::PARAM_INT);
             $stmt->bindValue('dns_id', $new_dns_id, PDO::PARAM_INT);
             $stmt->bindValue('ip_id', $new_ip_id, PDO::PARAM_INT);
-            $stmt->bindValue('hosting_id', $new_hosting_id, PDO::PARAM_INT);
             $stmt->bindValue('privacy', $new_privacy, PDO::PARAM_INT);
             $stmt->bindValue('autorenew', $new_autorenew, PDO::PARAM_INT);
             $stmt->bindValue('qid', $qid, PDO::PARAM_INT);
@@ -370,6 +405,15 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             header("Location: ../");
             exit;
 
+        } catch (DomainMOD\HostingServiceRefused $e) {
+
+            // The hosting lock was busy (nothing was written), or the service can't be used (marked on its menu)
+            if ($e->getCode() === DomainMOD\HostingServiceRefused::BUSY) {
+                $_SESSION['s_message_danger'] .= $e->getMessage() . '<BR>';
+            } else {
+                $form->addFieldError('new_service_id', $e->getMessage());
+            }
+
         } catch (Exception $e) {
 
             if ($pdo->InTransaction()) $pdo->rollback();
@@ -381,6 +425,10 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
             $_SESSION['s_message_danger'] .= _('Unable to import queue domain') . '<BR>';
 
             throw $e;
+
+        } finally {
+
+            if ($hosting_locked) DomainMOD\Hosting::unlock($pdo);
 
         }
 
@@ -408,9 +456,9 @@ if ($edited_creation_type_id && $queue_row && $_SERVER['REQUEST_METHOD'] == 'POS
 
         }
 
-        if ($new_hosting_id === 0) {
+        if ($new_service_id < 0) {
 
-            $form->addFieldError('new_hosting_id', _('Choose the Web Host'));
+            $form->addFieldError('new_service_id', DomainMOD\Hosting::serviceGoneMessage());
 
         }
 
@@ -614,32 +662,14 @@ if (!$edited_creation_type_id) {
 
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // The optional hosting service, once hosting is available (the queue never chooses one itself)
+    if ($hosting_available) {
 
-        $to_compare = $new_hosting_id;
-
-    } else {
-
-        $to_compare = $queue_row->hosting_id ? $queue_row->hosting_id : $_SESSION['s_default_host'];
-
-    }
-
-    $result = $pdo->query("
-        SELECT id, `name`
-        FROM hosting
-        ORDER BY name ASC")->fetchAll();
-
-    if ($result) {
-
-        echo $form->showDropdownTop('new_hosting_id', _('Web Hosting Provider'), '', '1', '');
-
-        foreach ($result as $row) {
-
-            echo $form->showDropdownOption($row->id, $row->name, $to_compare);
-
-        }
-
-        echo $form->showDropdownBottom('', 'new_hosting_id');
+        $to_compare = $_SERVER['REQUEST_METHOD'] == 'POST' ? max($new_service_id, 0) : 0;
+        $services = DomainMOD\Hosting::serviceMenu($pdo, $to_compare);
+        // Shown again after a failed save, the IP Address shown was already chosen, so the service no longer fills it in
+        echo $form->showHostingServiceMenu('new_service_id', $to_compare, $services, '', '',
+            $_SERVER['REQUEST_METHOD'] == 'POST' ? '' : 'new_ip_id', DomainMOD\Hosting::serviceIps($pdo, array_keys($services)));
 
     }
 
@@ -723,5 +753,6 @@ if (!$edited_creation_type_id) {
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 <?php require_once DIR_INC . '/layout/date-picker-footer.inc.php'; ?>
+<script src="<?php echo $layout->assetUrl('js/hosting-service-ip.js'); ?>"></script>
 </body>
 </html>

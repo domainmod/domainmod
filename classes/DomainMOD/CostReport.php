@@ -22,26 +22,38 @@
 namespace DomainMOD;
 
 /*
- * The Domain Costs and SSL Costs reports (reporting/domains/costs.php and reporting/ssl/costs.php): what each Group By
- * choice shows, and the queries behind it. Each grouping keeps the tables and order of the report it replaced (such as
+ * The Domain Costs, SSL Costs, and Hosting Costs reports (reporting/domains/costs.php, reporting/ssl/costs.php, and
+ * reporting/hosting/costs.php): what each Group By choice shows, and the queries behind it. Each grouping keeps the tables and order of the report it replaced (such as
  * Domain Cost by Registrar), but groups by id rather than by name, so two records with the same name (such as two
  * owners called Greg) get a row each, each linking to its own record.
  *
  * The SQL is built only from the fixed grouping data below, never from the request: the request's group only picks a
  * grouping, and the user and the dates are bound.
+ *
+ * Hosting's costs are yearly figures (each service's cost per term scaled to 12 months, see Hosting::yearlyCost()).
+ * A group's services can have different billing terms, so the report never adds up costs per term. A service with a
+ * billing term outside the allowed list is left out, as a service with no fee or no conversion rate is. Its Month
+ * grouping shows projected renewals instead (see HostingReport::monthTotals()), worked out once per request in PHP
+ * rather than by a grouped query.
  */
 class CostReport
 {
     /*
      * Each section's assets: their table and alias, their fee table, the statuses left out (Expired and Sold domains,
-     * and Expired SSL certificates), the list their counts link to, and the grouping the report opens at
+     * Expired SSL certificates, and Cancelled hosting services), the list their counts link to, and the grouping the
+     * report opens at
      */
     const SECTIONS = array(
         'domains' => array('table' => 'domains', 'alias' => 'd', 'fees' => 'fees', 'inactive' => "'0', '10'",
             'list' => '../../domains/index.php', 'default' => 'registrar'),
         'ssl' => array('table' => 'ssl_certs', 'alias' => 'sslc', 'fees' => 'ssl_fees', 'inactive' => "'0'",
             'list' => '../../ssl/index.php', 'default' => 'provider'),
+        'hosting' => array('table' => 'hosting_services', 'alias' => 'hs', 'fees' => 'hosting_fees', 'inactive' => "'0'",
+            'list' => '../../hosting/index.php', 'default' => 'provider'),
     );
+
+    // Hosting's Month grouping's projection, worked out once per range and read by rows(), totals(), and subtotals()
+    protected $projections = array();
 
     protected $pdo;
     protected $user_id;
@@ -76,7 +88,8 @@ class CostReport
      *                 linkValue()).
      *   chart         'doughnut' or 'bar', and its labels: 'field' (a row's field), 'tld', 'ip' (name and IP address),
      *                 'month', or the chart query's field (Registrar and Provider, which have their own chart query),
-     *                 with 'null_label' for a NULL field, as for the columns
+     *                 with 'null_label' for a NULL field, as for the columns (for 'ip', the label of the row with no
+     *                 IP address)
      *   subtotal      'year' (Month), or the registrar's or provider's id column and name field, with 'blank', the
      *                 text of a group cell on a group's later rows
      *   ordering      whether the table's columns sort, and 'page_length', the user setting a paged table opens at
@@ -92,6 +105,8 @@ class CostReport
         $ssl_certs = function ($param) {
             return array('heading' => _('SSL Certs'), 'value' => 'count', 'link' => array($param, 'id'));
         };
+
+        if ($section === 'hosting') return self::hostingGroupings();
 
         if ($section === 'ssl') {
 
@@ -171,7 +186,7 @@ class CostReport
 
         }
 
-        return array(
+        $groupings = array(
             'category' => array('key' => 'category', 'label' => _('Category'),
                 'title' => _('Domain Cost by Category Report'), 'name' => _('Domain Cost by Category'),
                 'export' => _('domain_cost_by_category_report'), 'export_all' => _('domain_cost_by_category_report_all'),
@@ -240,28 +255,136 @@ class CostReport
                 'chart' => array('type' => 'doughnut', 'label' => 'tld'), 'ordering' => true,
                 // The export's Date Range row has the start and end dates in cells of their own
                 'range_cells' => true),
-            'host' => array('key' => 'host', 'label' => _('Web Host'),
-                'title' => _('Domain Cost by Web Host Report'), 'name' => _('Domain Cost by Web Host'),
-                'export' => _('domain_cost_by_web_host_report'), 'export_all' => _('domain_cost_by_web_host_report_all'),
-                'select' => 'wh.id, wh.name', 'from' => array('hosting AS wh'),
-                'where' => array('d.hosting_id = wh.id'), 'group_by' => 'wh.id, wh.name', 'order_by' => 'wh.name, wh.id',
-                // The number of domains comes before the cost here
+        );
+
+        // Hosting Service, once the 4.27.0 database update adds hosting services. It replaced the Hosting Provider
+        // grouping (host), whose old links now open the default grouping, since a provider's id isn't a service's.
+        if (self::hostingAvailable()) {
+            $groupings['service'] = array('key' => 'service', 'label' => _('Hosting Service'),
+                'title' => _('Domain Cost by Hosting Service Report'), 'name' => _('Domain Cost by Hosting Service'),
+                'export' => _('domain_cost_by_hosting_service_report'),
+                'export_all' => _('domain_cost_by_hosting_service_report_all'),
+                // A domain doesn't need a hosting service, so the domains with none (or with one that's gone) are one
+                // NULL row, None
+                'select' => 'hs.id, hs.name', 'from' => array(), 'where' => array(),
+                'left_join' => array('table' => 'hosting_services', 'alias' => 'hs', 'on' => 'hs.id = d.service_id'),
+                'group_by' => 'hs.id, hs.name', 'order_by' => 'hs.name, hs.id',
+                // The number of domains comes before the cost here, as it did for the Hosting Provider grouping
                 'columns' => array(
-                    array('heading' => _('Host'), 'csv' => _('Web Hosting Provider'), 'value' => 'field', 'field' => 'name'),
-                    $domains('whid'), $cost, $per_domain),
+                    array('heading' => _('Service'), 'csv' => _('Hosting Service'), 'value' => 'field', 'field' => 'name',
+                        'null_label' => _('None')),
+                    $domains('hsid') + array('null_link' => DomainList::NO_SERVICE), $cost, $per_domain),
+                'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name', 'null_label' => _('None')),
+                'ordering' => true);
+        }
+
+        return $groupings;
+    }
+
+    // Whether the database has hosting services (see Hosting::isAvailable()). A database that can't be asked counts as
+    // no.
+    protected static function hostingAvailable()
+    {
+        try {
+            return Hosting::isAvailable();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /*
+     * Hosting's groupings. Each total is the yearly figure ('cost', with 'per' the yearly cost per service). There's no
+     * cost per term, since a group's services can have different billing terms.
+     */
+    protected static function hostingGroupings()
+    {
+        $cost = array('heading' => _('Yearly Cost'), 'value' => 'cost');
+        $per_service = array('heading' => _('Per Service'), 'value' => 'per');
+        $services = function ($param, $field = 'id') {
+            return array('heading' => _('Services'), 'csv' => _('Hosting Services'), 'value' => 'count',
+                'link' => array($param, $field));
+        };
+
+        return array(
+            'category' => array('key' => 'category', 'label' => _('Category'),
+                'title' => _('Hosting Cost by Category Report'), 'name' => _('Hosting Cost by Category'),
+                'export' => _('hosting_cost_by_category_report'), 'export_all' => _('hosting_cost_by_category_report_all'),
+                'select' => 'cat.id, cat.name', 'from' => array('categories AS cat'),
+                'where' => array('hs.cat_id = cat.id'), 'group_by' => 'cat.id, cat.name', 'order_by' => 'cat.name, cat.id',
+                'columns' => array(array('heading' => _('Category'), 'value' => 'field', 'field' => 'name'), $cost,
+                    $services('hcid'), $per_service),
                 'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
+            'ip-address' => array('key' => 'ip-address', 'label' => _('IP Address'),
+                'title' => _('Hosting Cost by IP Address Report'), 'name' => _('Hosting Cost by IP Address'),
+                'export' => _('hosting_cost_by_ip_address_report'),
+                'export_all' => _('hosting_cost_by_ip_address_report_all'),
+                // A service doesn't need an IP address, so the services with none (or with one that's gone) are one
+                // NULL row, None
+                'select' => 'ip.id, ip.name, ip.ip, ip.rdns', 'from' => array(), 'where' => array(),
+                'left_join' => array('table' => 'ip_addresses', 'alias' => 'ip', 'on' => 'ip.id = hs.ip_id'),
+                'group_by' => 'ip.id, ip.name, ip.ip, ip.rdns', 'order_by' => 'ip.name, ip.id',
+                'columns' => array(
+                    array('heading' => _('Name'), 'csv' => _('IP Address Name'), 'value' => 'field', 'field' => 'name',
+                        'null_label' => _('None')),
+                    array('heading' => _('IP Address'), 'value' => 'field', 'field' => 'ip'),
+                    array('heading' => _('rDNS'), 'value' => 'field', 'field' => 'rdns'),
+                    $cost, $services('hipid') + array('null_link' => HostingList::NO_IP), $per_service),
+                'chart' => array('type' => 'doughnut', 'label' => 'ip', 'null_label' => _('None')), 'ordering' => true),
+            'month' => self::month('hosting'),
+            'owner' => array('key' => 'owner', 'label' => _('Owner'),
+                'title' => _('Hosting Cost by Owner Report'), 'name' => _('Hosting Cost by Owner'),
+                'export' => _('hosting_cost_by_owner_report'), 'export_all' => _('hosting_cost_by_owner_report_all'),
+                'select' => 'o.id, o.name', 'from' => array('owners AS o'),
+                'where' => array('hs.owner_id = o.id'), 'group_by' => 'o.id, o.name', 'order_by' => 'o.name, o.id',
+                'columns' => array(array('heading' => _('Owner'), 'value' => 'field', 'field' => 'name'), $cost,
+                    $services('oid'), $per_service),
+                'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'name'), 'ordering' => true),
+            'provider' => array('key' => 'provider', 'label' => _('Provider'),
+                'title' => _('Hosting Cost by Provider Report'), 'name' => _('Hosting Cost by Provider'),
+                'export' => _('hosting_cost_by_provider_report'), 'export_all' => _('hosting_cost_by_provider_report_all'),
+                'select' => 'h.id, h.name AS provider_name, o.name AS owner_name, hpa.id AS account_id, hpa.username',
+                'from' => array('hosting AS h', 'hosting_provider_accounts AS hpa', 'owners AS o'),
+                'where' => array('hs.hosting_id = h.id', 'hs.account_id = hpa.id', 'hs.owner_id = o.id'),
+                'group_by' => 'h.id, h.name, o.id, o.name, hpa.id, hpa.username',
+                'order_by' => 'h.name, h.id, o.name, o.id, hpa.username, hpa.id',
+                'columns' => array(
+                    array('heading' => _('Provider'), 'csv' => _('Hosting Provider'), 'value' => 'field',
+                        'field' => 'provider_name', 'group_only' => true),
+                    array('heading' => _('Yearly Cost'), 'value' => 'group_cost', 'group_only' => true),
+                    array('heading' => _('Services'), 'csv' => _('Hosting Services'), 'value' => 'group_count',
+                        'link' => array('hid', 'id'), 'group_only' => true),
+                    array('heading' => _('Per Service'), 'value' => 'group_per', 'group_only' => true),
+                    array('heading' => _('Account'), 'csv' => _('Hosting Account'), 'value' => 'account'),
+                    $cost, $services('hpaid', 'account_id'), $per_service),
+                'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'provider_name',
+                    'select' => 'h.name AS provider_name', 'group_by' => 'h.id, h.name', 'order_by' => 'h.name, h.id'),
+                'subtotal' => array('id' => 'h.id', 'name' => 'provider_name', 'blank' => ''), 'ordering' => false),
+            'type' => array('key' => 'type', 'label' => _('Service Type'),
+                'title' => _('Hosting Cost by Service Type Report'), 'name' => _('Hosting Cost by Service Type'),
+                'export' => _('hosting_cost_by_type_report'), 'export_all' => _('hosting_cost_by_type_report_all'),
+                'select' => 'ht.id, ht.type', 'from' => array('hosting_types AS ht'),
+                'where' => array('hs.type_id = ht.id'), 'group_by' => 'ht.id, ht.type', 'order_by' => 'ht.type, ht.id',
+                'columns' => array(array('heading' => _('Service Type'), 'value' => 'field', 'field' => 'type'), $cost,
+                    $services('htid'), $per_service),
+                'chart' => array('type' => 'doughnut', 'label' => 'field', 'field' => 'type'), 'ordering' => true),
         );
     }
 
-    // The Month grouping, the same for both sections apart from its names. The year and its cost show only on a year's
-    // first row in the table.
+    // The Month grouping, the same for every section apart from its names. The year and its cost show only on a year's
+    // first row in the table. Hosting's shows projected renewals (see HostingReport::monthTotals()).
     protected static function month($section)
     {
+        $names = array(
+            'domains' => array(_('Domain Cost by Month Report'), _('Domain Cost by Month'), _('domain_cost_by_month_report'),
+                _('domain_cost_by_month_report_all')),
+            'ssl' => array(_('SSL Cost by Month Report'), _('SSL Cost by Month'), _('ssl_cost_by_month_report'),
+                _('ssl_cost_by_month_report_all')),
+            'hosting' => array(_('Hosting Cost by Month Report'), _('Hosting Cost by Month'),
+                _('hosting_cost_by_month_report'), _('hosting_cost_by_month_report_all')));
+        list($title, $name, $export, $export_all) = $names[$section];
+
         return array('key' => 'month', 'label' => _('Month'),
-            'title' => $section === 'ssl' ? _('SSL Cost by Month Report') : _('Domain Cost by Month Report'),
-            'name' => $section === 'ssl' ? _('SSL Cost by Month') : _('Domain Cost by Month'),
-            'export' => $section === 'ssl' ? _('ssl_cost_by_month_report') : _('domain_cost_by_month_report'),
-            'export_all' => $section === 'ssl' ? _('ssl_cost_by_month_report_all') : _('domain_cost_by_month_report_all'),
+            'title' => $title, 'name' => $name, 'export' => $export, 'export_all' => $export_all,
             'from' => array(), 'where' => array(),
             'columns' => array(
                 array('heading' => _('Year'), 'value' => 'year', 'group_only' => true),
@@ -320,10 +443,12 @@ class CostReport
 
     /*
      * The grouped rows. Month lists every month with an asset, without the conversion rates (as the old report did),
-     * and its costs come from subtotals().
+     * and its costs come from subtotals(). Hosting's Month lists every month with a projected renewal.
      */
     public function rows($section, $grouping, $start_date, $end_date)
     {
+        if ($this->projected($section, $grouping)) return $this->projection($start_date, $end_date)['rows'];
+
         if ($grouping['key'] === 'month') {
             $expiry = self::SECTIONS[$section]['alias'] . '.expiry_date';
             return $this->run($section, $grouping, 'YEAR(' . $expiry . ') AS year, MONTH(' . $expiry . ') AS month',
@@ -334,11 +459,19 @@ class CostReport
             $grouping['group_by'], $grouping['order_by'], $start_date, $end_date);
     }
 
-    // The report's total cost (grand_total) and number of assets (number_total), with the grouping's own tables
+    /*
+     * The report's total cost (grand_total) and number of assets (number_total), with the grouping's own tables.
+     * Hosting's Month: the sum of the projected renewals, and the number of services with at least one.
+     */
     public function totals($section, $grouping, $start_date, $end_date)
     {
+        if ($this->projected($section, $grouping)) {
+            $projection = $this->projection($start_date, $end_date);
+            return (object) array('grand_total' => $projection['total'], 'number_total' => $projection['count']);
+        }
+
         $rows = $this->run($section, $grouping,
-            'SUM(' . self::SECTIONS[$section]['alias'] . '.total_cost * cc.conversion) AS grand_total, count(*) AS number_total',
+            'SUM(' . self::costSql($section) . ') AS grand_total, count(*) AS number_total',
             '', '', $start_date, $end_date);
 
         return $rows[0] ?? (object) array('grand_total' => null, 'number_total' => 0);
@@ -350,21 +483,26 @@ class CostReport
         if (!isset($grouping['chart']['select'])) return array();
 
         return $this->run($section, $grouping, $grouping['chart']['select'] . ', SUM(' .
-            self::SECTIONS[$section]['alias'] . '.total_cost * cc.conversion) AS total_cost',
+            self::costSql($section) . ') AS total_cost',
             $grouping['chart']['group_by'], $grouping['chart']['order_by'], $start_date, $end_date);
     }
 
     /*
      * The costs a row looks up rather than carries. Month: 'month' (keyed year-month) and 'year' (keyed year), each a
      * cost. Registrar and Provider: 'group', keyed by the registrar's or provider's id, each with total_cost and
-     * number_of_assets. Other groupings have none.
+     * number_of_assets. Other groupings have none. Hosting's Month comes from the projection.
      */
     public function subtotals($section, $grouping, $start_date, $end_date)
     {
         if (!isset($grouping['subtotal'])) return array();
 
+        if ($this->projected($section, $grouping)) {
+            $projection = $this->projection($start_date, $end_date);
+            return array('month' => $projection['month'], 'year' => $projection['year']);
+        }
+
         $alias = self::SECTIONS[$section]['alias'];
-        $cost = 'SUM(' . $alias . '.total_cost * cc.conversion)';
+        $cost = 'SUM(' . self::costSql($section) . ')';
 
         if (!empty($grouping['subtotal']['year'])) {
             $expiry = $alias . '.expiry_date';
@@ -425,7 +563,9 @@ class CostReport
             if ($chart['label'] === 'tld') {
                 $labels[] = '.' . $row->tld;
             } elseif ($chart['label'] === 'ip') {
-                $labels[] = $row->name . ' (' . $row->ip . ')';
+                // The NULL row of a LEFT JOIN (hosting's services with no IP address) has no name or address to show
+                $labels[] = isset($chart['null_label']) && $row->id === null
+                    ? $chart['null_label'] : $row->name . ' (' . $row->ip . ')';
             } else {
                 $labels[] = self::fieldText($chart, $row);
             }
@@ -438,7 +578,36 @@ class CostReport
     // The cost and the number of assets of each group
     protected function costColumns($section)
     {
-        return 'SUM(' . self::SECTIONS[$section]['alias'] . '.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_assets';
+        return 'SUM(' . self::costSql($section) . ') AS total_cost, count(*) AS number_of_assets';
+    }
+
+    // One asset's cost in the user's currency, as SQL: hosting's yearly figure, or the cost itself for the others
+    protected static function costSql($section)
+    {
+        $a = self::SECTIONS[$section]['alias'];
+        if ($section === 'hosting') return Hosting::yearlyCostSql($a, $a . '.total_cost * cc.conversion');
+        return $a . '.total_cost * cc.conversion';
+    }
+
+    // Whether the grouping is hosting's Month, which shows projected renewals rather than a grouped query's rows
+    protected function projected($section, $grouping)
+    {
+        return $section === 'hosting' && $grouping['key'] === 'month';
+    }
+
+    /*
+     * Hosting's Month figures for the range (HostingReport::monthTotals()), worked out once per request and range, so
+     * the rows, totals, chart, and subtotals all add up the same projected renewals
+     */
+    protected function projection($start_date, $end_date)
+    {
+        $key = $start_date . '|' . $end_date;
+        if (!isset($this->projections[$key])) {
+            $report = new HostingReport($this->pdo, $this->user_id);
+            $this->projections[$key] = HostingReport::monthTotals($report->services((string) $end_date),
+                (string) $start_date, (string) $end_date);
+        }
+        return $this->projections[$key];
     }
 
     /*
@@ -467,6 +636,8 @@ class CostReport
         $from = array_merge($from, $grouping['from']);
         $where = array_merge($where, $grouping['where']);
         $where[] = $a . '.active NOT IN (' . $assets['inactive'] . ')';
+        // A hosting service whose billing term isn't an allowed one has no yearly figure, so it's left out
+        if ($section === 'hosting') $where[] = $a . '.billing_term IN (' . implode(', ', Hosting::BILLING_TERMS) . ')';
         if ($with_rates) {
             $where[] = 'cc.user_id = :user_id';
             $params['user_id'] = $this->user_id;

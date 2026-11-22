@@ -88,6 +88,10 @@ class ChangeHistoryOperation
         if ($this->enabled && $this->source !== ChangeHistory::SOURCE_CUSTOM_FIELD) {
             $this->customFields('domain');
             $this->customFields('ssl');
+            // Hosting's too: the history is only on from 4.27.0, whose database update adds the hosting tables, so there's
+            // no need to ask Hosting::isAvailable(), whose plain read would open the transaction's snapshot before the
+            // write site's own locking reads (see ChangeHistory::isAvailable())
+            $this->customFields('hosting');
         }
     }
 
@@ -719,8 +723,9 @@ class ChangeHistoryOperation
 
     /*
      * The name of each referenced asset for an id field, at the time (so a later rename or delete doesn't change what
-     * the history says). An id that names nothing (such as an SSL certificate's domain 0) has
-     * no name, and the page shows "None" for a certificate's domain.
+     * the history says). An id that names nothing (such as an SSL certificate's domain 0, or a hosting service's IP
+     * address 0) has no name, and the page shows "None" for a certificate's domain, a hosting service's IP address, and
+     * a domain's hosting service.
      */
     protected function displayNames($type, $field, array $ids)
     {
@@ -732,7 +737,7 @@ class ChangeHistoryOperation
                 'cat_id' => "SELECT id, `name` FROM categories WHERE id IN (%s)",
                 'dns_id' => "SELECT id, `name` FROM dns WHERE id IN (%s)",
                 'ip_id' => "SELECT id, CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id IN (%s)",
-                'hosting_id' => "SELECT id, `name` FROM hosting WHERE id IN (%s)"),
+                'service_id' => "SELECT id, `name` FROM hosting_services WHERE id IN (%s)"),
             'ssl' => array(
                 'domain_id' => "SELECT id, domain FROM domains WHERE id IN (%s)",
                 'account_id' => "SELECT sa.id, CONCAT(p.name, ', ', o.name, ' (', sa.username, ')') FROM ssl_accounts AS sa JOIN ssl_providers AS p ON p.id = sa.ssl_provider_id JOIN owners AS o ON o.id = sa.owner_id WHERE sa.id IN (%s)",
@@ -741,6 +746,14 @@ class ChangeHistoryOperation
                 'type_id' => "SELECT id, `type` FROM ssl_cert_types WHERE id IN (%s)",
                 'ip_id' => "SELECT id, CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id IN (%s)",
                 'cat_id' => "SELECT id, `name` FROM categories WHERE id IN (%s)"));
+        // A hosting service's names, in their own statement, apart from the certificate's domain query above
+        $sql['hosting'] = array(
+            'account_id' => "SELECT hpa.id, CONCAT(h.name, ', ', o.name, ' (', hpa.username, ')') FROM hosting_provider_accounts AS hpa JOIN hosting AS h ON h.id = hpa.hosting_id JOIN owners AS o ON o.id = hpa.owner_id WHERE hpa.id IN (%s)",
+            'owner_id' => "SELECT id, `name` FROM owners WHERE id IN (%s)",
+            'hosting_id' => "SELECT id, `name` FROM hosting WHERE id IN (%s)",
+            'type_id' => "SELECT id, `type` FROM hosting_types WHERE id IN (%s)",
+            'ip_id' => "SELECT id, CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id IN (%s)",
+            'cat_id' => "SELECT id, `name` FROM categories WHERE id IN (%s)");
 
         $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
         if (!$ids || !isset($sql[$type][$field])) return array();

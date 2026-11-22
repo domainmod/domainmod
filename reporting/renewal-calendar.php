@@ -45,13 +45,23 @@ $system->authCheck();
 $export_data = (int) ($_GET['export_data'] ?? 0);
 $today = $time->userToday();
 
-// The month shown (YYYY-MM, from 2000-01 through 2099-12), or today's month for anything else
-$month = $_GET['month'] ?? '';
-if (!is_string($month) || !preg_match('/^(20\d{2})-(0[1-9]|1[0-2])\z/', $month)) $month = substr($today, 0, 7);
+// Hosting services are shown once the database update has added the hosting tables. Their dates are projected renewals,
+// and whether a stored date has passed is judged by the hosting date (see DomainMOD\Hosting::hostingDate()).
+$hosting_available = DomainMOD\Hosting::isAvailable($deeb->cnxx);
+$hosting_today = $hosting_available ? DomainMOD\Hosting::hostingDate($deeb->cnxx) : $today;
 
-// What's shown: everything, or just domains or just SSL certificates
+// What's shown: everything, or just domains, SSL certificates, or hosting services
+$show_choices = $hosting_available ? array('all', 'domains', 'ssl', 'hosting') : array('all', 'domains', 'ssl');
 $show = $_GET['show'] ?? 'all';
-if (!is_string($show) || !in_array($show, array('all', 'domains', 'ssl'), true)) $show = 'all';
+if (!is_string($show) || !in_array($show, $show_choices, true)) $show = 'all';
+
+// The month shown (YYYY-MM, from 2000-01 through 2099-12), or today's month for anything else (the hosting date's month
+// when only hosting services are shown)
+$month = $_GET['month'] ?? '';
+if (!is_string($month) || !preg_match('/^(20\d{2})-(0[1-9]|1[0-2])\z/', $month)) {
+    $month = substr($show === 'hosting' ? $hosting_today : $today, 0, 7);
+}
+$this_month = substr($show === 'hosting' ? $hosting_today : $today, 0, 7);
 
 $month_start = $month . '-01';
 $next_month = (new DateTime($month_start))->modify('+1 month')->format('Y-m');
@@ -66,35 +76,73 @@ $page_url = function ($for_month, $for_show, $extra = array()) use ($report_file
     return $report_filename . '?' . http_build_query(array_merge(array('month' => $for_month, 'show' => $for_show), $extra));
 };
 
-// The month's live items, domains and SSL certificates together, sorted by date, then type, then name
+/*
+ * The month's live items, domains, SSL certificates, and hosting services together, sorted by date, then type, then
+ * name. A hosting service appears on each of its projected renewals in the month (see DomainMOD\HostingReport), and
+ * only its stored date can be overdue or waiting for its renewal to be confirmed (see DomainMOD\Hosting::renewalState()).
+ * Services with no fee or no rate are still shown, as domains and SSL certificates
+ * are, so every service that isn't Cancelled is read.
+ */
+$month_end = (new DateTime($next_month . '-01'))->modify('-1 day')->format('Y-m-d');
 $items = array();
-if ($show !== 'ssl') {
+if ($show === 'all' || $show === 'domains') {
     foreach ($reporting->renewalDomains($next_month . '-01', $month_start) as $row) {
         $items[] = array('type' => 'domain', 'id' => (int) $row->id, 'name' => $row->domain, 'date' => $row->expiry_date,
             'provider' => $row->registrar_name, 'owner' => $row->owner_name, 'username' => $row->username,
-            'has_fee' => $row->has_fee, 'has_rate' => $row->has_rate, 'cost' => $row->converted_cost);
+            'has_fee' => $row->has_fee, 'has_rate' => $row->has_rate, 'cost' => $row->converted_cost,
+            'overdue' => $row->expiry_date < $today, 'confirm' => false);
     }
 }
-if ($show !== 'domains') {
+if ($show === 'all' || $show === 'ssl') {
     foreach ($reporting->renewalCerts($next_month . '-01', $month_start) as $row) {
         $items[] = array('type' => 'ssl', 'id' => (int) $row->id, 'name' => $row->name, 'date' => $row->expiry_date,
             'provider' => $row->provider_name, 'owner' => $row->owner_name, 'username' => $row->username,
-            'has_fee' => $row->has_fee, 'has_rate' => $row->has_rate, 'cost' => $row->converted_cost);
+            'has_fee' => $row->has_fee, 'has_rate' => $row->has_rate, 'cost' => $row->converted_cost,
+            'overdue' => $row->expiry_date < $today, 'confirm' => false);
+    }
+}
+if ($hosting_available && ($show === 'all' || $show === 'hosting')) {
+    $hosting_report = new DomainMOD\HostingReport($deeb->cnxx, $_SESSION['s_user_id'] ?? 0);
+    $hosting_services = $hosting_report->services($month_end);
+    $hosting_rows = DomainMOD\HostingReport::payments($hosting_services, $month_start, $month_end);
+    // A billing term DomainMOD doesn't know gives no projected renewals, but the stored date still shows in its month
+    foreach ($hosting_services as $service) {
+        if (DomainMOD\Hosting::validTerm($service->billing_term) || $service->expiry_date < $month_start
+            || $service->expiry_date > $month_end) continue;
+        $row = clone $service;
+        $row->renewal_date = $service->expiry_date;
+        $row->projected = false;
+        $hosting_rows[] = $row;
+    }
+    foreach ($hosting_rows as $row) {
+        // Only the stored date has a renewal state, never a projected renewal
+        $state = $row->projected ? '' : DomainMOD\Hosting::renewalState($row->active, $row->autorenew, $row->renewal_date,
+            $row->billing_term, $hosting_today);
+        $items[] = array('type' => 'hosting', 'id' => (int) $row->id, 'name' => $row->name, 'date' => $row->renewal_date,
+            'provider' => $row->provider_name, 'owner' => $row->owner_name, 'username' => $row->username,
+            'has_fee' => $row->has_fee, 'has_rate' => $row->has_rate, 'cost' => $row->converted_cost,
+            'overdue' => $state === DomainMOD\Hosting::STATE_OVERDUE, 'confirm' => $state === DomainMOD\Hosting::STATE_CONFIRM);
     }
 }
 usort($items, function ($a, $b) {
     return array($a['date'], $a['type'], strtolower($a['name'])) <=> array($b['date'], $b['type'], strtolower($b['name']));
 });
 
-// The month's totals (each type and both together), and each day's items, count, and cost
-$totals = array('domain' => array('count' => 0, 'cost' => 0.0), 'ssl' => array('count' => 0, 'cost' => 0.0));
+// The month's totals (each type and all together), and each day's items, count, and cost.
+// A day is marked Overdue when it has a domain or SSL certificate whose expiry date has passed, or an overdue hosting
+// service's stored date, and Confirm renewal when it has a hosting service's stored date waiting for its renewal to be
+// confirmed (both when it has both), so a past day with only projected hosting renewals is marked neither.
+$totals = array('domain' => array('count' => 0, 'cost' => 0.0), 'ssl' => array('count' => 0, 'cost' => 0.0),
+    'hosting' => array('count' => 0, 'cost' => 0.0));
 $missing = 0;
 $days = array();
 foreach ($items as $item) {
     $date = $item['date'];
-    if (!isset($days[$date])) $days[$date] = array('items' => array(), 'domain' => 0, 'ssl' => 0, 'cost' => 0.0, 'costed' => 0);
+    if (!isset($days[$date])) $days[$date] = array('items' => array(), 'domain' => 0, 'ssl' => 0, 'hosting' => 0, 'cost' => 0.0, 'costed' => 0, 'overdue' => false, 'confirm' => false);
     $days[$date]['items'][] = $item;
     $days[$date][$item['type']]++;
+    if ($item['overdue']) $days[$date]['overdue'] = true;
+    if ($item['confirm']) $days[$date]['confirm'] = true;
     $totals[$item['type']]['count']++;
     if ($item['has_fee'] && $item['has_rate']) {
         $days[$date]['cost'] += (float) $item['cost'];
@@ -104,8 +152,8 @@ foreach ($items as $item) {
         $missing++;
     }
 }
-$total_count = $totals['domain']['count'] + $totals['ssl']['count'];
-$total_cost = $totals['domain']['cost'] + $totals['ssl']['cost'];
+$total_count = $totals['domain']['count'] + $totals['ssl']['count'] + $totals['hosting']['count'];
+$total_cost = $totals['domain']['cost'] + $totals['ssl']['cost'] + $totals['hosting']['cost'];
 
 // An amount in the user's currency, as the other reports show it
 $money = function ($amount) use ($currency) {
@@ -125,11 +173,14 @@ $html = function ($text) {
 };
 
 $item_url = function ($item) {
-    return WEB_ROOT . ($item['type'] === 'domain' ? '/domains/edit.php?did=' : '/ssl/edit.php?sslcid=') . $item['id'];
+    $paths = array('domain' => '/domains/edit.php?did=', 'ssl' => '/ssl/edit.php?sslcid=', 'hosting' => '/hosting/edit.php?hsid=');
+    return WEB_ROOT . $paths[$item['type']] . $item['id'];
 };
 $type_name = function ($item) {
-    return $item['type'] === 'domain' ? _('Domain') : _('SSL Certificate');
+    $names = array('domain' => _('Domain'), 'ssl' => _('SSL Certificate'), 'hosting' => _('Hosting Service'));
+    return $names[$item['type']];
 };
+$type_icons = array('domain' => 'bi-globe2', 'ssl' => 'bi-shield-lock', 'hosting' => 'bi-hdd-stack');
 
 // The weekday names, Sunday first (date('w') order): the full name, and the short one the calendar's columns show
 $weekdays = array(_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'));
@@ -147,10 +198,12 @@ $day_summary = function ($day) {
     $parts = array();
     if ($day['domain'] > 0) $parts[] = sprintf(ngettext('%s domain', '%s domains', $day['domain']), number_format($day['domain']));
     if ($day['ssl'] > 0) $parts[] = sprintf(ngettext('%s SSL certificate', '%s SSL certificates', $day['ssl']), number_format($day['ssl']));
+    if ($day['hosting'] > 0) $parts[] = sprintf(ngettext('%s hosting service', '%s hosting services', $day['hosting']), number_format($day['hosting']));
     return implode(', ', $parts);
 };
 
 $show_names = array('all' => _('All'), 'domains' => _('Domains'), 'ssl' => _('SSL Certificates'));
+if ($hosting_available) $show_names['hosting'] = _('Hosting Services');
 
 // The list's columns, and each one's name as its cells' data-label, which phones show before each value (the Date
 // column's cells are row headers, which phones show as each row's heading instead)
@@ -164,6 +217,10 @@ $empty_texts = array(
     'all' => _('No live domains or SSL certificates expire in this month.'),
     'domains' => _('No live domains expire in this month.'),
     'ssl' => _('No live SSL certificates expire in this month.'));
+if ($hosting_available) {
+    $empty_texts['all'] = _('No live domains or SSL certificates expire in this month, and no hosting services have a projected renewal in it.');
+    $empty_texts['hosting'] = _('No hosting services have a projected renewal in this month.');
+}
 
 // A month with no renewals still exports, with its summary and the column headings, since Export is always offered
 if ($export_data === 1) {
@@ -251,7 +308,12 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
 <?php echo $layout->calloutTop(); ?>
-<?php echo _('What expires on each day of the month, with each day\'s renewal cost in your currency. Only live domains and SSL certificates are shown. Expired and sold ones are left out.'); ?>
+<?php
+if ($hosting_available) {
+    echo _('What renews on each day of the month, with each day\'s renewal cost in your currency. Only live domains, SSL certificates, and hosting services are shown. Expired and sold domains, expired SSL certificates, and cancelled hosting services are left out. Hosting services\' dates are projected renewals, so a monthly service appears on each day it renews.');
+} else {
+    echo _('What expires on each day of the month, with each day\'s renewal cost in your currency. Only live domains and SSL certificates are shown. Expired and sold ones are left out.');
+} ?>
 <?php echo $layout->calloutBottom(); ?>
 
 <div id="renewal-calendar">
@@ -262,8 +324,8 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
             if ($month > '2000-01') {
                 echo $htmx_link($page_url($previous_month, $show), '<i class="bi bi-chevron-left" aria-hidden="true"></i> ' . _('Previous Month') . '<span class="visually-hidden">, ' . $month_label_of($previous_month) . '</span>', 'btn btn-sm btn-outline-secondary');
             }
-            if ($month !== substr($today, 0, 7)) {
-                echo $htmx_link($page_url(substr($today, 0, 7), $show), _('This Month'), 'btn btn-sm btn-outline-secondary');
+            if ($month !== $this_month) {
+                echo $htmx_link($page_url($this_month, $show), _('This Month'), 'btn btn-sm btn-outline-secondary');
             }
             if ($month < '2099-12') {
                 echo $htmx_link($page_url($next_month, $show), _('Next Month') . '<span class="visually-hidden">, ' . $month_label_of($next_month) . '</span> <i class="bi bi-chevron-right" aria-hidden="true"></i>', 'btn btn-sm btn-outline-secondary');
@@ -283,11 +345,14 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
 
     <div class="row"><?php
         $tile_url = '/reporting/' . $page_url($month, $show) . '#renewal-list';
-        if ($show !== 'ssl') {
+        if ($show === 'all' || $show === 'domains') {
             echo $dashboard->displayPanel(_('Domains'), $totals['domain']['count'], 'danger', 'bi-calendar-event', $tile_url, _('Renewal Calendar'), $money($totals['domain']['cost']));
         }
-        if ($show !== 'domains') {
+        if ($show === 'all' || $show === 'ssl') {
             echo $dashboard->displayPanel(_('SSL Certificates'), $totals['ssl']['count'], 'danger', 'bi-shield-lock', $tile_url, _('Renewal Calendar'), $money($totals['ssl']['cost']));
+        }
+        if ($hosting_available && ($show === 'all' || $show === 'hosting')) {
+            echo $dashboard->displayPanel(_('Hosting Services'), $totals['hosting']['count'], 'danger', 'bi-hdd-stack', $tile_url, _('Renewal Calendar'), $money($totals['hosting']['cost']));
         }
         echo $dashboard->displayPanel(_('All Renewals'), $total_count, 'secondary', 'bi-calendar3', $tile_url, _('Renewal Calendar'), $money($total_cost)); ?>
     </div><?php
@@ -314,19 +379,23 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
                     continue;
                 }
                 $day = $days[$date] ?? null;
-                $is_today = $date === $today; ?>
+                // Today is the hosting date when only hosting services are shown, as This Month is
+                $is_today = $date === ($show === 'hosting' ? $hosting_today : $today); ?>
                 <td data-date="<?php echo $date; ?>"<?php echo $is_today ? ' class="domainmod-calendar-today" aria-current="date"' : ''; ?>>
                     <div class="domainmod-calendar-cell">
                         <span class="domainmod-calendar-day"><?php echo (int) substr($date, 8, 2); ?></span><?php
                         if ($day) {
-                            if ($date < $today) { ?>
+                            if ($day['overdue']) { ?>
                                 <span class="badge text-bg-danger"><?php echo _('Overdue'); ?></span><?php
+                            }
+                            if ($day['confirm']) { ?>
+                                <span class="badge text-bg-warning"><?php echo _('Confirm renewal'); ?></span><?php
                             } ?>
                             <div class="small text-body-secondary"><?php echo $day_summary($day); ?></div>
                             <div class="small fw-semibold"><?php echo $day['costed'] > 0 ? $money($day['cost']) : _('No fee or rate'); ?></div>
                             <ul class="list-unstyled mb-0 mt-1"><?php
                             foreach (array_slice($day['items'], 0, 3) as $item) { ?>
-                                <li class="text-truncate"><i class="bi <?php echo $item['type'] === 'domain' ? 'bi-globe2' : 'bi-shield-lock'; ?> text-body-secondary" aria-hidden="true"></i> <a href="<?php echo $item_url($item); ?>" title="<?php echo $html($item['name']); ?>"><span class="visually-hidden"><?php echo $type_name($item); ?>: </span><?php echo $html($item['name']); ?></a></li><?php
+                                <li class="text-truncate"><i class="bi <?php echo $type_icons[$item['type']]; ?> text-body-secondary" aria-hidden="true"></i> <a href="<?php echo $item_url($item); ?>" title="<?php echo $html($item['name']); ?>"><span class="visually-hidden"><?php echo $type_name($item); ?>: </span><?php echo $html($item['name']); ?></a></li><?php
                             }
                             $more = count($day['items']) - 3;
                             if ($more > 0) { ?>
@@ -358,24 +427,43 @@ $htmx_link = function ($url, $text, $class = '', $extra = '') use ($calendar_htm
             </tr>
             </thead>
             <tbody role="rowgroup"><?php
+            // A row's state: overdue, waiting for its renewal to be confirmed (a hosting service's stored date), or
+            // neither, with each state's icon, colour, and name
+            $row_state = function ($item) {
+                return $item['overdue'] ? 'overdue' : ($item['confirm'] ? 'confirm' : '');
+            };
+            $state_icons = array('overdue' => '<i class="bi bi-exclamation-triangle text-danger" aria-hidden="true"></i> ',
+                'confirm' => '<i class="bi bi-hourglass-split text-warning-emphasis" aria-hidden="true"></i> ');
+            $state_classes = array('overdue' => ' text-danger-emphasis', 'confirm' => ' text-warning-emphasis');
+            $state_names = array('overdue' => _('Overdue'), 'confirm' => _('Confirm renewal'));
             foreach ($days as $date => $day) {
-                // The day's date. A day before today shows in red (the theme's darker or lighter red, which keeps its contrast
-                // in light and dark mode), after a red warning icon, and its first row also tells screen readers it's overdue,
-                // so they hear it once per day.
-                $is_overdue = $date < $today;
-                $date_text = ($is_overdue ? '<i class="bi bi-exclamation-triangle text-danger" aria-hidden="true"></i> ' : '') . $date . ', ' . $weekday_of($date);
-                $date_class = 'd-block d-sm-table-cell' . ($is_overdue ? ' text-danger-emphasis' : '');
-                foreach ($day['items'] as $index => $item) { ?>
+                $first_state = $row_state($day['items'][0]);
+                foreach ($day['items'] as $index => $item) {
+                    /*
+                     * The row's date. An overdue renewal's date (a domain or SSL certificate past its expiry date, or an
+                     * overdue hosting service's stored date, never a projected renewal) shows in red (the theme's darker
+                     * or lighter red, which keeps its contrast in light and dark mode), after a red warning icon, and
+                     * tells screen readers it's overdue. A hosting service's stored date waiting for its renewal to be
+                     * confirmed shows the same way in amber, and tells screen readers so.
+                     */
+                    $state = $row_state($item);
+                    $date_text = ($state_icons[$state] ?? '') . $date . ', ' . $weekday_of($date);
+                    $date_class = 'd-block d-sm-table-cell' . ($state_classes[$state] ?? '');
+                    $overdue_text = $state !== '' ? '<span class="visually-hidden">, ' . $state_names[$state] . '</span>' : ''; ?>
                     <tr role="row"><?php
                         /*
                          * Each row's date is its row header. The date shows on the day's first row, which the calendar's
-                         * "+N more" links jump to. On the day's other rows it shows only on phones, where each row stacks
-                         * on its own, and is visually hidden on wider screens, so screen readers still hear it.
+                         * "+N more" links jump to, and on a later row whose state (overdue, waiting for its renewal to be
+                         * confirmed, or neither) differs from the first row's, so its own warning (or its lack of one)
+                         * shows. On the day's other rows it shows only on phones, where each row
+                         * stacks on its own, and is visually hidden on wider screens, so screen readers still hear it.
                          */
                         if ($index === 0) { ?>
-                            <th scope="row" role="rowheader" id="renewals-<?php echo $date; ?>" class="<?php echo $date_class; ?>"><?php echo $date_text; ?><?php echo $is_overdue ? '<span class="visually-hidden">, ' . _('Overdue') . '</span>' : ''; ?></th><?php
+                            <th scope="row" role="rowheader" id="renewals-<?php echo $date; ?>" class="<?php echo $date_class; ?>"><?php echo $date_text . $overdue_text; ?></th><?php
+                        } elseif ($state !== $first_state) { ?>
+                            <th scope="row" role="rowheader" class="<?php echo $date_class; ?>"><?php echo $date_text . $overdue_text; ?></th><?php
                         } else { ?>
-                            <th scope="row" role="rowheader" class="<?php echo $date_class; ?>"><span class="d-sm-none"><?php echo $date_text; ?></span><span class="visually-hidden d-none d-sm-inline"><?php echo $date_text; ?></span></th><?php
+                            <th scope="row" role="rowheader" class="<?php echo $date_class; ?>"><span class="d-sm-none"><?php echo $date_text; ?></span><span class="visually-hidden d-none d-sm-inline"><?php echo $date_text; ?></span><?php echo $overdue_text; ?></th><?php
                         } ?>
                         <td role="cell" data-label="<?php echo $list_labels[1]; ?>"><?php echo $type_name($item); ?></td>
                         <td role="cell" data-label="<?php echo $list_labels[2]; ?>"><a href="<?php echo $item_url($item); ?>"><?php echo $html($item['name']); ?></a></td>

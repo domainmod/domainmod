@@ -59,7 +59,21 @@ $pcid = (int) ($_REQUEST['pcid'] ?? 0);
 $oid = (int) ($_REQUEST['oid'] ?? 0);
 $dnsid = (int) ($_REQUEST['dnsid'] ?? 0);
 $ipid = (int) ($_REQUEST['ipid'] ?? 0);
-$whid = (int) ($_REQUEST['whid'] ?? 0);
+// The Hosting Service filter (see DomainMOD\DomainList::normalizeState()), only once hosting is available. An old
+// Hosting Provider filter (whid) in a saved link is ignored, since a provider's id isn't a service's.
+$hosting_available = DomainMOD\Hosting::isAvailable();
+$hsid = $hosting_available ? DomainMOD\DomainList::normalizeState($_REQUEST)['hsid'] : 0;
+// The filtered service's name, as the domain pages' service menu labels it, for the filter toolbar (decoded, since it
+// escapes its labels) and Export's heading (as stored, as the export's other names are)
+$service_filter_name = $service_filter_export = '';
+if ($hsid === DomainMOD\DomainList::NO_SERVICE) {
+    $service_filter_name = $service_filter_export = _('None');
+} elseif ($hsid !== 0) {
+    $service_filter_labels = DomainMOD\Hosting::serviceLabels($pdo, array($hsid));
+    $service_filter_export = $service_filter_labels[$hsid] ?? '';
+    $service_filter_name = isset($service_filter_labels[$hsid]) ? DomainMOD\FilterToolbar::decode($service_filter_labels[$hsid])
+        : DomainMOD\FilterToolbar::notFound();
+}
 $rid = (int) ($_REQUEST['rid'] ?? 0);
 $raid = (int) ($_REQUEST['raid'] ?? 0);
 $tld = isset($_REQUEST['tld']) ? $sanitize->text($_REQUEST['tld']) : '';
@@ -261,7 +275,7 @@ $cf_carry = $cf_state ? array('cff' => $cf->fieldsKey()) : array();
 $domain_list = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'], $dfd_fields);
 // Whether Export adds the registry status columns (DomainMOD\DomainStatus), which come with the 4.27.0 database update
 $export_status = $domain_list->hasStatusColumns();
-$list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'whid' => $whid, 'rid' => $rid,
+$list_state = array('pcid' => $pcid, 'oid' => $oid, 'dnsid' => $dnsid, 'ipid' => $ipid, 'hsid' => $hsid, 'rid' => $rid,
     'raid' => $raid, 'segid' => $segid, 'tld' => $tld, 'is_active' => $is_active, 'lock' => $lock);
 $filter_parts = $domain_list->filterParts($list_state, $filter_search_for, $filter_start_date, $filter_end_date,
     $segment_list);
@@ -347,7 +361,7 @@ $pcid_string = $filter_parts['pcid_string'];
 $oid_string = $filter_parts['oid_string'];
 $dnsid_string = $filter_parts['dnsid_string'];
 $ipid_string = $filter_parts['ipid_string'];
-$whid_string = $filter_parts['whid_string'];
+$hsid_string = $filter_parts['hsid_string'];
 $rid_string = $filter_parts['rid_string'];
 $raid_string = $filter_parts['raid_string'];
 $range_string = $filter_parts['range_string'];
@@ -365,7 +379,7 @@ $raw_list_from_sql = $domain_list->fromSql() . "
           $oid_string
           $dnsid_string
           $ipid_string
-          $whid_string
+          $hsid_string
           $rid_string
           $raid_string
           $range_string
@@ -384,7 +398,7 @@ $_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $segid_string . $pcid_string . $oid_string . $dnsid_string . $ipid_string
-    . $whid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $lock_string
+    . $hsid_string . $rid_string . $raid_string . $range_string . $tld_string . $search_string . $lock_string
     . $cf_filter['sql'];
 $list_filter_params = $cf_filter['params'];
 $list_has_range = $range_string != '';
@@ -522,13 +536,11 @@ if ($export_data == 1) {
 
         }
 
-        if ($whid > 0) {
-
-            $temp_hosting_name = $assets->getHost($whid);
+        if ($hsid !== 0) {
 
             $row_contents = array(
-                _('Web Host') . ':',
-                $temp_hosting_name
+                _('Hosting Service') . ':',
+                $service_filter_export
             );
             $search_filter_rows[] = $row_contents;
 
@@ -851,7 +863,8 @@ if ($export_data == 1) {
         $row_contents[$count++] = _('IP Address Name');
         $row_contents[$count++] = _('IP Address');
         $row_contents[$count++] = _('IP Address rDNS');
-        $row_contents[$count++] = _('Web Host');
+        // The hosting service comes with the 4.27.0 database update
+        if ($hosting_available) $row_contents[$count++] = _('Hosting Service');
         $row_contents[$count++] = _('Category');
         $row_contents[$count++] = _('Category Stakeholder');
         $row_contents[$count++] = _('Owner');
@@ -963,7 +976,7 @@ if ($export_data == 1) {
                 $row_contents[$count++] = $row->ip_name;
                 $row_contents[$count++] = $row->ip;
                 $row_contents[$count++] = $row->rdns;
-                $row_contents[$count++] = $row->wh_name;
+                if ($hosting_available) $row_contents[$count++] = $row->service_name ?? '';
                 $row_contents[$count++] = $row->category_name;
                 $row_contents[$count++] = $row->stakeholder;
                 $row_contents[$count++] = $row->owner_name;
@@ -1139,7 +1152,7 @@ if ($raid !== 0) $filter_toolbar->addFilter('raid', $raid, 0, $filter_name("
       AND ra.id = :id", $raid), _('Registrar Account'));
 if ($dnsid !== 0) $filter_toolbar->addFilter('dnsid', $dnsid, 0, $filter_name("SELECT `name` FROM dns WHERE id = :id", $dnsid), _('DNS Profile'));
 if ($ipid !== 0) $filter_toolbar->addFilter('ipid', $ipid, 0, $filter_name("SELECT CONCAT(`name`, ' (', ip, ')') FROM ip_addresses WHERE id = :id", $ipid), _('IP Address'));
-if ($whid !== 0) $filter_toolbar->addFilter('whid', $whid, 0, $filter_name("SELECT `name` FROM hosting WHERE id = :id", $whid), _('Web Hosting Provider'));
+if ($hsid !== 0) $filter_toolbar->addFilter('hsid', $hsid, 0, $service_filter_name, _('Hosting Service'));
 if ($pcid !== 0) $filter_toolbar->addFilter('pcid', $pcid, 0, $filter_name("SELECT `name` FROM categories WHERE id = :id", $pcid), _('Category'));
 if ($oid !== 0) $filter_toolbar->addFilter('oid', $oid, 0, $filter_name("SELECT `name` FROM owners WHERE id = :id", $oid), _('Owner'));
 if ($tld != '') $filter_toolbar->addFilter('tld', $tld, '', '.' . $tld, _('TLD'));
@@ -1166,8 +1179,8 @@ $date_range_fields = array_merge(array('daterange'), $cf->dateKeys());
 // The custom field filters for the filter menus' queries, which don't join the custom field data, by the domain id
 // each query names (see CustomFieldFilter::subquery()), and a menu's rows with their bound values
 $cf_menu_d = $cf->subquery($cf_state, DomainMOD\DomainList::FIELD_DATA_TABLE, DomainMOD\DomainList::FIELD_DATA_ID, 'd.id');
-$cf_menu_domains = $cf->subquery($cf_state, DomainMOD\DomainList::FIELD_DATA_TABLE, DomainMOD\DomainList::FIELD_DATA_ID,
-    'domains.id');
+// The Hosting Service filter's condition for the filter menus, which query domains as d without the list's joins
+$hsid_menu_string = $hosting_available ? DomainMOD\DomainList::serviceCondition($hsid) : '';
 $menu_rows = function ($sql, array $cf_menu) use ($pdo) {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($cf_menu['params']);
@@ -1188,7 +1201,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
         // The Registry Status filter's condition for the menus below, which name the domains table d, or don't alias it
         $lock_string_d = DomainMOD\DomainStatus::filterCondition($lock, 'd.');
-        $lock_string_plain = DomainMOD\DomainStatus::filterCondition($lock, ''); ?>
+        ?>
 
         <div><?php
                 // SEGMENT
@@ -1259,11 +1272,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($raid !== 0) {
                     $raid_string = " AND d.account_id = '$raid' ";
                 } else {
@@ -1299,7 +1308,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $oid_string
                   $dnsid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $raid_string
                   $range_string
                   $tld_string
@@ -1372,11 +1381,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND d.registrar_id = '$rid' ";
                 } else {
@@ -1409,7 +1414,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $oid_string
                   $dnsid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $range_string
                   $tld_string
@@ -1477,11 +1482,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND d.registrar_id = '$rid' ";
                 } else {
@@ -1521,7 +1522,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $pcid_string
                   $oid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $raid_string
                   $range_string
@@ -1590,11 +1591,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $dnsid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND d.registrar_id = '$rid' ";
                 } else {
@@ -1634,7 +1631,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $pcid_string
                   $oid_string
                   $dnsid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $raid_string
                   $range_string
@@ -1658,117 +1655,125 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
                 <?php // The session keeps the keyword HTML-escaped, so it's decoded once here (the field escapes it again), and Apply sends it back unchanged
                 echo $form->showInputText('search_for', _('Keyword Search'), '', DomainMOD\FilterToolbar::decode($_SESSION['s_search_for']), '100', '', '', '', ''); ?><?php
-                // WEB HOSTING PROVIDER
-                if ($is_active == "0") {
-                    $is_active_string = " AND d.active = '0' ";
-                } elseif ($is_active == "1") {
-                    $is_active_string = " AND d.active = '1' ";
-                } elseif ($is_active == "2") {
-                    $is_active_string = " AND d.active = '2' ";
-                } elseif ($is_active == "3") {
-                    $is_active_string = " AND d.active = '3' ";
-                } elseif ($is_active == "4") {
-                    $is_active_string = " AND d.active = '4' ";
-                } elseif ($is_active == "5") {
-                    $is_active_string = " AND d.active = '5' ";
-                } elseif ($is_active == "6") {
-                    $is_active_string = " AND d.active = '6' ";
-                } elseif ($is_active == "7") {
-                    $is_active_string = " AND d.active = '7' ";
-                } elseif ($is_active == "8") {
-                    $is_active_string = " AND d.active = '8' ";
-                } elseif ($is_active == "9") {
-                    $is_active_string = " AND d.active = '9' ";
-                } elseif ($is_active == "10") {
-                    $is_active_string = " AND d.active = '10' ";
-                } elseif ($is_active == 'LIVE') {
-                    $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
-                } elseif ($is_active == 'ALL') {
-                    $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
-                } else {
-                    $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
-                }
+                // HOSTING SERVICE (once hosting is available)
+                if ($hosting_available) {
 
-                if ($pcid !== 0) {
-                    $pcid_string = " AND d.cat_id = '$pcid' ";
-                } else {
-                    $pcid_string = "";
-                }
-                if ($oid !== 0) {
-                    $oid_string = " AND d.owner_id = '$oid' ";
-                } else {
-                    $oid_string = "";
-                }
-                if ($dnsid !== 0) {
-                    $dnsid_string = " AND d.dns_id = '$dnsid' ";
-                } else {
-                    $dnsid_string = "";
-                }
-                if ($ipid !== 0) {
-                    $ipid_string = " AND d.ip_id = '$ipid' ";
-                } else {
-                    $ipid_string = "";
-                }
-                if ($rid !== 0) {
-                    $rid_string = " AND d.registrar_id = '$rid' ";
-                } else {
-                    $rid_string = "";
-                }
-                if ($raid !== 0) {
-                    $raid_string = " AND d.account_id = '$raid' ";
-                } else {
-                    $raid_string = "";
-                }
-                if ($tld != "") {
-                    $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
-                } else {
-                    $tld_string = "";
-                }
-                if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
-                    $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
-                } else {
-                    $range_string = "";
-                }
-                if ($_SESSION['s_search_for'] != "") {
-                    $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
-                } else {
-                    $search_string = "";
-                }
-                if ($segid !== 0) {
-                    $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
-                } else {
-                    $segment_string = "";
-                }
+                    if ($is_active == "0") {
+                        $is_active_string = " AND d.active = '0' ";
+                    } elseif ($is_active == "1") {
+                        $is_active_string = " AND d.active = '1' ";
+                    } elseif ($is_active == "2") {
+                        $is_active_string = " AND d.active = '2' ";
+                    } elseif ($is_active == "3") {
+                        $is_active_string = " AND d.active = '3' ";
+                    } elseif ($is_active == "4") {
+                        $is_active_string = " AND d.active = '4' ";
+                    } elseif ($is_active == "5") {
+                        $is_active_string = " AND d.active = '5' ";
+                    } elseif ($is_active == "6") {
+                        $is_active_string = " AND d.active = '6' ";
+                    } elseif ($is_active == "7") {
+                        $is_active_string = " AND d.active = '7' ";
+                    } elseif ($is_active == "8") {
+                        $is_active_string = " AND d.active = '8' ";
+                    } elseif ($is_active == "9") {
+                        $is_active_string = " AND d.active = '9' ";
+                    } elseif ($is_active == "10") {
+                        $is_active_string = " AND d.active = '10' ";
+                    } elseif ($is_active == 'LIVE') {
+                        $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
+                    } elseif ($is_active == 'ALL') {
+                        $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
+                    } else {
+                        $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
+                    }
 
-                $result_hosting = $menu_rows("
-                SELECT h.id, h.name
-                FROM hosting AS h, domains AS d
-                WHERE h.id = d.hosting_id
-                  $is_active_string
-                  $pcid_string
-                  $oid_string
-                  $dnsid_string
-                  $ipid_string
-                  $rid_string
-                  $raid_string
-                  $range_string
-                  $tld_string
-                  $search_string
-                  $segment_string
-                  $lock_string_d
-                  {$cf_menu_d['sql']}
-                GROUP BY h.name
-                ORDER BY h.name asc", $cf_menu_d);
+                    if ($pcid !== 0) {
+                        $pcid_string = " AND d.cat_id = '$pcid' ";
+                    } else {
+                        $pcid_string = "";
+                    }
+                    if ($oid !== 0) {
+                        $oid_string = " AND d.owner_id = '$oid' ";
+                    } else {
+                        $oid_string = "";
+                    }
+                    if ($dnsid !== 0) {
+                        $dnsid_string = " AND d.dns_id = '$dnsid' ";
+                    } else {
+                        $dnsid_string = "";
+                    }
+                    if ($ipid !== 0) {
+                        $ipid_string = " AND d.ip_id = '$ipid' ";
+                    } else {
+                        $ipid_string = "";
+                    }
+                    if ($rid !== 0) {
+                        $rid_string = " AND d.registrar_id = '$rid' ";
+                    } else {
+                        $rid_string = "";
+                    }
+                    if ($raid !== 0) {
+                        $raid_string = " AND d.account_id = '$raid' ";
+                    } else {
+                        $raid_string = "";
+                    }
+                    if ($tld != "") {
+                        $tld_string = " AND d.tld = " . $pdo->quote($tld) . " ";
+                    } else {
+                        $tld_string = "";
+                    }
+                    if ($_SESSION['s_start_date'] != '' && $_SESSION['s_start_date'] != 'YYYY-MM-DD') {
+                        $range_string = " AND (d.expiry_date >= " . $pdo->quote($_SESSION['s_start_date']) . " AND d.expiry_date <= " . $pdo->quote($_SESSION['s_end_date']) . ")";
+                    } else {
+                        $range_string = "";
+                    }
+                    if ($_SESSION['s_search_for'] != "") {
+                        $search_string = " AND " . $domain_search_condition('d.domain', $_SESSION['s_search_for']) . "";
+                    } else {
+                        $search_string = "";
+                    }
+                    if ($segid !== 0) {
+                        $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') ";
+                    } else {
+                        $segment_string = "";
+                    }
 
-                echo $form->showDropdownTop('whid', _('Web Hosting Provider'), '', '', '');
-                echo $form->showDropdownOption('', _('Web Hosting Provider') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
-                foreach ($result_hosting as $row_hosting) {
+                    // The services the matching domains use, one option per service (two services can share a name),
+                    // labelled as the domain pages' service menu labels them
+                    $result_service = $menu_rows("
+                    SELECT hs.id
+                    FROM hosting_services AS hs, domains AS d
+                    WHERE hs.id = d.service_id
+                      $is_active_string
+                      $pcid_string
+                      $oid_string
+                      $dnsid_string
+                      $ipid_string
+                      $rid_string
+                      $raid_string
+                      $range_string
+                      $tld_string
+                      $search_string
+                      $segment_string
+                      $lock_string_d
+                      {$cf_menu_d['sql']}
+                    GROUP BY hs.id", $cf_menu_d);
+                    $service_menu = DomainMOD\Hosting::serviceLabels($pdo, array_map('intval', array_column($result_service, 'id')));
 
-                    echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $whid);
+                    echo $form->showDropdownTop('hsid', _('Hosting Service'), '', '', '');
+                    echo $form->showDropdownOption('', _('Hosting Service') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
+                    // TRANSLATORS: A Domains list filter choice: the domains that have no hosting service
+                    echo $form->showDropdownOption(DomainMOD\DomainList::NO_SERVICE, _('None'), $hsid);
+                    foreach ($service_menu as $service_id => $service_label) {
+
+                        echo $form->showDropdownOption($service_id, $service_label, $hsid);
+
+                    }
+                    echo $filter_toolbar->keepOption('hsid', array_merge(array(DomainMOD\DomainList::NO_SERVICE), array_keys($service_menu)));
+                    echo $form->showDropdownBottom('');
 
                 }
-                echo $filter_toolbar->keepOption('whid', array_column($result_hosting, 'id'));
-                echo $form->showDropdownBottom('');
 
 
                 // CATEGORY
@@ -1817,11 +1822,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND d.registrar_id = '$rid' ";
                 } else {
@@ -1861,7 +1862,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $oid_string
                   $dnsid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $raid_string
                   $range_string
@@ -1930,11 +1931,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND d.hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND d.registrar_id = '$rid' ";
                 } else {
@@ -1974,7 +1971,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                   $pcid_string
                   $dnsid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $raid_string
                   $range_string
@@ -2048,11 +2045,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND registrar_id = '$rid' ";
                 } else {
@@ -2081,22 +2074,22 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
                 $result_tld = $menu_rows("
                 SELECT tld, count(*) AS total_tld_count
-                FROM domains" .
+                FROM domains AS d" .
                     $is_active_string .
                     $pcid_string .
                     $oid_string .
                     $dnsid_string .
                     $ipid_string .
-                    $whid_string .
+                    $hsid_string .
                     $rid_string .
                     $raid_string .
                     $range_string .
                     $search_string .
                     $segment_string .
-                    $lock_string_plain .
-                    $cf_menu_domains['sql'] . "
+                    $lock_string_d .
+                    $cf_menu_d['sql'] . "
                 GROUP BY tld 
-                ORDER BY tld asc", $cf_menu_domains);
+                ORDER BY tld asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('tld', _('TLD'), '', '', '');
                 echo $form->showDropdownOption('', _('TLD') . ' - ' . DomainMOD\Format::toUpper(_('All')), 'null');
@@ -2130,11 +2123,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                 } else {
                     $ipid_string = "";
                 }
-                if ($whid !== 0) {
-                    $whid_string = " AND hosting_id = '$whid' ";
-                } else {
-                    $whid_string = "";
-                }
+                $hsid_string = $hsid_menu_string;
                 if ($rid !== 0) {
                     $rid_string = " AND registrar_id = '$rid' ";
                 } else {
@@ -2168,23 +2157,23 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
                 $result_active = $menu_rows("
                 SELECT active, count(*) AS total_count
-                FROM domains
+                FROM domains AS d
                 WHERE id != '0'
                   $pcid_string
                   $oid_string
                   $dnsid_string
                   $ipid_string
-                  $whid_string
+                  $hsid_string
                   $rid_string
                   $raid_string
                   $range_string
                   $tld_string
                   $search_string
                   $segment_string
-                  $lock_string_plain
-                  {$cf_menu_domains['sql']}
+                  $lock_string_d
+                  {$cf_menu_d['sql']}
                 GROUP BY active
-                ORDER BY active asc", $cf_menu_domains);
+                ORDER BY active asc", $cf_menu_d);
 
                 echo $form->showDropdownTop('is_active', _('Status'), '', '', '');
                 echo $form->showDropdownOption('LIVE', _('Live Domains') . ' (' . _('Active') . ' / ' . _('Transfers') . ' / ' . _('Pending') . ')', 'LIVE');
@@ -2431,21 +2420,20 @@ if ($result) {
     if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
         // Domains exist but none are listed. Which empty state shows depends on why (see the empty states plan).
-        $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $whid !== 0
+        $domain_filters_active = $segid !== 0 || $pcid !== 0 || $oid !== 0 || $dnsid !== 0 || $ipid !== 0 || $hsid !== 0
             || $rid !== 0 || $raid !== 0 || $tld != '' || $list_has_range || $list_has_search || $is_active != 'LIVE'
             || $cf_state !== array() || $lock !== '';
 
         // The list only shows domains that have a fee (it joins the fees to work out costs), so these counts leave
         // the fees out, to tell "nothing matches" apart from "hidden until they have a fee"
         $domains_without_fee_join = "
-            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+            FROM domains AS d" . ($hosting_available ? " LEFT JOIN hosting_services AS hs ON hs.id = d.service_id" : "") . ", registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, dns AS dns, ip_addresses AS ip, domain_field_data AS dfd
             WHERE d.account_id = ra.id
               AND ra.registrar_id = r.id
               AND ra.owner_id = o.id
               AND d.cat_id = cat.id
               AND d.dns_id = dns.id
               AND d.ip_id = ip.id
-              AND d.hosting_id = h.id
               AND d.id = dfd.domain_id";
 
         // Read-only users can't add fees, so their link only offers to show the missing ones

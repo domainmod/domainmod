@@ -232,6 +232,12 @@ a.btn:hover {
     color: var(--bs-danger-text-emphasis);
     font-weight: 600;
 }
+/* A hosting service's renewal date waiting for its renewal to be confirmed (amber, in the theme's darker or lighter
+   shade, which keeps its contrast in light and dark mode) */
+.domainmod-css-confirm {
+    color: var(--bs-warning-text-emphasis);
+    font-weight: 600;
+}
 /* The red and green highlights, lighter Nord red and green in dark mode so they're readable */
 [data-bs-theme="dark"] .domainmod-css-text-highlight-red {
     color: #e6adb2;

@@ -139,7 +139,8 @@ if ($export_data === 1) {
                 _('IP Address Name'),
                 _('IP Address'),
                 _('IP Address rDNS'),
-                _('Web Host'),
+                // TRANSLATORS: A segment results export column heading: the hosting service each domain uses
+                _('Hosting Service'),
                 _('Category'),
                 _('Category Stakeholder'),
                 _('Owner'),
@@ -234,7 +235,8 @@ if ($export_data === 1) {
                         $row->name,
                         $row->ip,
                         $row->rdns,
-                        $row->wh_name,
+                        // Empty before the 4.27.0 database update, which adds hosting services
+                        $row->service_name ?? '',
                         $row->category_name,
                         $row->category_stakeholder,
                         $row->owner_name,
@@ -278,7 +280,7 @@ if ($export_data === 1) {
 
 if ($type == "inactive" || $type == "filtered") {
 
-    $stmt = $pdo->prepare(DomainMOD\Segment::resultsSql($type));
+    $stmt = $pdo->prepare(DomainMOD\Segment::resultsSql($type, $pdo));
     $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
     $stmt->bindValue('segid', $segid, PDO::PARAM_INT);
     $stmt->execute();

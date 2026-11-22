@@ -79,6 +79,8 @@ class ChangeHistory
             'field_id' => 'domain_id', 'fields' => 'domain_fields', 'fee_table' => 'fees'),
         'ssl' => array('table' => 'ssl_certs', 'name' => 'name', 'field_data' => 'ssl_cert_field_data',
             'field_id' => 'ssl_id', 'fields' => 'ssl_cert_fields', 'fee_table' => 'ssl_fees'),
+        'hosting' => array('table' => 'hosting_services', 'name' => 'name', 'field_data' => 'hosting_service_field_data',
+            'field_id' => 'service_id', 'fields' => 'hosting_service_fields', 'fee_table' => 'hosting_fees'),
         'watch' => array('table' => 'watch_domains', 'name' => 'domain', 'field_data' => '', 'field_id' => '', 'fields' => '',
             'fee_table' => ''));
 
@@ -91,17 +93,21 @@ class ChangeHistory
      */
     const FIELDS = array(
         'domain' => array('domain' => 'text', 'account_id' => 'id', 'owner_id' => 'id', 'registrar_id' => 'id',
-            'expiry_date' => 'date', 'cat_id' => 'id', 'dns_id' => 'id', 'ip_id' => 'id', 'hosting_id' => 'id',
+            'expiry_date' => 'date', 'cat_id' => 'id', 'dns_id' => 'id', 'ip_id' => 'id', 'service_id' => 'id',
             'function' => 'text', 'notes' => 'long', 'autorenew' => 'int', 'privacy' => 'int', 'active' => 'int',
             'total_cost' => 'cost'),
         'ssl' => array('name' => 'text', 'domain_id' => 'id', 'account_id' => 'id', 'owner_id' => 'id',
             'ssl_provider_id' => 'id', 'type_id' => 'id', 'ip_id' => 'id', 'cat_id' => 'id', 'expiry_date' => 'date',
             'notes' => 'long', 'active' => 'int', 'total_cost' => 'cost'),
+        'hosting' => array('name' => 'text', 'account_id' => 'id', 'owner_id' => 'id', 'hosting_id' => 'id',
+            'type_id' => 'id', 'ip_id' => 'id', 'cat_id' => 'id', 'hostname' => 'text', 'billing_term' => 'int',
+            'renewal_day' => 'int', 'expiry_date' => 'date', 'autorenew' => 'int', 'notes' => 'long', 'active' => 'int',
+            'total_cost' => 'cost'),
         'watch' => array('reason' => 'text', 'notes' => 'long', 'archived' => 'int'));
 
     // The fields that follow the account: recorded only when they change without the account changing
     const FOLLOWS_ACCOUNT = array('domain' => array('owner_id', 'registrar_id'), 'ssl' => array('owner_id', 'ssl_provider_id'),
-        'watch' => array());
+        'hosting' => array('owner_id', 'hosting_id'), 'watch' => array());
 
     /*
      * The facts a create or delete snapshot keeps: the insert-only ones, and for a watched domain what its checks last
@@ -109,6 +115,7 @@ class ChangeHistory
      */
     const SNAPSHOT_FACTS = array('domain' => array('creation_type_id', 'created_by', 'insert_time', 'tld'),
         'ssl' => array('creation_type_id', 'created_by', 'insert_time'),
+        'hosting' => array('creation_type_id', 'created_by', 'insert_time'),
         'watch' => array('tld', 'stage', 'statuses', 'expiry_date', 'registration_date', 'registrar_name',
             'registrar_iana_id', 'moved_domain_id', 'created_by', 'insert_time'));
 
@@ -136,7 +143,8 @@ class ChangeHistory
         '4.27.0' => array('api_registrars', 'categories', 'change_history', 'change_operations', 'creation_types',
             'currencies', 'currency_conversions', 'custom_field_types', 'dns', 'domain_field_data', 'domain_fields',
             'domain_queue', 'domain_queue_history', 'domain_queue_list', 'domain_queue_list_history', 'domain_queue_temp',
-            'domains', 'dw_servers', 'fees', 'goal_activity', 'hosting', 'ip_addresses', 'languages', 'log', 'owners',
+            'domains', 'dw_servers', 'fees', 'goal_activity', 'hosting', 'hosting_fees', 'hosting_provider_accounts',
+            'hosting_service_field_data', 'hosting_service_fields', 'hosting_services', 'hosting_types', 'ip_addresses', 'languages', 'log', 'owners',
             'registrar_accounts', 'registrars', 'scheduler', 'segment_data', 'segments', 'settings', 'ssl_accounts',
             'ssl_cert_field_data', 'ssl_cert_fields', 'ssl_cert_status', 'ssl_cert_types', 'ssl_certs', 'ssl_fees',
             'ssl_providers', 'ssl_queue', 'ssl_queue_history', 'timezones', 'user_recovery_codes',
@@ -724,11 +732,18 @@ class ChangeHistory
 
     /*
      * A fee page's capture branches for ChangeHistoryOperation::captureCosts(): the items its reassignment reaches (the
-     * registrar and TLD, or the SSL provider and type) and every item on the fee row it edits or adds, whose currency
-     * follows that row, as two branches, each read through its own index, rather than one OR, so neither scans the table
+     * registrar and TLD, the SSL provider and type, or the hosting provider, service type, and billing term in $key_c) and
+     * every item on the fee row it edits or adds, whose currency follows that row, as two branches, each read through its
+     * own index, rather than one OR, so neither scans the table
      */
-    public static function feeScope($type, $key_a, $key_b, $fee_id)
+    public static function feeScope($type, $key_a, $key_b, $fee_id, $key_c = null)
     {
+        if ($type === 'hosting') {
+            return array(
+                array(" AND i.hosting_id = :fee_scope_a AND i.type_id = :fee_scope_b AND i.billing_term = :fee_scope_c",
+                    array('fee_scope_a' => (int) $key_a, 'fee_scope_b' => (int) $key_b, 'fee_scope_c' => (int) $key_c)),
+                array(" AND i.fee_id = :fee_scope_fee", array('fee_scope_fee' => (int) $fee_id)));
+        }
         $columns = $type === 'ssl' ? array('ssl_provider_id', 'type_id') : array('registrar_id', 'tld');
         return array(
             array(" AND i." . $columns[0] . " = :fee_scope_a AND i." . $columns[1] . " = :fee_scope_b",
@@ -738,11 +753,19 @@ class ChangeHistory
 
     /*
      * A fee page's note for its action (with the note code 'fee'): the fee's registrar and TLD, or SSL provider and type,
-     * as the administrator saw them, read from the fee's own keys
+     * as the administrator saw them, read from the fee's own keys (and, for hosting, its billing term in $key_c)
      */
-    public static function feeNote(\PDO $pdo, $type, $key_a, $key_b)
+    public static function feeNote(\PDO $pdo, $type, $key_a, $key_b, $key_c = null)
     {
-        if ($type === 'ssl') {
+        if ($type === 'hosting') {
+            $stmt = $pdo->prepare("
+                SELECT CONCAT(h.name, ' (', t.type, ', ', :key_c, ')')
+                FROM hosting AS h, hosting_types AS t
+                WHERE h.id = :key_a
+                  AND t.id = :key_b");
+            $stmt->bindValue('key_b', (int) $key_b, \PDO::PARAM_INT);
+            $stmt->bindValue('key_c', Hosting::termLabel($key_c), \PDO::PARAM_STR);
+        } elseif ($type === 'ssl') {
             $stmt = $pdo->prepare("
                 SELECT CONCAT(p.name, ' (', t.type, ')')
                 FROM ssl_providers AS p, ssl_cert_types AS t

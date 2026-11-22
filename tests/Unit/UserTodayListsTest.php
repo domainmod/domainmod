@@ -77,7 +77,9 @@ class UserTodayListsTest extends TestCase
         $source = $this->source('dashboard/index.php');
 
         $this->assertStringNotContainsString('$end_date . "', $source);
-        $this->assertSame(4, substr_count($source, 'expiry_date <= :end_date'));
+        // Four for domains and SSL certificates, and a fifth for Hosting, which ends at the hosting date's window
+        $this->assertSame(5, substr_count($source, 'expiry_date <= :end_date'));
         $this->assertSame(4, substr_count($source, "\$stmt->bindValue('end_date', \$end_date, PDO::PARAM_STR);"));
+        $this->assertSame(1, substr_count($source, "\$stmt->bindValue('end_date', \$hosting_end_date, PDO::PARAM_STR);"));
     }
 }

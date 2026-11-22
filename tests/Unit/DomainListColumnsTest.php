@@ -119,11 +119,51 @@ class DomainListColumnsTest extends TestCase
         foreach (DomainListColumns::OPTIONAL as $optional) {
             $all[$optional[0]] = '1';
         }
-        $columns = new DomainListColumns(self::settings($all + array('s_cdf_data' => array())), array());
+        $columns = new DomainListColumns(self::settings($all + array('s_cdf_data' => array())), array(), true);
 
-        $this->assertSame(array('domain', 'expiry', 'fee', 'tld', 'registrar', 'account', 'dns', 'ip', 'host',
+        $this->assertSame(array('domain', 'expiry', 'fee', 'tld', 'registrar', 'account', 'dns', 'ip', 'service',
             'category', 'owner'), self::keys($columns));
         $this->assertSame('Fee (USD)', $columns->columns()[2]['title']);
+    }
+
+    /*
+     * The Hosting Service column (still switched by the shipped s_display_domain_host setting) comes with the 4.27.0
+     * database update, whatever the session says: before it, the list has no join to read it from. Without an answer
+     * given, it asks Hosting::isAvailable(), which an unconnected database answers no.
+     */
+    public function testTheHostingServiceColumnComesWithTheUpdate()
+    {
+        $settings = self::settings(array('s_display_domain_host' => '1', 's_cdf_data' => array()));
+
+        $after = new DomainListColumns($settings, array(), true);
+        $this->assertSame(array('domain', 'service'), self::keys($after));
+        $this->assertSame('Hosting Service', $after->columns()[1]['title']);
+        $this->assertSame(array(0 => array('d.domain'), 1 => array('hs.name')), $after->sortMap());
+
+        $this->assertSame(array('domain'), self::keys(new DomainListColumns($settings, array(), false)));
+        $this->assertSame(array('domain'), self::keys(new DomainListColumns($settings, array())));
+    }
+
+    // A domain with no service has a blank cell, so an excluded word (NOT LIKE) mustn't turn the condition NULL and
+    // hide it
+    public function testTheHostingServiceSearchKeepsDomainsWithNoService()
+    {
+        $columns = new DomainListColumns(self::settings(array('s_display_domain_host' => '1', 's_cdf_data' => array())), array(), true);
+
+        $this->assertSame(array("COALESCE(hs.name, '')"), $columns->searchExpressions()['encoded']);
+    }
+
+    public function testTheHostingServiceCell()
+    {
+        $columns = new DomainListColumns(self::settings(array('s_display_domain_host' => '1', 's_cdf_data' => array())), array(), true);
+
+        $row = self::assetRow('user');
+        $this->assertSame('<a href="../hosting/edit.php?hsid=17">Shared &amp; Co</a>', $columns->cells($row, '2026-11-15')[1]);
+
+        // Blank for a domain with no service, or one whose service no longer exists (the LEFT JOIN's NULLs)
+        $row->service_id = null;
+        $row->service_name = null;
+        $this->assertSame('', $columns->cells($row, '2026-11-15')[1]);
     }
 
     public function testSortMapAndDefaultOrder()
@@ -255,16 +295,17 @@ class DomainListColumnsTest extends TestCase
         return (object) array('id' => 7, 'domain' => 'example.com', 'active' => '1', 'privacy' => '0', 'tld' => 'com',
             'r_id' => 11, 'f_id' => 12, 'registrar_name' => 'Registrar', 'o_id' => 13, 'owner_name' => 'Owner',
             'ra_id' => 14, 'username' => $username, 'dnsid' => 15, 'dns_name' => 'DNS', 'ipid' => 16, 'ip_name' => 'Server',
-            'ip' => '192.0.2.1', 'whid' => 17, 'wh_name' => 'Host', 'pcid' => 18, 'category_name' => 'Category');
+            'ip' => '192.0.2.1', 'service_id' => 17, 'service_name' => 'Shared &amp; Co', 'pcid' => 18,
+            'category_name' => 'Category');
     }
 
     public function testAssetCells()
     {
         $settings = array('s_cdf_data' => array());
-        foreach (array('tld', 'registrar', 'account', 'dns', 'ip', 'host', 'category', 'owner') as $key) {
+        foreach (array('tld', 'registrar', 'account', 'dns', 'ip', 'service', 'category', 'owner') as $key) {
             $settings[DomainListColumns::OPTIONAL[$key][0]] = '1';
         }
-        $columns = new DomainListColumns(self::settings($settings), array());
+        $columns = new DomainListColumns(self::settings($settings), array(), true);
 
         $this->assertSame(array(
             '<a href="../assets/edit/registrar-fee.php?rid=11&fee_id=12"><bdi dir="ltr">.com</bdi></a>',
@@ -273,7 +314,7 @@ class DomainListColumnsTest extends TestCase
                 . '(<a href="../assets/edit/registrar-account.php?raid=14">fifteen-chars-x</a>)',
             '<a href="../assets/edit/dns.php?dnsid=15">DNS</a>',
             '<a href="../assets/edit/ip-address.php?ipid=16">Server (192.0.2.1)</a>',
-            '<a href="../assets/edit/host.php?whid=17">Host</a>',
+            '<a href="../hosting/edit.php?hsid=17">Shared &amp; Co</a>',
             '<a href="../assets/edit/category.php?pcid=18">Category</a>',
             '<a href="../assets/edit/account-owner.php?oid=13">Owner</a>',
         ), array_slice($columns->cells(self::assetRow('fifteen-chars-x'), '2026-11-15'), 1));

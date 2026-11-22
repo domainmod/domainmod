@@ -67,6 +67,15 @@ if ($a == 'u') {
     $timezone = $schedule->getZone($_SESSION['s_default_timezone'] ?? 'UTC')->getName();
     $task = $schedule->getTask($id);
 
+    // Only a daily task has a run time to change (the page offers the menu for no other), so a posted hour can't turn a
+    // task that runs every few minutes into a daily one
+    if (!$task || $task->interval !== 'Daily') {
+        $schedule->releaseTaskLock($id);
+        $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _("Only a daily task's run time can be changed.") . '<BR>';
+        header("Location: index.php");
+        exit;
+    }
+
     // The time the menu already showed is kept as it is (see Scheduler::isShownHour()).
     if ($task && $schedule->isShownHour($task->expression, $task->timezone, $timezone, $new_hour)) {
         $schedule->releaseTaskLock($id);

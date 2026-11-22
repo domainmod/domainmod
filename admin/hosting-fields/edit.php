@@ -1,0 +1,277 @@
+<?php
+/**
+ * /admin/hosting-fields/edit.php
+ *
+ * This file is part of DomainMOD, an open source domain and internet asset manager.
+ * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
+ *
+ * Project: http://domainmod.org   Author: https://greg.ca
+ *
+ * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * DomainMOD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with DomainMOD. If not, see
+ * http://www.gnu.org/licenses/.
+ *
+ */
+?>
+<?php //@formatter:off
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$system = new DomainMOD\System();
+$log = new DomainMOD\Log('/admin/hosting-fields/edit.php');
+$layout = new DomainMOD\Layout();
+$time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
+$custom_field = new DomainMOD\CustomField();
+$sanitize = new DomainMOD\Sanitize();
+$unsanitize = new DomainMOD\Unsanitize();
+
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/admin-edit-custom-hosting-field.inc.php';
+
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+$pdo = $deeb->cnxx;
+
+// The hosting tables exist only once the database has been updated (DomainMOD\Hosting)
+if (!DomainMOD\Hosting::isAvailable($pdo)) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . DomainMOD\Hosting::unavailableMessage() . '<BR>';
+    header("Location: " . WEB_ROOT . "/admin/");
+    exit;
+
+}
+
+$del = (int) ($_GET['del'] ?? 0);
+
+$chfid = (int) ($_GET['chfid'] ?? 0);
+
+$new_name = isset($_POST['new_name']) ? $sanitize->text($_POST['new_name']) : '';
+$new_description = isset($_POST['new_description']) ? $sanitize->text($_POST['new_description']) : '';
+$new_chfid = (int) ($_POST['new_chfid'] ?? 0);
+$new_notes = isset($_POST['new_notes']) ? $sanitize->text($_POST['new_notes']) : '';
+
+if ($new_chfid === 0) $new_chfid = $chfid;
+
+$stmt = $pdo->prepare("
+    SELECT id
+    FROM hosting_service_fields
+    WHERE id = :chfid");
+$stmt->bindValue('chfid', $chfid, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetchColumn();
+
+if (!$result) {
+
+    $_SESSION['s_message_danger'] .= _("The Custom Hosting Field you're trying to edit is invalid.") . '<BR>';
+
+    header("Location: ../hosting-fields/");
+    exit;
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
+
+    try {
+
+        $pdo->beginTransaction();
+
+        // If the record was deleted while the form was open, nothing is saved
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM hosting_service_fields
+            WHERE id = :record_id");
+        $stmt->bindValue('record_id', $new_chfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $record_exists = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        if (!$record_exists) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+            header("Location: ../hosting-fields/");
+            exit;
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT field_name
+            FROM hosting_service_fields
+            WHERE id = :new_chfid");
+        $stmt->bindValue('new_chfid', $new_chfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+
+        if ($result) {
+
+            $stmt = $pdo->prepare("
+                UPDATE hosting_service_fields
+                SET `name` = :new_name,
+                    description = :new_description,
+                    notes = :new_notes,
+                    update_time = :timestamp
+                WHERE id = :new_chfid");
+            $stmt->bindValue('new_name', $new_name, PDO::PARAM_STR);
+            $stmt->bindValue('new_description', $new_description, PDO::PARAM_STR);
+            $stmt->bindValue('new_notes', $new_notes, PDO::PARAM_LOB);
+            $timestamp = $time->stamp();
+            $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+            $stmt->bindValue('new_chfid', $new_chfid, PDO::PARAM_INT);
+            $stmt->execute();
+
+        }
+
+        if ($pdo->InTransaction()) $pdo->commit();
+
+        $_SESSION['s_chf_data'] = $custom_field->getCHFData();
+
+        $_SESSION['s_message_success'] .= sprintf(_('Custom Hosting Field %s (%s) updated'), $new_name, $result) . '<BR>';
+
+        header("Location: ../hosting-fields/");
+        exit;
+
+    } catch (Exception $e) {
+
+        if ($pdo->InTransaction()) $pdo->rollback();
+
+        $log_message = 'Unable to edit custom hosting field';
+        $log_extra = array('Error' => $e);
+        $log->critical($log_message, $log_extra);
+
+        $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+        throw $e;
+
+    }
+
+} else {
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        if ($new_name == '') $form->addFieldError('new_name', _('Enter the display name'));
+
+    } else {
+
+        $stmt = $pdo->prepare("
+            SELECT f.name, f.field_name, f.description, f.notes, t.name AS field_type
+            FROM hosting_service_fields AS f, custom_field_types AS t
+            WHERE f.type_id = t.id
+              AND f.id = :chfid
+            ORDER BY f.name");
+        $stmt->bindValue('chfid', $chfid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if (!$result) {
+
+            $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+            header("Location: index.php");
+            exit;
+
+        }
+
+        $new_name = $result->name;
+        $new_field_name = $result->field_name;
+        $new_description = $result->description;
+        $new_notes = $result->notes;
+        $new_field_type = $result->field_type;
+
+    }
+
+}
+
+if ($del === 1) {
+
+    $csrf = new DomainMOD\Csrf();
+    $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
+
+    if ($chfid === 0) {
+
+        $_SESSION['s_message_danger'] .= _('The Custom Hosting Field cannot be deleted.') . '<BR>';
+
+    } else {
+
+        try {
+
+            /*
+             * Every item's non-empty value is recorded in the Change History, in the same transaction that deletes the
+             * definition row, and the columns are dropped after it (see DomainMOD\CustomFieldSchema)
+             */
+            $deleted_field = DomainMOD\CustomFieldSchema::delete($pdo, 'hosting', $chfid, $_SESSION['s_user_id']);
+
+            if ($deleted_field === null) {
+
+                $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . _('That custom field no longer exists.') . '<BR>';
+                header("Location: ../hosting-fields/");
+                exit;
+
+            }
+
+            $result = (object) array('name' => $deleted_field[0], 'field_name' => $deleted_field[1]);
+
+            $_SESSION['s_chf_data'] = $custom_field->getCHFData();
+
+            $_SESSION['s_message_success'] .= sprintf(_('Custom Hosting Field %s (%s) deleted'), $result->name, $result->field_name) . '<BR>';
+
+            header("Location: ../hosting-fields/");
+            exit;
+
+        } catch (Exception $e) {
+
+            if ($pdo->InTransaction()) $pdo->rollback();
+
+            $log_message = 'Unable to delete custom hosting field';
+            $log_extra = array('Error' => $e);
+            $log->critical($log_message, $log_extra);
+
+            $_SESSION['s_message_danger'] .= $log_message . '<BR>';
+
+            throw $e;
+
+        }
+
+    }
+
+}
+?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
+<?php echo $layout->htmlTag(); ?>
+<head>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+</head>
+<?php echo $layout->bodyTag(); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_name', _('Display Name') . ' (75)', '', $unsanitize->text($new_name), '75', '', '1', '', '');
+?>
+<strong><?php echo _('Database Field Name'); ?></strong><BR><?php echo $new_field_name; ?><BR><BR>
+<strong><?php echo _('Data Type'); ?></strong><BR><?php echo $new_field_type; ?><BR><BR>
+<?php
+echo $form->showInputText('new_description', _('Description') . ' (255)', '', $unsanitize->text($new_description), '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', _('Notes'), '', $unsanitize->text($new_notes), '', '', '');
+echo $form->showInputHidden('new_chfid', $chfid);
+echo $form->showSubmitButton(_('Save'), '', '');
+echo $form->showFormBottom('');
+
+$layout->dangerZone(_('Custom Hosting Field'), $new_name, 'edit.php?chfid=' . $chfid . '&del=1', _('Delete this custom hosting field'), sprintf(_('This removes %s and the value it holds for every hosting service. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_name, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
+?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
+</body>
+</html>

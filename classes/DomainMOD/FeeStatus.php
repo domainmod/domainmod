@@ -22,10 +22,12 @@
 namespace DomainMOD;
 
 /*
- * A domain's or SSL certificate's fee, as the Edit Domain and Edit SSL Certificate pages show it, and the warning shown
- * after a save leaves one without a fee. An item with no fee can't be costed, so it's hidden from its list until a fee
- * for its TLD (or certificate type) is added at its registrar (or provider). The names come from the database, where
- * they're stored escaped, so they're unescaped and escaped again here. Users who can edit fees get links to them.
+ * A domain's, SSL certificate's, or hosting service's fee, as the Edit Domain, Edit SSL Certificate, and Edit Hosting
+ * Service pages show it, and the warning shown after a save leaves one without a fee. A domain or SSL certificate with
+ * no fee can't be costed, so it's hidden from its list until a fee for its TLD (or certificate type) is added at its
+ * registrar (or provider). A hosting service with no fee stays in its list, saved without a cost until a fee for its
+ * type and billing term is added at its provider. The names come from the database, where they're stored escaped, so
+ * they're unescaped and escaped again here. Users who can edit fees get links to them.
  */
 class FeeStatus
 {
@@ -82,7 +84,30 @@ class FeeStatus
         return $row;
     }
 
-    // Whether a row from domainFee() or sslFee() has a fee: one is set and it still exists
+    // A hosting service's provider, type, billing term, and saved fee (the fee's columns are null when it has none), or
+    // false if it's gone (or the hosting tables don't exist yet)
+    public function hostingFee($service_id)
+    {
+        if (!Hosting::isAvailable($this->deeb->cnxx)) return false;
+
+        $stmt = $this->deeb->cnxx->prepare("
+            SELECT hs.name, hs.fee_id, hs.billing_term, h.id AS provider_id, h.name AS provider, t.id AS type_id, t.type,
+                f.id AS fee_row_id, f.initial_fee, f.renewal_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order,
+                c.symbol_space
+            FROM hosting_services AS hs
+            JOIN hosting AS h ON hs.hosting_id = h.id
+            JOIN hosting_types AS t ON hs.type_id = t.id
+            LEFT JOIN hosting_fees AS f ON hs.fee_id = f.id
+            LEFT JOIN currencies AS c ON f.currency_id = c.id
+            WHERE hs.id = :service_id");
+        $stmt->bindValue('service_id', $service_id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $stmt->closeCursor();
+        return $row;
+    }
+
+    // Whether a row from domainFee(), sslFee(), or hostingFee() has a fee: one is set and it still exists
     public function hasFee($row)
     {
         return $row && (int) $row->fee_id !== 0 && $row->fee_row_id !== null;
@@ -123,6 +148,35 @@ class FeeStatus
             $can_edit ? $this->addSslFeeUrl($row) : '');
     }
 
+    /*
+     * The Fee section's contents on Edit Hosting Service: the service's billing term, the fee's Renewal Fee and Misc Fee
+     * in its own currency, what one term costs (the two together), and its yearly figure, or what's missing. The
+     * Initial Fee isn't shown, since it never counts toward a service's cost, and the yearly figure is left out for a
+     * term that isn't an allowed one, as the list leaves it out.
+     */
+    public function hostingSection($row, $can_edit)
+    {
+        if ($this->hasFee($row)) {
+
+            $cost = (float) $row->renewal_fee + (float) $row->misc_fee;
+            // TRANSLATORS: The Misc Fee on a hosting service's Fee card. It's added to the Renewal Fee each term.
+            $amounts = array(_('Renewal Fee') => $row->renewal_fee, _('Misc Fee (added to each renewal)') => $row->misc_fee,
+                _('Cost Per Term') => $cost);
+            $yearly = Hosting::yearlyCost($cost, (string) $row->billing_term);
+            if ($yearly !== null) $amounts[_('Yearly Cost')] = $yearly;
+            $url = '/assets/edit/hosting-fee.php?hosting_id=' . (int) $row->provider_id . '&fee_id=' . (int) $row->fee_id;
+            return $this->feeFacts($row, $amounts, $can_edit ? $url : '', _('Edit Fee'),
+                array(array('label' => _('Billing Term'), 'value' => Hosting::termLabel($row->billing_term))));
+
+        }
+
+        // The type is the user's own text and the term is translated, so neither is kept left to right
+        return $this->missing(sprintf(_('No fee for %1$s at %2$s'), $this->escape($this->hostingTypeText($row)),
+            $this->escape($this->text($row->provider))),
+            _("No fee matches this provider, type, and billing term yet. The service is saved without a cost until you add one."),
+            $can_edit ? $this->addHostingFeeUrl($row) : '');
+    }
+
     // The warning after a domain is added or saved without a fee (HTML, for the page's warning message)
     public function domainWarning($row, $can_edit)
     {
@@ -139,6 +193,26 @@ class FeeStatus
             $this->escape($this->text($row->name)), $this->escape($this->text($row->type)),
             $this->escape($this->text($row->provider)));
         return $text . ($can_edit ? ' ' . $this->link($this->addSslFeeUrl($row), _('Add Fee')) : '');
+    }
+
+    // The warning after a hosting service is added or saved without a fee (HTML, for the page's warning message)
+    public function hostingWarning($row, $can_edit)
+    {
+        $text = sprintf(_("%1\$s has no fee yet, so it's saved without a cost until a fee for %2\$s at %3\$s is added."),
+            $this->escape($this->text($row->name)), $this->escape($this->hostingTypeText($row)),
+            $this->escape($this->text($row->provider)));
+        return $text . ($can_edit ? ' ' . $this->link($this->addHostingFeeUrl($row), _('Add Fee')) : '');
+    }
+
+    /*
+     * Add Hosting Fee for the service's provider, with its type and billing term chosen, from a row with provider_id,
+     * type_id, and billing_term (such as hostingFee()'s, or a Hosting Services list row). It's static, so the list can
+     * build the same link without a FeeStatus.
+     */
+    public static function addHostingFeeUrl($row)
+    {
+        return '/assets/add/hosting-fee.php?hosting_id=' . (int) $row->provider_id . '&type_id=' . (int) $row->type_id
+            . '&billing_term=' . (int) $row->billing_term;
     }
 
     // Add Registrar Fee for the domain's registrar, with its TLD filled in
@@ -159,9 +233,16 @@ class FeeStatus
         return sprintf(_('No fee for %1$s at %2$s'), $this->layout->ltr($item), $this->escape($where));
     }
 
-    private function feeFacts($row, $amounts, $url, $link_label)
+    // A hosting service's type and billing term as plain text, such as "Shared Pro (12 Months)"
+    private function hostingTypeText($row)
     {
-        $pairs = array();
+        // TRANSLATORS: %1$s is a hosting service type, such as Shared Pro, and %2$s its billing term, such as 12 Months.
+        return sprintf(_('%1$s (%2$s)'), $this->text($row->type), Hosting::termLabel($row->billing_term));
+    }
+
+    private function feeFacts($row, $amounts, $url, $link_label, $extra_pairs = array())
+    {
+        $pairs = $extra_pairs;
         foreach ($amounts as $label => $amount) {
             $pairs[] = array('label' => $label, 'value' => $this->currency->format($amount, $this->text($row->symbol),
                 $row->symbol_order, $row->symbol_space), 'ltr' => true);

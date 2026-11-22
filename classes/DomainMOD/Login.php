@@ -74,7 +74,9 @@ class Login
                 default_category_ssl, default_dns, default_host, default_ip_address_domains,
                 default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                 default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
-                expiration_days, email_signature, currency_converter, local_php_log
+                expiration_days, email_signature, currency_converter, local_php_log" .
+                (Hosting::isAvailable($pdo) ? ", default_category_hosting, default_ip_address_hosting,
+                default_owner_hosting, default_hosting_provider_account, default_hosting_type" : "") . "
             FROM settings");
         $stmt->execute();
         $result = $stmt->fetch();
@@ -98,7 +100,13 @@ class Login
                 us.display_ssl_owner, us.display_ssl_provider, us.display_ssl_account, us.display_ssl_domain,
                 us.display_ssl_type, us.display_ssl_ip, us.display_ssl_category, us.display_ssl_expiry_date, us.display_ssl_fee,
                 us.display_inactive_assets, us.display_dw_intro_page, us.dark_mode, lang.name AS language_name" .
-                (DomainStatus::isAvailable($pdo) ? ", us.display_domain_lock" : "") . "
+                (DomainStatus::isAvailable($pdo) ? ", us.display_domain_lock" : "") .
+                (Hosting::isAvailable($pdo) ? ", us.default_category_hosting, us.default_ip_address_hosting,
+                us.default_owner_hosting, us.default_hosting_provider_account, us.default_hosting_type,
+                us.number_of_hosting_services, us.display_hosting_owner, us.display_hosting_provider,
+                us.display_hosting_account, us.display_hosting_type,
+                us.display_hosting_expiry_date, us.display_hosting_ip, us.display_hosting_category,
+                us.display_hosting_fee" : "") . "
             FROM user_settings AS us, languages AS lang
             WHERE us.default_language = lang.language
               AND us.user_id = :user_id");

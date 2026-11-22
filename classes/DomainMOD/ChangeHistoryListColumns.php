@@ -117,6 +117,7 @@ class ChangeHistoryListColumns extends ListColumns
             // The scroll region's own name, since the section around it is already named Change History
             $body = '<div class="domainmod-span-all domainmod-scroll-table domainmod-history-section mb-2" tabindex="0" role="region" aria-label="'
                 . $esc(array('ssl' => _('Recent changes to this SSL certificate'),
+                    'hosting' => _('Recent changes to this hosting service'),
                     'watch' => _('Recent changes to this watched domain'))[$type] ?? _('Recent changes to this domain'))
                 . '"><table class="table table-sm mb-0"><thead><tr>';
             foreach ($columns->columns() as $column) $body .= '<th scope="col">' . $esc($column['title']) . '</th>';
@@ -128,6 +129,7 @@ class ChangeHistoryListColumns extends ListColumns
         }
 
         $link_texts = array('ssl' => _('See all changes to this SSL certificate'),
+            'hosting' => _('See all changes to this hosting service'),
             'watch' => _('See all changes to this watched domain'));
         $link_text = $link_texts[$type] ?? _('See all changes to this domain');
         $body .= '<p class="domainmod-span-all mb-2"><a href="' . $esc(WEB_ROOT . '/history/?' . http_build_query(array(
@@ -234,6 +236,7 @@ class ChangeHistoryListColumns extends ListColumns
     public static function typeName($type)
     {
         if ($type === 'watch') return _('Watched Domain');
+        if ($type === 'hosting') return _('Hosting Service');
         return $type === 'ssl' ? _('SSL Certificate') : _('Domain');
     }
 
@@ -241,7 +244,7 @@ class ChangeHistoryListColumns extends ListColumns
     public static function itemUrl($row)
     {
         if ($row->change_type === 'delete' || (int) ($row->last_delete_id ?? 0) > (int) $row->id) return '';
-        $pages = array('ssl' => '/ssl/edit.php?sslcid=', 'watch' => '/watch/edit.php?wid=');
+        $pages = array('ssl' => '/ssl/edit.php?sslcid=', 'hosting' => '/hosting/edit.php?hsid=', 'watch' => '/watch/edit.php?wid=');
         return WEB_ROOT . ($pages[$row->item_type] ?? '/domains/edit.php?did=') . (int) $row->item_id;
     }
 
@@ -308,6 +311,13 @@ class ChangeHistoryListColumns extends ListColumns
     // The fields' names by code, as their edit forms label them
     public static function fieldNames($type)
     {
+        if ($type === 'hosting') {
+            return array('name' => _('Name'), 'account_id' => _('Account'), 'owner_id' => _('Owner'),
+                'hosting_id' => _('Hosting Provider'), 'type_id' => _('Type'), 'ip_id' => _('IP Address'),
+                'cat_id' => _('Category'), 'hostname' => _('Hostname'),
+                'billing_term' => _('Billing Term'), 'renewal_day' => _('Renews On Day'), 'expiry_date' => _('Renewal Date'),
+                'autorenew' => _('Auto-Renew'), 'notes' => _('Notes'), 'active' => _('Status'), 'total_cost' => _('Cost'));
+        }
         $shared = array('account_id' => $type === 'ssl' ? _('SSL Provider Account') : _('Registrar Account'),
             'owner_id' => _('Owner'), 'expiry_date' => _('Expiry Date'), 'cat_id' => _('Category'),
             'ip_id' => _('IP Address'), 'notes' => _('Notes'),
@@ -322,7 +332,7 @@ class ChangeHistoryListColumns extends ListColumns
                 'ssl_provider_id' => _('SSL Provider'), 'type_id' => _('Certificate Type'), 'issuer' => _('Issuer'));
         }
         return $shared + array('domain' => _('Domain'), 'registrar_id' => _('Registrar'), 'dns_id' => _('DNS Profile'),
-            'hosting_id' => _('Web Hosting Provider'), 'function' => _('Function'), 'autorenew' => _('Auto-Renewal'),
+            'service_id' => _('Hosting Service'), 'function' => _('Function'), 'autorenew' => _('Auto-Renewal'),
             'privacy' => _('Privacy Enabled'), 'dns_servers' => _('DNS Servers'), 'transfer_lock' => _('Transfer Lock'),
             'registry_problem' => _('Registry Problem'), 'epp_status' => _('Registry Status'), 'live_ns' => _('Live DNS Servers'),
             'live_ips' => _('Live IP Addresses'));
@@ -420,7 +430,8 @@ class ChangeHistoryListColumns extends ListColumns
 
     /*
      * A value as plain text: a status by name, a flag as Yes or No, an id by the asset's name at the time (an SSL
-     * certificate's domain 0, or one whose domain is gone, as None), a cost with its currency, and text decoded
+     * certificate's domain, a hosting service's IP address, or a domain's hosting service when it's 0 or gone, as
+     * None), a hosting service's billing term in months, a cost with its currency, and text decoded
      */
     public function valueText($type, $field, $value, $display, $checkbox = false)
     {
@@ -462,9 +473,13 @@ class ChangeHistoryListColumns extends ListColumns
         }
         if ($field === 'epp_status' && $value === '') return _('None');
         if ($field === 'autorenew' || $field === 'privacy') return (int) $value === 1 ? _('Yes') : _('No');
+        if ($type === 'hosting' && $field === 'billing_term') return Hosting::termLabel((int) $value);
         if ($kind === 'id') {
             if ($display !== '') return $this->plain($display);
-            if ($type === 'ssl' && $field === 'domain_id') return _('None');
+            // A certificate's domain, a hosting service's IP address, and a domain's hosting service are optional, so 0
+            // (or one deleted before the change was recorded) reads None
+            if (($type === 'ssl' && $field === 'domain_id') || ($type === 'hosting' && $field === 'ip_id')
+                || ($type === 'domain' && $field === 'service_id')) return _('None');
             return (int) $value === 0 ? _('None') : '#' . (int) $value;
         }
         if ($kind === 'cost') {
@@ -476,6 +491,11 @@ class ChangeHistoryListColumns extends ListColumns
 
     public static function statusName($type, $code)
     {
+        // A hosting service's own statuses (DomainMOD\Hosting), so 0 reads Cancelled
+        if ($type === 'hosting') {
+            $name = Hosting::statusName((int) $code);
+            return $name !== '' ? $name : (string) $code;
+        }
         $names = array(0 => _('Expired'), 1 => _('Active'), 2 => _('Pending (Transfer)'), 3 => _('Pending (Renewal)'),
             4 => _('Pending (Other)'), 5 => _('Pending (Registration)'), 10 => _('Sold'));
         return $names[$code] ?? (string) $code;
@@ -690,7 +710,7 @@ class ChangeHistoryListColumns extends ListColumns
             'bulk_CDNS' => _('Change DNS Profile'),
             'bulk_CIP' => _('Change IP Address'),
             'bulk_CRA' => _('Change Registrar Account'),
-            'bulk_CWH' => _('Change Web Hosting Provider'),
+            'bulk_CWH' => _('Change Hosting Service'),
             'bulk_DD' => _('Delete Domains'),
             'bulk_AN' => _('Add a Note'),
             'bulk_CF' => _('Update Custom Domain Field'),
@@ -708,9 +728,18 @@ class ChangeHistoryListColumns extends ListColumns
             'registrar_delete' => _('Registrar Deleted'),
             'ssl_provider_delete' => _('SSL Provider Deleted'),
             'ssl_type_delete' => _('SSL Type Deleted'),
+            'hosting_fee_add' => _('Fee Added'),
+            'hosting_fee_edit' => _('Fee Changed'),
+            'hosting_fee_delete' => _('Fee Deleted'),
+            'zero_out_hosting_fees' => _('Missing Fees Set to Zero'),
+            'hosting_account_edit' => _('Hosting Account Changed'),
+            'hosting_provider_delete' => _('Hosting Provider Deleted'),
+            'hosting_type_delete' => _('Service Type Deleted'),
+            'hosting_renew' => _('Marked Renewed'),
             'cleanup' => _('System Cleanup'),
             'update_domain_fees' => _('Update Domain Fees'),
             'update_ssl_fees' => _('Update SSL Fees'),
+            'update_hosting_fees' => _('Update Hosting Fees'),
             'watch_check' => _('Scheduled Check'),
             'watch_check_now' => _('Check Now'),
             'watch_add' => _('Domains Added'),

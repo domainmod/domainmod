@@ -24,8 +24,8 @@ namespace DomainMOD\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 
 /*
- * A safety net for the Change History: every PHP file that writes the item tables (domains, ssl_certs, their custom
- * field data, and watch_domains), deletes fee rows (which can take an item's cost currency away), or writes a table named by a variable,
+ * A safety net for the Change History: every PHP file that writes the item tables (domains, ssl_certs, hosting_services,
+ * their custom field data, and watch_domains), deletes fee rows (which can take an item's cost currency away), or writes a table named by a variable,
  * must be a site that records its changes or an exempt one, so a new write can't skip the history. Code review still
  * checks the write sites by hand.
  */
@@ -46,7 +46,16 @@ class ChangeHistoryWriteSitesTest extends TestCase
         'classes/DomainMOD/DomainQueue.php', 'classes/DomainMOD/DomainRefresh.php', 'classes/DomainMOD/Maintenance.php',
         'classes/DomainMOD/SslQueue.php', 'classes/DomainMOD/SslRefresh.php', 'domains/add.php', 'domains/edit.php',
         'maintenance/update-domain-fees.php', 'maintenance/update-ssl-fees.php', 'queue/edit/index.php', 'ssl/add.php',
-        'ssl/edit.php', 'classes/DomainMOD/WatchList.php', 'classes/DomainMOD/WatchCheck.php');
+        'ssl/edit.php', 'classes/DomainMOD/WatchList.php', 'classes/DomainMOD/WatchCheck.php',
+        // Hosting (DomainMOD\Hosting): the service pages and Mark Renewed (HostingRenewal), the asset pages that
+        // reprice, move, or delete what services use, the fee maintenance, and the custom field delete
+        'hosting/add.php', 'hosting/edit.php', 'classes/DomainMOD/HostingRenewal.php',
+        'assets/edit/hosting-provider-account.php', 'assets/add/hosting-fee.php', 'assets/edit/hosting-fee.php',
+        'assets/zero-out-hosting-fees.php', 'assets/edit/hosting-type.php', 'assets/edit/host.php',
+        'admin/hosting-fields/add.php', 'admin/hosting-fields/edit.php');
+
+    // The comment on a domain insert's pre-update form (see HostingNamesTest)
+    const LEGACY_MARKER = '// Legacy: domains.hosting_id before 4.27.0';
 
     // The files that write these tables without recording them, and why
     const EXEMPT = array(
@@ -65,8 +74,8 @@ class ChangeHistoryWriteSitesTest extends TestCase
     // as "Update domains" doesn't match)
     const VERBS = '(INSERT INTO|UPDATE|DELETE FROM|REPLACE INTO|ALTER TABLE|insert into|update|delete from|replace into|alter table)';
 
-    const WRITES = '/' . self::VERBS . '\s+`?(domains|ssl_certs|domain_field_data|ssl_cert_field_data|watch_domains)\b'
-        . '|(DELETE FROM|delete from)\s+`?(fees|ssl_fees)\b|' . self::VERBS . '\s+`?"\s*\.\s*\$/';
+    const WRITES = '/' . self::VERBS . '\s+`?(domains|ssl_certs|hosting_services|domain_field_data|ssl_cert_field_data|hosting_service_field_data|watch_domains)\b'
+        . '|(DELETE FROM|delete from)\s+`?(fees|ssl_fees|hosting_fees)\b|' . self::VERBS . '\s+`?"\s*\.\s*\$/';
 
     private function files()
     {
@@ -110,10 +119,14 @@ class ChangeHistoryWriteSitesTest extends TestCase
             // one of the Bulk Updater's branches fails here even while the others finish theirs)
             $this->assertGreaterThanOrEqual(preg_match_all('/\$history_op = \(new (?:DomainMOD\\\\)?ChangeHistory\(/', $source),
                 substr_count($source, '$history_op->finish();'), $path);
-            // Every insert of an item is recorded as a create (its snapshot is written by finish())
-            $this->assertLessThanOrEqual(substr_count($source, '->created('), preg_match_all('/(INSERT INTO|insert into)\s+`?(domains|ssl_certs|watch_domains)\b/', $source), $path);
+            // Every insert of an item is recorded as a create (its snapshot is written by finish()). A domain insert's
+            // pre-update form (the legacy marker's hosting_id = 0, see HostingNamesTest) is the other branch of the same
+            // insert, so it isn't counted again.
+            $inserts = preg_match_all('/(INSERT INTO|insert into)\s+`?(domains|ssl_certs|hosting_services|watch_domains)\b/', $source)
+                - preg_match_all('/' . preg_quote(self::LEGACY_MARKER, '/') . '\s+\$stmt = \$pdo->prepare\("\s*(INSERT INTO|insert into)\s+`?domains\b/', $source);
+            $this->assertLessThanOrEqual(substr_count($source, '->created('), $inserts, $path);
             // and every delete of an item as a delete row with its snapshot (deleting() before the DELETE)
-            $this->assertLessThanOrEqual(substr_count($source, '->deleting('), preg_match_all('/(DELETE|delete)\s+(?:\w+\s+)?(FROM|from)\s+`?(domains|ssl_certs|watch_domains)\b/', $source), $path);
+            $this->assertLessThanOrEqual(substr_count($source, '->deleting('), preg_match_all('/(DELETE|delete)\s+(?:\w+\s+)?(FROM|from)\s+`?(domains|ssl_certs|hosting_services|watch_domains)\b/', $source), $path);
             // The custom field delete names its action $op
             if ($path === 'classes/DomainMOD/CustomFieldSchema.php') {
                 $this->assertSame(substr_count($source, '$op = (new ChangeHistory('), substr_count($source, '$op->finish();'), $path);
@@ -143,6 +156,101 @@ class ChangeHistoryWriteSitesTest extends TestCase
         $this->assertStringContainsString('$pasted_ids = $bulk_pasted_order($domain_id_list, $domain_array);', $source);
         $this->assertStringContainsString("\$history_op->deleting('domain', \$pasted_ids, true);", $source);
         $this->assertStringContainsString('$domain->unlinkSslCertificatesRecorded($pasted_ids, $history_op, $bulk_known_ssl_ids, true);', $source);
+    }
+
+    // A hosting service no longer points at a domain, so the domain deletes (the edit page's and the Bulk Updater's
+    // Delete Domains) change no service, take no hosting lock, and name only SSL certificates as kept
+    public function testTheDomainDeletesLeaveHostingAlone()
+    {
+        $root = dirname(__DIR__, 2);
+        $domain_source = file_get_contents($root . '/classes/DomainMOD/Domain.php');
+        $this->assertStringNotContainsString('unlinkHosting', $domain_source);
+        $this->assertDoesNotMatchRegularExpression('/(UPDATE|update)\s+`?hosting_services\b/', $domain_source);
+        foreach (array('domains/edit.php', 'bulk/main/index.php') as $path) {
+            $source = file_get_contents($root . '/' . $path);
+            $this->assertStringNotContainsString('unlinkHosting', $source, $path);
+            $this->assertDoesNotMatchRegularExpression('/hosting \w+ (was|were|are) kept without a domain/', $source, $path);
+            $this->assertDoesNotMatchRegularExpression('/(UPDATE|update)\s+`?hosting_services\b/', $source, $path);
+        }
+        // Neither delete takes the hosting lock
+        $edit = file_get_contents($root . '/domains/edit.php');
+        $delete = substr($edit, strpos($edit, "\$history_op->deleting('domain', array(\$did));") - 3000, 6000);
+        $this->assertStringNotContainsString('Hosting::lock(', $delete);
+        $bulk = file_get_contents($root . '/bulk/main/index.php');
+        $this->assertDoesNotMatchRegularExpression('/\$action == "DD"[^\n]*Hosting::lock\(/', $bulk);
+        $dd = strpos($bulk, '} elseif ($action == "DD") {');
+        $this->assertNotFalse($dd);
+        $this->assertStringNotContainsString('Hosting::', substr($bulk, $dd, strpos($bulk, '} elseif ($action ==', $dd + 10) - $dd));
+        $delete_branch = substr($edit, strpos($edit, 'if ($del === 1) {'));
+        $this->assertStringNotContainsString('Hosting::', substr($delete_branch, 0, strpos($delete_branch, "/doctype.inc.php'")));
+    }
+
+    /*
+     * Every domain write that sets a hosting service or inserts a domain with one (13a) takes the hosting lock before
+     * its transaction, checks the service inside it (after the domain rows are locked: the lock order is the hosting
+     * lock, the domains, then the hosting rows), and lets the lock go afterwards. An insert with None takes no lock.
+     * Each entry: the file, where its write starts, and where it ends.
+     */
+    public static function serviceWriteSites()
+    {
+        return array(
+            'domain add' => array('domains/add.php', "if (\$_SERVER['REQUEST_METHOD'] == 'POST') {", '} else {' . "\n\n" . '        if ($new_domain === \'\')'),
+            'domain edit save' => array('domains/edit.php', "if (\$_SERVER['REQUEST_METHOD'] == 'POST') {\n\n    \$system->readOnlyCheck", 'if ($del === 1) {'),
+            'bulk add domains' => array('bulk/main/index.php', '} elseif ($action == "AD") {', '} elseif ($action == "FR") {'),
+            'bulk change hosting service' => array('bulk/main/index.php', '} elseif ($action == "CWH") {', '} elseif ($action == "DD") {'),
+            'queue fix and import' => array('queue/edit/index.php', "if (\$edited_creation_type_id && \$queue_row && \$_SERVER['REQUEST_METHOD'] == 'POST') {", '} elseif ($queue_row) {'));
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('serviceWriteSites')]
+    public function testEveryDomainWriteWithAServiceTakesTheHostingLock($path, $start, $end)
+    {
+        $source = file_get_contents(dirname(__DIR__, 2) . '/' . $path);
+        $from = strpos($source, $start);
+        $this->assertNotFalse($from, $path . ': ' . $start);
+        $to = strpos($source, $end, $from);
+        $this->assertNotFalse($to, $path . ': ' . $end);
+        $site = substr($source, $from, $to - $from);
+
+        $lock = strpos($site, 'Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)');
+        $begin = strpos($site, '$pdo->beginTransaction();');
+        $check = strpos($site, 'Hosting::serviceError($pdo, $new_service_id');
+        $this->assertNotFalse($lock, $path);
+        $this->assertNotFalse($check, $path);
+        $this->assertLessThan($begin, $lock, $path . ': the lock comes before the transaction');
+        $this->assertLessThan($check, $begin, $path . ': the check is inside the transaction');
+        // The write itself comes after the check
+        $this->assertSame(1, preg_match('/(INSERT INTO domains|UPDATE domains\s+SET (?:service_id|owner_id))/', substr($site, $check)), $path);
+        // Nothing is written when the lock can't be had, and it's let go afterwards
+        $this->assertStringContainsString('Hosting::busyMessage()', $site, $path);
+        $this->assertStringContainsString('Hosting::unlock($pdo)', $site, $path);
+        // A malformed choice (-1) is refused before any lock
+        $this->assertMatchesRegularExpression('/\$new_service_id (?:>= 0|< 0)/', substr($site, 0, $lock), $path);
+    }
+
+    // Only a write that involves a service waits for the lock: an insert with None, and a domain edit Save of a domain
+    // with no service saved with None, never take it, while a Change Hosting Service (even to None) always does
+    public function testOnlyWritesInvolvingAServiceTakeTheLock()
+    {
+        $root = dirname(__DIR__, 2);
+        $this->assertStringContainsString('} elseif ($new_service_id !== 0 && !DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {',
+            file_get_contents($root . '/domains/add.php'));
+        $this->assertStringContainsString('} elseif ($new_service_id !== 0 && !DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {',
+            file_get_contents($root . '/bulk/main/index.php'));
+        $this->assertStringContainsString('            if ($new_service_id !== 0) {' . "\n" . '                if (!DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {',
+            file_get_contents($root . '/queue/edit/index.php'));
+        $edit = file_get_contents($root . '/domains/edit.php');
+        $this->assertStringContainsString('if ($new_service_id !== 0 || $stored_service_id !== 0) {', $edit);
+        // The stored service is read before the transaction, and again under the domain's lock for the cancelled check
+        $this->assertLessThan(strpos($edit, '$pdo->beginTransaction();', strpos($edit, '$stored_service_id = 0;')),
+            strpos($edit, '$stored_service_id = (int) $stmt->fetchColumn();'));
+        $this->assertStringContainsString('Hosting::serviceError($pdo, $new_service_id, $locked_service_id)', $edit);
+        $this->assertLessThan(strpos($edit, '$locked_service_id = (int)'), strpos($edit, "\$history_before = \$history_op->capture('domain', array(\$did));"));
+        $bulk = file_get_contents($root . '/bulk/main/index.php');
+        $cwh = substr($bulk, strpos($bulk, '} elseif ($action == "CWH") {'), 600);
+        $this->assertStringContainsString('} elseif (!DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {', $cwh);
+        // The bulk change checks the service after its capture locks the listed domains
+        $this->assertLessThan(strpos($bulk, 'Hosting::serviceError($pdo, $new_service_id)', strpos($bulk, '} elseif ($action == "CWH") {')),
+            strpos($bulk, '$history_before = $bulk_history_capture($history_op, $domain_array);', strpos($bulk, '} elseif ($action == "CWH") {')));
     }
 
     // The SSL type delete refuses inside its transaction when a certificate uses the type, and still rolls back after

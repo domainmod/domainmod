@@ -20,10 +20,16 @@
  */
 //@formatter:off
 /*
- * The Domain Costs and SSL Costs reports (reporting/domains/costs.php and reporting/ssl/costs.php), after the page has
- * set $cost_section, $cost_grouping (DomainMOD\CostReport::grouping()), and its settings: the export, or the page with
- * its Group By and date filter, summary, chart, and table. Every view is an address (the filter is a GET form), and
- * the request's values are read only when they're text, so an array can't stop the page.
+ * The Domain Costs, SSL Costs, and Hosting Costs reports (reporting/domains/costs.php, reporting/ssl/costs.php, and
+ * reporting/hosting/costs.php), after the page has set $cost_section, $cost_grouping (DomainMOD\CostReport::grouping()),
+ * and its settings: the export, or the page with its Group By and date filter, summary, chart, and table. Every view is
+ * an address (the filter is a GET form), and the request's values are read only when they're text, so an array can't
+ * stop the page.
+ *
+ * A page that has already worked out the range itself (only Hosting Costs grouped by Month, whose range always has an
+ * end) sets $cost_resolved_range to its start and end dates, and $cost_range_is_default to whether that's the 12-month
+ * default, before including this file. The queries, the date form, the export link, and the export's heading then use
+ * those dates, and this file's own parsing and its check for an end before the start are skipped.
  */
 $system->authCheck();
 // Rates for every currency in use, or the lists and reports below would leave out what uses a missing one
@@ -33,17 +39,30 @@ $cost_report = new DomainMOD\CostReport($deeb->cnxx, $_SESSION['s_user_id'] ?? 0
 $cost_key = $cost_grouping['key'];
 
 $export_data = DomainMOD\CostReport::exportRequested($_GET);
-$daterange = is_string($_GET['daterange'] ?? null) ? $sanitize->text($_GET['daterange']) : '';
-
-list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
 $submission_failed = 0;
-if ($new_start_date != '' && $new_start_date > $new_end_date) {
+if (isset($cost_resolved_range)) {
 
-    $_SESSION['s_message_danger'] .= _('The end date is before the start date.') . '<BR>';
-    $submission_failed = 1;
+    list($new_start_date, $new_end_date) = $cost_resolved_range;
+    $daterange = $new_start_date . ' - ' . $new_end_date;
+
+} else {
+
+    $daterange = is_string($_GET['daterange'] ?? null) ? $sanitize->text($_GET['daterange']) : '';
+
+    list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
+
+    if ($new_start_date != '' && $new_start_date > $new_end_date) {
+
+        $_SESSION['s_message_danger'] .= _('The end date is before the start date.') . '<BR>';
+        $submission_failed = 1;
+
+    }
 
 }
+
+// Whether the shown range can be cleared: any range, except the default one a resolved range falls back to
+$range_clearable = isset($cost_resolved_range) ? empty($cost_range_is_default) : $new_start_date != '' && $new_end_date != '';
 
 $cost_rows = array();
 $cost_chart_rows = array();
@@ -175,13 +194,18 @@ if ($submission_failed != 1 && $total_rows > 0 && $export_data) {
     }
     $export->writeRow($export_file, $row_contents);
 
-    $export->writeRow($export_file, array(
-        $cost_section == 'domains' ? _('Number of Domains') . ':' : _('Number of SSL Certificates') . ':',
-        $number_total
-    ));
+    if ($cost_section == 'hosting') {
+        $number_label = _('Number of Hosting Services') . ':';
+    } elseif ($cost_section == 'domains') {
+        $number_label = _('Number of Domains') . ':';
+    } else {
+        $number_label = _('Number of SSL Certificates') . ':';
+    }
+    $export->writeRow($export_file, array($number_label, $number_total));
 
+    // Hosting's totals are yearly figures, except Month's, which adds up the projected renewals in the range
     $export->writeRow($export_file, array(
-        _('Total Cost') . ':',
+        ($cost_section == 'hosting' && $cost_key !== 'month' ? _('Yearly Cost') : _('Total Cost')) . ':',
         $grand_total,
         $_SESSION['s_default_currency']
     ));
@@ -239,7 +263,7 @@ $report_range = $report_has_range ? array('daterange' => $new_start_date . ' - '
         <label for="daterange" class="form-label fw-bold mb-0"><?php echo _('Filter by Date Range'); ?></label>
         <input type="text" name="daterange" id="daterange" class="form-control w-auto" size="23" dir="ltr" value="<?php echo $daterange; ?>" />
         <?php echo $form->showSubmitButton(_('Filter Report'), '', ''); ?>
-        <?php if ($report_has_range) echo $layout->linkButton($report_filename . '?' . http_build_query(array('group' => $cost_key)), _('Clear')); ?>
+        <?php if ($range_clearable) echo $layout->linkButton($report_filename . '?' . http_build_query(array('group' => $cost_key)), _('Clear')); ?>
     </div>
 </form>
 <?php
@@ -260,6 +284,16 @@ if ($submission_failed != 1) {
     $report_url = '/reporting/' . $report_section . '/' . $report_filename;
     $report_group_url = $report_url . '?' . http_build_query(array('group' => $cost_key));
 
+    // Hosting's costs are yearly figures, and its Month grouping shows projected renewals, so the report says which.
+    // The other groupings' counts link to the Hosting list, which also shows services with no fee or rate, so the
+    // report says why a count can be lower than the list it opens.
+    if ($report_section == 'hosting') {
+        echo '<p class="domainmod-intro">' . ($cost_key === 'month'
+            ? _('This shows projected renewals: every renewal of each hosting service in the date range, one billing term\'s cost at a time, in the month it falls in. The range is at most 36 months and opens at the 12 months starting this month.')
+            : _('This report shows yearly figures, each hosting service\'s cost per billing term scaled to 12 months. Cancelled hosting services are left out.')
+                . ' ' . _('Counts and costs include only services with a fee and a conversion rate. The list they link to also shows services without them.')) . '</p>';
+    }
+
     if ($total_rows > 0) {
 
         // The amount and its currency code stay in order on right-to-left pages (isolated with Unicode marks, since
@@ -268,7 +302,12 @@ if ($submission_failed != 1) {
         $report_card_url = $report_url . '?' . http_build_query(array('group' => $cost_key) + $report_range, '', '&amp;') . '#' . $slug;
 
         echo '<div class="row mb-4">';
-        if ($report_section == 'domains') {
+        if ($report_section == 'hosting') {
+            // A yearly figure says so, while Month's total is the projected renewals in the range
+            // TRANSLATORS: A Hosting Costs total. %s is an amount and its currency code, such as "$120.00 USD".
+            $hosting_total = $cost_key === 'month' ? $report_total : sprintf(_('%s a year'), $report_total);
+            echo $dashboard->displayPanel(_('Hosting Services'), (int) $number_total, 'danger', 'bi-hdd-stack', $report_card_url, $report_name, $hosting_total);
+        } elseif ($report_section == 'domains') {
             echo $dashboard->displayPanel(_('Domains'), (int) $number_total, 'danger', 'bi-globe2', $report_card_url, $report_name, $report_total);
         } else {
             echo $dashboard->displayPanel(_('SSL Certificates'), (int) $number_total, 'danger', 'bi-shield-lock', $report_card_url, $report_name, $report_total);
@@ -277,17 +316,28 @@ if ($submission_failed != 1) {
 
     } elseif ($report_has_range) {
 
-        $report_empty_text = $report_section == 'domains'
-            ? _('No live domains with a fee expire between these dates.')
-            : _('No live SSL certificates with a fee expire between these dates.');
+        if ($report_section == 'hosting') {
+            $report_empty_text = $cost_key === 'month'
+                ? _('No hosting services with a fee and a conversion rate have a projected renewal between these dates.')
+                : _('No hosting services with a fee and a conversion rate renew between these dates.');
+        } elseif ($report_section == 'domains') {
+            $report_empty_text = _('No live domains with a fee expire between these dates.');
+        } else {
+            $report_empty_text = _('No live SSL certificates with a fee expire between these dates.');
+        }
+        // The link back to every date is left out when clearing the range would change nothing
         echo $layout->emptyState('bi-calendar-x', _('No costs in this date range'), $report_empty_text, '', '',
-            $report_group_url, _('Clear the date range'));
+            $range_clearable ? $report_group_url : '', $range_clearable ? _('Clear the date range') : '');
 
     } else {
 
-        $report_empty_text = $report_section == 'domains'
-            ? _('Live domains are counted here once they have a fee.')
-            : _('Live SSL certificates are counted here once they have a fee.');
+        if ($report_section == 'hosting') {
+            $report_empty_text = _('Hosting services that aren\'t cancelled are counted here once they have a fee and a conversion rate.');
+        } elseif ($report_section == 'domains') {
+            $report_empty_text = _('Live domains are counted here once they have a fee.');
+        } else {
+            $report_empty_text = _('Live SSL certificates are counted here once they have a fee.');
+        }
         echo $layout->emptyState('bi-cash-coin', _('No costs to report yet'), $report_empty_text);
 
     }

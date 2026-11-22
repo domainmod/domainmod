@@ -40,6 +40,10 @@ class Email
     public $last_name;
     public $email_address;
     public $use_smtp;
+    // Whether the database has the hosting tables, and the hosting date (today in the hosting time zone), worked out
+    // once per expiration email by checkExpiring() (see hostingExpiring())
+    public $hosting_available = false;
+    public $hosting_date = '';
 
     public function __construct()
     {
@@ -171,18 +175,20 @@ class Email
         // Nothing expiring: no email (checkExpiring() has already set the message for the page)
         $expiring = $this->checkExpiring($from_cron);
         if ($expiring === false) return;
-        list($result_domains, $result_ssl) = $expiring;
+        list($result_domains, $result_ssl, $result_hosting) = $expiring;
 
         $message_html = '';
         $message_html .= $this->messageTopHtml($subject);
         $message_html .= $this->showDomainsHtml($result_domains, $timestamp_basic);
         $message_html .= $this->showSslHtml($result_ssl, $timestamp_basic);
+        $message_html .= $this->showHostingHtml($result_hosting);
         $message_html .= $this->messageBottomHtml();
 
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText();
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
         $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
+        $message_text .= $this->showHostingText($result_hosting);
         $message_text .= $this->messageBottomText();
 
         foreach ($send_to as $row_recipients) {
@@ -307,8 +313,10 @@ class Email
 
         }
 
-        if ($domains_expiring != '0' || $ssl_expiring != '0') {
-            return array($domains_expiring, $ssl_expiring);
+        $hosting_expiring = $this->hostingExpiring();
+
+        if ($domains_expiring != '0' || $ssl_expiring != '0' || $hosting_expiring) {
+            return array($domains_expiring, $ssl_expiring, $hosting_expiring);
         } else {
 
             if (isset($_SESSION['s_message_success'])) {
@@ -320,6 +328,61 @@ class Email
             // Return rather than exit, so cron.php goes on to its other tasks
             return false;
         }
+    }
+
+    /*
+     * The hosting services for the expiration email, once the database update has added the hosting tables (an empty
+     * list before then): every service in any status except Cancelled whose renewal date is on or before the hosting
+     * cut-off, the hosting date plus the email's number of days, each with its renewal state (see hostingRows()). The
+     * hosting date, not the UTC date the domain and SSL sections use, is worked out once here, so just after midnight in
+     * a zone ahead of UTC a one-day window still includes tomorrow there.
+     */
+    public function hostingExpiring()
+    {
+        $pdo = $this->deeb->cnxx;
+        $this->hosting_available = Hosting::isAvailable($pdo);
+        if (!$this->hosting_available) return array();
+
+        $this->hosting_date = Hosting::hostingDate($pdo);
+        $cutoff = Hosting::addDays($this->hosting_date, (int) $this->number_of_days);
+
+        $stmt = $pdo->prepare("
+            SELECT hs.id, hs.name, hs.expiry_date, hs.billing_term, hs.renewal_day, hs.autorenew, hs.active, ht.type
+            FROM hosting_services AS hs
+            LEFT JOIN hosting_types AS ht ON hs.type_id = ht.id
+            WHERE hs.active <> 0
+              AND hs.expiry_date <= :cutoff
+            ORDER BY hs.expiry_date, hs.name");
+        $stmt->bindValue('cutoff', $cutoff, \PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+
+        return self::hostingRows($rows, $this->hosting_date, $cutoff);
+    }
+
+    /*
+     * Keeps the hosting service rows whose renewal date is on or before $cutoff, sorted by it (then by name), each with
+     * its renewal state on $hosting_date (Hosting::renewalState()): state, and overdue and confirm saying which. Every
+     * service is listed on its stored date, since DomainMOD never moves a date by itself, and one waiting for its
+     * renewal to be confirmed keeps an otherwise empty email going, since it asks the reader to act.
+     */
+    public static function hostingRows($rows, $hosting_date, $cutoff)
+    {
+        $kept = array();
+        foreach ($rows as $row) {
+            if ((string) $row->expiry_date > $cutoff) continue;
+            $row->state = Hosting::renewalState($row->active, $row->autorenew, $row->expiry_date, $row->billing_term,
+                $hosting_date);
+            $row->overdue = $row->state === Hosting::STATE_OVERDUE;
+            $row->confirm = $row->state === Hosting::STATE_CONFIRM;
+            $kept[] = $row;
+        }
+
+        usort($kept, function ($a, $b) {
+            return array((string) $a->expiry_date, (string) $a->name) <=> array((string) $b->expiry_date, (string) $b->name);
+        });
+
+        return $kept;
     }
 
     public function getExpEmRecip()
@@ -355,16 +418,25 @@ class Email
         <font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
         <?php echo $this->logoHtml(); ?>
         <BR>
-        <?php echo sprintf(_('Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days.'), SOFTWARE_TITLE, $this->number_of_days); ?><BR>
+        <?php echo $this->introLine(); ?><BR>
         <BR>
         <?php echo sprintf(_('If you would like to change the frequency of this email notification please contact your %s administrator.'), SOFTWARE_TITLE); ?><BR>
         <BR><?php
         return ob_get_clean();
     }
 
+    // The email's opening line, naming hosting services too once the database update has added them
+    public function introLine()
+    {
+        if ($this->hosting_available) {
+            return sprintf(ngettext('Below is a list of all the domains, SSL certificates, and hosting services in %1$s that are expiring or renewing in the next %2$s day.', 'Below is a list of all the domains, SSL certificates, and hosting services in %1$s that are expiring or renewing in the next %2$s days.', (int) $this->number_of_days), SOFTWARE_TITLE, $this->number_of_days);
+        }
+        return sprintf(_('Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days.'), SOFTWARE_TITLE, $this->number_of_days);
+    }
+
     public function messageTopText()
     {
-        $message = sprintf(_('Below is a list of all the Domains & SSL Certificates in %s that are expiring in the next %s days.'), SOFTWARE_TITLE, $this->number_of_days) . "\n\n";
+        $message = $this->introLine() . "\n\n";
         $message .= sprintf(_('If you would like to change the frequency of this email notification please contact your %s administrator.'), SOFTWARE_TITLE) . "\n\n";
         return $message;
     }
@@ -440,6 +512,61 @@ class Email
                     $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ") *" . Format::toUpper(_('Expired')) . "*\n";
                 } else {
                     $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ")\n";
+                }
+            }
+            $message .= "\n";
+        }
+        return $message;
+    }
+
+    // The Hosting section of the HTML email, by renewal date, with the overdue ones marked in red and those waiting for
+    // their renewal to be confirmed in amber
+    public function showHostingHtml($result_hosting)
+    {
+        ob_start();
+        if ($result_hosting) { ?>
+            <BR><strong><u><?php echo _('Hosting'); ?></u></strong><BR><?php
+            foreach ($result_hosting as $row_hosting) {
+                // Names and service types are stored HTML-escaped (as SSL certificates' are), so they're printed as is
+                $hosting_name = (string) $row_hosting->name;
+                if ((string) $row_hosting->type !== '') $hosting_name .= ' (' . $row_hosting->type . ')';
+                if ($row_hosting->overdue) { ?>
+                    <font color="#CC0000"><?php echo $row_hosting->expiry_date; ?></font>&nbsp;&nbsp;<a
+                        href="<?php echo $this->full_url; ?>/hosting/edit.php?hsid=<?php echo (int) $row_hosting->id;
+                        ?>"><?php echo $hosting_name; ?></a>&nbsp;&nbsp;<font
+                        color="#CC0000">*<?php echo Format::toUpper(_('Overdue')); ?>*</font><BR><?php
+                } elseif ($row_hosting->confirm) { ?>
+                    <font color="#995C00"><?php echo $row_hosting->expiry_date; ?></font>&nbsp;&nbsp;<a
+                        href="<?php echo $this->full_url; ?>/hosting/edit.php?hsid=<?php echo (int) $row_hosting->id;
+                        ?>"><?php echo $hosting_name; ?></a>&nbsp;&nbsp;<font
+                        color="#995C00">*<?php echo Format::toUpper(_('Confirm renewal')); ?>*</font><BR><?php
+                } else { ?>
+                    <?php echo $row_hosting->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $this->full_url;
+                    ?>/hosting/edit.php?hsid=<?php echo (int) $row_hosting->id; ?>"><?php echo $hosting_name; ?></a><BR><?php
+                }
+            }
+        }
+        return ob_get_clean();
+    }
+
+    // The Hosting section of the plain text email, by renewal date, with the overdue ones and those waiting for their
+    // renewal to be confirmed marked
+    public function showHostingText($result_hosting)
+    {
+        $message = '';
+        if ($result_hosting) {
+            $message .= "[" . _('Hosting') . "]\n";
+            foreach ($result_hosting as $row_hosting) {
+                // The plain text part shows the stored, HTML-escaped names as typed
+                $unsanitize = new Unsanitize();
+                $hosting_name = $unsanitize->text((string) $row_hosting->name);
+                if ((string) $row_hosting->type !== '') $hosting_name .= " (" . $unsanitize->text((string) $row_hosting->type) . ")";
+                if ($row_hosting->overdue) {
+                    $message .= $row_hosting->expiry_date . " - " . $hosting_name . " *" . Format::toUpper(_('Overdue')) . "*\n";
+                } elseif ($row_hosting->confirm) {
+                    $message .= $row_hosting->expiry_date . " - " . $hosting_name . " *" . Format::toUpper(_('Confirm renewal')) . "*\n";
+                } else {
+                    $message .= $row_hosting->expiry_date . " - " . $hosting_name . "\n";
                 }
             }
             $message .= "\n";

@@ -1,0 +1,183 @@
+<?php
+/**
+ * /admin/hosting-fields/index.php
+ *
+ * This file is part of DomainMOD, an open source domain and internet asset manager.
+ * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
+ *
+ * Project: http://domainmod.org   Author: https://greg.ca
+ *
+ * DomainMOD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * DomainMOD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with DomainMOD. If not, see
+ * http://www.gnu.org/licenses/.
+ *
+ */
+?>
+<?php //@formatter:off
+require_once __DIR__ . '/../../_includes/start-session.inc.php';
+require_once __DIR__ . '/../../_includes/init.inc.php';
+require_once DIR_INC . '/config.inc.php';
+require_once DIR_INC . '/software.inc.php';
+require_once DIR_ROOT . '/vendor/autoload.php';
+
+$deeb = DomainMOD\Database::getInstance();
+$system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
+$time = new DomainMOD\Time();
+
+require_once DIR_INC . '/head.inc.php';
+require_once DIR_INC . '/debug.inc.php';
+require_once DIR_INC . '/settings/admin-custom-hosting-fields.inc.php';
+
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin'] ?? 0);
+$pdo = $deeb->cnxx;
+
+// The hosting tables exist only once the database has been updated (DomainMOD\Hosting)
+if (!DomainMOD\Hosting::isAvailable($pdo)) {
+
+    $_SESSION['s_message_danger'] = ($_SESSION['s_message_danger'] ?? '') . DomainMOD\Hosting::unavailableMessage() . '<BR>';
+    header("Location: " . WEB_ROOT . "/admin/");
+    exit;
+
+}
+
+$export_data = (int) ($_GET['export_data'] ?? 0);
+
+$result = $pdo->query("
+    SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type
+    FROM hosting_service_fields AS f, custom_field_types AS t
+    WHERE f.type_id = t.id
+    ORDER BY f.name")->fetchAll();
+
+if ($export_data === 1) {
+
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile(_('custom_hosting_field_list'), strtotime($time->stamp()));
+
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
+
+    $export->writeBlankRow($export_file);
+
+    $row_contents = array(
+        _('Display Name'),
+        _('DB Field'),
+        _('Data Type'),
+        _('Description'),
+        _('Notes'),
+        _('Creation Type'),
+        _('Created By'),
+        _('Inserted'),
+        _('Updated')
+    );
+    $export->writeRow($export_file, $row_contents);
+
+    if ($result) {
+
+        foreach ($result as $row) {
+
+            $creation_type = $system->getCreationType($row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = _('Unknown');
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($row->created_by);
+            }
+
+            $row_contents = array(
+                $row->name,
+                $row->field_name,
+                $row->type,
+                $row->description,
+                $row->notes,
+                $creation_type,
+                $created_by,
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
+            );
+
+            $export->writeRow($export_file, $row_contents);
+
+        }
+
+    }
+
+    $export->closeFile($export_file);
+
+}
+?>
+<?php require_once DIR_INC . '/doctype.inc.php'; ?>
+<?php echo $layout->htmlTag(); ?>
+<head>
+    <title><?php echo $layout->pageTitle($page_title); ?></title>
+    <?php require_once DIR_INC . '/layout/head-tags.inc.php'; ?>
+</head>
+<?php echo $layout->bodyTag(); ?>
+<?php require_once DIR_INC . '/layout/header.inc.php'; ?>
+<div class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Custom Hosting Fields'), SOFTWARE_TITLE); ?><BR>
+<BR>
+<?php echo sprintf(_('Custom Hosting Fields help extend the functionality of %s by allowing the user to create their own data fields.'), SOFTWARE_TITLE); ?>
+<?php echo '&nbsp;'; echo _('For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your hosting services, you could create a Purchaser Name text field and keep track of this information for every one of your hosting services. And when you export your hosting data, the information contained in your custom fields will automatically be included in the exported data.'); ?></div>
+<BR><?php
+
+if (!$result) {
+
+    echo $layout->emptyState('bi-input-cursor-text', _('No custom hosting fields yet'), _('Custom fields let you track your own details for each hosting service.'), '/admin/hosting-fields/add.php', _('Add Custom Field'));
+
+} else {
+
+    // The page's actions, drawn in the page header (see Layout::renderPageActions())
+    $layout->setPageAddAction(_('Add Custom Field'), 'add.php');
+    $layout->addPageAction(_('Export'), 'index.php?export_data=1', 'bi-download'); ?>
+
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
+            <th><?php echo _('Name'); ?></th>
+            <th><?php echo _('DB Field'); ?></th>
+            <th><?php echo _('Data Type'); ?></th>
+            <th><?php echo _('Inserted'); ?></th>
+            <th><?php echo _('Updated'); ?></th>
+        </tr>
+        </thead>
+        <tbody><?php
+
+        foreach ($result as $row) { ?>
+
+            <tr>
+            <td></td>
+            <td>
+                <a href="edit.php?chfid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+            </td>
+            <td>
+                <a href="edit.php?chfid=<?php echo $row->id; ?>"><?php echo $row->field_name; ?></a>
+            </td>
+            <td>
+                <a href="edit.php?chfid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
+            </td>
+            <td>
+                <a href="edit.php?chfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->insert_time, 'Y-m-d H:i:s', '-'); ?></a>
+            </td>
+            <td>
+                <a href="edit.php?chfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->update_time, 'Y-m-d H:i:s', '-'); ?></a>
+            </td>
+            </tr><?php
+
+        } ?>
+
+        </tbody>
+    </table><?php
+
+} ?>
+<?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>
+</body>
+</html>

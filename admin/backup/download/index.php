@@ -46,13 +46,15 @@ $download_filename = 'domainmod-backup.sql';
 
 /*
  * The request's shared restore lock (taken by the bootstrap, see _includes/restore-gate.inc.php) is held until the dump
- * has finished, so a restore can't start part-way through it. Both item types' custom field locks are held for the whole
- * dump too (domain fields, then SSL fields, each with a short wait), so a field can't be added or deleted while the dump
- * reads the table definitions. If either can't be had, nothing is dumped.
+ * has finished, so a restore can't start part-way through it. Every item type's custom field lock is held for the whole
+ * dump too (domain fields, then SSL fields, then hosting fields once the database update adds the hosting tables, each
+ * with a short wait), so a field can't be added or deleted while the dump reads the table definitions. If any can't be
+ * had, nothing is dumped.
  */
 $pdo = $deeb->cnxx;
 $custom_field_locks = array();
-foreach (array('domain', 'ssl') as $custom_field_type) {
+$custom_field_types = DomainMOD\Hosting::isAvailable($pdo) ? array('domain', 'ssl', 'hosting') : array('domain', 'ssl');
+foreach ($custom_field_types as $custom_field_type) {
 
     if (!DomainMOD\ChangeHistory::lockCustomFields($pdo, $custom_field_type, 5)) {
 

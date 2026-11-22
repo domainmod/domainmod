@@ -112,27 +112,73 @@ if ($del === 1) {
     $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-    $stmt = $pdo->prepare("
-        SELECT cat_id
-        FROM domains
-        WHERE cat_id = :pcid
-        LIMIT 1");
-    $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
+    /*
+     * Once the database has the hosting tables, the checks and the delete hold the hosting lock, so a hosting service
+     * can't be given this category between the two
+     */
+    $hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+    if ($hosting_available && !DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {
 
-    if ($result) {
+        $_SESSION['s_message_danger'] .= DomainMOD\Hosting::busyMessage() . '<BR>';
+        header("Location: category.php?pcid=" . $pcid);
+        exit;
 
-        $_SESSION['s_message_danger'] .= _('This Category has domains associated with it and cannot be deleted.') . '<BR>';
+    }
 
-    } else {
+    $deleted = false;
+
+    try {
 
         $stmt = $pdo->prepare("
-            DELETE FROM categories
-            WHERE id = :pcid");
+            SELECT cat_id
+            FROM domains
+            WHERE cat_id = :pcid
+            LIMIT 1");
         $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
         $stmt->execute();
+        $existing_domains = $stmt->fetchColumn() !== false;
+        $stmt->closeCursor();
+
+        $existing_hosting_services = false;
+
+        if ($hosting_available) {
+
+            $stmt = $pdo->prepare("
+                SELECT id
+                FROM hosting_services
+                WHERE cat_id = :pcid
+                LIMIT 1");
+            $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+            $stmt->execute();
+            $existing_hosting_services = $stmt->fetchColumn() !== false;
+            $stmt->closeCursor();
+
+        }
+
+        if ($existing_domains || $existing_hosting_services) {
+
+            if ($existing_domains) $_SESSION['s_message_danger'] .= _('This Category has domains associated with it and cannot be deleted.') . '<BR>';
+            if ($existing_hosting_services) $_SESSION['s_message_danger'] .= _('This Category has hosting services associated with it and cannot be deleted.') . '<BR>';
+
+        } else {
+
+            $stmt = $pdo->prepare("
+                DELETE FROM categories
+                WHERE id = :pcid");
+            $stmt->bindValue('pcid', $pcid, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $deleted = true;
+
+        }
+
+    } finally {
+
+        if ($hosting_available) DomainMOD\Hosting::unlock($pdo);
+
+    }
+
+    if ($deleted) {
 
         $_SESSION['s_message_success'] .= sprintf(_('Category %s deleted'), $new_category) . '<BR>';
 
@@ -160,7 +206,7 @@ echo $form->showInputHidden('new_pcid', $pcid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->dangerZone(_('Category'), $new_category, 'category.php?pcid=' . $pcid . '&del=1', _('Delete this category'), sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_category, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
+$layout->dangerZone(_('Category'), $new_category, 'category.php?pcid=' . $pcid . '&del=1', _('Delete this category'), (DomainMOD\Hosting::isAvailable($pdo) ? sprintf(_('This removes %s. It can only be deleted when no domains or hosting services use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_category, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>') : sprintf(_('This removes %s. It can only be deleted when no domains use it. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_category, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>')), 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

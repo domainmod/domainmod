@@ -129,10 +129,15 @@ class Conversion
         return DIR_TEMP . '/conversion-rate-' . implode('_', $parts) . '.failed';
     }
 
-    // The currencies any domain or SSL fee uses (whether or not an asset uses that fee yet, so the fee comparisons can
-    // convert every fee) that a user has no conversion rate for
+    // The currencies any domain, SSL, or hosting fee uses (whether or not an asset uses that fee yet, so the fee
+    // comparisons can convert every fee) that a user has no conversion rate for. Hosting fees count once the database
+    // has the hosting tables (see Hosting::isAvailable()).
     public function missingRates($user_id)
     {
+        $hosting_fees = Hosting::isAvailable($this->deeb->cnxx) ? "
+               UNION
+               SELECT currency_id
+               FROM hosting_fees" : '';
         $stmt = $this->deeb->cnxx->prepare("
             SELECT c.id, c.currency
             FROM currencies AS c
@@ -141,7 +146,7 @@ class Conversion
                FROM fees
                UNION
                SELECT currency_id
-               FROM ssl_fees
+               FROM ssl_fees" . $hosting_fees . "
             )
               AND NOT EXISTS (
                 SELECT 1
@@ -226,10 +231,16 @@ class Conversion
         return $result_message;
     }
 
-    // The currencies any domain or SSL fee uses, whether or not an asset uses that fee yet, so the rates the fee
-    // comparisons need are refreshed with the rest
+    // The currencies any domain, SSL, or hosting fee uses, whether or not an asset uses that fee yet, so the rates the
+    // fee comparisons need are refreshed with the rest (hosting fees once the database has the hosting tables)
     public function getActiveCurrencies()
     {
+        $hosting_fees = Hosting::isAvailable($this->deeb->cnxx) ? "
+               UNION
+               SELECT c.id, c.currency
+               FROM currencies AS c, hosting_fees AS f
+               WHERE c.id = f.currency_id
+               GROUP BY c.currency" : '';
         $result = $this->deeb->cnxx->query("
             SELECT id, currency
             FROM
@@ -241,7 +252,7 @@ class Conversion
                SELECT c.id, c.currency
                FROM currencies AS c, ssl_fees AS f
                WHERE c.id = f.currency_id
-               GROUP BY c.currency
+               GROUP BY c.currency" . $hosting_fees . "
             ) AS temp
             GROUP BY currency")->fetchAll();
 

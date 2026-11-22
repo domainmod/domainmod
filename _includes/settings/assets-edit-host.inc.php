@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$page_title = _('Edit Web Host');
+$page_title = _('Edit Hosting Provider');
 $breadcrumb = _('Edit');
 $software_section = "assets";
 $slug = "assets-edit-host";

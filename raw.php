@@ -41,17 +41,17 @@ $pdo = $deeb->cnxx;
 $_SESSION['s_raw_list_type'] = $_SESSION['s_raw_list_type'] ?? '';
 
 /*
- * The Domains and SSL Certificates lists' Raw List links name the list they were made for: its saved query and bound
- * values (dt_list, see ListQuery::savedListKey()), its type (dt_type), and its custom field filters' key (dt_cfk, see
- * CustomFieldFilter::filterKey()). With a search in the table, they also carry the search box (dt_search) and the
- * column layout (dt_layout), added by js/server-list.js, so the list matches the rows the table shows. A link is only
+ * The Domains, SSL Certificates, and Hosting Services lists' Raw List links name the list they were made for: its saved
+ * query and bound values (dt_list, see ListQuery::savedListKey()), its type (dt_type), and its custom field filters' key
+ * (dt_cfk, see CustomFieldFilter::filterKey()). With a search in the table, they also carry the search box (dt_search)
+ * and the column layout (dt_layout), added by js/server-list.js, so the list matches the rows the table shows. A link is only
  * run on the saved list it was made for, with the same custom fields, never on one another tab has saved since, and its
  * page title and messages follow its own type. A plain link with none of them (an old bookmark) runs the saved list
  * unchecked, as before.
  */
 $raw_list_link = isset($_GET['dt_list']) && is_string($_GET['dt_list']);
 $raw_list_type = $_SESSION['s_raw_list_type'];
-if ($raw_list_link && in_array($_GET['dt_type'] ?? null, array('domains', 'ssl-certs'), true)) {
+if ($raw_list_link && in_array($_GET['dt_type'] ?? null, array('domains', 'ssl-certs', 'hosting'), true)) {
     $raw_list_type = $_GET['dt_type'];
 }
 
@@ -64,6 +64,11 @@ if ($raw_list_type == 'domains') {
 
     $page_title = _('SSL Certificates (Raw List)');
     $software_section = "ssl-certs";
+
+} elseif ($raw_list_type == 'hosting') {
+
+    $page_title = _('Hosting Services (Raw List)');
+    $software_section = "hosting";
 
 }
 ?>
@@ -89,6 +94,16 @@ if ($raw_list_type == 'ssl-certs') {
     $list_fields_table = 'ssl_cert_fields';
     $list_alias = 'sslfd';
     $list_settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
+
+} elseif ($raw_list_type == 'hosting') {
+
+    $list_changed = _('The Hosting Services list has changed since you searched it. Please reload the list and search again.');
+    $list_reopen = _('The Hosting Services list has changed since you opened it. Please reload the list and open Raw List again.');
+    // Before the database update there are no hosting tables to read
+    $list_class = DomainMOD\Hosting::isAvailable($pdo) ? 'DomainMOD\HostingList' : null;
+    $list_fields_table = 'hosting_service_fields';
+    $list_alias = 'hsfd';
+    $list_settings = DomainMOD\HostingListColumns::sessionCopy($_SESSION);
 
 } else {
 
@@ -127,7 +142,11 @@ if ($raw_list_status === 'mismatch') {
 
 }
 
-if ($raw_list_message !== '') {
+if ($raw_list_type == 'hosting' && $list_class === null) {
+
+    echo htmlspecialchars(DomainMOD\Hosting::unavailableMessage(), ENT_QUOTES, 'UTF-8') . "<BR>";
+
+} elseif ($raw_list_message !== '') {
 
     echo htmlspecialchars($raw_list_message, ENT_QUOTES, 'UTF-8') . "<BR>";
 

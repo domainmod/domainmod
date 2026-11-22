@@ -24,6 +24,7 @@ namespace DomainMOD\Tests\Unit;
 use DomainMOD\CustomField;
 use DomainMOD\DomainList;
 use DomainMOD\DomainListColumns;
+use DomainMOD\HostingList;
 use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\RecordingPdo;
@@ -52,7 +53,8 @@ class CustomFieldNamesTest extends TestCase
 
     public static function lists()
     {
-        return array('domains' => array(DomainList::class, 'dfd'), 'SSL certificates' => array(SslList::class, 'sslfd'));
+        return array('domains' => array(DomainList::class, 'dfd'), 'SSL certificates' => array(SslList::class, 'sslfd'),
+            'hosting services' => array(HostingList::class, 'hsfd'));
     }
 
     #[DataProvider('lists')]
@@ -79,6 +81,12 @@ class CustomFieldNamesTest extends TestCase
         $this->assertContains('registrar_name', DomainList::builtInColumnNames());
         $this->assertContains('type_id', SslList::builtInColumnNames());
         $this->assertContains('cat_name', SslList::builtInColumnNames());
+        $this->assertContains('hostname', HostingList::builtInColumnNames());
+        $this->assertContains('yearly_cost', HostingList::builtInColumnNames());
+        // The service's old Server, Username, and Main Domain columns are gone from the list, so a field may use them
+        foreach (array('server', 'hosting_username', 'domain_id', 'domain') as $gone) {
+            $this->assertNotContains($gone, HostingList::builtInColumnNames(), $gone);
+        }
     }
 
     public function testACustomFieldNamedLikeABuiltInColumnDoesNotReplaceIt()
@@ -104,12 +112,25 @@ class CustomFieldNamesTest extends TestCase
             'the data table id' => array('domain', 'id', true),
             'the data table domain id' => array('domain', 'domain_id', true),
             'the data table times' => array('domain', 'insert_time', true),
+            // The Domains list selects these once hosting is available, and they're reserved before that too
+            'the domain hosting service id' => array('domain', 'service_id', true),
+            'the domain hosting service name' => array('domain', 'service_name', true),
+            'the old domain hosting provider id' => array('domain', 'whid', false),
+            'the old domain hosting provider name' => array('domain', 'wh_name', false),
             'an SSL id on a domain field' => array('domain', 'ssl_id', false),
             'an ordinary domain field' => array('domain', 'renewal_note', false),
             'an SSL column' => array('ssl', 'cat_name', true),
             'the SSL data table id' => array('ssl', 'ssl_id', true),
             'the domain id on an SSL field' => array('ssl', 'domain_id', true),
             'an ordinary SSL field' => array('ssl', 'order_ref', false),
+            'a hosting column' => array('hosting', 'hostname', true),
+            'the old hosting server column' => array('hosting', 'server', false),
+            'the old hosting username column' => array('hosting', 'hosting_username', false),
+            'the old hosting domain id column' => array('hosting', 'domain_id', false),
+            'the old hosting domain column' => array('hosting', 'domain', false),
+            'the hosting yearly cost' => array('hosting', 'yearly_cost', true),
+            'the hosting data table id' => array('hosting', 'service_id', true),
+            'an ordinary hosting field' => array('hosting', 'plan_code', false),
         );
     }
 
@@ -122,7 +143,8 @@ class CustomFieldNamesTest extends TestCase
     public static function addPages()
     {
         return array('domain fields' => array('admin/domain-fields/add.php', 'domain'),
-            'SSL fields' => array('admin/ssl-fields/add.php', 'ssl'));
+            'SSL fields' => array('admin/ssl-fields/add.php', 'ssl'),
+            'hosting fields' => array('admin/hosting-fields/add.php', 'hosting'));
     }
 
     #[DataProvider('addPages')]
@@ -137,7 +159,8 @@ class CustomFieldNamesTest extends TestCase
 
     public static function exportPages()
     {
-        return array('domains' => array('domains/index.php'), 'SSL certificates' => array('ssl/index.php'));
+        return array('domains' => array('domains/index.php'), 'SSL certificates' => array('ssl/index.php'),
+            'hosting services' => array('hosting/index.php'));
     }
 
     #[DataProvider('exportPages')]

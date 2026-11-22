@@ -108,102 +108,157 @@ if ($del === 1) {
     $csrf->check($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/');
     $system->readOnlyCheck($_SERVER['HTTP_REFERER'] ?? WEB_ROOT . '/'); // read-only users can't delete or change data
 
-    $existing_registrar_accounts = 0;
-    $existing_ssl_accounts = 0;
-    $existing_domains = 0;
-    $existing_ssl_certs = 0;
+    /*
+     * Once the database has the hosting tables, the checks and the delete hold the hosting lock, so a hosting service or
+     * hosting account can't be given this owner between the two
+     */
+    $hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+    if ($hosting_available && !DomainMOD\Hosting::lock($pdo, DomainMOD\Hosting::PAGE_WAIT)) {
 
-    $stmt = $pdo->prepare("
-        SELECT owner_id
-        FROM registrar_accounts
-        WHERE owner_id = :oid
-        LIMIT 1");
-    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
-
-    if ($result) {
-
-        $existing_registrar_accounts = 1;
+        $_SESSION['s_message_danger'] .= DomainMOD\Hosting::busyMessage() . '<BR>';
+        header("Location: account-owner.php?oid=" . $oid);
+        exit;
 
     }
 
-    $stmt = $pdo->prepare("
-        SELECT owner_id
-        FROM ssl_accounts
-        WHERE owner_id = :oid
-        LIMIT 1");
-    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
+    $deleted = false;
 
-    if ($result) {
+    try {
 
-        $existing_ssl_accounts = 1;
+        $existing_registrar_accounts = 0;
+        $existing_ssl_accounts = 0;
+        $existing_domains = 0;
+        $existing_ssl_certs = 0;
+        $existing_hosting_provider_accounts = 0;
+        $existing_hosting_services = 0;
 
-    }
+        if ($hosting_available) {
 
-    $stmt = $pdo->prepare("
-        SELECT owner_id
-        FROM domains
-        WHERE owner_id = :oid
-        LIMIT 1");
-    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
+            $stmt = $pdo->prepare("
+                SELECT (SELECT COUNT(*) FROM hosting_provider_accounts WHERE owner_id = :oid_a) AS provider_accounts,
+                       (SELECT COUNT(*) FROM hosting_services WHERE owner_id = :oid_b) AS hosting_services");
+            $stmt->bindValue('oid_a', $oid, PDO::PARAM_INT);
+            $stmt->bindValue('oid_b', $oid, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stmt->closeCursor();
 
-    if ($result) {
+            $existing_hosting_provider_accounts = (int) $result->provider_accounts > 0 ? 1 : 0;
+            $existing_hosting_services = (int) $result->hosting_services > 0 ? 1 : 0;
 
-        $existing_domains = 1;
-
-    }
-
-    $stmt = $pdo->prepare("
-        SELECT owner_id
-        FROM ssl_certs
-        WHERE owner_id = :oid
-        LIMIT 1");
-    $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->closeCursor();
-
-    if ($result) {
-
-        $existing_ssl_certs = 1;
-
-    }
-
-    if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
-        $existing_ssl_certs > 0
-    ) {
-
-        if ($existing_registrar_accounts > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has registrar accounts associated with it and cannot be deleted.') . '<BR>';
         }
-
-        if ($existing_domains > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has domains associated with it and cannot be deleted.') . '<BR>';
-        }
-
-        if ($existing_ssl_accounts > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has SSL accounts associated with it and cannot be deleted.') . '<BR>';
-        }
-
-        if ($existing_ssl_certs > 0) {
-            $_SESSION['s_message_danger'] .= _('This Owner has SSL certificates associated with it and cannot be deleted.') . '<BR>';
-        }
-
-    } else {
 
         $stmt = $pdo->prepare("
-            DELETE FROM owners
-            WHERE id = :oid");
+            SELECT owner_id
+            FROM registrar_accounts
+            WHERE owner_id = :oid
+            LIMIT 1");
         $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
         $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result) {
+
+            $existing_registrar_accounts = 1;
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT owner_id
+            FROM ssl_accounts
+            WHERE owner_id = :oid
+            LIMIT 1");
+        $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result) {
+
+            $existing_ssl_accounts = 1;
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT owner_id
+            FROM domains
+            WHERE owner_id = :oid
+            LIMIT 1");
+        $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result) {
+
+            $existing_domains = 1;
+
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT owner_id
+            FROM ssl_certs
+            WHERE owner_id = :oid
+            LIMIT 1");
+        $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+
+        if ($result) {
+
+            $existing_ssl_certs = 1;
+
+        }
+
+        if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
+            $existing_ssl_certs > 0 || $existing_hosting_provider_accounts > 0 || $existing_hosting_services > 0
+        ) {
+
+            if ($existing_registrar_accounts > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has registrar accounts associated with it and cannot be deleted.') . '<BR>';
+            }
+
+            if ($existing_domains > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has domains associated with it and cannot be deleted.') . '<BR>';
+            }
+
+            if ($existing_ssl_accounts > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has SSL accounts associated with it and cannot be deleted.') . '<BR>';
+            }
+
+            if ($existing_ssl_certs > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has SSL certificates associated with it and cannot be deleted.') . '<BR>';
+            }
+
+            if ($existing_hosting_provider_accounts > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has hosting accounts associated with it and cannot be deleted.') . '<BR>';
+            }
+
+            if ($existing_hosting_services > 0) {
+                $_SESSION['s_message_danger'] .= _('This Owner has hosting services associated with it and cannot be deleted.') . '<BR>';
+            }
+
+        } else {
+
+            $stmt = $pdo->prepare("
+                DELETE FROM owners
+                WHERE id = :oid");
+            $stmt->bindValue('oid', $oid, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $deleted = true;
+
+        }
+
+    } finally {
+
+        if ($hosting_available) DomainMOD\Hosting::unlock($pdo);
+
+    }
+
+    if ($deleted) {
 
         $_SESSION['s_message_success'] .= sprintf(_('Owner %s deleted'), $new_owner) . '<BR>';
 
@@ -230,7 +285,14 @@ echo $form->showInputHidden('new_oid', $oid);
 echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 
-$layout->dangerZone(_('Owner'), $new_owner, 'account-owner.php?oid=' . $oid . '&del=1', _('Delete this owner'), sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, domains, or SSL certificates. It can\'t be undone.'), '<strong>' . htmlentities(html_entity_decode($new_owner, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>'), 2);
+// Once the database has the hosting tables, hosting accounts and hosting services block the delete too
+$owner_name_html = '<strong>' . htmlentities(html_entity_decode($new_owner, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8') . '</strong>';
+if (DomainMOD\Hosting::isAvailable($pdo)) {
+    $owner_delete_text = sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, hosting accounts, domains, SSL certificates, or hosting services. It can\'t be undone.'), $owner_name_html);
+} else {
+    $owner_delete_text = sprintf(_('This removes %s. It can only be deleted when it has no registrar accounts, SSL accounts, domains, or SSL certificates. It can\'t be undone.'), $owner_name_html);
+}
+$layout->dangerZone(_('Owner'), $new_owner, 'account-owner.php?oid=' . $oid . '&del=1', _('Delete this owner'), $owner_delete_text, 2);
 ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; ?>
 </body>

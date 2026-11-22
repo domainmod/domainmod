@@ -550,7 +550,7 @@ class Scheduler
                 'description' => sprintf(_('Reads the certificates of the sites in the SSL Queue and adds them to %s.'), SOFTWARE_TITLE)),
             'expiration-email' => array(
                 'name' => _('Send Expiration Email'),
-                'description' => _("Emails everyone who's subscribed about upcoming domain and SSL certificate expirations. Users can subscribe in their User Profile, and administrators can set the From address and the number of days the email covers in System Settings.")),
+                'description' => _("Emails everyone who's subscribed about upcoming domain, SSL certificate, and hosting service renewals. Users can subscribe in their User Profile, and administrators can set the From address and the number of days the email covers in System Settings.")),
             'update-conversion-rates' => array(
                 'name' => _('Update Conversion Rates'),
                 /* TRANSLATORS: %s is the software's name, DomainMOD */

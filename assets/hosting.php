@@ -45,39 +45,88 @@ $result = $pdo->query("
     FROM hosting
     ORDER BY `name` ASC")->fetchAll();
 
+/*
+ * Once the database has the hosting tables, each provider shows how many hosting accounts it has and how many hosting
+ * services that aren't Cancelled use it, and counts as in use (for Show Inactive and the export's Status) when an
+ * account or one of those services uses it. Domains don't name a provider any more (they choose a hosting service).
+ * Before the update, while they still do, each provider shows how many active domains use it instead, as plain text
+ * (the Domains list no longer filters by provider), and counts as in use when any do.
+ */
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$stmt_domain_count = !DomainMOD\Hosting::legacyDomainColumn($pdo) ? null : $pdo->prepare( // Legacy: domains.hosting_id before 4.27.0
+    "SELECT count(*)
+    FROM domains
+    WHERE hosting_id = :hosting_id
+      AND active NOT IN ('0', '10')");
+$count_domains = function ($hosting_id) use ($stmt_domain_count) {
+    if ($stmt_domain_count === null) return 0;
+    $stmt_domain_count->bindValue('hosting_id', (int) $hosting_id, PDO::PARAM_INT);
+    $stmt_domain_count->execute();
+    $total = (int) $stmt_domain_count->fetchColumn();
+    $stmt_domain_count->closeCursor();
+    return $total;
+};
+$stmt_account_count = $hosting_available ? $pdo->prepare("
+    SELECT count(*)
+    FROM hosting_provider_accounts
+    WHERE hosting_id = :hosting_id") : null;
+$count_hosting_provider_accounts = function ($hosting_id) use ($stmt_account_count) {
+    if ($stmt_account_count === null) return 0;
+    $stmt_account_count->bindValue('hosting_id', (int) $hosting_id, PDO::PARAM_INT);
+    $stmt_account_count->execute();
+    $total = (int) $stmt_account_count->fetchColumn();
+    $stmt_account_count->closeCursor();
+    return $total;
+};
+$stmt_hosting_count = $hosting_available ? $pdo->prepare("
+    SELECT count(*)
+    FROM hosting_services
+    WHERE hosting_id = :hosting_id
+      AND active NOT IN ('0')") : null;
+$count_hosting_services = function ($hosting_id) use ($stmt_hosting_count) {
+    if ($stmt_hosting_count === null) return 0;
+    $stmt_hosting_count->bindValue('hosting_id', (int) $hosting_id, PDO::PARAM_INT);
+    $stmt_hosting_count->execute();
+    $total = (int) $stmt_hosting_count->fetchColumn();
+    $stmt_hosting_count->closeCursor();
+    return $total;
+};
+
 if ($export_data === 1) {
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile(_('web_hosting_provider_list'), strtotime($time->stamp()));
+    $export_file = $export->openFile(_('hosting_provider_list'), strtotime($time->stamp()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
 
-    $row_contents = array(
-        _('Status'),
-        _('Web Host'),
-        _('Domains'),
-        _('Default Web Host') . '?',
+    $row_contents = array(_('Status'), _('Hosting Provider'));
+    if ($hosting_available) {
+        $row_contents[] = _('Hosting Accounts');
+        $row_contents[] = _('Hosting Services');
+    } else {
+        $row_contents[] = _('Domains');
+    }
+    $row_contents = array_merge($row_contents, array(
+        _('Default Hosting Provider') . '?',
         _('URL'),
         _('Notes'),
         _('Creation Type'),
         _('Created By'),
         _('Inserted'),
         _('Updated')
-    );
+    ));
     $export->writeRow($export_file, $row_contents);
 
     if ($result) {
 
         foreach ($result as $row) {
 
-            $total_domains = $pdo->query("
-                SELECT count(*)
-                FROM domains
-                WHERE hosting_id = '" . $row->id . "'
-                  AND active NOT IN ('0', '10')")->fetchColumn();
+            $total_domains = $count_domains($row->id);
+            $total_hosting_provider_accounts = $count_hosting_provider_accounts($row->id);
+            $total_hosting_services = $count_hosting_services($row->id);
 
             if ($row->id == $_SESSION['s_default_host']) {
 
@@ -89,7 +138,7 @@ if ($export_data === 1) {
 
             }
 
-            if ($total_domains >= 1) {
+            if ($total_domains >= 1 || $total_hosting_provider_accounts >= 1 || $total_hosting_services >= 1) {
 
                 $status = _('Active');
 
@@ -108,10 +157,14 @@ if ($export_data === 1) {
                 $created_by = $user->getFullName($row->created_by);
             }
 
-            $row_contents = array(
-                $status,
-                $row->name,
-                number_format($total_domains),
+            $row_contents = array($status, $row->name);
+            if ($hosting_available) {
+                $row_contents[] = number_format($total_hosting_provider_accounts);
+                $row_contents[] = number_format($total_hosting_services);
+            } else {
+                $row_contents[] = number_format($total_domains);
+            }
+            $row_contents = array_merge($row_contents, array(
                 $is_default,
                 $row->url,
                 $row->notes,
@@ -119,7 +172,7 @@ if ($export_data === 1) {
                 $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
-            );
+            ));
             $export->writeRow($export_file, $row_contents);
 
         }
@@ -138,7 +191,7 @@ if ($export_data === 1) {
 </head>
 <?php echo $layout->bodyTag(); ?>
 <?php require_once DIR_INC . '/layout/header.inc.php'; ?>
-<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Web Hosting Providers'), SOFTWARE_TITLE); ?></p>
+<p class="domainmod-intro"><?php echo sprintf(_('Below is a list of all the %s that have been added to %s.'), _('Hosting Providers'), SOFTWARE_TITLE); ?></p>
 <?php
 // The page's actions, drawn in the page header (see Layout::renderPageActions())
 $layout->setPageAddAction(_('Add Hosting Provider'), 'add/host.php');
@@ -166,8 +219,13 @@ if ($result) {
         <thead>
         <tr>
             <th><span class="visually-hidden"><?php echo _('Details'); ?></span></th>
-            <th><?php echo _('Host'); ?></th>
-            <th><?php echo _('Domains'); ?></th>
+            <th><?php echo _('Provider'); ?></th><?php
+            if ($hosting_available) { ?>
+            <th><?php echo _('Accounts'); ?></th>
+            <th><?php echo _('Services'); ?></th><?php
+            } else { ?>
+            <th><?php echo _('Domains'); ?></th><?php
+            } ?>
             <th class="ps-4"><?php echo _('Options'); ?></th>
         </tr>
         </thead>
@@ -175,13 +233,11 @@ if ($result) {
 
         foreach ($result as $row) {
 
-            $total_domains = $pdo->query("
-                SELECT count(*)
-                FROM domains
-                WHERE active NOT IN ('0', '10')
-                  AND hosting_id = '" . $row->id . "'")->fetchColumn();
+            $total_domains = $count_domains($row->id);
+            $total_hosting_provider_accounts = $count_hosting_provider_accounts($row->id);
+            $total_hosting_services = $count_hosting_services($row->id);
 
-            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') {
+            if ($total_domains >= 1 || $total_hosting_provider_accounts >= 1 || $total_hosting_services >= 1 || $_SESSION['s_display_inactive_assets'] == '1') {
 
                 $shown++; ?>
 
@@ -189,22 +245,47 @@ if ($result) {
                 <td></td>
                 <td>
                     <a href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_host'] == $row->id) echo $default_marker; ?>
-                </td>
-                <td><?php
+                </td><?php
 
-                    if ($total_domains >= 1) { ?>
+                if (!$hosting_available) { ?>
 
-                        <a href="../domains/index.php?whid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+                    <td><?php echo $total_domains >= 1 ? number_format($total_domains) : '-'; ?></td><?php
 
-                    } else {
+                } else { ?>
 
-                        echo '-';
+                    <td><?php
 
-                    } ?>
+                        if ($total_hosting_provider_accounts >= 1) { ?>
 
-                </td>
-                <td class="ps-4">
-                    <?php if ($row->url != '') { ?><a target="_blank" rel="noopener" href="<?php echo $row->url; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars(_('Website'), ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i><span class="visually-hidden"><?php echo _('Website'); ?></span></a><?php } ?>
+                            <a href="hosting-accounts.php?whid=<?php echo $row->id; ?>"><?php echo number_format($total_hosting_provider_accounts); ?></a><?php
+
+                        } else {
+
+                            echo '-';
+
+                        } ?>
+
+                    </td>
+                    <td><?php
+
+                        if ($total_hosting_services >= 1) { ?>
+
+                            <a href="../hosting/index.php?hid=<?php echo $row->id; ?>"><?php echo number_format($total_hosting_services); ?></a><?php
+
+                        } else {
+
+                            echo '-';
+
+                        } ?>
+
+                    </td><?php
+
+                } ?>
+
+                <td class="ps-4"><?php
+                    // Each provider's fees, once the database has the hosting tables
+                    if ($hosting_available) { ?><a href="hosting-fees.php?hosting_id=<?php echo $row->id; ?>"><?php echo _('Fees'); ?></a><?php } ?>
+                    <?php if ($row->url != '') { ?><a<?php if ($hosting_available) echo ' class="ms-2"'; ?> target="_blank" rel="noopener" href="<?php echo $row->url; ?>" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars(_('Website'), ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i><span class="visually-hidden"><?php echo _('Website'); ?></span></a><?php } ?>
                 </td>
                 </tr><?php
 
@@ -218,7 +299,7 @@ if ($result) {
     if ($shown === 0) {
 
         ob_end_clean();
-        echo $layout->emptyState('bi-eye-slash', _('No web hosting providers are in use'), _('Unused web hosting providers are hidden. Choose Show Inactive to see them.'), '', '', '/settings/display/', _('Display Settings'));
+        echo $layout->emptyState('bi-eye-slash', _('No hosting providers are in use'), _('Unused hosting providers are hidden. Choose Show Inactive to see them.'), '', '', '/settings/display/', _('Display Settings'));
 
     } else {
 
@@ -228,7 +309,7 @@ if ($result) {
 
 } else {
 
-    echo $layout->emptyState('bi-server', _('No web hosting providers yet'), _('Add the companies that host your websites.'));
+    echo $layout->emptyState('bi-server', _('No hosting providers yet'), _('Add the companies that host your websites.'));
 
 } ?>
 <?php require_once DIR_INC . '/layout/footer.inc.php'; //@formatter:on ?>

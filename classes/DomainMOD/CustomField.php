@@ -128,7 +128,8 @@ class CustomField
         return $valid;
     }
 
-    // The custom fields of a table (domain_fields or ssl_cert_fields) and their type ids, keyed by field name
+    // The custom fields of a table (domain_fields, ssl_cert_fields, or hosting_service_fields) and their type ids, keyed
+    // by field name
     public function getFieldTypes($table_name)
     {
         $field_types = array();
@@ -236,8 +237,8 @@ class CustomField
     /*
      * A list's custom fields as rows (id, name, field_name, and type_id), in name order, read in one query, for the
      * list's SELECT columns (fieldsSql()), its custom field columns, and its custom field filters (CustomFieldFilter),
-     * so they all describe the same fields. $table_name is domain_fields or ssl_cert_fields. A field whose database
-     * name isn't letters and underscores is left out, since its name goes into the list's SQL.
+     * so they all describe the same fields. $table_name is domain_fields, ssl_cert_fields, or hosting_service_fields. A
+     * field whose database name isn't letters and underscores is left out, since its name goes into the list's SQL.
      */
     public function getFilterFields($table_name)
     {
@@ -247,7 +248,7 @@ class CustomField
     // getFilterFields() on a given connection, so a page can read the fields inside its own snapshot or transaction
     public static function readFilterFields(\PDO $pdo, $table_name)
     {
-        if (!in_array($table_name, array('domain_fields', 'ssl_cert_fields'), true)) {
+        if (!in_array($table_name, array('domain_fields', 'ssl_cert_fields', 'hosting_service_fields'), true)) {
             throw new \InvalidArgumentException('Unknown custom field table');
         }
 
@@ -291,11 +292,11 @@ class CustomField
 
     /*
      * Whether a new Database Field Name is taken by one of the list's own columns (such as notes or expiry_date), or by
-     * one of the custom field data table's own columns, ignoring case. $type is 'domain' or 'ssl'.
+     * one of the custom field data table's own columns, ignoring case. $type is 'domain', 'ssl', or 'hosting'.
      */
     public static function reservedName($type, $field_name)
     {
-        $list = $type === 'ssl' ? SslList::class : DomainList::class;
+        $list = array('ssl' => SslList::class, 'hosting' => HostingList::class)[$type] ?? DomainList::class;
         $info = ChangeHistory::ITEM_TYPES[$type];
         $reserved = array_merge($list::builtInColumnNames(), array('id', $info['field_id'], 'insert_time', 'update_time'));
         return in_array(strtolower((string) $field_name), $reserved, true);
@@ -374,6 +375,47 @@ class CustomField
         }
 
         return $custom_ssl_field_data;
+
+    }
+
+    // The hosting custom fields and the user's display choice for each, or none before the hosting tables exist
+    public function getCHFData()
+    {
+        $custom_hosting_field_data = array();
+
+        if (!Hosting::isAvailable($this->deeb->cnxx)) return $custom_hosting_field_data;
+
+        $result = $this->deeb->cnxx->query("
+            SELECT name, field_name, type_id
+            FROM hosting_service_fields
+            ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+
+        if ($result) {
+
+            $count = 0;
+
+            foreach ($result as $field_values) {
+
+                $custom_hosting_field_data[$count]['name'] = $field_values['name'];
+                $custom_hosting_field_data[$count]['field'] = $field_values['field_name'];
+                $custom_hosting_field_data[$count]['type_id'] = $field_values['type_id'];
+                $custom_hosting_field_data[$count]['display_field'] = 'dispchf_' . $field_values['field_name'];
+
+                $stmt = $this->deeb->cnxx->prepare("
+                    SELECT  dispchf_" . $field_values['field_name'] . "
+                    FROM user_settings
+                    WHERE user_id = :user_id");
+                $stmt->bindValue('user_id', $_SESSION['s_user_id'], \PDO::PARAM_INT);
+                $stmt->execute();
+                $custom_hosting_field_data[$count]['value'] = $stmt->fetchColumn();
+
+                $count++;
+
+            }
+
+        }
+
+        return $custom_hosting_field_data;
 
     }
 

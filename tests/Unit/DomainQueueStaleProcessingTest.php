@@ -116,6 +116,41 @@ class DomainQueueStaleProcessingTest extends TestCase
         $this->assertNotContains('ROLLBACK', $pdo->events);
     }
 
+    /*
+     * The queue no longer gives a domain a hosting provider (13a): it creates no "[created by queue]" provider, and a
+     * domain it imports has no hosting service. Before the database update, the old hosting_id column is written as 0
+     * so it doesn't take its old default of 1 (a real provider on some installs).
+     */
+    public function testAnImportedDomainHasNoHostingService()
+    {
+        if (!defined('DB_NAME')) define('DB_NAME', 'domainmod_test');
+        foreach (array(true, false) as $available) {
+            $pdo = $this->importDatabase();
+            $queue = $this->queue($pdo, array('', '2030-01-01', array('ns1.example.com'), '0', '1'));
+            // After the update, or a stopped upgrade that has dropped the column, it isn't there
+            $queue->setLegacyDomainColumn(!$available);
+            $queue->processQueueDomain();
+
+            $this->assertNull($this->first($pdo->events, 'INSERT INTO hosting'), 'no provider is created');
+            $this->assertNull($this->first($pdo->events, 'SET hosting_id'));
+            $insert = $pdo->events[$this->first($pdo->events, 'INSERT INTO domains')];
+            $this->assertStringNotContainsString('service_id', $insert);
+            if ($available) {
+                $this->assertStringNotContainsString('hosting_id', $insert);
+            } else {
+                $this->assertMatchesRegularExpression('/ip_id, hosting_id,.*:ip_id,\s+0, :notes/s', $insert);
+            }
+            // The import is still confirmed and finished, without a provider in the check
+            $finished = $pdo->events[$this->first($pdo->events, 'AND creation_type_id = :creation_type_id')];
+            $this->assertStringNotContainsString('hosting_id', $finished);
+            $this->assertNotNull($this->first($pdo->events, self::FINISHED));
+            $this->assertNotContains('ROLLBACK', $pdo->events);
+        }
+        $this->assertFalse(method_exists(DomainQueue::class, 'updateHosting'));
+        // The DNS profile, IP address, and category placeholders stay, but no hosting provider is looked up or made
+        $this->assertDoesNotMatchRegularExpression('/(FROM|INTO)\s+`?hosting\b/', file_get_contents(DIR_ROOT . '/classes/DomainMOD/DomainQueue.php'));
+    }
+
     // Before, a run that died after a domain was marked ready left it where no run looks, and a failure part-way
     // through the import left the domain imported without its custom field row
     public function testAFailedImportIsRolledBackAndTheDomainPutBack()
@@ -170,7 +205,7 @@ class DomainQueueStaleProcessingTest extends TestCase
 
     /*
      * A DomainQueue on the fake database. Its registrar lookup returns $registrar_info for every domain (or throws it),
-     * and the IP, DNS, category, and hosting steps return IDs without looking anything up.
+     * and the IP, DNS, and category steps return IDs without looking anything up.
      */
     private function queue($pdo, $registrar_info = false)
     {
@@ -193,7 +228,10 @@ class DomainQueueStaleProcessingTest extends TestCase
             public function updateIp($queue_domain_id, $domain, $created_by) { return 3; }
             public function updateDnsServers($queue_domain_id, $dns_servers, $created_by) { return 4; }
             public function updateCategory($queue_domain_id, $created_by) { return 5; }
-            public function updateHosting($queue_domain_id, $created_by) { return 6; }
+
+            // Whether domains still has its old hosting_id column (the constructor, skipped here, asks
+            // Hosting::legacyDomainColumn())
+            public function setLegacyDomainColumn($legacy) { $this->legacy_domain_column = $legacy; }
         };
         $queue->registrar_info = $registrar_info;
         $queue->deeb = (object) array('cnxx' => $pdo);
@@ -269,7 +307,7 @@ class DomainQueueStaleProcessingTest extends TestCase
             'FROM domain_queue AS dq' => array($this->row(1, 'Example Registrar')),
             "AND already_in_domains != '1'" => array((object) array('id' => 1, 'owner_id' => 1, 'registrar_id' => 1,
                 'account_id' => 1, 'domain' => 'example.com', 'tld' => 'com', 'expiry_date' => '2030-01-01',
-                'cat_id' => 5, 'dns_id' => 4, 'ip_id' => 3, 'hosting_id' => 6, 'autorenew' => '1', 'privacy' => '0',
+                'cat_id' => 5, 'dns_id' => 4, 'ip_id' => 3, 'autorenew' => '1', 'privacy' => '0',
                 'created_by' => 1, 'insert_time' => '2026-01-01 00:00:00')),
             'AND creation_type_id = :creation_type_id' => '42',
             // The import holds the fee-change lock until its transaction ends

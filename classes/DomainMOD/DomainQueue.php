@@ -52,6 +52,9 @@ class DomainQueue
     protected static $list_last_attempt = null;
     // Whether an import in this run met another request's write (see hadConflict())
     protected static $had_conflict = false;
+    // Whether domains still has its pre-4.27.0 hosting_id column (Hosting::legacyDomainColumn()), asked when the queue
+    // is made
+    protected $legacy_domain_column = false;
 
     public function __construct()
     {
@@ -64,6 +67,8 @@ class DomainQueue
         $this->schedule = new Scheduler();
         $this->system = new System();
         $this->time = new Time();
+        // Asked once, here, before any transaction, so its plain read never opens a transaction's snapshot early
+        $this->legacy_domain_column = Hosting::legacyDomainColumn($this->deeb->cnxx);
     }
 
     /*
@@ -537,7 +542,7 @@ class DomainQueue
                 $queue_fee_lock->holdNamedLock('domainmod_fee_changes_' . substr(md5(DB_NAME), 0, 12));
 
                 $created_by = $row->created_by;
-                list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
+                list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $privacy_status, $autorenew_status)
                     = $this->updateDomain($row->id, $row->domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by);
 
                 // only process the domain if $ready_to_import = 1 (ie. all the information is valid)
@@ -566,7 +571,7 @@ class DomainQueue
                         $this->updateNewDomainId($row->id, $new_domain_id);
 
                         // markFinishedDomain confirms that the domain was added to the main domain database before marking it as finished
-                        $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+                        $this->markFinishedDomain($row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $privacy_status, $autorenew_status);
 
                     }
 
@@ -1015,13 +1020,12 @@ class DomainQueue
                 $this->updateExpirationDate($row->id, $lookup['expiry_date']);
                 $dns_id = $this->updateDnsServers($row->id, $dns_servers, $row->created_by);
                 $cat_id = $this->updateCategory($row->id, $row->created_by);
-                $hosting_id = $this->updateHosting($row->id, $row->created_by);
 
                 // RDAP doesn't give WHOIS privacy or auto renewal, so both are No (see the RDAP page's warning)
                 $this->updatePrivacy($row->id, '0');
                 $this->updateRenewStatus($row->id, '0');
 
-                if ($registrar_id && $account_id && $dns_id && $ip_id && $cat_id && $hosting_id) {
+                if ($registrar_id && $account_id && $dns_id && $ip_id && $cat_id) {
 
                     $stmt = $pdo->prepare("
                         UPDATE domain_queue
@@ -1056,7 +1060,7 @@ class DomainQueue
                         $this->updateNewDomainId($row->id, $new_domain_id);
                         $this->saveImportedStatus((int) $new_domain_id, $status_source, $lookup, $status_started);
                         $this->markFinishedDomain($row->id, $row->domain, $lookup['expiry_date'], $dns_id, $ip_id,
-                            $cat_id, $hosting_id, '0', '0');
+                            $cat_id, '0', '0');
 
                     }
 
@@ -1242,7 +1246,7 @@ class DomainQueue
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT id, domain, account_id, expiry_date, cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, message
+            SELECT id, domain, account_id, expiry_date, cat_id, dns_id, ip_id, autorenew, privacy, message
             FROM domain_queue
             WHERE id = :queue_domain_id
               AND finished = '1'
@@ -1472,14 +1476,12 @@ class DomainQueue
         $this->updateExpirationDate($queue_domain_id, $expiration_date);
         $dns_id = $this->updateDnsServers($queue_domain_id, $dns_servers, $created_by);
         $cat_id = $this->updateCategory($queue_domain_id, $created_by);
-        $hosting_id = $this->updateHosting($queue_domain_id, $created_by);
         $this->updatePrivacy($queue_domain_id, $privacy_status);
         $this->updateRenewStatus($queue_domain_id, $autorenew_status);
 
         // don't mark the domain as ready to import if the information isn't valid
         if ($expiration_date != '0000-00-00' && $dns_id != '0' && $dns_id != '' && $ip_id != '0' && $ip_id != ''
-            && $cat_id != '0' && $cat_id != '' && $hosting_id != '0' && $hosting_id != '' && $privacy_status != ''
-            && $autorenew_status != '') {
+            && $cat_id != '0' && $cat_id != '' && $privacy_status != '' && $autorenew_status != '') {
 
             $stmt = $pdo->prepare("
                 UPDATE domain_queue
@@ -1496,7 +1498,7 @@ class DomainQueue
 
         }
 
-        return array($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+        return array($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $privacy_status, $autorenew_status);
     }
 
     public function updateExpirationDate($queue_domain_id, $expiration_date)
@@ -1807,52 +1809,6 @@ class DomainQueue
         return $category_id;
     }
 
-    public function updateHosting($queue_domain_id, $created_by)
-    {
-        $pdo = $this->deeb->cnxx;
-
-        // Check to see if there's an existing '[created by queue]' host
-        $result = $pdo->query("
-            SELECT id
-            FROM hosting
-            WHERE `name` = '" . _('[created by queue]') . "'
-            ORDER BY update_time DESC, insert_time DESC
-            LIMIT 1")->fetchColumn();
-
-        if (!$result) { // If there isn't an existing '[created by queue]' host create one
-
-            $creation_type_id = $this->system->getCreationTypeId('Queue');
-
-            $stmt = $pdo->prepare("
-                INSERT INTO hosting
-                (`name`, creation_type_id, created_by, insert_time)
-                VALUES
-                ('[created by queue]', :creation_type_id, :created_by, :insert_time)");
-            $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_INT);
-            $stmt->bindValue('created_by', $created_by, \PDO::PARAM_INT);
-            $bind_timestamp = $this->time->stamp();
-            $stmt->bindValue('insert_time', $bind_timestamp, \PDO::PARAM_STR);
-            $stmt->execute();
-
-            $hosting_id = $pdo->lastInsertId('id');
-
-        } else { // If there's an existing '[created by queue]' category use it
-
-            $hosting_id = $result;
-
-        }
-
-        $stmt = $pdo->prepare("
-            UPDATE domain_queue
-            SET hosting_id = :hosting_id
-            WHERE id = :queue_domain_id");
-        $stmt->bindValue('hosting_id', $hosting_id, \PDO::PARAM_INT);
-        $stmt->bindValue('queue_domain_id', $queue_domain_id, \PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $hosting_id;
-    }
-
     public function updatePrivacy($queue_domain_id, $privacy_status)
     {
         $pdo = $this->deeb->cnxx;
@@ -1992,7 +1948,7 @@ class DomainQueue
         $pdo = $this->deeb->cnxx;
 
         $stmt = $pdo->prepare("
-            SELECT id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, created_by, insert_time
+            SELECT id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, autorenew, privacy, created_by, insert_time
             FROM domain_queue
             WHERE id = :queue_domain_id
               AND ready_to_import = '1'
@@ -2012,13 +1968,28 @@ class DomainQueue
 
         } else {
 
-            $stmt = $pdo->prepare("
-                INSERT INTO domains
-                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id,
-                 notes, autorenew, privacy, creation_type_id, created_by, insert_time)
-                VALUES
-                (:owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date, :cat_id, :dns_id, :ip_id,
-                 :hosting_id, :notes, :autorenew, :privacy, :creation_type_id, :created_by, :insert_time)");
+            // A domain the queue imports has no hosting service (service_id keeps its default of 0). Before the update,
+            // the old hosting_id column is still there, and is written as 0 so it doesn't take its old default of 1 (a
+            // real provider on some installs). A stopped upgrade that has dropped it writes the domain as the update does
+            // (see Hosting::legacyDomainColumn()).
+            if (!$this->legacy_domain_column) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
+                     notes, autorenew, privacy, creation_type_id, created_by, insert_time)
+                    VALUES
+                    (:owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date, :cat_id, :dns_id, :ip_id,
+                     :notes, :autorenew, :privacy, :creation_type_id, :created_by, :insert_time)");
+            } else {
+                // Legacy: domains.hosting_id before 4.27.0
+                $stmt = $pdo->prepare("
+                    INSERT INTO domains
+                    (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id,
+                     notes, autorenew, privacy, creation_type_id, created_by, insert_time)
+                    VALUES
+                    (:owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date, :cat_id, :dns_id, :ip_id,
+                     0, :notes, :autorenew, :privacy, :creation_type_id, :created_by, :insert_time)");
+            }
             $stmt->bindParam('owner_id', $bind_owner_id, \PDO::PARAM_INT);
             $stmt->bindParam('registrar_id', $bind_registrar_id, \PDO::PARAM_INT);
             $stmt->bindParam('account_id', $bind_account_id, \PDO::PARAM_INT);
@@ -2028,7 +1999,6 @@ class DomainQueue
             $stmt->bindParam('cat_id', $bind_cat_id, \PDO::PARAM_INT);
             $stmt->bindParam('dns_id', $bind_dns_id, \PDO::PARAM_INT);
             $stmt->bindParam('ip_id', $bind_ip_id, \PDO::PARAM_INT);
-            $stmt->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
             $bind_temp_notes = $this->time->timeBasic() . " - Inserted by Queue.";
             $stmt->bindValue('notes', $bind_temp_notes, \PDO::PARAM_LOB);
             $stmt->bindParam('autorenew', $bind_autorenew, \PDO::PARAM_INT);
@@ -2067,7 +2037,6 @@ class DomainQueue
                 $bind_cat_id = $row->cat_id;
                 $bind_dns_id = $row->dns_id;
                 $bind_ip_id = $row->ip_id;
-                $bind_hosting_id = $row->hosting_id;
                 $bind_autorenew = $row->autorenew;
                 $bind_privacy = $row->privacy;
                 $bind_created_by = $row->created_by;
@@ -2149,7 +2118,7 @@ class DomainQueue
         $stmt->execute();
     }
 
-    public function markFinishedDomain($queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
+    public function markFinishedDomain($queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $privacy_status, $autorenew_status)
     {
         $pdo = $this->deeb->cnxx;
 
@@ -2164,7 +2133,6 @@ class DomainQueue
               AND dns_id = :dns_id
               AND ip_id = :ip_id
               AND cat_id = :cat_id
-              AND hosting_id = :hosting_id
               AND privacy = :privacy_status
               AND autorenew = :autorenew_status
               AND creation_type_id = :creation_type_id
@@ -2174,7 +2142,6 @@ class DomainQueue
         $stmt->bindValue('dns_id', $dns_id, \PDO::PARAM_INT);
         $stmt->bindValue('ip_id', $ip_id, \PDO::PARAM_INT);
         $stmt->bindValue('cat_id', $cat_id, \PDO::PARAM_INT);
-        $stmt->bindValue('hosting_id', $hosting_id, \PDO::PARAM_INT);
         $stmt->bindValue('privacy_status', $privacy_status, \PDO::PARAM_INT);
         $stmt->bindValue('autorenew_status', $autorenew_status, \PDO::PARAM_INT);
         $stmt->bindValue('creation_type_id', $creation_type_id, \PDO::PARAM_STR);
@@ -2185,8 +2152,8 @@ class DomainQueue
 
             $log_message = 'Unable to mark queue domain as finished';
             $log_extra = array('Queue Domain ID' => $queue_domain_id, 'Domain' => $domain, 'Expiry Date' =>
-                $expiration_date, 'DNS ID' => $dns_id, 'IP ID' => $ip_id, 'Category ID' => $cat_id, 'Hosting ID' =>
-                $hosting_id, 'Privacy Status' => $privacy_status, 'Autorenew Status' => $autorenew_status,
+                $expiration_date, 'DNS ID' => $dns_id, 'IP ID' => $ip_id, 'Category ID' => $cat_id, 'Privacy Status' =>
+                $privacy_status, 'Autorenew Status' => $autorenew_status,
                 'Creation Type ID' => $creation_type_id);
             $this->log->critical($log_message, $log_extra);
 
@@ -2321,7 +2288,7 @@ class DomainQueue
 
         $result = $pdo->query("
             SELECT id, api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
-                dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
+                dns_id, ip_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
                 message, created_by, insert_time
             FROM domain_queue
             WHERE finished = '1'
@@ -2338,11 +2305,11 @@ class DomainQueue
             $stmt = $pdo->prepare("
                 INSERT INTO domain_queue_history
                 (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id,
-                 dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
+                 dns_id, ip_id, autorenew, privacy, already_in_domains, already_in_queue, invalid_domain,
                  message, created_by, insert_time)
                 VALUES
                 (:api_registrar_id, :domain_id, :owner_id, :registrar_id, :account_id, :domain, :tld, :expiry_date,
-                 :cat_id, :dns_id, :ip_id, :hosting_id, :autorenew, :privacy, :already_in_domains,
+                 :cat_id, :dns_id, :ip_id, :autorenew, :privacy, :already_in_domains,
                  :already_in_queue, :invalid_domain, :message, :created_by, :insert_time)");
             $stmt->bindParam('api_registrar_id', $bind_api_registrar_id, \PDO::PARAM_INT);
             $stmt->bindParam('domain_id', $bind_domain_id, \PDO::PARAM_INT);
@@ -2355,7 +2322,6 @@ class DomainQueue
             $stmt->bindParam('cat_id', $bind_cat_id, \PDO::PARAM_INT);
             $stmt->bindParam('dns_id', $bind_dns_id, \PDO::PARAM_INT);
             $stmt->bindParam('ip_id', $bind_ip_id, \PDO::PARAM_INT);
-            $stmt->bindParam('hosting_id', $bind_hosting_id, \PDO::PARAM_INT);
             $stmt->bindParam('autorenew', $bind_autorenew, \PDO::PARAM_INT);
             $stmt->bindParam('privacy', $bind_privacy, \PDO::PARAM_INT);
             $stmt->bindParam('already_in_domains', $bind_already_in_domains, \PDO::PARAM_INT);
@@ -2394,7 +2360,7 @@ class DomainQueue
                      */
                     $stmt3 = $pdo->prepare("
                         SELECT api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, expiry_date,
-                            cat_id, dns_id, ip_id, hosting_id, autorenew, privacy, already_in_domains, already_in_queue,
+                            cat_id, dns_id, ip_id, autorenew, privacy, already_in_domains, already_in_queue,
                             invalid_domain, message, created_by, insert_time
                         FROM domain_queue
                         WHERE id = :queue_domain_id
@@ -2417,7 +2383,6 @@ class DomainQueue
                     $bind_cat_id = $row->cat_id;
                     $bind_dns_id = $row->dns_id;
                     $bind_ip_id = $row->ip_id;
-                    $bind_hosting_id = $row->hosting_id;
                     $bind_autorenew = $row->autorenew;
                     $bind_privacy = $row->privacy;
                     $bind_already_in_domains = $row->already_in_domains;

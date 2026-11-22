@@ -59,6 +59,20 @@ $new_display_getting_started = (int) ($_POST['new_display_getting_started'] ?? 0
 $domain_lock_available = DomainMOD\DomainStatus::isAvailable($pdo);
 $domain_lock_offered = $domain_lock_available && ($_POST['domain_lock_offered'] ?? '') === '1';
 $new_display_domain_lock = '0';
+// The Hosting settings (DomainMOD\Hosting), saved only when the form offered them (from the 4.27.0 database update
+// on), so a form loaded before that update can't change them
+$hosting_available = DomainMOD\Hosting::isAvailable($pdo);
+$hosting_offered = $hosting_available && ($_POST['hosting_offered'] ?? '') === '1';
+$new_number_of_hosting_services = (int) ($_POST['new_number_of_hosting_services'] ?? 0);
+$hosting_column_options = (array) ($_POST['hosting_column_options'] ?? array(''));
+$custom_hosting_fields = (array) ($_POST['custom_hosting_fields'] ?? array(''));
+$hosting_columns = array('owner' => 'display_hosting_owner', 'provider' => 'display_hosting_provider',
+    'account' => 'display_hosting_account', 'type' => 'display_hosting_type', 'expiry' => 'display_hosting_expiry_date',
+    'ip' => 'display_hosting_ip', 'category' => 'display_hosting_category', 'fee' => 'display_hosting_fee');
+$new_display_hosting = array();
+foreach ($hosting_columns as $column) {
+    $new_display_hosting[$column] = (string) ($_SESSION['s_' . $column] ?? '0');
+}
 // The colour mode: 0 Light, 1 Dark, or 2 Auto (which follows the system setting)
 $new_dark_mode = (int) ($_POST['new_dark_mode'] ?? 2);
 if (!in_array($new_dark_mode, array(0, 1, 2), true)) $new_dark_mode = 2;
@@ -136,9 +150,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (in_array("category", $ssl_column_options)) { $new_display_ssl_category = '1'; } else { $new_display_ssl_category = '0'; }
     if (in_array("owner", $ssl_column_options)) { $new_display_ssl_owner = '1'; } else { $new_display_ssl_owner = '0'; }
 
+    if ($hosting_offered) {
+
+        foreach ($hosting_columns as $option => $column) {
+            $new_display_hosting[$column] = in_array($option, $hosting_column_options, true) ? '1' : '0';
+        }
+
+    }
+
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new_number_of_ssl_certs !== 0) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new_number_of_ssl_certs !== 0
+    && (!$hosting_offered || $new_number_of_hosting_services !== 0)) {
 
     $stmt = $pdo->prepare("
         UPDATE user_settings
@@ -239,6 +262,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
     }
 
+    if ($hosting_offered) {
+
+        $sql_columns = '';
+        foreach ($hosting_columns as $column) {
+            $sql_columns .= $column . " = :" . $column . ",
+                ";
+        }
+        $stmt = $pdo->prepare("
+            UPDATE user_settings
+            SET " . $sql_columns . "number_of_hosting_services = :new_number_of_hosting_services
+            WHERE user_id = :user_id");
+        foreach ($hosting_columns as $column) {
+            $stmt->bindValue($column, (int) $new_display_hosting[$column], PDO::PARAM_INT);
+        }
+        $stmt->bindValue('new_number_of_hosting_services', $new_number_of_hosting_services, PDO::PARAM_INT);
+        $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+
+        $_SESSION['s_number_of_hosting_services'] = $new_number_of_hosting_services;
+        foreach ($hosting_columns as $column) {
+            $_SESSION['s_' . $column] = $new_display_hosting[$column];
+        }
+
+        // The fields as they are now (not as cached at sign-in), so a field deleted since doesn't name a dropped column
+        foreach ($custom_field->getCHFData() as $field) {
+
+            $stmt = $pdo->prepare("
+                UPDATE `user_settings`
+                SET " . $field['display_field'] . " = :display
+                WHERE user_id = :user_id");
+            $stmt->bindValue('display', in_array($field['display_field'], $custom_hosting_fields, true) ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+
+        }
+
+        $_SESSION['s_chf_data'] = $custom_field->getCHFData();
+
+    }
+
     if ($getting_started_offered && $user->setGettingStartedDisplay($_SESSION['s_user_id'], $new_display_getting_started)) {
 
         $_SESSION['s_display_getting_started'] = $new_display_getting_started;
@@ -256,6 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
         if ($new_number_of_domains === 0) $form->addFieldError('new_number_of_domains', _('Enter the default number of domains to display'));
         if ($new_number_of_ssl_certs === 0) $form->addFieldError('new_number_of_ssl_certs', _('Enter the default number of SSL certificates to display'));
+        if ($hosting_offered && $new_number_of_hosting_services === 0) $form->addFieldError('new_number_of_hosting_services', _('Enter the default number of hosting services to display'));
 
     } else {
 
@@ -316,6 +380,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains !== 0 && $new
 
         }
 
+        if ($hosting_available) {
+
+            $stmt = $pdo->prepare("
+                SELECT number_of_hosting_services, " . implode(', ', $hosting_columns) . "
+                FROM user_settings
+                WHERE user_id = :user_id");
+            $stmt->bindValue('user_id', $_SESSION['s_user_id'], PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stmt->closeCursor();
+
+            if ($result) {
+
+                $new_number_of_hosting_services = (int) $result->number_of_hosting_services;
+                foreach ($hosting_columns as $column) {
+                    $new_display_hosting[$column] = (string) $result->$column;
+                }
+
+            }
+
+        }
+
     }
 
 }
@@ -348,7 +434,8 @@ echo $form->showMultipleSelectOption(_('Registrar'), 'registrar', $new_display_d
 echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_domain_account);
 echo $form->showMultipleSelectOption(_('DNS'), 'dns', $new_display_domain_dns);
 echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_domain_ip);
-echo $form->showMultipleSelectOption(_('Web Host'), 'host', $new_display_domain_host);
+// The setting keeps its shipped name (display_domain_host), and now shows each domain's hosting service
+echo $form->showMultipleSelectOption(_('Hosting Service'), 'host', $new_display_domain_host);
 echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_domain_category);
 echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_domain_owner);
 if ($domain_lock_available) echo $form->showMultipleSelectOption(_('Transfer Lock'), 'lock', $new_display_domain_lock);
@@ -404,6 +491,46 @@ foreach ($_SESSION['s_csf_data'] as $field) {
 }
 
 echo $form->showMultipleSelectBottom('<BR>');
+
+if ($hosting_available) { ?>
+
+<h2 class="h3"><?php echo _('Main Hosting Page'); ?></h2><?php
+
+    echo $form->showInputHidden('hosting_offered', '1');
+
+    if ($new_number_of_hosting_services !== 0) {
+        $temp_number_of_hosting_services = $new_number_of_hosting_services;
+    } else {
+        $temp_number_of_hosting_services = '';
+    }
+    echo $form->showInputText('new_number_of_hosting_services', _('Number of hosting services per page'), '', $temp_number_of_hosting_services, '5', '', '1', '', '');
+
+    echo $form->showMultipleSelectTop('hosting_column_options', _('Columns to Display'), '');
+    echo $form->showMultipleSelectOption(_('Renewal Date'), 'expiry', $new_display_hosting['display_hosting_expiry_date']);
+    echo $form->showMultipleSelectOption(_('Fee'), 'fee', $new_display_hosting['display_hosting_fee']);
+    echo $form->showMultipleSelectOption(_('Provider'), 'provider', $new_display_hosting['display_hosting_provider']);
+    echo $form->showMultipleSelectOption(_('Account'), 'account', $new_display_hosting['display_hosting_account']);
+    echo $form->showMultipleSelectOption(_('Type'), 'type', $new_display_hosting['display_hosting_type']);
+    echo $form->showMultipleSelectOption(_('IP Address'), 'ip', $new_display_hosting['display_hosting_ip']);
+    echo $form->showMultipleSelectOption(_('Category'), 'category', $new_display_hosting['display_hosting_category']);
+    echo $form->showMultipleSelectOption(_('Owner'), 'owner', $new_display_hosting['display_hosting_owner']);
+    echo $form->showMultipleSelectBottom('');
+
+    echo $form->showMultipleSelectTop('custom_hosting_fields', _('Custom Hosting Fields to Display'), '');
+
+    foreach ($_SESSION['s_chf_data'] ?? array() as $field) {
+
+        if ($field['type_id'] != '3') { // Don't show Text Areas
+
+            echo $form->showMultipleSelectOption($field['name'], $field['display_field'], $field['value']);
+
+        }
+
+    }
+
+    echo $form->showMultipleSelectBottom('<BR>');
+
+}
 ?>
 
 <h2 class="h3"><?php echo _('Asset Management Pages'); ?></h2>
