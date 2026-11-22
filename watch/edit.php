@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $entry) {
         $reason_was = is_string($_POST['reason_was'] ?? null) ? $_POST['reason_was'] : '';
         $notes_was = is_string($_POST['notes_was'] ?? null) ? $_POST['notes_was'] : '';
         if ($new_reason !== $reason_was) $draft['reason'] = $new_reason;
-        if (!hash_equals(hash('sha256', $new_notes), $notes_was)) $draft['notes'] = $new_notes;
+        if (!hash_equals(DomainMOD\WatchList::notesHash($new_notes), $notes_was)) $draft['notes'] = $new_notes;
         return $draft;
     };
 
@@ -316,8 +316,7 @@ if ($watch_off) {
     // The reason and notes as they're saved now, so a refused save can tell which ones the user changed (a draft kept
     // from an earlier refusal still differs from them, so it's kept again)
     echo $form->showInputHidden('reason_was', $entry->reason);
-    // (the notes as the form sends them back: a browser drops one line break at the start of a textarea's text)
-    echo $form->showInputHidden('notes_was', hash('sha256', preg_replace('/^\r?\n/', '', (string) $entry->notes)));
+    echo $form->showInputHidden('notes_was', DomainMOD\WatchList::notesHash($entry->notes));
     ob_start();
     echo $form->showDropdownTop('new_reason', _('Reason'), '', '', '');
     foreach (DomainMOD\WatchList::reasonLabels() as $reason_code => $reason_name) {

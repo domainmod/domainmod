@@ -618,6 +618,15 @@ class WatchList extends ListQuery
     }
 
     /*
+     * The edit page's notes as a hash with every line break as a line feed, so notes saved with line feeds alone still
+     * match the same notes when a browser sends them back with a carriage return and line feed
+     */
+    public static function notesHash($notes)
+    {
+        return hash('sha256', str_replace(array("\r\n", "\r"), "\n", (string) $notes));
+    }
+
+    /*
      * Saves an entry's details (its reason and notes) from the edit page, as one action (watch_edit). $loaded is
      * detailsHash() of the details the form was drawn with: when they've changed since (another user's save, or a paste
      * that unarchived the entry and added notes), nothing is saved, so those changes aren't overwritten. Returns saved,

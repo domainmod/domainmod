@@ -39,7 +39,7 @@ class RequestStringCastTest extends TestCase
     public function testWatchEditDraftReadsTheWasValuesOnlyAsStrings()
     {
         $code = self::block('watch/edit.php', '/^    \$draft_from_post = function .*?^    \};$/ms');
-        $hash = hash('sha256', 'Some notes');
+        $hash = \DomainMOD\WatchList::notesHash('Some notes');
         $call = '$draft_from_post(\'expiring\', \'Some notes\')';
 
         $draft = self::valueAfter($code, array('reason_was' => 'expiring', 'notes_was' => $hash), $call);

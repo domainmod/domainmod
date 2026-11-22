@@ -247,6 +247,8 @@ class Form
 
     /*
      * A text area with its label. $autofocus ('1') and mistakes recorded with addFieldError() work as in showInputText().
+     * A browser drops one line break straight after <textarea>, so one is written there before the value, and a value
+     * that starts with a blank line keeps it when the form is saved again.
      */
     public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after, $autofocus = '', $dir = '')
     {
@@ -256,7 +258,7 @@ class Form
                 <label class="form-label" for="<?php echo $this->fieldId($name); ?>"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('red', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span class="domainmod-css-normal-font-weight">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control<?php echo $this->errorClass($name); ?>" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, false); ?><?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    echo $name; ?>" id="<?php echo $this->fieldId($name); ?>"<?php echo $this->dirAttribute($name, $dir, false); ?><?php echo $this->errorAttributes($name); ?><?php if ($autofocus == '1' && !System::$error_shown && ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') echo ' autofocus'; ?>><?php echo "\n" . htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
                 <?php echo $this->errorFeedback($name); ?>
             </div><?php
             echo $after;

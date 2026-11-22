@@ -77,6 +77,14 @@ class WatchListTest extends TestCase
         $this->assertSame($too_long, $list->checkPaste(str_repeat("\n", 5000))['error']);
     }
 
+    public function testTheNotesHashIgnoresHowLinesBreak()
+    {
+        // Notes saved with line feeds alone match the same notes as a browser sends them back
+        $this->assertSame(WatchList::notesHash("\nOne\nTwo"), WatchList::notesHash("\r\nOne\r\nTwo"));
+        $this->assertSame(WatchList::notesHash("One\rTwo"), WatchList::notesHash("One\r\nTwo"));
+        $this->assertNotSame(WatchList::notesHash("\nOne"), WatchList::notesHash('One'));
+    }
+
     public function testTheTableMatchesTheInstaller()
     {
         $source = preg_replace('/\s+/', ' ', file_get_contents(dirname(__DIR__, 2) . '/install/go.php'));
