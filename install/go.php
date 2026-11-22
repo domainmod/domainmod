@@ -26,6 +26,34 @@ require_once DIR_INC . '/config.inc.php';
 require_once DIR_INC . '/software.inc.php';
 require_once DIR_ROOT . '/vendor/autoload.php';
 
+/*
+ * The restore lock comes first, before anything reads the database: the installer creates temp/restore.lock where it
+ * can (or reuses one the web server can use), and where it can't, the database lock stands in for it (see
+ * _includes/restore-gate.inc.php). Then it holds the lock exclusively, waiting up to 30 seconds as the upgrade does,
+ * until its last write, so it never installs into a database while a restore is replacing its tables, and two install
+ * requests at once can't both pass the "already installed" check.
+ */
+// Only the installer's last step can start the installation (see DomainMOD\Csrf), checked before waiting for the lock
+$csrf = new DomainMOD\Csrf();
+$csrf->check(WEB_ROOT . '/install/');
+// Only a session that has answered every installer step waits for the lock (the sign-in form's token passes the check
+// above too), so a request from anywhere else can't hold the gate. The "already installed" check stays under the lock.
+if (DomainMOD\System::installFirstMissingStep() !== '') {
+    header('Location: ' . WEB_ROOT . '/install/ready/');
+    exit;
+}
+
+$restore_lock = DomainMOD\RestoreLock::exclusive(30);
+if ($restore_lock['state'] === 'error' && ($restore_lock['reason'] ?? '') === 'database') {
+    domainmod_restore_refuse(domainmod_restore_db_unreachable_message('install'));
+}
+if ($restore_lock['state'] === 'error') domainmod_restore_refuse(domainmod_restore_lock_error_message());
+if ($restore_lock['state'] !== 'held' || $restore_lock['flag']) {
+    domainmod_restore_refuse(DomainMOD\RestoreLock::message($restore_lock['flag']));
+}
+// The file's mode, once the lock is held (the lock itself creates the file, where temp/ can be written)
+DomainMOD\RestoreLock::prepareFile(true);
+
 $deeb = DomainMOD\Database::getInstance();
 $goal = new DomainMOD\Goal();
 $log = new DomainMOD\Log('/install/go/index.php');
@@ -37,10 +65,6 @@ require_once DIR_INC . '/debug.inc.php';
 
 $system->loginCheck();
 
-// Only the installer's last step can start the installation (see DomainMOD\Csrf).
-$csrf = new DomainMOD\Csrf();
-$csrf->check(WEB_ROOT . '/install/');
-
 $pdo = $deeb->cnxx;
 $timestamp = $time->stamp();
 
@@ -48,7 +72,6 @@ $timestamp = $time->stamp();
 // Assets
 $temp_default_category = _('[no category]');
 $temp_default_stakeholder = _('[no stakeholder]');
-$temp_default_hosting = _('[no hosting]');
 $temp_default_owner = _('[no owner]');
 $temp_default_dns = _('[no dns]');
 $temp_default_ip_address = _('[no ip address]');
@@ -59,6 +82,10 @@ $temp_default_ssl_type_two = _('S/MIME and Authentication Certificate');
 $temp_default_ssl_type_three = _('Object Code Signing Certificate');
 $temp_default_ssl_type_four = _('Digital ID');
 
+// Hosting Service Types
+$temp_default_hosting_types = array(_('Shared'), _('Reseller'), _('VPS'), _('Dedicated'), _('Cloud'), _('DNS'), _('Email'),
+    _('Other'));
+
 // Task Scheduler
 $temp_task_scheduler_one = _('Domain Queue Processing');
 $temp_task_scheduler_two = _('Send Expiration Email');
@@ -66,6 +93,9 @@ $temp_task_scheduler_three = _('Update Conversion Rates');
 $temp_task_scheduler_four = _('System Cleanup');
 $temp_task_scheduler_five = _('Check For New Version');
 $temp_task_scheduler_six = _('Data Warehouse Build');
+$temp_task_scheduler_seven = _('SSL Queue Processing');
+$temp_task_scheduler_eight = _('Check Watch List');
+$temp_task_scheduler_ten = _('Refresh Domains');
 
 // System Settings
 $installation_language = DEFAULT_LANGUAGE ?? '';
@@ -129,6 +159,13 @@ try {
             `active` TINYINT(1) NOT NULL DEFAULT '1',
             `number_of_logins` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `last_login` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `two_factor_secret` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `two_factor_last_step` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+            `two_factor_failures` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
+            `two_factor_locked_until` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `two_factor_stamp` CHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `two_factor_codes_confirmed` TINYINT(1) NOT NULL DEFAULT '0',
+            `two_factor_enabled_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
@@ -139,10 +176,10 @@ try {
     $stmt = $pdo->prepare("
         INSERT INTO `users`
         (`first_name`, `last_name`, `username`, `email_address`, `password`, `new_password`, `admin`, `read_only`,
-         `creation_type_id`, `insert_time`)
+         `two_factor_stamp`, `creation_type_id`, `insert_time`)
         VALUES
         (:new_first_name, :new_last_name, :new_username, :new_admin_email, :admin_password,
-         '0', '1', '0', :creation_type_id_installation, :timestamp)");
+         '0', '1', '0', :two_factor_stamp, :creation_type_id_installation, :timestamp)");
     // The administrator account from the Administrator Account step, with the password already hashed there, so
     // there's no default password and no forced change at first sign-in (new_password is 0)
     $stmt->bindValue('new_first_name', $_SESSION['s_installation_admin_first_name'], PDO::PARAM_STR);
@@ -150,11 +187,40 @@ try {
     $stmt->bindValue('new_username', $_SESSION['s_installation_admin_username'], PDO::PARAM_STR);
     $stmt->bindValue('new_admin_email', $_SESSION['s_installation_admin_email'], PDO::PARAM_STR);
     $stmt->bindValue('admin_password', $_SESSION['s_installation_admin_hash'], PDO::PARAM_STR);
+    // A random two-factor stamp from the start, like every user after the 4.27.0 upgrade
+    $stmt->bindValue('two_factor_stamp', bin2hex(random_bytes(16)), PDO::PARAM_STR);
     $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
     $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
     $stmt->execute();
     // The new administrator's id, for their settings below (the username is now whatever they chose)
     $temp_user_id = $pdo->lastInsertId('id');
+
+    // Two-factor sign-in's recovery codes (stored as SHA-256 hashes) and remembered devices (token hashes)
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `user_recovery_codes` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `user_id` INT(10) UNSIGNED NOT NULL,
+            `code_hash` CHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `used_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `user_code` (`user_id`, `code_hash`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `user_remembered_devices` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `user_id` INT(10) UNSIGNED NOT NULL,
+            `token_hash` CHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `expires` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `stamp` CHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `token_hash` (`token_hash`),
+            KEY `user_expires` (`user_id`, `expires`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `user_settings` (
@@ -176,9 +242,15 @@ try {
             `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_category_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_ip_address_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_owner_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_hosting_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_hosting_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `expiration_emails` TINYINT(1) NOT NULL DEFAULT '0',
             `number_of_domains` INT(5) NOT NULL DEFAULT '50',
             `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50',
+            `number_of_hosting_services` INT(5) NOT NULL DEFAULT '50',
             `display_domain_owner` TINYINT(1) NOT NULL DEFAULT '0',
             `display_domain_registrar` TINYINT(1) NOT NULL DEFAULT '0',
             `display_domain_account` TINYINT(1) NOT NULL DEFAULT '1',
@@ -189,6 +261,8 @@ try {
             `display_domain_ip` TINYINT(1) NOT NULL DEFAULT '0',
             `display_domain_tld` TINYINT(1) NOT NULL DEFAULT '1',
             `display_domain_fee` TINYINT(1) NOT NULL DEFAULT '1',
+            `display_domain_lock` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_domain_live_dns` TINYINT(1) NOT NULL DEFAULT '0',
             `display_ssl_owner` TINYINT(1) NOT NULL DEFAULT '1',
             `display_ssl_provider` TINYINT(1) NOT NULL DEFAULT '0',
             `display_ssl_account` TINYINT(1) NOT NULL DEFAULT '1',
@@ -198,6 +272,14 @@ try {
             `display_ssl_ip` TINYINT(1) NOT NULL DEFAULT '0',
             `display_ssl_category` TINYINT(1) NOT NULL DEFAULT '0',
             `display_ssl_fee` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_hosting_owner` TINYINT(1) NOT NULL DEFAULT '1',
+            `display_hosting_provider` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_hosting_account` TINYINT(1) NOT NULL DEFAULT '1',
+            `display_hosting_type` TINYINT(1) NOT NULL DEFAULT '1',
+            `display_hosting_expiry_date` TINYINT(1) NOT NULL DEFAULT '1',
+            `display_hosting_ip` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_hosting_category` TINYINT(1) NOT NULL DEFAULT '0',
+            `display_hosting_fee` TINYINT(1) NOT NULL DEFAULT '0',
             `display_inactive_assets` TINYINT(1) NOT NULL DEFAULT '1',
             `display_dw_intro_page` TINYINT(1) NOT NULL DEFAULT '1',
             `display_getting_started` TINYINT(1) NOT NULL DEFAULT '1',
@@ -253,16 +335,6 @@ try {
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
-
-   $stmt = $pdo->prepare("
-        INSERT INTO `hosting`
-        (`name`, `creation_type_id`, `insert_time`)
-        VALUES
-        (:temp_default_hosting, :creation_type_id_installation, :timestamp)");
-    $stmt->bindValue('temp_default_hosting', $temp_default_hosting, PDO::PARAM_STR);
-    $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
-    $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
-    $stmt->execute();
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `owners` (
@@ -569,11 +641,15 @@ try {
             `total_cost` DECIMAL(10,2) NOT NULL,
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
-            `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+            `service_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `function` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
             `privacy` TINYINT(1) NOT NULL DEFAULT '0',
+            `transfer_lock` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+            `epp_status` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `epp_status_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `epp_status_failed_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `active` TINYINT(2) NOT NULL DEFAULT '1',
             `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
             `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
@@ -582,7 +658,11 @@ try {
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
             KEY `domain` (`domain`),
-            KEY `expiry_date` (`expiry_date`, `domain`)
+            KEY `expiry_date` (`expiry_date`, `domain`),
+            KEY `registrar_id` (`registrar_id`, `tld`),
+            KEY `fee_id` (`fee_id`),
+            KEY `account_id` (`account_id`),
+            KEY `service_id` (`service_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
@@ -599,7 +679,6 @@ try {
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
             `privacy` TINYINT(1) NOT NULL DEFAULT '0',
             `processing` TINYINT(1) NOT NULL DEFAULT '0',
@@ -630,7 +709,6 @@ try {
             `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `dns_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-            `hosting_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
             `privacy` TINYINT(1) NOT NULL DEFAULT '0',
             `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
@@ -653,6 +731,7 @@ try {
             `processing` TINYINT(1) NOT NULL DEFAULT '0',
             `ready_to_import` TINYINT(1) NOT NULL DEFAULT '0',
             `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
             `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
@@ -692,6 +771,74 @@ try {
             `privacy` TINYINT(1) NOT NULL DEFAULT '0',
             PRIMARY KEY  (`id`),
             KEY `domain` (`domain`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `ssl_queue` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `host` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `domain_name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `provider_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `type_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `wait_for_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `wait_domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `wait_since` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `exact_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
+            `issuer` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `fingerprint` CHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `processing` TINYINT(1) NOT NULL DEFAULT '0',
+            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `already_in_ssl` TINYINT(1) NOT NULL DEFAULT '0',
+            `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+            `failed` TINYINT(1) NOT NULL DEFAULT '0',
+            `message` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `attempts` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `new_ssl_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
+            `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            KEY `host` (`host`),
+            KEY `finished` (`finished`, `processing`, `last_attempt`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `ssl_queue_history` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `host` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `domain_name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `owner_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `provider_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `type_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `cat_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `wait_for_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `wait_domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `wait_since` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `exact_domain` TINYINT(1) NOT NULL DEFAULT '0',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
+            `issuer` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `fingerprint` CHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `already_in_ssl` TINYINT(1) NOT NULL DEFAULT '0',
+            `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+            `failed` TINYINT(1) NOT NULL DEFAULT '0',
+            `message` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `attempts` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `new_ssl_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
@@ -745,7 +892,7 @@ try {
             `owner_id` INT(10) UNSIGNED NOT NULL,
             `ssl_provider_id` INT(10) UNSIGNED NOT NULL,
             `account_id` INT(10) UNSIGNED NOT NULL,
-            `domain_id` INT(10) UNSIGNED NOT NULL,
+            `domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `type_id` INT(10) UNSIGNED NOT NULL,
             `ip_id` INT(10) UNSIGNED NOT NULL,
             `cat_id` INT(10) UNSIGNED NOT NULL,
@@ -761,7 +908,12 @@ try {
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`),
-            KEY `expiry_date` (`expiry_date`, `name`)
+            KEY `expiry_date` (`expiry_date`, `name`),
+            KEY `domain_id` (`domain_id`),
+            KEY `ssl_provider_id` (`ssl_provider_id`, `type_id`),
+            KEY `type_id` (`type_id`),
+            KEY `fee_id` (`fee_id`),
+            KEY `account_id` (`account_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
@@ -775,6 +927,24 @@ try {
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `ssl_cert_status` (
+            `ssl_id` INT(10) UNSIGNED NOT NULL,
+            `host` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `fingerprint` CHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `issuer` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `refreshed_issuer` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+            `names` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `valid_from` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `valid_to` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `trusted` TINYINT(1) NOT NULL DEFAULT '0',
+            `last_check` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `last_result` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `revision` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            PRIMARY KEY  (`ssl_id`),
+            KEY `fingerprint` (`fingerprint`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $stmt = $pdo->prepare("
         INSERT INTO `ssl_cert_types`
@@ -840,6 +1010,128 @@ try {
             PRIMARY KEY  (`id`),
             KEY `ssl_id` (`ssl_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+        $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_services` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `owner_id` INT(10) UNSIGNED NOT NULL,
+        `hosting_id` INT(10) UNSIGNED NOT NULL,
+        `account_id` INT(10) UNSIGNED NOT NULL,
+        `type_id` INT(10) UNSIGNED NOT NULL,
+        `ip_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `cat_id` INT(10) UNSIGNED NOT NULL,
+        `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `hostname` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+        `billing_term` TINYINT(3) UNSIGNED NOT NULL DEFAULT '12',
+        `renewal_day` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1',
+        `revision` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
+        `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
+        `fee_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `total_cost` DECIMAL(10,2) NOT NULL DEFAULT '0.00',
+        `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
+        `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `active` TINYINT(2) NOT NULL DEFAULT '1',
+        `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+        `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`),
+        KEY `fee_group` (`hosting_id`, `type_id`, `billing_term`),
+        KEY `fee_id` (`fee_id`),
+        KEY `account_id` (`account_id`),
+        KEY `autorenew_due` (`autorenew`, `active`, `expiry_date`),
+        KEY `expiry_date` (`expiry_date`, `name`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    // Like ssl_accounts, without a password column (people keep those in a password manager)
+    $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_provider_accounts` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `owner_id` INT(10) UNSIGNED NOT NULL,
+        `hosting_id` INT(10) UNSIGNED NOT NULL,
+        `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `reseller` TINYINT(1) NOT NULL DEFAULT '0',
+        `reseller_id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+        `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`),
+        KEY `hosting_id` (`hosting_id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_types` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `type` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+        `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    // A fee is per provider, service type, and billing term (in months), and the unique key keeps it that way
+    $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_fees` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `hosting_id` INT(10) UNSIGNED NOT NULL,
+        `type_id` INT(10) UNSIGNED NOT NULL,
+        `billing_term` TINYINT(3) UNSIGNED NOT NULL DEFAULT '12',
+        `initial_fee` DECIMAL(10,2) NOT NULL,
+        `renewal_fee` DECIMAL(10,2) NOT NULL,
+        `misc_fee` DECIMAL(10,2) NOT NULL,
+        `currency_id` INT(10) UNSIGNED NOT NULL,
+        `fee_fixed` TINYINT(1) NOT NULL DEFAULT '0',
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`),
+        UNIQUE KEY `fee_group` (`hosting_id`, `type_id`, `billing_term`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_service_fields` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `type_id` INT(10) UNSIGNED NOT NULL,
+        `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+        `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+        `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+    CREATE TABLE IF NOT EXISTS `hosting_service_field_data` (
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `service_id` INT(10) UNSIGNED NOT NULL,
+        `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+        PRIMARY KEY  (`id`),
+        KEY `service_id` (`service_id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $stmt = $pdo->prepare("
+        INSERT INTO hosting_types
+        (`type`, notes, creation_type_id, insert_time)
+        VALUES
+        (:type, '', :creation_type_id_installation, :timestamp)");
+
+    foreach ($temp_default_hosting_types as $temp_default_hosting_type) {
+
+        $stmt->bindValue('type', $temp_default_hosting_type, PDO::PARAM_STR);
+        $stmt->bindValue('creation_type_id_installation', $creation_type_id_installation, PDO::PARAM_INT);
+        $stmt->bindValue('timestamp', $timestamp, PDO::PARAM_STR);
+        $stmt->execute();
+
+    }
 
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `dns` (
@@ -977,7 +1269,8 @@ try {
             `filtered` TINYINT(1) NOT NULL DEFAULT '0',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
-        PRIMARY KEY  (`id`)
+            PRIMARY KEY  (`id`),
+            KEY `segment_id` (`segment_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
     $pdo->query("
@@ -1118,6 +1411,74 @@ try {
     $stmt->bindValue('temp_task_scheduler_six', $temp_task_scheduler_six, PDO::PARAM_STR);
     $stmt->execute();
 
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_seven, 'Reads the certificates of the sites in the SSL Queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * *', 'ssl-queue', '15', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_seven', $temp_task_scheduler_seven, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
+         VALUES
+        (:temp_task_scheduler_eight, :temp_task_description_eight, 'Every 10 Minutes', '*/10 * * * *', 'watch-list', '130', '0', '1', '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_eight', $temp_task_scheduler_eight, PDO::PARAM_STR);
+    $stmt->bindValue('temp_task_description_eight', DomainMOD\WatchList::TASK_DESCRIPTION, PDO::PARAM_STR);
+    $stmt->execute();
+    // The Refresh Domains task's schedule, one row per domain (DomainMOD\DomainRefresh::tableSql(), which a unit test
+    // compares with this)
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `domain_refresh_status` (
+            `domain_id` INT(10) UNSIGNED NOT NULL,
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `last_turn` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `last_success` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `next_due` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `hold_until` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `failures` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
+            `last_source` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `last_result` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `public_next` TINYINT(1) NOT NULL DEFAULT '0',
+            `revision` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            PRIMARY KEY  (`domain_id`),
+            KEY `next_due` (`next_due`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+    // Live DNS: each domain's last live name servers, addresses, and mail servers (DomainMOD\LiveDns::tableSql(), which a
+    // unit test compares with this)
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `domain_dns_check` (
+            `domain_id` INT(10) UNSIGNED NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `checked_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `started_us` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+            `result` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `ns_state` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+            `ip_state` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+            `list_state` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'failed',
+            `name_servers` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `a` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `aaaa` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `www_a` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `www_aaaa` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `mx` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `seen_sets` VARCHAR(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `stale_sets` VARCHAR(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `truncated_sets` VARCHAR(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `retry_sets` VARCHAR(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `last_ok_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `first_set` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `ip_basis` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `history_ns` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `history_ips` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `history_seen` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            PRIMARY KEY  (`domain_id`),
+            KEY `list_state` (`list_state`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+
     // Daily tasks follow the time zone chosen during installation (with its clock changes), and every task gets its
     // first run time.
     $schedule = new DomainMOD\Scheduler();
@@ -1178,7 +1539,7 @@ try {
         ('Above.com', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('DNSimple', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('DreamHost', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a DreamHost account will have their WHOIS privacy status set to No by default.', '" . $timestamp . "'),
-        ('Dynadot', '0', '0', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
+        ('Dynadot', '0', '0', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', 'API Key and API Secret: both are under Tools > API in your Dynadot account. The same API Key works for both of Dynadot\'s APIs, so keep a saved API Key as it is and add the API Secret to this registrar account. With an API Secret saved, DomainMOD tries Dynadot\'s current API first. Without one, it uses Dynadot\'s legacy API, which Dynadot plans to retire, so add the secret soon. If you restrict API access by IP address at Dynadot, add this server\'s IP address to the allowed list. If a large list of domains doesn\'t finish importing, set up your cron job to run cron.php with PHP\'s command-line version, or paste your domains into the <strong>Domains to add</strong> field.', '" . $timestamp . "'),
         ('eNom', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
         ('Freenom', '1', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $timestamp . "'),
@@ -1228,6 +1589,134 @@ try {
             PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
 
+    // The Change History: one row per action, and one row per changed field (see DomainMOD\ChangeHistory)
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `change_operations` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `source` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `action` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `username` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `note` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `note_code` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `item_count` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            KEY `insert_time` (`insert_time`),
+            KEY `source_action` (`source`, `action`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `change_history` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `operation_id` INT(10) UNSIGNED NOT NULL,
+            `item_type` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `item_id` INT(10) UNSIGNED NOT NULL,
+            `item_name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `change_type` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `field` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `old_value` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `new_value` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `old_display` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `new_display` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `old_hash` CHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `old_length` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `snapshot` MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `via` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `detail` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `source` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `changed_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `operation_item` (`operation_id`, `item_type`, `item_id`, `field`, `change_type`),
+            KEY `item` (`item_type`, `item_id`, `id`),
+            KEY `item_life` (`item_type`, `item_id`, `change_type`, `id`),
+            KEY `changed_time` (`changed_time`, `id`),
+            KEY `source` (`source`, `changed_time`),
+            KEY `user_id` (`user_id`, `changed_time`),
+            KEY `field` (`field`, `changed_time`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+
+    /*
+     * Two indexes for the Change History's Item sort, one for each direction (ties newest first, see
+     * ChangeHistoryList::orderSql()), only where the server honours descending index parts (MariaDB 10.8 and MySQL
+     * 8.0 on), since an older one would keep two plain indexes that never serve the sort. They're optional: a
+     * server set up with 4 KB pages can't hold a key this long, and the list sorts without them, so a failure here
+     * is ignored.
+     */
+    $history_db = DomainMOD\Database::getInstance();
+    if (version_compare($history_db->getDbVersion(), $history_db->getDbType() === 'MariaDB' ? '10.8' : '8.0', '>=')) {
+        foreach (array("ADD KEY `item_name` (`item_name`, `changed_time` DESC, `operation_id` DESC)",
+                     "ADD KEY `item_name_desc` (`item_name` DESC, `changed_time` DESC, `operation_id` DESC)") as $item_key) {
+            try {
+                $pdo->query("ALTER TABLE `change_history` " . $item_key);
+            } catch (PDOException $e) {
+            }
+        }
+    }
+
+    // The Watch List (DomainMOD\WatchList::tableSql(), which a unit test compares with this)
+    $pdo->query("
+        CREATE TABLE IF NOT EXISTS `watch_domains` (
+            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+            `reason` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'watch',
+            `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `archived` TINYINT(1) NOT NULL DEFAULT '0',
+            `last_status_read` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `has_baseline` TINYINT(1) NOT NULL DEFAULT '0',
+            `moved_domain_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `stage` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
+            `pending_stage` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `pending_source` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `pending_since` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+            `statuses` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `expiry_date` DATE NOT NULL DEFAULT '1970-01-01',
+            `registration_date` DATE NOT NULL DEFAULT '1970-01-01',
+            `deletion_date` DATE NOT NULL DEFAULT '1970-01-01',
+            `expiry_source` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `grace_base_expiry` DATE NOT NULL DEFAULT '1970-01-01',
+            `grace_base_source` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `grace_open` TINYINT(1) NOT NULL DEFAULT '0',
+            `registrar_name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `registrar_iana_id` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `registrar_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `stage_since` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `stage_last_seen` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `prev_check` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `drop_from` DATE NOT NULL DEFAULT '1970-01-01',
+            `drop_to` DATE NOT NULL DEFAULT '1970-01-01',
+            `drop_basis` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `last_attempt` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `last_success` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `next_due` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `hold_until` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `failures` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
+            `last_source` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `last_result` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+            `created_by` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `domain` (`domain`),
+            KEY `next_due` (`next_due`),
+            KEY `archived_stage` (`archived`, `stage`)
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+    // Refresh Domains is off until an administrator turns it on, since it sends every domain name to registries and
+    // registrars on a schedule
+    $stmt = $pdo->prepare("
+        INSERT INTO scheduler
+        (`name`, description, `interval`, expression, slug, sort_order, is_running, active, next_run, insert_time)
+         VALUES
+        (:temp_task_scheduler_ten, :temp_task_description_ten, 'Every 10 Minutes', '*/10 * * * *', 'domain-refresh', '120', '0', '0', :next_run, '" . $timestamp . "')");
+    $stmt->bindValue('temp_task_scheduler_ten', $temp_task_scheduler_ten, PDO::PARAM_STR);
+    $stmt->bindValue('next_run', $schedule->getNextRun('*/10 * * * *', 'UTC'), PDO::PARAM_STR);
+    $stmt->bindValue('temp_task_description_ten', DomainMOD\DomainRefresh::TASK_DESCRIPTION, PDO::PARAM_STR);
+    $stmt->execute();
+
+
     $pdo->query("
         CREATE TABLE IF NOT EXISTS `settings` (
             `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1251,6 +1740,11 @@ try {
             `default_ssl_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_ssl_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `default_ssl_provider` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_category_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_ip_address_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_owner_hosting` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_hosting_provider_account` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+            `default_hosting_type` INT(10) UNSIGNED NOT NULL DEFAULT '0',
             `expiration_days` INT(3) NOT NULL DEFAULT '60',
             `email_signature` INT(10) UNSIGNED NOT NULL DEFAULT '1',
             `currency_converter` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'fcra',
@@ -1263,6 +1757,9 @@ try {
             `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
             `debug_mode` TINYINT(1) NOT NULL DEFAULT '0',
             `local_php_log` TINYINT(1) NOT NULL DEFAULT '0',
+            `two_factor_required` TINYINT(1) NOT NULL DEFAULT '0',
+            `history_retention_months` INT(10) UNSIGNED NOT NULL DEFAULT '36',
+            `use_watch_list` TINYINT(1) NOT NULL DEFAULT '1',
             `insert_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             `update_time` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00',
             PRIMARY KEY  (`id`)
@@ -1287,6 +1784,10 @@ try {
     }
     // settings.full_url is VARCHAR(100)
     $full_url = substr($full_url, 0, 100);
+
+    // The Change History's start marker, which turns recording on, written before the settings row that marks the
+    // installation done, so an installed database always has it
+    DomainMOD\ChangeHistory::writeStartMarker($pdo);
 
     $stmt = $pdo->prepare("
         INSERT INTO `settings`
