@@ -10,11 +10,11 @@ Source Code: <https://domainmod.org/source/>
 
 About
 -----
-DomainMOD is a free, open source, self-hosted application for managing your domains, SSL certificates, web hosting, and other internet assets in one place. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
+DomainMOD is a free, open source, self-hosted application for managing your domains, hosting, SSL certificates, and other internet assets in one place. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
 
 Live Demo
 ---------
-Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? We hate when that happens ourselves, which is why we've setup a live demo so you don't waste your time.
+Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? We hate when that happens ourselves, which is why we've set up a live demo so you don't waste your time.
 
 So go ahead, take the live demo for a test drive before you install: <https://demo.domainmod.org>
 
@@ -23,6 +23,7 @@ Requirements
 **Software**: PHP 8.2-8.5, MariaDB 10.4-12.3 or MySQL 5.7-9.7  
 **PHP Extensions**: PDO (MariaDB/MySQL), cURL, OpenSSL, gettext, MySQLi  
 **PHP Settings**: allow_url_fopen  
+**Folders**: The web server can write to the 'temp' folder  
 
 Downloading
 -----------
@@ -42,7 +43,7 @@ To download using Git, change to the directory that will hold DomainMOD and run 
 
     git clone https://github.com/domainmod/domainmod.git
 
-**Option #4 -- Installing via Softactulous**  
+**Option #4 -- Installing via Softaculous**  
 
 Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.
 
@@ -62,23 +63,27 @@ If you used Git to retrieve the source code in the previous step, just change to
 
 1. Create a MySQL database that will be used to store DomainMOD's data.
 
-2. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your web server's settings.
+2. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your web server's settings (including the recommended `$secret_key` for MFA).
 
-3. In a web browser, visit the URL where you just installed DomainMOD, enter the requested information, and then click the Install button. For example, example.com/domainmod/. After a few seconds a message will appear letting you know that the installation was successful.
+3. Make sure the web server can write to the 'temp' folder and the files in it, or restores are turned off. If your cron job runs as a different user, give both users write access to the folder.
 
-4. Setup the below cron job on your web server.
+4. In a web browser, visit the URL where you installed DomainMOD (for example, example.com/domainmod/) and work through the installer. When it's done, you'll be taken to the sign-in page.
+
+5. Set up the cron job below on your web server.
 
 Cron Job
 --------
-DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.
+DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming domain, hosting, and SSL certificate expirations.
 
-The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run, the Task Scheduler will be live.
+The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is set up to run, the Task Scheduler will be live.
 
-If you installed DomainMOD using Docker, the cron job will be setup and running automatically within the container, so there's nothing you need to setup manually.
+If you installed DomainMOD using Docker, the cron job will be set up and running automatically within the container, so there's nothing you need to set up manually.
 
 **NOTE:** This file should be executed every 10 minutes.
 
     Filename: /cron.php
+
+If your cron job runs cron.php from the command line, the simplest setup is to run it as the same user PHP runs as for your web server, so both can write to DomainMOD's 'temp' folder.
 
 To stop anyone else from running cron.php, you can give it a key by adding `$cron_key = 'YourKeyHere';` (with a long random value) to config.inc.php. After that, cron.php only runs from the command line, or from a URL that includes the key, such as `/cron.php?key=YourKeyHere`. See the User Guide for details: <https://domainmod.org/docs/userguide/getting-started/#cron-job>
 
@@ -92,23 +97,27 @@ Although we've done our best to secure DomainMOD, unfortunately there are many f
 
 3. Do not use easy-to-guess passwords. **Ever**.
 
-4. Although DomainMOD has its own authentication system, we recommend that you also use HTTP authentication on your installation directory to add an extra layer of security.
+4. Turn on MFA (multi-factor authentication) in **Settings** -> **Security**, and set `$secret_key` in config.inc.php (or `DOMAINMOD_SECRET_KEY` for Docker), ideally when you install, so DomainMOD encrypts each user's MFA secret. See config.SAMPLE.inc.php for details.
 
-5. Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, **use it at your own risk**. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.
+5. Although DomainMOD has its own authentication system, we recommend that you also use HTTP authentication on your installation directory to add an extra layer of security.
 
-    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is only necessary if you want to import domains using your registrar's API through the Domain Queue (imports using RDAP and WHOIS don't need them), however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.
+6. Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, **use it at your own risk**. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.
 
-6. Do not host DomainMOD on a public website or on an easy-to-guess URL.
+    **WARNING:** Saving your API keys (and other relevant API connection information) in DomainMOD is only necessary if you want to use your registrar's API to import domains through the Domain Queue or to refresh them (the Refresh button and the Refresh Domains task). Imports and refreshes using RDAP and WHOIS don't need them, but they can't read WHOIS privacy or auto renewal. If you don't need those, we recommend that you only save your API keys while you're using the Domain Queue, and remove them as soon as you're done.
+
+7. Do not host DomainMOD on a public website or on an easy-to-guess URL.
 
    If you do end up hosting DomainMOD on a public website, DomainMOD asks search engines not to index its pages. Don't block its URL in your website's robots.txt file, since search engines then can't see that request, and your DomainMOD URL may still end up in public search results.
 
-7. Do not give the URL to anyone who does not need to access DomainMOD. You should treat the URL like a password.
+8. Do not give the URL to anyone who does not need to access DomainMOD. You should treat the URL like a password.
 
-8. Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerabilities that are found and fixed.
+9. Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerabilities that are found and fixed.
 
 Upgrading
 ---------
 **WARNING:** Before upgrading it's **strongly** recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your previous version. The Backup & Restore documentation can be found here: <https://domainmod.org/docs/userguide/backup-restore/>
+
+As of v4.27.0, administrators can open **Administration** -> **Upgrade** to see the installed and latest versions, and the upgrade steps for the way DomainMOD was installed. The steps for each method are also below.
 
 **Option #1 -- Docker Install**  
 If you installed DomainMOD using Docker, please see our official DomainMOD container on Docker Hub for upgrade information: <https://hub.docker.com/r/domainmod/domainmod>  
@@ -127,7 +136,15 @@ If you installed DomainMOD using Git right from your web server, just run the fo
 If you installed DomainMOD using Softaculous you're just a few clicks away from upgrading to the newest version. Please see the upgrade instructions on the Softaculous Wiki: <https://www.softaculous.com/docs/How_to_upgrade_installations>
 
 **After Upgrading**  
+To finish the upgrade, sign in as an administrator and click **Upgrade Database** when DomainMOD asks.
+
 Unless you upgraded using Docker, restart PHP so the updated translation files are loaded (restart PHP-FPM if your server uses it, otherwise restart your web server). Otherwise some text may display incorrectly until it restarts. If you can't restart it yourself, your web hosting provider should be able to do it for you.
+
+As of v4.27.0, the web server needs to be able to write to the 'temp' folder and the files in it (see the Installation Steps above). If it can't, DomainMOD shows a warning and turns off restores until it can.
+
+As of v4.27.0, domains no longer have a Web Hosting Provider field. The upgrade turns each domain's old Web Hosting Provider into a hosting service named after the provider, in a new hosting account with the username "Imported" (one account and service for each provider and owner, shared by their domains), and links the domains to it. Domains set to a placeholder such as [no hosting] aren't linked. Check the imported services under Hosting after upgrading.
+
+As of v4.27.0, if your users turn on MFA, we recommend adding `$secret_key` to config.inc.php with a long random value, so DomainMOD encrypts each user's MFA secret (Docker installs use the `DOMAINMOD_SECRET_KEY` variable). Secrets saved before the key was set are encrypted the next time each user signs in with a code from their authenticator app. Keep the key safe, since it isn't in DomainMOD's backups, and use the same value when you move or restore your installation. If it's lost or changed, users with MFA on need a recovery code or an administrator's reset to sign in.
 
 Data Warehouse
 --------------
