@@ -22,7 +22,7 @@
 <?php //@formatter:off
 /*
  * The Hosting Services list's rows, one page at a time, for DataTables' server-side mode (see js/server-list.js). It
- * answers in JSON and changes nothing: no session writes, saved Raw List, or currency rates (the page load does those).
+ * answers in JSON and changes nothing: it leaves session writes and currency rate updates to the page load.
  * The list's filters come from the request, the way the page put them in the table's address, never from the session,
  * so another tab's filters can't change this tab's rows.
  */

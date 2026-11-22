@@ -176,7 +176,7 @@ if (!array_key_exists('search_for', $back_filters)) $back_filters['search_for'] 
 if (!array_key_exists('daterange', $back_filters)) $back_filters['daterange'] = $daterange;
 
 // The list's filters as SQL, from the same class as the list's data endpoint (hosting/list-data.php), so the first
-// page, the pages fetched afterwards, the counts, Export, and the Raw List all agree (see HostingList::filterParts()).
+// page, the pages fetched afterwards, the counts, and Export all agree (see HostingList::filterParts()).
 //
 // The list's custom fields are read once, so the SELECT, the columns, Export, and the custom field filters all describe
 // the same fields, and the custom field filters come from the request only, as on the SSL Certificates list
@@ -212,26 +212,14 @@ $list_state = array('oid' => $oid, 'hid' => $hid, 'hpaid' => $hpaid, 'htid' => $
     'hipid' => $hipid, 'hcid' => $hcid, 'is_active' => $is_active);
 $filter_parts = $hosting_list->filterParts($list_state, $list_search_for, $list_start_date, $list_end_date);
 
-// Export and the Raw List come out in the list's default order (HostingList::EXPORT_ORDER_SQL). The Raw List also keeps
-// the query without its order, so it can add the table's search box when its link carries one, and without its columns,
-// so it can read only the names, in chunks (see raw.php).
 $list_filter_sql = DomainMOD\HostingList::filterSql($filter_parts) . $cf_filter['sql'];
 $list_filter_params = $cf_filter['params'];
-$raw_list_from_sql = $hosting_list->fromSql() . $list_filter_sql;
-$raw_list_sql = $hosting_list->selectSql() . $raw_list_from_sql;
-$_SESSION['s_raw_list_type'] = 'hosting';
-$_SESSION['s_raw_list_sql'] = $raw_list_sql . DomainMOD\HostingList::EXPORT_ORDER_SQL;
-$_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
-$_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
-// The custom field filters' bound values, and their keys, for raw.php's checks (see raw.php)
-$_SESSION['s_raw_list_params'] = $list_filter_params;
-$_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 $list_has_range = $filter_parts['range_string'] != '';
 $list_has_search = $filter_parts['search_string'] != '';
 
 // The table search the address carries (dt_search, with the column layout it was made for, dt_layout), so the list
-// opens on the same search (js/server-list.js adds it to the Export and Raw List links)
+// opens on the same search (js/server-list.js adds it to the Export link)
 $table_search_for = isset($_GET['dt_search']) && is_string($_GET['dt_search']) ? $_GET['dt_search'] : '';
 $table_search_layout = isset($_GET['dt_layout']) && is_string($_GET['dt_layout']) ? $_GET['dt_layout'] : '';
 $table_search = $hosting_list->tableSearchSql($table_search_for, $table_search_layout,
@@ -597,7 +585,7 @@ $ready_for_hosting_services = 0;
 
 if ($_SESSION['s_has_hosting_service'] != '1' && $has_hosting_provider == '1' && $_SESSION['s_has_hosting_provider_account'] == '1') {
 
-    echo $layout->emptyState('bi-hdd-stack', _('No hosting services yet'), _('Add the hosting services you want to keep track of.'), '/hosting/add.php', _('Add Service'), '', '', 2, true);
+    echo $layout->emptyState('bi-hdd-stack', _('No hosting services yet'), _('Add the hosting services you want to keep track of.'), '/hosting/add.php', _('Add Hosting Service'), '', '', 2, true);
     $ready_for_hosting_services = 1;
 
 } elseif ($_SESSION['s_has_hosting_service'] == '1' && $has_hosting_provider == '1' && $_SESSION['s_has_hosting_provider_account'] == '1') {
@@ -905,25 +893,20 @@ if ($hosting_ready) {
 $list_state_url = $filter_toolbar->stateUrl();
 $list_query = (string) parse_url($list_state_url, PHP_URL_QUERY);
 
-// The search the page accepted, as the Export and Raw List links carry it before the table's first draw (see below)
+// The search the page accepted, as the Export link carries it before the table's first draw (see below)
 $accepted_search = $table_search_for !== '' ? array('dt_search' => $table_search_for, 'dt_layout' => $list_columns->layoutKey()) : array();
 
 if ($total_rows > 0) {
 
     /*
      * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link carries the filters
-     * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()). Both links keep their ids,
-     * since js/server-list.js adds the table's search box to them (dt_search), and both start with the search the page
+     * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()). The link keeps its id,
+     * since js/server-list.js adds the table's search box to it (dt_search), and it starts with the search the page
      * accepted from its address, so an export made before the table's first draw holds the rows the page shows. Layout
      * leaves the Add button out for read-only users.
      */
-    $layout->setPageAddAction(_('Add Service'), 'add.php');
-    // The Raw List link always names the list it was made for (see raw.php)
-    $raw_list_url = $web_root . '/raw.php?' . http_build_query(array(
-        'dt_list' => DomainMOD\HostingList::savedListKey($raw_list_from_sql, $list_filter_params), 'dt_type' => 'hosting',
-        'dt_cfk' => $cf->filterKey(array_keys($cf_keys))) + $accepted_search);
+    $layout->setPageAddAction(_('Add Hosting Service'), 'add.php');
     $export_url = $filter_toolbar->exportUrl() . ($accepted_search ? '&' . http_build_query($accepted_search) : '');
-    $layout->addPageAction(_('Raw List'), $raw_list_url, 'bi-list-ul', array('target' => '_blank', 'id' => 'hosting-list-raw'));
     $layout->addPageAction(_('Export'), $export_url, 'bi-download', array('id' => 'hosting-list-export')); ?>
 
     <strong><?php echo _('Number of Hosting Services'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
@@ -989,9 +972,8 @@ if ($total_rows > 0) {
             // custom field filters when one of their fields changed (see js/server-list.js)
             'reloadUrl' => $list_state_url,
             'filterReloadUrl' => $filter_toolbar->stateUrl('search_for', 'daterange', array(), array_keys($cf_keys)),
-            // The links that follow the search box (by id), and what each carries with it (see raw.php)
+            // The links that follow the search box (by id), and what each carries with it
             'searchLinks' => array(
-                'hosting-list-raw' => array('dt_layout' => $list_columns->layoutKey()),
                 'hosting-list-export' => array('dt_layout' => $list_columns->layoutKey()),
             ),
         );
@@ -1036,7 +1018,7 @@ if ($total_rows > 0) {
     // With no hosting services at all, the "No hosting services yet" empty state above already offers the Add button
     if ($ready_for_hosting_services === 1 && $_SESSION['s_has_hosting_service'] == '1') {
 
-        $layout->setPageAddAction(_('Add Service'), 'add.php');
+        $layout->setPageAddAction(_('Add Hosting Service'), 'add.php');
 
     }
 

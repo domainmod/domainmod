@@ -34,43 +34,35 @@ require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
 
 $system->authCheck();
-// Rates for every currency in use, or the saved list query below would leave out what uses a missing one
-(new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 $pdo = $deeb->cnxx;
 
 $_SESSION['s_raw_list_type'] = $_SESSION['s_raw_list_type'] ?? '';
 
 /*
- * The Domains, SSL Certificates, and Hosting Services lists' Raw List links name the list they were made for: its saved
- * query and bound values (dt_list, see ListQuery::savedListKey()), its type (dt_type), and its custom field filters' key
- * (dt_cfk, see CustomFieldFilter::filterKey()). With a search in the table, they also carry the search box (dt_search)
- * and the column layout (dt_layout), added by js/server-list.js, so the list matches the rows the table shows. A link is only
- * run on the saved list it was made for, with the same custom fields, never on one another tab has saved since, and its
- * page title and messages follow its own type. A plain link with none of them (an old bookmark) runs the saved list
- * unchecked, as before.
+ * Only the Domains list has a Raw List. Its link names the list it was made for: its saved query and bound values
+ * (dt_list, see ListQuery::savedListKey()), its type (dt_type), and its custom field filters' key (dt_cfk, see
+ * CustomFieldFilter::filterKey()). With a search in the table, it also carries the search box (dt_search) and the
+ * column layout (dt_layout), added by js/server-list.js, so the list matches the rows the table shows. A link is only
+ * run on the saved list it was made for, with the same custom fields, never on one another tab has saved since. A
+ * request that doesn't name its list (an old bookmark, with no dt_list) runs the saved list unchecked, as before, but
+ * only when the saved list is the Domains list. A request whose type isn't domains (such as the SSL Certificates list's
+ * Raw List from 4.26.0), a link that names its list without dt_type=domains, or a request that doesn't name its list
+ * when the saved list isn't the Domains list shows a message instead of a list, and nothing is read.
  */
 $raw_list_link = isset($_GET['dt_list']) && is_string($_GET['dt_list']);
 $raw_list_type = $_SESSION['s_raw_list_type'];
-if ($raw_list_link && in_array($_GET['dt_type'] ?? null, array('domains', 'ssl-certs', 'hosting'), true)) {
-    $raw_list_type = $_GET['dt_type'];
+if ($raw_list_link || array_key_exists('dt_type', $_GET)) {
+    $raw_list_type = $_GET['dt_type'] ?? '';
+}
+$raw_list_domains = $raw_list_type === 'domains' && ($raw_list_link || $_SESSION['s_raw_list_type'] === 'domains');
+
+// Rates for every currency in use, or the saved list query below would leave out what uses a missing one
+if ($raw_list_domains) {
+    (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 }
 
-if ($raw_list_type == 'domains') {
-
-    $page_title = _('Domains (Raw List)');
-    $software_section = "domains";
-
-} elseif ($raw_list_type == 'ssl-certs') {
-
-    $page_title = _('SSL Certificates (Raw List)');
-    $software_section = "ssl-certs";
-
-} elseif ($raw_list_type == 'hosting') {
-
-    $page_title = _('Hosting Services (Raw List)');
-    $software_section = "hosting";
-
-}
+$page_title = _('Domains (Raw List)');
+$software_section = "domains";
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -86,35 +78,9 @@ if ($raw_list_type == 'domains') {
 // The saved query has a new name, so a query saved by an older version (whose date range wasn't checked) is never run.
 unset($_SESSION['s_raw_list_query']);
 
-if ($raw_list_type == 'ssl-certs') {
-
-    $list_changed = _('The SSL Certificates list has changed since you searched it. Please reload the list and search again.');
-    $list_reopen = _('The SSL Certificates list has changed since you opened it. Please reload the list and open Raw List again.');
-    $list_class = 'DomainMOD\SslList';
-    $list_fields_table = 'ssl_cert_fields';
-    $list_alias = 'sslfd';
-    $list_settings = DomainMOD\SslListColumns::sessionCopy($_SESSION);
-
-} elseif ($raw_list_type == 'hosting') {
-
-    $list_changed = _('The Hosting Services list has changed since you searched it. Please reload the list and search again.');
-    $list_reopen = _('The Hosting Services list has changed since you opened it. Please reload the list and open Raw List again.');
-    // Before the database update there are no hosting tables to read
-    $list_class = DomainMOD\Hosting::isAvailable($pdo) ? 'DomainMOD\HostingList' : null;
-    $list_fields_table = 'hosting_service_fields';
-    $list_alias = 'hsfd';
-    $list_settings = DomainMOD\HostingListColumns::sessionCopy($_SESSION);
-
-} else {
-
-    $list_changed = _('The Domains list has changed since you searched it. Please reload the list and search again.');
-    $list_reopen = _('The Domains list has changed since you opened it. Please reload the list and open Raw List again.');
-    $list_class = $raw_list_type == 'domains' ? 'DomainMOD\DomainList' : null;
-    $list_fields_table = 'domain_fields';
-    $list_alias = 'dfd';
-    $list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
-
-}
+$list_changed = _('The Domains list has changed since you searched it. Please reload the list and search again.');
+$list_reopen = _('The Domains list has changed since you opened it. Please reload the list and open Raw List again.');
+$list_settings = DomainMOD\DomainListColumns::sessionCopy($_SESSION);
 
 // What's needed from the session is copied first, so the session can be closed before a long list is read, and the
 // user's other tabs aren't held up
@@ -144,27 +110,27 @@ if ($raw_list_status === 'mismatch') {
 
 // A Domains list saved with Live DNS's table that's gone since (an older backup was restored, or a restore left it
 // missing) is a list that has changed, rather than a query that fails
-if ($raw_list_message === '' && $raw_list_type == 'domains' && is_string($raw_list_from_sql)
+if ($raw_list_message === '' && $raw_list_domains && is_string($raw_list_from_sql)
     && strpos($raw_list_from_sql, 'JOIN domain_dns_check AS ldc') !== false && !DomainMOD\LiveDns::isAvailable($pdo)) {
 
     $raw_list_message = $raw_list_mismatch;
 
 }
 
-if ($raw_list_type == 'hosting' && $list_class === null) {
+if (!$raw_list_domains) {
 
-    echo htmlspecialchars(DomainMOD\Hosting::unavailableMessage(), ENT_QUOTES, 'UTF-8') . "<BR>";
+    echo htmlspecialchars(_('Only the Domains list has a Raw List. Please open it from there.'), ENT_QUOTES, 'UTF-8') . "<BR>";
 
 } elseif ($raw_list_message !== '') {
 
     echo htmlspecialchars($raw_list_message, ENT_QUOTES, 'UTF-8') . "<BR>";
 
-} elseif ($list_class !== null && $raw_list_saved && $raw_list_from_sql === null) {
+} elseif ($raw_list_saved && $raw_list_from_sql === null) {
 
     // Saved by a version before the list was read in chunks, so it can't be read only by its names
     echo htmlspecialchars($list_reopen, ENT_QUOTES, 'UTF-8') . "<BR>";
 
-} elseif ($list_class !== null && $raw_list_from_sql !== null) {
+} elseif ($raw_list_from_sql !== null) {
 
     // Every output buffer that can be ended is ended, so a host that buffers output can't hold the whole list
     DomainMOD\Export::endOutputBuffers();
@@ -186,7 +152,7 @@ if ($raw_list_type == 'hosting' && $list_class === null) {
 
     try {
 
-        $list_query = new $list_class($pdo, $_SESSION['s_user_id'] ?? 0, array());
+        $list_query = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0, array());
         $list_query->beginSnapshot();
         $in_snapshot = true;
 
@@ -200,10 +166,10 @@ if ($raw_list_type == 'hosting' && $list_class === null) {
         $list_ok = true;
         if ($raw_list_link) {
 
-            $list_fields = DomainMOD\CustomField::readFilterFields($pdo, $list_fields_table);
-            $list_query = new $list_class($pdo, $_SESSION['s_user_id'] ?? 0, $list_fields);
+            $list_fields = DomainMOD\CustomField::readFilterFields($pdo, 'domain_fields');
+            $list_query = new DomainMOD\DomainList($pdo, $_SESSION['s_user_id'] ?? 0, $list_fields);
 
-            if (!hash_equals((new DomainMOD\CustomFieldFilter($list_fields, $list_alias))->filterKey($raw_list_filter_keys),
+            if (!hash_equals((new DomainMOD\CustomFieldFilter($list_fields, 'dfd'))->filterKey($raw_list_filter_keys),
                 $_GET['dt_cfk'])) {
 
                 $list_ok = false;

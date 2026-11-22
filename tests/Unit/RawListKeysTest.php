@@ -23,13 +23,12 @@ namespace DomainMOD\Tests\Unit;
 
 use DomainMOD\DomainList;
 use DomainMOD\ListQuery;
-use DomainMOD\SslList;
 use DomainMOD\Tests\Support\FieldRows;
 use DomainMOD\Tests\Support\RecordingPdo;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// The Raw List reads only the keys (ListQuery::exportKeyBatches()), never the list's full rows, from its saved query
+// The Domains list's Raw List reads only the keys (ListQuery::exportKeyBatches()), never the list's full rows, from its saved query
 class RawListKeysTest extends TestCase
 {
     protected function setUp(): void
@@ -43,7 +42,6 @@ class RawListKeysTest extends TestCase
     {
         return array(
             'domains' => array(DomainList::class, ', dfd.project_code', 'd.domain'),
-            'ssl certificates' => array(SslList::class, ', sslfd.order_ref', 'sslc.name'),
         );
     }
 

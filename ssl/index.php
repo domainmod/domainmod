@@ -172,8 +172,8 @@ if (!array_key_exists('search_for', $back_filters)) $back_filters['search_for'] 
 if (!array_key_exists('daterange', $back_filters)) $back_filters['daterange'] = $daterange;
 
 // The list's filters as SQL, from the same class as the list's data endpoint (ssl/list-data.php), so the first page,
-// the pages fetched afterwards, the counts, Export, and the Raw List all agree. The keyword is matched against the
-// certificate's name, which is stored HTML-encoded, as the keyword is, or its domain, as the filter menus match it (see
+// the pages fetched afterwards, the counts, and Export all agree. The keyword is matched against the certificate's
+// name, which is stored HTML-encoded, as the keyword is, or its domain, as the filter menus match it (see
 // SslList::filterParts()).
 //
 // The list's custom fields are read once, so the SELECT, the columns, Export, and the custom field filters all describe
@@ -219,30 +219,6 @@ $sslipid_string = $filter_parts['sslipid_string'];
 $sslpcid_string = $filter_parts['sslpcid_string'];
 $range_string = $filter_parts['range_string'];
 $search_string = $filter_parts['search_string'];
-
-// Export and the Raw List come out in the list's default order (SslList::EXPORT_ORDER_SQL). The Raw List also keeps the
-// query without its order, so it can add the table's search box when its link carries one, and without its columns, so
-// it can read only the names, in chunks (see raw.php).
-$raw_list_from_sql = $ssl_list->fromSql() . "
-          $is_active_string
-          $oid_string
-          $did_string
-          $sslpid_string
-          $sslpaid_string
-          $ssltid_string
-          $sslipid_string
-          $sslpcid_string
-          $range_string
-          $search_string" . $cf_filter['sql'];
-$raw_list_sql = $ssl_list->selectSql() . $raw_list_from_sql;
-$sql = $raw_list_sql . DomainMOD\SslList::EXPORT_ORDER_SQL;
-$_SESSION['s_raw_list_type'] = 'ssl-certs';
-$_SESSION['s_raw_list_sql'] = $sql;
-$_SESSION['s_raw_list_unordered_sql'] = $raw_list_sql;
-$_SESSION['s_raw_list_from_sql'] = $raw_list_from_sql;
-// The custom field filters' bound values, and their keys, for raw.php's checks (see raw.php)
-$_SESSION['s_raw_list_params'] = $cf_filter['params'];
-$_SESSION['s_raw_list_filter_keys'] = array_keys($cf_keys);
 
 // The list's filters as they are now, kept for the empty state's counts, since the filter menus below reuse these names
 $list_filter_sql = $is_active_string . $oid_string . $did_string . $sslpid_string . $sslpaid_string . $ssltid_string
@@ -1691,17 +1667,12 @@ if ($result) {
      * The page's actions, drawn in the page header (see Layout::renderPageActions()). Export's link carries the filters
      * the list actually used, from the filter toolbar's state (FilterToolbar::exportUrl()), since the filter form posts
      * them and they'd otherwise never reach the export. Each active filter is written out (so an inactive-only list
-     * keeps is_active=0), and the keyword and date range always are, empty when off. Both links keep their ids, since
-     * js/server-list.js adds the table's search box to them (dt_search). Layout leaves the Add button out for read-only
+     * keeps is_active=0), and the keyword and date range always are, empty when off. The link keeps its id, since
+     * js/server-list.js adds the table's search box to it (dt_search). Layout leaves the Add button out for read-only
      * users.
      */
     $layout->setPageAddAction(_('Add SSL Certificate'), 'add.php');
     if ($ssl_import_available) $layout->addPageAddMenuItem(_('Add SSL Certificates Automatically'), $web_root . '/queue/add/ssl.php', 'bi-magic');
-    // The Raw List link always names the list it was made for (see raw.php)
-    $raw_list_url = $web_root . '/raw.php?' . http_build_query(array(
-        'dt_list' => DomainMOD\SslList::savedListKey($raw_list_from_sql, $list_filter_params), 'dt_type' => 'ssl-certs',
-        'dt_cfk' => $cf->filterKey(array_keys($cf_keys))));
-    $layout->addPageAction(_('Raw List'), $raw_list_url, 'bi-list-ul', array('target' => '_blank', 'id' => 'ssl-list-raw'));
     $layout->addPageAction(_('Export'), $filter_toolbar->exportUrl(), 'bi-download', array('id' => 'ssl-list-export')); ?>
 
     <strong><?php echo _('Number of SSL Certificates'); ?>:</strong> <?php echo number_format($total_rows); ?><BR>
@@ -1751,9 +1722,8 @@ if ($result) {
             // custom field filters when one of their fields changed (see js/server-list.js)
             'reloadUrl' => $list_state_url,
             'filterReloadUrl' => $filter_toolbar->stateUrl('search_for', 'daterange', array(), array_keys($cf_keys)),
-            // The links that follow the search box (by id), and what each carries with it (see raw.php)
+            // The links that follow the search box (by id), and what each carries with it
             'searchLinks' => array(
-                'ssl-list-raw' => array('dt_layout' => $list_columns->layoutKey()),
                 'ssl-list-export' => array('dt_layout' => $list_columns->layoutKey()),
             ),
         );

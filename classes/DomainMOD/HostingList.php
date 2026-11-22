@@ -24,8 +24,8 @@ namespace DomainMOD;
 /*
  * Which hosting services are in the Hosting Services list, and in what order. The list page (hosting/index.php) and its
  * server-side data endpoint (hosting/list-data.php) both build their filters here, so the first page the server prints,
- * the pages DataTables fetches afterwards, the counts, Export, and the Raw List can't drift apart. What it shares with
- * the Domains and SSL Certificates lists (page sizes, the search box, counts, rows, and the order) is in ListQuery.
+ * the pages DataTables fetches afterwards, the counts, and Export can't drift apart. What it shares with the Domains
+ * and SSL Certificates lists (page sizes, the search box, counts, rows, and the order) is in ListQuery.
  *
  * The filter conditions are SQL fragments, with whole numbers cast, and the dates and keyword quoted by PDO. The keyword
  * matches a hosting service's name or hostname. Every condition is written on the hosting service table alone (hs), so
@@ -66,7 +66,7 @@ class HostingList extends ListQuery
         array('ip_addresses', 'ip', 'PRIMARY', 'ip.id = hs.ip_id'),
         array('categories', 'cat', 'PRIMARY'));
 
-    // Export and the Raw List come out in the list's default order, as the other lists' do, and EXPORT_ORDER_SQL and
+    // Export comes out in the list's default order, as the other lists' exports do, and EXPORT_ORDER_SQL and
     // the keyset (see ListQuery::keysetSql()) are both built from it
     const EXPORT_ORDER = array('hs.expiry_date', 'hs.name', 'hs.id');
     const EXPORT_ORDER_SQL = ' ORDER BY ' . self::EXPORT_ORDER[0] . ' ASC, ' . self::EXPORT_ORDER[1] . ' ASC, '
