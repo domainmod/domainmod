@@ -144,7 +144,7 @@ try {
     $data = array();
     if ($start < $records_filtered) {
         $order_sql = DomainMOD\DomainList::orderSql($order_requests, $sort_map, $columns->defaultOrder());
-        $today = $time->timeBasic();
+        $today = $time->userToday();
         foreach ($domain_list->rows($filter_sql, $search_sql, $order_sql, $start, $length, $cf_filter['params']) as $row) {
             $data[] = $columns->cells($row, $today);
         }

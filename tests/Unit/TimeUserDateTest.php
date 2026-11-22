@@ -93,4 +93,66 @@ class TimeUserDateTest extends TestCase
         $_SESSION['s_default_timezone'] = 'UTC';
         $this->assertSame('2029-03-01', $time->userDatePlusYears(1, '2028-02-29 12:00:00'));
     }
+
+    public function testTodayIsTheUsersDateAroundMidnightUtc()
+    {
+        $time = new Time();
+
+        // 00:30 UTC on the 20th is still the evening of the 19th in Vancouver, so reports show the 19th as today
+        $_SESSION['s_default_timezone'] = 'America/Vancouver';
+        $this->assertSame('2026-11-19', $time->userToday('@' . strtotime('2026-11-20 00:30:00 UTC')));
+        $this->assertSame('2026-11-19', $time->userToday('@' . strtotime('2026-11-19 23:30:00 UTC')));
+        // The 20th starts there seven or eight hours after UTC's, depending on the time zone data
+        $this->assertSame('2026-11-19', $time->userToday('@' . strtotime('2026-11-20 06:30:00 UTC')));
+        $this->assertSame('2026-11-20', $time->userToday('@' . strtotime('2026-11-20 08:30:00 UTC')));
+
+        // East of UTC the user's day starts first: 23:30 on the 19th in UTC is the 20th in Tokyo
+        $_SESSION['s_default_timezone'] = 'Asia/Tokyo';
+        $this->assertSame('2026-11-20', $time->userToday('@' . strtotime('2026-11-19 23:30:00 UTC')));
+        $this->assertSame('2026-11-20', $time->userToday('@' . strtotime('2026-11-20 00:30:00 UTC')));
+        $this->assertSame('2026-11-19', $time->userToday('@' . strtotime('2026-11-19 14:59:59 UTC')));
+    }
+
+    public function testTodayFallsBackToUtcForAnUnknownZone()
+    {
+        $time = new Time();
+
+        foreach (array('Not/A_Zone', '') as $zone) {
+            $_SESSION['s_default_timezone'] = $zone;
+            $this->assertSame('2026-11-20', $time->userToday('@' . strtotime('2026-11-20 00:30:00 UTC')));
+            $this->assertSame('2026-11-19', $time->userToday('@' . strtotime('2026-11-19 23:59:59 UTC')));
+        }
+
+        // No time zone in the session at all is UTC too
+        unset($_SESSION['s_default_timezone']);
+        $this->assertSame('2026-11-20', $time->userToday('@' . strtotime('2026-11-20 00:30:00 UTC')));
+    }
+
+    public function testDaysOnCountFromTheUsersToday()
+    {
+        $time = new Time();
+
+        // The 19th in Vancouver, so 30 days on is 19 December, not 20 December
+        $_SESSION['s_default_timezone'] = 'America/Vancouver';
+        $now = '@' . strtotime('2026-11-20 00:30:00 UTC');
+        $this->assertSame('2026-12-19', $time->userTodayPlusDays(30, $now));
+        $this->assertSame('2026-11-20', $time->userTodayPlusDays(1, $now));
+        $this->assertSame('2026-11-18', $time->userTodayPlusDays(-1, $now));
+
+        // Counting from a date the page already has gives the same date, without reading the clock again
+        $today = $time->userToday($now);
+        $this->assertSame('2026-12-19', $time->userTodayPlusDays(30, $today));
+        $this->assertSame('2026-11-19', $time->userTodayPlusDays(0, $today));
+        $_SESSION['s_default_timezone'] = 'Asia/Tokyo';
+        $this->assertSame('2027-02-17', $time->userTodayPlusDays(90, '2026-11-19'));
+
+        // A day on from 23:30 is still the next date when 23:30 on that date doesn't exist (Dhaka's clocks jumped from
+        // 23:00 to midnight on 19 June 2009), not the date after it
+        $_SESSION['s_default_timezone'] = 'Asia/Dhaka';
+        $this->assertSame('2009-06-19', $time->userTodayPlusDays(1, '@' . strtotime('2009-06-18 17:30:00 UTC')));
+
+        // Thirty days on is counted on the calendar, even in a zone that skipped a date (Samoa skipped 30 December 2011)
+        $_SESSION['s_default_timezone'] = 'Pacific/Apia';
+        $this->assertSame('2011-12-30', $time->userTodayPlusDays(30, '2011-11-30'));
+    }
 }

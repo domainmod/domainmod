@@ -48,7 +48,7 @@ $export_data = (int) ($_GET['export_data'] ?? 0);
 $days = (int) ($_GET['days'] ?? 90);
 if (!in_array($days, array(30, 60, 90), true)) $days = 90;
 
-$today = $time->timeBasic();
+$today = $time->userToday();
 $rows = $reporting->renewalCerts($reporting->renewalChartEnd($today));
 $months = $reporting->renewalMonths($rows, $today);
 
@@ -61,7 +61,7 @@ $money = function ($amount) use ($currency) {
 // certificates (overdue ones first, then those expiring by the window's end)
 $windows = array();
 foreach (array(30, 60, 90) as $window_days) {
-    $window_end = $time->timeBasicPlusDays($window_days);
+    $window_end = $time->userTodayPlusDays($window_days, $today);
     $windows[$window_days] = array('count' => 0, 'cost' => 0.0, 'missing' => 0);
     foreach ($rows as $row) {
         if ($row->expiry_date < $today || $row->expiry_date > $window_end) continue;
@@ -74,7 +74,7 @@ foreach (array(30, 60, 90) as $window_days) {
     }
 }
 
-$window_end = $time->timeBasicPlusDays($days);
+$window_end = $time->userTodayPlusDays($days, $today);
 $list = array_values(array_filter($rows, function ($row) use ($window_end) {
     return $row->expiry_date <= $window_end;
 }));

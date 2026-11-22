@@ -1757,7 +1757,7 @@ if ($result) {
                 'ssl-list-export' => array('dt_layout' => $list_columns->layoutKey()),
             ),
         );
-        $today = $time->timeBasic(); // for marking past expiry dates ?>
+        $today = $time->userToday(); // for marking past expiry dates, in the user's time zone ?>
 
         <div id="<?php echo $slug; ?>-message"></div>
         <?php // The table's scroll box, for when JavaScript is off (js/server-list.js gives DataTables its own) ?>

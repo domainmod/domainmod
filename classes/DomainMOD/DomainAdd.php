@@ -68,7 +68,7 @@ class DomainAdd
         $default_rdns = 'one.two.three.four';
         $default_text = '';
         $default_username = '';
-        $todays_date = $this->time->timeBasic();
+        $todays_date = $this->time->userToday();
 
         if ($creation_type == 'CSV Importer') {
 
@@ -80,7 +80,7 @@ class DomainAdd
 
         }
 
-        if ($expiry == '') $expiry = $this->time->timeBasic();
+        if ($expiry == '') $expiry = $todays_date;
         if ($auto_renewal == '1' || strtoupper($auto_renewal) == 'YES') {
             $auto_renewal = 1;
         } else {

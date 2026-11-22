@@ -49,11 +49,11 @@ $pdo = $deeb->cnxx;
 // The domains renewing in the renewal cost chart's 12 months (overdue ones included), shared with the At-Risk tile and
 // the Domain Renewals and At-Risk Domains reports, and the SSL certificates renewing in them, as SSL Renewals
 // counts them
-$today = $time->timeBasic();
+$today = $time->userToday();
 // (with each domain's lock and registry status, so the At Risk tile counts what the At-Risk Domains report lists)
 $renewal_rows = $reporting->renewalDomainsWithStatus($reporting->renewalChartEnd($today));
 $renewal_cert_rows = $reporting->renewalCerts($reporting->renewalChartEnd($today));
-$at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->timeBasicPlusDays(DomainMOD\Reporting::AT_RISK_DAYS)));
+$at_risk_count = count($reporting->atRiskDomains($renewal_rows, $today, $time->userTodayPlusDays(DomainMOD\Reporting::AT_RISK_DAYS, $today)));
 ?>
 <?php require_once DIR_INC . '/doctype.inc.php'; ?>
 <?php echo $layout->htmlTag(); ?>
@@ -121,21 +121,27 @@ $expiration_days = $pdo->query("
     FROM settings")->fetchColumn();
 
 $start_date = '2000-01-01';
-$end_date = $time->timeBasicPlusDays($expiration_days);
+$end_date = $time->userTodayPlusDays($expiration_days, $today);
 $daterange = $start_date . ' - ' . $end_date;
 
-$total_count_domains = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT count(*)
     FROM domains
     WHERE active NOT IN ('0', '10')
-      AND expiry_date <= '" . $end_date . "'")->fetchColumn();
+      AND expiry_date <= :end_date");
+$stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+$stmt->execute();
+$total_count_domains = $stmt->fetchColumn();
 
-$total_count_ssl = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT count(*)
     FROM ssl_certs AS sslc, ssl_cert_types AS sslt
     WHERE sslc.type_id = sslt.id
       AND sslc.active NOT IN ('0')
-      AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
+      AND sslc.expiry_date <= :end_date");
+$stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+$stmt->execute();
+$total_count_ssl = $stmt->fetchColumn();
 
 if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
 
@@ -150,11 +156,14 @@ if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
     //////////////////////////////////////////////////
     // Expiring Domains
     //////////////////////////////////////////////////
-    $total_count = $pdo->query("
+    $stmt = $pdo->prepare("
                 SELECT count(*)
                 FROM domains
                 WHERE active NOT IN ('0', '10')
-                  AND expiry_date <= '" . $end_date . "'")->fetchColumn();
+                  AND expiry_date <= :end_date");
+    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+    $stmt->execute();
+    $total_count = $stmt->fetchColumn();
 
     if ($total_count) {
 
@@ -165,12 +174,15 @@ if ($total_count_domains || $total_count_ssl || $at_risk_count) { ?>
     //////////////////////////////////////////////////
     // Expiring SSL Certificates
     //////////////////////////////////////////////////
-    $total_count = $pdo->query("
+    $stmt = $pdo->prepare("
                 SELECT count(*)
                 FROM ssl_certs AS sslc, ssl_cert_types AS sslt
                 WHERE sslc.type_id = sslt.id
                   AND sslc.active NOT IN ('0')
-                  AND sslc.expiry_date <= '" . $end_date . "'")->fetchColumn();
+                  AND sslc.expiry_date <= :end_date");
+    $stmt->bindValue('end_date', $end_date, PDO::PARAM_STR);
+    $stmt->execute();
+    $total_count = $stmt->fetchColumn();
 
     if ($total_count) {
 

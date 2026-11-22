@@ -56,10 +56,10 @@ $expiration_days = (int) $pdo->query("
     SELECT expiration_days
     FROM settings")->fetchColumn();
 
-$today = $time->timeBasic();
+$today = $time->userToday();
 $risk_days = DomainMOD\Reporting::AT_RISK_DAYS;
-$risk_end = $time->timeBasicPlusDays($risk_days);
-$at_risk = $reporting->atRiskDomains($reporting->renewalDomainsWithStatus($time->timeBasicPlusDays($risk_days + 1)), $today, $risk_end);
+$risk_end = $time->userTodayPlusDays($risk_days, $today);
+$at_risk = $reporting->atRiskDomains($reporting->renewalDomainsWithStatus($time->userTodayPlusDays($risk_days + 1, $today)), $today, $risk_end);
 
 // Why each domain is listed (it can be more than one)
 $is_overdue = function ($row) use ($today) {

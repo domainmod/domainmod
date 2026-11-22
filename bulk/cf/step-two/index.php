@@ -40,8 +40,6 @@ $unsanitize = new DomainMOD\Unsanitize();
 $custom_field = new DomainMOD\CustomField();
 
 $timestamp = $time->stamp();
-$timestamp_basic = $time->timeBasic();
-$timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';

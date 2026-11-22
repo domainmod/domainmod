@@ -43,7 +43,7 @@ $system->authCheck();
 (new DomainMOD\Conversion())->ensureRates($_SESSION['s_user_id'] ?? 0, $_SESSION['s_default_currency'] ?? '');
 
 $export_data = (int) ($_GET['export_data'] ?? 0);
-$today = $time->timeBasic();
+$today = $time->userToday();
 
 // The month shown (YYYY-MM, from 2000-01 through 2099-12), or today's month for anything else
 $month = $_GET['month'] ?? '';

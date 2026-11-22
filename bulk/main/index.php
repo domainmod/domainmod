@@ -39,7 +39,7 @@ $sanitize = new DomainMOD\Sanitize();
 $unsanitize = new DomainMOD\Unsanitize();
 
 $timestamp = $time->stamp();
-$timestamp_basic = $time->timeBasic();
+$timestamp_basic = $time->userToday();
 
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/debug.inc.php';
@@ -2627,7 +2627,7 @@ if ($done != "1") {
         if ($new_expiry_date != "") {
             $temp_expiry_date = $new_expiry_date;
         } else {
-            $temp_expiry_date = $time->toUserTimezone($timestamp_basic, 'Y-m-d');
+            $temp_expiry_date = $timestamp_basic;
         }
         echo $form->showInputText('datepick', _('Expiry Date') . ' (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 

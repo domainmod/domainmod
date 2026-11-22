@@ -192,6 +192,28 @@ class Time
         return $date->format('Y-m-d');
     }
 
+    // Today's date in the user's time zone, the "today" that expiry dates (plain calendar dates) are compared with, so
+    // the reports don't move on to tomorrow in the evening west of UTC. $now is the time to go by, for tests.
+    public function userToday($now = 'now')
+    {
+        return $this->userTodayPlusDays(0, $now);
+    }
+
+    // Today's date in the user's time zone, a number of days on (such as the end of a report's 30-day window). $now is
+    // the time or date to count from: a page passes the userToday() it already has, so every date on it comes from
+    // the same moment even if midnight passes while it loads.
+    public function userTodayPlusDays($days, $now = 'now')
+    {
+        $zone = self::zone($_SESSION['s_default_timezone'] ?? 'UTC');
+        $date = new \DateTime($now, $zone);
+        $date->setTimezone($zone); // a Unix timestamp ('@...') is read as UTC whatever the zone given
+        // Count the days on the calendar date alone (in UTC, which has no daylight saving gaps or skipped dates), as the
+        // stored expiry dates are counted
+        $day = new \DateTime($date->format('Y-m-d'), new \DateTimeZone('UTC'));
+        $day->modify(((int) $days < 0 ? '-' : '+') . abs((int) $days) . ' days');
+        return $day->format('Y-m-d');
+    }
+
     // A stored UTC time in the user's time zone, or $unset if the time was never set
     public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s', $unset = '')
     {
