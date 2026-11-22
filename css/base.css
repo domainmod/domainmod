@@ -143,6 +143,12 @@ html {
     background-color: var(--bs-primary);
     color: #fff;
 }
+/* The sign-in, password reset, and MFA pages start near the top instead of being centred in the window (Greg's
+   choice, 2026-11-22), so the form isn't halfway down a tall screen. The gap grows a little with the window's height. */
+.login-page {
+    justify-content: flex-start;
+    padding-block: clamp(1.5rem, 8vh, 5rem) 1.5rem;
+}
 /* The large logo on the sign-in, installer, and bare pages, drawn like the sidebar's logo in dark mode (Greg's
    choice, 2026-11-14): the lettering in a soft off-white with a CSS filter, and the red icon kept in colour by a second
    copy of the image cropped to the icon (the left 14% of the image) and laid over it. Light mode shows the image as

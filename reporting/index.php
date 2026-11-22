@@ -96,16 +96,17 @@ if (($_SESSION['s_read_only'] ?? '') != '1') {
 <div class="row g-3 mt-4"><?php
     $domain_cost_links = array(
         array('/reporting/domains/costs.php?group=category', _('Category'), _('Domain Cost by Category')),
-        array('/reporting/domains/costs.php?group=dns', _('DNS Profile'), _('Domain Cost by DNS Profile')),
+        array('/reporting/domains/costs.php?group=dns', _('DNS Profile'), _('Domain Cost by DNS Profile')));
+    // Hosting Service needs the hosting services the 4.27.0 database update adds
+    if ($hosting_available) {
+        $domain_cost_links[] = array('/reporting/domains/costs.php?group=service', _('Hosting Service'), _('Domain Cost by Hosting Service'));
+    }
+    $domain_cost_links = array_merge($domain_cost_links, array(
         array('/reporting/domains/costs.php?group=ip-address', _('IP Address'), _('Domain Cost by IP Address')),
         array('/reporting/domains/costs.php?group=month', _('Month'), _('Domain Cost by Month')),
         array('/reporting/domains/costs.php?group=owner', _('Owner'), _('Domain Cost by Owner')),
         array('/reporting/domains/costs.php?group=registrar', _('Registrar'), _('Domain Cost by Registrar')),
-        array('/reporting/domains/costs.php?group=tld', _('TLD'), _('Domain Cost by TLD')));
-    // Hosting Service comes with the 4.27.0 database update, which adds hosting services
-    if ($hosting_available) {
-        $domain_cost_links[] = array('/reporting/domains/costs.php?group=service', _('Hosting Service'), _('Domain Cost by Hosting Service'));
-    }
+        array('/reporting/domains/costs.php?group=tld', _('TLD'), _('Domain Cost by TLD'))));
     echo $layout->landingLinks(_('Domain Costs by:'), $domain_cost_links);
     if ($hosting_available) {
         echo $layout->landingLinks(_('Hosting Costs by:'), array(
