@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Creating Assets</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="./" aria-current="page">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -104,6 +114,12 @@
     </li>
     <li><a href="#add-a-domain-registrar-account">Add a Domain Registrar Account</a>
     </li>
+    <li><a href="#add-a-hosting-provider">Add a Hosting Provider</a>
+    </li>
+    <li><a href="#add-a-hosting-account">Add a Hosting Account</a>
+    </li>
+    <li><a href="#add-a-hosting-service-type">Add a Hosting Service Type</a>
+    </li>
     <li><a href="#add-an-ssl-provider">Add an SSL Provider</a>
     </li>
     <li><a href="#add-an-ssl-provider-account">Add an SSL Provider Account</a>
@@ -111,7 +127,7 @@
 </ul>
                 </details>
                 <div class="dm-prose dm-guide-content">
-                    <p>This section of the User Guide details how to add various Assets to DomainMOD, such as your Account Owners, Domain Registrars, Domain Registrar Accounts, and so on.</p>
+                    <p>This section of the User Guide details how to add various Assets to DomainMOD, such as your Account Owners, Domain Registrars, Domain Registrar Accounts, Hosting Providers, and so on.</p>
 <p>If you've just finished installing DomainMOD please see the <a href="../first-run/">First Run</a> section for instructions on how to get up-and-running.</p>
 <h2 id="add-an-owner">Add An Owner</h2>
 <ol>
@@ -137,7 +153,7 @@
 <p>Click on <strong>Assets</strong> on the main menu.</p>
 </li>
 <li>
-<p>Under <strong>Domains</strong>, click <strong>Registrars</strong>.</p>
+<p>Under <strong>Domains</strong>, click <strong>Domain Registrars</strong>.</p>
 </li>
 <li>
 <p>Click the <strong>Add Registrar</strong> button.</p>
@@ -154,7 +170,7 @@
 <p>Click on <strong>Assets</strong> on the main menu.</p>
 </li>
 <li>
-<p>Under <strong>Domains</strong>, click <strong>Registrar Accounts</strong>.</p>
+<p>Under <strong>Domains</strong>, click <strong>Domain Registrar Accounts</strong>.</p>
 </li>
 <li>
 <p>Click the <strong>Add Registrar Account</strong> button.</p>
@@ -163,13 +179,61 @@
 <p>Choose the Domain Registrar and Account Owner that this registrar account belongs to, enter your account Username, and then click the <strong>Add Registrar Account</strong> button.</p>
 </li>
 </ol>
+<h2 id="add-a-hosting-provider">Add a Hosting Provider</h2>
+<ol>
+<li>
+<p>Click on <strong>Assets</strong> on the main menu.</p>
+</li>
+<li>
+<p>Under <strong>Hosting</strong>, click <strong>Hosting Providers</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Add Hosting Provider</strong> button.</p>
+</li>
+<li>
+<p>Enter the Hosting Provider's Name and then click the <strong>Add Hosting Provider</strong> button.</p>
+</li>
+</ol>
+<p>Now it's time to add your first Hosting Account.</p>
+<h2 id="add-a-hosting-account">Add a Hosting Account</h2>
+<ol>
+<li>
+<p>Click on <strong>Assets</strong> on the main menu.</p>
+</li>
+<li>
+<p>Under <strong>Hosting</strong>, click <strong>Hosting Accounts</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Add Account</strong> button.</p>
+</li>
+<li>
+<p>Choose the Hosting Provider and Account Owner that this hosting account belongs to, enter your account Username, and then click the <strong>Add Hosting Account</strong> button.</p>
+</li>
+</ol>
+<h2 id="add-a-hosting-service-type">Add a Hosting Service Type</h2>
+<p>DomainMOD comes with a set of service types, such as Shared, VPS, and Email, so you only need to add one if none of them fit.</p>
+<ol>
+<li>
+<p>Click on <strong>Assets</strong> on the main menu.</p>
+</li>
+<li>
+<p>Under <strong>Hosting</strong>, click <strong>Hosting Service Types</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Add Type</strong> button.</p>
+</li>
+<li>
+<p>Enter the Service Type and then click the <strong>Add Service Type</strong> button.</p>
+</li>
+</ol>
+<p>Once you have a hosting account, you can start <a href="../hosting/">adding your hosting services</a>.</p>
 <h2 id="add-an-ssl-provider">Add an SSL Provider</h2>
 <ol>
 <li>
 <p>Click on <strong>Assets</strong> on the main menu.</p>
 </li>
 <li>
-<p>Under <strong>SSL Certificates</strong>, click <strong>Providers</strong>.</p>
+<p>Under <strong>SSL Certificates</strong>, click <strong>SSL Providers</strong>.</p>
 </li>
 <li>
 <p>Click the <strong>Add SSL Provider</strong> button.</p>
@@ -185,7 +249,7 @@
 <p>Click on <strong>Assets</strong> on the main menu.</p>
 </li>
 <li>
-<p>Under <strong>SSL Certificates</strong>, click <strong>Provider Accounts</strong>.</p>
+<p>Under <strong>SSL Certificates</strong>, click <strong>SSL Provider Accounts</strong>.</p>
 </li>
 <li>
 <p>Click the <strong>Add SSL Account</strong> button.</p>
@@ -196,9 +260,9 @@
 </ol>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/creating-assets.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">
-                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../database-encryption/" rel="prev">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../dashboard/" rel="prev">
                         <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
-                        <span class="dm-guide-pager-title">Encrypted Database Connections</span>
+                        <span class="dm-guide-pager-title">Dashboard</span>
                     </a>
                     <a class="dm-guide-pager-link dm-guide-pager-next" href="../adding-domains/" rel="next">
                         <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
@@ -214,6 +278,12 @@
     <li><a href="#add-a-domain-registrar">Add a Domain Registrar</a>
     </li>
     <li><a href="#add-a-domain-registrar-account">Add a Domain Registrar Account</a>
+    </li>
+    <li><a href="#add-a-hosting-provider">Add a Hosting Provider</a>
+    </li>
+    <li><a href="#add-a-hosting-account">Add a Hosting Account</a>
+    </li>
+    <li><a href="#add-a-hosting-service-type">Add a Hosting Service Type</a>
     </li>
     <li><a href="#add-an-ssl-provider">Add an SSL Provider</a>
     </li>

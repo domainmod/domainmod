@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light" data-base-url="..">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSL Queue - DomainMOD User Guide</title>
+<link rel="canonical" href="https://domainmod.org/docs/userguide/ssl-queue/">
+<script src="../js/colour-mode.js"></script>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../vendor/bootstrap/5.3.8/css/bootstrap.min.css">
+<link rel="stylesheet" href="../vendor/bootstrap-icons/1.13.2/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../fonts/source-sans-3/source-sans-3.css">
+<link rel="stylesheet" href="../css/domainmod-tokens.css">
+<link rel="stylesheet" href="../css/guide.css">
+<link rel="shortcut icon" href="../img/favicon.ico">
+</head>
+<body class="dm-body dm-guide"><a class="dm-skip" href="#dm-guide-main">Skip to main content</a>
+
+<header class="dm-header sticky-lg-top">
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
+        <div class="container-xl">
+            <a class="navbar-brand" href="https://domainmod.org/">
+                <span class="dm-logo dm-logo--filter"><img class="dm-logo-image" src="../img/logo.png" width="264" height="40" alt="DomainMOD home"><img class="dm-logo-icon" src="../img/logo.png" width="264" height="40" alt=""></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#dm-menu" aria-controls="dm-menu" aria-expanded="false">
+                <i class="bi bi-list" aria-hidden="true"></i><span class="visually-hidden">Menu</span>
+            </button>
+            <div class="collapse navbar-collapse" id="dm-menu">
+                <ul class="navbar-nav mx-lg-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/download/">Download</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/docs/" aria-current="true">Docs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/support/">Support</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/news/">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/about/">About</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2 py-2 py-lg-0">
+                    <div class="dropdown">
+                        <button class="btn btn-link dm-mode dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <i class="bi bi-circle-half" aria-hidden="true"></i><span class="visually-hidden">Color Mode</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end">
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="light" aria-pressed="false"><i class="bi bi-sun-fill" aria-hidden="true"></i>Light<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i>Dark<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="auto" aria-pressed="false"><i class="bi bi-circle-half" aria-hidden="true"></i>Auto<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-outline-primary dm-pill" href="https://demo.domainmod.org">Try the Demo</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main id="main">
+    <div class="dm-page-header">
+        <div class="container-xl">
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
+            <h1 class="dm-page-title">SSL Queue</h1>
+        </div>
+    </div>
+
+    <div class="container-xl dm-page">
+        <div class="dm-guide-layout dm-guide-layout--toc">
+            <nav class="dm-guide-side" aria-label="User Guide">
+                <form class="dm-guide-search" action="../search.html" method="get" role="search">
+    <label class="visually-hidden" for="dm-guide-search-input">Search the User Guide</label>
+    <input class="form-control" type="search" name="q" id="dm-guide-search-input" placeholder="Search the guide" autocomplete="off">
+    <button class="btn dm-guide-search-button" type="submit"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Search</span></button>
+</form>
+                <button class="btn dm-guide-pages-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#dm-guide-pages" aria-controls="dm-guide-pages" aria-expanded="false">
+                    <span><i class="bi bi-journal-text" aria-hidden="true"></i> Pages in This Guide</span><i class="bi bi-chevron-down dm-guide-pages-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="collapse d-lg-block" id="dm-guide-pages">
+                    <ul class="dm-guide-nav" role="list">
+    <li><a href="..">Home</a></li>
+    <li><a href="../getting-started/">Getting Started</a></li>
+    <li><a href="../first-run/">First Run</a></li>
+    <li><a href="../upgrading/">Upgrading</a></li>
+    <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
+    <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
+    <li><a href="../creating-assets/">Creating Assets</a></li>
+    <li><a href="../adding-domains/">Adding Domains</a></li>
+    <li><a href="../csv-importer/">CSV Importer</a></li>
+    <li><a href="../domain-queue/">Domain Queue</a></li>
+    <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="./" aria-current="page">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
+    <li><a href="../administration/">Administration</a></li>
+    <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
+    <li><a href="../data-warehouse/">Data Warehouse</a></li>
+    <li><a href="../faq/">Frequently Asked Questions</a></li>
+    <li><a href="../troubleshooting/">Troubleshooting</a></li>
+    <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
+</ul>
+                </div>
+            </nav>
+
+            <div class="dm-guide-main" id="dm-guide-main" tabindex="-1"><details class="dm-guide-toc-compact">
+                    <summary>On This Page</summary>
+                    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#adding-ssl-certificates-automatically">Adding SSL Certificates Automatically</a>
+    </li>
+    <li><a href="#the-import-queue">The Import Queue</a>
+    </li>
+    <li><a href="#adding-an-ssl-certificate-manually">Adding an SSL Certificate Manually</a>
+    </li>
+    <li><a href="#refreshing-an-ssl-certificate">Refreshing an SSL Certificate</a>
+    </li>
+</ul>
+                </details>
+                <div class="dm-prose dm-guide-content">
+                    <p>As of v4.27.0, the SSL Queue imports your SSL certificates for you. Paste a list of hostnames, and DomainMOD connects to each site, reads the certificate it serves, and adds it as an SSL certificate with its expiry date and issuer. New certificates are linked to their domain when DomainMOD has just one record of that domain.</p>
+<div class="admonition warning">
+<p class="admonition-title">Requirement</p>
+<p>The SSL Queue is processed by the <strong>SSL Queue Processing</strong> task, so you must set up the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD (Docker installs already run it).</p>
+</div>
+<h2 id="adding-ssl-certificates-automatically">Adding SSL Certificates Automatically</h2>
+<ol>
+<li>
+<p>Click <strong>SSL Certificates</strong> on the main menu.</p>
+</li>
+<li>
+<p>Choose <strong>Add SSL Certificates Automatically</strong> from the menu beside the <strong>Add SSL Certificate</strong> button. Before you have any SSL certificates, it's a button on the page instead.</p>
+</li>
+<li>
+<p>Paste in up to 1,000 hostnames, one per line. Each line can be a hostname, such as example.com, or an https:// address.</p>
+</li>
+<li>
+<p>Choose the <strong>SSL Provider Account</strong>. <strong>Match each certificate's issuer (recommended)</strong> finds or adds the SSL provider for each certificate's issuer, and uses your account there, or adds an account named "SSL Import". Then choose the <strong>Owner</strong> (used with issuer matching, since a chosen account has its own owner), and, under <strong>Defaults for New Certificates</strong>, the <strong>Certificate Type</strong>, <strong>IP Address</strong>, and <strong>Category</strong>. The <strong>Owner</strong>, <strong>IP Address</strong>, and <strong>Category</strong> start on <strong>Same as the Domain</strong>, which gives each certificate its domain's values, or your SSL defaults for a hostname whose domain isn't in DomainMOD.</p>
+</li>
+<li>
+<p>Click the <strong>Add SSL Certificates</strong> button, and you'll be taken to the Import Queue page, where you can follow the progress of your imports.</p>
+</li>
+</ol>
+<p>Only port 443 is checked, and only public sites can be reached. A hostname whose domain is still in the Domain Queue waits up to 7 days for it, and is then checked anyway. A certificate that's already in DomainMOD isn't added again: that's a live certificate with the same hostname, or the very same certificate. An expired record with the same hostname doesn't stop the new certificate being added. To update an existing certificate's expiry date, use <strong>Refresh</strong> on its edit page (see below).</p>
+<p>You can also import certificates while you add domains: when you add domains with the <a href="../domain-queue/">Domain Queue</a>, <strong>Also import each domain's SSL certificate</strong> (on by default) adds each domain's site to the SSL Queue. Only the domains you paste are looked up, not the ones a registrar's API supplies.</p>
+<h2 id="the-import-queue">The Import Queue</h2>
+<p>The Import Queue page shows the Domain Queue and the SSL Queue, one after the other, each with its own buttons. While either queue has entries, you can open it with <strong>Import Queue</strong> on the main menu.</p>
+<p>For each hostname, the SSL Queue shows its status, such as <strong>Pending</strong>, <strong>Processing</strong>, <strong>Retrying</strong>, <strong>Waiting for the Domain</strong>, <strong>Imported</strong>, or <strong>Failed</strong>, with the reason when there is one. An imported certificate that has expired or isn't trusted gets an <strong>Expired</strong> or <strong>Not trusted</strong> badge. A hostname is tried up to three times before it fails. Use <strong>Retry Failed</strong> to put failed hostnames back in the queue (a hostname whose chosen account or other setting has since been deleted has to be added again instead), <strong>Clear Completed</strong> to remove the finished ones, and <strong>Export</strong> to download the list.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A new certificate needs a fee for its SSL provider and type, like any other SSL certificate. Until the fee is added, it's hidden from the SSL Certificates list (see <strong>Missing Fees</strong> in <strong>Assets</strong> -&gt; <strong>SSL Fees</strong>).</p>
+</div>
+<h2 id="adding-an-ssl-certificate-manually">Adding an SSL Certificate Manually</h2>
+<p>First <a href="../creating-assets/#add-an-ssl-provider">add an SSL provider and an SSL provider account</a>, if you haven't already. Then click <strong>SSL Certificates</strong> on the main menu, and click the <strong>Add SSL Certificate</strong> button. Enter the certificate's <strong>Host / Label</strong>, such as example.com, and fill in its details. As of v4.27.0, a certificate doesn't need a domain: set <strong>Domain</strong> to <strong>None</strong> for one that isn't for a domain in DomainMOD. When you delete a domain, its SSL certificates are kept without a domain.</p>
+<h2 id="refreshing-an-ssl-certificate">Refreshing an SSL Certificate</h2>
+<p>As of v4.27.0, an SSL certificate's edit page has a <strong>Refresh</strong> button near the top. It reads the certificate the site serves now, and updates the expiry date and status when they've changed, with a note saying what changed. A pending status is kept, and the SSL provider, account, type, and fee aren't changed. Refresh needs the certificate's <strong>Host / Label</strong> to be the hostname it's installed on, such as example.com, and part of the certificate's domain, if it has one.</p>
+                </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/ssl-queue.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
+                <nav class="dm-guide-pager" aria-label="Previous and next pages">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../hosting/" rel="prev">
+                        <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
+                        <span class="dm-guide-pager-title">Hosting</span>
+                    </a>
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../change-history/" rel="next">
+                        <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                        <span class="dm-guide-pager-title">Change History</span>
+                    </a>
+                </nav>
+            </div>
+            <aside class="dm-guide-toc" aria-label="On this page">
+    <p class="dm-guide-toc-heading" aria-hidden="true">On This Page</p>
+    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#adding-ssl-certificates-automatically">Adding SSL Certificates Automatically</a>
+    </li>
+    <li><a href="#the-import-queue">The Import Queue</a>
+    </li>
+    <li><a href="#adding-an-ssl-certificate-manually">Adding an SSL Certificate Manually</a>
+    </li>
+    <li><a href="#refreshing-an-ssl-certificate">Refreshing an SSL Certificate</a>
+    </li>
+</ul>
+</aside>
+        </div>
+    </div>
+</main>
+
+<footer class="dm-footer">
+    <div class="container-xl">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Product</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/download/">Download</a></li>
+                    <li><a href="https://domainmod.org/docker/">Install with Docker</a></li>
+                    <li><a href="https://domainmod.org/upgrade/">Upgrade</a></li>
+                    <li><a href="https://demo.domainmod.org">Live Demo</a></li>
+                    <li><a href="https://domainmod.org/changelog/">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Docs</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/docs/userguide/">User Guide</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/getting-started/">Getting Started</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/upgrading/">Upgrading</a></li>
+                    <li><a href="https://domainmod.org/readme/">README</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/faq/">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Community</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/support/">Support Portal</a></li>
+                    <li><a href="https://github.com/domainmod/domainmod">GitHub</a></li>
+                    <li><a href="https://domainmod.org/subscribe/">Subscribe</a></li>
+                    <li><a href="https://domainmod.org/rss/">RSS</a></li>
+                    <li><a href="https://domainmod.org/contribute/">Contribute</a></li>
+                    <li><a href="https://domainmod.org/contributing/">Contributing</a></li>
+                    <li><a href="https://domainmod.org/conduct/">Code of Conduct</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Legal</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/privacy/">Privacy</a></li>
+                    <li><a href="https://domainmod.org/terms/">Terms</a></li>
+                    <li><a href="https://domainmod.org/LICENSE">License</a></li>
+                    <li><a href="https://domainmod.org/security.txt">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="dm-footer-bottom d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <p class="mb-0">Copyright © 2013-2026 <a href="https://greg.ca">Greg Chetcuti</a>. DomainMOD is free software under the GPLv3.</p>
+            <ul class="list-unstyled d-flex gap-3 mb-0" role="list">
+                <li><a href="https://x.com/DomainMOD" class="dm-social"><i class="bi bi-twitter-x" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on X</span></a></li>
+                <li><a href="https://www.facebook.com/DomainMOD" class="dm-social"><i class="bi bi-facebook" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Facebook</span></a></li>
+                <li><a href="https://www.linkedin.com/company/domainmod" class="dm-social"><i class="bi bi-linkedin" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on LinkedIn</span></a></li>
+                <li><a href="https://www.reddit.com/r/DomainMOD" class="dm-social"><i class="bi bi-reddit" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Reddit</span></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="../vendor/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+<script src="../js/guide.js"></script>
+</body>
+</html>

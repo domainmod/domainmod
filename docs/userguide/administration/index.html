@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Administration</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="./" aria-current="page">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -102,30 +112,48 @@
     </li>
     <li><a href="#task-scheduler">Task Scheduler</a>
     </li>
+    <li><a href="#tools">Tools</a>
+    </li>
 </ul>
                 </details>
                 <div class="dm-prose dm-guide-content">
                     <h2 id="custom-fields">Custom Fields</h2>
 <p>Custom Fields help extend the functionality of DomainMOD by allowing the user to create their own data fields. For example, if you wanted to keep track of which domains are currently setup in your Analytics software, you could create a new Analytics check box field and start tracking this information for each of your domains. Combine Custom Fields with the ability to update them with the <a href="../bulk-updater/">Bulk Updater</a>*, and the sky's the limit in regards to what data you can easily track!</p>
-<p>When you export your domain or SSL certificate data, the information contained in your custom fields will automatically be included in the exported data.</p>
+<p>As of v4.27.0, there are custom fields for hosting services too, in <strong>Administration</strong> -&gt; <strong>Custom Hosting Fields</strong>, alongside <strong>Custom Domain Fields</strong> and <strong>Custom SSL Fields</strong>.</p>
+<p>When you export your domain, hosting, or SSL certificate data, the information contained in your custom fields will automatically be included in the exported data.</p>
+<p>As of v4.27.0, you can also filter the Domains and SSL Certificates lists by custom field, in the <strong>Custom Fields</strong> section of the filter panel. A check box field has a <strong>Value</strong> menu (<strong>Yes</strong> or <strong>No</strong>). Text fields, text areas, and URLs have a <strong>Contains</strong> box, and dates and time stamps have a <strong>Between</strong> range. Every type except check boxes also has a <strong>Filled In</strong> menu (<strong>Filled in</strong> or <strong>Empty</strong>).</p>
 <p><strong>Custom Field Types:</strong> Check Box, Date, Text Field, Text Area, Time Stamp, URL</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As of v4.13, DomainMOD has the ability to display your Custom Field data on the main Domain and SSL Certificate pages.</p>
+<p>As of v4.13, DomainMOD has the ability to display your Custom Field data on the main Domain and SSL Certificate pages, and as of v4.27.0 on the main Hosting page.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>* The Bulk Updater currently only allows you to update Custom Domain Fields, but not Custom SSL Certificate Fields.</p>
+<p>* The Bulk Updater currently only allows you to update Custom Domain Fields, but not Custom Hosting Fields or Custom SSL Certificate Fields.</p>
 </div>
 <h2 id="task-scheduler">Task Scheduler</h2>
 <p>The Task Scheduler (<strong>Administration</strong> -&gt; <strong>Task Scheduler</strong>) runs DomainMOD's system jobs, such as processing the Domain Queue, sending expiration emails, and building the Data Warehouse. In order for it to work, you must set up the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD, and you can also limit who can run it with a <a href="../getting-started/#task-scheduler-key">Task Scheduler Key</a>. If you installed DomainMOD using Docker, you don't need to set up the cron job, since the container already runs the Task Scheduler every 10 minutes.</p>
-<p>As of v4.26.0, <strong>Last run of cron.php</strong> on the Task Scheduler page shows when cron.php last ran, or <strong>Never</strong>. When you upgrade to v4.26.0, <strong>Last run of cron.php</strong> is set to the time of the upgrade if the Task Scheduler had run before, so a working cron job isn't reported as stopped before its next run. If any tasks are enabled and cron.php last ran more than two hours ago, administrators see a warning on the Dashboard and the Task Scheduler page, with a link to the <a href="../getting-started/#cron-job">cron job</a> instructions. Until it runs again, expiration emails and the Domain Queue only run when you use <strong>Run Now</strong>. If tasks are enabled and cron.php has never run, the Task Scheduler page shows a note explaining how to set it up, and administrators see it on the Dashboard too whenever the Getting Started checklist isn't shown. If every task is disabled, neither page warns you.</p>
+<p>Each task can be disabled or enabled, and <strong>Run Now</strong> runs it straight away. As of v4.27.0, <strong>Disable All</strong> at the top of the page disables every task that isn't running at the time, and once they're all disabled, <strong>Enable All</strong> turns them back on. These are the tasks, in the order the Task Scheduler page lists them:</p>
+<ul>
+<li><strong>Domain Queue Processing</strong> (every 5 minutes): looks up the domains in the <a href="../domain-queue/">Domain Queue</a> and adds them to DomainMOD.</li>
+<li><strong>SSL Queue Processing</strong> (every 5 minutes): reads the certificates of the sites in the SSL Queue and adds them to DomainMOD.</li>
+<li><strong>Send Expiration Email</strong> (daily): emails everyone who's subscribed about upcoming domain, hosting service, and SSL certificate renewals. Users can subscribe in their User Profile, and administrators can set the From address and the number of days the email covers in System Settings.</li>
+<li><strong>Update Conversion Rates</strong> (daily): gets the current currency conversion rates and updates every user's costs. Users can set their currency in their User Profile.</li>
+<li><strong>System Cleanup</strong> (daily): converts domains to lowercase, checks that every TLD is correct, and records the status of each domain in your segments, which keeps segment filtering up to date. It also checks the domain, SSL certificate, and fee data against each other, deletes unused domain and SSL fees, updates the hosting services' costs from their fees, and removes <a href="../change-history/">change history</a> older than the time set in System Settings.</li>
+<li><strong>Check For New Version</strong> (daily): checks whether a newer version of DomainMOD is available to download.</li>
+<li><strong>Data Warehouse Build</strong> (daily): rebuilds the <a href="../data-warehouse/">Data Warehouse</a>, so it has the latest information from your servers.</li>
+<li><strong>Refresh Domains</strong> (every 10 minutes, off by default): as of v4.27.0, checks the expiry date and DNS servers of each live domain (every domain that isn't Expired or Sold), a few domains at a time, and records any changes in the <a href="../change-history/">Change History</a> as Scheduled Refresh. When DomainMOD supports the registrar's API and the domain's registrar account has its API details filled in, the registrar's API is used, and it can also update WHOIS privacy and auto-renewal. Otherwise, or if the API can't be used, public RDAP data is used, or WHOIS for TLDs without RDAP, and an RDAP server can pass the lookup on to another server, such as the registrar's. The transfer lock is checked using RDAP. When there's time, the domain's <a href="../refreshing-domains/#live-dns">live DNS</a> (its name servers, IP addresses, and mail servers) is also looked up through your server's own DNS resolver, whose operator can see the names being checked. Domains are checked about once a week, and daily in the last 60 days before they expire. A failed check is tried again after a day, then less often each time, up to 30 days, and a domain whose RDAP or WHOIS server is busy waits an hour. See <a href="../refreshing-domains/">Refreshing Domains</a>.</li>
+<li><strong>Check Watch List</strong> (every 10 minutes): as of v4.27.0, checks the domains on the <a href="../watch-list/">Watch List</a> with public RDAP and WHOIS servers, a few at a time: weekly while a registered domain is far from expiry, daily in its last 60 days before expiry and in most other stages, and every few hours once it's close to dropping.</li>
+</ul>
+<p>As of v4.26.0, <strong>Last run of cron.php</strong> on the Task Scheduler page shows when cron.php last ran, or <strong>Never</strong>. When you upgrade to v4.26.0, <strong>Last run of cron.php</strong> is set to the time of the upgrade if the Task Scheduler had run before, so a working cron job isn't reported as stopped before its next run. If any tasks are enabled and cron.php last ran more than two hours ago, administrators see a warning on the Dashboard and the Task Scheduler page, with a link to the <a href="../getting-started/#cron-job">cron job</a> instructions. Until it runs again, expiration emails and the Import Queue only run when you use <strong>Run Now</strong>. If tasks are enabled and cron.php has never run, the Task Scheduler page shows a note explaining how to set it up, and administrators see it on the Dashboard too whenever the Getting Started checklist isn't shown. If every task is disabled, neither page warns you.</p>
 <p>As of v4.25.0, each daily task runs at the same local time all year, including across daylight saving time changes. When you set a daily task's run time, it's saved in your own time zone (from your user settings), and the Task Scheduler page shows each daily task's run time along with its time zone. Changing your time zone later doesn't move tasks that are already set, so set their run times again if you want them to follow your new time zone. When you upgrade to v4.25.0, existing daily tasks keep running at the same moment, using the time zone of the user who installed DomainMOD (or of the first administrator).</p>
+<h2 id="tools">Tools</h2>
+<p>As of v4.23.0, to check that DomainMOD can send email, open <strong>Administration</strong> -&gt; <strong>Tools</strong> and click <strong>Send Test Email</strong>. A test email is sent to your own email address.</p>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/administration.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">
-                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../bulk-updater/" rel="prev">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../user-settings/" rel="prev">
                         <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
-                        <span class="dm-guide-pager-title">Bulk Updater</span>
+                        <span class="dm-guide-pager-title">User Settings</span>
                     </a>
                     <a class="dm-guide-pager-link dm-guide-pager-next" href="../backup-restore/" rel="next">
                         <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
@@ -139,6 +167,8 @@
     <li><a href="#custom-fields">Custom Fields</a>
     </li>
     <li><a href="#task-scheduler">Task Scheduler</a>
+    </li>
+    <li><a href="#tools">Tools</a>
     </li>
 </ul>
 </aside>

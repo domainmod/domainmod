@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Domain Queue</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="./" aria-current="page">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -124,7 +134,7 @@
 <h2 id="usage">Usage</h2>
 <div class="admonition warning">
 <p class="admonition-title">Requirement</p>
-<p>In order to use the Domain Queue you must first setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD.</p>
+<p>In order to use the Domain Queue you must first set up the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD.</p>
 </div>
 <ol>
 <li>
@@ -146,7 +156,7 @@
 <p>Click the <strong>Add Domains</strong> button.</p>
 </li>
 <li>
-<p>You will now be taken to the Domain Queue page, where you can see the status of your domain imports. You can also access the Domain Queue by clicking on <strong>Queue</strong> on the main menu (this menu option is only available when you have domains being processed in the queue).</p>
+<p>You will now be taken to the Import Queue page, where you can see the status of your domain imports. You can also open it by clicking <strong>Import Queue</strong> on the main menu (this menu option is only shown while the Domain Queue or the SSL Queue has entries). As of v4.27.0, the page also shows the <a href="../ssl-queue/">SSL Queue</a>.</p>
 </li>
 <li>
 <p>Once all of your imports have completed you can click the <strong>Clear Completed</strong> button in order to clear the queue.</p>
@@ -159,7 +169,7 @@
 <p>Click on <strong>Domains</strong> on the main menu.</p>
 </li>
 <li>
-<p>Click <strong>Add Domains Automatically</strong> on the Domains page. Once you have domains, it's in the menu beside the <strong>Add Domain</strong> button. If you haven't added a registrar and a registrar account yet, click <strong>Add Domains Automatically</strong> in the Dashboard's Getting Started checklist instead (if you've hidden the checklist, you can turn it back on in <strong>Settings</strong> -&gt; <strong>Display Settings</strong>).</p>
+<p>Click <strong>Add Domains Automatically</strong> on the Domains page. Once you have domains, it's in the menu beside the <strong>Add Domain</strong> button. If you haven't added a registrar and a registrar account yet, it can add them for you.</p>
 </li>
 <li>
 <p>Click the <strong>Add Domains Without an API</strong> button.</p>
@@ -171,7 +181,7 @@
 <p>Paste in your list of domains, one per line (up to 1,000 at a time).</p>
 </li>
 <li>
-<p>Click the <strong>Add Domains</strong> button, and you'll be taken to the Domain Queue page, where you can follow the progress of your imports.</p>
+<p>Click the <strong>Add Domains</strong> button, and you'll be taken to the Import Queue page, where you can follow the progress of your imports.</p>
 </li>
 </ol>
 <p>A registrar that isn't in DomainMOD yet is added for you. Each domain goes into your account at that registrar if you have exactly one, or otherwise into a general account named "RDAP Import", which is created the first time it's needed and used for later imports.</p>
@@ -195,7 +205,7 @@
 </ol>
 <p>The domain is added with the creation type "Queue (Edited Manually)", and the Domain Queue shows it as "Imported (Edited Manually)".</p>
 <h2 id="keeping-domains-up-to-date">Keeping Domains Up To Date</h2>
-<p>Once your domains have been added, you can update a single domain at any time using the <strong>Refresh</strong> button on its edit page. See <a href="../faq/#refresh">Refreshing a Domain</a> for details.</p>
+<p>Once your domains have been added, you can update a single domain at any time using the <strong>Refresh</strong> button on its edit page. See <a href="../refreshing-domains/">Refreshing Domains</a> for details.</p>
 <h2 id="api-notes"><a name="apinotes"></a>API Notes</h2>
 <p>This section contains various notes and things to watch out for when using the domain registrar APIs.</p>
 <h4>Cloudflare</h4>
@@ -207,6 +217,10 @@
 <h4>DreamHost</h4>
 
 <p>DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved via their API, so all domains added to the Domain Queue from a DreamHost account will have their WHOIS privacy status set to No by default.</p>
+<h4>Dynadot</h4>
+
+<p>You'll find the API Key and API Secret under <strong>Tools</strong> -&gt; <strong>API</strong> in your Dynadot account. As of v4.27.0, a registrar account with an API Secret uses Dynadot's current API. Without one, DomainMOD uses Dynadot's legacy API, which Dynadot plans to retire, so add the API Secret soon. The same API Key works for both.</p>
+<p>If you restrict API access by IP address at Dynadot, add your server's IP address to the allowed list.</p>
 <h4>Freenom</h4>
 
 <p>Freenom currently only gives API access to reseller accounts.</p>

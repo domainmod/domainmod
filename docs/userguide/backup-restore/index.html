@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Backup &amp; Restore</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="./" aria-current="page">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -152,6 +162,13 @@
 <p>Once the restore is complete, you will automatically be logged out of DomainMOD. You should now be able to log in using the accounts that you just restored.</p>
 </li>
 </ol>
+<p>As of v4.27.0, restores need DomainMOD's temp folder to be writable by the web server. When you restore a backup, the <a href="../change-history/#restores">Change History</a> becomes the backup's own.</p>
+<p><strong>If a Restore Doesn't Finish</strong><br />
+If a restore stops part-way (for example, if the server times out), DomainMOD stays closed until it's finished. An administrator can open <strong>Administration</strong> -&gt; <strong>Backup &amp; Restore</strong> and click <strong>Finish Restore</strong>, or run <code>php restore.php --recover</code> in DomainMOD's folder on the server, as the web server's user (use this if you can't sign in). The cron job can also finish it when it runs cron.php from the command line or with a <a href="../getting-started/#task-scheduler-key">Task Scheduler Key</a>, and then logs any warning in the server's error log. Finishing a restore doesn't redo the import, so if DomainMOD or the error log says the database may be partly restored, restore a complete backup before going on.</p>
+<p><strong>Restoring a Large Backup</strong><br />
+If a backup is too large to upload, you can restore it on the server instead. Keep the backup file in a private folder outside your web root. Stop the cron job, then run this in DomainMOD's folder as the web server's user. <code>--temp-dir</code> is a private folder outside your web root that the web server's user can write to, where a copy of the backup is kept during the restore. Start the cron job again once the restore has finished.</p>
+<pre><code>php restore.php /path/to/private/folder/domainmod-backup.sql --temp-dir=/path/to/private/folder
+</code></pre>
 <h2 id="migrating">Migrating</h2>
 <div class="admonition danger">
 <p class="admonition-title">Warning</p>

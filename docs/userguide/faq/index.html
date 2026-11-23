@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Frequently Asked Questions</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="./" aria-current="page">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -126,7 +136,7 @@
 <h2 id="usage"><BR>Usage</h2>
 <h4>How many domains can I manage with DomainMOD?</h4>
 
-<p>There's no set limit on the number of domains you can manage. It depends on your server hardware. As of v4.26.0, the Domains and SSL Certificates lists load from the server one page at a time (up to 500 rows a page), and sort and search on the server too, so they stay quick even with tens of thousands of domains.</p>
+<p>There's no set limit on the number of domains you can manage. It depends on your server hardware. As of v4.26.0, the Domains and SSL Certificates lists (and, as of v4.27.0, the Hosting list) load from the server one page at a time (up to 500 rows a page), and sort and search on the server too, so they stay quick even with tens of thousands of domains.</p>
 <h4>Can I use DomainMOD to sell domains?</h4>
 
 <p>The primary use for DomainMOD is to manage a large portfolio of domains, and it currently doesn't have any sales features, such as being able to host sales letter landing pages. This is something we're looking at implementing in a future version of DomainMOD.</p>
@@ -139,16 +149,9 @@
 <p>Although this is not a standard field, you can use <a href="../administration/#custom-fields">Custom Fields</a> to keep track of the purchase price of your domains.</p>
 <h4>Is it possible to display the custom fields I've created on the main domain page as a column?</h4>
 
-<p>This is something we're still investigating, as we realize how helpful this feature would be for some people, however if it happens it's probably going to be a while still. Although on the surface it seems like it may be pretty easy to implement, there's actually quite a bit to it and it's going to take quite a bit of work.</p>
-<p>Also, since you can accomplish pretty much the same thing by exporting your domain list and sorting the exported data in something like excel (since it includes all of your custom fields), implementing this within the UI is not very high on the priority list.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>As of v4.13, you can now display your Custom Fields on the main domain page.</p>
-</div>
-<p><a name="refresh"></a><h4>Are the domain expiration dates updated automatically using the domain's WHOIS information?</h4> </p>
-<p>Not automatically, but as of v4.25.0 you can refresh a domain whenever you like. On the domain's edit page, click the <strong>Refresh</strong> button near the top, and DomainMOD will look up the domain's current details and update them straight away, listing what changed.</p>
-<p>If your registrar account uses a supported registrar API with its API details filled in, DomainMOD uses the API, which can update the expiry date, DNS servers, WHOIS privacy, and auto-renewal status (some registrars' APIs don't report all of these, and anything not reported is left as it is). Otherwise, or if the API can't be used, DomainMOD uses public RDAP and WHOIS data instead, which only updates the expiry date and DNS servers.</p>
-<p>To avoid overloading your registrar and the RDAP and WHOIS servers, there's a short wait between refreshes. If you've changed the expiry date, DNS servers, WHOIS privacy, auto-renewal, or notes without saving, DomainMOD asks before a refresh replaces your changes. Read-only users don't see the <strong>Refresh</strong> button.</p>
+<p>Yes. As of v4.13, you can choose which custom fields to show as columns in <strong>Settings</strong> -&gt; <strong>Display Settings</strong>, and the same goes for the SSL Certificates page (and, as of v4.27.0, the Hosting page).</p>
+<p><a name="refresh"></a><h4>Are the domain expiration dates updated automatically?</h4> </p>
+<p>Yes, as of v4.27.0, once an administrator enables the <strong>Refresh Domains</strong> task in the Task Scheduler. You can also refresh a single domain whenever you like by clicking the <strong>Refresh</strong> button on its edit page. See <a href="../refreshing-domains/">Refreshing Domains</a> for details.</p>
 <p>Expiration dates can also be updated one-by-one by editing the domain, or by using the <a href="../bulk-updater/">Bulk Updater</a>.</p>
 <p><a name="idn"></a><h4>Does DomainMOD support internationalized domain names (IDNs)?</h4></p>
 <p>Yes. As of v4.25.0, you can enter an internationalized domain name such as münchen.de in either its Unicode form or its punycode form (xn--mnchen-3ya.de), and DomainMOD stores it in its lowercase Unicode form, so searches match it whichever form you use. The one exception is a name with a character that the database can't store, such as an emoji, which is kept in punycode. This works everywhere you add domains, including the CSV Importer, the Bulk Updater, and the Domain Queue, and DomainMOD converts the domain back to punycode when it talks to registrar APIs and other servers.</p>
@@ -159,7 +162,7 @@
 <p>So although registry support may happen at <em>some</em> point, it's not currently very high on the priority list.</p>
 <h4>Is it possible to encrypt the data stored in DomainMOD?</h4>
 
-<p>It's not currently possible to encrypt the data in the database, however it's something we're hoping to implement in some way in the future. Based on our research it wouldn't be a small task to implement, and unfortunately, all things considered, it's just not one of the top priorities at the moment. Adding encryption would also create quite a few challenges with some features we have planned for the future.</p>
+<p>Not all of it. As of v4.27.0, DomainMOD can encrypt each user's MFA secret if you set a secret key (see <a href="../security/#for-administrators">Security and MFA</a>), and if your database is on another server, the connection to it can be encrypted (see <a href="../database-encryption/">Encrypted Database Connections</a>). The rest of the data in the database isn't encrypted, so keep the database and its backups safe.</p>
 <p>For more information regarding the security of DomainMOD, please see <a href="../getting-started/#security">Security</a> in the Getting Started section.</p>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/faq.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">
@@ -167,9 +170,9 @@
                         <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
                         <span class="dm-guide-pager-title">Data Warehouse</span>
                     </a>
-                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../conduct/" rel="next">
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../troubleshooting/" rel="next">
                         <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                        <span class="dm-guide-pager-title">Code of Conduct</span>
+                        <span class="dm-guide-pager-title">Troubleshooting</span>
                     </a>
                 </nav>
             </div>

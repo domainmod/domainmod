@@ -2,78 +2,118 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://domainmod.org/docs/userguide/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/adding-domains/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/administration/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/backup-restore/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/bulk-updater/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/change-history/</loc>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/conduct/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/contributing/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/creating-assets/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/csv-importer/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/dashboard/</loc>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/data-warehouse/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/database-encryption/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/domain-queue/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/faq/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/first-run/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/getting-started/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/hosting/</loc>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/migrating/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/refreshing-domains/</loc>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/reporting/</loc>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/security/</loc>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/segments/</loc>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/ssl-queue/</loc>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/support/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/troubleshooting/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
     </url>
     <url>
          <loc>https://domainmod.org/docs/userguide/upgrading/</loc>
-         <lastmod>2026-11-19</lastmod>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/user-settings/</loc>
+         <lastmod>2026-11-22</lastmod>
+    </url>
+    <url>
+         <loc>https://domainmod.org/docs/userguide/watch-list/</loc>
+         <lastmod>2026-11-22</lastmod>
     </url>
 </urlset>

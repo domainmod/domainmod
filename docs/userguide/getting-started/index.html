@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Getting Started</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -123,25 +133,26 @@ Documentation: <a href="https://domainmod.org/docs/">https://domainmod.org/docs/
 Support: <a href="https://domainmod.org/support/">https://domainmod.org/support/</a><br />
 Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/source/</a></p>
 <h2 id="about">About</h2>
-<p>DomainMOD is a free, open source, self-hosted application for managing your domains, SSL certificates, web hosting, and other internet assets in one place. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.</p>
+<p>DomainMOD is a free, open source, self-hosted application for managing your domains, hosting services, SSL certificates, and other internet assets in one place. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.</p>
 <h2 id="live-demo">Live Demo</h2>
 <p>Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? We hate when that happens ourselves, which is why we've set up a live demo so you don't waste your time.</p>
 <p>So go ahead, take the live demo for a test drive before you install: <a href="https://demo.domainmod.org">https://demo.domainmod.org</a></p>
 <h2 id="requirements">Requirements</h2>
 <p><strong>Software</strong>: PHP 8.2-8.5, MariaDB 10.4-12.3 or MySQL 5.7-9.7<br />
 <strong>PHP Extensions</strong>: PDO (MariaDB/MySQL), cURL, OpenSSL, gettext, MySQLi<br />
-<strong>PHP Settings</strong>: allow_url_fopen  </p>
+<strong>PHP Settings</strong>: allow_url_fopen<br />
+<strong>Folders</strong>: the web server can write to the 'temp' folder  </p>
 <h2 id="downloading">Downloading</h2>
 <p>There are currently four options for downloading DomainMOD.</p>
-<p><strong>Option #1 -- Using Docker</strong></p>
+<p><span id="docker"></span><strong>Option #1 -- Using Docker</strong></p>
 <p>Please see our official DomainMOD container on Docker Hub for more information: <a href="https://hub.docker.com/r/domainmod/domainmod">https://hub.docker.com/r/domainmod/domainmod</a></p>
-<p><strong>Option #2 -- Downloading a .zip file</strong>  </p>
+<p><span id="zip"></span><strong>Option #2 -- Downloading a .zip file</strong>  </p>
 <p>Visit the following URL to download DomainMOD in a .zip file: <a href="https://domainmod.org/download/">https://domainmod.org/download/</a></p>
-<p><strong>Option #3 -- Using Git</strong>  </p>
+<p><span id="git"></span><strong>Option #3 -- Using Git</strong>  </p>
 <p>To download using Git, change to the directory that will hold DomainMOD and run the following command, which puts it in a new <code>domainmod</code> folder there (this download option requires that you have Git installed on your server):</p>
 <pre><code>git clone https://github.com/domainmod/domainmod.git
 </code></pre>
-<p><strong>Option #4 -- Installing via Softaculous</strong>  </p>
+<p><span id="softaculous"></span><strong>Option #4 -- Installing via Softaculous</strong>  </p>
 <p>Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.</p>
 <p>To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.</p>
 <p>More Information: <a href="http://www.softaculous.com/softaculous/apps/others/DomainMOD/">http://www.softaculous.com/softaculous/apps/others/DomainMOD/</a></p>
@@ -155,24 +166,34 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <p>Create a MySQL database that will be used to store DomainMOD's data.</p>
 </li>
 <li>
-<p>In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your web server's settings.</p>
+<p>In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your web server's settings (including the recommended <code>$secret_key</code> for MFA).</p>
 </li>
 <li>
-<p>In a web browser, visit the URL where you just installed DomainMOD, for example example.com/domainmod/, and work through the installer's steps. On <strong>Administrator Account</strong>, choose the username and password you'll sign in with. The password needs at least 8 characters and no more than 72 bytes: letters, numbers, and symbols on a standard English keyboard take one byte each, and characters such as <code>é</code> take more. On <strong>Ready to Install</strong>, check your choices and click <strong>Install DomainMOD</strong>. After a few seconds you'll be taken to the sign-in page.</p>
+<p>Make sure the web server can write to the 'temp' folder and the files in it, or restores are turned off. If your cron job runs as a different user, give both users write access to the folder.</p>
 </li>
 <li>
-<p>Set up the below cron job on your web server.</p>
+<p>In a web browser, visit the URL where you installed DomainMOD (for example, example.com/domainmod/) and work through the installer. When it's done, you'll be taken to the sign-in page.</p>
+</li>
+<li>
+<p>Set up the cron job below on your web server.</p>
 </li>
 </ol>
+<p><strong>The Secret Key</strong><br />
+<code>$secret_key</code> is a long random value that DomainMOD uses to encrypt each user's MFA secret. It's best to set it when you install, before anyone turns on MFA. See <a href="../security/#for-administrators">Security and MFA</a> for details.</p>
+<p><strong>The 'temp' Folder</strong><br />
+DomainMOD keeps its restore lock and its lookup caches in the 'temp' folder, and restores are turned off until the web server can write to the folder and its restore.lock file. For example, if your web server runs PHP as www-data, run <code>sudo chown -R www-data temp</code> from the folder you installed DomainMOD in, and set up the cron job to run as www-data too.</p>
+<p><strong>The Installer</strong><br />
+On <strong>Administrator Account</strong>, choose the username and password you'll sign in with. The password needs at least 8 characters and no more than 72 bytes: letters, numbers, and symbols on a standard English keyboard take one byte each, and characters such as <code>é</code> take more. On <strong>Ready to Install</strong>, check your choices and click <strong>Install DomainMOD</strong>.</p>
 <h2 id="cron-job">Cron Job</h2>
-<p>DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain &amp; SSL Certificate expirations.</p>
-<p>The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is setup to run, the Task Scheduler will be live.</p>
-<p>If you installed DomainMOD using Docker, the cron job will be setup and running automatically within the container, so there's nothing you need to setup manually.</p>
+<p>DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming domain, hosting service, and SSL certificate renewals.</p>
+<p>The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron job to run on your web server. Once the cron job is set up to run, the Task Scheduler will be live.</p>
+<p>If you installed DomainMOD using Docker, the cron job will be set up and running automatically within the container, so there's nothing you need to set up manually.</p>
 <p>Filename: /cron.php</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This file should be executed every 10 minutes.</p>
 </div>
+<p>If your cron job runs cron.php from the command line, the simplest setup is to run it as the same user PHP runs as for your web server, so both can write to DomainMOD's 'temp' folder.</p>
 <p><a name="task-scheduler-key"></a><strong>Task Scheduler Key (Optional)</strong></p>
 <p>By default, cron.php runs whenever its URL is opened, which is how many installations schedule it. As of v4.25.0, you can stop anyone else from running it by giving it a key. Add the following line to your config.inc.php file, replacing YourKeyHere with a long, random value:</p>
 <pre><code>$cron_key = 'YourKeyHere';
@@ -197,7 +218,7 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 <p>Do not store your account passwords or API keys in DomainMOD. Although the ability to save this information exists, <strong>use it at your own risk</strong>. This information is fairly secure if you run DomainMOD on your local computer, but there's a much higher risk of someone gaining access to it if you host the site on a server that is accessible to the outside world.</p>
 <div class="admonition danger">
 <p class="admonition-title">Warning</p>
-<p>Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use the Domain Queue with your registrar's API, however we recommend that you only save this information temporarily while you're using the Domain Queue, and that you remove it as soon as you're done.</p>
+<p>Saving your API keys (and other relevant API connection information) in DomainMOD is necessary if you want to use your registrar's API to import domains through the Domain Queue or to refresh them (the Refresh button and the Refresh Domains task). Imports and refreshes using RDAP and WHOIS don't need them, but they can't read WHOIS privacy or auto renewal. If you don't need those, we recommend that you only save this information while you're using the Domain Queue, and that you remove it as soon as you're done.</p>
 </div>
 </li>
 <li>
@@ -209,6 +230,9 @@ Source Code: <a href="https://domainmod.org/source/">https://domainmod.org/sourc
 </li>
 <li>
 <p>Always use the most up-to-date version of DomainMOD. This will help protect you from any security vulnerabilities that are found and fixed.</p>
+</li>
+<li>
+<p>Turn on multi-factor authentication (MFA) for your account, and consider requiring it for every user. See <a href="../security/">Security and MFA</a> for details.</p>
 </li>
 </ol>
 <h2 id="first-run">First Run</h2>

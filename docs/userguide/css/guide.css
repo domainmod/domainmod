@@ -25,7 +25,11 @@
     --dm-site-muted: #b5bdcd;
 }
 
-/* Header. From the lg breakpoint up it stays at the top, so focused elements scroll clear of it. */
+/* Header. Below the lg breakpoint it scrolls away, so a link to a place on a page only needs a little room above it.
+   From lg up it stays at the top, so focused elements scroll clear of it. */
+html {
+    scroll-padding-top: 1rem;
+}
 @media (min-width: 992px) {
     html {
         scroll-padding-top: 6.5rem;

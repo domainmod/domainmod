@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Bulk Updater</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="./" aria-current="page">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -100,12 +110,16 @@
                     <ul class="dm-guide-toc-list" role="list">
     <li><a href="#usage">Usage</a>
     </li>
+    <li><a href="#finding-domains">Finding Domains</a>
+    </li>
+    <li><a href="#changing-the-hosting-service">Changing the Hosting Service</a>
+    </li>
 </ul>
                 </details>
                 <div class="dm-prose dm-guide-content">
                     <p>The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks. Using the Bulk Updater is simple, it's just like adding or modifying a single domain, but instead of supplying one domain you supply a list of domains, and the Bulk Updater does the rest.</p>
 <h2 id="usage">Usage</h2>
-<p>For this example we're going to use the Bulk Updater to add domains, however it can also be used to renew domains, change the status of the domains, change the category and DNS profile of the domains, and so on.</p>
+<p>For this example we're going to use the Bulk Updater to add domains. However, it can also be used to renew domains, change the status of the domains, change the category, DNS profile, and hosting service of the domains, and so on.</p>
 <p><strong>Adding Domains Using The Bulk Updater</strong></p>
 <ol>
 <li>
@@ -125,15 +139,19 @@
 </li>
 </ol>
 <p>That's all there is to it, you've just added some domains in bulk!</p>
+<h2 id="finding-domains">Finding Domains</h2>
+<p>As of v4.27.0, every action except <strong>Add Domains</strong> has a <strong>Find a domain to add to the list</strong> box above the list of domains. For <strong>Update Custom Domain Field</strong>, the box is on the second step, with the list. Type part of a domain name, then pick it from the results, which show each domain's status, to add it to the list as a new line. You can still type or paste domains straight into the list.</p>
+<h2 id="changing-the-hosting-service">Changing the Hosting Service</h2>
+<p>As of v4.27.0, the <strong>Change Hosting Service</strong> action links every domain on the list to the <a href="../hosting/">hosting service</a> you choose. Choose <strong>None</strong> to remove their links. Cancelled services aren't offered. <strong>Add Domains</strong> also has an optional <strong>Hosting Service</strong> menu.</p>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/bulk-updater.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">
                     <a class="dm-guide-pager-link dm-guide-pager-prev" href="../domain-queue/" rel="prev">
                         <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
                         <span class="dm-guide-pager-title">Domain Queue</span>
                     </a>
-                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../administration/" rel="next">
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../refreshing-domains/" rel="next">
                         <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                        <span class="dm-guide-pager-title">Administration</span>
+                        <span class="dm-guide-pager-title">Refreshing Domains</span>
                     </a>
                 </nav>
             </div>
@@ -141,6 +159,10 @@
     <p class="dm-guide-toc-heading" aria-hidden="true">On This Page</p>
     <ul class="dm-guide-toc-list" role="list">
     <li><a href="#usage">Usage</a>
+    </li>
+    <li><a href="#finding-domains">Finding Domains</a>
+    </li>
+    <li><a href="#changing-the-hosting-service">Changing the Hosting Service</a>
     </li>
 </ul>
 </aside>

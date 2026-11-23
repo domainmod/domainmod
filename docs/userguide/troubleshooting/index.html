@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Troubleshooting</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="../upgrading/">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="./" aria-current="page">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -190,8 +200,8 @@ I'm trying to connect DomainMOD to my domain registrar account using the API so 
 I'm trying to import data using the Domain Queue, but everything is stuck on "Processing"
 </h4></p>
 <p>In case there's an issue with the cron job you can also try triggering the queue manually. Go to <em>Administration -&gt; Task Scheduler</em>, and then beside "Domain Queue Processing" click the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
-<p>If that doesn't work you can try clearing the queue items that are currently processing by going to <em>Administration -&gt; Maintenance</em>, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
-<p>If that still doesn't do it go to <em>Administration -&gt; Maintenance</em>, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
+<p>If that doesn't work you can try clearing the queue items that are currently processing by going to <em>Administration -&gt; Cleanup</em>, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
+<p>If that still doesn't do it go to <em>Administration -&gt; Cleanup</em>, and then click on "Clear Queues". This deletes every list and domain in the Domain Queue, whatever their status (the SSL Queue isn't affected). Now try retrieving your data again using the Domain Queue.</p>
 <p><a name="dwprop"></a><h4>
 I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server
 </h4></p>
@@ -242,7 +252,24 @@ My fees are all showing up as zero
 <p>Click the <strong>Update System Settings</strong> button. </p>
 </li>
 </ol>
-<p>After the Currency Converter source has been changed you can force a currency conversion update by going to <em>Administration -&gt; Task Scheduler</em>, and then clicking the "run now" link beside "Update Conversion Rates".</p>
+<p>After the Currency Converter source has been changed you can force a currency conversion update by going to <em>Administration -&gt; Task Scheduler</em>, and then clicking the "run now" link beside "Update Conversion Rates". As of v4.27.0, you can also click <strong>Update Conversion Rates</strong> under <strong>Maintenance</strong> on the main menu, which updates only your own rates.</p>
+<p><a name="smtpnone"></a><h4>
+I want to send email through a local mail relay that has no encryption and no sign-in
+</h4></p>
+<p>As of v4.27.0, go to <strong>Administration</strong> -&gt; <strong>System Settings</strong>, turn on <strong>Use SMTP Server?</strong>, and enter the relay's <strong>SMTP Server</strong> and <strong>SMTP Server Port</strong>, and the <strong>SMTP Email Address</strong> to send from. Choose <strong>None</strong> for <strong>SMTP Server Protocol</strong>, and leave <strong>SMTP Username</strong> and <strong>SMTP Password</strong> blank (tick <strong>Remove the saved value</strong> if a password is saved), then click <strong>Update System Settings</strong>. Only use <strong>None</strong> for a server like this. Any other SMTP server should use TLS or SSL.</p>
+<p><a name="timezonedata"></a><h4>
+Times in my region are an hour off<br />
+System Information says my time zone data is out of date
+</h4></p>
+<p>Outdated PHP time zone data can make times appear an hour off in regions that recently changed their rules. As of v4.27.0, <strong>Administration</strong> -&gt; <strong>System Information</strong> shows the <strong>PHP Time Zone Database</strong> version and warns you when it's older than DomainMOD expects. To fix it, update PHP or add the latest <code>timezonedb</code> PHP extension. If you can't do this yourself, your web hosting provider should be able to assist you.</p>
+<p><a name="tempfolder"></a><h4>
+DomainMOD says it can't write to its temp folder, and restores are turned off
+</h4></p>
+<p>As of v4.27.0, the web server needs to be able to write to DomainMOD's 'temp' folder and the files in it, including temp/restore.lock. DomainMOD keeps working without it, but restores stay turned off until it can. Give the user PHP runs as for your web server write access to the folder (see <a href="../getting-started/#installing">Installing</a>), and if your cron job runs as a different user, give that user write access too.</p>
+<p><a name="exportincomplete"></a><h4>
+My export ends with a row saying it's incomplete
+</h4></p>
+<p>That row means the export stopped early because of an error, so the file is missing data. As of v4.27.0, exports are written out as they're read, which lets very large exports work. Try the export again, and if it keeps happening, turn on <strong>Debugging Mode</strong> (see <a href="#debugging">Debugging</a>) and check the <strong>Debug Log</strong> and your PHP error log.</p>
 <h2 id="debugging"><BR>Debugging</h2>
 <p>If you're still having issues you can enable Debugging Mode, which will make DomainMOD start logging your actions and errors, which can help us troubleshoot your issue.</p>
 <div class="admonition note">
@@ -303,9 +330,9 @@ $force_https = 0;
 </div>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/troubleshooting.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">
-                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../contributing/" rel="prev">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../faq/" rel="prev">
                         <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
-                        <span class="dm-guide-pager-title">Contributing</span>
+                        <span class="dm-guide-pager-title">Frequently Asked Questions</span>
                     </a>
                     <a class="dm-guide-pager-link dm-guide-pager-next" href="../support/" rel="next">
                         <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>

@@ -54,7 +54,7 @@
 <main id="main">
     <div class="dm-page-header">
         <div class="container-xl">
-            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.26.0</span></p>
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
             <h1 class="dm-page-title">Upgrading</h1>
         </div>
     </div>
@@ -77,20 +77,30 @@
     <li><a href="../first-run/">First Run</a></li>
     <li><a href="./" aria-current="page">Upgrading</a></li>
     <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
     <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
     <li><a href="../creating-assets/">Creating Assets</a></li>
     <li><a href="../adding-domains/">Adding Domains</a></li>
     <li><a href="../csv-importer/">CSV Importer</a></li>
     <li><a href="../domain-queue/">Domain Queue</a></li>
     <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="../refreshing-domains/">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
     <li><a href="../administration/">Administration</a></li>
     <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
     <li><a href="../data-warehouse/">Data Warehouse</a></li>
     <li><a href="../faq/">Frequently Asked Questions</a></li>
-    <li><a href="../conduct/">Code of Conduct</a></li>
-    <li><a href="../contributing/">Contributing</a></li>
     <li><a href="../troubleshooting/">Troubleshooting</a></li>
     <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
 </ul>
                 </div>
             </nav>
@@ -102,6 +112,7 @@
 <p>Before upgrading it's <strong>strongly</strong> recommended that you backup your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no way to recover your data, and having a backup of your installation directory and database will allow you to easily restore your previous version. </p>
 <p>The Backup &amp; Restore instructions can be found <a href="../backup-restore/">here</a>.</p>
 </div>
+<p>As of v4.27.0, administrators can open <strong>Administration</strong> -&gt; <strong>Upgrade</strong> to see the installed and latest versions, check for a new version with <strong>Check Now</strong>, and get the upgrade steps for the way DomainMOD was installed (Docker, Git, zip file, or Softaculous), with buttons to copy each command. If it detects the wrong installation method, choose yours under <strong>Not right? Choose yours</strong> and click <strong>Show Steps</strong>, or set <code>$install_type</code> in <code>/_includes/config.inc.php</code>. The steps for each method are also below.</p>
 <p><strong>Option #1 -- Docker Install</strong><br />
 If you installed DomainMOD using Docker, please see our official DomainMOD container on Docker Hub for upgrade information: <a href="https://hub.docker.com/r/domainmod/domainmod">https://hub.docker.com/r/domainmod/domainmod</a></p>
 <p><strong>Option #2 -- .zip File Install</strong><br />
@@ -113,9 +124,16 @@ If you installed DomainMOD using Git right from your web server, just run the fo
 </code></pre>
 <p><strong>Option #4 -- Softaculous Install</strong><br />
 If you installed DomainMOD using Softaculous you're just a few clicks away from upgrading to the newest version. Please see the upgrade instructions on the Softaculous Wiki: <a href="https://www.softaculous.com/docs/How_to_upgrade_installations">https://www.softaculous.com/docs/How_to_upgrade_installations</a></p>
+<p>Once the new files are in place, sign in as an administrator, and DomainMOD asks you to upgrade the database. Click <strong>Upgrade Database</strong>. While the upgrade runs, other pages say that DomainMOD is busy, so wait for it to finish.</p>
 <div class="admonition note">
 <p class="admonition-title">After Upgrading</p>
 <p>Unless you upgraded using Docker, restart PHP so the updated translation files are loaded (restart PHP-FPM if your server uses it, otherwise restart your web server). Otherwise some text may display incorrectly until it restarts. If you can't restart it yourself, your web hosting provider should be able to do it for you.</p>
+<p>As of v4.27.0, the web server needs to be able to write to the 'temp' folder and the files in it (see the <a href="../getting-started/#installing">Installation Steps</a>). If it can't, DomainMOD shows a warning and turns off restores until it can.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Web Hosting Providers in v4.27.0</p>
+<p>The v4.27.0 upgrade replaces each domain's Web Hosting Provider field with a <a href="../hosting/">hosting service</a>. For each provider your domains used, it adds a hosting account with the username "Imported" for each owner, and under it a service named after the provider, then links those domains to it. Domains with the same provider and owner share one service. DomainMOD's placeholder providers, such as [no hosting], aren't converted.</p>
+<p>The old field had no other details, so each service starts as Active, with the service type Other, a 12-month billing term, auto-renew off, no fee, and a renewal date one year after the upgrade. After upgrading, open <strong>Hosting</strong> and update each service's details and renewal date, and the account's username, then add its fees. Set the service type and billing term first, since a fee applies to every service with the same provider, service type, and billing term.</p>
 </div>
                 </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/upgrading.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
                 <nav class="dm-guide-pager" aria-label="Previous and next pages">

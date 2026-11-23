@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light" data-base-url="..">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refreshing Domains - DomainMOD User Guide</title>
+<link rel="canonical" href="https://domainmod.org/docs/userguide/refreshing-domains/">
+<script src="../js/colour-mode.js"></script>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/source-sans-3/files/source-sans-3-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../vendor/bootstrap/5.3.8/css/bootstrap.min.css">
+<link rel="stylesheet" href="../vendor/bootstrap-icons/1.13.2/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../fonts/source-sans-3/source-sans-3.css">
+<link rel="stylesheet" href="../css/domainmod-tokens.css">
+<link rel="stylesheet" href="../css/guide.css">
+<link rel="shortcut icon" href="../img/favicon.ico">
+</head>
+<body class="dm-body dm-guide"><a class="dm-skip" href="#dm-guide-main">Skip to main content</a>
+
+<header class="dm-header sticky-lg-top">
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
+        <div class="container-xl">
+            <a class="navbar-brand" href="https://domainmod.org/">
+                <span class="dm-logo dm-logo--filter"><img class="dm-logo-image" src="../img/logo.png" width="264" height="40" alt="DomainMOD home"><img class="dm-logo-icon" src="../img/logo.png" width="264" height="40" alt=""></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#dm-menu" aria-controls="dm-menu" aria-expanded="false">
+                <i class="bi bi-list" aria-hidden="true"></i><span class="visually-hidden">Menu</span>
+            </button>
+            <div class="collapse navbar-collapse" id="dm-menu">
+                <ul class="navbar-nav mx-lg-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/download/">Download</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/docs/" aria-current="true">Docs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/support/">Support</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/news/">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://domainmod.org/about/">About</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2 py-2 py-lg-0">
+                    <div class="dropdown">
+                        <button class="btn btn-link dm-mode dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <i class="bi bi-circle-half" aria-hidden="true"></i><span class="visually-hidden">Color Mode</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end">
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="light" aria-pressed="false"><i class="bi bi-sun-fill" aria-hidden="true"></i>Light<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i>Dark<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                            <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-dm-mode="auto" aria-pressed="false"><i class="bi bi-circle-half" aria-hidden="true"></i>Auto<i class="bi bi-check2 ms-auto dm-mode-check" aria-hidden="true"></i></button></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-outline-primary dm-pill" href="https://demo.domainmod.org">Try the Demo</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main id="main">
+    <div class="dm-page-header">
+        <div class="container-xl">
+            <p class="dm-guide-eyebrow"><a href="..">User Guide</a><span class="dm-guide-version"> · for DomainMOD 4.27.0</span></p>
+            <h1 class="dm-page-title">Refreshing Domains</h1>
+        </div>
+    </div>
+
+    <div class="container-xl dm-page">
+        <div class="dm-guide-layout dm-guide-layout--toc">
+            <nav class="dm-guide-side" aria-label="User Guide">
+                <form class="dm-guide-search" action="../search.html" method="get" role="search">
+    <label class="visually-hidden" for="dm-guide-search-input">Search the User Guide</label>
+    <input class="form-control" type="search" name="q" id="dm-guide-search-input" placeholder="Search the guide" autocomplete="off">
+    <button class="btn dm-guide-search-button" type="submit"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Search</span></button>
+</form>
+                <button class="btn dm-guide-pages-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#dm-guide-pages" aria-controls="dm-guide-pages" aria-expanded="false">
+                    <span><i class="bi bi-journal-text" aria-hidden="true"></i> Pages in This Guide</span><i class="bi bi-chevron-down dm-guide-pages-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="collapse d-lg-block" id="dm-guide-pages">
+                    <ul class="dm-guide-nav" role="list">
+    <li><a href="..">Home</a></li>
+    <li><a href="../getting-started/">Getting Started</a></li>
+    <li><a href="../first-run/">First Run</a></li>
+    <li><a href="../upgrading/">Upgrading</a></li>
+    <li><a href="../migrating/">Migrating</a></li>
+    <li><a href="../security/">Security and MFA</a></li>
+    <li><a href="../database-encryption/">Encrypted Database Connections</a></li>
+    <li><a href="../dashboard/">Dashboard</a></li>
+    <li><a href="../creating-assets/">Creating Assets</a></li>
+    <li><a href="../adding-domains/">Adding Domains</a></li>
+    <li><a href="../csv-importer/">CSV Importer</a></li>
+    <li><a href="../domain-queue/">Domain Queue</a></li>
+    <li><a href="../bulk-updater/">Bulk Updater</a></li>
+    <li><a href="./" aria-current="page">Refreshing Domains</a></li>
+    <li><a href="../watch-list/">Watch List</a></li>
+    <li><a href="../hosting/">Hosting</a></li>
+    <li><a href="../ssl-queue/">SSL Queue</a></li>
+    <li><a href="../change-history/">Change History</a></li>
+    <li><a href="../segments/">Segments</a></li>
+    <li><a href="../reporting/">Reporting</a></li>
+    <li><a href="../user-settings/">User Settings</a></li>
+    <li><a href="../administration/">Administration</a></li>
+    <li><a href="../backup-restore/">Backup &amp; Restore</a></li>
+    <li><a href="../data-warehouse/">Data Warehouse</a></li>
+    <li><a href="../faq/">Frequently Asked Questions</a></li>
+    <li><a href="../troubleshooting/">Troubleshooting</a></li>
+    <li><a href="../support/">Support</a></li>
+    <li><a href="../contributing/">Contributing</a></li>
+    <li><a href="../conduct/">Code of Conduct</a></li>
+</ul>
+                </div>
+            </nav>
+
+            <div class="dm-guide-main" id="dm-guide-main" tabindex="-1"><details class="dm-guide-toc-compact">
+                    <summary>On This Page</summary>
+                    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#refresh">Refresh</a>
+    </li>
+    <li><a href="#automatic-refreshes">Automatic Refreshes</a>
+    </li>
+    <li><a href="#registry-status-and-transfer-lock">Registry Status and Transfer Lock</a>
+    </li>
+    <li><a href="#live-dns">Live DNS</a>
+    </li>
+</ul>
+                </details>
+                <div class="dm-prose dm-guide-content">
+                    <p>DomainMOD can look up a domain's current details and update them for you, either when you click <strong>Refresh</strong> on the domain's edit page (as of v4.25.0), or automatically with the <strong>Refresh Domains</strong> task (as of v4.27.0). The changes a refresh makes are recorded in the <a href="../change-history/">Change History</a>.</p>
+<h2 id="refresh">Refresh</h2>
+<p>On the domain's edit page, click the <strong>Refresh</strong> button near the top, and DomainMOD will look up the domain's current details and update them straight away, listing what changed.</p>
+<p>If your registrar account uses a supported registrar API with its API details filled in, DomainMOD uses the API, which can update the expiry date, DNS servers, WHOIS privacy, and auto-renewal status (some registrars' APIs don't report all of these, and anything not reported is left as it is). Otherwise, or if the API can't be used, DomainMOD uses public RDAP and WHOIS data instead, which updates the expiry date and DNS servers, but not WHOIS privacy or auto-renewal. As of v4.27.0, Refresh also checks the transfer lock and registry status using RDAP where it's available, whichever source updates the other details, and looks up the domain's <a href="#live-dns">live DNS</a>.</p>
+<p>To avoid overloading your registrar and the RDAP and WHOIS servers, there's a short wait between refreshes. If you've changed the expiry date, DNS servers, WHOIS privacy, auto-renewal, or notes without saving, DomainMOD asks before a refresh replaces your changes. Read-only users don't see the <strong>Refresh</strong> button.</p>
+<h2 id="automatic-refreshes">Automatic Refreshes</h2>
+<p>The <strong>Refresh Domains</strong> task refreshes your live domains (every domain that isn't Expired or Sold) a few at a time, the same way <strong>Refresh</strong> does, and records its changes in the Change History as Scheduled Refresh. It's off by default, so an administrator needs to enable it in <strong>Administration</strong> -&gt; <strong>Task Scheduler</strong>, and the <a href="../getting-started/#cron-job">cron job</a> must be set up (Docker installs already run it). See <a href="../administration/#task-scheduler">Task Scheduler</a> for how it checks each domain.</p>
+<p>Each live domain's <strong>Change History</strong> section shows its automatic check status, such as when it was last checked and when its next check is due.</p>
+<h2 id="registry-status-and-transfer-lock">Registry Status and Transfer Lock</h2>
+<p>As of v4.27.0, Refresh reads each domain's registry status codes from RDAP, along with its transfer lock: <strong>Locked</strong>, <strong>Not Locked</strong>, <strong>Unknown</strong> (the registry didn't report a clear status, or RDAP isn't available for the TLD), <strong>Couldn't Check</strong> (no status could be read yet), or <strong>Not Checked</strong>. Domains added with the Domain Queue's RDAP import get them too. Some country-code registries don't use transfer locks.</p>
+<p>The domain's edit page has a <strong>Registry Status</strong> section, the Domains list has a <strong>Registry Status</strong> filter, and you can add a <strong>Transfer Lock</strong> column in <strong>Settings</strong> -&gt; <strong>Display Settings</strong>. A domain that the registry has on hold, or is deleting or restoring, gets an <strong>On Hold</strong>, <strong>Being Deleted</strong>, or <strong>Being Restored</strong> badge. For live domains expiring in the next 30 days, or already past their expiry date, the At-Risk Domains report (and the Dashboard's at-risk count) also covers ones with the transfer lock off (<strong>Transfer Lock Off</strong>, for domains not yet expired) and ones on hold or being deleted or restored (<strong>Registry Hold or Deletion</strong>).</p>
+<h2 id="live-dns">Live DNS</h2>
+<p>As of v4.27.0, after each refresh (clicked or automatic), when there's time left, DomainMOD looks up the domain's live name servers, IP addresses (for the domain and its www name), and mail servers. These lookups go through your server's own DNS resolver, so whoever runs that resolver can see the names being checked.</p>
+<p>DomainMOD compares the live name servers with the domain's DNS profile, and the live addresses with its IP Address. Live DNS only reports what it finds. It never changes the domain, its DNS profile, or its IP Address.</p>
+<p>The <strong>Live DNS</strong> section on the domain's edit page shows what was found and how it compares. When one of your DNS profiles or IP Addresses matches what's live, <strong>Use it</strong> picks it in the edit form (click <strong>Save</strong> to keep it), and <strong>Add this IP Address</strong> opens the <strong>Add IP Address</strong> form with a live address that isn't in DomainMOD yet filled in. Changes to the live name servers and addresses are recorded in the Change History.</p>
+<p>On the Domains list, you can add a <strong>Live DNS</strong> column in <strong>Settings</strong> -&gt; <strong>Display Settings</strong>, and use the <strong>Live DNS</strong> filter to find domains whose name servers or IP address differ, that have no DNS, or whose check failed or hasn't run. The Domains export includes it too.</p>
+                </div><p class="dm-guide-edit"><a href="https://github.com/domainmod/userguide/edit/master/docs/refreshing-domains.md"><i class="bi bi-github me-1" aria-hidden="true"></i>Edit this page on GitHub</a></p>
+                <nav class="dm-guide-pager" aria-label="Previous and next pages">
+                    <a class="dm-guide-pager-link dm-guide-pager-prev" href="../bulk-updater/" rel="prev">
+                        <span class="dm-guide-pager-label"><i class="bi bi-arrow-left" aria-hidden="true"></i> Previous</span>
+                        <span class="dm-guide-pager-title">Bulk Updater</span>
+                    </a>
+                    <a class="dm-guide-pager-link dm-guide-pager-next" href="../watch-list/" rel="next">
+                        <span class="dm-guide-pager-label">Next <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                        <span class="dm-guide-pager-title">Watch List</span>
+                    </a>
+                </nav>
+            </div>
+            <aside class="dm-guide-toc" aria-label="On this page">
+    <p class="dm-guide-toc-heading" aria-hidden="true">On This Page</p>
+    <ul class="dm-guide-toc-list" role="list">
+    <li><a href="#refresh">Refresh</a>
+    </li>
+    <li><a href="#automatic-refreshes">Automatic Refreshes</a>
+    </li>
+    <li><a href="#registry-status-and-transfer-lock">Registry Status and Transfer Lock</a>
+    </li>
+    <li><a href="#live-dns">Live DNS</a>
+    </li>
+</ul>
+</aside>
+        </div>
+    </div>
+</main>
+
+<footer class="dm-footer">
+    <div class="container-xl">
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Product</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/download/">Download</a></li>
+                    <li><a href="https://domainmod.org/docker/">Install with Docker</a></li>
+                    <li><a href="https://domainmod.org/upgrade/">Upgrade</a></li>
+                    <li><a href="https://demo.domainmod.org">Live Demo</a></li>
+                    <li><a href="https://domainmod.org/changelog/">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Docs</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/docs/userguide/">User Guide</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/getting-started/">Getting Started</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/upgrading/">Upgrading</a></li>
+                    <li><a href="https://domainmod.org/readme/">README</a></li>
+                    <li><a href="https://domainmod.org/docs/userguide/faq/">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Community</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/support/">Support Portal</a></li>
+                    <li><a href="https://github.com/domainmod/domainmod">GitHub</a></li>
+                    <li><a href="https://domainmod.org/subscribe/">Subscribe</a></li>
+                    <li><a href="https://domainmod.org/rss/">RSS</a></li>
+                    <li><a href="https://domainmod.org/contribute/">Contribute</a></li>
+                    <li><a href="https://domainmod.org/contributing/">Contributing</a></li>
+                    <li><a href="https://domainmod.org/conduct/">Code of Conduct</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="dm-footer-heading">Legal</h2>
+                <ul class="list-unstyled dm-footer-list" role="list">
+                    <li><a href="https://domainmod.org/privacy/">Privacy</a></li>
+                    <li><a href="https://domainmod.org/terms/">Terms</a></li>
+                    <li><a href="https://domainmod.org/LICENSE">License</a></li>
+                    <li><a href="https://domainmod.org/security.txt">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="dm-footer-bottom d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <p class="mb-0">Copyright © 2013-2026 <a href="https://greg.ca">Greg Chetcuti</a>. DomainMOD is free software under the GPLv3.</p>
+            <ul class="list-unstyled d-flex gap-3 mb-0" role="list">
+                <li><a href="https://x.com/DomainMOD" class="dm-social"><i class="bi bi-twitter-x" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on X</span></a></li>
+                <li><a href="https://www.facebook.com/DomainMOD" class="dm-social"><i class="bi bi-facebook" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Facebook</span></a></li>
+                <li><a href="https://www.linkedin.com/company/domainmod" class="dm-social"><i class="bi bi-linkedin" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on LinkedIn</span></a></li>
+                <li><a href="https://www.reddit.com/r/DomainMOD" class="dm-social"><i class="bi bi-reddit" aria-hidden="true"></i><span class="visually-hidden">DomainMOD on Reddit</span></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="../vendor/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+<script src="../js/guide.js"></script>
+</body>
+</html>
