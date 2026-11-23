@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings/settings-two-factor.inc.php
+ * /_includes/settings/settings-security.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -23,4 +23,4 @@
 $page_title = _('Security');
 $breadcrumb = $page_title;
 $software_section = "settings";
-$slug = "settings-two-factor";
+$slug = "settings-security";

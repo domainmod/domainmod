@@ -469,7 +469,7 @@ echo $form->showSubmitButton(_('Save'), '', '');
 echo $form->showFormBottom('');
 ?>
 <?php if ($uid == ($_SESSION['s_user_id'] ?? 0)) { // resetting your own password here would log you out ?>
-<?php echo sprintf(_('To change your own password, use the %sSecurity%s page under Settings.'), '<a href="' . WEB_ROOT . '/settings/two-factor/">', '</a>'); ?><BR><BR>
+<?php echo sprintf(_('To change your own password, use the %sSecurity%s page under Settings.'), '<a href="' . WEB_ROOT . '/settings/security/">', '</a>'); ?><BR><BR>
 <?php } else { ?>
 <?php // The two ways to reset the user's password, as outline buttons beside each other, wrapping on phones ?>
 <div class="d-flex flex-wrap gap-2 mb-3"><?php

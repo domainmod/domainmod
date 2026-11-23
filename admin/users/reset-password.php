@@ -84,7 +84,7 @@ if ($new_username != '') {
         // included) before the new password could be shown, leaving the account locked out
         $_SESSION['s_message_danger'] .= _('To change your own password, use the Security page under Settings.') . '<BR>';
 
-        header('Location: ' . WEB_ROOT . '/settings/two-factor/');
+        header('Location: ' . WEB_ROOT . '/settings/security/');
         exit;
 
     } else {

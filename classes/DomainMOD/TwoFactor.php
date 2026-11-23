@@ -190,7 +190,7 @@ class TwoFactor
     }
 
     // The pages a session with unfinished sign-in steps can still open (paths from the install's root)
-    const STEP_PAGES = array('/checks.php', '/notice.php', '/settings/two-factor/index.php');
+    const STEP_PAGES = array('/checks.php', '/notice.php', '/settings/security/index.php');
 
     /*
      * What System::authCheckResult() makes of a signed-in session once the database has two-factor sign-in, given the
@@ -220,7 +220,7 @@ class TwoFactor
     }
 
     /*
-     * The actions settings/two-factor/ allows for this state, so the server enforces each sign-in step, not just the
+     * The actions settings/security/ allows for this state, so the server enforces each sign-in step, not just the
      * forms shown. 'password_<action>' is the password check that gives an action's permission. While Change Password
      * is pending, nothing is allowed. While another sign-in step is pending, only what that step needs: setup,
      * replacing a secret that can't be decrypted, or the recovery codes (confirming them while the session still has

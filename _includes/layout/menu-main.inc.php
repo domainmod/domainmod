@@ -311,7 +311,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo $web_root; ?>/settings/two-factor/" class="nav-link<?php if ($slug == "settings-two-factor") echo " active"; ?>" aria-label="<?php echo _('Security'); ?>">
+                    <a href="<?php echo $web_root; ?>/settings/security/" class="nav-link<?php if ($slug == "settings-security") echo " active"; ?>" aria-label="<?php echo _('Security'); ?>">
                         <i class="nav-icon bi"></i>
                         <p><?php echo _('Security') ?></p>
                     </a>

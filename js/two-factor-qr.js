@@ -19,11 +19,11 @@
  */
 
 /*
- * Draws the two-factor setup page's QR code (settings/two-factor/index.php) on a canvas, from the otpauth:// address
+ * Draws the two-factor setup page's QR code (settings/security/index.php) on a canvas, from the otpauth:// address
  * in the element's data-domainmod-otpauth attribute, with the vendored qrcode-generator library. Drawing on a canvas
  * isn't affected by the Content Security Policy, unlike inline styles. The code is always dark on white, with a quiet
  * zone of four modules, so phone cameras read it in dark mode too. The key is always shown as text as well, so setup
- * works without JavaScript. Loaded by settings/two-factor/index.php after the library.
+ * works without JavaScript. Loaded by settings/security/index.php after the library.
  */
 (function () {
     'use strict';

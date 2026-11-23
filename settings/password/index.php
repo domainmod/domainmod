@@ -20,7 +20,7 @@
  */
 ?>
 <?php //@formatter:off
-// Change Password is now the Password card on the Security page (settings/two-factor/). Old links and bookmarks lead
+// Change Password is now the Password card on the Security page (settings/security/). Old links and bookmarks lead
 // there, and the Security page checks the sign-in.
-header('Location: ../two-factor/', true, 302);
+header('Location: ../security/', true, 302);
 exit; //@formatter:on

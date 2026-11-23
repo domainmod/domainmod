@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$locked) {
                     $codes_left = $two_factor->remainingCodes($state['id']);
                     $_SESSION['s_message_warning'] .= sprintf(ngettext('You signed in with a recovery code. You have %d recovery code left.',
                         'You signed in with a recovery code. You have %d recovery codes left.', $codes_left), $codes_left)
-                        . ' <a href="' . htmlspecialchars(WEB_ROOT . '/settings/two-factor/', ENT_QUOTES, 'UTF-8') . '">'
+                        . ' <a href="' . htmlspecialchars(WEB_ROOT . '/settings/security/', ENT_QUOTES, 'UTF-8') . '">'
                         . _('Set up a new authenticator') . '</a>.<BR>';
 
                 }

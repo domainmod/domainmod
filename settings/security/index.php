@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/two-factor/index.php
+ * /settings/security/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2026 Greg Chetcuti <greg@chetcuti.com>
@@ -40,7 +40,7 @@ $totp = new DomainMOD\Totp();
 require_once DIR_INC . '/head.inc.php';
 require_once DIR_INC . '/config-demo.inc.php';
 require_once DIR_INC . '/debug.inc.php';
-require_once DIR_INC . '/settings/settings-two-factor.inc.php';
+require_once DIR_INC . '/settings/settings-security.inc.php';
 
 $system->authCheck();
 $pdo = $deeb->cnxx;

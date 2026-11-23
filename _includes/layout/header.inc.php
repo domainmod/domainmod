@@ -107,7 +107,7 @@ $search_for = $search_for ?? '';
                                 } else {
                                     echo _('MFA') . ': ' . _('Off');
                                     // MFA can't be set up on the demo, so it gets no link there
-                                    if (DEMO_INSTALLATION != true) { ?> &middot; <a href="<?php echo $web_root; ?>/settings/two-factor/"><?php echo _('Set it up'); ?></a><?php
+                                    if (DEMO_INSTALLATION != true) { ?> &middot; <a href="<?php echo $web_root; ?>/settings/security/"><?php echo _('Set it up'); ?></a><?php
                                     }
                                 } ?></div><?php
                             }
@@ -122,7 +122,7 @@ $search_for = $search_for ?? '';
                         foreach (array(array('/settings/profile/', 'bi-person-circle', _('User Profile')),
                                      array('/settings/display/', 'bi-display', _('Display Settings')),
                                      array('/settings/defaults/', 'bi-person-gear', _('User Defaults')),
-                                     array('/settings/two-factor/', 'bi-shield-lock', _('Security'))) as $user_menu_link) { ?>
+                                     array('/settings/security/', 'bi-shield-lock', _('Security'))) as $user_menu_link) { ?>
 
                         <li><a class="dropdown-item d-flex align-items-center" href="<?php echo $web_root . $user_menu_link[0]; ?>"><i class="bi <?php echo $user_menu_link[1]; ?> me-2" aria-hidden="true"></i><?php echo $user_menu_link[2]; ?></a></li><?php
                         } ?>

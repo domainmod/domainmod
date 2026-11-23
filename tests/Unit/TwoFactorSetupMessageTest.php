@@ -46,7 +46,7 @@ class TwoFactorSetupMessageTest extends TestCase
             $danger . '\s*=\s*' . $danger . '\s*\?\?\s*\'\'\s*;\s*' .
             $danger . '\s*\.=\s*_\s*\(\s*\'An administrator requires MFA, so please set it up before ' .
             'continuing\.\'\s*\)\s*\.\s*\'<BR>\'\s*;\s*\}\s*' .
-            'header\s*\(\s*"Location: settings\/two-factor\/"\s*\)\s*;\s*exit\s*;\s*\}/';
+            'header\s*\(\s*"Location: settings\/security\/"\s*\)\s*;\s*exit\s*;\s*\}/';
 
         $this->assertNotNull(self::offset($pattern, $source));
         // The message isn't added anywhere else, such as for the steps that explain themselves on the page

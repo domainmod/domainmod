@@ -93,8 +93,8 @@ class TwoFactorSessionTest extends TestCase
 
         $this->assertSame('steps_pending', $two_factor->sessionResult($state, $session, '/dashboard/index.php'));
         $this->assertSame('steps_pending', $two_factor->sessionResult($state, $session, '/domains/list-data.php'));
-        // The Security page (settings/two-factor/) has the Password card, so it finishes the password step too
-        foreach (array('/checks.php', '/notice.php', '/settings/two-factor/index.php') as $page) {
+        // The Security page (settings/security/) has the Password card, so it finishes the password step too
+        foreach (array('/checks.php', '/notice.php', '/settings/security/index.php') as $page) {
             $this->assertSame('valid', $two_factor->sessionResult($state, $session, $page));
         }
         // settings/password/ only forwards to the Security page now, so it isn't one of them

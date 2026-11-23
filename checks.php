@@ -313,7 +313,7 @@ if ($_SESSION['s_version_error'] != '1') {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes.') . '<BR>';
-        header("Location: settings/two-factor/");
+        header("Location: settings/security/");
         exit;
 
     }
@@ -334,7 +334,7 @@ if ($two_factor->isAvailableNow()) {
 
         $_SESSION['s_message_danger'] = $_SESSION['s_message_danger'] ?? '';
         $_SESSION['s_message_danger'] .= _('Your password should be changed for security purposes.') . '<BR>';
-        header("Location: settings/two-factor/");
+        header("Location: settings/security/");
         exit;
 
     } elseif ($sign_in_steps !== array()) {
@@ -347,7 +347,7 @@ if ($two_factor->isAvailableNow()) {
 
         }
 
-        header("Location: settings/two-factor/");
+        header("Location: settings/security/");
         exit;
 
     }

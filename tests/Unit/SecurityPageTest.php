@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
 
 
 /*
- * Change Password and MFA are one Security page (settings/two-factor/): the Password card first, then MFA's cards.
+ * Change Password and MFA are one Security page (settings/security/): the Password card first, then MFA's cards.
  * The Settings menu has one Security item, last, and no Change Password item. settings/password/ only forwards to the
  * Security page. While changing the password is the sign-in step to do, the Password card works and nothing of MFA
  * does (TwoFactorSessionTest checks allowedActions() and the pages that step can open). Outside that forced change,
@@ -39,10 +39,10 @@ class SecurityPageTest extends TestCase
     #[RunInSeparateProcess]
     public function testTheSettingsMenuEndsWithSecurityAndHasNoChangePassword()
     {
-        $html = self::menu('settings-two-factor', 'settings');
+        $html = self::menu('settings-security', 'settings');
 
         $links = self::settingsLinks($html);
-        $this->assertSame(array('/settings/profile/', '/settings/display/', '/settings/defaults/', '/settings/two-factor/'),
+        $this->assertSame(array('/settings/profile/', '/settings/display/', '/settings/defaults/', '/settings/security/'),
             array_column($links, 'href'));
         $this->assertSame('Security', $links[3]['label']);
         $this->assertSame(array(false, false, false, true), array_column($links, 'active'));
@@ -63,18 +63,18 @@ class SecurityPageTest extends TestCase
     {
         $source = self::code('/settings/index.php');
 
-        $this->assertSame(1, preg_match_all('/landingTile\s*\(\s*\'\/settings\/two-factor\/\'/', $source));
-        $this->assertSame(1, preg_match_all('/landingTile\s*\(\s*\'\/settings\/two-factor\/\'\s*,\s*_\s*\(\s*\'Security\'\s*\)/', $source));
+        $this->assertSame(1, preg_match_all('/landingTile\s*\(\s*\'\/settings\/security\/\'/', $source));
+        $this->assertSame(1, preg_match_all('/landingTile\s*\(\s*\'\/settings\/security\/\'\s*,\s*_\s*\(\s*\'Security\'\s*\)/', $source));
         $this->assertStringNotContainsString('/settings/password/', $source);
         // The Password card works on the demo too, so the tile isn't left out there
         $this->assertStringNotContainsString('DEMO_INSTALLATION', $source);
         $this->assertMatchesRegularExpression('/\$page_title\s*=\s*_\s*\(\s*\'Security\'\s*\)\s*;/',
-            self::code('/_includes/settings/settings-two-factor.inc.php'));
+            self::code('/_includes/settings/settings-security.inc.php'));
     }
 
     public function testChangePasswordOnlyForwardsToTheSecurityPage()
     {
-        $this->assertMatchesRegularExpression('/^\s*<\?php\s*\?>\s*<\?php\s*header\s*\(\s*\'Location: \.\.\/two-factor\/\'\s*,\s*true\s*,' .
+        $this->assertMatchesRegularExpression('/^\s*<\?php\s*\?>\s*<\?php\s*header\s*\(\s*\'Location: \.\.\/security\/\'\s*,\s*true\s*,' .
             '\s*302\s*\)\s*;\s*exit\s*;\s*$/', self::code('/settings/password/index.php'));
     }
 
@@ -101,7 +101,7 @@ class SecurityPageTest extends TestCase
 
     public function testThePasswordCardWorksWhileNothingOfMfaDoes()
     {
-        $source = self::code('/settings/two-factor/index.php');
+        $source = self::code('/settings/security/index.php');
 
         // A change of password is the Password card's own POST, never one of MFA's actions, and its fields are only read
         // (as strings) for that POST
@@ -144,7 +144,7 @@ class SecurityPageTest extends TestCase
 
     public function testThePasswordChangeKeepsItsChecksAndSessionHandling()
     {
-        $source = self::code('/settings/two-factor/index.php');
+        $source = self::code('/settings/security/index.php');
 
         foreach (array(
             // Only the account this session signed in with, still active, with the same password (and MFA stamp)
@@ -168,7 +168,7 @@ class SecurityPageTest extends TestCase
 
     public function testTheCurrentPasswordIsCheckedExceptDuringTheForcedChange()
     {
-        $source = self::code('/settings/two-factor/index.php');
+        $source = self::code('/settings/security/index.php');
 
         // Forced: the account's temporary password flag, read from the database. Otherwise the typed password has to
         // pass password_verify() against the stored hash (the session's, which authCheck() matched with the account's
