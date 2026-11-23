@@ -186,6 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         $user_id = (int) $user->getUserId($new_username);
         $now = time();
 
+        // The password is right, so the user's own language is used for the code step (kept with the pending sign-in
+        // below, so an abandoned code step doesn't leave it behind) and, once signed in, for the first messages from
+        // checks.php, which would otherwise show in the sign-in page's language
+        $user_language = $login->getUserLanguage($user_id);
+        $user_language = $user_language ? (string) $user_language->default_language : '';
+
         /*
          * Two-factor sign-in, once the live database has it (before the upgrade nobody can have turned it on). If the
          * version or the user's state can't be read, the sign-in is refused rather than skipping the second step.
@@ -229,7 +235,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             // right (two-factor.php)
             $_SESSION['s_two_factor_pending'] = array('user_id' => $user_id, 'username' => $new_username,
                 'password_hash' => $stored_hash, 'stamp' => (string) $two_factor_state['stamp'], 'time' => $now,
-                'wrong' => 0);
+                'wrong' => 0, 'language' => $user_language,
+                'language_until' => $now + DomainMOD\TwoFactor::PENDING_SECONDS);
             $csrf = new DomainMOD\Csrf();
             $csrf->newToken();
 
@@ -252,6 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
                     $two_factor->grantPermission('setup', $user_id, $stored_hash, $two_factor_session['stamp'], $now);
                 }
 
+                if ($user_language !== '') $_SESSION['s_default_language'] = $user_language;
                 header("Location: checks.php");
                 exit;
 

@@ -54,6 +54,14 @@ if (($_SESSION['s_is_logged_in'] ?? '') == 1 && isset($_SESSION['s_default_langu
 
     define('DEFAULT_LANGUAGE', $_SESSION['s_installation_language']);
 
+} elseif (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'two-factor.php'
+    && ($_SESSION['s_two_factor_pending']['language'] ?? '') !== ''
+    && time() <= (int) ($_SESSION['s_two_factor_pending']['language_until'] ?? 0)) {
+
+    // The code step (two-factor.php) shows in the user's own language while its sign-in can still be finished. Any other
+    // page, and an expired or abandoned code step, keeps the sign-in page's language.
+    define('DEFAULT_LANGUAGE', $_SESSION['s_two_factor_pending']['language']);
+
 } elseif (isset($_SESSION['s_default_language'])) {
 
     define('DEFAULT_LANGUAGE', $_SESSION['s_default_language']);

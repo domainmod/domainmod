@@ -79,4 +79,21 @@ class LoginLanguageTest extends TestCase
         $this->assertSame(array(), $_SESSION);
     }
 
+    public function testGetUserLanguageReturnsTheLanguageWithoutChangingTheSession()
+    {
+        $row = (object) array('default_language' => 'ar_SA.UTF-8', 'language_name' => 'Arabic');
+
+        $this->assertSame('ar_SA.UTF-8', $this->login($this->pdoReturning($row))->getUserLanguage(7)->default_language);
+        $this->assertSame(array(), $_SESSION);
+    }
+
+    public function testGetUserLanguageReturnsFalseWhenTheReadFails()
+    {
+        $pdo = $this->createMock(\PDO::class);
+        $pdo->method('prepare')->willThrowException(new \PDOException('gone'));
+
+        $this->assertFalse($this->login($pdo)->getUserLanguage(7));
+        $this->assertSame(array(), $_SESSION);
+    }
+
 } //@formatter:on

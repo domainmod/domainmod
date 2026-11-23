@@ -126,6 +126,21 @@ class Login
      */
     public function loadUserLanguage($user_id)
     {
+        $result = $this->getUserLanguage($user_id);
+        if (!$result) return false;
+
+        $_SESSION['s_default_language'] = $result->default_language;
+        $_SESSION['s_default_language_name'] = $result->language_name;
+
+        return true;
+    }
+
+    /*
+     * The user's language code and name, or false if they can't be read. It reads only the language, so it works before
+     * a database upgrade (the sign-in page uses it for the code step), and it doesn't change the session.
+     */
+    public function getUserLanguage($user_id)
+    {
         try {
 
             $stmt = $this->deeb->cnxx->prepare("
@@ -144,12 +159,7 @@ class Login
 
         }
 
-        if (!$result) return false;
-
-        $_SESSION['s_default_language'] = $result->default_language;
-        $_SESSION['s_default_language_name'] = $result->language_name;
-
-        return true;
+        return $result ? $result : false;
     }
 
     /*

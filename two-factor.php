@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !$locked) {
                         'samesite' => 'Lax'));
                 }
 
+                if (($pending['language'] ?? '') !== '') $_SESSION['s_default_language'] = $pending['language'];
                 header('Location: checks.php');
                 exit;
 
