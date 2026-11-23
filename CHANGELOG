@@ -1,5 +1,65 @@
 DomainMOD CHANGELOG
 ===================
+v4.27.0     2026-11-22
+- Added a Hosting section
+- Added a Change History
+- Added a Watch List
+- Added multi-factor authentication (MFA)
+- Added the SSL Queue
+- Added a Refresh button for SSL certificates
+- Added a Refresh Domains task to the Task Scheduler
+- Added Live DNS
+- Added transfer lock and registry status for domains
+- Added custom field filters to the Domains and SSL Certificates lists
+- Added a domain search to the Bulk Updater
+- Added Disable All and Enable All to the Task Scheduler
+- Added a guided Upgrade page
+- Added support for SSL certificates with no domain
+- Added Finish Restore to Backup & Restore
+- Added a None option to the SMTP protocol setting
+- Added a warning when PHP's time zone data is out of date
+- Updated the Dashboard
+- Updated the renewal and cost chart colours
+- Updated the sidebar menu, including a new Maintenance section
+- Updated Administration's Maintenance page to Cleanup
+- Updated breadcrumbs and page titles to match the sidebar menu
+- Updated the Reporting page, including TLD Price Comparison and SSL Price Comparison
+- Updated Web Hosting Providers to Hosting Providers
+- Updated each domain's Web Hosting Provider to a hosting service
+- Updated the Domains, SSL Certificates, and Import Queue tables
+- Updated DomainMOD to pause while a restore or upgrade runs
+- Updated the top bar's user menu
+- Updated the Queue menu item to Import Queue
+- Updated due dates to follow your own time zone
+- Updated the Renewal Calendar's list
+- Updated exports to use far less memory
+- Updated the Dynadot integration to use Dynadot's REST API
+- Updated the installation and upgrade notice sent to domainmod.org
+- Updated the account exports to leave out saved passwords and API keys
+- Fixed exported text that could run as a formula in a spreadsheet
+- Fixed a zero exchange rate being saved when a lookup failed
+- Fixed a failed restore being reported as a success
+- Fixed custom fields replacing built-in columns with the same name
+- Fixed registrar passwords and API keys with special characters being refused
+- Fixed emails not sending to addresses with & or an apostrophe
+- Fixed domains getting stuck in the Domain Queue
+- Fixed pages failing on MariaDB 12.3
+- Fixed the RDAP, WHOIS, and exchange rate caches on new installations
+- Fixed expiry dates past 2038 on 32-bit PHP
+- Fixed the fee edit pages accepting malformed IDs
+- Fixed fees being left behind when an SSL type was deleted
+- Fixed text boxes losing a blank first line
+- Fixed the Bulk Updater's Change Expiry Date moving the date back a day
+- Fixed the segments export's missing Notes heading
+- Fixed searchable menus shrinking when they lost focus
+- Fixed the installer's language overriding your profile's language
+- Fixed the profile save confirmation appearing in the previous language
+- Fixed the first message after signing in appearing in the sign-in page's language
+- Fixed SSL certificate labels made only of spaces being saved
+- Fixed error messages stacking up
+- Fixed accessibility issues
+- Removed the Raw List from the SSL Certificates list
+
 v4.26.0     2026-11-18
 - Added a new design, built on AdminLTE 4 and Bootstrap 5, with a reworked sidebar, Dashboard, forms, lists, and reports, and status icons in the lists
 - Added full right-to-left layouts for Arabic, Persian, and Urdu
